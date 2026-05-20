@@ -115,11 +115,18 @@ async function tick(): Promise<void> {
     // Czekaj na load
     await waitForTab(tab.id);
 
+    // Pobierz obrazki z postu (jeśli są)
+    const { posts: allPosts = [], campaigns: allCampaigns = [] } = await chrome.storage.local.get(['posts', 'campaigns']);
+    const campaign = (allCampaigns as Array<{ id: string; postId: string }>).find((c) => c.id === target.campaignId);
+    const post = (allPosts as Array<{ id: string; imageDataUrls?: string[] }>).find((p) => p.id === campaign?.postId);
+    const imageDataUrls = post?.imageDataUrls ?? [];
+
     // Wyślij PASTE_POST
     const pasteResp = await chrome.tabs.sendMessage(tab.id, {
       type: 'PASTE_POST',
       text: target.renderedText,
       targetId: target.id,
+      imageDataUrls,
     }).catch((e) => ({ ok: false, error: String(e) }));
 
     if (!pasteResp?.ok) {

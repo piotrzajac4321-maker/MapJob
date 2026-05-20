@@ -20,6 +20,16 @@ import {
   type ActivityEvent,
 } from '../lib/store';
 import * as cloud from '../lib/cloud';
+import {
+  FRAMEWORKS,
+  HOOKS,
+  suggestHook,
+  assemblePost,
+  validatePost,
+  type FrameworkType,
+  type HookExample,
+} from '../lib/post-builder';
+import { uploadImages, MAX_IMAGES_PER_POST, approxDataUrlSize } from '../lib/images';
 
 const $ = <T extends HTMLElement = HTMLElement>(id: string) => document.getElementById(id) as T;
 
@@ -207,17 +217,29 @@ async function refreshPostsTab(): Promise<void> {
   const posts = await getPosts();
   $('posts-count').textContent = `${posts.length} postów`;
   $('posts-list').innerHTML = posts.length
-    ? posts.map((p) => `
-      <div class="card" style="padding: 10px">
-        <div style="font-weight: 600; font-size: 12.5px">${escapeHtml(p.title)}</div>
-        <div style="color: var(--muted); font-size: 11px; margin-top: 4px; margin-bottom: 6px">
-          ${escapeHtml(p.body.slice(0, 120))}${p.body.length > 120 ? '…' : ''}
-        </div>
-        <div class="row-between">
-          <span class="badge badge-muted">${p.type}</span>
-          <button class="btn btn-ghost btn-sm" data-del="${p.id}">Usuń</button>
-        </div>
-      </div>`).join('')
+    ? posts.map((p) => {
+        const imgCount = p.imageDataUrls?.length ?? 0;
+        const thumb = imgCount > 0
+          ? `<div class="post-thumb" style="background-image: url('${p.imageDataUrls[0]}')"></div>`
+          : `<div class="post-thumb placeholder">📝</div>`;
+        const imgBadge = imgCount > 0 ? `<span class="badge badge-primary">${imgCount} 📷</span>` : '';
+        return `
+          <div class="post-row">
+            ${thumb}
+            <div class="post-content">
+              <div class="post-title">${escapeHtml(p.title)}</div>
+              <div style="color: var(--muted); font-size: 10.5px; margin-top: 2px">
+                ${escapeHtml(p.body.slice(0, 80))}${p.body.length > 80 ? '…' : ''}
+              </div>
+              <div class="row" style="margin-top: 6px; gap: 6px">
+                <span class="badge badge-muted">${p.type}</span>
+                ${imgBadge}
+                <span style="flex: 1"></span>
+                <button class="btn btn-ghost btn-sm" data-del="${p.id}">Usuń</button>
+              </div>
+            </div>
+          </div>`;
+      }).join('')
     : '<div class="empty">Brak postów. Stwórz pierwszy na ekranie głównym lub klikając "Nowy".</div>';
 
   $('posts-list').querySelectorAll('[data-del]').forEach((b) => {
@@ -362,6 +384,222 @@ $('clear-log').addEventListener('click', async () => {
   await refreshLog();
 });
 
+// ============ ASYSTENT ============
+const assistantState = {
+  type: 'job' as 'job' | 'sales' | 'other',
+  framework: 'aida' as FrameworkType,
+  values: {} as Record<string, string>,
+  images: [] as string[],
+  edited: false, // user manually edited preview — nie nadpisuj
+};
+
+function renderFrameworks(): void {
+  const grid = $('as-frameworks');
+  grid.innerHTML = Object.values(FRAMEWORKS)
+    .map((fw) => `
+      <div class="framework-card ${fw.id === assistantState.framework ? 'active' : ''}" data-fw="${fw.id}">
+        <div class="fw-name">${fw.name}</div>
+        <div class="fw-desc">${escapeHtml(fw.desc.split('.')[0]!)}.</div>
+      </div>
+    `).join('');
+  grid.querySelectorAll('[data-fw]').forEach((el) => {
+    el.addEventListener('click', () => {
+      assistantState.framework = el.getAttribute('data-fw') as FrameworkType;
+      assistantState.values = {}; // reset wartości
+      assistantState.edited = false;
+      renderFrameworks();
+      renderFields();
+      renderHooks();
+      regenerate();
+    });
+  });
+}
+
+function renderHooks(): void {
+  const hooksHost = $('as-hooks');
+  const list = suggestHook(assistantState.type);
+  const byCategory = new Map<string, HookExample[]>();
+  for (const h of list) {
+    if (!byCategory.has(h.category)) byCategory.set(h.category, []);
+    byCategory.get(h.category)!.push(h);
+  }
+  hooksHost.innerHTML = Array.from(byCategory.entries())
+    .map(([cat, hooks]) => `
+      <div class="hook-category">${escapeHtml(cat)}</div>
+      ${hooks.map((h) => `<div class="hook-chip" data-hook-id="${h.id}" title="${escapeHtml(h.text)}">${escapeHtml(h.text.slice(0, 42))}${h.text.length > 42 ? '…' : ''}</div>`).join('')}
+    `).join('');
+  hooksHost.querySelectorAll('[data-hook-id]').forEach((el) => {
+    el.addEventListener('click', () => {
+      const id = el.getAttribute('data-hook-id')!;
+      const h = HOOKS.find((x) => x.id === id);
+      if (!h) return;
+      // Wkleja w pierwsze pole frameworka (hook / problem / before / hook)
+      const def = FRAMEWORKS[assistantState.framework];
+      const firstField = def.fields[0]!;
+      assistantState.values[firstField.id] = h.text;
+      assistantState.edited = false;
+      renderFields();
+      regenerate();
+    });
+  });
+}
+
+function renderFields(): void {
+  const def = FRAMEWORKS[assistantState.framework];
+  const host = $('as-fields');
+  host.innerHTML = def.fields.map((f) => `
+    <div>
+      <label class="form-label">${escapeHtml(f.label)}</label>
+      <textarea data-field="${f.id}" rows="${f.rows ?? 2}" placeholder="${escapeHtml(f.placeholder)}">${escapeHtml(assistantState.values[f.id] ?? '')}</textarea>
+    </div>
+  `).join('');
+  host.querySelectorAll<HTMLTextAreaElement>('textarea[data-field]').forEach((ta) => {
+    ta.addEventListener('input', () => {
+      const id = ta.getAttribute('data-field')!;
+      assistantState.values[id] = ta.value;
+      assistantState.edited = false;
+      regenerate();
+    });
+  });
+}
+
+function regenerate(): void {
+  if (assistantState.edited) return; // nie nadpisuj ręcznej edycji
+  const text = assemblePost(assistantState.framework, assistantState.values);
+  ($('as-preview') as HTMLTextAreaElement).value = text;
+  updateScore(text);
+}
+
+function updateScore(text: string): void {
+  const v = validatePost(text);
+  $('as-score-value').textContent = String(v.score);
+  const fill = $('as-score-fill') as HTMLElement;
+  fill.style.width = `${v.score}%`;
+  fill.className = 'score-fill ' + (v.score < 40 ? 'low' : v.score < 70 ? 'mid' : 'high');
+  $('as-warnings').innerHTML = v.warnings.map((w) => `<li>${escapeHtml(w)}</li>`).join('');
+  const words = text.split(/\s+/).filter(Boolean).length;
+  $('as-length').textContent = `${text.length} znaków · ${words} słów`;
+}
+
+function renderThumbs(): void {
+  const host = $('as-thumbs');
+  host.innerHTML = assistantState.images
+    .map((url, i) => `
+      <div class="thumb" style="background-image: url('${url}')">
+        <div class="thumb-remove" data-rm="${i}">×</div>
+      </div>
+    `).join('');
+  host.querySelectorAll('[data-rm]').forEach((el) => {
+    el.addEventListener('click', () => {
+      const i = parseInt(el.getAttribute('data-rm')!, 10);
+      assistantState.images.splice(i, 1);
+      renderThumbs();
+      updateDropzoneState();
+    });
+  });
+}
+
+function updateDropzoneState(): void {
+  const dz = $('as-dropzone');
+  if (assistantState.images.length >= MAX_IMAGES_PER_POST) {
+    dz.style.opacity = '0.5';
+    dz.style.pointerEvents = 'none';
+    dz.querySelector('div:nth-child(2)')!.textContent = `Limit ${MAX_IMAGES_PER_POST} osiągnięty`;
+  } else {
+    dz.style.opacity = '1';
+    dz.style.pointerEvents = 'auto';
+    dz.querySelector('div:nth-child(2)')!.innerHTML = '<strong>Przeciągnij zdjęcia tutaj</strong> lub kliknij';
+  }
+}
+
+async function handleImageFiles(files: FileList | File[]): Promise<void> {
+  const remaining = MAX_IMAGES_PER_POST - assistantState.images.length;
+  if (remaining <= 0) {
+    banner(`Już masz ${MAX_IMAGES_PER_POST} zdjęć — usuń jedno żeby dodać kolejne.`, 'warn');
+    return;
+  }
+  const slice = Array.from(files).slice(0, remaining);
+  banner(`⏳ Kompresuję ${slice.length} zdjęć...`, 'info', 2000);
+
+  const { dataUrls, errors } = await uploadImages(slice);
+  assistantState.images.push(...dataUrls);
+  renderThumbs();
+  updateDropzoneState();
+
+  const totalSize = assistantState.images.reduce((s, u) => s + approxDataUrlSize(u), 0);
+  if (errors.length > 0) {
+    banner(`Dodano ${dataUrls.length}, błędów: ${errors.length} (${errors[0]!.reason})`, 'warn', 6000);
+  } else {
+    banner(`✓ Dodano ${dataUrls.length} zdjęć (${(totalSize / 1024 / 1024).toFixed(2)} MB w sumie)`, 'ok');
+  }
+}
+
+function bindAssistant(): void {
+  $('as-type').addEventListener('change', () => {
+    assistantState.type = ($('as-type') as HTMLSelectElement).value as 'job' | 'sales' | 'other';
+    renderHooks();
+  });
+
+  $('as-preview').addEventListener('input', () => {
+    assistantState.edited = true;
+    updateScore(($('as-preview') as HTMLTextAreaElement).value);
+  });
+
+  const dz = $('as-dropzone');
+  const fileInput = $('as-file-input') as HTMLInputElement;
+
+  dz.addEventListener('click', () => fileInput.click());
+  fileInput.addEventListener('change', async () => {
+    if (fileInput.files) await handleImageFiles(fileInput.files);
+    fileInput.value = '';
+  });
+  dz.addEventListener('dragover', (e) => {
+    e.preventDefault();
+    dz.classList.add('drag-over');
+  });
+  dz.addEventListener('dragleave', () => dz.classList.remove('drag-over'));
+  dz.addEventListener('drop', async (e) => {
+    e.preventDefault();
+    dz.classList.remove('drag-over');
+    const dataTransfer = (e as DragEvent).dataTransfer;
+    if (dataTransfer?.files) await handleImageFiles(dataTransfer.files);
+  });
+
+  $('as-save').addEventListener('click', async () => {
+    const text = ($('as-preview') as HTMLTextAreaElement).value.trim();
+    const title = ($('as-title') as HTMLInputElement).value.trim() || text.slice(0, 60);
+    if (text.length < 20) {
+      banner('Tekst za krótki (min 20 znaków).', 'warn');
+      return;
+    }
+    if (!title) {
+      banner('Wpisz tytuł posta.', 'warn');
+      return;
+    }
+    await savePost({
+      id: crypto.randomUUID(),
+      title,
+      type: assistantState.type,
+      body: text,
+      imageDataUrls: assistantState.images.slice(),
+      createdAt: Date.now(),
+    });
+    // Reset
+    assistantState.values = {};
+    assistantState.images = [];
+    assistantState.edited = false;
+    ($('as-preview') as HTMLTextAreaElement).value = '';
+    ($('as-title') as HTMLInputElement).value = '';
+    renderFields();
+    renderThumbs();
+    updateDropzoneState();
+    updateScore('');
+    banner(`✓ Post "${title}" zapisany${assistantState.images.length ? ` z ${assistantState.images.length} zdjęciami` : ''}`, 'ok');
+    await refreshPostsTab();
+    await refreshHome();
+  });
+}
+
 // ============ HELPERS ============
 function escapeHtml(s: string): string {
   return s.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]!));
@@ -394,6 +632,15 @@ async function refreshAll(): Promise<void> {
 document.querySelectorAll('input[name="tabs"]').forEach((input) => {
   input.addEventListener('change', () => refreshAll());
 });
+
+// Init asystenta (raz)
+renderFrameworks();
+renderHooks();
+renderFields();
+renderThumbs();
+updateDropzoneState();
+updateScore('');
+bindAssistant();
 
 void refreshAll();
 setInterval(refreshFBStatus, 5000);
