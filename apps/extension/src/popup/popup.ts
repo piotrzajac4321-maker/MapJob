@@ -12,6 +12,8 @@ import {
   saveCampaign,
   saveTargets,
   getTargets,
+  getCampaigns,
+  duplicateCampaign,
   getActivity,
   getSettings,
   setSettings,
@@ -46,9 +48,10 @@ import {
   activateLicense,
   isLicenseValid,
   getStatusBadge,
-
   type License,
 } from '../lib/license';
+import { computeQuickStats, formatNextPost, formatHour } from '../lib/stats';
+import { computeInsights } from '../lib/insights';
 
 const $ = <T extends HTMLElement = HTMLElement>(id: string) => document.getElementById(id) as T;
 
@@ -58,11 +61,42 @@ function banner(msg: string, kind: 'ok' | 'warn' | 'err' | 'info' = 'info', ms =
   if (ms > 0) setTimeout(() => { host.innerHTML = ''; }, ms);
 }
 
+function renderQuickStats(stats: Awaited<ReturnType<typeof computeQuickStats>>): void {
+  const dayLabel = new Date().toLocaleDateString('pl-PL', { weekday: 'long', day: 'numeric', month: 'long' });
+  const el = (id: string) => document.getElementById(id);
+  el('qs-day-label')!.textContent = dayLabel;
+  el('qs-today-progress')!.textContent = `${stats.todayPosted} / ${stats.todayPlanned}`;
+  const pct = stats.todayPlanned > 0 ? Math.min(100, (stats.todayPosted / stats.todayPlanned) * 100) : 0;
+  const fill = el('qs-today-fill') as HTMLElement;
+  fill.style.width = `${pct.toFixed(0)}%`;
+  fill.className = 'storage-fill ' + (pct >= 90 ? 'critical' : pct >= 70 ? 'warn' : '');
+
+  el('qs-next-post')!.textContent = formatNextPost(stats.nextPostInSeconds);
+  if (stats.nextGroupName) {
+    el('qs-next-group-row')!.style.display = 'flex';
+    el('qs-next-group')!.textContent = stats.nextGroupName;
+  } else {
+    el('qs-next-group-row')!.style.display = 'none';
+  }
+
+  el('qs-success')!.textContent = stats.totalAttempts > 0
+    ? `${stats.successRate}% (${stats.totalPosted}/${stats.totalAttempts})`
+    : 'brak danych';
+
+  el('qs-best-hour')!.textContent = stats.bestHour != null
+    ? `${formatHour(stats.bestHour)} (${stats.bestHourSuccessCount} postów)`
+    : 'mało danych';
+
+  el('qs-week-react')!.textContent = String(stats.weeklyReactions);
+  el('qs-week-comm')!.textContent = String(stats.weeklyComments);
+}
+
 async function refreshHome(): Promise<void> {
-  const [groups, posts, targets, settings, usage] = await Promise.all([
-    getGroups(), getPosts(), getTargets(), getSettings(), getStorageUsage(),
+  const [groups, posts, targets, settings, usage, stats] = await Promise.all([
+    getGroups(), getPosts(), getTargets(), getSettings(), getStorageUsage(), computeQuickStats(),
   ]);
   await refreshQuotasView('quotas-home', true);
+  renderQuickStats(stats);
   const activeGroups = groups.filter((g) => g.isActive).length;
   const todayStart = new Date();
   todayStart.setHours(0, 0, 0, 0);
@@ -73,7 +107,49 @@ async function refreshHome(): Promise<void> {
   $('stat-today').textContent = String(today);
 
   if (settings.killSwitch) {
-    $('status-summary').innerHTML = '<span style="color: var(--danger)">🚨 KILL SWITCH — sprawdź zakładkę Ustawienia ⚙</span>';
+    // Sprawdź czy 24h od kill switch już minęło → pokaż banner Resume
+    const elapsedMs = settings.killSwitchAt ? Date.now() - settings.killSwitchAt : 0;
+    if (elapsedMs > 24 * 3600_000) {
+      const hoursAgo = Math.round(elapsedMs / 3600_000);
+      $('status-summary').innerHTML = `
+        <span style="color: var(--warning)">⏰ Kill switch wygasł (${hoursAgo}h temu)</span><br/>
+        <div style="margin-top: 8px; display: flex; gap: 6px">
+          <button class="btn btn-primary btn-sm" id="resume-now">✓ Wznów</button>
+          <button class="btn btn-secondary btn-sm" id="resume-wait">Jeszcze nie</button>
+        </div>
+      `;
+      document.getElementById('resume-now')?.addEventListener('click', async () => {
+        if (!confirm(
+          'Sprawdziłeś czy konto FB działa normalnie?\n' +
+          '✓ Brak captcha / blokady\n' +
+          '✓ Możesz publikować ręcznie\n\n' +
+          'Wznawiać postowanie?'
+        )) return;
+        await setSettings({
+          killSwitch: false,
+          killSwitchReason: undefined,
+          killSwitchAt: undefined,
+          paused: false,
+        });
+        banner('✓ System wznowiony. Postuj ostrożnie.', 'ok', 6000);
+        await refreshHome();
+      });
+      document.getElementById('resume-wait')?.addEventListener('click', async () => {
+        // Przedłuż kill switch o kolejne 24h
+        await setSettings({ killSwitchAt: Date.now() });
+        banner('Kill switch przedłużony o 24h.', 'info', 4000);
+        await refreshHome();
+      });
+    } else {
+      const remaining = settings.killSwitchAt
+        ? Math.max(0, 24 * 3600_000 - elapsedMs)
+        : 24 * 3600_000;
+      const hLeft = Math.ceil(remaining / 3600_000);
+      $('status-summary').innerHTML = `<span style="color: var(--danger)">🚨 KILL SWITCH</span><br/><span style="font-size: 10.5px; color: var(--muted)">Auto-przegląd za ${hLeft}h · powód: ${escapeHtml(settings.killSwitchReason ?? 'nieznany')}</span>`;
+    }
+  } else if (settings.pauseUntil && Date.now() < settings.pauseUntil) {
+    const until = new Date(settings.pauseUntil).toLocaleString('pl-PL', { weekday: 'short', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
+    $('status-summary').innerHTML = `<span style="color: var(--warning)">⏸ Wstrzymane ${escapeHtml(settings.pauseReason ?? '')}</span><br/><span style="font-size: 10.5px; color: var(--muted)">Auto-wznowienie: ${until}</span>`;
   } else if (settings.paused) {
     $('status-summary').textContent = 'Wstrzymane (kliknij switch żeby wznowić)';
   } else {
@@ -215,7 +291,84 @@ $('quick-save').addEventListener('click', async () => {
 
 $('pause-toggle').addEventListener('click', async () => {
   const settings = await getSettings();
-  await setSettings({ paused: !settings.paused });
+  // Toggle wyłącza także pauseUntil
+  await setSettings({ paused: !settings.paused, pauseUntil: undefined, pauseReason: undefined });
+  await refreshHome();
+});
+
+// ============ SMART PAUSE ============
+function presetToTimestamp(preset: string): { until: number; label: string } | null {
+  const now = new Date();
+  switch (preset) {
+    case 'tomorrow_9': {
+      const d = new Date(now);
+      d.setDate(d.getDate() + 1);
+      d.setHours(9, 0, 0, 0);
+      return { until: d.getTime(), label: 'do jutra 9:00' };
+    }
+    case 'monday_8': {
+      const d = new Date(now);
+      const daysUntilMonday = (8 - d.getDay()) % 7 || 7;
+      d.setDate(d.getDate() + daysUntilMonday);
+      d.setHours(8, 0, 0, 0);
+      return { until: d.getTime(), label: 'do poniedziałku 8:00' };
+    }
+    case '2hours': {
+      const t = now.getTime() + 2 * 3600 * 1000;
+      return { until: t, label: 'na 2h' };
+    }
+    case 'evening': {
+      const d = new Date(now);
+      // jeśli już po 20, idź do jutra
+      if (d.getHours() >= 20) d.setDate(d.getDate() + 1);
+      d.setHours(20, 0, 0, 0);
+      return { until: d.getTime(), label: 'do wieczora 20:00' };
+    }
+    case '7days': {
+      const t = now.getTime() + 7 * 86400 * 1000;
+      return { until: t, label: 'na 7 dni' };
+    }
+    default:
+      return null;
+  }
+}
+
+$('smart-pause-btn').addEventListener('click', () => {
+  $('pause-modal').classList.add('show');
+});
+
+$('pause-cancel').addEventListener('click', () => $('pause-modal').classList.remove('show'));
+$('pause-modal').addEventListener('click', (e) => {
+  if (e.target === $('pause-modal')) $('pause-modal').classList.remove('show');
+});
+
+document.querySelectorAll('.pause-preset').forEach((b) => {
+  b.addEventListener('click', async (e) => {
+    const preset = (e.currentTarget as HTMLElement).getAttribute('data-preset')!;
+    const r = presetToTimestamp(preset);
+    if (!r) return;
+    await setSettings({ paused: true, pauseUntil: r.until, pauseReason: r.label });
+    $('pause-modal').classList.remove('show');
+    const untilStr = new Date(r.until).toLocaleString('pl-PL', { dateStyle: 'short', timeStyle: 'short' });
+    banner(`✓ Wstrzymano ${r.label} (do ${untilStr})`, 'ok', 6000);
+    await refreshHome();
+  });
+});
+
+$('pause-custom-btn').addEventListener('click', async () => {
+  const val = ($('pause-custom') as HTMLInputElement).value;
+  if (!val) {
+    banner('Wybierz datę i czas', 'warn');
+    return;
+  }
+  const until = new Date(val).getTime();
+  if (until <= Date.now()) {
+    banner('Czas musi być w przyszłości', 'warn');
+    return;
+  }
+  await setSettings({ paused: true, pauseUntil: until, pauseReason: `do ${new Date(until).toLocaleString('pl-PL')}` });
+  $('pause-modal').classList.remove('show');
+  banner(`✓ Wstrzymano do ${new Date(until).toLocaleString('pl-PL', { dateStyle: 'short', timeStyle: 'short' })}`, 'ok', 6000);
   await refreshHome();
 });
 
@@ -269,9 +422,42 @@ $('group-filter').addEventListener('input', refreshGroupsTab);
 $('refresh-groups').addEventListener('click', refreshGroupsTab);
 
 // ============ POSTS ============
+async function renderInsights(): Promise<void> {
+  const insights = await computeInsights();
+  const host = document.getElementById('insights-card');
+  if (!host) return;
+  if (insights.length === 0) {
+    host.style.display = 'none';
+    return;
+  }
+  host.style.display = 'block';
+  host.innerHTML = insights.slice(0, 3).map((ins) => {
+    const color = ins.severity === 'warning' ? 'var(--warning)' : ins.severity === 'tip' ? 'var(--primary-light)' : 'var(--success)';
+    return `
+      <div class="card" style="border-left: 3px solid ${color}; padding: 10px 12px; margin-bottom: 6px">
+        <div style="font-size: 12.5px; font-weight: 600; margin-bottom: 4px">${ins.title}</div>
+        <div style="font-size: 11px; color: var(--muted); line-height: 1.5">${ins.description}</div>
+        ${ins.actionLabel ? `<button class="btn btn-ghost btn-sm" data-ins-action="${ins.actionType}" style="margin-top: 6px">${ins.actionLabel} →</button>` : ''}
+      </div>
+    `;
+  }).join('');
+
+  host.querySelectorAll('[data-ins-action]').forEach((b) => {
+    b.addEventListener('click', (e) => {
+      const action = (e.currentTarget as HTMLElement).getAttribute('data-ins-action');
+      const targetTab = action === 'open_groups' ? 'tab-groups'
+        : action === 'open_assistant' ? 'tab-assistant'
+        : action === 'open_settings' ? 'tab-settings'
+        : null;
+      if (targetTab) ($(targetTab) as HTMLInputElement).checked = true;
+    });
+  });
+}
+
 async function refreshPostsTab(): Promise<void> {
   const posts = await getPosts();
   $('posts-count').textContent = `${posts.length} postów`;
+  await renderInsights();
   $('posts-list').innerHTML = posts.length
     ? posts.map((p) => {
         const imgCount = p.imageDataUrls?.length ?? 0;
@@ -441,7 +627,90 @@ $('edit-save').addEventListener('click', async () => {
 const selectedGroupIds = new Set<string>();
 
 async function refreshCampTab(): Promise<void> {
-  const [posts, groups] = await Promise.all([getPosts(), getGroups()]);
+  const [posts, groups, campaigns, allTargets] = await Promise.all([
+    getPosts(), getGroups(), getCampaigns(), getTargets(),
+  ]);
+
+  // Lista kampanii (running / paused / completed)
+  const campsList = $('campaigns-list');
+  if (campaigns.length === 0) {
+    campsList.innerHTML = '<div class="empty" style="padding: 16px">Brak kampanii. Stwórz pierwszą wybierając post + grupy wyżej.</div>';
+  } else {
+    campsList.innerHTML = campaigns
+      .slice()
+      .sort((a, b) => b.createdAt - a.createdAt)
+      .slice(0, 10)
+      .map((c) => {
+        const ts = allTargets.filter((t) => t.campaignId === c.id);
+        const posted = ts.filter((t) => t.status === 'posted').length;
+        const failed = ts.filter((t) => t.status === 'failed').length;
+        const pending = ts.filter((t) => t.status === 'pending' || t.status === 'queued').length;
+        const statusBadge = c.status === 'running'
+          ? `<span class="badge badge-success badge-dot">aktywna</span>`
+          : c.status === 'paused' ? `<span class="badge badge-warning badge-dot">pauza</span>`
+          : `<span class="badge badge-muted">${c.status}</span>`;
+        const post = posts.find((p) => p.id === c.postId);
+        const created = timeAgo(c.createdAt);
+        return `
+          <div class="post-row" style="align-items: center">
+            <div class="post-content">
+              <div class="post-title">${escapeHtml(c.name)}</div>
+              <div style="font-size: 10.5px; color: var(--muted); margin-top: 2px">
+                ${escapeHtml(post?.title ?? '—')} · ${ts.length} grup · ${created}
+              </div>
+              <div class="row" style="gap: 6px; margin-top: 6px; align-items: center">
+                ${statusBadge}
+                <span class="badge badge-success">✓ ${posted}</span>
+                ${pending ? `<span class="badge badge-primary">⏱ ${pending}</span>` : ''}
+                ${failed ? `<span class="badge badge-danger">✗ ${failed}</span>` : ''}
+              </div>
+            </div>
+            <button class="btn btn-ghost btn-sm" data-clone="${c.id}" title="Klonuj kampanię">⎘</button>
+            ${c.status === 'running'
+              ? `<button class="btn btn-ghost btn-sm" data-pause-camp="${c.id}" title="Pauza">⏸</button>`
+              : `<button class="btn btn-ghost btn-sm" data-resume-camp="${c.id}" title="Wznów">▶</button>`}
+          </div>
+        `;
+      }).join('');
+
+    // Klonuj handler
+    campsList.querySelectorAll('[data-clone]').forEach((b) => {
+      b.addEventListener('click', async (e) => {
+        const id = (e.currentTarget as HTMLElement).dataset.clone!;
+        const newCamp = await duplicateCampaign(id);
+        if (newCamp) {
+          banner(`✓ Kampania sklonowana: "${newCamp.name}"`, 'ok', 6000);
+          await refreshCampTab();
+          await refreshHome();
+        }
+      });
+    });
+    // Pauza/Resume per kampania
+    campsList.querySelectorAll('[data-pause-camp]').forEach((b) => {
+      b.addEventListener('click', async (e) => {
+        const id = (e.currentTarget as HTMLElement).dataset.pauseCamp!;
+        const camps = await getCampaigns();
+        const c = camps.find((x) => x.id === id);
+        if (!c) return;
+        c.status = 'paused';
+        await saveCampaign(c);
+        await refreshCampTab();
+        banner('⏸ Kampania wstrzymana', 'ok');
+      });
+    });
+    campsList.querySelectorAll('[data-resume-camp]').forEach((b) => {
+      b.addEventListener('click', async (e) => {
+        const id = (e.currentTarget as HTMLElement).dataset.resumeCamp!;
+        const camps = await getCampaigns();
+        const c = camps.find((x) => x.id === id);
+        if (!c) return;
+        c.status = 'running';
+        await saveCampaign(c);
+        await refreshCampTab();
+        banner('▶ Kampania wznowiona', 'ok');
+      });
+    });
+  }
 
   // Posts dropdown
   const select = $('camp-post') as HTMLSelectElement;
@@ -840,6 +1109,7 @@ async function refreshSettingsTab(): Promise<void> {
 
   // Safety modes
   renderSafetyModes(s.safetyMode);
+  renderScheduler(s);
 
   // Kill switch banner
   const ksCard = $('kill-switch-card');
@@ -965,6 +1235,54 @@ function refreshSyncPill(): void {
   else { pill.className = 'sync-pill unk'; pill.textContent = 'sync…'; pill.title = 'Nie wykonano jeszcze żadnej operacji'; }
 }
 
+function renderScheduler(s: Awaited<ReturnType<typeof getSettings>>): void {
+  const sch = s.scheduler ?? {
+    enabled: false,
+    intervalMinutes: 90,
+    jitterMinutes: 20,
+    days: [
+      { enabled: false, startHour: 12, endHour: 18 },
+      { enabled: true,  startHour: 8,  endHour: 17 },
+      { enabled: true,  startHour: 8,  endHour: 17 },
+      { enabled: true,  startHour: 8,  endHour: 17 },
+      { enabled: true,  startHour: 8,  endHour: 17 },
+      { enabled: true,  startHour: 8,  endHour: 17 },
+      { enabled: false, startHour: 10, endHour: 14 },
+    ],
+  };
+  ($('sch-enabled') as HTMLInputElement).checked = sch.enabled;
+  ($('sch-interval') as HTMLInputElement).value = String(sch.intervalMinutes);
+  ($('sch-jitter') as HTMLInputElement).value = String(sch.jitterMinutes);
+
+  const dayNames = ['Niedz', 'Pn', 'Wt', 'Śr', 'Czw', 'Pt', 'Sob'];
+  $('sch-days').innerHTML = sch.days.map((d, i) => `
+    <div class="row" style="gap: 6px; align-items: center; padding: 4px 0">
+      <input type="checkbox" data-sch-day="${i}" ${d.enabled ? 'checked' : ''} style="width: auto" />
+      <div style="flex: 0 0 32px; font-size: 11px; color: var(--muted)">${dayNames[i]}</div>
+      <input type="number" data-sch-start="${i}" min="0" max="23" value="${d.startHour}" style="flex: 1" />
+      <div style="font-size: 11px; color: var(--muted)">-</div>
+      <input type="number" data-sch-end="${i}" min="0" max="23" value="${d.endHour}" style="flex: 1" />
+    </div>
+  `).join('');
+}
+
+function readSchedulerFromUI(): Awaited<ReturnType<typeof getSettings>>['scheduler'] {
+  const days = [0, 1, 2, 3, 4, 5, 6].map((i) => {
+    const enabled = (document.querySelector(`[data-sch-day="${i}"]`) as HTMLInputElement).checked;
+    const startHour = parseInt((document.querySelector(`[data-sch-start="${i}"]`) as HTMLInputElement).value, 10);
+    const endHour = parseInt((document.querySelector(`[data-sch-end="${i}"]`) as HTMLInputElement).value, 10);
+    return { enabled, startHour: Math.max(0, Math.min(23, startHour)), endHour: Math.max(0, Math.min(23, endHour)) };
+  }) as ExtensionSettingsSchedDays;
+  return {
+    enabled: ($('sch-enabled') as HTMLInputElement).checked,
+    intervalMinutes: Math.max(30, parseInt(($('sch-interval') as HTMLInputElement).value, 10)),
+    jitterMinutes: Math.max(0, parseInt(($('sch-jitter') as HTMLInputElement).value, 10)),
+    days,
+  };
+}
+
+type ExtensionSettingsSchedDays = NonNullable<Awaited<ReturnType<typeof getSettings>>['scheduler']>['days'];
+
 $('set-save').addEventListener('click', async () => {
   const get = (id: string) => parseInt(($(id) as HTMLInputElement).value, 10);
   const minD = Math.max(10, get('set-min-delay'));
@@ -979,6 +1297,7 @@ $('set-save').addEventListener('click', async () => {
     sleepStartHour: Math.max(0, Math.min(23, get('set-sleep-start'))),
     sleepEndHour: Math.max(0, Math.min(23, get('set-sleep-end'))),
     variatorEnabled: ($('set-variator') as HTMLInputElement).checked,
+    scheduler: readSchedulerFromUI(),
   });
   banner('✓ Ustawienia zapisane', 'ok');
   await refreshSettingsTab();

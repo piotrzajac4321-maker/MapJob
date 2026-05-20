@@ -53,8 +53,39 @@ export interface Campaign {
   createdAt: number;
 }
 
+export interface DaySchedule {
+  enabled: boolean;
+  startHour: number;   // 0-23
+  endHour: number;     // 0-23
+}
+
+export interface SchedulerConfig {
+  enabled: boolean;
+  intervalMinutes: number;       // odstęp między slotami (np. 90 min)
+  jitterMinutes: number;         // ±X min losowości
+  days: [DaySchedule, DaySchedule, DaySchedule, DaySchedule, DaySchedule, DaySchedule, DaySchedule]; // [niedz, pon, wt, śr, czw, pt, sob]
+}
+
+export const DEFAULT_SCHEDULE: SchedulerConfig = {
+  enabled: false,
+  intervalMinutes: 90,
+  jitterMinutes: 20,
+  days: [
+    { enabled: false, startHour: 12, endHour: 18 },  // niedziela
+    { enabled: true,  startHour: 8,  endHour: 17 },  // poniedziałek
+    { enabled: true,  startHour: 8,  endHour: 17 },  // wtorek
+    { enabled: true,  startHour: 8,  endHour: 17 },  // środa
+    { enabled: true,  startHour: 8,  endHour: 17 },  // czwartek
+    { enabled: true,  startHour: 8,  endHour: 17 },  // piątek
+    { enabled: false, startHour: 10, endHour: 14 },  // sobota
+  ],
+};
+
 export interface ExtensionSettings {
   paused: boolean;
+  pauseUntil?: number;              // timestamp — auto-wznowienie gdy minie
+  pauseReason?: string;             // "do jutra 9:00" / "do poniedziałku" / "urlop 7 dni"
+  scheduler?: SchedulerConfig;      // jeśli enabled → ignoruje minDelay/maxDelay
   globalDailyCap: number;
   defaultCooldownMinutes: number;
   defaultGroupDailyCap: number;
@@ -72,6 +103,7 @@ export interface ExtensionSettings {
 
 const DEFAULT_SETTINGS: ExtensionSettings = {
   paused: false,
+  scheduler: DEFAULT_SCHEDULE,
   globalDailyCap: 10,                // SAFE preset
   defaultCooldownMinutes: 360,
   defaultGroupDailyCap: 1,
@@ -201,8 +233,33 @@ export async function pickNextTarget(): Promise<{ target: CampaignTarget; group:
     getSettings(),
   ]);
 
+  // Auto-clear pauseUntil jeśli minęło — wznawiamy
+  if (settings.pauseUntil && Date.now() >= settings.pauseUntil) {
+    await setSettings({ paused: false, pauseUntil: undefined, pauseReason: undefined });
+    settings.paused = false;
+    settings.pauseUntil = undefined;
+  }
+
   if (settings.paused) return null;
+  if (settings.pauseUntil && Date.now() < settings.pauseUntil) return null;
   if (settings.killSwitch) return null;
+
+  // Scheduler — jeśli aktywny, sprawdź czy mamy okno publikacji teraz
+  if (settings.scheduler?.enabled) {
+    const now = new Date();
+    const day = settings.scheduler.days[now.getDay()];
+    if (!day || !day.enabled) return null;
+    const h = now.getHours();
+    if (h < day.startHour || h >= day.endHour) return null;
+    // Interval check — jeśli ostatni post był < intervalMinutes - jitter, skip
+    const lastPostedTs = allTargets
+      .filter((t) => t.status === 'posted' && t.postedAt)
+      .reduce((max, t) => Math.max(max, t.postedAt!), 0);
+    if (lastPostedTs > 0) {
+      const minWaitMs = (settings.scheduler.intervalMinutes - settings.scheduler.jitterMinutes) * 60_000;
+      if (Date.now() - lastPostedTs < minWaitMs) return null;
+    }
+  }
 
   // Sleep hours — nie postuj 22:00-08:00 (domyślnie)
   if (settings.sleepHoursEnabled) {
@@ -330,6 +387,38 @@ export async function getStorageUsage(): Promise<StorageUsage> {
   const percent = (used / quota) * 100;
   const warning = percent >= 90 ? 'critical' : percent >= 70 ? 'warn' : 'ok';
   return { bytesUsed: used, bytesQuota: quota, percentUsed: percent, warning };
+}
+
+/**
+ * Duplikuje kampanię z nowymi targetami jako pending.
+ * Ten sam post, te same grupy, wszystko pending. Nowy ID.
+ */
+export async function duplicateCampaign(id: string): Promise<Campaign | null> {
+  const [campaigns, targets, posts] = await Promise.all([getCampaigns(), getTargets(), getPosts()]);
+  const orig = campaigns.find((c) => c.id === id);
+  if (!orig) return null;
+  const post = posts.find((p) => p.id === orig.postId);
+
+  const newCampaign: Campaign = {
+    ...orig,
+    id: crypto.randomUUID(),
+    name: orig.name.startsWith('Klon: ') ? orig.name : `Klon: ${orig.name}`,
+    status: 'running',
+    createdAt: Date.now(),
+  };
+  await saveCampaign(newCampaign);
+
+  // Skopiuj targets z oryginalnej kampanii — same grupy, ten sam tekst, ale pending
+  const origTargets = targets.filter((t) => t.campaignId === id);
+  const newTargets: CampaignTarget[] = origTargets.map((t) => ({
+    id: crypto.randomUUID(),
+    campaignId: newCampaign.id,
+    groupId: t.groupId,
+    status: 'pending',
+    renderedText: post?.body ?? t.renderedText,
+  }));
+  await saveTargets(newTargets);
+  return newCampaign;
 }
 
 /**

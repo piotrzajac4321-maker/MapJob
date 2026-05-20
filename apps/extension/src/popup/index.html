@@ -171,6 +171,14 @@
       .sync-pill.err { color: var(--danger); background: var(--danger-soft); }
       .sync-pill.unk { color: var(--warning); background: var(--warning-soft); }
 
+      /* QUICK STATS */
+      .qs-row {
+        display: flex; justify-content: space-between; align-items: baseline;
+        padding: 4px 0;
+      }
+      .qs-label { font-size: 12px; color: var(--muted); }
+      .qs-value { font-size: 13px; font-weight: 600; color: var(--text); }
+
       /* STORAGE BAR */
       .storage-bar {
         height: 4px;
@@ -443,12 +451,56 @@
               <div style="font-weight: 600">Status systemu</div>
               <div style="font-size: 11.5px; color: var(--muted); margin-top: 2px" id="status-summary">Sprawdzam...</div>
             </div>
-            <div id="pause-toggle" class="switch on" title="Pauza / wznów"></div>
+            <div class="row" style="gap: 6px; align-items: center">
+              <button class="btn btn-ghost btn-sm" id="smart-pause-btn" title="Wstrzymaj do…">⏸ Wstrzymaj…</button>
+              <div id="pause-toggle" class="switch on" title="Pauza / wznów"></div>
+            </div>
           </div>
           <div class="row" style="gap: 6px">
             <div class="stat-mini"><div class="v" id="stat-groups">0</div><div class="l">Grupy</div></div>
             <div class="stat-mini"><div class="v" id="stat-posts">0</div><div class="l">Posty</div></div>
             <div class="stat-mini"><div class="v" id="stat-today">0</div><div class="l">Dziś</div></div>
+          </div>
+        </div>
+
+        <!-- Quick Stats Panel -->
+        <div class="card" id="qs-card">
+          <div class="row-between" style="margin-bottom: 12px">
+            <div style="font-weight: 600">📊 Dzisiaj</div>
+            <div style="font-size: 10.5px; color: var(--muted)" id="qs-day-label"></div>
+          </div>
+
+          <div class="qs-row">
+            <div class="qs-label">Opublikowano</div>
+            <div class="qs-value" id="qs-today-progress">— / —</div>
+          </div>
+          <div class="storage-bar" style="margin: 6px 0 12px"><div class="storage-fill" id="qs-today-fill" style="width: 0%"></div></div>
+
+          <div class="qs-row">
+            <div class="qs-label">⏱ Następny post</div>
+            <div class="qs-value" id="qs-next-post">—</div>
+          </div>
+          <div class="qs-row" id="qs-next-group-row" style="display: none">
+            <div class="qs-label" style="color: var(--muted-2); font-size: 10.5px">w grupie</div>
+            <div style="font-size: 11px; color: var(--muted); text-align: right" id="qs-next-group">—</div>
+          </div>
+
+          <div style="border-top: 1px solid var(--border); margin: 10px 0 0; padding-top: 10px">
+            <div class="qs-row">
+              <div class="qs-label">📈 Success rate</div>
+              <div class="qs-value" id="qs-success">—%</div>
+            </div>
+            <div class="qs-row">
+              <div class="qs-label">🕐 Najlepsza godzina</div>
+              <div class="qs-value" id="qs-best-hour">—</div>
+            </div>
+          </div>
+
+          <div style="border-top: 1px solid var(--border); margin: 10px 0 0; padding-top: 10px">
+            <div class="qs-row">
+              <div class="qs-label">7 dni: 👍 / 💬</div>
+              <div class="qs-value"><span id="qs-week-react">0</span> · <span id="qs-week-comm">0</span></div>
+            </div>
           </div>
         </div>
 
@@ -487,6 +539,7 @@
 
       <!-- POSTS -->
       <div class="tab-pane tp-posts">
+        <div id="insights-card" style="display: none; margin-bottom: 10px"></div>
         <div class="row-between" style="margin-bottom: 10px">
           <div style="font-weight: 600" id="posts-count">0 postów</div>
           <button class="btn btn-primary btn-sm" id="new-post">+ Nowy</button>
@@ -574,6 +627,9 @@
           </div>
           <button class="btn btn-primary btn-block" id="camp-start">🚀 Uruchom kampanię</button>
         </div>
+
+        <div style="font-weight: 600; font-size: 12.5px; margin: 14px 0 8px">Twoje kampanie</div>
+        <div id="campaigns-list"></div>
       </div>
 
       <!-- SETTINGS -->
@@ -595,6 +651,27 @@
           <div class="form-label">Tryb bezpieczeństwa</div>
           <div id="safety-modes" style="display: grid; gap: 6px"></div>
           <div id="safety-warning" style="font-size: 11px; color: var(--warning); margin-top: 8px; display: none"></div>
+        </div>
+
+        <div class="card">
+          <div class="row" style="gap: 8px; align-items: center; margin-bottom: 8px">
+            <input type="checkbox" id="sch-enabled" style="width: auto" />
+            <label for="sch-enabled" style="font-size: 12px; flex: 1; cursor: pointer; font-weight: 500">📅 Harmonogram tygodniowy</label>
+          </div>
+          <div style="font-size: 10.5px; color: var(--muted); margin-bottom: 10px">
+            Gdy włączony, system postuje tylko w wybranych dniach i godzinach. Wyłącza losowy delay z trybu bezpieczeństwa.
+          </div>
+          <div id="sch-days" style="display: grid; gap: 4px"></div>
+          <div class="row" style="gap: 6px; margin-top: 10px">
+            <div style="flex: 1">
+              <div style="font-size: 11px; color: var(--muted); margin-bottom: 3px">Co (minut)</div>
+              <input id="sch-interval" type="number" min="30" max="720" value="90" />
+            </div>
+            <div style="flex: 1">
+              <div style="font-size: 11px; color: var(--muted); margin-bottom: 3px">± jitter (min)</div>
+              <input id="sch-jitter" type="number" min="0" max="60" value="20" />
+            </div>
+          </div>
         </div>
 
         <div class="card">
@@ -789,6 +866,31 @@
           Zamów klucz: <strong>kontakt@mapjob.pl</strong>
         </div>
         <button class="btn btn-primary btn-block" id="expired-activate">Mam klucz — aktywuj</button>
+      </div>
+    </div>
+
+    <!-- SMART PAUSE MODAL -->
+    <div class="modal-backdrop" id="pause-modal">
+      <div class="modal" style="max-width: 360px">
+        <div class="modal-header">
+          <div class="modal-title">⏸ Wstrzymaj postowanie</div>
+          <div class="modal-close" id="pause-cancel">×</div>
+        </div>
+        <div style="font-size: 12px; color: var(--muted); margin-bottom: 12px">
+          System auto-wznowi się gdy minie wybrany czas.
+        </div>
+        <div class="stack" style="gap: 6px">
+          <button class="btn btn-secondary btn-block pause-preset" data-preset="tomorrow_9">📅 Do jutra 9:00</button>
+          <button class="btn btn-secondary btn-block pause-preset" data-preset="monday_8">🗓 Do poniedziałku 8:00</button>
+          <button class="btn btn-secondary btn-block pause-preset" data-preset="2hours">⏰ Na 2 godziny</button>
+          <button class="btn btn-secondary btn-block pause-preset" data-preset="evening">🌙 Do wieczora (20:00)</button>
+          <button class="btn btn-secondary btn-block pause-preset" data-preset="7days">✈ Urlop 7 dni</button>
+        </div>
+        <div style="border-top: 1px solid var(--border); margin: 12px 0; padding-top: 12px">
+          <label class="form-label">Lub własny czas</label>
+          <input type="datetime-local" id="pause-custom" />
+          <button class="btn btn-primary btn-block" id="pause-custom-btn" style="margin-top: 8px">Wstrzymaj do tego czasu</button>
+        </div>
       </div>
     </div>
 
