@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="pl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Test JS</title>
+    <style>
+      body { background: #0a1628; color: #e5edf9; font-family: -apple-system, sans-serif; padding: 24px; margin: 0; }
+      h1 { font-size: 22px; margin-bottom: 16px; }
+      .box { padding: 20px; border-radius: 10px; margin-bottom: 16px; line-height: 1.5; }
+      .red { background: #fee2e2; color: #991b1b; }
+      .green { background: #d1fae5; color: #065f46; }
+      code { background: rgba(255,255,255,0.1); padding: 2px 6px; border-radius: 4px; font-size: 12px; word-break: break-all; }
+      ol { padding-left: 22px; margin-top: 12px; }
+      ol li { margin-bottom: 6px; }
+    </style>
+  </head>
+  <body>
+    <h1>🧪 Test JavaScript</h1>
+
+    <div id="status" class="box red">
+      <strong>❌ JavaScript NIE DZIAŁA w Twojej przeglądarce</strong><br><br>
+      Jeśli widzisz tylko tę czerwoną wiadomość, to znaczy że JS jest wyłączony lub plik otworzyłeś w trybie podglądu (QuickLook).
+      <br><br>
+      <strong>Co zrobić:</strong>
+      <ol>
+        <li>Zamknij ten plik</li>
+        <li>Otwórz przeglądarkę Chrome/Safari ręcznie</li>
+        <li>Przeciągnij plik na okno przeglądarki, lub File → Open</li>
+        <li>Albo na iOS: tap-and-hold plik → Share → Open in Chrome / Safari</li>
+      </ol>
+    </div>
+
+    <div id="info" class="box" style="background: #1f2f52; color: #e5edf9; display: none">
+      <strong style="color: #3b82f6">Diagnoza:</strong><br><br>
+      User Agent:<br>
+      <code id="ua"></code><br><br>
+      Engine:<br>
+      <code id="engine"></code><br><br>
+      Czas wykonania:<br>
+      <code id="time"></code>
+    </div>
+
+    <script>
+      document.getElementById('status').innerHTML = '<strong style="color: #065f46">✓ JavaScript DZIAŁA</strong><br><br>Świetnie. Skoro JS działa w tym pliku, problem z głównym demo jest inny. Pokaż mi diagnozę poniżej.';
+      document.getElementById('status').className = 'box green';
+      document.getElementById('info').style.display = 'block';
+      document.getElementById('ua').textContent = navigator.userAgent;
+      var ua = navigator.userAgent;
+      var engine = 'Unknown';
+      if (/Chrome/.test(ua) && !/Edg|OPR/.test(ua)) engine = 'Chrome / Blink';
+      else if (/Safari/.test(ua) && !/Chrome/.test(ua)) engine = 'Safari / WebKit';
+      else if (/Edg/.test(ua)) engine = 'Edge / Blink';
+      else if (/Firefox/.test(ua)) engine = 'Firefox / Gecko';
+      else if (/CriOS/.test(ua)) engine = 'Chrome iOS (WebKit wewnątrz)';
+      else if (/FxiOS/.test(ua)) engine = 'Firefox iOS (WebKit wewnątrz)';
+      document.getElementById('engine').textContent = engine;
+      document.getElementById('time').textContent = new Date().toLocaleString('pl-PL');
+    </script>
+  </body>
+</html>
