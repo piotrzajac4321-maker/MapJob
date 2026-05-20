@@ -15,12 +15,14 @@ import {
   getSettings,
   setSettings,
   logActivity,
+  getDeviceId,
   type FBGroup,
   type PostTemplate,
   type Campaign,
   type CampaignTarget,
   type ActivityEvent,
 } from '../lib/store';
+import * as cloud from '../lib/cloud';
 
 const $ = <T extends HTMLElement = HTMLElement>(id: string) => document.getElementById(id) as T;
 
@@ -110,7 +112,24 @@ $('import-groups').addEventListener('click', async () => {
 
   const result = await upsertGroups(response.groups);
   await logActivity({ type: 'scrape', message: `Zaimportowano ${result.added} nowych grup, zaktualizowano ${result.updated}` });
-  banner(`✓ Zaimportowano ${result.added} nowych grup${result.updated ? `, zaktualizowano ${result.updated}` : ''}`, 'ok');
+
+  // Cloud sync
+  const deviceId = await getDeviceId();
+  await cloud.registerDevice(deviceId, `Chrome — ${navigator.platform}`);
+  await cloud.syncGroups(deviceId, response.groups.map((g: any) => ({
+    fbGroupId: g.fbGroupId,
+    name: g.name,
+    url: g.url,
+    membersCount: g.membersCount,
+    privacy: g.privacy,
+    isActive: true,
+  })));
+  void cloud.logActivity(deviceId, {
+    eventType: 'scrape',
+    message: `Zaimportowano ${result.added} grup (+${result.updated} zaktualizowano)`,
+  });
+
+  banner(`✓ Zaimportowano ${result.added} nowych grup${result.updated ? `, zaktualizowano ${result.updated}` : ''} (cloud sync)`, 'ok');
   btn.disabled = false;
   btn.textContent = '↻ Importuj grupy';
   await refreshHome();
@@ -303,8 +322,28 @@ $('camp-start').addEventListener('click', async () => {
   await saveTargets(targets);
   await logActivity({ type: 'post', message: `Uruchomiono kampanię "${post.title}" na ${targets.length} grup` });
 
+  // Cloud sync: zapisz wszystkie publications jako 'pending'
+  const deviceId = await getDeviceId();
+  const groupsMap = new Map((await getGroups()).map((g) => [g.fbGroupId, g] as const));
+  for (const t of targets) {
+    const g = groupsMap.get(t.groupId);
+    void cloud.upsertPublication(deviceId, {
+      id: t.id,
+      fbGroupId: t.groupId,
+      groupName: g?.name,
+      campaignName: campaign.name,
+      postTitle: post.title,
+      postBody: post.body,
+      status: 'pending',
+    });
+  }
+  void cloud.logActivity(deviceId, {
+    eventType: 'campaign_started',
+    message: `Uruchomiono kampanię "${post.title}" na ${targets.length} grup`,
+  });
+
   selectedGroupIds.clear();
-  banner(`✓ Kampania uruchomiona na ${targets.length} grup. Otworzy pierwszą grupę w ciągu 30s — kliknij Publikuj.`, 'ok', 8000);
+  banner(`✓ Kampania na ${targets.length} grup uruchomiona (cloud sync ON). Pierwszy post za ≤30s — kliknij Publikuj na FB.`, 'ok', 8000);
 
   // Tab → log
   ($('tab-log') as HTMLInputElement).checked = true;

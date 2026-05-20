@@ -14,16 +14,22 @@ import {
   markGroupPosted,
   logActivity,
   getSettings,
+  getDeviceId,
 } from '../lib/store';
+import * as cloud from '../lib/cloud';
 
 const ALARM_NAME = 'mapjob-tick';
 
-chrome.runtime.onInstalled.addListener(() => {
+chrome.runtime.onInstalled.addListener(async () => {
   chrome.alarms.create(ALARM_NAME, { periodInMinutes: 0.5 });
   console.log('[MapJob BG] Extension installed');
+  const deviceId = await getDeviceId();
+  void cloud.registerDevice(deviceId, `Chrome — ${navigator.platform}`);
 });
-chrome.runtime.onStartup.addListener(() => {
+chrome.runtime.onStartup.addListener(async () => {
   chrome.alarms.create(ALARM_NAME, { periodInMinutes: 0.5 });
+  const deviceId = await getDeviceId();
+  void cloud.pingDevice(deviceId);
 });
 
 chrome.alarms.onAlarm.addListener((alarm) => {
@@ -45,8 +51,24 @@ async function tick(): Promise<void> {
     const { target, group, delaySec } = next;
     console.log('[MapJob BG] Next target:', group.name, 'delay:', delaySec, 's');
 
+    const deviceId = await getDeviceId();
     await updateTarget(target.id, { status: 'in_progress', attemptedAt: Date.now() });
     await logActivity({ type: 'post', message: 'Otwieram grupę', groupName: group.name });
+
+    // Cloud: upsert publication + log
+    void cloud.upsertPublication(deviceId, {
+      id: target.id,
+      fbGroupId: group.fbGroupId,
+      groupName: group.name,
+      postBody: target.renderedText,
+      status: 'in_progress',
+      attemptedAt: Date.now(),
+    });
+    void cloud.logActivity(deviceId, {
+      eventType: 'post_started',
+      message: `Otwieram grupę: ${group.name}`,
+      fbGroupId: group.fbGroupId,
+    });
 
     // Otwórz tab z grupą
     const tab = await chrome.tabs.create({ url: group.url, active: false });
@@ -139,6 +161,20 @@ async function handleMessage(msg: { type?: string; [k: string]: unknown }, sende
       await markGroupPosted(target.groupId);
       const group = (groups as any[])?.find((g: any) => g.fbGroupId === target.groupId);
       await logActivity({ type: 'post', message: 'Opublikowany ✓', groupName: group?.name ?? target.groupId });
+
+      // Cloud sync
+      const deviceId = await getDeviceId();
+      void cloud.updatePublicationStatus(targetId, {
+        status: 'posted',
+        postedAt: Date.now(),
+        fbPostUrl,
+      });
+      void cloud.logActivity(deviceId, {
+        eventType: 'post_done',
+        message: 'Opublikowany ✓',
+        fbGroupId: target.groupId,
+        meta: { fb_post_url: fbPostUrl },
+      });
     }
 
     if (sender.tab?.id) {
@@ -154,6 +190,14 @@ async function handleMessage(msg: { type?: string; [k: string]: unknown }, sende
       errorMessage: 'User nie kliknął Publikuj w 90 sekund',
     });
     await logActivity({ type: 'fail', message: 'Nie kliknięto Publikuj' });
+
+    const deviceId = await getDeviceId();
+    void cloud.updatePublicationStatus(targetId, {
+      status: 'failed',
+      errorCode: 'no_publish_detected',
+      errorMessage: 'User nie kliknął Publikuj w 90 sekund',
+    });
+    void cloud.logActivity(deviceId, { eventType: 'post_failed', message: 'Nie kliknięto Publikuj' });
   } else if (msg.type === 'LOGIN_REQUIRED') {
     const targetId = msg.targetId as string;
     if (targetId) {
