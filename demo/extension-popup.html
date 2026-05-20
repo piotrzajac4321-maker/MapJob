@@ -410,6 +410,7 @@
     <header>
       <div class="logo-mark">M</div>
       <div class="logo-text">MapJob FB Poster</div>
+      <span class="sync-pill unk" id="license-pill" title="Status licencji">…</span>
       <span class="sync-pill unk" id="sync-pill" title="Status backupu w chmurze">sync…</span>
       <div id="fb-status-dot"></div>
     </header>
@@ -579,6 +580,12 @@
       <!-- SETTINGS -->
       <div class="tab-pane tp-settings">
 
+        <div class="card">
+          <div class="form-label">Licencja</div>
+          <div id="license-info">Sprawdzam status...</div>
+          <button class="btn btn-secondary btn-block" id="open-activate" style="margin-top: 10px">🔑 Wpisz klucz aktywacyjny</button>
+        </div>
+
         <div class="card" id="kill-switch-card" style="display: none; border-color: var(--danger)">
           <div style="color: var(--danger); font-weight: 600; font-size: 13px; margin-bottom: 6px">🚨 KILL SWITCH AKTYWNY</div>
           <div style="font-size: 11.5px" id="kill-switch-info"></div>
@@ -688,6 +695,101 @@
           <button class="btn btn-ghost btn-sm" id="clear-log">Wyczyść</button>
         </div>
         <div id="log-list" style="max-height: 400px; overflow-y: auto"></div>
+      </div>
+    </div>
+
+    <!-- ONBOARDING MODAL -->
+    <div class="modal-backdrop" id="onboarding-modal">
+      <div class="modal" style="max-width: 380px">
+        <div style="text-align: center; margin-bottom: 14px">
+          <div style="font-size: 28px; margin-bottom: 8px">🎉</div>
+          <div style="font-weight: 700; font-size: 16px; margin-bottom: 4px">Witaj w MapJob FB Poster</div>
+          <div style="color: var(--muted); font-size: 12px">7 dni za darmo · bez karty</div>
+        </div>
+
+        <div class="card" style="background: var(--bg-2); margin-bottom: 12px">
+          <div style="font-size: 12px; font-weight: 600; margin-bottom: 6px">Co dostajesz w trialu:</div>
+          <div style="font-size: 11.5px; color: var(--muted); line-height: 1.7">
+            ✓ Pełna funkcjonalność przez 7 dni<br/>
+            ✓ Wszystkie 3 tryby bezpieczeństwa<br/>
+            ✓ Asystent + biblioteka hooków<br/>
+            ✓ 500 publikacji w okresie próbnym
+          </div>
+        </div>
+
+        <div style="margin-bottom: 10px">
+          <label class="form-label">Email *</label>
+          <input id="onb-email" type="email" placeholder="ty@firma.pl" />
+        </div>
+
+        <div style="margin-bottom: 10px">
+          <label class="form-label">Telefon *</label>
+          <input id="onb-phone" type="tel" placeholder="123 456 789" />
+          <div style="font-size: 10.5px; color: var(--muted); margin-top: 4px">
+            Bez karty. Kontakt do Ciebie w sprawie aktywacji pełnej wersji po trialu.
+          </div>
+        </div>
+
+        <div style="margin-bottom: 12px">
+          <label style="display: flex; align-items: flex-start; gap: 8px; cursor: pointer; font-size: 11.5px">
+            <input id="onb-tos" type="checkbox" style="width: auto; margin-top: 2px" />
+            <span>
+              Rozumiem że narzędzie automatyzuje działania na FB i akceptuję <strong>ryzyko ograniczenia konta</strong>. Aplikacja wykorzystuje tryby bezpieczeństwa, ale nie daje 100% gwarancji.
+            </span>
+          </label>
+        </div>
+
+        <button class="btn btn-primary btn-block" id="onb-start" disabled>
+          🚀 Rozpocznij 7-dniowy trial
+        </button>
+
+        <div style="text-align: center; margin-top: 10px; font-size: 11px; color: var(--muted)">
+          Masz już klucz licencyjny? <a href="#" id="onb-have-key">Wpisz tutaj →</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- ACTIVATE KEY MODAL -->
+    <div class="modal-backdrop" id="activate-modal">
+      <div class="modal" style="max-width: 380px">
+        <div class="modal-header">
+          <div class="modal-title">Aktywacja klucza</div>
+          <div class="modal-close" id="activate-cancel">×</div>
+        </div>
+        <div style="font-size: 12px; margin-bottom: 8px; color: var(--muted)">
+          Wklej klucz otrzymany mailem po zakupie.
+        </div>
+        <input id="activate-key" placeholder="MJFB-PLAN-XXXX-YYYY" style="font-family: ui-monospace, monospace; text-transform: uppercase" />
+        <div id="activate-msg" style="font-size: 11.5px; margin-top: 8px; min-height: 18px"></div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary btn-block" id="activate-discard">Anuluj</button>
+          <button class="btn btn-primary btn-block" id="activate-submit">Aktywuj</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- LICENSE EXPIRED MODAL -->
+    <div class="modal-backdrop" id="expired-modal">
+      <div class="modal" style="max-width: 380px; text-align: center">
+        <div style="font-size: 32px; margin-bottom: 8px">⏰</div>
+        <div style="font-weight: 700; font-size: 16px; margin-bottom: 6px">Okres próbny zakończony</div>
+        <div style="color: var(--muted); font-size: 12px; margin-bottom: 16px">
+          Twoje 7 dni testów minęło. Postowanie zostało wstrzymane.
+        </div>
+
+        <div class="card" style="background: var(--bg-2); margin-bottom: 12px; text-align: left">
+          <div style="font-weight: 600; font-size: 12.5px; margin-bottom: 6px">Plany pełnej wersji:</div>
+          <div style="font-size: 11.5px; line-height: 1.8">
+            <div class="row-between"><span><strong>🟢 Basic</strong> · 500 publikacji/m</span><span style="color: var(--primary-light); font-weight: 600">25 zł</span></div>
+            <div class="row-between"><span><strong>🟡 Pro</strong> · 2000 publikacji/m</span><span style="color: var(--primary-light); font-weight: 600">75 zł</span></div>
+            <div class="row-between"><span><strong>🔴 Studio</strong> · 5000 publikacji/m</span><span style="color: var(--primary-light); font-weight: 600">199 zł</span></div>
+          </div>
+        </div>
+
+        <div style="font-size: 11.5px; color: var(--muted); margin-bottom: 12px">
+          Zamów klucz: <strong>kontakt@mapjob.pl</strong>
+        </div>
+        <button class="btn btn-primary btn-block" id="expired-activate">Mam klucz — aktywuj</button>
       </div>
     </div>
 

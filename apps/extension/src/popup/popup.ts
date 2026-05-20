@@ -40,6 +40,15 @@ import {
   canAddImages,
 } from '../lib/quotas';
 import { SAFETY_PRESETS, type SafetyMode } from '../lib/safety';
+import {
+  fetchLicense,
+  startTrial,
+  activateLicense,
+  isLicenseValid,
+  getStatusBadge,
+
+  type License,
+} from '../lib/license';
 
 const $ = <T extends HTMLElement = HTMLElement>(id: string) => document.getElementById(id) as T;
 
@@ -1015,11 +1024,145 @@ $('set-export').addEventListener('click', async () => {
   banner('✓ Backup pobrany', 'ok');
 });
 
+// ============ LICENSE ============
+let currentLicense: License | null = null;
+
+async function refreshLicense(): Promise<void> {
+  currentLicense = await fetchLicense();
+  applyLicenseToUI();
+}
+
+function applyLicenseToUI(): void {
+  const badge = getStatusBadge(currentLicense);
+  const pill = $('license-pill');
+  if (pill) {
+    pill.className = `sync-pill ${badge.cls === 'success' ? 'ok' : badge.cls === 'warning' ? 'unk' : badge.cls === 'danger' ? 'err' : 'off'}`;
+    pill.textContent = badge.text;
+  }
+
+  // Modal expired — gdy NIE jest valid
+  const expiredModal = $('expired-modal');
+  if (currentLicense && !isLicenseValid(currentLicense)) {
+    expiredModal.classList.add('show');
+  } else {
+    expiredModal.classList.remove('show');
+  }
+
+  // Modal onboarding — gdy brak licencji w ogóle
+  const onbModal = $('onboarding-modal');
+  if (!currentLicense) {
+    onbModal.classList.add('show');
+  } else {
+    onbModal.classList.remove('show');
+  }
+
+  // License section w Settings
+  const licSect = document.getElementById('license-info');
+  if (licSect && currentLicense) {
+    const trialEnds = currentLicense.trialEndsAt ? new Date(currentLicense.trialEndsAt).toLocaleString('pl-PL', { dateStyle: 'medium', timeStyle: 'short' }) : '—';
+    const paidUntil = currentLicense.paidUntil ? new Date(currentLicense.paidUntil).toLocaleString('pl-PL', { dateStyle: 'medium', timeStyle: 'short' }) : '—';
+    licSect.innerHTML = `
+      <div style="font-size: 12px; line-height: 1.7">
+        <div>Plan: <strong>${currentLicense.plan.toUpperCase()}</strong></div>
+        <div>Status: <strong style="color: ${badge.cls === 'success' ? 'var(--success)' : badge.cls === 'warning' ? 'var(--warning)' : 'var(--danger)'}">${badge.text}</strong></div>
+        <div>Email: <code>${escapeHtml(currentLicense.email ?? '—')}</code></div>
+        ${currentLicense.phone ? `<div>Telefon: <code>${escapeHtml(currentLicense.phone)}</code></div>` : ''}
+        <div>Limit miesięczny: <strong>${currentLicense.monthlyPublicationsCap}</strong></div>
+        ${currentLicense.plan === 'trial' ? `<div>Trial do: <strong>${trialEnds}</strong></div>` : ''}
+        ${currentLicense.paidUntil ? `<div>Ważna do: <strong>${paidUntil}</strong></div>` : ''}
+      </div>
+    `;
+  }
+}
+
+// ONBOARDING
+function bindOnboardingHandlers(): void {
+  const email = $('onb-email') as HTMLInputElement;
+  const phone = $('onb-phone') as HTMLInputElement;
+  const tos = $('onb-tos') as HTMLInputElement;
+  const startBtn = $('onb-start') as HTMLButtonElement;
+
+  const updateState = () => {
+    const ok = email.value.trim().length > 5 && phone.value.trim().length >= 9 && tos.checked;
+    startBtn.disabled = !ok;
+  };
+  email.addEventListener('input', updateState);
+  phone.addEventListener('input', updateState);
+  tos.addEventListener('change', updateState);
+
+  startBtn.addEventListener('click', async () => {
+    startBtn.disabled = true;
+    startBtn.textContent = '⏳ Aktywuję trial...';
+    const r = await startTrial(email.value, phone.value);
+    if (!r.ok) {
+      startBtn.disabled = false;
+      startBtn.textContent = '🚀 Rozpocznij 7-dniowy trial';
+      banner(r.error ?? 'Nie udało się rozpocząć trialu', 'err', 8000);
+      return;
+    }
+    $('onboarding-modal').classList.remove('show');
+    banner('✓ Trial 7-dniowy aktywowany! Możesz importować grupy i postować.', 'ok', 8000);
+    await refreshLicense();
+  });
+
+  $('onb-have-key').addEventListener('click', (e) => {
+    e.preventDefault();
+    $('onboarding-modal').classList.remove('show');
+    $('activate-modal').classList.add('show');
+  });
+}
+
+// ACTIVATE KEY MODAL
+function bindActivateHandlers(): void {
+  const close = () => $('activate-modal').classList.remove('show');
+  $('activate-cancel').addEventListener('click', close);
+  $('activate-discard').addEventListener('click', close);
+  $('activate-modal').addEventListener('click', (e) => {
+    if (e.target === $('activate-modal')) close();
+  });
+
+  $('activate-submit').addEventListener('click', async () => {
+    const key = ($('activate-key') as HTMLInputElement).value.trim();
+    if (!key) {
+      $('activate-msg').innerHTML = '<span style="color: var(--danger)">Wpisz klucz</span>';
+      return;
+    }
+    $('activate-msg').innerHTML = '<span style="color: var(--muted)">⏳ Aktywuję...</span>';
+    const r = await activateLicense(key);
+    if (!r.ok) {
+      $('activate-msg').innerHTML = `<span style="color: var(--danger)">${escapeHtml(r.error ?? 'Błąd')}</span>`;
+      return;
+    }
+    $('activate-msg').innerHTML = '<span style="color: var(--success)">✓ Aktywowane!</span>';
+    setTimeout(async () => {
+      close();
+      $('expired-modal').classList.remove('show');
+      await refreshLicense();
+      banner(`✓ Plan ${r.license?.plan.toUpperCase()} aktywny`, 'ok');
+    }, 1200);
+  });
+
+  $('expired-activate').addEventListener('click', () => {
+    $('expired-modal').classList.remove('show');
+    $('activate-modal').classList.add('show');
+  });
+}
+
 // ============ INIT ============
 async function refreshAll(): Promise<void> {
-  await Promise.all([refreshHome(), refreshFBStatus(), refreshGroupsTab(), refreshPostsTab(), refreshCampTab(), refreshLog(), refreshSettingsTab()]);
+  await Promise.all([
+    refreshHome(), refreshFBStatus(), refreshGroupsTab(), refreshPostsTab(),
+    refreshCampTab(), refreshLog(), refreshSettingsTab(), refreshLicense(),
+  ]);
   refreshSyncPill();
 }
+
+document.getElementById('open-activate')?.addEventListener('click', () => {
+  $('activate-modal').classList.add('show');
+});
+
+bindOnboardingHandlers();
+bindActivateHandlers();
 
 document.querySelectorAll('input[name="tabs"]').forEach((input) => {
   input.addEventListener('change', () => refreshAll());

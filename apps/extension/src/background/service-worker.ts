@@ -20,6 +20,7 @@ import {
 import * as cloud from '../lib/cloud';
 import { variateForGroup } from '../lib/variator';
 import { BLOCK_PAUSE_HOURS } from '../lib/safety';
+import { fetchLicense, isLicenseValid } from '../lib/license';
 
 const ALARM_TICK = 'mapjob-tick';
 const ALARM_ENGAGEMENT = 'mapjob-engagement';
@@ -82,6 +83,13 @@ async function tick(): Promise<void> {
   try {
     const settings = await getSettings();
     if (settings.paused) return;
+
+    // LICENCE GUARD — bez aktywnej licencji nie postujemy
+    const license = await fetchLicense();
+    if (!isLicenseValid(license)) {
+      console.log('[MapJob BG] Brak ważnej licencji — pauza tick');
+      return;
+    }
 
     const next = await pickNextTarget();
     if (!next) return;
