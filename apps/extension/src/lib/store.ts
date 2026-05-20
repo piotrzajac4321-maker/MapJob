@@ -163,7 +163,9 @@ export async function updateTarget(id: string, patch: Partial<CampaignTarget>): 
   const all = (targets as CampaignTarget[]) ?? [];
   const idx = all.findIndex((t) => t.id === id);
   if (idx >= 0) {
-    all[idx] = { ...all[idx], ...patch };
+    const current = all[idx];
+    if (!current) return;
+    all[idx] = { ...current, ...patch };
     await chrome.storage.local.set({ targets: all });
   }
 }
@@ -185,8 +187,16 @@ export async function pickNextTarget(): Promise<{ target: CampaignTarget; group:
   // Dzienny licznik
   const todayStart = new Date();
   todayStart.setHours(0, 0, 0, 0);
-  const postedToday = allTargets.filter((t) => t.status === 'posted' && (t.postedAt ?? 0) >= todayStart.getTime()).length;
-  if (postedToday >= settings.globalDailyCap) return null;
+  const postedTodayAll = allTargets.filter(
+    (t) => t.status === 'posted' && (t.postedAt ?? 0) >= todayStart.getTime(),
+  );
+  if (postedTodayAll.length >= settings.globalDailyCap) return null;
+
+  // Per-group daily counter — żeby nie spamować pojedynczej grupy
+  const postedTodayByGroup = new Map<string, number>();
+  for (const t of postedTodayAll) {
+    postedTodayByGroup.set(t.groupId, (postedTodayByGroup.get(t.groupId) ?? 0) + 1);
+  }
 
   const runningCampaigns = new Set(campaigns.filter((c) => c.status === 'running').map((c) => c.id));
   const groupById = new Map(groups.map((g) => [g.fbGroupId, g]));
@@ -202,6 +212,9 @@ export async function pickNextTarget(): Promise<{ target: CampaignTarget; group:
       const cooldownMs = group.cooldownMinutes * 60_000;
       if (Date.now() - group.lastPostedAt < cooldownMs) return false;
     }
+    // Per-group daily cap (zwykle 2 dziennie żeby FB nie flagował)
+    const todayInGroup = postedTodayByGroup.get(t.groupId) ?? 0;
+    if (todayInGroup >= group.dailyCap) return false;
     return true;
   });
 

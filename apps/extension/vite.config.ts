@@ -6,7 +6,6 @@ export default defineConfig({
   plugins: [
     webExtension({
       manifest: resolve(__dirname, 'manifest.json'),
-      additionalInputs: ['src/callback.html'],
     }),
   ],
   build: {

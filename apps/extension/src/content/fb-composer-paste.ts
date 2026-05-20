@@ -10,13 +10,13 @@ interface PasteMessage {
   imageDataUrls?: string[];
 }
 
-async function waitFor<T extends Element>(selectors: string[], timeoutMs = 8000): Promise<T | null> {
+async function waitFor<T extends HTMLElement = HTMLElement>(selectors: string[], timeoutMs = 8000): Promise<T | null> {
   const start = Date.now();
   while (Date.now() - start < timeoutMs) {
     for (const sel of selectors) {
       try {
         const el = document.querySelector(sel) as T | null;
-        if (el && (el as HTMLElement).offsetParent !== null) return el;
+        if (el && el.offsetParent !== null) return el;
       } catch {}
     }
     await new Promise((r) => setTimeout(r, 250));

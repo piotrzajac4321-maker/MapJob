@@ -184,33 +184,32 @@ async function handleMessage(msg: { type?: string; [k: string]: unknown }, sende
     const targetId = msg.targetId as string;
     const fbPostUrl = msg.fbPostUrl as string | undefined;
 
-    // Mark posted
-    const { targets, groups } = await chrome.storage.local.get(['targets', 'groups']);
-    const target = (targets as any[])?.find((t: any) => t.id === targetId);
-    if (target) {
-      await updateTarget(targetId, {
-        status: 'posted',
-        postedAt: Date.now(),
-        errorCode: fbPostUrl ? undefined : undefined,
-      });
-      await markGroupPosted(target.groupId);
-      const group = (groups as any[])?.find((g: any) => g.fbGroupId === target.groupId);
-      await logActivity({ type: 'post', message: 'Opublikowany ✓', groupName: group?.name ?? target.groupId });
-
-      // Cloud sync
-      const deviceId = await getDeviceId();
-      void cloud.updatePublicationStatus(targetId, {
-        status: 'posted',
-        postedAt: Date.now(),
-        fbPostUrl,
-      });
-      void cloud.logActivity(deviceId, {
-        eventType: 'post_done',
-        message: 'Opublikowany ✓',
-        fbGroupId: target.groupId,
-        meta: { fb_post_url: fbPostUrl },
-      });
+    // Atomic read of targets+groups, update target → mark group posted → log
+    const snap = await chrome.storage.local.get(['targets', 'groups']);
+    const target = ((snap.targets as Array<{ id: string; groupId: string }> | undefined) ?? [])
+      .find((t) => t.id === targetId);
+    if (!target) {
+      console.warn('[MapJob BG] PUBLISH_DETECTED dla nieznanego target:', targetId);
+      return;
     }
+
+    const postedAt = Date.now();
+    await updateTarget(targetId, { status: 'posted', postedAt });
+    await markGroupPosted(target.groupId);
+
+    const group = ((snap.groups as Array<{ fbGroupId: string; name: string }> | undefined) ?? [])
+      .find((g) => g.fbGroupId === target.groupId);
+    await logActivity({ type: 'post', message: 'Opublikowany ✓', groupName: group?.name ?? target.groupId });
+
+    // Cloud sync — fire-and-forget
+    const deviceId = await getDeviceId();
+    void cloud.updatePublicationStatus(targetId, { status: 'posted', postedAt, fbPostUrl });
+    void cloud.logActivity(deviceId, {
+      eventType: 'post_done',
+      message: 'Opublikowany ✓',
+      fbGroupId: target.groupId,
+      meta: { fb_post_url: fbPostUrl ?? null },
+    });
 
     if (sender.tab?.id) {
       await chrome.tabs.sendMessage(sender.tab.id, { type: 'STOP_WATCH' }).catch(() => null);
