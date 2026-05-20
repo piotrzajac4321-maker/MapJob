@@ -281,7 +281,7 @@
 
     <main>
       <h1 class="page-title">Live Dashboard</h1>
-      <p class="page-subtitle">Dane z prawdziwej bazy Supabase · auto-refresh co 10s · pokazuje aktywność z extension</p>
+      <p class="page-subtitle">Analityka publikacji · auto-refresh co 10s · synchronizacja z extension</p>
 
       <!-- Stat cards -->
       <div class="grid-4" id="stats">
@@ -559,7 +559,7 @@
             loadPublications(),
           ]);
           setBanner(
-            `<span class="pulse-dot"></span>Połączono z <code>ahgzjneegvptudphibdm.supabase.co</code> · device <code>${DEVICE_ID}</code>`,
+            `<span class="pulse-dot"></span>Połączono · device <code>${DEVICE_ID}</code>`,
             'ok'
           );
           document.getElementById('last-refresh').textContent = new Date().toLocaleTimeString('pl-PL', { hour: '2-digit', minute: '2-digit', second: '2-digit' });

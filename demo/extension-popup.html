@@ -410,7 +410,7 @@
     <header>
       <div class="logo-mark">M</div>
       <div class="logo-text">MapJob FB Poster</div>
-      <span class="sync-pill unk" id="sync-pill" title="Status sync z Supabase">sync…</span>
+      <span class="sync-pill unk" id="sync-pill" title="Status backupu w chmurze">sync…</span>
       <div id="fb-status-dot"></div>
     </header>
 
@@ -459,6 +459,11 @@
             <button class="btn btn-secondary btn-sm btn-block" id="open-fb">Otwórz Facebook</button>
             <button class="btn btn-primary btn-sm btn-block" id="import-groups">↻ Importuj grupy</button>
           </div>
+        </div>
+
+        <div class="card">
+          <div style="font-weight: 600; margin-bottom: 8px">Limity miesięczne</div>
+          <div id="quotas-home"></div>
         </div>
 
         <div class="card">
@@ -607,6 +612,10 @@
           </div>
         </div>
         <div class="card">
+          <div class="form-label">Limity miesięczne (pakiet)</div>
+          <div id="quotas-settings"></div>
+        </div>
+        <div class="card">
           <div class="form-label">Zużycie storage</div>
           <div class="row-between" style="font-size: 11.5px">
             <div id="storage-used">— / 10 MB</div>
@@ -618,7 +627,7 @@
           </div>
         </div>
         <div class="card">
-          <div class="form-label">Sync do chmury (Supabase)</div>
+          <div class="form-label">Backup w chmurze</div>
           <div style="font-size: 11.5px" id="cloud-info">Sprawdzam status…</div>
         </div>
         <button class="btn btn-primary btn-block" id="set-save">💾 Zapisz ustawienia</button>

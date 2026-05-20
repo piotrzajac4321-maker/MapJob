@@ -33,6 +33,12 @@ import {
   type HookExample,
 } from '../lib/post-builder';
 import { uploadImages, MAX_IMAGES_PER_POST, approxDataUrlSize } from '../lib/images';
+import {
+  checkAllQuotas,
+  canAddPublications,
+  canAddGroups,
+  canAddImages,
+} from '../lib/quotas';
 
 const $ = <T extends HTMLElement = HTMLElement>(id: string) => document.getElementById(id) as T;
 
@@ -46,6 +52,7 @@ async function refreshHome(): Promise<void> {
   const [groups, posts, targets, settings, usage] = await Promise.all([
     getGroups(), getPosts(), getTargets(), getSettings(), getStorageUsage(),
   ]);
+  await refreshQuotasView('quotas-home', true);
   const activeGroups = groups.filter((g) => g.isActive).length;
   const todayStart = new Date();
   todayStart.setHours(0, 0, 0, 0);
@@ -130,6 +137,20 @@ $('import-groups').addEventListener('click', async () => {
     btn.disabled = false;
     btn.textContent = '↻ Importuj grupy';
     return;
+  }
+
+  // Sprawdź limit grup — nie wpuszczaj jeśli przekroczone
+  const existingGroups = await getGroups();
+  const existingIds = new Set(existingGroups.map((g) => g.fbGroupId));
+  const newCount = (response.groups as Array<{ fbGroupId: string }>).filter((g) => !existingIds.has(g.fbGroupId)).length;
+  if (newCount > 0) {
+    const err = await canAddGroups(newCount);
+    if (err) {
+      banner(err, 'err', 10_000);
+      btn.disabled = false;
+      btn.textContent = '↻ Importuj grupy';
+      return;
+    }
   }
 
   const result = await upsertGroups(response.groups);
@@ -370,7 +391,13 @@ $('edit-add-img').addEventListener('click', () => {
   const files = (e.target as HTMLInputElement).files;
   if (!files) return;
   const remaining = MAX_IMAGES_PER_POST - editState.images.length;
-  const { dataUrls, errors } = await uploadImages(Array.from(files).slice(0, remaining));
+  const slice = Array.from(files).slice(0, remaining);
+  const quotaErr = await canAddImages(slice.length);
+  if (quotaErr) {
+    banner(quotaErr, 'err', 8000);
+    return;
+  }
+  const { dataUrls, errors } = await uploadImages(slice);
   editState.images.push(...dataUrls);
   renderEditThumbs();
   if (errors.length) banner(`Błędy: ${errors.length} (${errors[0]!.reason})`, 'warn');
@@ -466,6 +493,13 @@ $('camp-start').addEventListener('click', async () => {
     dailyCap: 25,
     createdAt: Date.now(),
   };
+  // Sprawdź limit miesięczny publikacji
+  const quotaErr = await canAddPublications(selectedGroupIds.size);
+  if (quotaErr) {
+    banner(quotaErr, 'err', 12_000);
+    return;
+  }
+
   await saveCampaign(campaign);
 
   const targets: CampaignTarget[] = Array.from(selectedGroupIds).map((groupId) => ({
@@ -656,6 +690,12 @@ async function handleImageFiles(files: FileList | File[]): Promise<void> {
     return;
   }
   const slice = Array.from(files).slice(0, remaining);
+  // Sprawdź globalny limit zdjęć
+  const quotaErr = await canAddImages(slice.length);
+  if (quotaErr) {
+    banner(quotaErr, 'err', 8000);
+    return;
+  }
   banner(`⏳ Kompresuję ${slice.length} zdjęć...`, 'info', 2000);
 
   const { dataUrls, errors } = await uploadImages(slice);
@@ -781,6 +821,31 @@ async function refreshSettingsTab(): Promise<void> {
 
   await refreshStorageUsage();
   await refreshCloudInfo();
+  await refreshQuotasView('quotas-settings', false);
+}
+
+async function refreshQuotasView(hostId: string, compact = false): Promise<void> {
+  const q = await checkAllQuotas();
+  const host = document.getElementById(hostId);
+  if (!host) return;
+  const row = (c: { label: string; used: number; limit: number; percent: number; warning: string }) => {
+    const colorClass = c.warning === 'blocked' ? 'critical' : c.warning === 'critical' ? 'critical' : c.warning === 'warn' ? 'warn' : '';
+    return `
+      <div style="margin-bottom: ${compact ? 6 : 10}px">
+        <div class="row-between" style="font-size: ${compact ? 11 : 12}px; margin-bottom: 3px">
+          <div style="color: ${c.warning === 'blocked' ? 'var(--danger)' : 'var(--text)'}">${escapeHtml(c.label)}</div>
+          <div style="color: var(--muted); font-weight: 500">${c.used} / ${c.limit}</div>
+        </div>
+        <div class="storage-bar"><div class="storage-fill ${colorClass}" style="width: ${c.percent.toFixed(0)}%"></div></div>
+      </div>
+    `;
+  };
+  host.innerHTML = row(q.publications) + row(q.groups) + row(q.images);
+
+  if (!compact) {
+    const monthName = new Date().toLocaleDateString('pl-PL', { month: 'long', year: 'numeric' });
+    host.innerHTML += `<div style="font-size: 10.5px; color: var(--muted); margin-top: 8px">Licznik publikacji resetuje się 1. dnia miesiąca. Bieżący okres: <strong>${monthName}</strong></div>`;
+  }
 }
 
 async function refreshStorageUsage(): Promise<void> {
@@ -795,14 +860,15 @@ async function refreshStorageUsage(): Promise<void> {
 }
 
 async function refreshCloudInfo(): Promise<void> {
-  const c = cloud.getCloudConfig();
   const s = cloud.getSyncStatus();
   const lastSync = s.lastSyncAt ? timeAgo(s.lastSyncAt) : 'nigdy';
-  const statusLabel = s.status === 'ok' ? '✓ Połączono' : s.status === 'no_schema' ? '⚠ Schema nie wgrana' : s.status === 'offline' ? '✗ Offline' : '? Sprawdzam';
+  const statusLabel = s.status === 'ok' ? '✓ Zapisuje się w chmurze' :
+                       s.status === 'no_schema' ? '⚠ Backup niedostępny (skontaktuj się z administratorem)' :
+                       s.status === 'offline' ? '✗ Tryb offline — dane lokalne' :
+                       '? Sprawdzam status';
   $('cloud-info').innerHTML = `
-    <div style="margin-bottom: 4px">URL: <code>${c.url.replace('https://', '').slice(0, 28)}…</code></div>
-    <div style="margin-bottom: 4px">Status: <strong>${statusLabel}</strong></div>
-    <div style="color: var(--muted); font-size: 10.5px">Ostatni sync: ${lastSync}</div>
+    <div style="margin-bottom: 4px"><strong>${statusLabel}</strong></div>
+    <div style="color: var(--muted); font-size: 10.5px">Ostatnia synchronizacja: ${lastSync}</div>
   `;
 }
 
@@ -810,8 +876,8 @@ function refreshSyncPill(): void {
   const s = cloud.getSyncStatus();
   const pill = $('sync-pill');
   if (s.status === 'ok') { pill.className = 'sync-pill ok'; pill.textContent = 'sync OK'; pill.title = `Ostatni sync: ${timeAgo(s.lastSyncAt)}`; }
-  else if (s.status === 'no_schema') { pill.className = 'sync-pill err'; pill.textContent = 'no schema'; pill.title = 'Wgraj init-apkafb.sql do Supabase'; }
-  else if (s.status === 'offline') { pill.className = 'sync-pill err'; pill.textContent = 'offline'; pill.title = 'Brak połączenia z Supabase'; }
+  else if (s.status === 'no_schema') { pill.className = 'sync-pill err'; pill.textContent = 'błąd'; pill.title = 'Backup w chmurze niedostępny — skontaktuj się z administratorem'; }
+  else if (s.status === 'offline') { pill.className = 'sync-pill err'; pill.textContent = 'offline'; pill.title = 'Brak połączenia z internetem — dane zapisują się lokalnie'; }
   else { pill.className = 'sync-pill unk'; pill.textContent = 'sync…'; pill.title = 'Nie wykonano jeszcze żadnej operacji'; }
 }
 
