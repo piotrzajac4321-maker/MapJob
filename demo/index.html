@@ -1,0 +1,706 @@
+<!doctype html>
+<html lang="pl" class="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>MapJob FB Poster — demo UI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        darkMode: 'class',
+        theme: {
+          extend: {
+            colors: {
+              bg: '#0a0a0a',
+              card: '#141414',
+              cardHover: '#1a1a1a',
+              border: '#262626',
+              muted: '#a3a3a3',
+              accent: '#3b82f6',
+              accentHover: '#2563eb',
+              green: '#22c55e',
+              yellow: '#eab308',
+              red: '#ef4444',
+            },
+            fontFamily: {
+              sans: ['-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
+            },
+          },
+        },
+      };
+    </script>
+    <style>
+      body { background: #0a0a0a; color: #e5e5e5; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+      .nav-link.active { color: #3b82f6; background: #1a1a1a; }
+      .badge { display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 9999px; font-size: 11px; font-weight: 500; }
+      .scrollbar::-webkit-scrollbar { width: 6px; }
+      .scrollbar::-webkit-scrollbar-thumb { background: #404040; border-radius: 3px; }
+      pre, code, .mono { font-family: ui-monospace, SFMono-Regular, Monaco, monospace; }
+      .fade-in { animation: fadeIn 0.2s ease-out; }
+      @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+      .pulse-dot { width: 8px; height: 8px; border-radius: 50%; background: #22c55e; animation: pulse 2s infinite; }
+      @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+      .checkmark { color: #22c55e; }
+      .crossmark { color: #737373; }
+    </style>
+  </head>
+  <body class="min-h-screen">
+    <!-- Demo banner -->
+    <div class="bg-yellow/10 border-b border-yellow/30 text-yellow text-xs px-4 py-2 text-center">
+      🧪 <strong>Demo UI</strong> — to jest podgląd interfejsu z fake danymi. Prawdziwa apka po podłączeniu Supabase
+      <code class="mx-1 text-yellow/80">afqibinzwgdidumvjxyo.supabase.co</code>
+      i Anthropic API key.
+    </div>
+
+    <!-- Top nav -->
+    <header class="border-b border-border bg-card/50 backdrop-blur sticky top-0 z-10">
+      <div class="max-w-7xl mx-auto px-4 h-14 flex items-center justify-between">
+        <a href="#dashboard" class="flex items-center gap-2 font-semibold">
+          <span class="w-7 h-7 rounded-md bg-accent flex items-center justify-center text-white text-sm">M</span>
+          <span>MapJob FB Poster</span>
+        </a>
+        <nav class="hidden md:flex items-center gap-1 text-sm">
+          <a href="#dashboard" data-route="dashboard" class="nav-link px-3 py-1.5 rounded-md hover:bg-cardHover">Dashboard</a>
+          <a href="#posts" data-route="posts" class="nav-link px-3 py-1.5 rounded-md hover:bg-cardHover">Posty</a>
+          <a href="#ai" data-route="ai" class="nav-link px-3 py-1.5 rounded-md hover:bg-cardHover">Generator AI</a>
+          <a href="#groups" data-route="groups" class="nav-link px-3 py-1.5 rounded-md hover:bg-cardHover">Grupy</a>
+          <a href="#campaigns" data-route="campaigns" class="nav-link px-3 py-1.5 rounded-md hover:bg-cardHover">Kampanie</a>
+          <a href="#analytics" data-route="analytics" class="nav-link px-3 py-1.5 rounded-md hover:bg-cardHover">Analytics</a>
+        </nav>
+        <div class="flex items-center gap-2 text-sm">
+          <div class="hidden md:flex items-center gap-2 text-muted text-xs">
+            <span class="pulse-dot"></span> Extension: <span class="text-green">połączone</span>
+          </div>
+          <div class="w-8 h-8 rounded-full bg-accent/20 text-accent flex items-center justify-center text-sm font-semibold">PZ</div>
+        </div>
+      </div>
+    </header>
+
+    <main id="view" class="max-w-7xl mx-auto px-4 py-8"></main>
+
+    <!-- Templates -->
+    <template id="tmpl-dashboard">
+      <div class="fade-in space-y-8">
+        <div class="flex items-center justify-between">
+          <div>
+            <h1 class="text-3xl font-bold">Dashboard</h1>
+            <p class="text-muted text-sm mt-1">Cześć Piotr 👋 — masz <strong class="text-white">3 aktywne kampanie</strong> i <strong class="text-white">237 grup</strong> w bibliotece.</p>
+          </div>
+          <a href="#ai" class="bg-accent hover:bg-accentHover px-4 py-2 rounded-md text-sm font-medium">+ Generuj post AI</a>
+        </div>
+
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div class="bg-card border border-border rounded-lg p-5">
+            <div class="text-xs text-muted">Posty w bibliotece</div>
+            <div class="text-3xl font-bold mt-1">42</div>
+            <div class="text-xs text-green mt-2">↑ 8 w tym tygodniu</div>
+          </div>
+          <div class="bg-card border border-border rounded-lg p-5">
+            <div class="text-xs text-muted">Aktywne grupy</div>
+            <div class="text-3xl font-bold mt-1">237</div>
+            <div class="text-xs text-muted mt-2">z 248 zaimportowanych</div>
+          </div>
+          <div class="bg-card border border-border rounded-lg p-5">
+            <div class="text-xs text-muted">Postów dzisiaj</div>
+            <div class="text-3xl font-bold mt-1">73</div>
+            <div class="text-xs text-green mt-2">96% success rate</div>
+          </div>
+          <div class="bg-card border border-border rounded-lg p-5">
+            <div class="text-xs text-muted">Aktywne kampanie</div>
+            <div class="text-3xl font-bold mt-1">3</div>
+            <div class="text-xs text-muted mt-2">2 w toku, 1 zaplanowana</div>
+          </div>
+        </div>
+
+        <section>
+          <h2 class="text-lg font-semibold mb-3">Aktywne kampanie</h2>
+          <div class="bg-card border border-border rounded-lg overflow-hidden">
+            <table class="w-full text-sm">
+              <thead class="bg-cardHover border-b border-border text-muted text-xs uppercase">
+                <tr>
+                  <th class="text-left px-4 py-2.5">Nazwa</th>
+                  <th class="text-left px-4 py-2.5">Status</th>
+                  <th class="text-right px-4 py-2.5">Posted</th>
+                  <th class="text-right px-4 py-2.5">Pending</th>
+                  <th class="text-right px-4 py-2.5">Skipped</th>
+                  <th class="text-right px-4 py-2.5">% sukcesu</th>
+                </tr>
+              </thead>
+              <tbody id="dashboard-campaigns"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="grid md:grid-cols-2 gap-4">
+          <div class="bg-card border border-border rounded-lg p-5">
+            <h3 class="font-semibold mb-3">Ostatnie publikacje</h3>
+            <div id="recent-publications" class="space-y-2 text-sm"></div>
+          </div>
+          <div class="bg-card border border-border rounded-lg p-5">
+            <h3 class="font-semibold mb-3">Health rozszerzenia</h3>
+            <div class="space-y-2 text-sm">
+              <div class="flex justify-between"><span class="text-muted">Wersja</span><span>0.1.0</span></div>
+              <div class="flex justify-between"><span class="text-muted">Ostatnia aktywność</span><span class="text-green">2 min temu</span></div>
+              <div class="flex justify-between"><span class="text-muted">Selector miss (7 dni)</span><span class="text-green">0</span></div>
+              <div class="flex justify-between"><span class="text-muted">Sesja FB</span><span class="text-green">aktywna</span></div>
+              <div class="flex justify-between"><span class="text-muted">Token wygasa za</span><span>28 dni</span></div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </template>
+
+    <template id="tmpl-posts">
+      <div class="fade-in">
+        <div class="flex items-center justify-between mb-6">
+          <div>
+            <h1 class="text-3xl font-bold">Posty</h1>
+            <p class="text-muted text-sm mt-1">Biblioteka treści — manualne i wygenerowane przez AI.</p>
+          </div>
+          <div class="flex gap-2">
+            <a href="#ai" class="bg-accent hover:bg-accentHover px-4 py-2 rounded-md text-sm font-medium">+ Generator AI</a>
+            <button class="border border-border px-4 py-2 rounded-md text-sm hover:bg-cardHover">+ Napisz ręcznie</button>
+          </div>
+        </div>
+        <div class="bg-card border border-border rounded-lg overflow-hidden">
+          <table class="w-full text-sm">
+            <thead class="bg-cardHover border-b border-border text-muted text-xs uppercase">
+              <tr>
+                <th class="text-left px-4 py-2.5">Tytuł</th>
+                <th class="text-left px-4 py-2.5">Typ</th>
+                <th class="text-left px-4 py-2.5">Framework</th>
+                <th class="text-left px-4 py-2.5">Status</th>
+                <th class="text-right px-4 py-2.5">Human score</th>
+                <th class="text-right px-4 py-2.5">Utworzony</th>
+              </tr>
+            </thead>
+            <tbody id="posts-list"></tbody>
+          </table>
+        </div>
+      </div>
+    </template>
+
+    <template id="tmpl-ai">
+      <div class="fade-in grid lg:grid-cols-2 gap-8">
+        <section>
+          <h1 class="text-2xl font-bold mb-1">Generator AI</h1>
+          <p class="text-muted text-sm mb-6">Brief → Claude generuje warianty z anti-AI filter + per-grupa wariancja.</p>
+
+          <div class="space-y-3">
+            <div class="grid grid-cols-2 gap-3">
+              <label class="block">
+                <span class="text-xs text-muted mb-1 block">Typ posta</span>
+                <select id="ai-type" class="w-full bg-card border border-border rounded-md px-3 py-2 text-sm">
+                  <option value="job">Ogłoszenie pracy</option>
+                  <option value="sales">Sprzedażowe</option>
+                </select>
+              </label>
+              <label class="block">
+                <span class="text-xs text-muted mb-1 block">Framework</span>
+                <select id="ai-framework" class="w-full bg-card border border-border rounded-md px-3 py-2 text-sm">
+                  <option value="PAS">PAS — Problem, Agitation, Solution</option>
+                  <option value="AIDA">AIDA — Attention, Interest, Desire, Action</option>
+                  <option value="BAB">BAB — Before, After, Bridge</option>
+                  <option value="FAB">FAB — Features, Advantages, Benefits</option>
+                </select>
+              </label>
+            </div>
+
+            <label class="block">
+              <span class="text-xs text-muted mb-1 block">Audience</span>
+              <textarea id="ai-audience" rows="2" class="w-full bg-card border border-border rounded-md px-3 py-2 text-sm" placeholder="np. mężczyźni 25-45, kierowcy kat. C, z Pruszkowa i okolic"></textarea>
+            </label>
+
+            <fieldset class="border border-border rounded-md p-3 space-y-2">
+              <legend class="text-xs text-muted px-1">Marka / firma</legend>
+              <input id="ai-brand-name" placeholder="Nazwa firmy" class="w-full bg-card border border-border rounded-md px-3 py-2 text-sm" />
+              <input id="ai-brand-oneliner" placeholder="W jednym zdaniu — co robisz" class="w-full bg-card border border-border rounded-md px-3 py-2 text-sm" />
+              <textarea id="ai-brand-usp" rows="2" placeholder="USP (każdy w nowej linii)" class="w-full bg-card border border-border rounded-md px-3 py-2 text-sm mono"></textarea>
+            </fieldset>
+
+            <label class="block">
+              <span class="text-xs text-muted mb-1 block">Oferta</span>
+              <textarea id="ai-offer" rows="4" class="w-full bg-card border border-border rounded-md px-3 py-2 text-sm" placeholder="np. szukamy spawacza MIG/MAG na hali Bemowo, dwie zmiany, stawka od 7200 netto, premia 500/m za wieczorówki"></textarea>
+            </label>
+
+            <div class="grid grid-cols-3 gap-3">
+              <input id="ai-region" placeholder="Region (Warszawa, Bemowo)" class="bg-card border border-border rounded-md px-3 py-2 text-sm" />
+              <input id="ai-budget" placeholder="Stawka (7200 PLN netto)" class="bg-card border border-border rounded-md px-3 py-2 text-sm" />
+              <input id="ai-contact" placeholder="Kontakt (DM, 555-...)" class="bg-card border border-border rounded-md px-3 py-2 text-sm" />
+            </div>
+
+            <input id="ai-cta" placeholder="CTA (Zostaw numer, oddzwaniam)" class="w-full bg-card border border-border rounded-md px-3 py-2 text-sm" />
+
+            <button id="ai-generate-btn" class="w-full bg-accent hover:bg-accentHover px-4 py-2.5 rounded-md text-sm font-medium">
+              ⚡ Wygeneruj 3 warianty (Claude Sonnet 4.6)
+            </button>
+            <p class="text-xs text-muted text-center">Średni czas: 4-7 s · Koszt: ~$0.008 / generacja</p>
+          </div>
+        </section>
+
+        <section class="space-y-4">
+          <div class="flex items-center justify-between">
+            <h2 class="text-lg font-semibold">Wynik</h2>
+            <span id="ai-result-meta" class="text-xs text-muted"></span>
+          </div>
+
+          <div id="ai-result-placeholder" class="bg-card/30 border border-dashed border-border rounded-lg p-12 text-center text-muted text-sm">
+            Wypełnij brief po lewej i kliknij Wygeneruj.<br>
+            Zobaczysz 3 warianty + human score + checklistę.
+          </div>
+
+          <div id="ai-result" class="hidden space-y-4"></div>
+        </section>
+      </div>
+    </template>
+
+    <template id="tmpl-groups">
+      <div class="fade-in">
+        <div class="flex items-center justify-between mb-6">
+          <div>
+            <h1 class="text-3xl font-bold">Grupy</h1>
+            <p class="text-muted text-sm mt-1">237 grup zaimportowanych przez rozszerzenie · cooldown 4h domyślny</p>
+          </div>
+          <button class="bg-accent hover:bg-accentHover px-4 py-2 rounded-md text-sm font-medium">↻ Synchronizuj z FB</button>
+        </div>
+
+        <div class="bg-card border border-border rounded-lg p-3 mb-4 flex gap-2 items-center text-sm">
+          <input placeholder="Szukaj po nazwie..." class="flex-1 bg-bg border border-border rounded-md px-3 py-1.5" />
+          <select class="bg-bg border border-border rounded-md px-3 py-1.5">
+            <option>Wszystkie tagi</option>
+            <option>warszawa</option>
+            <option>praca</option>
+            <option>sprzedaz</option>
+          </select>
+        </div>
+
+        <div class="bg-card border border-border rounded-lg overflow-hidden">
+          <table class="w-full text-sm">
+            <thead class="bg-cardHover border-b border-border text-muted text-xs uppercase">
+              <tr>
+                <th class="text-left px-4 py-2.5">Nazwa</th>
+                <th class="text-right px-4 py-2.5">Członkowie</th>
+                <th class="text-left px-4 py-2.5">Prywatność</th>
+                <th class="text-left px-4 py-2.5">Tagi</th>
+                <th class="text-right px-4 py-2.5">Cooldown</th>
+                <th class="text-right px-4 py-2.5">Ostatni post</th>
+              </tr>
+            </thead>
+            <tbody id="groups-list"></tbody>
+          </table>
+        </div>
+      </div>
+    </template>
+
+    <template id="tmpl-campaigns">
+      <div class="fade-in">
+        <div class="flex items-center justify-between mb-6">
+          <div>
+            <h1 class="text-3xl font-bold">Kampanie</h1>
+            <p class="text-muted text-sm mt-1">Wybierz post + grupy → system pilnuje cooldownu i kolejki.</p>
+          </div>
+          <button class="bg-accent hover:bg-accentHover px-4 py-2 rounded-md text-sm font-medium">+ Nowa kampania</button>
+        </div>
+
+        <div class="bg-card border border-border rounded-lg overflow-hidden">
+          <table class="w-full text-sm">
+            <thead class="bg-cardHover border-b border-border text-muted text-xs uppercase">
+              <tr>
+                <th class="text-left px-4 py-2.5">Nazwa</th>
+                <th class="text-left px-4 py-2.5">Post</th>
+                <th class="text-left px-4 py-2.5">Status</th>
+                <th class="text-right px-4 py-2.5">Posted / All</th>
+                <th class="text-right px-4 py-2.5">Skipped</th>
+                <th class="text-right px-4 py-2.5">% sukcesu</th>
+                <th class="text-right px-4 py-2.5">Akcja</th>
+              </tr>
+            </thead>
+            <tbody id="campaigns-list"></tbody>
+          </table>
+        </div>
+      </div>
+    </template>
+
+    <template id="tmpl-analytics">
+      <div class="fade-in space-y-8">
+        <h1 class="text-3xl font-bold">Analytics</h1>
+
+        <section>
+          <h2 class="text-lg font-semibold mb-3">Posty per dzień (ostatnie 14)</h2>
+          <div class="bg-card border border-border rounded-lg p-5">
+            <div id="chart-perday" class="flex items-end gap-1 h-40"></div>
+            <div id="chart-perday-labels" class="flex gap-1 text-[10px] text-muted mt-2"></div>
+          </div>
+        </section>
+
+        <section>
+          <h2 class="text-lg font-semibold mb-3">Najlepsze godziny publikacji</h2>
+          <div class="bg-card border border-border rounded-lg p-5">
+            <div id="chart-hours" class="flex items-end gap-1 h-32"></div>
+            <div class="flex gap-1 text-[10px] text-muted mt-2">
+              <span class="flex-1 text-center">0</span><span class="flex-1 text-center">3</span><span class="flex-1 text-center">6</span><span class="flex-1 text-center">9</span><span class="flex-1 text-center">12</span><span class="flex-1 text-center">15</span><span class="flex-1 text-center">18</span><span class="flex-1 text-center">21</span><span class="flex-1 text-center">23</span>
+            </div>
+          </div>
+        </section>
+
+        <div class="grid md:grid-cols-2 gap-4">
+          <section class="bg-card border border-border rounded-lg p-5">
+            <h2 class="text-lg font-semibold mb-3">Top grupy (success rate)</h2>
+            <div id="top-groups" class="space-y-2 text-sm"></div>
+          </section>
+          <section class="bg-card border border-border rounded-lg p-5">
+            <h2 class="text-lg font-semibold mb-3">Najczęstsze błędy</h2>
+            <div id="top-errors" class="space-y-1 text-sm"></div>
+          </section>
+        </div>
+      </div>
+    </template>
+
+    <script>
+      // ============== DEMO DATA ==============
+      const POSTS = [
+        { id: 1, title: 'Spawacz Pruszków - hala B', type: 'job', framework: 'PAS', status: 'ready', human: 87, created: '2026-05-20' },
+        { id: 2, title: 'Kierowca C+E - Wrocław centrum', type: 'job', framework: 'AIDA', status: 'ready', human: 79, created: '2026-05-19' },
+        { id: 3, title: 'iPhone 14 Pro sprzedam', type: 'sales', framework: 'BAB', status: 'ready', human: 92, created: '2026-05-19' },
+        { id: 4, title: 'Magazynier nocny - Łódź', type: 'job', framework: 'PAS', status: 'draft', human: 64, created: '2026-05-18' },
+        { id: 5, title: 'Klimatyzacja - montaż 4h', type: 'sales', framework: 'PAS', status: 'ready', human: 83, created: '2026-05-17' },
+        { id: 6, title: 'Programista junior Pruszków', type: 'job', framework: '4U', status: 'archived', human: 71, created: '2026-05-12' },
+      ];
+
+      const CAMPAIGNS = [
+        { id: 1, name: 'Rekrutacja spawacz maj 2026', post: 'Spawacz Pruszków - hala B', status: 'running', total: 87, posted: 64, pending: 19, skipped: 4, failed: 0, pct: 73 },
+        { id: 2, name: 'iPhone 14 Pro - szybka sprzedaż', post: 'iPhone 14 Pro sprzedam', status: 'running', total: 42, posted: 28, pending: 12, skipped: 2, failed: 0, pct: 66 },
+        { id: 3, name: 'Kierowcy C+E - Warszawa', post: 'Kierowca C+E - Wrocław centrum', status: 'scheduled', total: 156, posted: 0, pending: 156, skipped: 0, failed: 0, pct: 0 },
+        { id: 4, name: 'Klimatyzacja lipiec', post: 'Klimatyzacja - montaż 4h', status: 'done', total: 73, posted: 71, pending: 0, skipped: 2, failed: 0, pct: 97 },
+        { id: 5, name: 'Magazynier Łódź - test', post: 'Magazynier nocny - Łódź', status: 'paused', total: 24, posted: 8, pending: 14, skipped: 1, failed: 1, pct: 33 },
+      ];
+
+      const GROUPS = [
+        { name: 'Praca Warszawa i okolice 2026', members: 87234, privacy: 'public', tags: ['warszawa', 'praca'], cooldown: 240, lastPost: '2h temu' },
+        { name: 'Bemowo - sprzedam, kupię, oddam', members: 12856, privacy: 'public', tags: ['warszawa', 'bemowo', 'sprzedaz'], cooldown: 360, lastPost: '6h temu' },
+        { name: 'Praca Wrocław - oferty', members: 45120, privacy: 'public', tags: ['wroclaw', 'praca'], cooldown: 240, lastPost: '1d temu' },
+        { name: 'Spawacze, ślusarze, mechanicy PL', members: 23445, privacy: 'public', tags: ['praca', 'rzemioslo'], cooldown: 480, lastPost: '4h temu' },
+        { name: 'Kierowcy zawodowi - oferty pracy', members: 67890, privacy: 'public', tags: ['praca', 'kierowcy'], cooldown: 240, lastPost: '8h temu' },
+        { name: 'Pruszków - co się dzieje', members: 19200, privacy: 'public', tags: ['pruszkow', 'lokalne'], cooldown: 360, lastPost: '12h temu' },
+        { name: 'Łódź - praca i ogłoszenia', members: 34110, privacy: 'public', tags: ['lodz', 'praca'], cooldown: 240, lastPost: '3h temu' },
+        { name: 'Sprzedam kupie ogarnę - Trójmiasto', members: 78900, privacy: 'public', tags: ['trojmiasto', 'sprzedaz'], cooldown: 360, lastPost: '5h temu' },
+      ];
+
+      const RECENT = [
+        { group: 'Praca Warszawa i okolice 2026', when: '2 min temu', status: 'posted' },
+        { group: 'Bemowo - sprzedam, kupię', when: '7 min temu', status: 'posted' },
+        { group: 'Spawacze ślusarze mechanicy', when: '12 min temu', status: 'skipped', reason: 'cooldown 4h' },
+        { group: 'Kierowcy zawodowi', when: '18 min temu', status: 'posted' },
+        { group: 'Pruszków - co się dzieje', when: '24 min temu', status: 'posted' },
+      ];
+
+      const ERRORS = [
+        { code: 'cooldown', count: 23 },
+        { code: 'daily_cap', count: 8 },
+        { code: 'no_publish_detected', count: 2 },
+        { code: 'login_required', count: 1 },
+      ];
+
+      const TOP_GROUPS = [
+        { name: 'Spawacze, ślusarze, mechanicy PL', attempts: 18, posted: 18, pct: 100 },
+        { name: 'Praca Warszawa i okolice', attempts: 24, posted: 22, pct: 92 },
+        { name: 'Kierowcy zawodowi', attempts: 15, posted: 13, pct: 87 },
+        { name: 'Pruszków - co się dzieje', attempts: 12, posted: 10, pct: 83 },
+      ];
+
+      // ============== ROUTER ==============
+      const view = document.getElementById('view');
+      function route() {
+        const hash = (location.hash || '#dashboard').slice(1);
+        document.querySelectorAll('[data-route]').forEach((el) => {
+          el.classList.toggle('active', el.dataset.route === hash);
+        });
+        const tmpl = document.getElementById(`tmpl-${hash}`);
+        if (!tmpl) { view.innerHTML = '<p class="text-muted">Brak widoku.</p>'; return; }
+        view.innerHTML = '';
+        view.appendChild(tmpl.content.cloneNode(true));
+        if (renderers[hash]) renderers[hash]();
+      }
+
+      // ============== RENDERERS ==============
+      const renderers = {};
+
+      function statusBadge(status) {
+        const map = {
+          ready: ['bg-green/20', 'text-green', 'gotowy'],
+          draft: ['bg-yellow/20', 'text-yellow', 'szkic'],
+          archived: ['bg-muted/20', 'text-muted', 'archiwum'],
+          running: ['bg-green/20', 'text-green', 'w toku'],
+          scheduled: ['bg-accent/20', 'text-accent', 'zaplanowana'],
+          paused: ['bg-yellow/20', 'text-yellow', 'pauza'],
+          done: ['bg-muted/20', 'text-muted', 'zakończona'],
+          posted: ['bg-green/20', 'text-green', 'opublikowany'],
+          skipped: ['bg-yellow/20', 'text-yellow', 'pominięty'],
+        };
+        const [bg, fg, label] = map[status] || ['bg-muted/20', 'text-muted', status];
+        return `<span class="badge ${bg} ${fg}">${label}</span>`;
+      }
+
+      function humanBadge(score) {
+        const color = score >= 75 ? 'text-green' : score >= 60 ? 'text-yellow' : 'text-red';
+        return `<span class="${color} font-semibold">${score}/100</span>`;
+      }
+
+      renderers.dashboard = () => {
+        const cbody = document.getElementById('dashboard-campaigns');
+        cbody.innerHTML = CAMPAIGNS.filter(c => c.status === 'running' || c.status === 'scheduled')
+          .map(c => `
+            <tr class="border-b border-border last:border-0 hover:bg-cardHover">
+              <td class="px-4 py-3">${c.name}</td>
+              <td class="px-4 py-3">${statusBadge(c.status)}</td>
+              <td class="px-4 py-3 text-right">${c.posted}</td>
+              <td class="px-4 py-3 text-right">${c.pending}</td>
+              <td class="px-4 py-3 text-right text-yellow">${c.skipped}</td>
+              <td class="px-4 py-3 text-right font-semibold">${c.pct}%</td>
+            </tr>
+          `).join('');
+
+        document.getElementById('recent-publications').innerHTML = RECENT.map(r => `
+          <div class="flex items-center justify-between border-b border-border pb-2 last:border-0">
+            <div>
+              <div class="text-white">${r.group}</div>
+              <div class="text-xs text-muted">${r.when}${r.reason ? ' · ' + r.reason : ''}</div>
+            </div>
+            ${statusBadge(r.status)}
+          </div>
+        `).join('');
+      };
+
+      renderers.posts = () => {
+        document.getElementById('posts-list').innerHTML = POSTS.map(p => `
+          <tr class="border-b border-border last:border-0 hover:bg-cardHover">
+            <td class="px-4 py-3">${p.title}</td>
+            <td class="px-4 py-3 text-muted">${p.type}</td>
+            <td class="px-4 py-3 mono text-xs">${p.framework}</td>
+            <td class="px-4 py-3">${statusBadge(p.status)}</td>
+            <td class="px-4 py-3 text-right">${humanBadge(p.human)}</td>
+            <td class="px-4 py-3 text-right text-muted text-xs">${p.created}</td>
+          </tr>
+        `).join('');
+      };
+
+      renderers.groups = () => {
+        document.getElementById('groups-list').innerHTML = GROUPS.map(g => `
+          <tr class="border-b border-border last:border-0 hover:bg-cardHover">
+            <td class="px-4 py-3">${g.name}</td>
+            <td class="px-4 py-3 text-right">${g.members.toLocaleString('pl-PL')}</td>
+            <td class="px-4 py-3 text-muted text-xs">${g.privacy}</td>
+            <td class="px-4 py-3">${g.tags.map(t => `<span class="badge bg-cardHover text-muted mr-1">${t}</span>`).join('')}</td>
+            <td class="px-4 py-3 text-right text-muted">${g.cooldown} min</td>
+            <td class="px-4 py-3 text-right text-muted text-xs">${g.lastPost}</td>
+          </tr>
+        `).join('');
+      };
+
+      renderers.campaigns = () => {
+        document.getElementById('campaigns-list').innerHTML = CAMPAIGNS.map(c => `
+          <tr class="border-b border-border last:border-0 hover:bg-cardHover">
+            <td class="px-4 py-3">${c.name}</td>
+            <td class="px-4 py-3 text-muted text-xs">${c.post}</td>
+            <td class="px-4 py-3">${statusBadge(c.status)}</td>
+            <td class="px-4 py-3 text-right">${c.posted} / ${c.total}</td>
+            <td class="px-4 py-3 text-right text-yellow">${c.skipped}</td>
+            <td class="px-4 py-3 text-right font-semibold">${c.pct}%</td>
+            <td class="px-4 py-3 text-right">
+              ${c.status === 'running' ? '<button class="text-xs text-muted hover:text-white">Pauza</button>' :
+                c.status === 'paused' ? '<button class="text-xs text-accent">Wznów</button>' :
+                c.status === 'draft' || c.status === 'scheduled' ? '<button class="text-xs text-accent">Start</button>' :
+                '<span class="text-xs text-muted">—</span>'}
+            </td>
+          </tr>
+        `).join('');
+      };
+
+      renderers.analytics = () => {
+        // Per-day bar chart
+        const days = [12, 18, 24, 31, 22, 8, 14, 28, 35, 41, 38, 52, 47, 73];
+        const max = Math.max(...days);
+        document.getElementById('chart-perday').innerHTML = days.map(v => `
+          <div class="flex-1 flex flex-col items-center justify-end gap-1 group cursor-pointer">
+            <div class="text-[10px] text-muted opacity-0 group-hover:opacity-100">${v}</div>
+            <div class="w-full bg-accent rounded-t" style="height: ${(v/max)*100}%; min-height: 4px;"></div>
+          </div>
+        `).join('');
+        document.getElementById('chart-perday-labels').innerHTML = ['Pn','Wt','Śr','Cz','Pt','So','Nd','Pn','Wt','Śr','Cz','Pt','So','Nd'].map(d => `<span class="flex-1 text-center">${d}</span>`).join('');
+
+        // Hours
+        const hours = [0,0,0,0,1,2,4,8,14,22,28,31,29,26,24,28,32,38,34,22,12,6,2,1];
+        const hMax = Math.max(...hours);
+        document.getElementById('chart-hours').innerHTML = hours.map(v => `
+          <div class="flex-1 bg-accent rounded-t" style="height: ${(v/hMax)*100}%; min-height: 2px;" title="${v} postów"></div>
+        `).join('');
+
+        document.getElementById('top-groups').innerHTML = TOP_GROUPS.map(g => `
+          <div class="flex items-center justify-between border-b border-border pb-2 last:border-0">
+            <div class="flex-1 truncate pr-3">${g.name}</div>
+            <div class="text-muted text-xs mr-3">${g.posted}/${g.attempts}</div>
+            <div class="font-semibold ${g.pct >= 90 ? 'text-green' : g.pct >= 70 ? 'text-yellow' : 'text-red'}">${g.pct}%</div>
+          </div>
+        `).join('');
+
+        document.getElementById('top-errors').innerHTML = ERRORS.map(e => `
+          <div class="flex items-center justify-between border-b border-border pb-2 last:border-0">
+            <code class="text-xs">${e.code}</code>
+            <span class="text-muted">${e.count}×</span>
+          </div>
+        `).join('');
+      };
+
+      // ============== AI GENERATOR (mock) ==============
+      function mockGenerate() {
+        const type = document.getElementById('ai-type').value;
+        const framework = document.getElementById('ai-framework').value;
+        const audience = document.getElementById('ai-audience').value || '[audience nieuzupełnione]';
+        const brand = document.getElementById('ai-brand-name').value || 'Twoja firma';
+        const offer = document.getElementById('ai-offer').value || 'oferty';
+        const region = document.getElementById('ai-region').value || 'okolicy';
+        const budget = document.getElementById('ai-budget').value || '';
+        const cta = document.getElementById('ai-cta').value || 'Pisz w wiadomości, oddzwaniam dziś';
+        const contact = document.getElementById('ai-contact').value || '';
+
+        const offerShort = offer.split('.')[0].slice(0, 120);
+
+        const variants = type === 'job' ? [
+          // PAS
+          `Szukam u nas w ${region} osoby do roboty.\n\n${offerShort}.${budget ? ' Stawka ' + budget + '.' : ''} Dwie zmiany, hala B na Powstańców 12. Mam też premię 500/m za wieczorówki.\n\nLudzie odpadają zwykle na "a gdzie to dokładnie" - więc piszę od razu: 5 min od przystanku autobusu 197.\n\n${cta}.${contact ? ' ' + contact : ''}`,
+          // AIDA
+          `Hej grupa ${region}! 👋\n\n${offerShort}.\n\nU nas konkretnie: ${budget || 'stawka uczciwa'}, decyzja w 24h od rozmowy, hala 5 min od przystanku. Bez ściemy o "konkurencyjnym wynagrodzeniu".\n\nKto się odzywa dziś, dzwonimy jeszcze przed weekendem. ${cta}.`,
+          // BAB
+          `Trzy lata temu Marek dojeżdżał 1h 20 min do roboty. Teraz robi u nas w ${region}, 12 min od domu.\n\n${offerShort}.${budget ? ' ' + budget + ' netto + premia.' : ''}\n\nNie obiecuję "pracy marzeń". Obiecuję konkret: 5 min od autobusu, ekipa 8 osób, brygadzista co tłumaczy raz a porządnie.\n\n${cta}.`,
+        ] : [
+          // SALES PAS
+          `Klima w samochodzie dmucha ciepłe powietrze a lipiec już za rogiem? Tyle.\n\n${offerShort}.${budget ? ' ' + budget + ', wszystko w cenie.' : ''} Montujemy u Ciebie pod blokiem, w 4h, gwarancja 5 lat. Zostały 4 terminy w lipcu - serwisy w mieście są już zarobione.\n\n${cta}.${contact ? ' ' + contact : ''}`,
+          // SALES AIDA
+          `27 stopni w aucie o 8 rano i dopiero rośnie. ☀️\n\n${offerShort}. ${budget || 'Cena uczciwa'}, robota w 4h, 5 lat gwarancji. Jeździsz do roboty z dzieckiem - ważne.\n\n${cta}.`,
+          // SALES BAB
+          `Stara klima: 30 minut w korku w aucie z dzieckiem to tortura. Nowa: chłodno w 90 sekund.\n\n${offerShort}.\n\nMontaż 4h u Ciebie, gwarancja 5 lat. ${budget ? budget + ', bez dopłat.' : ''} ${cta}.`,
+        ];
+
+        const human = [87, 82, 91];
+        const warnings = [['em_dash: zamieniono 2× —'], [], ['too_uniform_sentences: σ=2.1 (warn)']];
+
+        const resultEl = document.getElementById('ai-result');
+        const placeholderEl = document.getElementById('ai-result-placeholder');
+        const meta = document.getElementById('ai-result-meta');
+
+        placeholderEl.classList.add('hidden');
+        resultEl.classList.remove('hidden');
+        meta.innerHTML = `<span class="text-green">●</span> 4.2s · Tokens: 1240+680 · Koszt: $0.0084 · 1× regenerate`;
+
+        resultEl.innerHTML = `
+          <div class="flex gap-2">
+            ${variants.map((_, i) => `
+              <button data-var="${i}" class="variant-tab flex-1 px-3 py-2 rounded-md text-sm border ${i===0 ? 'bg-accent border-accent text-white' : 'bg-card border-border'}">
+                Wariant ${i+1}<br><span class="text-xs opacity-75">human ${human[i]}/100</span>
+              </button>
+            `).join('')}
+          </div>
+          <div id="variant-content"></div>
+        `;
+
+        function showVariant(i) {
+          const text = variants[i];
+          const score = human[i];
+          const warn = warnings[i];
+
+          // Compute live checks (z anti-AI filter logiki)
+          const hasNumber = /\d/.test(text);
+          const hasProper = /(?<=[^.!?]\s)[A-ZĄĆĘŁŃÓŚŹŻ][a-ząćęłńóśźż]+/.test(text);
+          const hasEmDash = /—/.test(text);
+          const sentences = text.split(/[.!?]+/).map(s=>s.trim()).filter(Boolean);
+          const hasShort = sentences.some(s => s.split(/\s+/).length <= 5);
+          const hasColloquial = /\b(daj znać|odzywaj|pisz|dm|tagnij|u nas|tu w|po sąsiedzku|domknąć|rekru|cv-k|lead|krótko mówiąc)\b/i.test(text);
+          const tooLong = text.length > 900;
+
+          const checks = [
+            { label: 'Konkretna liczba/kwota', ok: hasNumber },
+            { label: 'Nazwa własna (dzielnica/firma)', ok: hasProper },
+            { label: 'Brak em-dashy (—)', ok: !hasEmDash },
+            { label: 'Krótkie zdanie (≤5 słów)', ok: hasShort },
+            { label: 'Branżowy żargon / kolokwializm', ok: hasColloquial },
+            { label: `Długość ${text.length} < 900`, ok: !tooLong },
+          ];
+
+          document.getElementById('variant-content').innerHTML = `
+            <div class="bg-card border border-border rounded-lg p-4 mb-3">
+              <div class="flex items-center justify-between mb-3">
+                <div class="${score>=75?'text-green':score>=60?'text-yellow':'text-red'} font-semibold">
+                  Human score: ${score}/100 ${score>=75?'✓ brzmi jak człowiek':score>=60?'⚠ sprawdź checklist':'✗ pachnie AI'}
+                </div>
+                ${warn.length ? '<span class="badge bg-yellow/20 text-yellow">'+warn.length+' warn</span>' : '<span class="badge bg-green/20 text-green">clean</span>'}
+              </div>
+              <pre class="whitespace-pre-wrap mono text-sm bg-bg p-3 rounded border border-border">${text.replace(/</g,'&lt;')}</pre>
+            </div>
+
+            <div class="bg-card border border-border rounded-lg p-4">
+              <div class="flex items-center justify-between mb-3">
+                <h3 class="font-semibold text-sm">Humanize checklist</h3>
+                <span class="text-xs text-muted">${checks.filter(c=>c.ok).length}/${checks.length}</span>
+              </div>
+              <ul class="space-y-1.5 text-sm">
+                ${checks.map(c => `
+                  <li class="flex gap-2">
+                    <span class="${c.ok?'checkmark':'crossmark'}">${c.ok?'✓':'○'}</span>
+                    <span class="${c.ok?'':'text-muted'}">${c.label}</span>
+                  </li>
+                `).join('')}
+              </ul>
+            </div>
+
+            ${warn.length ? `
+              <div class="bg-yellow/10 border border-yellow/30 text-yellow/90 rounded-md p-3 text-sm mt-3">
+                <strong>Anti-AI filter:</strong> ${warn.join(', ')}
+              </div>
+            ` : ''}
+
+            <div class="flex gap-2 mt-3">
+              <button class="flex-1 bg-accent hover:bg-accentHover px-4 py-2 rounded-md text-sm font-medium">Zapisz w bibliotece</button>
+              <button class="border border-border px-4 py-2 rounded-md text-sm hover:bg-cardHover">Regeneruj</button>
+            </div>
+          `;
+        }
+
+        showVariant(0);
+        resultEl.querySelectorAll('.variant-tab').forEach(btn => {
+          btn.addEventListener('click', (e) => {
+            resultEl.querySelectorAll('.variant-tab').forEach(b => b.className = 'variant-tab flex-1 px-3 py-2 rounded-md text-sm border bg-card border-border');
+            e.currentTarget.className = 'variant-tab flex-1 px-3 py-2 rounded-md text-sm border bg-accent border-accent text-white';
+            showVariant(Number(e.currentTarget.dataset.var));
+          });
+        });
+      }
+
+      renderers.ai = () => {
+        // Wstępne dane przykładowe
+        document.getElementById('ai-audience').value = 'mężczyźni 25-50, spawacze, mieszkańcy Pruszkowa i Warszawy zachodniej';
+        document.getElementById('ai-brand-name').value = 'Stalmet Pruszków';
+        document.getElementById('ai-brand-oneliner').value = 'Zakład spawalniczy z 14-osobową ekipą, hala na Powstańców 12';
+        document.getElementById('ai-brand-usp').value = 'Dwie zmiany, bez weekendów\nStawka 7 200+ premia\nBrygadzista co tłumaczy raz';
+        document.getElementById('ai-offer').value = 'szukamy spawacza MIG/MAG, hala Bemowo Powstańców 12, dwie zmiany, stawka od 7 200 netto, premia 500/m za wieczorówki, dojazd autobusem 197';
+        document.getElementById('ai-region').value = 'Warszawa Bemowo / Pruszków';
+        document.getElementById('ai-budget').value = '7 200 PLN netto + premia';
+        document.getElementById('ai-contact').value = 'tel. 555-123-456';
+        document.getElementById('ai-cta').value = 'Zostaw numer w komentarzu, oddzwaniam jeszcze dziś';
+
+        document.getElementById('ai-generate-btn').addEventListener('click', () => {
+          const btn = document.getElementById('ai-generate-btn');
+          btn.disabled = true;
+          btn.textContent = '⏳ Claude generuje... (Sonnet 4.6)';
+          setTimeout(() => {
+            mockGenerate();
+            btn.disabled = false;
+            btn.innerHTML = '⚡ Wygeneruj kolejne 3 warianty';
+          }, 1800);
+        });
+      };
+
+      window.addEventListener('hashchange', route);
+      route();
+    </script>
+  </body>
+</html>
