@@ -16,26 +16,31 @@ export interface AntiAiReport {
   cleanedText: string;
 }
 
+// W JS \b nie działa po polskich znakach (ć, ę, ą itp. nie są \w),
+// więc używamy lookarounds (?<![a-ząćęłńóśźż]) / (?![a-ząćęłńóśźż]).
+const NB_BEFORE = '(?<![a-ząćęłńóśźż])';
+const NB_AFTER = '(?![a-ząćęłńóśźż])';
+
 const BANNED_PHRASES: { phrase: RegExp; code: string; message: string }[] = [
   { phrase: /w\s+dzisiejszym\s+(dynamicznie\s+)?(zmieniaj[ąa]cym\s+si[eę]\s+)?[sś]wiecie/i, code: 'cliche_modern_world', message: '"W dzisiejszym świecie" — typowy AI-wypełniacz.' },
   { phrase: /w\s+(erze|dobie)\s+(cyfrow|internetu|technologii)/i, code: 'cliche_digital_era', message: '"W erze cyfrowej" — wypełniacz AI.' },
-  { phrase: /\bwarto\s+pami[ęe]ta[ćc]\b/i, code: 'cliche_worth_remembering', message: '"Warto pamiętać" — AI-tell.' },
-  { phrase: /\bpodsumowuj[ąa]c\b/i, code: 'cliche_summarizing', message: '"Podsumowując" — AI-tell.' },
-  { phrase: /\breasumuj[ąa]c\b/i, code: 'cliche_resumming', message: '"Reasumując" — AI-tell.' },
-  { phrase: /\bz\s+pewno[śs]ci[ąa]\b/i, code: 'cliche_for_sure', message: '"Z pewnością" — AI-tell.' },
-  { phrase: /\bniew[ąa]tpliwie\b/i, code: 'cliche_undoubtedly', message: '"Niewątpliwie" — AI-tell.' },
+  { phrase: new RegExp(`${NB_BEFORE}warto\\s+pami[ęe]ta[ćc]${NB_AFTER}`, 'i'), code: 'cliche_worth_remembering', message: '"Warto pamiętać" — AI-tell.' },
+  { phrase: new RegExp(`${NB_BEFORE}podsumowuj[ąa]c${NB_AFTER}`, 'i'), code: 'cliche_summarizing', message: '"Podsumowując" — AI-tell.' },
+  { phrase: new RegExp(`${NB_BEFORE}reasumuj[ąa]c${NB_AFTER}`, 'i'), code: 'cliche_resumming', message: '"Reasumując" — AI-tell.' },
+  { phrase: new RegExp(`${NB_BEFORE}z\\s+pewno[śs]ci[ąa]${NB_AFTER}`, 'i'), code: 'cliche_for_sure', message: '"Z pewnością" — AI-tell.' },
+  { phrase: new RegExp(`${NB_BEFORE}niew[ąa]tpliwie${NB_AFTER}`, 'i'), code: 'cliche_undoubtedly', message: '"Niewątpliwie" — AI-tell.' },
   { phrase: /\bsynergi(czn|i)/i, code: 'cliche_synergy', message: '"Synergia/synergiczny" — korpomowa AI.' },
   { phrase: /\bholistyczn/i, code: 'cliche_holistic', message: '"Holistyczny" — korpomowa AI.' },
   { phrase: /\bkompleksowe\s+rozwi[ąa]zani/i, code: 'cliche_comprehensive', message: '"Kompleksowe rozwiązanie" — pusta fraza AI.' },
-  { phrase: /\bzapraszamy\s+do\s+wsp[óo][łl]pracy\b/i, code: 'cliche_invite_cooperation', message: '"Zapraszamy do współpracy" — zero CTA, korpo.' },
-  { phrase: /\bz\s+dum[ąa]\s+prezentujemy\b/i, code: 'cliche_proudly_present', message: '"Z dumą prezentujemy" — korpo-AI.' },
-  { phrase: /\bmamy\s+przyjemno[śs][ćc]\b/i, code: 'cliche_have_pleasure', message: '"Mamy przyjemność" — korpomowa.' },
+  { phrase: new RegExp(`${NB_BEFORE}zapraszamy\\s+do\\s+wsp[óo][łl]pracy${NB_AFTER}`, 'i'), code: 'cliche_invite_cooperation', message: '"Zapraszamy do współpracy" — zero CTA, korpo.' },
+  { phrase: new RegExp(`${NB_BEFORE}z\\s+dum[ąa]\\s+prezentujemy${NB_AFTER}`, 'i'), code: 'cliche_proudly_present', message: '"Z dumą prezentujemy" — korpo-AI.' },
+  { phrase: new RegExp(`${NB_BEFORE}mamy\\s+przyjemno[śs][ćc]${NB_AFTER}`, 'i'), code: 'cliche_have_pleasure', message: '"Mamy przyjemność" — korpomowa.' },
   { phrase: /\brewolucyjn/i, code: 'cliche_revolutionary', message: '"Rewolucyjny" — pusty przymiotnik bez dowodu.' },
   { phrase: /\binnowacyjn/i, code: 'cliche_innovative', message: '"Innowacyjny" — pusty przymiotnik.' },
   { phrase: /\blider(em|a)?\s+(na\s+)?rynk/i, code: 'cliche_market_leader', message: '"Lider rynku" — bez dowodu = AI-tell.' },
-  { phrase: /\bprofesjonaln[ąa]?\s+obs[łl]ug/i, code: 'cliche_professional_service', message: '"Profesjonalna obsługa" — pusta fraza.' },
+  { phrase: new RegExp(`${NB_BEFORE}profesjonaln[ąa]?\\s+obs[łl]ug`, 'i'), code: 'cliche_professional_service', message: '"Profesjonalna obsługa" — pusta fraza.' },
   { phrase: /\bindywidualne\s+podej[śs]ci/i, code: 'cliche_individual_approach', message: '"Indywidualne podejście" — pusta fraza.' },
-  { phrase: /\bnajwy[żz]szej?\s+jako[śs]ci\b/i, code: 'cliche_highest_quality', message: '"Najwyższa jakość" — bez liczb = AI.' },
+  { phrase: new RegExp(`${NB_BEFORE}najwy[żz]szej?\\s+jako[śs]ci${NB_AFTER}`, 'i'), code: 'cliche_highest_quality', message: '"Najwyższa jakość" — bez liczb = AI.' },
 ];
 
 /** Em-dashes (—) — bardzo silny ślad AI w polskim tekście. */

@@ -12,26 +12,29 @@ export interface AntiAiReport {
   cleanedText: string;
 }
 
+const NB_BEFORE = '(?<![a-ząćęłńóśźż])';
+const NB_AFTER = '(?![a-ząćęłńóśźż])';
+
 const BANNED_PHRASES: { phrase: RegExp; code: string; message: string }[] = [
   { phrase: /w\s+dzisiejszym\s+(dynamicznie\s+)?(zmieniaj[ąa]cym\s+si[eę]\s+)?[sś]wiecie/i, code: 'cliche_modern_world', message: '"W dzisiejszym świecie"' },
   { phrase: /w\s+(erze|dobie)\s+(cyfrow|internetu|technologii)/i, code: 'cliche_digital_era', message: '"W erze cyfrowej"' },
-  { phrase: /\bwarto\s+pami[ęe]ta[ćc]\b/i, code: 'cliche_worth_remembering', message: '"Warto pamiętać"' },
-  { phrase: /\bpodsumowuj[ąa]c\b/i, code: 'cliche_summarizing', message: '"Podsumowując"' },
-  { phrase: /\breasumuj[ąa]c\b/i, code: 'cliche_resumming', message: '"Reasumując"' },
-  { phrase: /\bz\s+pewno[śs]ci[ąa]\b/i, code: 'cliche_for_sure', message: '"Z pewnością"' },
-  { phrase: /\bniew[ąa]tpliwie\b/i, code: 'cliche_undoubtedly', message: '"Niewątpliwie"' },
+  { phrase: new RegExp(`${NB_BEFORE}warto\\s+pami[ęe]ta[ćc]${NB_AFTER}`, 'i'), code: 'cliche_worth_remembering', message: '"Warto pamiętać"' },
+  { phrase: new RegExp(`${NB_BEFORE}podsumowuj[ąa]c${NB_AFTER}`, 'i'), code: 'cliche_summarizing', message: '"Podsumowując"' },
+  { phrase: new RegExp(`${NB_BEFORE}reasumuj[ąa]c${NB_AFTER}`, 'i'), code: 'cliche_resumming', message: '"Reasumując"' },
+  { phrase: new RegExp(`${NB_BEFORE}z\\s+pewno[śs]ci[ąa]${NB_AFTER}`, 'i'), code: 'cliche_for_sure', message: '"Z pewnością"' },
+  { phrase: new RegExp(`${NB_BEFORE}niew[ąa]tpliwie${NB_AFTER}`, 'i'), code: 'cliche_undoubtedly', message: '"Niewątpliwie"' },
   { phrase: /\bsynergi(czn|i)/i, code: 'cliche_synergy', message: 'Synergia' },
   { phrase: /\bholistyczn/i, code: 'cliche_holistic', message: 'Holistyczny' },
   { phrase: /\bkompleksowe\s+rozwi[ąa]zani/i, code: 'cliche_comprehensive', message: 'Kompleksowe rozwiązanie' },
-  { phrase: /\bzapraszamy\s+do\s+wsp[óo][łl]pracy\b/i, code: 'cliche_invite_cooperation', message: 'Zapraszamy do współpracy' },
-  { phrase: /\bz\s+dum[ąa]\s+prezentujemy\b/i, code: 'cliche_proudly_present', message: 'Z dumą prezentujemy' },
-  { phrase: /\bmamy\s+przyjemno[śs][ćc]\b/i, code: 'cliche_have_pleasure', message: 'Mamy przyjemność' },
+  { phrase: new RegExp(`${NB_BEFORE}zapraszamy\\s+do\\s+wsp[óo][łl]pracy${NB_AFTER}`, 'i'), code: 'cliche_invite_cooperation', message: 'Zapraszamy do współpracy' },
+  { phrase: new RegExp(`${NB_BEFORE}z\\s+dum[ąa]\\s+prezentujemy${NB_AFTER}`, 'i'), code: 'cliche_proudly_present', message: 'Z dumą prezentujemy' },
+  { phrase: new RegExp(`${NB_BEFORE}mamy\\s+przyjemno[śs][ćc]${NB_AFTER}`, 'i'), code: 'cliche_have_pleasure', message: 'Mamy przyjemność' },
   { phrase: /\brewolucyjn/i, code: 'cliche_revolutionary', message: 'Rewolucyjny' },
   { phrase: /\binnowacyjn/i, code: 'cliche_innovative', message: 'Innowacyjny' },
   { phrase: /\blider(em|a)?\s+(na\s+)?rynk/i, code: 'cliche_market_leader', message: 'Lider rynku' },
-  { phrase: /\bprofesjonaln[ąa]?\s+obs[łl]ug/i, code: 'cliche_professional_service', message: 'Profesjonalna obsługa' },
+  { phrase: new RegExp(`${NB_BEFORE}profesjonaln[ąa]?\\s+obs[łl]ug`, 'i'), code: 'cliche_professional_service', message: 'Profesjonalna obsługa' },
   { phrase: /\bindywidualne\s+podej[śs]ci/i, code: 'cliche_individual_approach', message: 'Indywidualne podejście' },
-  { phrase: /\bnajwy[żz]szej?\s+jako[śs]ci\b/i, code: 'cliche_highest_quality', message: 'Najwyższa jakość' },
+  { phrase: new RegExp(`${NB_BEFORE}najwy[żz]szej?\\s+jako[śs]ci${NB_AFTER}`, 'i'), code: 'cliche_highest_quality', message: 'Najwyższa jakość' },
 ];
 
 const EM_DASH_RE = /—/g;
