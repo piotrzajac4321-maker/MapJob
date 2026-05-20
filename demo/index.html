@@ -4,86 +4,71 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <meta name="theme-color" content="#0a1628" />
-    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
-    <meta http-equiv="Pragma" content="no-cache" />
-    <meta http-equiv="Expires" content="0" />
-    <title>MapJob FB Poster — demo</title>
+    <title>MapJob FB Poster — demo v6</title>
     <style>
-      /* ============ TOKENS (niebieski theme) ============ */
       :root {
-        --bg: #0a1628;
-        --bg-2: #0f1e36;
-        --card: #131f3a;
-        --card-2: #1a2847;
-        --border: #1f2f52;
-        --border-2: #2a3f6b;
-        --text: #e5edf9;
-        --muted: #94a3b8;
-        --muted-2: #64748b;
-        --primary: #3b82f6;
-        --primary-hover: #2563eb;
-        --primary-light: #60a5fa;
-        --primary-soft: rgba(59, 130, 246, 0.14);
-        --primary-glow: rgba(59, 130, 246, 0.4);
-        --success: #10b981;
-        --success-soft: rgba(16, 185, 129, 0.14);
-        --warning: #f59e0b;
-        --warning-soft: rgba(245, 158, 11, 0.14);
-        --danger: #ef4444;
-        --danger-soft: rgba(239, 68, 68, 0.14);
-        --r: 10px;
-        --r-sm: 6px;
+        --bg: #0a1628; --bg-2: #0f1e36; --card: #131f3a; --card-2: #1a2847;
+        --border: #1f2f52; --border-2: #2a3f6b;
+        --text: #e5edf9; --muted: #94a3b8; --muted-2: #64748b;
+        --primary: #3b82f6; --primary-hover: #2563eb; --primary-light: #60a5fa;
+        --primary-soft: rgba(59, 130, 246, 0.14); --primary-glow: rgba(59, 130, 246, 0.4);
+        --success: #10b981; --success-soft: rgba(16, 185, 129, 0.14);
+        --warning: #f59e0b; --warning-soft: rgba(245, 158, 11, 0.14);
+        --danger: #ef4444; --danger-soft: rgba(239, 68, 68, 0.14);
+        --r: 10px; --r-sm: 6px;
         --shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
         --gradient: linear-gradient(135deg, #3b82f6 0%, #60a5fa 100%);
-        --gradient-bg: radial-gradient(ellipse 1200px 600px at top, rgba(59, 130, 246, 0.08), transparent 60%);
+      }
+      *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+      body{
+        font-family:-apple-system,BlinkMacSystemFont,'Inter','Segoe UI',Roboto,system-ui,sans-serif;
+        font-size:15px;line-height:1.5;color:var(--text);background:var(--bg);
+        background-image:radial-gradient(ellipse 1200px 600px at top,rgba(59,130,246,.08),transparent 60%);
+        background-attachment:fixed;-webkit-font-smoothing:antialiased;min-height:100vh;
+      }
+      a{color:var(--primary-light);text-decoration:none}
+      a:hover{color:var(--primary)}
+      code,pre{font-family:ui-monospace,'SF Mono',Monaco,monospace;font-size:12.5px}
+      code{background:var(--bg-2);padding:1px 6px;border-radius:4px;color:#93c5fd}
+      pre{white-space:pre-wrap;word-break:break-word}
+
+      /* ====== Routing via radio :checked ====== */
+      .route-radio { position: absolute; opacity: 0; pointer-events: none; }
+      .view { display: none; }
+      #r-dashboard:checked ~ main .v-dashboard,
+      #r-posts:checked     ~ main .v-posts,
+      #r-ai:checked        ~ main .v-ai,
+      #r-groups:checked    ~ main .v-groups,
+      #r-campaigns:checked ~ main .v-campaigns,
+      #r-analytics:checked ~ main .v-analytics { display: block; }
+
+      /* Active label highlighting */
+      .nav-label {
+        padding: 7px 14px; border-radius: var(--r-sm);
+        font-size: 14px; color: var(--muted);
+        cursor: pointer; white-space: nowrap; transition: all .15s;
+        display: inline-block; line-height: 1.4;
+        -webkit-tap-highlight-color: transparent;
+      }
+      .nav-label:hover { background: var(--card-2); color: var(--text); }
+      #r-dashboard:checked ~ header label[for="r-dashboard"],
+      #r-posts:checked     ~ header label[for="r-posts"],
+      #r-ai:checked        ~ header label[for="r-ai"],
+      #r-groups:checked    ~ header label[for="r-groups"],
+      #r-campaigns:checked ~ header label[for="r-campaigns"],
+      #r-analytics:checked ~ header label[for="r-analytics"] {
+        background: var(--primary-soft); color: var(--primary-light);
       }
 
-      *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-      html { -webkit-text-size-adjust: 100%; }
-      body {
-        font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', Roboto, system-ui, sans-serif;
-        font-size: 15px;
-        line-height: 1.5;
-        color: var(--text);
-        background: var(--bg);
-        background-image: var(--gradient-bg);
-        background-attachment: fixed;
-        -webkit-font-smoothing: antialiased;
-        min-height: 100vh;
-        min-height: 100dvh;
-      }
+      /* ====== Mobile nav toggle (checkbox) ====== */
+      #menu-toggle { position: absolute; opacity: 0; pointer-events: none; }
+      .menu-toggle-label { display: none; padding: 6px 10px; cursor: pointer; }
 
-      a { color: var(--primary-light); text-decoration: none; }
-      a:hover { color: var(--primary); }
-      button { font: inherit; cursor: pointer; border: 0; background: none; color: inherit; }
-      input, select, textarea {
-        font: inherit;
-        font-size: 14px;
-        color: var(--text);
-        background: var(--bg-2);
-        border: 1px solid var(--border);
-        border-radius: var(--r-sm);
-        padding: 10px 12px;
-        width: 100%;
-        outline: 0;
-        transition: border-color .15s, box-shadow .15s;
-        -webkit-appearance: none;
-        appearance: none;
-      }
-      input:focus, select:focus, textarea:focus {
-        border-color: var(--primary);
-        box-shadow: 0 0 0 3px var(--primary-soft);
-      }
-      code, pre, .mono { font-family: ui-monospace, 'SF Mono', Monaco, Consolas, monospace; font-size: 12.5px; }
-      code { background: var(--bg-2); padding: 1px 6px; border-radius: 4px; color: #93c5fd; }
-      pre { white-space: pre-wrap; word-break: break-word; }
-
-      /* ============ HEADER ============ */
+      /* ====== HEADER ====== */
       header {
         position: sticky; top: 0; z-index: 30;
-        background: rgba(10, 22, 40, 0.85);
-        backdrop-filter: saturate(180%) blur(14px);
-        -webkit-backdrop-filter: saturate(180%) blur(14px);
+        background: rgba(10, 22, 40, 0.92);
+        -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px);
         border-bottom: 1px solid var(--border);
       }
       .header-inner {
@@ -94,109 +79,59 @@
       .logo { display: flex; align-items: center; gap: 10px; font-weight: 600; color: var(--text); }
       .logo-mark {
         width: 30px; height: 30px;
-        background: var(--gradient);
-        border-radius: 8px;
+        background: var(--gradient); border-radius: 8px;
         display: flex; align-items: center; justify-content: center;
         color: white; font-weight: 700;
         box-shadow: 0 4px 14px var(--primary-glow);
-        flex-shrink: 0;
       }
       .nav { display: flex; align-items: center; gap: 2px; flex: 1; justify-content: center; }
-      .nav a {
-        padding: 7px 14px; border-radius: var(--r-sm);
-        font-size: 14px; color: var(--muted);
-        transition: all .15s; white-space: nowrap;
-      }
-      .nav a:hover { background: var(--card-2); color: var(--text); }
-      .nav a.active { background: var(--primary-soft); color: var(--primary-light); }
       .header-actions { display: flex; align-items: center; gap: 6px; }
 
-      /* ============ BUTTONS ============ */
+      /* ====== BUTTONS ====== */
       .btn {
         display: inline-flex; align-items: center; justify-content: center; gap: 6px;
         padding: 9px 16px; border-radius: var(--r-sm);
         font-size: 14px; font-weight: 500;
-        transition: all .15s; border: 1px solid transparent;
-        white-space: nowrap; line-height: 1;
+        border: 1px solid transparent; white-space: nowrap;
+        text-decoration: none; cursor: pointer;
         -webkit-tap-highlight-color: transparent;
       }
       .btn-primary {
         background: var(--gradient); color: white;
         box-shadow: 0 2px 10px var(--primary-glow);
       }
-      .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 6px 20px var(--primary-glow); }
-      .btn-primary:active { transform: translateY(0); }
-      .btn-primary:disabled { opacity: 0.55; cursor: not-allowed; transform: none; }
-      .btn-secondary {
-        background: var(--card); border-color: var(--border); color: var(--text);
-      }
-      .btn-secondary:hover { background: var(--card-2); border-color: var(--border-2); }
+      .btn-secondary { background: var(--card); border-color: var(--border); color: var(--text); }
+      .btn-secondary:hover { background: var(--card-2); }
       .btn-ghost { color: var(--muted); }
-      .btn-ghost:hover { color: var(--text); background: var(--card-2); }
+      .btn-ghost:hover { color: var(--text); }
       .btn-sm { padding: 6px 11px; font-size: 13px; }
-      .btn-lg { padding: 12px 18px; font-size: 15px; }
-      .btn-block { width: 100%; }
 
-      /* ============ STATUS BANNER ============ */
-      .banner {
-        padding: 10px 16px;
-        text-align: center;
-        font-size: 13px;
-        border-bottom: 1px solid var(--border);
-        background: var(--card);
-      }
-      .banner.ok { background: var(--success-soft); color: var(--success); border-color: var(--success); }
-      .banner.warn { background: var(--warning-soft); color: var(--warning); border-color: var(--warning); }
-      .banner.err { background: var(--danger-soft); color: var(--danger); border-color: var(--danger); }
-      .banner button { text-decoration: underline; font-weight: 600; }
-
-      /* ============ MAIN ============ */
+      /* ====== MAIN ====== */
       main { max-width: 1280px; margin: 0 auto; padding: 28px 16px; }
-      .fade-in { animation: fadeIn .25s ease-out; }
-      @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
-
       h1 { font-size: 28px; font-weight: 700; letter-spacing: -0.02em; }
       h2 { font-size: 18px; font-weight: 600; }
       h3 { font-size: 15px; font-weight: 600; }
       .text-muted { color: var(--muted); }
       .text-sm { font-size: 13px; }
       .text-xs { font-size: 12px; }
-      .gradient-text {
-        background: var(--gradient);
-        -webkit-background-clip: text; background-clip: text;
-        -webkit-text-fill-color: transparent; color: transparent;
-      }
+      .gradient-text { background: var(--gradient); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
 
-      /* ============ CARDS ============ */
+      /* ====== CARDS ====== */
       .card {
-        background: var(--card);
-        border: 1px solid var(--border);
-        border-radius: var(--r);
-        padding: 20px;
+        background: var(--card); border: 1px solid var(--border);
+        border-radius: var(--r); padding: 20px;
       }
       .stat {
         background: linear-gradient(135deg, var(--card) 0%, var(--bg-2) 100%);
-        border: 1px solid var(--border);
-        border-radius: var(--r);
-        padding: 18px;
-        position: relative;
-        overflow: hidden;
+        border: 1px solid var(--border); border-radius: var(--r);
+        padding: 18px; position: relative; overflow: hidden;
       }
-      .stat::after {
-        content: '';
-        position: absolute; top: 0; right: 0;
-        width: 100px; height: 100px;
-        background: var(--primary-soft);
-        border-radius: 999px;
-        filter: blur(40px);
-        opacity: 0.5;
-      }
-      .stat-label { color: var(--muted); font-size: 12px; position: relative; z-index: 1; }
-      .stat-value { font-size: 30px; font-weight: 700; margin-top: 4px; letter-spacing: -0.02em; position: relative; z-index: 1; }
-      .stat-delta { font-size: 12px; margin-top: 6px; color: var(--success); position: relative; z-index: 1; }
+      .stat-label { color: var(--muted); font-size: 12px; }
+      .stat-value { font-size: 30px; font-weight: 700; margin-top: 4px; letter-spacing: -0.02em; }
+      .stat-delta { font-size: 12px; margin-top: 6px; color: var(--success); }
       .stat-delta.neutral { color: var(--muted); }
 
-      /* ============ LAYOUTS ============ */
+      /* ====== LAYOUTS ====== */
       .row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
       .row-between { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
       .stack { display: flex; flex-direction: column; gap: 20px; }
@@ -216,13 +151,10 @@
         .stat { padding: 14px; }
       }
 
-      /* ============ TABLE ============ */
+      /* ====== TABLE ====== */
       .table-wrap {
-        background: var(--card);
-        border: 1px solid var(--border);
-        border-radius: var(--r);
-        overflow: hidden;
-        overflow-x: auto;
+        background: var(--card); border: 1px solid var(--border);
+        border-radius: var(--r); overflow: hidden; overflow-x: auto;
         -webkit-overflow-scrolling: touch;
       }
       table { width: 100%; border-collapse: collapse; font-size: 13.5px; min-width: 600px; }
@@ -231,22 +163,18 @@
         text-align: left; padding: 10px 14px;
         font-size: 11px; font-weight: 600;
         text-transform: uppercase; letter-spacing: 0.06em;
-        color: var(--muted);
-        border-bottom: 1px solid var(--border);
+        color: var(--muted); border-bottom: 1px solid var(--border);
         white-space: nowrap;
       }
       td { padding: 12px 14px; border-bottom: 1px solid var(--border); }
       tr:last-child td { border-bottom: 0; }
-      tr:hover td { background: var(--card-2); }
       th.right, td.right { text-align: right; }
 
-      /* ============ BADGES ============ */
+      /* ====== BADGES ====== */
       .badge {
         display: inline-flex; align-items: center;
-        padding: 3px 9px;
-        border-radius: 999px;
-        font-size: 11px; font-weight: 500;
-        line-height: 1.5;
+        padding: 3px 9px; border-radius: 999px;
+        font-size: 11px; font-weight: 500; line-height: 1.5;
         white-space: nowrap;
       }
       .badge-primary { background: var(--primary-soft); color: var(--primary-light); }
@@ -255,116 +183,81 @@
       .badge-danger  { background: var(--danger-soft); color: var(--danger); }
       .badge-muted   { background: var(--bg-2); color: var(--muted); }
 
-      /* ============ AVATAR ============ */
+      /* ====== AVATAR / CHIP ====== */
       .avatar {
-        width: 30px; height: 30px;
-        border-radius: 999px;
-        background: var(--gradient);
-        color: white;
+        width: 30px; height: 30px; border-radius: 999px;
+        background: var(--gradient); color: white;
         display: inline-flex; align-items: center; justify-content: center;
         font-weight: 600; font-size: 12px;
-        flex-shrink: 0;
       }
-      .user-chip { display: flex; align-items: center; gap: 8px; }
 
-      /* ============ MODALS ============ */
-      .modal-backdrop {
-        position: fixed; inset: 0; z-index: 50;
-        background: rgba(0, 8, 24, 0.78);
-        backdrop-filter: blur(8px);
-        -webkit-backdrop-filter: blur(8px);
-        display: none;
-        align-items: center; justify-content: center;
-        padding: 16px;
+      /* ====== AI GENERATOR ====== */
+      input, select, textarea {
+        font: inherit; font-size: 14px; color: var(--text);
+        background: var(--bg-2); border: 1px solid var(--border);
+        border-radius: var(--r-sm); padding: 10px 12px; width: 100%;
+        outline: 0; -webkit-appearance: none; appearance: none;
       }
-      .modal-backdrop.open { display: flex; }
-      .modal {
-        background: var(--card);
-        border: 1px solid var(--border-2);
-        border-radius: 14px;
-        width: 100%;
-        max-width: 480px;
-        max-height: 90vh;
-        max-height: 90dvh;
-        display: flex; flex-direction: column;
-        box-shadow: var(--shadow);
-        animation: modalIn .2s ease-out;
-        overflow: hidden;
+      input:focus, select:focus, textarea:focus {
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px var(--primary-soft);
       }
-      .modal-wide { max-width: 720px; }
-      @keyframes modalIn { from { opacity: 0; transform: scale(.96); } to { opacity: 1; transform: scale(1); } }
-      .modal-header { padding: 20px 22px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: start; gap: 16px; }
-      .modal-body { padding: 22px; overflow-y: auto; flex: 1; }
-      .modal-close { font-size: 26px; color: var(--muted); line-height: 1; padding: 0 8px; border-radius: 6px; }
-      .modal-close:hover { color: var(--text); background: var(--card-2); }
-
-      /* ============ FORMS ============ */
-      .form-group { display: flex; flex-direction: column; gap: 6px; }
-      .form-label { font-size: 12.5px; font-weight: 500; color: var(--muted); }
       fieldset { border: 1px solid var(--border); border-radius: var(--r-sm); padding: 14px; display: flex; flex-direction: column; gap: 10px; min-width: 0; }
       legend { padding: 0 8px; font-size: 12px; color: var(--muted); }
-
-      /* ============ AI GENERATOR ============ */
-      .variant-tabs { display: flex; gap: 6px; flex-wrap: wrap; }
-      .variant-tab {
-        flex: 1 1 100px; padding: 9px 12px;
-        border-radius: var(--r-sm);
-        border: 1px solid var(--border);
-        background: var(--card);
-        cursor: pointer; font-size: 13px;
-        text-align: center;
-        transition: all .15s;
-        -webkit-tap-highlight-color: transparent;
-      }
-      .variant-tab:hover { border-color: var(--border-2); }
-      .variant-tab.active { background: var(--gradient); border-color: transparent; color: white; box-shadow: 0 2px 8px var(--primary-glow); }
-      .variant-tab .sub { display: block; font-size: 11px; opacity: 0.85; margin-top: 2px; }
+      .form-group { display: flex; flex-direction: column; gap: 6px; }
+      .form-label { font-size: 12.5px; font-weight: 500; color: var(--muted); }
 
       .post-preview {
-        background: var(--bg-2);
-        border: 1px solid var(--border);
-        border-radius: var(--r-sm);
-        padding: 14px;
+        background: var(--bg-2); border: 1px solid var(--border);
+        border-radius: var(--r-sm); padding: 14px;
         font-family: -apple-system, BlinkMacSystemFont, sans-serif;
-        font-size: 14px;
-        white-space: pre-wrap;
-        line-height: 1.55;
+        font-size: 14px; white-space: pre-wrap; line-height: 1.55;
       }
-
       .human-score { font-weight: 600; font-size: 14px; }
       .human-score.good { color: var(--success); }
       .human-score.mid { color: var(--warning); }
-      .human-score.bad { color: var(--danger); }
-
       .checklist { list-style: none; padding: 0; }
       .checklist li { display: flex; gap: 10px; padding: 5px 0; font-size: 13px; }
       .checklist .pass { color: var(--success); flex-shrink: 0; }
       .checklist .fail { color: var(--muted-2); flex-shrink: 0; }
-      .checklist .item-fail { color: var(--muted); }
 
-      .placeholder-box {
-        background: var(--card);
-        border: 1px dashed var(--border-2);
-        border-radius: var(--r);
-        padding: 40px 20px;
+      /* Variant tabs przez :checked */
+      .vr { position: absolute; opacity: 0; pointer-events: none; }
+      .v-tabs { display: flex; gap: 6px; flex-wrap: wrap; }
+      .v-tab {
+        flex: 1 1 100px; padding: 9px 12px;
+        border-radius: var(--r-sm); border: 1px solid var(--border);
+        background: var(--card); cursor: pointer; font-size: 13px;
         text-align: center;
-        color: var(--muted);
-        font-size: 14px;
+        -webkit-tap-highlight-color: transparent;
       }
+      .v-tab .sub { display: block; font-size: 11px; opacity: 0.85; margin-top: 2px; }
+      #vr-1:checked ~ .v-tabs label[for="vr-1"],
+      #vr-2:checked ~ .v-tabs label[for="vr-2"],
+      #vr-3:checked ~ .v-tabs label[for="vr-3"] {
+        background: var(--gradient); border-color: transparent; color: white;
+        box-shadow: 0 2px 8px var(--primary-glow);
+      }
+      .v-content > div { display: none; }
+      #vr-1:checked ~ .v-content .v-c-1,
+      #vr-2:checked ~ .v-content .v-c-2,
+      #vr-3:checked ~ .v-content .v-c-3 { display: block; }
 
-      /* ============ CHARTS ============ */
+      /* ====== CHARTS ====== */
       .chart-bars { display: flex; align-items: end; gap: 4px; height: 160px; }
-      .chart-bars .bar {
-        flex: 1; background: var(--gradient); border-radius: 4px 4px 0 0;
-        min-height: 3px;
-        transition: opacity .2s;
-      }
-      .chart-bars .bar:hover { opacity: 0.7; }
+      .chart-bars .bar { flex: 1; background: var(--gradient); border-radius: 4px 4px 0 0; min-height: 3px; }
       .chart-labels { display: flex; gap: 4px; margin-top: 6px; font-size: 10px; color: var(--muted); }
       .chart-labels span { flex: 1; text-align: center; }
 
-      /* ============ MOBILE NAV ============ */
-      .mobile-toggle { display: none; padding: 6px 10px; }
+      .pulse {
+        width: 8px; height: 8px; border-radius: 999px;
+        background: var(--success); display: inline-block; margin-right: 4px;
+        animation: pulse 2s infinite;
+      }
+      @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
+      .truncate { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+      /* ====== MOBILE ====== */
       @media (max-width: 900px) {
         .nav {
           display: none; position: absolute; top: 56px; left: 0; right: 0;
@@ -372,214 +265,83 @@
           padding: 8px; flex-direction: column; gap: 0;
           box-shadow: var(--shadow);
         }
-        .nav.open { display: flex; }
-        .nav a { padding: 12px 16px; border-radius: 0; text-align: left; }
-        .mobile-toggle { display: inline-flex; }
+        #menu-toggle:checked ~ header .nav { display: flex; }
+        .nav-label { padding: 12px 16px; border-radius: 0; text-align: left; }
+        .menu-toggle-label { display: inline-flex; align-items: center; justify-content: center; }
         .logo span:not(.logo-mark) { display: none; }
-        .header-actions .btn:not(.mobile-toggle) { padding: 7px 11px; font-size: 13px; }
-        .header-actions #logout-btn { padding: 5px 8px; }
+        .header-actions .btn { padding: 7px 11px; font-size: 13px; }
       }
 
-      /* ============ UTILITIES ============ */
-      .hidden { display: none !important; }
-      .flex-1 { flex: 1; }
-      .pulse {
-        width: 8px; height: 8px; border-radius: 999px;
-        background: var(--success);
-        animation: pulse 2s infinite;
-        display: inline-block;
-        margin-right: 4px;
+      .banner {
+        padding: 10px 16px; text-align: center; font-size: 13px;
+        border-bottom: 1px solid var(--border);
+        background: var(--success-soft); color: var(--success);
       }
-      @keyframes pulse {
-        0%, 100% { opacity: 1; box-shadow: 0 0 0 0 var(--success); }
-        50% { opacity: 0.6; box-shadow: 0 0 0 6px transparent; }
-      }
-      .truncate { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     </style>
   </head>
   <body>
-    <!-- Status banner -->
-    <div id="status-banner" class="banner">
-      <span class="text-muted">Wczytuję demo… (v5)</span>
+    <!-- Radio buttons for routing (hidden, controlled by labels in header) -->
+    <input class="route-radio" type="radio" name="route" id="r-dashboard" checked />
+    <input class="route-radio" type="radio" name="route" id="r-posts" />
+    <input class="route-radio" type="radio" name="route" id="r-ai" />
+    <input class="route-radio" type="radio" name="route" id="r-groups" />
+    <input class="route-radio" type="radio" name="route" id="r-campaigns" />
+    <input class="route-radio" type="radio" name="route" id="r-analytics" />
+    <input type="checkbox" id="menu-toggle" />
+
+    <div class="banner">
+      ✓ <strong>Demo v6 — CSS only</strong> · działa bez JavaScriptu · klikalna nawigacja
     </div>
 
-    <!-- WCZESNY signal: jeśli JS startuje, banner zmienia tekst na "JS OK" w 50ms.
-         Jeśli widzisz "Wczytuję demo… (v5)" dłużej niż sekundę → JS jest wyłączony. -->
-    <script>
-      (function () {
-        try {
-          var b = document.getElementById('status-banner');
-          if (b) b.innerHTML = '<span style="color: var(--primary-light)">⚡ JS startuje…</span>';
-        } catch (e) {}
-
-        // Watchdog: jeśli za 3s główny script nie wstawił treści, pokaż instrukcję
-        setTimeout(function () {
-          var view = document.getElementById('view');
-          if (view && view.innerHTML.trim() === '') {
-            var njw = document.getElementById('no-js-warning');
-            if (njw) njw.style.display = 'block';
-            var bn = document.getElementById('status-banner');
-            if (bn) {
-              bn.className = 'banner err';
-              bn.innerHTML = '✗ JS nie wykonał route() w 3s. Patrz instrukcja poniżej.';
-            }
-          }
-        }, 3000);
-      })();
-    </script>
-
-    <!-- Fallback: jeśli JS nie wykona się (iOS QuickLook preview ma JS wyłączony),
-         ten ekran zostanie. JS na końcu skryptu ustawia mu display: none. -->
-    <div id="no-js-warning" style="padding: 60px 24px; max-width: 600px; margin: 0 auto; text-align: center">
-      <div style="width: 64px; height: 64px; margin: 0 auto 20px; background: var(--gradient); border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 32px; box-shadow: 0 8px 32px var(--primary-glow)">📱</div>
-      <h1 style="font-size: 22px; margin-bottom: 12px">Otwórz w Safari / Chrome</h1>
-      <p class="text-sm text-muted" style="margin-bottom: 24px; line-height: 1.6">
-        Otworzyłeś ten plik w <strong style="color: var(--text)">trybie podglądu iOS</strong> (Files / Mail attachment).
-        Podgląd ma <strong style="color: var(--text)">wyłączony JavaScript</strong>, więc demo nie zadziała.
-      </p>
-      <div class="card" style="text-align: left; margin-bottom: 20px">
-        <h3 style="margin-bottom: 12px; color: var(--primary-light)">📲 Jak otworzyć w Safari (iOS)</h3>
-        <ol style="padding-left: 20px; display: flex; flex-direction: column; gap: 8px; font-size: 14px">
-          <li>Tapnij i <strong>przytrzymaj</strong> ikonę pliku w Files / Mail.</li>
-          <li>Wybierz <strong>„Udostępnij"</strong> (Share).</li>
-          <li>Przewiń i wybierz <strong>„Otwórz w Safari"</strong> lub <strong>„Skopiuj do Chrome"</strong>.</li>
-        </ol>
-      </div>
-      <div class="card" style="text-align: left">
-        <h3 style="margin-bottom: 12px; color: var(--primary-light)">💻 Na komputerze</h3>
-        <p class="text-sm text-muted">Dwuklik na pliku otworzy go w domyślnej przeglądarce — Chrome / Safari / Firefox. Wszystkie obsługują demo.</p>
-      </div>
-      <p class="text-xs text-muted" style="margin-top: 20px">demo v5 — 2026-05-20 12:00</p>
-    </div>
-
-    <!-- Header -->
     <header>
       <div class="header-inner">
-        <a href="#dashboard" class="logo">
+        <div class="logo">
           <span class="logo-mark">M</span>
           <span>MapJob FB Poster</span>
-        </a>
-        <nav class="nav" id="nav">
-          <a href="#dashboard" data-route="dashboard">Dashboard</a>
-          <a href="#posts" data-route="posts">Posty</a>
-          <a href="#ai" data-route="ai">Generator AI</a>
-          <a href="#groups" data-route="groups">Grupy</a>
-          <a href="#campaigns" data-route="campaigns">Kampanie</a>
-          <a href="#analytics" data-route="analytics">Analytics</a>
+        </div>
+        <nav class="nav">
+          <label for="r-dashboard" class="nav-label">Dashboard</label>
+          <label for="r-posts" class="nav-label">Posty</label>
+          <label for="r-ai" class="nav-label">Generator AI</label>
+          <label for="r-groups" class="nav-label">Grupy</label>
+          <label for="r-campaigns" class="nav-label">Kampanie</label>
+          <label for="r-analytics" class="nav-label">Analytics</label>
         </nav>
         <div class="header-actions">
-          <button id="open-setup" class="btn btn-ghost btn-sm">⚙</button>
-          <button id="auth-btn" class="btn btn-primary btn-sm">Zaloguj</button>
-          <div id="user-chip" class="user-chip hidden">
-            <div class="avatar" id="user-initials">—</div>
-            <button id="logout-btn" class="btn btn-ghost btn-sm">wyloguj</button>
-          </div>
-          <button id="mobile-toggle" class="mobile-toggle btn btn-ghost btn-sm">☰</button>
+          <button class="btn btn-primary btn-sm">Zaloguj</button>
+          <label for="menu-toggle" class="menu-toggle-label btn btn-ghost btn-sm">☰</label>
         </div>
       </div>
     </header>
 
-    <main id="view"></main>
-
-    <!-- Auth modal -->
-    <div id="auth-modal" class="modal-backdrop">
-      <div class="modal">
-        <div class="modal-header">
-          <div>
-            <h2>Zaloguj się / załóż konto</h2>
-            <p class="text-sm text-muted" style="margin-top:4px">Magic link — bez haseł.</p>
-          </div>
-          <button class="modal-close" data-close>×</button>
-        </div>
-        <div class="modal-body">
-          <div id="auth-idle" class="stack-sm">
-            <input id="auth-email" type="email" placeholder="ty@firma.pl" autocomplete="email" inputmode="email" />
-            <button id="auth-send" class="btn btn-primary btn-block btn-lg">Wyślij magic link</button>
-            <p id="auth-error" class="text-sm hidden" style="color: var(--danger)"></p>
-            <div class="text-xs text-muted" style="padding-top:12px; border-top: 1px solid var(--border); margin-top: 4px">
-              W trybie demo (otwierane z pliku) auth nie wyśle realnego maila — to tylko wizualizacja.
-              W aplikacji web podłączamy do Supabase.
-            </div>
-          </div>
-          <div id="auth-sent" class="hidden" style="background: var(--success-soft); border: 1px solid var(--success); border-radius: var(--r-sm); padding: 16px; text-align: center; font-size: 14px; color: var(--success)">
-            ✓ Demo: w realnej apce link poleciałby na <strong id="auth-sent-email"></strong>.
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Setup modal -->
-    <div id="setup-modal" class="modal-backdrop">
-      <div class="modal modal-wide">
-        <div class="modal-header">
-          <div>
-            <h2>Setup bazy — instrukcja</h2>
-            <p class="text-sm text-muted" style="margin-top:4px">Jak uruchomić prawdziwą aplikację (nie tylko demo).</p>
-          </div>
-          <button class="modal-close" data-close>×</button>
-        </div>
-        <div class="modal-body">
-          <ol style="padding-left: 20px; display: flex; flex-direction: column; gap: 8px; font-size: 14px; margin-bottom: 16px;">
-            <li>Stwórz projekt Supabase (region <strong>Frankfurt</strong>).</li>
-            <li>Skopiuj <code>init.sql</code> z repo (plik obok tego HTML, 36 KB).</li>
-            <li>Wklej do <strong>Supabase → SQL Editor → New query → Run</strong>.</li>
-            <li>Sklonuj <a href="https://github.com/piotrzajac4321-maker/MapJob/tree/claude/fb-auto-posting-app-44Q4X" target="_blank">repo</a>, <code>pnpm install</code>, uzupełnij <code>.env.local</code> kluczami z Supabase.</li>
-            <li><code>pnpm --filter @mapjob/web dev</code> → <code>localhost:3000</code>.</li>
-          </ol>
-          <p class="text-sm text-muted">
-            Ten HTML to klikalny prototyp UI bez backendu. Po setupie powyżej dostajesz pełną apkę z auth, bazą, generatorem AI, rozszerzeniem Chrome.
-          </p>
-        </div>
-      </div>
-    </div>
-
-    <!-- ====================== TEMPLATES ====================== -->
-
-    <template id="tmpl-dashboard">
-      <div class="fade-in stack">
+    <main>
+      <!-- ====== DASHBOARD ====== -->
+      <section class="view v-dashboard stack">
         <div class="row-between">
           <div>
             <h1>Dashboard</h1>
-            <p class="text-sm text-muted" id="greeting" style="margin-top: 4px">Cześć 👋 — podgląd UI z fake danymi.</p>
+            <p class="text-sm text-muted" style="margin-top: 4px">Cześć Piotr 👋 — przykładowy widok z fake danymi.</p>
           </div>
-          <a href="#ai" class="btn btn-primary">+ Generuj post AI</a>
+          <label for="r-ai" class="btn btn-primary" style="cursor: pointer">+ Generuj post AI</label>
         </div>
 
         <div class="grid-4">
-          <div class="stat">
-            <div class="stat-label">Posty w bibliotece</div>
-            <div class="stat-value">42</div>
-            <div class="stat-delta">↑ 8 w tym tygodniu</div>
-          </div>
-          <div class="stat">
-            <div class="stat-label">Aktywne grupy</div>
-            <div class="stat-value">237</div>
-            <div class="stat-delta neutral">z 248 zaimportowanych</div>
-          </div>
-          <div class="stat">
-            <div class="stat-label">Postów dzisiaj</div>
-            <div class="stat-value">73</div>
-            <div class="stat-delta">96% success rate</div>
-          </div>
-          <div class="stat">
-            <div class="stat-label">Aktywne kampanie</div>
-            <div class="stat-value">3</div>
-            <div class="stat-delta neutral">2 w toku, 1 zaplanowana</div>
-          </div>
+          <div class="stat"><div class="stat-label">Posty w bibliotece</div><div class="stat-value">42</div><div class="stat-delta">↑ 8 w tym tygodniu</div></div>
+          <div class="stat"><div class="stat-label">Aktywne grupy</div><div class="stat-value">237</div><div class="stat-delta neutral">z 248 zaimportowanych</div></div>
+          <div class="stat"><div class="stat-label">Postów dzisiaj</div><div class="stat-value">73</div><div class="stat-delta">96% success rate</div></div>
+          <div class="stat"><div class="stat-label">Aktywne kampanie</div><div class="stat-value">3</div><div class="stat-delta neutral">2 w toku, 1 zaplanowana</div></div>
         </div>
 
         <div class="stack-sm">
           <h2>Aktywne kampanie</h2>
           <div class="table-wrap">
             <table>
-              <thead>
-                <tr>
-                  <th>Nazwa</th><th>Status</th>
-                  <th class="right">Posted</th><th class="right">Pending</th>
-                  <th class="right">Skipped</th><th class="right">% sukcesu</th>
-                </tr>
-              </thead>
-              <tbody id="dashboard-campaigns"></tbody>
+              <thead><tr><th>Nazwa</th><th>Status</th><th class="right">Posted</th><th class="right">Pending</th><th class="right">Skipped</th><th class="right">% sukcesu</th></tr></thead>
+              <tbody>
+                <tr><td>Rekrutacja spawacz maj 2026</td><td><span class="badge badge-success">w toku</span></td><td class="right">64</td><td class="right">19</td><td class="right" style="color: var(--warning)">4</td><td class="right" style="font-weight:600">73%</td></tr>
+                <tr><td>iPhone 14 Pro — szybka sprzedaż</td><td><span class="badge badge-success">w toku</span></td><td class="right">28</td><td class="right">12</td><td class="right" style="color: var(--warning)">2</td><td class="right" style="font-weight:600">66%</td></tr>
+                <tr><td>Kierowcy C+E — Warszawa</td><td><span class="badge badge-primary">zaplanowana</span></td><td class="right">0</td><td class="right">156</td><td class="right">0</td><td class="right" style="font-weight:600">0%</td></tr>
+              </tbody>
             </table>
           </div>
         </div>
@@ -587,7 +349,13 @@
         <div class="grid-2">
           <div class="card">
             <h3 style="margin-bottom: 14px">Ostatnie publikacje</h3>
-            <div id="recent-publications" class="stack-sm"></div>
+            <div class="stack-sm">
+              <div class="row-between" style="padding: 8px 0; border-bottom: 1px solid var(--border)"><div><div>Praca Warszawa i okolice 2026</div><div class="text-xs text-muted">2 min temu</div></div><span class="badge badge-success">opublikowany</span></div>
+              <div class="row-between" style="padding: 8px 0; border-bottom: 1px solid var(--border)"><div><div>Bemowo - sprzedam, kupię</div><div class="text-xs text-muted">7 min temu</div></div><span class="badge badge-success">opublikowany</span></div>
+              <div class="row-between" style="padding: 8px 0; border-bottom: 1px solid var(--border)"><div><div>Spawacze ślusarze mechanicy</div><div class="text-xs text-muted">12 min temu · cooldown 4h</div></div><span class="badge badge-warning">pominięty</span></div>
+              <div class="row-between" style="padding: 8px 0; border-bottom: 1px solid var(--border)"><div><div>Kierowcy zawodowi</div><div class="text-xs text-muted">18 min temu</div></div><span class="badge badge-success">opublikowany</span></div>
+              <div class="row-between" style="padding: 8px 0"><div><div>Pruszków — co się dzieje</div><div class="text-xs text-muted">24 min temu</div></div><span class="badge badge-success">opublikowany</span></div>
+            </div>
           </div>
           <div class="card">
             <h3 style="margin-bottom: 14px">Health rozszerzenia</h3>
@@ -600,109 +368,209 @@
             </div>
           </div>
         </div>
-      </div>
-    </template>
+      </section>
 
-    <template id="tmpl-posts">
-      <div class="fade-in stack">
+      <!-- ====== POSTS ====== -->
+      <section class="view v-posts stack">
         <div class="row-between">
           <div>
             <h1>Posty</h1>
             <p class="text-sm text-muted" style="margin-top: 4px">Biblioteka treści — manualne i wygenerowane przez AI.</p>
           </div>
           <div class="row">
-            <a href="#ai" class="btn btn-primary">+ Generator AI</a>
+            <label for="r-ai" class="btn btn-primary" style="cursor: pointer">+ Generator AI</label>
             <button class="btn btn-secondary">+ Napisz ręcznie</button>
           </div>
         </div>
         <div class="table-wrap">
           <table>
-            <thead>
-              <tr>
-                <th>Tytuł</th><th>Typ</th><th>Framework</th><th>Status</th>
-                <th class="right">Human</th><th class="right">Utworzony</th>
-              </tr>
-            </thead>
-            <tbody id="posts-list"></tbody>
+            <thead><tr><th>Tytuł</th><th>Typ</th><th>Framework</th><th>Status</th><th class="right">Human</th><th class="right">Utworzony</th></tr></thead>
+            <tbody>
+              <tr><td>Spawacz Pruszków - hala B</td><td class="text-muted">job</td><td><code>PAS</code></td><td><span class="badge badge-success">gotowy</span></td><td class="right"><span class="human-score good">87/100</span></td><td class="right text-muted text-xs">2026-05-20</td></tr>
+              <tr><td>Kierowca C+E - Wrocław centrum</td><td class="text-muted">job</td><td><code>AIDA</code></td><td><span class="badge badge-success">gotowy</span></td><td class="right"><span class="human-score good">79/100</span></td><td class="right text-muted text-xs">2026-05-19</td></tr>
+              <tr><td>iPhone 14 Pro sprzedam</td><td class="text-muted">sales</td><td><code>BAB</code></td><td><span class="badge badge-success">gotowy</span></td><td class="right"><span class="human-score good">92/100</span></td><td class="right text-muted text-xs">2026-05-19</td></tr>
+              <tr><td>Magazynier nocny - Łódź</td><td class="text-muted">job</td><td><code>PAS</code></td><td><span class="badge badge-warning">szkic</span></td><td class="right"><span class="human-score mid">64/100</span></td><td class="right text-muted text-xs">2026-05-18</td></tr>
+              <tr><td>Klimatyzacja - montaż 4h</td><td class="text-muted">sales</td><td><code>PAS</code></td><td><span class="badge badge-success">gotowy</span></td><td class="right"><span class="human-score good">83/100</span></td><td class="right text-muted text-xs">2026-05-17</td></tr>
+              <tr><td>Programista junior Pruszków</td><td class="text-muted">job</td><td><code>4U</code></td><td><span class="badge badge-muted">archiwum</span></td><td class="right"><span class="human-score mid">71/100</span></td><td class="right text-muted text-xs">2026-05-12</td></tr>
+            </tbody>
           </table>
         </div>
-      </div>
-    </template>
+      </section>
 
-    <template id="tmpl-ai">
-      <div class="fade-in grid-2" style="gap: 28px">
-        <section class="stack-sm">
-          <div>
-            <h1>Generator AI</h1>
-            <p class="text-sm text-muted" style="margin-top: 4px">Brief → Claude generuje warianty + anti-AI filter + per-grupa wariancja.</p>
-          </div>
-
-          <div class="grid-2" style="gap: 10px">
-            <div class="form-group">
-              <label class="form-label">Typ posta</label>
-              <select id="ai-type">
-                <option value="job">Ogłoszenie pracy</option>
-                <option value="sales">Sprzedażowe</option>
-              </select>
+      <!-- ====== AI ====== -->
+      <section class="view v-ai">
+        <div class="grid-2" style="gap: 28px">
+          <div class="stack-sm">
+            <div>
+              <h1>Generator AI</h1>
+              <p class="text-sm text-muted" style="margin-top: 4px">Brief → Claude generuje 3 warianty + anti-AI filter + per-grupa wariancja.</p>
             </div>
+
+            <div class="grid-2" style="gap: 10px">
+              <div class="form-group">
+                <label class="form-label">Typ posta</label>
+                <select><option>Ogłoszenie pracy</option><option>Sprzedażowe</option></select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Framework</label>
+                <select><option>PAS — Problem, Agitation, Solution</option><option>AIDA</option><option>BAB</option><option>FAB</option></select>
+              </div>
+            </div>
+
             <div class="form-group">
-              <label class="form-label">Framework</label>
-              <select id="ai-framework">
-                <option value="PAS">PAS — Problem, Agitation, Solution</option>
-                <option value="AIDA">AIDA</option>
-                <option value="BAB">BAB — Before, After, Bridge</option>
-                <option value="FAB">FAB</option>
-              </select>
+              <label class="form-label">Audience</label>
+              <textarea rows="2">mężczyźni 25-50, spawacze z Pruszkowa i Warszawy zachodniej</textarea>
+            </div>
+
+            <fieldset>
+              <legend>Marka / firma</legend>
+              <input value="Stalmet Pruszków" />
+              <input value="Zakład spawalniczy z 14-osobową ekipą, hala na Powstańców 12" />
+              <textarea rows="2">Dwie zmiany, bez weekendów
+Stawka 7 200 + premia
+Brygadzista co tłumaczy raz</textarea>
+            </fieldset>
+
+            <div class="form-group">
+              <label class="form-label">Oferta</label>
+              <textarea rows="3">szukamy spawacza MIG/MAG, hala Bemowo Powstańców 12, dwie zmiany, stawka od 7 200 netto, premia 500/m za wieczorówki</textarea>
+            </div>
+
+            <div class="grid-3">
+              <input value="Warszawa Bemowo" placeholder="Region" />
+              <input value="7 200 PLN netto + premia" placeholder="Stawka / cena" />
+              <input value="tel. 555-123-456" placeholder="Kontakt" />
+            </div>
+
+            <input value="Zostaw numer w komentarzu, oddzwaniam dziś" placeholder="CTA" />
+
+            <button class="btn btn-primary" style="width: 100%; padding: 12px">⚡ Wygeneruj 3 warianty</button>
+            <p class="text-xs text-muted" style="text-align: center">Claude Sonnet 4.6 · ~4-7s · $0.008</p>
+          </div>
+
+          <div class="stack-sm">
+            <div class="row-between">
+              <h2>Wynik</h2>
+              <span class="text-xs text-muted"><span class="pulse"></span>4.2s · 1240+680 tok · $0.0084</span>
+            </div>
+
+            <!-- Variants — CSS-only tabs przez :checked -->
+            <input class="vr" type="radio" name="variant" id="vr-1" checked />
+            <input class="vr" type="radio" name="variant" id="vr-2" />
+            <input class="vr" type="radio" name="variant" id="vr-3" />
+
+            <div class="v-tabs">
+              <label for="vr-1" class="v-tab">Wariant 1<span class="sub">human 87/100</span></label>
+              <label for="vr-2" class="v-tab">Wariant 2<span class="sub">human 82/100</span></label>
+              <label for="vr-3" class="v-tab">Wariant 3<span class="sub">human 91/100</span></label>
+            </div>
+
+            <div class="v-content">
+              <!-- Variant 1 -->
+              <div class="v-c-1 stack-sm">
+                <div class="card stack-sm">
+                  <div class="row-between">
+                    <div class="human-score good">Human score: 87/100 ✓ brzmi jak człowiek</div>
+                    <span class="badge badge-warning">1 warn</span>
+                  </div>
+                  <pre class="post-preview">Szukam u nas w Pruszkowie spawacza MIG/MAG do hali.
+
+Stawka 7 200 netto + premia 500/m za wieczorówki. Dwie zmiany, hala na Powstańców 12. Dojazd autobusem 197, 5 min od przystanku.
+
+Ludzie odpadają zwykle na "a gdzie to dokładnie" - więc piszę od razu.
+
+Zostaw numer w komentarzu, oddzwaniam dziś.</pre>
+                </div>
+                <div class="card stack-sm">
+                  <div class="row-between"><h3>Humanize checklist</h3><span class="text-xs text-muted">6/6</span></div>
+                  <ul class="checklist">
+                    <li><span class="pass">✓</span><span>Konkretna liczba/kwota (7200, 500, 197)</span></li>
+                    <li><span class="pass">✓</span><span>Nazwa własna (Pruszków, Powstańców)</span></li>
+                    <li><span class="pass">✓</span><span>Brak em-dashy (—)</span></li>
+                    <li><span class="pass">✓</span><span>Krótkie zdanie (≤5 słów)</span></li>
+                    <li><span class="pass">✓</span><span>Branżowy żargon / kolokwializm (u nas, oddzwaniam, daj znać)</span></li>
+                    <li><span class="pass">✓</span><span>Długość 312 znaków &lt; 900</span></li>
+                  </ul>
+                </div>
+                <div style="background: var(--warning-soft); border: 1px solid var(--warning); border-radius: var(--r-sm); padding: 12px; font-size: 13px; color: var(--warning)">
+                  <strong>Anti-AI filter:</strong> em_dash: zamieniono 2× na zwykłe myślniki
+                </div>
+                <div class="row">
+                  <button class="btn btn-primary" style="flex: 1">Zapisz w bibliotece</button>
+                  <button class="btn btn-secondary">Regeneruj</button>
+                </div>
+              </div>
+
+              <!-- Variant 2 -->
+              <div class="v-c-2 stack-sm">
+                <div class="card stack-sm">
+                  <div class="row-between">
+                    <div class="human-score good">Human score: 82/100 ⚠ sprawdź checklist</div>
+                    <span class="badge badge-success">clean</span>
+                  </div>
+                  <pre class="post-preview">Hej grupa Bemowo!
+
+Mamy wakat — spawacz MIG/MAG, hala B na Powstańców 12.
+
+U nas konkretnie: 7 200 netto + premia, decyzja w 24h od rozmowy, hala 5 min od przystanku 197. Bez ściemy o "konkurencyjnym wynagrodzeniu".
+
+Kto się odzywa dziś, dzwonimy jeszcze przed weekendem. Zostaw numer w komentarzu, oddzwaniam dziś.</pre>
+                </div>
+                <div class="card stack-sm">
+                  <div class="row-between"><h3>Humanize checklist</h3><span class="text-xs text-muted">5/6</span></div>
+                  <ul class="checklist">
+                    <li><span class="pass">✓</span><span>Konkretna liczba/kwota</span></li>
+                    <li><span class="pass">✓</span><span>Nazwa własna (Bemowo, Powstańców)</span></li>
+                    <li><span class="pass">✓</span><span>Brak em-dashy (—)</span></li>
+                    <li><span class="fail">○</span><span class="text-muted">Krótkie zdanie (≤5 słów) — brak</span></li>
+                    <li><span class="pass">✓</span><span>Branżowy żargon / kolokwializm</span></li>
+                    <li><span class="pass">✓</span><span>Długość 384 znaków &lt; 900</span></li>
+                  </ul>
+                </div>
+                <div class="row">
+                  <button class="btn btn-primary" style="flex: 1">Zapisz w bibliotece</button>
+                  <button class="btn btn-secondary">Regeneruj</button>
+                </div>
+              </div>
+
+              <!-- Variant 3 -->
+              <div class="v-c-3 stack-sm">
+                <div class="card stack-sm">
+                  <div class="row-between">
+                    <div class="human-score good">Human score: 91/100 ✓ brzmi jak człowiek</div>
+                    <span class="badge badge-success">clean</span>
+                  </div>
+                  <pre class="post-preview">Trzy lata temu Marek dojeżdżał 1h 20 min do roboty. Teraz robi u nas, 12 min od domu.
+
+Szukamy kolejnego spawacza MIG/MAG. Hala Bemowo. 7 200 netto + premia 500/m za wieczorówki.
+
+Nie obiecuję "pracy marzeń". Obiecuję konkret: 5 min od autobusu 197, ekipa 8 osób, brygadzista co tłumaczy raz a porządnie.
+
+Zostaw numer, oddzwaniam.</pre>
+                </div>
+                <div class="card stack-sm">
+                  <div class="row-between"><h3>Humanize checklist</h3><span class="text-xs text-muted">6/6</span></div>
+                  <ul class="checklist">
+                    <li><span class="pass">✓</span><span>Konkretna liczba/kwota</span></li>
+                    <li><span class="pass">✓</span><span>Nazwa własna (Bemowo)</span></li>
+                    <li><span class="pass">✓</span><span>Brak em-dashy</span></li>
+                    <li><span class="pass">✓</span><span>Krótkie zdanie ≤5 słów</span></li>
+                    <li><span class="pass">✓</span><span>Branżowy żargon (u nas, ekipa, oddzwaniam)</span></li>
+                    <li><span class="pass">✓</span><span>Długość 388 znaków &lt; 900</span></li>
+                  </ul>
+                </div>
+                <div class="row">
+                  <button class="btn btn-primary" style="flex: 1">Zapisz w bibliotece</button>
+                  <button class="btn btn-secondary">Regeneruj</button>
+                </div>
+              </div>
             </div>
           </div>
+        </div>
+      </section>
 
-          <div class="form-group">
-            <label class="form-label">Audience</label>
-            <textarea id="ai-audience" rows="2" placeholder="np. mężczyźni 25-50, spawacze z Pruszkowa"></textarea>
-          </div>
-
-          <fieldset>
-            <legend>Marka / firma</legend>
-            <input id="ai-brand-name" placeholder="Nazwa firmy" />
-            <input id="ai-brand-oneliner" placeholder="W jednym zdaniu — co robisz" />
-            <textarea id="ai-brand-usp" rows="2" placeholder="USP (każdy w nowej linii)"></textarea>
-          </fieldset>
-
-          <div class="form-group">
-            <label class="form-label">Oferta</label>
-            <textarea id="ai-offer" rows="3" placeholder="np. szukamy spawacza MIG/MAG..."></textarea>
-          </div>
-
-          <div class="grid-3">
-            <input id="ai-region" placeholder="Region" />
-            <input id="ai-budget" placeholder="Stawka / cena" />
-            <input id="ai-contact" placeholder="Kontakt" />
-          </div>
-
-          <input id="ai-cta" placeholder="CTA (np. Zostaw numer, oddzwaniam)" />
-
-          <button id="ai-generate-btn" class="btn btn-primary btn-block btn-lg">⚡ Wygeneruj 3 warianty</button>
-          <p class="text-xs text-muted" style="text-align: center">Demo mock — w prawdziwej apce Claude Sonnet 4.6, ~4-7s, $0.008</p>
-        </section>
-
-        <section class="stack-sm">
-          <div class="row-between">
-            <h2>Wynik</h2>
-            <span id="ai-result-meta" class="text-xs text-muted"></span>
-          </div>
-
-          <div id="ai-result-placeholder" class="placeholder-box">
-            Wypełnij brief po lewej i kliknij Wygeneruj.<br />
-            Zobaczysz 3 warianty + human score + checklistę.
-          </div>
-
-          <div id="ai-result" class="hidden stack-sm"></div>
-        </section>
-      </div>
-    </template>
-
-    <template id="tmpl-groups">
-      <div class="fade-in stack">
+      <!-- ====== GROUPS ====== -->
+      <section class="view v-groups stack">
         <div class="row-between">
           <div>
             <h1>Grupy</h1>
@@ -713,27 +581,28 @@
         <div class="card row" style="padding: 12px; gap: 8px">
           <input placeholder="Szukaj po nazwie..." style="flex: 1; min-width: 0" />
           <select style="flex: 0 0 180px; max-width: 100%">
-            <option>Wszystkie tagi</option>
-            <option>warszawa</option><option>praca</option><option>sprzedaz</option>
+            <option>Wszystkie tagi</option><option>warszawa</option><option>praca</option>
           </select>
         </div>
         <div class="table-wrap">
           <table>
-            <thead>
-              <tr>
-                <th>Nazwa</th><th class="right">Członkowie</th>
-                <th>Prywatność</th><th>Tagi</th>
-                <th class="right">Cooldown</th><th class="right">Ostatni post</th>
-              </tr>
-            </thead>
-            <tbody id="groups-list"></tbody>
+            <thead><tr><th>Nazwa</th><th class="right">Członkowie</th><th>Prywatność</th><th>Tagi</th><th class="right">Cooldown</th><th class="right">Ostatni post</th></tr></thead>
+            <tbody>
+              <tr><td>Praca Warszawa i okolice 2026</td><td class="right">87 234</td><td class="text-muted text-xs">public</td><td><span class="badge badge-muted">warszawa</span><span class="badge badge-muted">praca</span></td><td class="right text-muted">240 min</td><td class="right text-muted text-xs">2h temu</td></tr>
+              <tr><td>Bemowo - sprzedam, kupię, oddam</td><td class="right">12 856</td><td class="text-muted text-xs">public</td><td><span class="badge badge-muted">warszawa</span><span class="badge badge-muted">bemowo</span></td><td class="right text-muted">360 min</td><td class="right text-muted text-xs">6h temu</td></tr>
+              <tr><td>Praca Wrocław - oferty</td><td class="right">45 120</td><td class="text-muted text-xs">public</td><td><span class="badge badge-muted">wroclaw</span><span class="badge badge-muted">praca</span></td><td class="right text-muted">240 min</td><td class="right text-muted text-xs">1d temu</td></tr>
+              <tr><td>Spawacze, ślusarze, mechanicy PL</td><td class="right">23 445</td><td class="text-muted text-xs">public</td><td><span class="badge badge-muted">praca</span><span class="badge badge-muted">rzemioslo</span></td><td class="right text-muted">480 min</td><td class="right text-muted text-xs">4h temu</td></tr>
+              <tr><td>Kierowcy zawodowi - oferty pracy</td><td class="right">67 890</td><td class="text-muted text-xs">public</td><td><span class="badge badge-muted">praca</span><span class="badge badge-muted">kierowcy</span></td><td class="right text-muted">240 min</td><td class="right text-muted text-xs">8h temu</td></tr>
+              <tr><td>Pruszków - co się dzieje</td><td class="right">19 200</td><td class="text-muted text-xs">public</td><td><span class="badge badge-muted">pruszkow</span></td><td class="right text-muted">360 min</td><td class="right text-muted text-xs">12h temu</td></tr>
+              <tr><td>Łódź - praca i ogłoszenia</td><td class="right">34 110</td><td class="text-muted text-xs">public</td><td><span class="badge badge-muted">lodz</span><span class="badge badge-muted">praca</span></td><td class="right text-muted">240 min</td><td class="right text-muted text-xs">3h temu</td></tr>
+              <tr><td>Sprzedam kupie ogarnę - Trójmiasto</td><td class="right">78 900</td><td class="text-muted text-xs">public</td><td><span class="badge badge-muted">trojmiasto</span></td><td class="right text-muted">360 min</td><td class="right text-muted text-xs">5h temu</td></tr>
+            </tbody>
           </table>
         </div>
-      </div>
-    </template>
+      </section>
 
-    <template id="tmpl-campaigns">
-      <div class="fade-in stack">
+      <!-- ====== CAMPAIGNS ====== -->
+      <section class="view v-campaigns stack">
         <div class="row-between">
           <div>
             <h1>Kampanie</h1>
@@ -743,429 +612,81 @@
         </div>
         <div class="table-wrap">
           <table>
-            <thead>
-              <tr>
-                <th>Nazwa</th><th>Post</th><th>Status</th>
-                <th class="right">Posted / All</th><th class="right">Skipped</th>
-                <th class="right">% sukcesu</th><th class="right">Akcja</th>
-              </tr>
-            </thead>
-            <tbody id="campaigns-list"></tbody>
+            <thead><tr><th>Nazwa</th><th>Post</th><th>Status</th><th class="right">Posted / All</th><th class="right">Skipped</th><th class="right">% sukcesu</th><th class="right">Akcja</th></tr></thead>
+            <tbody>
+              <tr><td>Rekrutacja spawacz maj 2026</td><td class="text-muted text-xs">Spawacz Pruszków</td><td><span class="badge badge-success">w toku</span></td><td class="right">64 / 87</td><td class="right" style="color: var(--warning)">4</td><td class="right" style="font-weight: 600">73%</td><td class="right"><button class="btn btn-ghost btn-sm">Pauza</button></td></tr>
+              <tr><td>iPhone 14 Pro - szybka sprzedaż</td><td class="text-muted text-xs">iPhone 14 Pro</td><td><span class="badge badge-success">w toku</span></td><td class="right">28 / 42</td><td class="right" style="color: var(--warning)">2</td><td class="right" style="font-weight: 600">66%</td><td class="right"><button class="btn btn-ghost btn-sm">Pauza</button></td></tr>
+              <tr><td>Kierowcy C+E - Warszawa</td><td class="text-muted text-xs">Kierowca C+E</td><td><span class="badge badge-primary">zaplanowana</span></td><td class="right">0 / 156</td><td class="right">0</td><td class="right" style="font-weight: 600">0%</td><td class="right"><button class="btn btn-primary btn-sm">Start</button></td></tr>
+              <tr><td>Klimatyzacja lipiec</td><td class="text-muted text-xs">Klimatyzacja</td><td><span class="badge badge-muted">zakończona</span></td><td class="right">71 / 73</td><td class="right" style="color: var(--warning)">2</td><td class="right" style="font-weight: 600">97%</td><td class="right"><span class="text-muted text-xs">—</span></td></tr>
+              <tr><td>Magazynier Łódź - test</td><td class="text-muted text-xs">Magazynier nocny</td><td><span class="badge badge-warning">pauza</span></td><td class="right">8 / 24</td><td class="right" style="color: var(--warning)">1</td><td class="right" style="font-weight: 600">33%</td><td class="right"><button class="btn btn-primary btn-sm">Wznów</button></td></tr>
+            </tbody>
           </table>
         </div>
-      </div>
-    </template>
+      </section>
 
-    <template id="tmpl-analytics">
-      <div class="fade-in stack">
+      <!-- ====== ANALYTICS ====== -->
+      <section class="view v-analytics stack">
         <h1>Analytics</h1>
 
-        <section class="card">
+        <div class="card">
           <h3 style="margin-bottom: 14px">Posty per dzień (ostatnie 14)</h3>
-          <div id="chart-perday" class="chart-bars"></div>
-          <div id="chart-perday-labels" class="chart-labels"></div>
-        </section>
+          <div class="chart-bars">
+            <div class="bar" style="height: 16%"></div>
+            <div class="bar" style="height: 25%"></div>
+            <div class="bar" style="height: 33%"></div>
+            <div class="bar" style="height: 42%"></div>
+            <div class="bar" style="height: 30%"></div>
+            <div class="bar" style="height: 11%"></div>
+            <div class="bar" style="height: 19%"></div>
+            <div class="bar" style="height: 38%"></div>
+            <div class="bar" style="height: 48%"></div>
+            <div class="bar" style="height: 56%"></div>
+            <div class="bar" style="height: 52%"></div>
+            <div class="bar" style="height: 71%"></div>
+            <div class="bar" style="height: 64%"></div>
+            <div class="bar" style="height: 100%"></div>
+          </div>
+          <div class="chart-labels">
+            <span>Pn</span><span>Wt</span><span>Śr</span><span>Cz</span><span>Pt</span><span>So</span><span>Nd</span><span>Pn</span><span>Wt</span><span>Śr</span><span>Cz</span><span>Pt</span><span>So</span><span>Nd</span>
+          </div>
+        </div>
 
-        <section class="card">
+        <div class="card">
           <h3 style="margin-bottom: 14px">Najlepsze godziny publikacji</h3>
-          <div id="chart-hours" class="chart-bars" style="height: 120px"></div>
+          <div class="chart-bars" style="height: 120px">
+            <div class="bar" style="height: 1%"></div><div class="bar" style="height: 1%"></div><div class="bar" style="height: 1%"></div><div class="bar" style="height: 1%"></div>
+            <div class="bar" style="height: 3%"></div><div class="bar" style="height: 5%"></div><div class="bar" style="height: 11%"></div><div class="bar" style="height: 21%"></div>
+            <div class="bar" style="height: 37%"></div><div class="bar" style="height: 58%"></div><div class="bar" style="height: 74%"></div><div class="bar" style="height: 82%"></div>
+            <div class="bar" style="height: 76%"></div><div class="bar" style="height: 68%"></div><div class="bar" style="height: 63%"></div><div class="bar" style="height: 74%"></div>
+            <div class="bar" style="height: 84%"></div><div class="bar" style="height: 100%"></div><div class="bar" style="height: 89%"></div><div class="bar" style="height: 58%"></div>
+            <div class="bar" style="height: 32%"></div><div class="bar" style="height: 16%"></div><div class="bar" style="height: 5%"></div><div class="bar" style="height: 3%"></div>
+          </div>
           <div class="chart-labels">
             <span>0</span><span>3</span><span>6</span><span>9</span><span>12</span><span>15</span><span>18</span><span>21</span><span>23</span>
           </div>
-        </section>
+        </div>
 
         <div class="grid-2">
-          <section class="card">
+          <div class="card">
             <h3 style="margin-bottom: 14px">Top grupy (success rate)</h3>
-            <div id="top-groups" class="stack-sm" style="font-size: 13px"></div>
-          </section>
-          <section class="card">
+            <div class="stack-sm" style="font-size: 13px">
+              <div class="row-between" style="padding: 6px 0; border-bottom: 1px solid var(--border)"><div class="flex-1 truncate" style="padding-right: 12px">Spawacze, ślusarze, mechanicy PL</div><div class="text-muted text-xs" style="margin-right: 12px">18/18</div><div style="font-weight: 600; color: var(--success)">100%</div></div>
+              <div class="row-between" style="padding: 6px 0; border-bottom: 1px solid var(--border)"><div class="flex-1 truncate" style="padding-right: 12px">Praca Warszawa i okolice</div><div class="text-muted text-xs" style="margin-right: 12px">22/24</div><div style="font-weight: 600; color: var(--success)">92%</div></div>
+              <div class="row-between" style="padding: 6px 0; border-bottom: 1px solid var(--border)"><div class="flex-1 truncate" style="padding-right: 12px">Kierowcy zawodowi</div><div class="text-muted text-xs" style="margin-right: 12px">13/15</div><div style="font-weight: 600; color: var(--warning)">87%</div></div>
+              <div class="row-between" style="padding: 6px 0"><div class="flex-1 truncate" style="padding-right: 12px">Pruszków - co się dzieje</div><div class="text-muted text-xs" style="margin-right: 12px">10/12</div><div style="font-weight: 600; color: var(--warning)">83%</div></div>
+            </div>
+          </div>
+          <div class="card">
             <h3 style="margin-bottom: 14px">Najczęstsze błędy</h3>
-            <div id="top-errors" class="stack-sm" style="font-size: 13px"></div>
-          </section>
+            <div class="stack-sm" style="font-size: 13px">
+              <div class="row-between" style="padding: 6px 0; border-bottom: 1px solid var(--border)"><code>cooldown</code><span class="text-muted">23×</span></div>
+              <div class="row-between" style="padding: 6px 0; border-bottom: 1px solid var(--border)"><code>daily_cap</code><span class="text-muted">8×</span></div>
+              <div class="row-between" style="padding: 6px 0; border-bottom: 1px solid var(--border)"><code>no_publish_detected</code><span class="text-muted">2×</span></div>
+              <div class="row-between" style="padding: 6px 0"><code>login_required</code><span class="text-muted">1×</span></div>
+            </div>
+          </div>
         </div>
-      </div>
-    </template>
-
-    <script>
-      // ====== DEMO DATA ======
-      const POSTS = [
-        { id: 1, title: 'Spawacz Pruszków - hala B', type: 'job', framework: 'PAS', status: 'ready', human: 87, created: '2026-05-20' },
-        { id: 2, title: 'Kierowca C+E - Wrocław centrum', type: 'job', framework: 'AIDA', status: 'ready', human: 79, created: '2026-05-19' },
-        { id: 3, title: 'iPhone 14 Pro sprzedam', type: 'sales', framework: 'BAB', status: 'ready', human: 92, created: '2026-05-19' },
-        { id: 4, title: 'Magazynier nocny - Łódź', type: 'job', framework: 'PAS', status: 'draft', human: 64, created: '2026-05-18' },
-        { id: 5, title: 'Klimatyzacja - montaż 4h', type: 'sales', framework: 'PAS', status: 'ready', human: 83, created: '2026-05-17' },
-        { id: 6, title: 'Programista junior Pruszków', type: 'job', framework: '4U', status: 'archived', human: 71, created: '2026-05-12' },
-      ];
-      const CAMPAIGNS = [
-        { id: 1, name: 'Rekrutacja spawacz maj 2026', post: 'Spawacz Pruszków', status: 'running', total: 87, posted: 64, pending: 19, skipped: 4, failed: 0, pct: 73 },
-        { id: 2, name: 'iPhone 14 Pro - szybka sprzedaż', post: 'iPhone 14 Pro', status: 'running', total: 42, posted: 28, pending: 12, skipped: 2, failed: 0, pct: 66 },
-        { id: 3, name: 'Kierowcy C+E - Warszawa', post: 'Kierowca C+E', status: 'scheduled', total: 156, posted: 0, pending: 156, skipped: 0, failed: 0, pct: 0 },
-        { id: 4, name: 'Klimatyzacja lipiec', post: 'Klimatyzacja', status: 'done', total: 73, posted: 71, pending: 0, skipped: 2, failed: 0, pct: 97 },
-        { id: 5, name: 'Magazynier Łódź - test', post: 'Magazynier nocny', status: 'paused', total: 24, posted: 8, pending: 14, skipped: 1, failed: 1, pct: 33 },
-      ];
-      const GROUPS = [
-        { name: 'Praca Warszawa i okolice 2026', members: 87234, privacy: 'public', tags: ['warszawa', 'praca'], cooldown: 240, lastPost: '2h temu' },
-        { name: 'Bemowo - sprzedam, kupię, oddam', members: 12856, privacy: 'public', tags: ['warszawa', 'bemowo'], cooldown: 360, lastPost: '6h temu' },
-        { name: 'Praca Wrocław - oferty', members: 45120, privacy: 'public', tags: ['wroclaw', 'praca'], cooldown: 240, lastPost: '1d temu' },
-        { name: 'Spawacze, ślusarze, mechanicy PL', members: 23445, privacy: 'public', tags: ['praca', 'rzemioslo'], cooldown: 480, lastPost: '4h temu' },
-        { name: 'Kierowcy zawodowi - oferty pracy', members: 67890, privacy: 'public', tags: ['praca', 'kierowcy'], cooldown: 240, lastPost: '8h temu' },
-        { name: 'Pruszków - co się dzieje', members: 19200, privacy: 'public', tags: ['pruszkow', 'lokalne'], cooldown: 360, lastPost: '12h temu' },
-        { name: 'Łódź - praca i ogłoszenia', members: 34110, privacy: 'public', tags: ['lodz', 'praca'], cooldown: 240, lastPost: '3h temu' },
-        { name: 'Sprzedam kupie ogarnę - Trójmiasto', members: 78900, privacy: 'public', tags: ['trojmiasto'], cooldown: 360, lastPost: '5h temu' },
-      ];
-      const RECENT = [
-        { group: 'Praca Warszawa i okolice 2026', when: '2 min temu', status: 'posted' },
-        { group: 'Bemowo - sprzedam, kupię', when: '7 min temu', status: 'posted' },
-        { group: 'Spawacze ślusarze mechanicy', when: '12 min temu', status: 'skipped', reason: 'cooldown 4h' },
-        { group: 'Kierowcy zawodowi', when: '18 min temu', status: 'posted' },
-        { group: 'Pruszków - co się dzieje', when: '24 min temu', status: 'posted' },
-      ];
-      const ERRORS = [
-        { code: 'cooldown', count: 23 },
-        { code: 'daily_cap', count: 8 },
-        { code: 'no_publish_detected', count: 2 },
-        { code: 'login_required', count: 1 },
-      ];
-      const TOP_GROUPS = [
-        { name: 'Spawacze, ślusarze, mechanicy PL', attempts: 18, posted: 18, pct: 100 },
-        { name: 'Praca Warszawa i okolice', attempts: 24, posted: 22, pct: 92 },
-        { name: 'Kierowcy zawodowi', attempts: 15, posted: 13, pct: 87 },
-        { name: 'Pruszków - co się dzieje', attempts: 12, posted: 10, pct: 83 },
-      ];
-
-      const BADGE = {
-        ready: ['badge-success', 'gotowy'],
-        draft: ['badge-warning', 'szkic'],
-        archived: ['badge-muted', 'archiwum'],
-        running: ['badge-success', 'w toku'],
-        scheduled: ['badge-primary', 'zaplanowana'],
-        paused: ['badge-warning', 'pauza'],
-        done: ['badge-muted', 'zakończona'],
-        posted: ['badge-success', 'opublikowany'],
-        skipped: ['badge-warning', 'pominięty'],
-        failed: ['badge-danger', 'błąd'],
-      };
-      const badge = (s) => { const [c, l] = BADGE[s] || ['badge-muted', s]; return `<span class="badge ${c}">${l}</span>`; };
-      const human = (s) => `<span class="human-score ${s >= 75 ? 'good' : s >= 60 ? 'mid' : 'bad'}">${s}/100</span>`;
-
-      // ====== ROUTER ======
-      const view = document.getElementById('view');
-      function route() {
-        const hash = (location.hash || '#dashboard').slice(1);
-        document.querySelectorAll('[data-route]').forEach((el) => {
-          el.classList.toggle('active', el.dataset.route === hash);
-        });
-        const tmpl = document.getElementById('tmpl-' + hash);
-        if (!tmpl) { view.innerHTML = '<p class="text-muted">Brak widoku.</p>'; return; }
-        view.innerHTML = '';
-        view.appendChild(tmpl.content.cloneNode(true));
-        if (R[hash]) R[hash]();
-        document.getElementById('nav').classList.remove('open');
-        window.scrollTo({ top: 0, behavior: 'instant' });
-      }
-
-      const R = {};
-
-      R.dashboard = () => {
-        document.getElementById('dashboard-campaigns').innerHTML = CAMPAIGNS
-          .filter((c) => c.status === 'running' || c.status === 'scheduled')
-          .map((c) => `<tr>
-            <td>${c.name}</td><td>${badge(c.status)}</td>
-            <td class="right">${c.posted}</td><td class="right">${c.pending}</td>
-            <td class="right" style="color: var(--warning)">${c.skipped}</td>
-            <td class="right" style="font-weight: 600">${c.pct}%</td>
-          </tr>`).join('');
-
-        document.getElementById('recent-publications').innerHTML = RECENT.map((r) => `
-          <div class="row-between" style="padding: 8px 0; border-bottom: 1px solid var(--border)">
-            <div style="min-width: 0; flex: 1">
-              <div class="truncate">${r.group}</div>
-              <div class="text-xs text-muted">${r.when}${r.reason ? ' · ' + r.reason : ''}</div>
-            </div>
-            ${badge(r.status)}
-          </div>
-        `).join('');
-      };
-
-      R.posts = () => {
-        document.getElementById('posts-list').innerHTML = POSTS.map((p) => `<tr>
-          <td>${p.title}</td><td class="text-muted">${p.type}</td>
-          <td><code>${p.framework}</code></td><td>${badge(p.status)}</td>
-          <td class="right">${human(p.human)}</td>
-          <td class="right text-muted text-xs">${p.created}</td>
-        </tr>`).join('');
-      };
-
-      R.groups = () => {
-        document.getElementById('groups-list').innerHTML = GROUPS.map((g) => `<tr>
-          <td>${g.name}</td>
-          <td class="right">${g.members.toLocaleString('pl-PL')}</td>
-          <td class="text-muted text-xs">${g.privacy}</td>
-          <td>${g.tags.map((t) => `<span class="badge badge-muted" style="margin-right: 4px">${t}</span>`).join('')}</td>
-          <td class="right text-muted">${g.cooldown} min</td>
-          <td class="right text-muted text-xs">${g.lastPost}</td>
-        </tr>`).join('');
-      };
-
-      R.campaigns = () => {
-        document.getElementById('campaigns-list').innerHTML = CAMPAIGNS.map((c) => `<tr>
-          <td>${c.name}</td><td class="text-muted text-xs">${c.post}</td>
-          <td>${badge(c.status)}</td>
-          <td class="right">${c.posted} / ${c.total}</td>
-          <td class="right" style="color: var(--warning)">${c.skipped}</td>
-          <td class="right" style="font-weight: 600">${c.pct}%</td>
-          <td class="right">${
-            c.status === 'running' ? '<button class="btn btn-ghost btn-sm">Pauza</button>' :
-            c.status === 'paused' ? '<button class="btn btn-primary btn-sm">Wznów</button>' :
-            c.status === 'draft' || c.status === 'scheduled' ? '<button class="btn btn-primary btn-sm">Start</button>' :
-            '<span class="text-muted text-xs">—</span>'
-          }</td>
-        </tr>`).join('');
-      };
-
-      R.analytics = () => {
-        const days = [12, 18, 24, 31, 22, 8, 14, 28, 35, 41, 38, 52, 47, 73];
-        const dmax = Math.max(...days);
-        document.getElementById('chart-perday').innerHTML = days.map((v) =>
-          `<div class="bar" style="height: ${(v / dmax) * 100}%" title="${v} postów"></div>`
-        ).join('');
-        document.getElementById('chart-perday-labels').innerHTML = ['Pn','Wt','Śr','Cz','Pt','So','Nd','Pn','Wt','Śr','Cz','Pt','So','Nd'].map((d) => `<span>${d}</span>`).join('');
-
-        const hours = [0,0,0,0,1,2,4,8,14,22,28,31,29,26,24,28,32,38,34,22,12,6,2,1];
-        const hmax = Math.max(...hours);
-        document.getElementById('chart-hours').innerHTML = hours.map((v) =>
-          `<div class="bar" style="height: ${(v / hmax) * 100}%" title="${v} postów"></div>`
-        ).join('');
-
-        document.getElementById('top-groups').innerHTML = TOP_GROUPS.map((g) => `
-          <div class="row-between" style="padding: 6px 0; border-bottom: 1px solid var(--border)">
-            <div class="flex-1 truncate" style="padding-right: 12px">${g.name}</div>
-            <div class="text-muted text-xs" style="margin-right: 12px">${g.posted}/${g.attempts}</div>
-            <div style="font-weight: 600; color: ${g.pct >= 90 ? 'var(--success)' : g.pct >= 70 ? 'var(--warning)' : 'var(--danger)'}">${g.pct}%</div>
-          </div>
-        `).join('');
-
-        document.getElementById('top-errors').innerHTML = ERRORS.map((e) => `
-          <div class="row-between" style="padding: 6px 0; border-bottom: 1px solid var(--border)">
-            <code>${e.code}</code><span class="text-muted">${e.count}×</span>
-          </div>
-        `).join('');
-      };
-
-      // ====== AI MOCK ======
-      function mockGenerate() {
-        const type = document.getElementById('ai-type').value;
-        const region = document.getElementById('ai-region').value || 'okolicy';
-        const budget = document.getElementById('ai-budget').value || '';
-        const offer = (document.getElementById('ai-offer').value || 'naszej ofercie').split('.')[0].slice(0, 120);
-        const cta = document.getElementById('ai-cta').value || 'Pisz w wiadomości, oddzwaniam';
-        const contact = document.getElementById('ai-contact').value || '';
-
-        const variants = type === 'job' ? [
-          `Szukam u nas w ${region} osoby do roboty.\n\n${offer}.${budget ? ' Stawka ' + budget + '.' : ''} Dwie zmiany, hala B na Powstańców 12. Mam też premię 500/m za wieczorówki.\n\nLudzie odpadają zwykle na "a gdzie to dokładnie" - więc piszę od razu: 5 min od przystanku autobusu 197.\n\n${cta}.${contact ? ' ' + contact : ''}`,
-          `Hej grupa ${region}!\n\n${offer}.\n\nU nas konkretnie: ${budget || 'stawka uczciwa'}, decyzja w 24h od rozmowy, hala 5 min od przystanku. Bez ściemy o "konkurencyjnym wynagrodzeniu".\n\nKto się odzywa dziś, dzwonimy jeszcze przed weekendem. ${cta}.`,
-          `Trzy lata temu Marek dojeżdżał 1h 20 min do roboty. Teraz robi u nas w ${region}, 12 min od domu.\n\n${offer}.${budget ? ' ' + budget + ' netto + premia.' : ''}\n\nNie obiecuję "pracy marzeń". Obiecuję konkret: 5 min od autobusu, ekipa 8 osób, brygadzista co tłumaczy raz a porządnie.\n\n${cta}.`,
-        ] : [
-          `Klima w samochodzie dmucha ciepłe powietrze a lipiec już za rogiem? Tyle.\n\n${offer}.${budget ? ' ' + budget + ', wszystko w cenie.' : ''} Montujemy u Ciebie pod blokiem, w 4h, gwarancja 5 lat. Zostały 4 terminy w lipcu - serwisy w mieście są już zarobione.\n\n${cta}.${contact ? ' ' + contact : ''}`,
-          `27 stopni w aucie o 8 rano i dopiero rośnie.\n\n${offer}. ${budget || 'Cena uczciwa'}, robota w 4h, 5 lat gwarancji. Jeździsz z dzieckiem - ważne.\n\n${cta}.`,
-          `Stara klima: 30 minut w korku w aucie z dzieckiem to tortura. Nowa: chłodno w 90 sekund.\n\n${offer}.\n\nMontaż 4h u Ciebie, gwarancja 5 lat. ${budget ? budget + ', bez dopłat.' : ''} ${cta}.`,
-        ];
-        const scores = [87, 82, 91];
-        const warnings = [['em_dash: zamieniono 2x'], [], ['too_uniform_sentences: σ=2.1']];
-
-        document.getElementById('ai-result-placeholder').classList.add('hidden');
-        const r = document.getElementById('ai-result');
-        r.classList.remove('hidden');
-        document.getElementById('ai-result-meta').innerHTML = '<span class="pulse"></span>4.2s · 1240+680 tok · $0.0084';
-
-        r.innerHTML = `
-          <div class="variant-tabs">
-            ${variants.map((_, i) => `<button data-var="${i}" class="variant-tab ${i === 0 ? 'active' : ''}">
-              Wariant ${i + 1}<span class="sub">human ${scores[i]}/100</span>
-            </button>`).join('')}
-          </div>
-          <div id="variant-content"></div>
-        `;
-
-        function show(i) {
-          const text = variants[i];
-          const score = scores[i];
-          const warn = warnings[i];
-
-          const hasNumber = /\d/.test(text);
-          // Bez lookbehind — iOS Safari < 16.4 nie wspiera (?<=...)
-          // Znajdź wielką literę po znaku interpunkcji lub na początku linii.
-          const hasProper = /(?:^|[^.!?]\s)[A-ZĄĆĘŁŃÓŚŹŻ][a-ząćęłńóśźż]{2,}/.test(text);
-          const hasEmDash = /—/.test(text);
-          const sentences = text.split(/[.!?]+/).map((s) => s.trim()).filter(Boolean);
-          const hasShort = sentences.some((s) => s.split(/\s+/).length <= 5);
-          const hasColloquial = /\b(daj znać|odzywaj|pisz|dm|tagnij|u nas|tu w|po sąsiedzku|domknąć|rekru|cv-k|lead|krótko mówiąc)\b/i.test(text);
-
-          const checks = [
-            { label: 'Konkretna liczba/kwota', ok: hasNumber },
-            { label: 'Nazwa własna (dzielnica/firma)', ok: hasProper },
-            { label: 'Brak em-dashy (—)', ok: !hasEmDash },
-            { label: 'Krótkie zdanie (≤5 słów)', ok: hasShort },
-            { label: 'Branżowy żargon / kolokwializm', ok: hasColloquial },
-            { label: 'Długość ' + text.length + ' < 900', ok: text.length < 900 },
-          ];
-          const cls = score >= 75 ? 'good' : score >= 60 ? 'mid' : 'bad';
-          const lbl = score >= 75 ? '✓ brzmi jak człowiek' : score >= 60 ? '⚠ sprawdź checklist' : '✗ pachnie AI';
-
-          document.getElementById('variant-content').innerHTML = `
-            <div class="card stack-sm" style="margin-top: 12px">
-              <div class="row-between">
-                <div class="human-score ${cls}">Human score: ${score}/100 ${lbl}</div>
-                ${warn.length ? '<span class="badge badge-warning">' + warn.length + ' warn</span>' : '<span class="badge badge-success">clean</span>'}
-              </div>
-              <pre class="post-preview">${text.replace(/</g, '&lt;')}</pre>
-            </div>
-
-            <div class="card stack-sm">
-              <div class="row-between">
-                <h3>Humanize checklist</h3>
-                <span class="text-xs text-muted">${checks.filter((c) => c.ok).length}/${checks.length}</span>
-              </div>
-              <ul class="checklist">
-                ${checks.map((c) => `<li>
-                  <span class="${c.ok ? 'pass' : 'fail'}">${c.ok ? '✓' : '○'}</span>
-                  <span class="${c.ok ? '' : 'item-fail'}">${c.label}</span>
-                </li>`).join('')}
-              </ul>
-            </div>
-
-            ${warn.length ? `<div style="background: var(--warning-soft); border: 1px solid var(--warning); border-radius: var(--r-sm); padding: 12px; font-size: 13px; color: var(--warning)">
-              <strong>Anti-AI filter:</strong> ${warn.join(', ')}
-            </div>` : ''}
-
-            <div class="row">
-              <button class="btn btn-primary flex-1">Zapisz w bibliotece</button>
-              <button class="btn btn-secondary">Regeneruj</button>
-            </div>
-          `;
-        }
-
-        show(0);
-        r.querySelectorAll('.variant-tab').forEach((b) => {
-          b.addEventListener('click', (e) => {
-            r.querySelectorAll('.variant-tab').forEach((x) => x.classList.remove('active'));
-            e.currentTarget.classList.add('active');
-            show(Number(e.currentTarget.dataset.var));
-          });
-        });
-      }
-
-      R.ai = () => {
-        document.getElementById('ai-audience').value = 'mężczyźni 25-50, spawacze z Pruszkowa i Warszawy zachodniej';
-        document.getElementById('ai-brand-name').value = 'Stalmet Pruszków';
-        document.getElementById('ai-brand-oneliner').value = 'Zakład spawalniczy z 14-osobową ekipą, hala na Powstańców 12';
-        document.getElementById('ai-brand-usp').value = 'Dwie zmiany, bez weekendów\nStawka 7 200+ premia\nBrygadzista co tłumaczy raz';
-        document.getElementById('ai-offer').value = 'szukamy spawacza MIG/MAG, hala Bemowo Powstańców 12, dwie zmiany, stawka od 7 200 netto, premia 500/m za wieczorówki, dojazd autobusem 197';
-        document.getElementById('ai-region').value = 'Warszawa Bemowo';
-        document.getElementById('ai-budget').value = '7 200 PLN netto + premia';
-        document.getElementById('ai-contact').value = 'tel. 555-123-456';
-        document.getElementById('ai-cta').value = 'Zostaw numer w komentarzu, oddzwaniam dziś';
-
-        document.getElementById('ai-generate-btn').addEventListener('click', () => {
-          const b = document.getElementById('ai-generate-btn');
-          b.disabled = true;
-          b.textContent = '⏳ Claude generuje...';
-          setTimeout(() => {
-            mockGenerate();
-            b.disabled = false;
-            b.innerHTML = '⚡ Wygeneruj kolejne 3 warianty';
-          }, 1400);
-        });
-      };
-
-      // ====== MODALS + AUTH MOCK ======
-      const openAuth = () => document.getElementById('auth-modal').classList.add('open');
-      const openSetup = () => document.getElementById('setup-modal').classList.add('open');
-      document.querySelectorAll('[data-close]').forEach((b) => b.addEventListener('click', () => {
-        document.querySelectorAll('.modal-backdrop').forEach((m) => m.classList.remove('open'));
-      }));
-      document.querySelectorAll('.modal-backdrop').forEach((m) => {
-        m.addEventListener('click', (e) => {
-          if (e.target === m) m.classList.remove('open');
-        });
-      });
-      document.getElementById('open-setup').addEventListener('click', openSetup);
-      document.getElementById('auth-btn').addEventListener('click', openAuth);
-      document.getElementById('mobile-toggle').addEventListener('click', () => {
-        document.getElementById('nav').classList.toggle('open');
-      });
-
-      document.getElementById('auth-send').addEventListener('click', () => {
-        const email = document.getElementById('auth-email').value.trim();
-        const err = document.getElementById('auth-error');
-        err.classList.add('hidden');
-        if (!email || !email.includes('@')) {
-          err.textContent = 'Podaj prawidłowy email.';
-          err.classList.remove('hidden');
-          return;
-        }
-        // Mock login — symulujemy zalogowanego usera
-        document.getElementById('auth-idle').classList.add('hidden');
-        document.getElementById('auth-sent').classList.remove('hidden');
-        document.getElementById('auth-sent-email').textContent = email;
-        setTimeout(() => {
-          document.getElementById('auth-modal').classList.remove('open');
-          // "zaloguj" usera w UI
-          document.getElementById('auth-btn').classList.add('hidden');
-          const chip = document.getElementById('user-chip');
-          chip.classList.remove('hidden');
-          document.getElementById('user-initials').textContent = email.slice(0, 2).toUpperCase();
-          document.getElementById('user-initials').title = email;
-          const g = document.getElementById('greeting');
-          if (g) g.innerHTML = 'Cześć <strong style="color: var(--text)">' + email + '</strong> 👋 — demo, fake dane.';
-          // reset modalu na następny raz
-          document.getElementById('auth-idle').classList.remove('hidden');
-          document.getElementById('auth-sent').classList.add('hidden');
-          document.getElementById('auth-email').value = '';
-        }, 1200);
-      });
-      document.getElementById('logout-btn').addEventListener('click', () => {
-        document.getElementById('user-chip').classList.add('hidden');
-        document.getElementById('auth-btn').classList.remove('hidden');
-        const g = document.getElementById('greeting');
-        if (g) g.innerHTML = 'Cześć 👋 — podgląd UI z fake danymi.';
-      });
-
-      // ====== BANNER ======
-      function setBanner() {
-        const b = document.getElementById('status-banner');
-        b.className = 'banner';
-        b.innerHTML = '🧪 <strong>Demo mode</strong> — klikalny prototyp UI z fake danymi. <button id="banner-setup">Jak uruchomić prawdziwą apkę →</button>';
-        document.getElementById('banner-setup').addEventListener('click', openSetup);
-      }
-
-      // ====== INIT ======
-      try {
-        // Ukryj no-js warning bo JS działa
-        var njw = document.getElementById('no-js-warning');
-        if (njw) njw.style.display = 'none';
-
-        window.addEventListener('hashchange', route);
-        route();
-        setBanner();
-      } catch (err) {
-        const v = document.getElementById('view');
-        if (v) {
-          v.innerHTML = '<div class="card" style="border-color: var(--danger); background: var(--danger-soft); color: var(--text)">' +
-            '<h2 style="margin-bottom: 8px">Błąd ładowania demo</h2>' +
-            '<p class="text-sm" style="margin-bottom: 12px">Twoja przeglądarka odrzuciła skrypt. Najczęściej: stare iOS Safari (<16.4) nie obsługuje regex lookbehind. Spróbuj zaktualizować system lub otworzyć w Chrome.</p>' +
-            '<pre class="post-preview" style="font-size: 11px">' + String(err && err.message || err).replace(/</g, '&lt;') + '</pre>' +
-            '</div>';
-        }
-        const b = document.getElementById('status-banner');
-        if (b) { b.className = 'banner err'; b.innerHTML = '✗ Błąd inicjalizacji JS'; }
-      }
-    </script>
-    <noscript>
-      <div style="padding: 40px 20px; text-align: center; color: var(--muted)">
-        Ten prototyp wymaga JavaScript. Włącz JS i odśwież.
-      </div>
-    </noscript>
+      </section>
+    </main>
   </body>
 </html>
