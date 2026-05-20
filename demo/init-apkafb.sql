@@ -56,9 +56,12 @@ create index if not exists idx_publications_device_posted on public.publications
 create index if not exists idx_publications_status on public.publications (device_id, status);
 create index if not exists idx_publications_group on public.publications (fb_group_id);
 
--- Trigger updated_at
+-- Trigger updated_at (pinned search_path)
 create or replace function public.set_updated_at()
-returns trigger language plpgsql as $$
+returns trigger
+language plpgsql
+set search_path = ''
+as $$
 begin new.updated_at = now(); return new; end;
 $$;
 
@@ -114,8 +117,8 @@ create policy "anon eng" on public.engagement for all to anon using (true) with 
 drop policy if exists "anon activity" on public.activity_log;
 create policy "anon activity" on public.activity_log for all to anon using (true) with check (true);
 
--- 7. ANALYTICS VIEWS — pod dashboard
-create or replace view public.v_publications_per_day as
+-- 7. ANALYTICS VIEWS — pod dashboard (security_invoker = respektuje RLS)
+create or replace view public.v_publications_per_day with (security_invoker = true) as
 select device_id,
        date_trunc('day', posted_at)::date as day,
        count(*) filter (where status = 'posted') as posted,
@@ -125,7 +128,7 @@ from public.publications
 where posted_at is not null
 group by device_id, date_trunc('day', posted_at)::date;
 
-create or replace view public.v_publications_per_hour as
+create or replace view public.v_publications_per_hour with (security_invoker = true) as
 select device_id,
        extract(dow from posted_at)::int as day_of_week,    -- 0=niedz, 1=pon, ...
        extract(hour from posted_at)::int as hour_of_day,
@@ -134,7 +137,7 @@ from public.publications
 where posted_at is not null
 group by device_id, extract(dow from posted_at)::int, extract(hour from posted_at)::int;
 
-create or replace view public.v_top_groups as
+create or replace view public.v_top_groups with (security_invoker = true) as
 select p.device_id,
        p.fb_group_id,
        max(p.group_name) as group_name,
@@ -154,7 +157,7 @@ left join lateral (
 ) e on true
 group by p.device_id, p.fb_group_id;
 
-create or replace view public.v_dashboard_stats as
+create or replace view public.v_dashboard_stats with (security_invoker = true) as
 select d.id as device_id,
        (select count(*) from public.imported_groups g where g.device_id = d.id and g.is_active) as active_groups,
        (select count(*) from public.imported_groups g where g.device_id = d.id) as total_groups,

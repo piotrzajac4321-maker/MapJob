@@ -7,7 +7,6 @@ import {
   upsertGroups,
   getPosts,
   savePost,
-  getCampaigns,
   saveCampaign,
   saveTargets,
   getTargets,
@@ -16,8 +15,6 @@ import {
   setSettings,
   logActivity,
   getDeviceId,
-  type FBGroup,
-  type PostTemplate,
   type Campaign,
   type CampaignTarget,
   type ActivityEvent,
@@ -240,7 +237,7 @@ $('new-post').addEventListener('click', () => {
 });
 
 // ============ CAMPAIGNS ============
-let selectedGroupIds = new Set<string>();
+const selectedGroupIds = new Set<string>();
 
 async function refreshCampTab(): Promise<void> {
   const [posts, groups] = await Promise.all([getPosts(), getGroups()]);

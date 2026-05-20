@@ -16,7 +16,7 @@ const PUBLISH_TIMEOUT_MS = 120_000; // 2 minuty
 let publishObserver: MutationObserver | null = null;
 let dialogPresent = false;
 let watchStartedAt = 0;
-let currentTargetId: string | null = null;
+let _currentTargetId: string | null = null;
 
 function detectLoginRequired(): boolean {
   if (location.href.includes('/login/')) return true;
@@ -39,14 +39,14 @@ function findFbPostUrl(): string | undefined {
 function stopWatch(): void {
   publishObserver?.disconnect();
   publishObserver = null;
-  currentTargetId = null;
+  _currentTargetId = null;
   dialogPresent = false;
 }
 
 function startPublishWatch(targetId: string): void {
   if (publishObserver) stopWatch();
   watchStartedAt = Date.now();
-  currentTargetId = targetId;
+  _currentTargetId = targetId;
   console.log('[MapJob detect] Start watch dla target', targetId);
 
   let resolved = false;
@@ -137,15 +137,20 @@ async function scrapeEngagement(fbPostUrl: string): Promise<{ reactions: number;
 
   const text = document.body.textContent ?? '';
 
-  // Reactions: szukaj patternów typu "Anna Kowalska, Marek Nowak i 23 osoby"
-  // albo "47 reakcji" / "47 reactions"
+  // Reactions — wiele wariantów FB:
+  //  • "47 reakcji" / "47 polubień" / "12 reactions" / "8 likes"
+  //  • "Anna i 23 inne osoby polubiły" (FB tak pisze gdy >2 reakcji)
+  //  • "John and 5 others"
   let reactions = 0;
-  const reactMatch = text.match(/([\d\s]+)\s*(reakcj|reakcji|reactions|likes|polubien|polubień)/i);
-  if (reactMatch) reactions = parseInt(reactMatch[1]!.replace(/\s/g, ''), 10) || 0;
-  // alternative: "i 23 osoby" / "and 23 others"
+  const direct = text.match(/(\d[\d\s]{0,8})\s*(?:reakcj\w*|reactions|likes|polubie[nń]|polubie[nń]ia)/i);
+  if (direct) reactions = parseInt(direct[1]!.replace(/\s/g, ''), 10) || 0;
   if (reactions === 0) {
-    const others = text.match(/i\s+(\d+)\s+(osob|innych|other|people)/i) ||
-                   text.match(/and\s+(\d+)\s+others/i);
+    // "X osób polubiło" lub "X inne osoby polubiły"
+    const indirect = text.match(/(\d+)\s+(?:inn\w+\s+)?(?:osob\w*|innych|other|people)\s+polubi\w*/i);
+    if (indirect) reactions = parseInt(indirect[1]!, 10) || 0;
+  }
+  if (reactions === 0) {
+    const others = text.match(/(?:i|and)\s+(\d+)\s+(?:inn\w+|other\w*|osob\w*|people)/i);
     if (others) reactions = parseInt(others[1]!, 10) || 0;
   }
 
