@@ -3,690 +3,2199 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-    <meta name="theme-color" content="#0a1628" />
-    <title>MapJob FB Poster — demo v6</title>
+    <meta name="theme-color" content="#0a0e1a" />
+    <title>MapJob FB Poster</title>
     <style>
+      /* ============ DESIGN TOKENS ============ */
       :root {
-        --bg: #0a1628; --bg-2: #0f1e36; --card: #131f3a; --card-2: #1a2847;
-        --border: #1f2f52; --border-2: #2a3f6b;
-        --text: #e5edf9; --muted: #94a3b8; --muted-2: #64748b;
-        --primary: #3b82f6; --primary-hover: #2563eb; --primary-light: #60a5fa;
-        --primary-soft: rgba(59, 130, 246, 0.14); --primary-glow: rgba(59, 130, 246, 0.4);
-        --success: #10b981; --success-soft: rgba(16, 185, 129, 0.14);
-        --warning: #f59e0b; --warning-soft: rgba(245, 158, 11, 0.14);
-        --danger: #ef4444; --danger-soft: rgba(239, 68, 68, 0.14);
-        --r: 10px; --r-sm: 6px;
-        --shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+        --bg: #0a0e1a;
+        --bg-elevated: #0e1421;
+        --surface: #131a2b;
+        --surface-2: #1a2238;
+        --surface-3: #232d47;
+        --border: #1f2940;
+        --border-strong: #2a3656;
+        --border-subtle: #161e30;
+
+        --text: #f1f5f9;
+        --text-2: #cbd5e1;
+        --muted: #94a3b8;
+        --muted-2: #64748b;
+        --muted-3: #475569;
+
+        --primary: #3b82f6;
+        --primary-hover: #2563eb;
+        --primary-light: #60a5fa;
+        --primary-soft: rgba(59, 130, 246, 0.12);
+        --primary-soft-2: rgba(59, 130, 246, 0.18);
+        --primary-glow: rgba(59, 130, 246, 0.35);
+
+        --success: #22c55e;
+        --success-soft: rgba(34, 197, 94, 0.12);
+        --warning: #f59e0b;
+        --warning-soft: rgba(245, 158, 11, 0.12);
+        --danger: #ef4444;
+        --danger-soft: rgba(239, 68, 68, 0.12);
+        --info: #06b6d4;
+        --info-soft: rgba(6, 182, 212, 0.12);
+        --violet: #8b5cf6;
+        --violet-soft: rgba(139, 92, 246, 0.12);
+
+        --r-xs: 4px;
+        --r-sm: 6px;
+        --r-md: 8px;
+        --r-lg: 12px;
+        --r-xl: 16px;
+
+        --shadow-sm: 0 1px 2px rgba(0,0,0,0.4);
+        --shadow-md: 0 4px 16px rgba(0,0,0,0.3);
+        --shadow-lg: 0 16px 48px rgba(0,0,0,0.5);
+        --shadow-glow: 0 8px 32px rgba(59, 130, 246, 0.25);
+
         --gradient: linear-gradient(135deg, #3b82f6 0%, #60a5fa 100%);
-      }
-      *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-      body{
-        font-family:-apple-system,BlinkMacSystemFont,'Inter','Segoe UI',Roboto,system-ui,sans-serif;
-        font-size:15px;line-height:1.5;color:var(--text);background:var(--bg);
-        background-image:radial-gradient(ellipse 1200px 600px at top,rgba(59,130,246,.08),transparent 60%);
-        background-attachment:fixed;-webkit-font-smoothing:antialiased;min-height:100vh;
-      }
-      a{color:var(--primary-light);text-decoration:none}
-      a:hover{color:var(--primary)}
-      code,pre{font-family:ui-monospace,'SF Mono',Monaco,monospace;font-size:12.5px}
-      code{background:var(--bg-2);padding:1px 6px;border-radius:4px;color:#93c5fd}
-      pre{white-space:pre-wrap;word-break:break-word}
+        --gradient-strong: linear-gradient(135deg, #2563eb 0%, #3b82f6 50%, #60a5fa 100%);
+        --gradient-violet: linear-gradient(135deg, #8b5cf6 0%, #a78bfa 100%);
+        --gradient-success: linear-gradient(135deg, #16a34a 0%, #22c55e 100%);
 
-      /* ====== Routing via radio :checked ====== */
-      .route-radio { position: absolute; opacity: 0; pointer-events: none; }
-      .view { display: none; }
-      #r-dashboard:checked ~ main .v-dashboard,
-      #r-posts:checked     ~ main .v-posts,
-      #r-ai:checked        ~ main .v-ai,
-      #r-groups:checked    ~ main .v-groups,
-      #r-campaigns:checked ~ main .v-campaigns,
-      #r-analytics:checked ~ main .v-analytics { display: block; }
-
-      /* Active label highlighting */
-      .nav-label {
-        padding: 7px 14px; border-radius: var(--r-sm);
-        font-size: 14px; color: var(--muted);
-        cursor: pointer; white-space: nowrap; transition: all .15s;
-        display: inline-block; line-height: 1.4;
-        -webkit-tap-highlight-color: transparent;
-      }
-      .nav-label:hover { background: var(--card-2); color: var(--text); }
-      #r-dashboard:checked ~ header label[for="r-dashboard"],
-      #r-posts:checked     ~ header label[for="r-posts"],
-      #r-ai:checked        ~ header label[for="r-ai"],
-      #r-groups:checked    ~ header label[for="r-groups"],
-      #r-campaigns:checked ~ header label[for="r-campaigns"],
-      #r-analytics:checked ~ header label[for="r-analytics"] {
-        background: var(--primary-soft); color: var(--primary-light);
+        --sidebar-w: 248px;
       }
 
-      /* ====== Mobile nav toggle (checkbox) ====== */
-      #menu-toggle { position: absolute; opacity: 0; pointer-events: none; }
-      .menu-toggle-label { display: none; padding: 6px 10px; cursor: pointer; }
+      *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-      /* ====== HEADER ====== */
-      header {
-        position: sticky; top: 0; z-index: 30;
-        background: rgba(10, 22, 40, 0.92);
-        -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px);
-        border-bottom: 1px solid var(--border);
-      }
-      .header-inner {
-        max-width: 1280px; margin: 0 auto;
-        padding: 0 16px; height: 56px;
-        display: flex; align-items: center; justify-content: space-between; gap: 12px;
-      }
-      .logo { display: flex; align-items: center; gap: 10px; font-weight: 600; color: var(--text); }
-      .logo-mark {
-        width: 30px; height: 30px;
-        background: var(--gradient); border-radius: 8px;
-        display: flex; align-items: center; justify-content: center;
-        color: white; font-weight: 700;
-        box-shadow: 0 4px 14px var(--primary-glow);
-      }
-      .nav { display: flex; align-items: center; gap: 2px; flex: 1; justify-content: center; }
-      .header-actions { display: flex; align-items: center; gap: 6px; }
-
-      /* ====== BUTTONS ====== */
-      .btn {
-        display: inline-flex; align-items: center; justify-content: center; gap: 6px;
-        padding: 9px 16px; border-radius: var(--r-sm);
-        font-size: 14px; font-weight: 500;
-        border: 1px solid transparent; white-space: nowrap;
-        text-decoration: none; cursor: pointer;
-        -webkit-tap-highlight-color: transparent;
-      }
-      .btn-primary {
-        background: var(--gradient); color: white;
-        box-shadow: 0 2px 10px var(--primary-glow);
-      }
-      .btn-secondary { background: var(--card); border-color: var(--border); color: var(--text); }
-      .btn-secondary:hover { background: var(--card-2); }
-      .btn-ghost { color: var(--muted); }
-      .btn-ghost:hover { color: var(--text); }
-      .btn-sm { padding: 6px 11px; font-size: 13px; }
-
-      /* ====== MAIN ====== */
-      main { max-width: 1280px; margin: 0 auto; padding: 28px 16px; }
-      h1 { font-size: 28px; font-weight: 700; letter-spacing: -0.02em; }
-      h2 { font-size: 18px; font-weight: 600; }
-      h3 { font-size: 15px; font-weight: 600; }
-      .text-muted { color: var(--muted); }
-      .text-sm { font-size: 13px; }
-      .text-xs { font-size: 12px; }
-      .gradient-text { background: var(--gradient); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
-
-      /* ====== CARDS ====== */
-      .card {
-        background: var(--card); border: 1px solid var(--border);
-        border-radius: var(--r); padding: 20px;
-      }
-      .stat {
-        background: linear-gradient(135deg, var(--card) 0%, var(--bg-2) 100%);
-        border: 1px solid var(--border); border-radius: var(--r);
-        padding: 18px; position: relative; overflow: hidden;
-      }
-      .stat-label { color: var(--muted); font-size: 12px; }
-      .stat-value { font-size: 30px; font-weight: 700; margin-top: 4px; letter-spacing: -0.02em; }
-      .stat-delta { font-size: 12px; margin-top: 6px; color: var(--success); }
-      .stat-delta.neutral { color: var(--muted); }
-
-      /* ====== LAYOUTS ====== */
-      .row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
-      .row-between { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
-      .stack { display: flex; flex-direction: column; gap: 20px; }
-      .stack-sm { display: flex; flex-direction: column; gap: 8px; }
-      .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
-      .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
-      .grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
-
-      @media (max-width: 768px) {
-        .grid-4 { grid-template-columns: repeat(2, 1fr); gap: 10px; }
-        .grid-3 { grid-template-columns: 1fr; gap: 10px; }
-        .grid-2 { grid-template-columns: 1fr; gap: 14px; }
-        h1 { font-size: 22px; }
-        h2 { font-size: 16px; }
-        main { padding: 16px 12px; }
-        .stat-value { font-size: 24px; }
-        .stat { padding: 14px; }
+      body {
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, system-ui, sans-serif;
+        font-size: 14px;
+        line-height: 1.5;
+        color: var(--text);
+        background: var(--bg);
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        min-height: 100vh;
+        font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+        letter-spacing: -0.005em;
       }
 
-      /* ====== TABLE ====== */
-      .table-wrap {
-        background: var(--card); border: 1px solid var(--border);
-        border-radius: var(--r); overflow: hidden; overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
-      }
-      table { width: 100%; border-collapse: collapse; font-size: 13.5px; min-width: 600px; }
-      thead { background: var(--bg-2); }
-      th {
-        text-align: left; padding: 10px 14px;
-        font-size: 11px; font-weight: 600;
-        text-transform: uppercase; letter-spacing: 0.06em;
-        color: var(--muted); border-bottom: 1px solid var(--border);
-        white-space: nowrap;
-      }
-      td { padding: 12px 14px; border-bottom: 1px solid var(--border); }
-      tr:last-child td { border-bottom: 0; }
-      th.right, td.right { text-align: right; }
+      a { color: var(--primary-light); text-decoration: none; transition: color 0.15s; }
+      a:hover { color: var(--primary); }
+      button { font: inherit; cursor: pointer; border: 0; background: none; color: inherit; }
+      code, pre, .mono { font-family: 'JetBrains Mono', ui-monospace, 'SF Mono', Monaco, Consolas, monospace; font-size: 12.5px; }
+      code { background: var(--surface-2); padding: 2px 6px; border-radius: var(--r-xs); color: #93c5fd; font-size: 0.92em; }
+      pre { white-space: pre-wrap; word-break: break-word; }
 
-      /* ====== BADGES ====== */
-      .badge {
-        display: inline-flex; align-items: center;
-        padding: 3px 9px; border-radius: 999px;
-        font-size: 11px; font-weight: 500; line-height: 1.5;
-        white-space: nowrap;
-      }
-      .badge-primary { background: var(--primary-soft); color: var(--primary-light); }
-      .badge-success { background: var(--success-soft); color: var(--success); }
-      .badge-warning { background: var(--warning-soft); color: var(--warning); }
-      .badge-danger  { background: var(--danger-soft); color: var(--danger); }
-      .badge-muted   { background: var(--bg-2); color: var(--muted); }
-
-      /* ====== AVATAR / CHIP ====== */
-      .avatar {
-        width: 30px; height: 30px; border-radius: 999px;
-        background: var(--gradient); color: white;
-        display: inline-flex; align-items: center; justify-content: center;
-        font-weight: 600; font-size: 12px;
-      }
-
-      /* ====== AI GENERATOR ====== */
       input, select, textarea {
-        font: inherit; font-size: 14px; color: var(--text);
-        background: var(--bg-2); border: 1px solid var(--border);
-        border-radius: var(--r-sm); padding: 10px 12px; width: 100%;
-        outline: 0; -webkit-appearance: none; appearance: none;
+        font: inherit; font-size: 13.5px; color: var(--text);
+        background: var(--surface);
+        border: 1px solid var(--border-strong);
+        border-radius: var(--r-md);
+        padding: 9px 12px; width: 100%;
+        outline: 0; transition: all 0.15s;
+        -webkit-appearance: none; appearance: none;
       }
       input:focus, select:focus, textarea:focus {
         border-color: var(--primary);
         box-shadow: 0 0 0 3px var(--primary-soft);
+        background: var(--bg-elevated);
       }
-      fieldset { border: 1px solid var(--border); border-radius: var(--r-sm); padding: 14px; display: flex; flex-direction: column; gap: 10px; min-width: 0; }
-      legend { padding: 0 8px; font-size: 12px; color: var(--muted); }
-      .form-group { display: flex; flex-direction: column; gap: 6px; }
-      .form-label { font-size: 12.5px; font-weight: 500; color: var(--muted); }
+      input::placeholder, textarea::placeholder { color: var(--muted-2); }
 
-      .post-preview {
-        background: var(--bg-2); border: 1px solid var(--border);
-        border-radius: var(--r-sm); padding: 14px;
-        font-family: -apple-system, BlinkMacSystemFont, sans-serif;
-        font-size: 14px; white-space: pre-wrap; line-height: 1.55;
-      }
-      .human-score { font-weight: 600; font-size: 14px; }
-      .human-score.good { color: var(--success); }
-      .human-score.mid { color: var(--warning); }
-      .checklist { list-style: none; padding: 0; }
-      .checklist li { display: flex; gap: 10px; padding: 5px 0; font-size: 13px; }
-      .checklist .pass { color: var(--success); flex-shrink: 0; }
-      .checklist .fail { color: var(--muted-2); flex-shrink: 0; }
+      /* ============ ROUTING ============ */
+      .route-radio { position: absolute; opacity: 0; pointer-events: none; }
+      .view { display: none; animation: fadeIn 0.2s ease-out; }
+      @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
 
-      /* Variant tabs przez :checked */
-      .vr { position: absolute; opacity: 0; pointer-events: none; }
-      .v-tabs { display: flex; gap: 6px; flex-wrap: wrap; }
-      .v-tab {
-        flex: 1 1 100px; padding: 9px 12px;
-        border-radius: var(--r-sm); border: 1px solid var(--border);
-        background: var(--card); cursor: pointer; font-size: 13px;
-        text-align: center;
+      #r-dashboard:checked ~ .app .v-dashboard,
+      #r-posts:checked     ~ .app .v-posts,
+      #r-composer:checked  ~ .app .v-composer,
+      #r-ai:checked        ~ .app .v-ai,
+      #r-groups:checked    ~ .app .v-groups,
+      #r-campaigns:checked ~ .app .v-campaigns,
+      #r-campaign-detail:checked ~ .app .v-campaign-detail,
+      #r-analytics:checked ~ .app .v-analytics,
+      #r-team:checked      ~ .app .v-team,
+      #r-settings:checked  ~ .app .v-settings,
+      #r-extension:checked ~ .app .v-extension { display: block; }
+
+      /* Active nav item */
+      .nav-item {
+        display: flex; align-items: center; gap: 12px;
+        padding: 9px 12px;
+        border-radius: var(--r-md);
+        font-size: 13.5px; font-weight: 500;
+        color: var(--muted);
+        cursor: pointer;
+        transition: all 0.15s;
+        position: relative;
         -webkit-tap-highlight-color: transparent;
       }
-      .v-tab .sub { display: block; font-size: 11px; opacity: 0.85; margin-top: 2px; }
+      .nav-item:hover { background: var(--surface); color: var(--text); }
+      .nav-item .nav-icon { width: 18px; height: 18px; flex-shrink: 0; opacity: 0.85; }
+      .nav-item .nav-badge {
+        margin-left: auto;
+        background: var(--surface-2);
+        color: var(--muted);
+        font-size: 11px;
+        padding: 1px 7px;
+        border-radius: 999px;
+        font-weight: 600;
+      }
+      .nav-item .nav-badge.active { background: var(--primary); color: white; }
+
+      #r-dashboard:checked ~ .app .nav-item[for="r-dashboard"],
+      #r-posts:checked     ~ .app .nav-item[for="r-posts"],
+      #r-composer:checked  ~ .app .nav-item[for="r-composer"],
+      #r-ai:checked        ~ .app .nav-item[for="r-ai"],
+      #r-groups:checked    ~ .app .nav-item[for="r-groups"],
+      #r-campaigns:checked ~ .app .nav-item[for="r-campaigns"],
+      #r-campaign-detail:checked ~ .app .nav-item[for="r-campaign-detail"],
+      #r-analytics:checked ~ .app .nav-item[for="r-analytics"],
+      #r-team:checked      ~ .app .nav-item[for="r-team"],
+      #r-settings:checked  ~ .app .nav-item[for="r-settings"],
+      #r-extension:checked ~ .app .nav-item[for="r-extension"] {
+        background: var(--primary-soft);
+        color: var(--primary-light);
+      }
+      #r-dashboard:checked ~ .app .nav-item[for="r-dashboard"] .nav-icon,
+      #r-posts:checked     ~ .app .nav-item[for="r-posts"] .nav-icon,
+      #r-composer:checked  ~ .app .nav-item[for="r-composer"] .nav-icon,
+      #r-ai:checked        ~ .app .nav-item[for="r-ai"] .nav-icon,
+      #r-groups:checked    ~ .app .nav-item[for="r-groups"] .nav-icon,
+      #r-campaigns:checked ~ .app .nav-item[for="r-campaigns"] .nav-icon,
+      #r-campaign-detail:checked ~ .app .nav-item[for="r-campaign-detail"] .nav-icon,
+      #r-analytics:checked ~ .app .nav-item[for="r-analytics"] .nav-icon,
+      #r-team:checked      ~ .app .nav-item[for="r-team"] .nav-icon,
+      #r-settings:checked  ~ .app .nav-item[for="r-settings"] .nav-icon,
+      #r-extension:checked ~ .app .nav-item[for="r-extension"] .nav-icon { opacity: 1; }
+
+      /* Mobile sidebar toggle */
+      #sidebar-toggle { position: absolute; opacity: 0; pointer-events: none; }
+
+      /* ============ LAYOUT ============ */
+      .app {
+        display: grid;
+        grid-template-columns: var(--sidebar-w) 1fr;
+        min-height: 100vh;
+      }
+
+      /* ============ SIDEBAR ============ */
+      .sidebar {
+        background: var(--bg-elevated);
+        border-right: 1px solid var(--border);
+        display: flex;
+        flex-direction: column;
+        position: sticky;
+        top: 0;
+        height: 100vh;
+        overflow-y: auto;
+      }
+      .sidebar-header {
+        padding: 18px 16px 14px;
+        display: flex; align-items: center; gap: 10px;
+        border-bottom: 1px solid var(--border-subtle);
+      }
+      .logo-mark {
+        width: 32px; height: 32px;
+        background: var(--gradient-strong);
+        border-radius: var(--r-md);
+        display: flex; align-items: center; justify-content: center;
+        color: white; font-weight: 700; font-size: 14px;
+        box-shadow: var(--shadow-glow);
+        flex-shrink: 0;
+      }
+      .logo-text { display: flex; flex-direction: column; line-height: 1.15; min-width: 0; }
+      .logo-name { font-size: 14px; font-weight: 600; color: var(--text); }
+      .logo-org { font-size: 11px; color: var(--muted); }
+
+      .org-switcher {
+        margin: 10px 12px;
+        padding: 9px 12px;
+        background: var(--surface);
+        border: 1px solid var(--border-strong);
+        border-radius: var(--r-md);
+        display: flex; align-items: center; gap: 10px;
+        font-size: 13px;
+        cursor: pointer;
+        transition: all 0.15s;
+      }
+      .org-switcher:hover { background: var(--surface-2); border-color: var(--border-strong); }
+      .org-avatar {
+        width: 24px; height: 24px;
+        background: var(--gradient-violet);
+        border-radius: var(--r-sm);
+        display: flex; align-items: center; justify-content: center;
+        color: white; font-weight: 700; font-size: 11px;
+        flex-shrink: 0;
+      }
+      .org-info { flex: 1; min-width: 0; }
+      .org-info-name { font-weight: 600; color: var(--text); font-size: 13px; }
+      .org-info-plan { font-size: 11px; color: var(--muted); }
+
+      .nav-section {
+        padding: 8px 12px;
+        display: flex; flex-direction: column; gap: 2px;
+      }
+      .nav-section-label {
+        font-size: 10.5px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: var(--muted-2);
+        padding: 12px 12px 6px;
+      }
+
+      .sidebar-footer {
+        margin-top: auto;
+        padding: 12px;
+        border-top: 1px solid var(--border-subtle);
+      }
+      .user-card {
+        display: flex; align-items: center; gap: 10px;
+        padding: 8px;
+        border-radius: var(--r-md);
+        cursor: pointer;
+        transition: background 0.15s;
+      }
+      .user-card:hover { background: var(--surface); }
+      .user-avatar {
+        width: 32px; height: 32px;
+        background: var(--gradient);
+        border-radius: 999px;
+        display: flex; align-items: center; justify-content: center;
+        color: white; font-weight: 600; font-size: 12px;
+        flex-shrink: 0;
+      }
+      .user-info { flex: 1; min-width: 0; }
+      .user-name { font-size: 13px; font-weight: 600; color: var(--text); }
+      .user-email { font-size: 11px; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+      /* ============ MAIN ============ */
+      .main {
+        display: flex;
+        flex-direction: column;
+        min-width: 0;
+        background: var(--bg);
+      }
+
+      /* ============ TOP BAR ============ */
+      .topbar {
+        position: sticky;
+        top: 0;
+        z-index: 20;
+        background: rgba(10, 14, 26, 0.85);
+        -webkit-backdrop-filter: blur(16px);
+        backdrop-filter: blur(16px);
+        border-bottom: 1px solid var(--border);
+        padding: 0 28px;
+        height: 60px;
+        display: flex;
+        align-items: center;
+        gap: 16px;
+      }
+      .sidebar-toggle-btn {
+        display: none;
+        width: 36px; height: 36px;
+        align-items: center; justify-content: center;
+        border-radius: var(--r-md);
+        color: var(--muted);
+        cursor: pointer;
+      }
+      .sidebar-toggle-btn:hover { background: var(--surface); color: var(--text); }
+
+      .breadcrumb {
+        font-size: 13px; color: var(--muted);
+        display: flex; align-items: center; gap: 8px;
+      }
+      .breadcrumb .crumb-active { color: var(--text); font-weight: 500; }
+      .breadcrumb svg { width: 14px; height: 14px; }
+
+      .search-box {
+        position: relative;
+        flex: 1;
+        max-width: 480px;
+      }
+      .search-box input {
+        padding-left: 36px;
+        padding-right: 64px;
+        background: var(--surface);
+        font-size: 13px;
+      }
+      .search-icon {
+        position: absolute;
+        left: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 14px; height: 14px;
+        color: var(--muted-2);
+        pointer-events: none;
+      }
+      .search-shortcut {
+        position: absolute;
+        right: 8px;
+        top: 50%;
+        transform: translateY(-50%);
+        background: var(--surface-2);
+        border: 1px solid var(--border-strong);
+        border-radius: var(--r-xs);
+        padding: 1px 5px;
+        font-size: 10.5px;
+        color: var(--muted);
+        font-family: ui-monospace, monospace;
+      }
+
+      .topbar-actions {
+        display: flex; align-items: center; gap: 6px;
+        margin-left: auto;
+      }
+      .icon-btn {
+        width: 36px; height: 36px;
+        display: flex; align-items: center; justify-content: center;
+        border-radius: var(--r-md);
+        color: var(--muted);
+        position: relative;
+        transition: all 0.15s;
+        cursor: pointer;
+      }
+      .icon-btn:hover { background: var(--surface); color: var(--text); }
+      .icon-btn svg { width: 18px; height: 18px; }
+      .icon-btn-badge {
+        position: absolute;
+        top: 6px; right: 6px;
+        width: 8px; height: 8px;
+        background: var(--danger);
+        border-radius: 999px;
+        border: 2px solid var(--bg);
+      }
+
+      /* ============ CONTENT ============ */
+      .content {
+        padding: 28px 28px 60px;
+        max-width: 1400px;
+        width: 100%;
+      }
+      .page-header {
+        display: flex; align-items: start; justify-content: space-between;
+        gap: 16px;
+        margin-bottom: 24px;
+        flex-wrap: wrap;
+      }
+      .page-title { font-size: 24px; font-weight: 700; letter-spacing: -0.02em; }
+      .page-subtitle { font-size: 13.5px; color: var(--muted); margin-top: 4px; }
+      .page-actions { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+
+      /* ============ BUTTONS ============ */
+      .btn {
+        display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+        padding: 8px 14px;
+        border-radius: var(--r-md);
+        font-size: 13px; font-weight: 500;
+        transition: all 0.15s;
+        border: 1px solid transparent;
+        white-space: nowrap;
+        line-height: 1.4;
+        cursor: pointer;
+        -webkit-tap-highlight-color: transparent;
+      }
+      .btn svg { width: 14px; height: 14px; flex-shrink: 0; }
+      .btn-primary {
+        background: var(--gradient);
+        color: white;
+        box-shadow: 0 1px 2px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.15);
+      }
+      .btn-primary:hover { background: var(--gradient-strong); box-shadow: var(--shadow-glow); }
+      .btn-secondary {
+        background: var(--surface);
+        border-color: var(--border-strong);
+        color: var(--text);
+      }
+      .btn-secondary:hover { background: var(--surface-2); border-color: var(--border-strong); }
+      .btn-ghost { color: var(--muted); }
+      .btn-ghost:hover { background: var(--surface); color: var(--text); }
+      .btn-danger {
+        background: var(--danger-soft);
+        color: var(--danger);
+        border-color: var(--danger-soft);
+      }
+      .btn-danger:hover { background: var(--danger); color: white; }
+      .btn-sm { padding: 5px 10px; font-size: 12px; }
+      .btn-sm svg { width: 12px; height: 12px; }
+      .btn-lg { padding: 10px 18px; font-size: 14px; }
+
+      /* ============ CARDS ============ */
+      .card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--r-lg);
+        padding: 20px;
+        transition: border-color 0.15s;
+      }
+      .card-elevated {
+        background: linear-gradient(180deg, var(--surface) 0%, var(--bg-elevated) 100%);
+        border: 1px solid var(--border);
+        border-radius: var(--r-lg);
+        padding: 20px;
+        position: relative;
+        overflow: hidden;
+      }
+      .card-elevated::before {
+        content: '';
+        position: absolute;
+        top: 0; left: 0; right: 0; height: 1px;
+        background: linear-gradient(90deg, transparent, var(--border-strong), transparent);
+      }
+      .card-header {
+        display: flex; align-items: center; justify-content: space-between;
+        margin-bottom: 14px;
+        gap: 12px;
+      }
+      .card-title { font-size: 14px; font-weight: 600; color: var(--text); }
+
+      /* Stat card */
+      .stat {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--r-lg);
+        padding: 18px;
+        position: relative;
+        overflow: hidden;
+        transition: all 0.2s;
+      }
+      .stat:hover { border-color: var(--border-strong); transform: translateY(-1px); box-shadow: var(--shadow-md); }
+      .stat-icon-wrap {
+        width: 36px; height: 36px;
+        border-radius: var(--r-md);
+        background: var(--primary-soft);
+        color: var(--primary-light);
+        display: flex; align-items: center; justify-content: center;
+        margin-bottom: 14px;
+      }
+      .stat-icon-wrap.success { background: var(--success-soft); color: var(--success); }
+      .stat-icon-wrap.warning { background: var(--warning-soft); color: var(--warning); }
+      .stat-icon-wrap.violet { background: var(--violet-soft); color: var(--violet); }
+      .stat-icon-wrap svg { width: 18px; height: 18px; }
+      .stat-label { color: var(--muted); font-size: 12px; font-weight: 500; }
+      .stat-value { font-size: 28px; font-weight: 700; margin-top: 2px; letter-spacing: -0.02em; line-height: 1.1; }
+      .stat-delta { font-size: 12px; margin-top: 8px; display: inline-flex; align-items: center; gap: 4px; color: var(--success); font-weight: 500; }
+      .stat-delta svg { width: 12px; height: 12px; }
+      .stat-delta.neutral { color: var(--muted); }
+      .stat-delta.negative { color: var(--danger); }
+
+      /* ============ LAYOUTS ============ */
+      .row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+      .row-between { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+      .stack { display: flex; flex-direction: column; gap: 24px; }
+      .stack-sm { display: flex; flex-direction: column; gap: 8px; }
+      .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+      .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+      .grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
+      .grid-2-3-1 { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; }
+      .grid-1-1-2 { display: grid; grid-template-columns: 1fr 2fr; gap: 20px; }
+
+      /* ============ TABLE ============ */
+      .table-wrap {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--r-lg);
+        overflow: hidden;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+      }
+      table { width: 100%; border-collapse: collapse; font-size: 13px; min-width: 600px; }
+      thead { background: var(--bg-elevated); }
+      th {
+        text-align: left; padding: 11px 16px;
+        font-size: 11px; font-weight: 600;
+        text-transform: uppercase; letter-spacing: 0.05em;
+        color: var(--muted);
+        border-bottom: 1px solid var(--border);
+        white-space: nowrap;
+      }
+      td { padding: 12px 16px; border-bottom: 1px solid var(--border-subtle); vertical-align: middle; }
+      tr:last-child td { border-bottom: 0; }
+      tr:hover td { background: var(--bg-elevated); }
+      th.right, td.right { text-align: right; }
+
+      /* ============ BADGES ============ */
+      .badge {
+        display: inline-flex; align-items: center; gap: 4px;
+        padding: 3px 8px;
+        border-radius: 999px;
+        font-size: 11px; font-weight: 500;
+        line-height: 1.5;
+        white-space: nowrap;
+      }
+      .badge svg { width: 10px; height: 10px; }
+      .badge-primary { background: var(--primary-soft); color: var(--primary-light); }
+      .badge-success { background: var(--success-soft); color: var(--success); }
+      .badge-warning { background: var(--warning-soft); color: var(--warning); }
+      .badge-danger  { background: var(--danger-soft); color: var(--danger); }
+      .badge-info    { background: var(--info-soft); color: var(--info); }
+      .badge-violet  { background: var(--violet-soft); color: var(--violet); }
+      .badge-muted   { background: var(--surface-2); color: var(--muted); }
+      .badge-dot::before {
+        content: ''; width: 6px; height: 6px;
+        border-radius: 999px; background: currentColor;
+        display: inline-block;
+      }
+
+      /* ============ AVATAR ============ */
+      .avatar {
+        width: 28px; height: 28px;
+        border-radius: 999px;
+        background: var(--gradient);
+        color: white;
+        display: inline-flex; align-items: center; justify-content: center;
+        font-weight: 600; font-size: 11px;
+        flex-shrink: 0;
+      }
+      .avatar-lg { width: 40px; height: 40px; font-size: 14px; }
+      .avatar-group { display: flex; }
+      .avatar-group .avatar { border: 2px solid var(--bg); margin-left: -8px; }
+      .avatar-group .avatar:first-child { margin-left: 0; }
+
+      /* ============ FORMS ============ */
+      .form-group { display: flex; flex-direction: column; gap: 6px; }
+      .form-label { font-size: 12.5px; font-weight: 500; color: var(--text-2); }
+      .form-hint { font-size: 11.5px; color: var(--muted); }
+      fieldset { border: 1px solid var(--border); border-radius: var(--r-md); padding: 16px; display: flex; flex-direction: column; gap: 12px; min-width: 0; background: var(--bg-elevated); }
+      legend { padding: 0 8px; font-size: 11.5px; color: var(--muted); font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em; }
+
+      /* ============ AI GENERATOR ============ */
+      .post-preview {
+        background: var(--bg-elevated);
+        border: 1px solid var(--border);
+        border-radius: var(--r-md);
+        padding: 16px;
+        font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+        font-size: 13.5px;
+        white-space: pre-wrap;
+        line-height: 1.55;
+        color: var(--text);
+      }
+      .human-score { font-weight: 600; font-size: 14px; display: inline-flex; align-items: center; gap: 6px; }
+      .human-score.good { color: var(--success); }
+      .human-score.mid { color: var(--warning); }
+
+      .checklist { list-style: none; padding: 0; display: flex; flex-direction: column; gap: 4px; }
+      .checklist li { display: flex; gap: 10px; padding: 4px 0; font-size: 12.5px; align-items: start; }
+      .checklist .check-icon { flex-shrink: 0; margin-top: 2px; }
+      .checklist .pass { color: var(--success); }
+      .checklist .fail { color: var(--muted-2); }
+      .checklist .item-fail { color: var(--muted); }
+
+      /* Variant tabs through :checked */
+      .vr { position: absolute; opacity: 0; pointer-events: none; }
+      .v-tabs { display: flex; gap: 6px; flex-wrap: wrap; padding: 4px; background: var(--surface-2); border-radius: var(--r-md); }
+      .v-tab {
+        flex: 1 1 100px; padding: 8px 12px;
+        border-radius: var(--r-sm);
+        cursor: pointer; font-size: 12.5px;
+        text-align: center;
+        color: var(--muted);
+        transition: all 0.15s;
+        line-height: 1.3;
+        -webkit-tap-highlight-color: transparent;
+      }
+      .v-tab .sub { display: block; font-size: 10.5px; opacity: 0.85; margin-top: 2px; }
       #vr-1:checked ~ .v-tabs label[for="vr-1"],
       #vr-2:checked ~ .v-tabs label[for="vr-2"],
       #vr-3:checked ~ .v-tabs label[for="vr-3"] {
-        background: var(--gradient); border-color: transparent; color: white;
-        box-shadow: 0 2px 8px var(--primary-glow);
+        background: var(--surface);
+        color: var(--text);
+        box-shadow: 0 1px 2px rgba(0,0,0,0.2);
       }
       .v-content > div { display: none; }
       #vr-1:checked ~ .v-content .v-c-1,
       #vr-2:checked ~ .v-content .v-c-2,
       #vr-3:checked ~ .v-content .v-c-3 { display: block; }
 
-      /* ====== CHARTS ====== */
-      .chart-bars { display: flex; align-items: end; gap: 4px; height: 160px; }
-      .chart-bars .bar { flex: 1; background: var(--gradient); border-radius: 4px 4px 0 0; min-height: 3px; }
-      .chart-labels { display: flex; gap: 4px; margin-top: 6px; font-size: 10px; color: var(--muted); }
+      /* ============ CHARTS ============ */
+      .chart-bars { display: flex; align-items: end; gap: 6px; height: 160px; padding-top: 16px; }
+      .chart-bars .bar {
+        flex: 1; background: var(--gradient);
+        border-radius: var(--r-xs) var(--r-xs) 0 0;
+        min-height: 4px;
+        position: relative;
+        transition: opacity 0.2s;
+        box-shadow: 0 -1px 0 inset rgba(255,255,255,0.1);
+      }
+      .chart-bars .bar:hover { opacity: 0.85; }
+      .chart-bars .bar.peak { background: var(--gradient-strong); }
+      .chart-labels { display: flex; gap: 6px; margin-top: 8px; font-size: 10.5px; color: var(--muted); }
       .chart-labels span { flex: 1; text-align: center; }
 
-      .pulse {
-        width: 8px; height: 8px; border-radius: 999px;
-        background: var(--success); display: inline-block; margin-right: 4px;
-        animation: pulse 2s infinite;
+      /* Heatmap 7x24 */
+      .heatmap {
+        display: grid;
+        grid-template-columns: 32px repeat(24, 1fr);
+        gap: 2px;
+        font-size: 10px;
       }
-      @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
+      .heatmap-day { color: var(--muted); padding-right: 8px; text-align: right; padding-top: 3px; }
+      .heatmap-cell {
+        aspect-ratio: 1; border-radius: 2px;
+        background: var(--surface-2);
+        min-height: 14px;
+      }
+      .heatmap-cell.h1 { background: rgba(59, 130, 246, 0.15); }
+      .heatmap-cell.h2 { background: rgba(59, 130, 246, 0.35); }
+      .heatmap-cell.h3 { background: rgba(59, 130, 246, 0.55); }
+      .heatmap-cell.h4 { background: rgba(59, 130, 246, 0.75); }
+      .heatmap-cell.h5 { background: rgba(96, 165, 250, 0.95); }
+      .heatmap-hours { display: grid; grid-template-columns: 32px repeat(24, 1fr); gap: 2px; font-size: 9.5px; color: var(--muted); margin-top: 4px; }
+      .heatmap-hours span { text-align: center; }
+      .heatmap-legend { display: flex; align-items: center; gap: 4px; font-size: 11px; color: var(--muted); margin-top: 12px; }
+      .heatmap-legend .legend-cells { display: flex; gap: 2px; }
+      .heatmap-legend .legend-cells > div { width: 14px; height: 14px; border-radius: 2px; }
+
+      /* Ring (donut) chart — pure CSS conic-gradient */
+      .ring-chart {
+        width: 140px; height: 140px;
+        border-radius: 50%;
+        background: conic-gradient(var(--primary) 0% 73%, var(--surface-2) 73% 100%);
+        position: relative;
+        display: flex; align-items: center; justify-content: center;
+        flex-shrink: 0;
+      }
+      .ring-chart::before {
+        content: '';
+        position: absolute; inset: 14px;
+        background: var(--surface);
+        border-radius: 50%;
+      }
+      .ring-value { position: relative; font-size: 24px; font-weight: 700; }
+      .ring-label { position: relative; font-size: 11px; color: var(--muted); margin-top: 2px; }
+
+      /* ============ PROGRESS ============ */
+      .progress {
+        height: 8px;
+        background: var(--surface-2);
+        border-radius: 999px;
+        overflow: hidden;
+        position: relative;
+      }
+      .progress-bar {
+        height: 100%;
+        background: var(--gradient);
+        border-radius: 999px;
+        transition: width 0.3s;
+      }
+      .progress-bar.success { background: var(--gradient-success); }
+      .progress-bar.warning { background: var(--warning); }
+
+      /* ============ TIMELINE ============ */
+      .timeline { position: relative; padding-left: 24px; }
+      .timeline::before {
+        content: '';
+        position: absolute; left: 8px; top: 8px; bottom: 8px;
+        width: 2px; background: var(--border);
+      }
+      .timeline-item { position: relative; padding-bottom: 18px; }
+      .timeline-item:last-child { padding-bottom: 0; }
+      .timeline-dot {
+        position: absolute; left: -22px; top: 4px;
+        width: 14px; height: 14px;
+        border-radius: 999px;
+        background: var(--surface);
+        border: 2px solid var(--primary);
+      }
+      .timeline-dot.success { border-color: var(--success); background: var(--success); }
+      .timeline-dot.warning { border-color: var(--warning); background: var(--warning); }
+      .timeline-dot.danger { border-color: var(--danger); background: var(--danger); }
+      .timeline-time { font-size: 11px; color: var(--muted); margin-bottom: 2px; }
+      .timeline-title { font-size: 13px; font-weight: 500; }
+      .timeline-desc { font-size: 12px; color: var(--muted); margin-top: 2px; }
+
+      /* ============ EMPTY STATE ============ */
+      .empty {
+        padding: 48px 24px;
+        text-align: center;
+        background: var(--bg-elevated);
+        border: 1px dashed var(--border-strong);
+        border-radius: var(--r-lg);
+      }
+      .empty-icon {
+        width: 56px; height: 56px;
+        margin: 0 auto 16px;
+        background: var(--surface);
+        border: 1px solid var(--border-strong);
+        border-radius: var(--r-lg);
+        display: flex; align-items: center; justify-content: center;
+        color: var(--muted);
+      }
+      .empty-icon svg { width: 24px; height: 24px; }
+      .empty-title { font-size: 15px; font-weight: 600; margin-bottom: 4px; }
+      .empty-desc { font-size: 13px; color: var(--muted); margin-bottom: 16px; max-width: 360px; margin-left: auto; margin-right: auto; }
+
+      /* ============ ONBOARDING ============ */
+      .onboarding-step {
+        display: flex; gap: 14px; padding: 14px;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--r-md);
+        align-items: start;
+      }
+      .onboarding-step.done { border-color: var(--success-soft); background: rgba(34, 197, 94, 0.04); }
+      .onboarding-step.active { border-color: var(--primary); background: var(--primary-soft); }
+      .onboarding-num {
+        width: 28px; height: 28px;
+        border-radius: 999px;
+        background: var(--surface-2);
+        color: var(--muted);
+        font-size: 12px; font-weight: 600;
+        display: flex; align-items: center; justify-content: center;
+        flex-shrink: 0;
+      }
+      .onboarding-step.done .onboarding-num { background: var(--success); color: white; }
+      .onboarding-step.active .onboarding-num { background: var(--primary); color: white; }
+
+      /* ============ UTILS ============ */
+      .text-muted { color: var(--muted); }
+      .text-success { color: var(--success); }
+      .text-warning { color: var(--warning); }
+      .text-danger { color: var(--danger); }
+      .text-sm { font-size: 13px; }
+      .text-xs { font-size: 12px; }
+      .text-2xs { font-size: 11px; }
       .truncate { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+      .flex-1 { flex: 1; min-width: 0; }
+      .gradient-text { background: var(--gradient); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+      .divider { height: 1px; background: var(--border); margin: 16px 0; }
+      .pulse-dot { width: 6px; height: 6px; border-radius: 999px; background: var(--success); display: inline-block; animation: pulse 2s infinite; }
+      @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
 
-      /* ====== MOBILE ====== */
-      @media (max-width: 900px) {
-        .nav {
-          display: none; position: absolute; top: 56px; left: 0; right: 0;
-          background: var(--card); border-bottom: 1px solid var(--border);
-          padding: 8px; flex-direction: column; gap: 0;
-          box-shadow: var(--shadow);
+      /* ============ MOBILE ============ */
+      @media (max-width: 1024px) {
+        .app { grid-template-columns: 1fr; }
+        .sidebar {
+          position: fixed;
+          top: 0; left: 0;
+          width: var(--sidebar-w);
+          z-index: 50;
+          transform: translateX(-100%);
+          transition: transform 0.25s;
+          box-shadow: var(--shadow-lg);
         }
-        #menu-toggle:checked ~ header .nav { display: flex; }
-        .nav-label { padding: 12px 16px; border-radius: 0; text-align: left; }
-        .menu-toggle-label { display: inline-flex; align-items: center; justify-content: center; }
-        .logo span:not(.logo-mark) { display: none; }
-        .header-actions .btn { padding: 7px 11px; font-size: 13px; }
+        #sidebar-toggle:checked ~ .app .sidebar { transform: translateX(0); }
+        #sidebar-toggle:checked ~ .app::after {
+          content: '';
+          position: fixed; inset: 0;
+          background: rgba(0, 4, 12, 0.7);
+          z-index: 45;
+          -webkit-backdrop-filter: blur(2px);
+          backdrop-filter: blur(2px);
+        }
+        .sidebar-toggle-btn { display: flex; }
+        .topbar { padding: 0 16px; height: 56px; }
+        .content { padding: 20px 16px 60px; }
+        .grid-4 { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+        .grid-3 { grid-template-columns: 1fr; }
+        .grid-2 { grid-template-columns: 1fr; gap: 14px; }
+        .grid-2-3-1, .grid-1-1-2 { grid-template-columns: 1fr; gap: 14px; }
+        .page-title { font-size: 20px; }
+        .stat-value { font-size: 22px; }
+        .search-box { max-width: none; }
+      }
+      @media (max-width: 640px) {
+        .search-shortcut { display: none; }
+        .breadcrumb { display: none; }
       }
 
-      .banner {
-        padding: 10px 16px; text-align: center; font-size: 13px;
-        border-bottom: 1px solid var(--border);
-        background: var(--success-soft); color: var(--success);
+      /* ============ TWEAKS ============ */
+      .group-tag {
+        display: inline-flex; align-items: center;
+        background: var(--surface-2);
+        color: var(--muted);
+        font-size: 11px;
+        padding: 2px 7px;
+        border-radius: var(--r-xs);
+        margin-right: 4px;
+      }
+      .kbd {
+        display: inline-block;
+        padding: 2px 6px;
+        background: var(--surface-2);
+        border: 1px solid var(--border-strong);
+        border-radius: var(--r-xs);
+        font-size: 10.5px;
+        color: var(--muted);
+        font-family: ui-monospace, monospace;
       }
     </style>
   </head>
   <body>
-    <!-- Radio buttons for routing (hidden, controlled by labels in header) -->
+    <!-- Routing radios -->
     <input class="route-radio" type="radio" name="route" id="r-dashboard" checked />
     <input class="route-radio" type="radio" name="route" id="r-posts" />
+    <input class="route-radio" type="radio" name="route" id="r-composer" />
     <input class="route-radio" type="radio" name="route" id="r-ai" />
     <input class="route-radio" type="radio" name="route" id="r-groups" />
     <input class="route-radio" type="radio" name="route" id="r-campaigns" />
+    <input class="route-radio" type="radio" name="route" id="r-campaign-detail" />
     <input class="route-radio" type="radio" name="route" id="r-analytics" />
-    <input type="checkbox" id="menu-toggle" />
+    <input class="route-radio" type="radio" name="route" id="r-team" />
+    <input class="route-radio" type="radio" name="route" id="r-settings" />
+    <input class="route-radio" type="radio" name="route" id="r-extension" />
+    <input type="checkbox" id="sidebar-toggle" />
 
-    <div class="banner">
-      ✓ <strong>Demo v6 — CSS only</strong> · działa bez JavaScriptu · klikalna nawigacja
-    </div>
-
-    <header>
-      <div class="header-inner">
-        <div class="logo">
-          <span class="logo-mark">M</span>
-          <span>MapJob FB Poster</span>
-        </div>
-        <nav class="nav">
-          <label for="r-dashboard" class="nav-label">Dashboard</label>
-          <label for="r-posts" class="nav-label">Posty</label>
-          <label for="r-ai" class="nav-label">Generator AI</label>
-          <label for="r-groups" class="nav-label">Grupy</label>
-          <label for="r-campaigns" class="nav-label">Kampanie</label>
-          <label for="r-analytics" class="nav-label">Analytics</label>
-        </nav>
-        <div class="header-actions">
-          <button class="btn btn-primary btn-sm">Zaloguj</button>
-          <label for="menu-toggle" class="menu-toggle-label btn btn-ghost btn-sm">☰</label>
-        </div>
-      </div>
-    </header>
-
-    <main>
-      <!-- ====== DASHBOARD ====== -->
-      <section class="view v-dashboard stack">
-        <div class="row-between">
-          <div>
-            <h1>Dashboard</h1>
-            <p class="text-sm text-muted" style="margin-top: 4px">Cześć Piotr 👋 — przykładowy widok z fake danymi.</p>
+    <div class="app">
+      <!-- ============ SIDEBAR ============ -->
+      <aside class="sidebar">
+        <div class="sidebar-header">
+          <div class="logo-mark">M</div>
+          <div class="logo-text">
+            <span class="logo-name">MapJob FB</span>
+            <span class="logo-org">FB Poster</span>
           </div>
-          <label for="r-ai" class="btn btn-primary" style="cursor: pointer">+ Generuj post AI</label>
         </div>
 
-        <div class="grid-4">
-          <div class="stat"><div class="stat-label">Posty w bibliotece</div><div class="stat-value">42</div><div class="stat-delta">↑ 8 w tym tygodniu</div></div>
-          <div class="stat"><div class="stat-label">Aktywne grupy</div><div class="stat-value">237</div><div class="stat-delta neutral">z 248 zaimportowanych</div></div>
-          <div class="stat"><div class="stat-label">Postów dzisiaj</div><div class="stat-value">73</div><div class="stat-delta">96% success rate</div></div>
-          <div class="stat"><div class="stat-label">Aktywne kampanie</div><div class="stat-value">3</div><div class="stat-delta neutral">2 w toku, 1 zaplanowana</div></div>
+        <div class="org-switcher">
+          <div class="org-avatar">SP</div>
+          <div class="org-info">
+            <div class="org-info-name truncate">Stalmet Pruszków</div>
+            <div class="org-info-plan">Plan Pro · 3 użytkowników</div>
+          </div>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;color:var(--muted);flex-shrink:0"><path d="M7 10l5 5 5-5" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </div>
 
-        <div class="stack-sm">
-          <h2>Aktywne kampanie</h2>
+        <div class="nav-section">
+          <div class="nav-section-label">Workspace</div>
+          <label for="r-dashboard" class="nav-item">
+            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 13l9-9 9 9v8a2 2 0 01-2 2h-4v-7H9v7H5a2 2 0 01-2-2v-8z" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Dashboard
+          </label>
+          <label for="r-posts" class="nav-item">
+            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16v16H4V4z M4 9h16 M9 4v16" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Biblioteka postów
+            <span class="nav-badge">42</span>
+          </label>
+          <label for="r-ai" class="nav-item">
+            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h7l-1 8 10-12h-7l1-8z" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Generator AI
+            <span class="nav-badge active">NEW</span>
+          </label>
+          <label for="r-groups" class="nav-item">
+            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="7" r="4"/><path d="M3 21v-2a4 4 0 014-4h4a4 4 0 014 4v2 M16 3.13a4 4 0 010 7.75 M21 21v-2a4 4 0 00-3-3.87" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Grupy FB
+            <span class="nav-badge">237</span>
+          </label>
+          <label for="r-campaigns" class="nav-item">
+            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7h18 M3 12h18 M3 17h18" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Kampanie
+            <span class="nav-badge active">3</span>
+          </label>
+          <label for="r-analytics" class="nav-item">
+            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18 M7 14l4-4 4 4 5-7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Analytics
+          </label>
+        </div>
+
+        <div class="nav-section">
+          <div class="nav-section-label">Operacje</div>
+          <label for="r-composer" class="nav-item">
+            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5 M18 3l3 3-9 9H9v-3l9-9z" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Composer
+          </label>
+          <label for="r-campaign-detail" class="nav-item">
+            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 5H5a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-4 M16 3l5 5-9 9H7v-5l9-9z" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Detal kampanii
+          </label>
+          <label for="r-extension" class="nav-item">
+            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>
+            Rozszerzenie
+            <span class="badge badge-success" style="margin-left: auto"><span class="pulse-dot"></span>aktywne</span>
+          </label>
+        </div>
+
+        <div class="nav-section">
+          <div class="nav-section-label">Organizacja</div>
+          <label for="r-team" class="nav-item">
+            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="7" r="4"/><path d="M3 21v-2a4 4 0 014-4h4a4 4 0 014 4v2 M16 11a4 4 0 100-8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Zespół
+            <span class="nav-badge">3</span>
+          </label>
+          <label for="r-settings" class="nav-item">
+            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 01-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 11-2.83-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 112.83-2.83l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 112.83 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Ustawienia
+          </label>
+        </div>
+
+        <div class="sidebar-footer">
+          <div class="user-card">
+            <div class="user-avatar">PZ</div>
+            <div class="user-info">
+              <div class="user-name">Piotr Zając</div>
+              <div class="user-email">piotr@stalmet.pl</div>
+            </div>
+            <svg style="width:14px;height:14px;color:var(--muted);flex-shrink:0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="1"/><circle cx="12" cy="5" r="1"/><circle cx="12" cy="19" r="1"/></svg>
+          </div>
+        </div>
+      </aside>
+
+      <!-- ============ MAIN ============ -->
+      <div class="main">
+        <!-- ============ TOP BAR ============ -->
+        <div class="topbar">
+          <label for="sidebar-toggle" class="sidebar-toggle-btn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:20px;height:20px"><path d="M4 6h16 M4 12h16 M4 18h16" stroke-linecap="round"/></svg>
+          </label>
+
+          <nav class="breadcrumb">
+            <span>Stalmet Pruszków</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <span class="crumb-active">Dashboard</span>
+          </nav>
+
+          <div class="search-box">
+            <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.35-4.35" stroke-linecap="round"/></svg>
+            <input type="text" placeholder="Szukaj postów, grup, kampanii…" />
+            <span class="search-shortcut">⌘K</span>
+          </div>
+
+          <div class="topbar-actions">
+            <div class="icon-btn">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9 M13.73 21a2 2 0 01-3.46 0" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              <span class="icon-btn-badge"></span>
+            </div>
+            <div class="icon-btn">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20 M2 12h20 M4.93 4.93l14.14 14.14 M19.07 4.93L4.93 19.07" stroke-linecap="round"/></svg>
+            </div>
+            <button class="btn btn-primary btn-sm">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14 M5 12h14" stroke-linecap="round"/></svg>
+              Nowy post
+            </button>
+          </div>
+        </div>
+
+        <div class="content">
+
+        <!-- ============================== DASHBOARD ============================== -->
+        <section class="view v-dashboard stack">
+          <div class="page-header">
+            <div>
+              <h1 class="page-title">Dashboard</h1>
+              <p class="page-subtitle">Hej Piotr — dziś już 73 publikacje z 96% success rate. Idzie świetnie 🚀</p>
+            </div>
+            <div class="page-actions">
+              <button class="btn btn-secondary btn-sm">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4 M7 10l5 5 5-5 M12 15V3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                Eksport
+              </button>
+              <label for="r-ai" class="btn btn-primary">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h7l-1 8 10-12h-7l1-8z" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                Generuj post AI
+              </label>
+            </div>
+          </div>
+
+          <!-- Stats -->
+          <div class="grid-4">
+            <div class="stat">
+              <div class="stat-icon-wrap">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16v16H4V4z M4 9h16 M9 4v16" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </div>
+              <div class="stat-label">Biblioteka postów</div>
+              <div class="stat-value">42</div>
+              <span class="stat-delta">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17l5-5 5 5 M7 12l5-5 5 5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                +8 w tym tygodniu
+              </span>
+            </div>
+            <div class="stat">
+              <div class="stat-icon-wrap success">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="7" r="4"/><path d="M3 21v-2a4 4 0 014-4h4a4 4 0 014 4v2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </div>
+              <div class="stat-label">Aktywne grupy FB</div>
+              <div class="stat-value">237</div>
+              <span class="stat-delta neutral">z 248 zaimportowanych</span>
+            </div>
+            <div class="stat">
+              <div class="stat-icon-wrap warning">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14 M22 4L12 14.01l-3-3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </div>
+              <div class="stat-label">Postów dzisiaj</div>
+              <div class="stat-value">73</div>
+              <span class="stat-delta">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17l5-5 5 5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                96% success rate
+              </span>
+            </div>
+            <div class="stat">
+              <div class="stat-icon-wrap violet">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </div>
+              <div class="stat-label">Aktywne kampanie</div>
+              <div class="stat-value">3</div>
+              <span class="stat-delta neutral">2 w toku, 1 zaplanowana</span>
+            </div>
+          </div>
+
+          <!-- Onboarding (jeśli niezakończone) -->
+          <div class="card-elevated">
+            <div class="row-between" style="margin-bottom: 16px">
+              <div>
+                <h2 class="card-title" style="font-size: 16px">Twój postęp setupu</h2>
+                <p class="text-xs text-muted" style="margin-top: 2px">5 z 6 kroków zakończonych · 83% gotowe</p>
+              </div>
+              <div class="row" style="gap: 6px">
+                <div style="width: 80px"><div class="progress"><div class="progress-bar success" style="width: 83%"></div></div></div>
+                <span class="text-xs text-success" style="font-weight: 600">83%</span>
+              </div>
+            </div>
+            <div class="grid-3" style="gap: 10px">
+              <div class="onboarding-step done">
+                <div class="onboarding-num">
+                  <svg style="width:14px;height:14px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </div>
+                <div class="flex-1">
+                  <div style="font-size: 13px; font-weight: 600">Konto utworzone</div>
+                  <div class="text-xs text-muted" style="margin-top: 2px">Stalmet Pruszków · 12 maja</div>
+                </div>
+              </div>
+              <div class="onboarding-step done">
+                <div class="onboarding-num">
+                  <svg style="width:14px;height:14px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </div>
+                <div class="flex-1">
+                  <div style="font-size: 13px; font-weight: 600">Rozszerzenie podłączone</div>
+                  <div class="text-xs text-muted" style="margin-top: 2px">Chrome v.0.1.0 · token na 28 dni</div>
+                </div>
+              </div>
+              <div class="onboarding-step done">
+                <div class="onboarding-num">
+                  <svg style="width:14px;height:14px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </div>
+                <div class="flex-1">
+                  <div style="font-size: 13px; font-weight: 600">Grupy zaimportowane</div>
+                  <div class="text-xs text-muted" style="margin-top: 2px">237 aktywnych grup</div>
+                </div>
+              </div>
+              <div class="onboarding-step done">
+                <div class="onboarding-num">
+                  <svg style="width:14px;height:14px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </div>
+                <div class="flex-1">
+                  <div style="font-size: 13px; font-weight: 600">Pierwszy post utworzony</div>
+                  <div class="text-xs text-muted" style="margin-top: 2px">Spawacz Pruszków · PAS</div>
+                </div>
+              </div>
+              <div class="onboarding-step done">
+                <div class="onboarding-num">
+                  <svg style="width:14px;height:14px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </div>
+                <div class="flex-1">
+                  <div style="font-size: 13px; font-weight: 600">Pierwsza kampania uruchomiona</div>
+                  <div class="text-xs text-muted" style="margin-top: 2px">87 targetów · 64 opublikowane</div>
+                </div>
+              </div>
+              <div class="onboarding-step active">
+                <div class="onboarding-num">6</div>
+                <div class="flex-1">
+                  <div style="font-size: 13px; font-weight: 600">Zaproś zespół</div>
+                  <div class="text-xs text-muted" style="margin-top: 2px">Plan Pro pozwala na 5 użytkowników</div>
+                  <label for="r-team" class="btn btn-primary btn-sm" style="margin-top: 10px">Otwórz Zespół →</label>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Campaigns + sidebar -->
+          <div class="grid-2-3-1">
+            <div class="card">
+              <div class="card-header">
+                <h2 class="card-title">Aktywne kampanie</h2>
+                <label for="r-campaigns" class="btn btn-ghost btn-sm">Zobacz wszystkie →</label>
+              </div>
+              <div class="table-wrap" style="border: 0; border-radius: 0">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Nazwa</th><th>Status</th><th>Postęp</th><th class="right">Sukces</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>
+                        <label for="r-campaign-detail" style="cursor: pointer; font-weight: 500">Rekrutacja spawacz maj 2026</label>
+                        <div class="text-xs text-muted" style="margin-top: 2px">Spawacz Pruszków</div>
+                      </td>
+                      <td><span class="badge badge-success badge-dot">w toku</span></td>
+                      <td>
+                        <div class="row" style="gap: 8px">
+                          <div style="flex: 1; min-width: 80px"><div class="progress"><div class="progress-bar" style="width: 73%"></div></div></div>
+                          <span class="text-2xs text-muted">64/87</span>
+                        </div>
+                      </td>
+                      <td class="right"><span style="font-weight: 600; color: var(--success)">73%</span></td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <div style="font-weight: 500">iPhone 14 Pro — szybka sprzedaż</div>
+                        <div class="text-xs text-muted" style="margin-top: 2px">iPhone 14 Pro · sales</div>
+                      </td>
+                      <td><span class="badge badge-success badge-dot">w toku</span></td>
+                      <td>
+                        <div class="row" style="gap: 8px">
+                          <div style="flex: 1; min-width: 80px"><div class="progress"><div class="progress-bar" style="width: 66%"></div></div></div>
+                          <span class="text-2xs text-muted">28/42</span>
+                        </div>
+                      </td>
+                      <td class="right"><span style="font-weight: 600; color: var(--success)">66%</span></td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <div style="font-weight: 500">Kierowcy C+E — Warszawa</div>
+                        <div class="text-xs text-muted" style="margin-top: 2px">Kierowca C+E · job</div>
+                      </td>
+                      <td><span class="badge badge-primary badge-dot">zaplanowana</span></td>
+                      <td>
+                        <div class="row" style="gap: 8px">
+                          <div style="flex: 1; min-width: 80px"><div class="progress"><div class="progress-bar" style="width: 0%"></div></div></div>
+                          <span class="text-2xs text-muted">0/156</span>
+                        </div>
+                      </td>
+                      <td class="right"><span style="font-weight: 600; color: var(--muted)">—</span></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-header">
+                <h2 class="card-title">Wydajność dzisiaj</h2>
+              </div>
+              <div class="row" style="gap: 18px; align-items: center">
+                <div class="ring-chart">
+                  <div>
+                    <div class="ring-value">73<span style="font-size: 14px; color: var(--muted)">/100</span></div>
+                    <div class="ring-label">opublikowanych</div>
+                  </div>
+                </div>
+                <div class="stack-sm flex-1">
+                  <div class="row-between" style="gap: 6px"><span class="text-xs text-muted">Opublikowane</span><span class="text-sm" style="font-weight: 600; color: var(--success)">73</span></div>
+                  <div class="row-between" style="gap: 6px"><span class="text-xs text-muted">Pominięte</span><span class="text-sm" style="font-weight: 600; color: var(--warning)">3</span></div>
+                  <div class="row-between" style="gap: 6px"><span class="text-xs text-muted">Błędy</span><span class="text-sm" style="font-weight: 600; color: var(--danger)">0</span></div>
+                  <div class="divider" style="margin: 4px 0"></div>
+                  <div class="row-between" style="gap: 6px"><span class="text-xs text-muted">Limit dzienny</span><span class="text-sm">100</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Recent + Health -->
+          <div class="grid-2">
+            <div class="card">
+              <div class="card-header">
+                <h2 class="card-title">Ostatnie publikacje</h2>
+                <span class="badge badge-success" style="font-weight: 500"><span class="pulse-dot"></span>na żywo</span>
+              </div>
+              <div class="timeline">
+                <div class="timeline-item">
+                  <div class="timeline-dot success"></div>
+                  <div class="timeline-time">2 min temu</div>
+                  <div class="timeline-title">Praca Warszawa i okolice 2026</div>
+                  <div class="timeline-desc">Spawacz Pruszków · post #4 dzisiaj</div>
+                </div>
+                <div class="timeline-item">
+                  <div class="timeline-dot success"></div>
+                  <div class="timeline-time">7 min temu</div>
+                  <div class="timeline-title">Bemowo — sprzedam, kupię, oddam</div>
+                  <div class="timeline-desc">iPhone 14 Pro · uzupełniono variator</div>
+                </div>
+                <div class="timeline-item">
+                  <div class="timeline-dot warning"></div>
+                  <div class="timeline-time">12 min temu</div>
+                  <div class="timeline-title">Spawacze, ślusarze, mechanicy PL</div>
+                  <div class="timeline-desc">Pominięte — cooldown 4h (ostatni post o 09:54)</div>
+                </div>
+                <div class="timeline-item">
+                  <div class="timeline-dot success"></div>
+                  <div class="timeline-time">18 min temu</div>
+                  <div class="timeline-title">Kierowcy zawodowi — oferty pracy</div>
+                  <div class="timeline-desc">Spawacz Pruszków · variator zastosował 2 zmiany</div>
+                </div>
+                <div class="timeline-item">
+                  <div class="timeline-dot success"></div>
+                  <div class="timeline-time">24 min temu</div>
+                  <div class="timeline-title">Pruszków — co się dzieje</div>
+                  <div class="timeline-desc">Spawacz Pruszków · pierwszy post w tej grupie</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-header">
+                <h2 class="card-title">Status rozszerzenia</h2>
+                <label for="r-extension" class="btn btn-ghost btn-sm">Szczegóły →</label>
+              </div>
+              <div class="stack-sm">
+                <div class="row-between"><span class="text-xs text-muted">Wersja</span><span class="text-sm">0.1.0</span></div>
+                <div class="row-between"><span class="text-xs text-muted">Ostatnia synchronizacja</span><span class="text-sm" style="color: var(--success)">2 min temu</span></div>
+                <div class="row-between"><span class="text-xs text-muted">Sesja Facebook</span><span class="badge badge-success badge-dot">aktywna</span></div>
+                <div class="row-between"><span class="text-xs text-muted">Token wygasa</span><span class="text-sm">za 28 dni</span></div>
+                <div class="divider"></div>
+                <div>
+                  <div class="row-between" style="margin-bottom: 8px">
+                    <span class="text-xs text-muted">Selector health (7 dni)</span>
+                    <span class="text-xs" style="color: var(--success); font-weight: 600">100%</span>
+                  </div>
+                  <div class="progress"><div class="progress-bar success" style="width: 100%"></div></div>
+                  <div class="text-2xs text-muted" style="margin-top: 4px">0 nieudanych detekcji DOM Facebooka</div>
+                </div>
+                <div>
+                  <div class="row-between" style="margin-bottom: 8px">
+                    <span class="text-xs text-muted">Daily cap (dzisiaj)</span>
+                    <span class="text-xs">73 / 100</span>
+                  </div>
+                  <div class="progress"><div class="progress-bar" style="width: 73%"></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ============================== POSTS ============================== -->
+        <section class="view v-posts stack">
+          <div class="page-header">
+            <div>
+              <h1 class="page-title">Biblioteka postów</h1>
+              <p class="page-subtitle">42 posty · wszystkie z humanize score · 38 gotowych do użycia</p>
+            </div>
+            <div class="page-actions">
+              <label for="r-composer" class="btn btn-secondary">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5 M18 3l3 3-9 9H9v-3l9-9z" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                Napisz ręcznie
+              </label>
+              <label for="r-ai" class="btn btn-primary">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h7l-1 8 10-12h-7l1-8z" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                Generator AI
+              </label>
+            </div>
+          </div>
+
+          <div class="card" style="padding: 12px">
+            <div class="row" style="gap: 8px">
+              <div class="search-box" style="flex: 1; max-width: none">
+                <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.35-4.35" stroke-linecap="round"/></svg>
+                <input placeholder="Szukaj w bibliotece..." />
+              </div>
+              <select style="flex: 0 0 140px"><option>Wszystkie typy</option><option>job</option><option>sales</option></select>
+              <select style="flex: 0 0 140px"><option>Wszystkie frameworki</option><option>PAS</option><option>AIDA</option><option>BAB</option></select>
+              <select style="flex: 0 0 140px"><option>Wszystkie statusy</option><option>gotowy</option><option>szkic</option></select>
+            </div>
+          </div>
+
           <div class="table-wrap">
             <table>
-              <thead><tr><th>Nazwa</th><th>Status</th><th class="right">Posted</th><th class="right">Pending</th><th class="right">Skipped</th><th class="right">% sukcesu</th></tr></thead>
+              <thead><tr><th>Tytuł</th><th>Typ</th><th>Framework</th><th>Status</th><th class="right">Human score</th><th class="right">Użycia</th><th class="right">Utworzony</th></tr></thead>
               <tbody>
-                <tr><td>Rekrutacja spawacz maj 2026</td><td><span class="badge badge-success">w toku</span></td><td class="right">64</td><td class="right">19</td><td class="right" style="color: var(--warning)">4</td><td class="right" style="font-weight:600">73%</td></tr>
-                <tr><td>iPhone 14 Pro — szybka sprzedaż</td><td><span class="badge badge-success">w toku</span></td><td class="right">28</td><td class="right">12</td><td class="right" style="color: var(--warning)">2</td><td class="right" style="font-weight:600">66%</td></tr>
-                <tr><td>Kierowcy C+E — Warszawa</td><td><span class="badge badge-primary">zaplanowana</span></td><td class="right">0</td><td class="right">156</td><td class="right">0</td><td class="right" style="font-weight:600">0%</td></tr>
+                <tr><td><div style="font-weight: 500">Spawacz Pruszków — hala B</div><div class="text-xs text-muted" style="margin-top: 2px">87 znaków · 1 obraz</div></td><td><span class="badge badge-violet">job</span></td><td><code>PAS</code></td><td><span class="badge badge-success badge-dot">gotowy</span></td><td class="right"><span class="human-score good">87 ✓</span></td><td class="right text-muted">12×</td><td class="right text-xs text-muted">2026-05-20</td></tr>
+                <tr><td><div style="font-weight: 500">Kierowca C+E — Wrocław centrum</div><div class="text-xs text-muted" style="margin-top: 2px">142 znaki · 2 obrazy</div></td><td><span class="badge badge-violet">job</span></td><td><code>AIDA</code></td><td><span class="badge badge-success badge-dot">gotowy</span></td><td class="right"><span class="human-score good">79 ✓</span></td><td class="right text-muted">5×</td><td class="right text-xs text-muted">2026-05-19</td></tr>
+                <tr><td><div style="font-weight: 500">iPhone 14 Pro sprzedam</div><div class="text-xs text-muted" style="margin-top: 2px">98 znaków · 4 obrazy</div></td><td><span class="badge badge-info">sales</span></td><td><code>BAB</code></td><td><span class="badge badge-success badge-dot">gotowy</span></td><td class="right"><span class="human-score good">92 ✓</span></td><td class="right text-muted">28×</td><td class="right text-xs text-muted">2026-05-19</td></tr>
+                <tr><td><div style="font-weight: 500">Magazynier nocny — Łódź</div><div class="text-xs text-muted" style="margin-top: 2px">156 znaków · brak obrazów</div></td><td><span class="badge badge-violet">job</span></td><td><code>PAS</code></td><td><span class="badge badge-warning badge-dot">szkic</span></td><td class="right"><span class="human-score mid">64 ⚠</span></td><td class="right text-muted">0×</td><td class="right text-xs text-muted">2026-05-18</td></tr>
+                <tr><td><div style="font-weight: 500">Klimatyzacja — montaż 4h</div><div class="text-xs text-muted" style="margin-top: 2px">112 znaków · 1 obraz</div></td><td><span class="badge badge-info">sales</span></td><td><code>PAS</code></td><td><span class="badge badge-success badge-dot">gotowy</span></td><td class="right"><span class="human-score good">83 ✓</span></td><td class="right text-muted">71×</td><td class="right text-xs text-muted">2026-05-17</td></tr>
+                <tr><td><div style="font-weight: 500">Programista junior Pruszków</div><div class="text-xs text-muted" style="margin-top: 2px">203 znaki · brak obrazów</div></td><td><span class="badge badge-violet">job</span></td><td><code>4U</code></td><td><span class="badge badge-muted badge-dot">archiwum</span></td><td class="right"><span class="human-score mid">71 ⚠</span></td><td class="right text-muted">3×</td><td class="right text-xs text-muted">2026-05-12</td></tr>
               </tbody>
             </table>
           </div>
-        </div>
+        </section>
 
-        <div class="grid-2">
-          <div class="card">
-            <h3 style="margin-bottom: 14px">Ostatnie publikacje</h3>
-            <div class="stack-sm">
-              <div class="row-between" style="padding: 8px 0; border-bottom: 1px solid var(--border)"><div><div>Praca Warszawa i okolice 2026</div><div class="text-xs text-muted">2 min temu</div></div><span class="badge badge-success">opublikowany</span></div>
-              <div class="row-between" style="padding: 8px 0; border-bottom: 1px solid var(--border)"><div><div>Bemowo - sprzedam, kupię</div><div class="text-xs text-muted">7 min temu</div></div><span class="badge badge-success">opublikowany</span></div>
-              <div class="row-between" style="padding: 8px 0; border-bottom: 1px solid var(--border)"><div><div>Spawacze ślusarze mechanicy</div><div class="text-xs text-muted">12 min temu · cooldown 4h</div></div><span class="badge badge-warning">pominięty</span></div>
-              <div class="row-between" style="padding: 8px 0; border-bottom: 1px solid var(--border)"><div><div>Kierowcy zawodowi</div><div class="text-xs text-muted">18 min temu</div></div><span class="badge badge-success">opublikowany</span></div>
-              <div class="row-between" style="padding: 8px 0"><div><div>Pruszków — co się dzieje</div><div class="text-xs text-muted">24 min temu</div></div><span class="badge badge-success">opublikowany</span></div>
-            </div>
-          </div>
-          <div class="card">
-            <h3 style="margin-bottom: 14px">Health rozszerzenia</h3>
-            <div class="stack-sm" style="font-size: 13px">
-              <div class="row-between"><span class="text-muted">Wersja</span><span>0.1.0</span></div>
-              <div class="row-between"><span class="text-muted">Ostatnia aktywność</span><span style="color: var(--success)">2 min temu</span></div>
-              <div class="row-between"><span class="text-muted">Selector miss (7 dni)</span><span style="color: var(--success)">0</span></div>
-              <div class="row-between"><span class="text-muted">Sesja FB</span><span style="color: var(--success)"><span class="pulse"></span>aktywna</span></div>
-              <div class="row-between"><span class="text-muted">Token wygasa za</span><span>28 dni</span></div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- ====== POSTS ====== -->
-      <section class="view v-posts stack">
-        <div class="row-between">
-          <div>
-            <h1>Posty</h1>
-            <p class="text-sm text-muted" style="margin-top: 4px">Biblioteka treści — manualne i wygenerowane przez AI.</p>
-          </div>
-          <div class="row">
-            <label for="r-ai" class="btn btn-primary" style="cursor: pointer">+ Generator AI</label>
-            <button class="btn btn-secondary">+ Napisz ręcznie</button>
-          </div>
-        </div>
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th>Tytuł</th><th>Typ</th><th>Framework</th><th>Status</th><th class="right">Human</th><th class="right">Utworzony</th></tr></thead>
-            <tbody>
-              <tr><td>Spawacz Pruszków - hala B</td><td class="text-muted">job</td><td><code>PAS</code></td><td><span class="badge badge-success">gotowy</span></td><td class="right"><span class="human-score good">87/100</span></td><td class="right text-muted text-xs">2026-05-20</td></tr>
-              <tr><td>Kierowca C+E - Wrocław centrum</td><td class="text-muted">job</td><td><code>AIDA</code></td><td><span class="badge badge-success">gotowy</span></td><td class="right"><span class="human-score good">79/100</span></td><td class="right text-muted text-xs">2026-05-19</td></tr>
-              <tr><td>iPhone 14 Pro sprzedam</td><td class="text-muted">sales</td><td><code>BAB</code></td><td><span class="badge badge-success">gotowy</span></td><td class="right"><span class="human-score good">92/100</span></td><td class="right text-muted text-xs">2026-05-19</td></tr>
-              <tr><td>Magazynier nocny - Łódź</td><td class="text-muted">job</td><td><code>PAS</code></td><td><span class="badge badge-warning">szkic</span></td><td class="right"><span class="human-score mid">64/100</span></td><td class="right text-muted text-xs">2026-05-18</td></tr>
-              <tr><td>Klimatyzacja - montaż 4h</td><td class="text-muted">sales</td><td><code>PAS</code></td><td><span class="badge badge-success">gotowy</span></td><td class="right"><span class="human-score good">83/100</span></td><td class="right text-muted text-xs">2026-05-17</td></tr>
-              <tr><td>Programista junior Pruszków</td><td class="text-muted">job</td><td><code>4U</code></td><td><span class="badge badge-muted">archiwum</span></td><td class="right"><span class="human-score mid">71/100</span></td><td class="right text-muted text-xs">2026-05-12</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </section>
-
-      <!-- ====== AI ====== -->
-      <section class="view v-ai">
-        <div class="grid-2" style="gap: 28px">
-          <div class="stack-sm">
+        <!-- ============================== COMPOSER ============================== -->
+        <section class="view v-composer">
+          <div class="page-header">
             <div>
-              <h1>Generator AI</h1>
-              <p class="text-sm text-muted" style="margin-top: 4px">Brief → Claude generuje 3 warianty + anti-AI filter + per-grupa wariancja.</p>
+              <h1 class="page-title">Composer</h1>
+              <p class="page-subtitle">Napisz post ręcznie z podglądem na żywo · auto humanize check</p>
             </div>
-
-            <div class="grid-2" style="gap: 10px">
-              <div class="form-group">
-                <label class="form-label">Typ posta</label>
-                <select><option>Ogłoszenie pracy</option><option>Sprzedażowe</option></select>
-              </div>
-              <div class="form-group">
-                <label class="form-label">Framework</label>
-                <select><option>PAS — Problem, Agitation, Solution</option><option>AIDA</option><option>BAB</option><option>FAB</option></select>
-              </div>
+            <div class="page-actions">
+              <button class="btn btn-secondary">Zapisz szkic</button>
+              <button class="btn btn-primary">Zapisz jako gotowy</button>
             </div>
-
-            <div class="form-group">
-              <label class="form-label">Audience</label>
-              <textarea rows="2">mężczyźni 25-50, spawacze z Pruszkowa i Warszawy zachodniej</textarea>
-            </div>
-
-            <fieldset>
-              <legend>Marka / firma</legend>
-              <input value="Stalmet Pruszków" />
-              <input value="Zakład spawalniczy z 14-osobową ekipą, hala na Powstańców 12" />
-              <textarea rows="2">Dwie zmiany, bez weekendów
-Stawka 7 200 + premia
-Brygadzista co tłumaczy raz</textarea>
-            </fieldset>
-
-            <div class="form-group">
-              <label class="form-label">Oferta</label>
-              <textarea rows="3">szukamy spawacza MIG/MAG, hala Bemowo Powstańców 12, dwie zmiany, stawka od 7 200 netto, premia 500/m za wieczorówki</textarea>
-            </div>
-
-            <div class="grid-3">
-              <input value="Warszawa Bemowo" placeholder="Region" />
-              <input value="7 200 PLN netto + premia" placeholder="Stawka / cena" />
-              <input value="tel. 555-123-456" placeholder="Kontakt" />
-            </div>
-
-            <input value="Zostaw numer w komentarzu, oddzwaniam dziś" placeholder="CTA" />
-
-            <button class="btn btn-primary" style="width: 100%; padding: 12px">⚡ Wygeneruj 3 warianty</button>
-            <p class="text-xs text-muted" style="text-align: center">Claude Sonnet 4.6 · ~4-7s · $0.008</p>
           </div>
 
-          <div class="stack-sm">
-            <div class="row-between">
-              <h2>Wynik</h2>
-              <span class="text-xs text-muted"><span class="pulse"></span>4.2s · 1240+680 tok · $0.0084</span>
-            </div>
+          <div class="grid-2">
+            <div class="card stack-sm">
+              <div class="grid-2" style="gap: 10px">
+                <div class="form-group">
+                  <label class="form-label">Tytuł wewnętrzny</label>
+                  <input value="Spawacz Pruszków — hala B" />
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Typ</label>
+                  <select><option>job</option><option>sales</option></select>
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Treść posta (max 800 znaków)</label>
+                <textarea rows="12" style="font-family: -apple-system, sans-serif">Szukam u nas w Pruszkowie spawacza MIG/MAG do hali.
 
-            <!-- Variants — CSS-only tabs przez :checked -->
-            <input class="vr" type="radio" name="variant" id="vr-1" checked />
-            <input class="vr" type="radio" name="variant" id="vr-2" />
-            <input class="vr" type="radio" name="variant" id="vr-3" />
+Stawka 7 200 netto + premia 500/m za wieczorówki. Dwie zmiany, hala na Powstańców 12. Dojazd autobusem 197, 5 min od przystanku.
 
-            <div class="v-tabs">
-              <label for="vr-1" class="v-tab">Wariant 1<span class="sub">human 87/100</span></label>
-              <label for="vr-2" class="v-tab">Wariant 2<span class="sub">human 82/100</span></label>
-              <label for="vr-3" class="v-tab">Wariant 3<span class="sub">human 91/100</span></label>
-            </div>
+Ludzie odpadają zwykle na "a gdzie to dokładnie" - więc piszę od razu.
 
-            <div class="v-content">
-              <!-- Variant 1 -->
-              <div class="v-c-1 stack-sm">
-                <div class="card stack-sm">
-                  <div class="row-between">
-                    <div class="human-score good">Human score: 87/100 ✓ brzmi jak człowiek</div>
-                    <span class="badge badge-warning">1 warn</span>
+Zostaw numer w komentarzu, oddzwaniam dziś.</textarea>
+                <div class="row-between text-2xs text-muted">
+                  <span>312 / 800 znaków</span>
+                  <span><span class="text-success">●</span> Brak zakazanych fraz AI</span>
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Załączniki (1-4 obrazów)</label>
+                <div class="row" style="gap: 8px">
+                  <div style="width: 72px; height: 72px; background: var(--surface-2); border: 1px solid var(--border-strong); border-radius: var(--r-md); display: flex; align-items: center; justify-content: center; color: var(--muted)">
+                    <svg style="width:20px;height:20px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v8 M8 12h8" stroke-linecap="round"/></svg>
                   </div>
-                  <pre class="post-preview">Szukam u nas w Pruszkowie spawacza MIG/MAG do hali.
+                </div>
+                <span class="form-hint">Max 8 MB / obraz · JPG, PNG, WEBP</span>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Framework copywritingu</label>
+                <select><option>PAS — Problem, Agitation, Solution</option><option>AIDA</option><option>BAB</option></select>
+              </div>
+            </div>
+
+            <div class="stack-sm">
+              <div class="card-elevated">
+                <div class="card-header">
+                  <h3 class="card-title">Podgląd na żywo</h3>
+                  <span class="text-2xs text-muted">tak będzie wyglądał na grupie FB</span>
+                </div>
+                <div style="background: var(--bg); border-radius: var(--r-md); padding: 16px; border: 1px solid var(--border)">
+                  <div class="row" style="gap: 10px; margin-bottom: 12px">
+                    <div class="avatar avatar-lg">PZ</div>
+                    <div>
+                      <div style="font-weight: 600; font-size: 14px">Piotr Zając</div>
+                      <div class="text-2xs text-muted">2 min · 🌍 Publiczny</div>
+                    </div>
+                  </div>
+                  <pre class="post-preview" style="background: transparent; border: 0; padding: 0">Szukam u nas w Pruszkowie spawacza MIG/MAG do hali.
 
 Stawka 7 200 netto + premia 500/m za wieczorówki. Dwie zmiany, hala na Powstańców 12. Dojazd autobusem 197, 5 min od przystanku.
 
 Ludzie odpadają zwykle na "a gdzie to dokładnie" - więc piszę od razu.
 
 Zostaw numer w komentarzu, oddzwaniam dziś.</pre>
-                </div>
-                <div class="card stack-sm">
-                  <div class="row-between"><h3>Humanize checklist</h3><span class="text-xs text-muted">6/6</span></div>
-                  <ul class="checklist">
-                    <li><span class="pass">✓</span><span>Konkretna liczba/kwota (7200, 500, 197)</span></li>
-                    <li><span class="pass">✓</span><span>Nazwa własna (Pruszków, Powstańców)</span></li>
-                    <li><span class="pass">✓</span><span>Brak em-dashy (—)</span></li>
-                    <li><span class="pass">✓</span><span>Krótkie zdanie (≤5 słów)</span></li>
-                    <li><span class="pass">✓</span><span>Branżowy żargon / kolokwializm (u nas, oddzwaniam, daj znać)</span></li>
-                    <li><span class="pass">✓</span><span>Długość 312 znaków &lt; 900</span></li>
-                  </ul>
-                </div>
-                <div style="background: var(--warning-soft); border: 1px solid var(--warning); border-radius: var(--r-sm); padding: 12px; font-size: 13px; color: var(--warning)">
-                  <strong>Anti-AI filter:</strong> em_dash: zamieniono 2× na zwykłe myślniki
-                </div>
-                <div class="row">
-                  <button class="btn btn-primary" style="flex: 1">Zapisz w bibliotece</button>
-                  <button class="btn btn-secondary">Regeneruj</button>
+                  <div class="row" style="gap: 16px; padding-top: 12px; margin-top: 12px; border-top: 1px solid var(--border); color: var(--muted); font-size: 12px">
+                    <span>👍 Lubię to</span><span>💬 Komentarz</span><span>↗ Udostępnij</span>
+                  </div>
                 </div>
               </div>
 
-              <!-- Variant 2 -->
-              <div class="v-c-2 stack-sm">
-                <div class="card stack-sm">
-                  <div class="row-between">
-                    <div class="human-score good">Human score: 82/100 ⚠ sprawdź checklist</div>
-                    <span class="badge badge-success">clean</span>
-                  </div>
-                  <pre class="post-preview">Hej grupa Bemowo!
+              <div class="card">
+                <div class="card-header">
+                  <h3 class="card-title">Humanize score</h3>
+                  <span class="human-score good" style="font-size: 18px">87/100</span>
+                </div>
+                <div class="progress" style="margin-bottom: 16px"><div class="progress-bar success" style="width: 87%"></div></div>
+                <ul class="checklist">
+                  <li><svg class="check-icon pass" style="width:14px;height:14px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/></svg>Konkretne liczby (7200, 500, 197)</li>
+                  <li><svg class="check-icon pass" style="width:14px;height:14px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/></svg>Nazwy własne (Pruszków, Powstańców)</li>
+                  <li><svg class="check-icon pass" style="width:14px;height:14px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/></svg>Brak em-dashy (—)</li>
+                  <li><svg class="check-icon pass" style="width:14px;height:14px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/></svg>Krótkie zdanie (≤5 słów)</li>
+                  <li><svg class="check-icon pass" style="width:14px;height:14px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/></svg>Branżowy żargon (oddzwaniam, u nas)</li>
+                  <li><svg class="check-icon pass" style="width:14px;height:14px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/></svg>Długość 312 znaków &lt; 900</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </section>
 
-Mamy wakat — spawacz MIG/MAG, hala B na Powstańców 12.
+        <!-- ============================== AI GENERATOR ============================== -->
+        <section class="view v-ai">
+          <div class="page-header">
+            <div>
+              <h1 class="page-title">Generator AI <span class="badge badge-violet" style="margin-left: 8px; vertical-align: middle">Claude Sonnet 4.6</span></h1>
+              <p class="page-subtitle">Brief → 3 warianty z anti-AI filter · ~4s · $0.008 / generacja</p>
+            </div>
+            <div class="page-actions">
+              <span class="text-xs text-muted">Pozostało dziś: <strong style="color: var(--text)">17/20</strong></span>
+            </div>
+          </div>
+
+          <div class="grid-2">
+            <div class="stack-sm">
+              <div class="card stack-sm">
+                <div class="grid-2" style="gap: 10px">
+                  <div class="form-group">
+                    <label class="form-label">Typ posta</label>
+                    <select><option>Ogłoszenie pracy</option><option>Sprzedażowe</option></select>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Framework</label>
+                    <select><option>PAS — Problem, Agitation, Solution</option><option>AIDA</option><option>BAB</option><option>FAB</option></select>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Audience</label>
+                  <textarea rows="2">mężczyźni 25-50, spawacze z Pruszkowa i Warszawy zachodniej</textarea>
+                </div>
+              </div>
+
+              <fieldset>
+                <legend>Marka / firma</legend>
+                <input value="Stalmet Pruszków" placeholder="Nazwa" />
+                <input value="Zakład spawalniczy z 14-osobową ekipą" placeholder="W jednym zdaniu" />
+                <textarea rows="2" placeholder="USP">Dwie zmiany, bez weekendów
+Stawka 7 200 + premia
+Brygadzista co tłumaczy raz</textarea>
+              </fieldset>
+
+              <div class="card stack-sm">
+                <div class="form-group">
+                  <label class="form-label">Oferta / treść do zakomunikowania</label>
+                  <textarea rows="3">szukamy spawacza MIG/MAG, hala Bemowo Powstańców 12, dwie zmiany, stawka od 7 200 netto, premia 500/m za wieczorówki</textarea>
+                </div>
+                <div class="grid-3">
+                  <div class="form-group">
+                    <label class="form-label">Region</label>
+                    <input value="Warszawa Bemowo" />
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Stawka</label>
+                    <input value="7 200 PLN + premia" />
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Kontakt</label>
+                    <input value="tel. 555-123-456" />
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">CTA</label>
+                  <input value="Zostaw numer w komentarzu, oddzwaniam dziś" />
+                </div>
+              </div>
+
+              <button class="btn btn-primary btn-lg" style="width: 100%">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h7l-1 8 10-12h-7l1-8z" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                Wygeneruj 3 warianty
+              </button>
+            </div>
+
+            <div class="stack-sm">
+              <div class="row-between">
+                <h2 style="font-size: 16px; font-weight: 600">Wygenerowane warianty</h2>
+                <span class="text-xs text-muted"><span class="pulse-dot"></span>4.2s · 1240+680 tok · $0.0084</span>
+              </div>
+
+              <input class="vr" type="radio" name="variant" id="vr-1" checked />
+              <input class="vr" type="radio" name="variant" id="vr-2" />
+              <input class="vr" type="radio" name="variant" id="vr-3" />
+
+              <div class="v-tabs">
+                <label for="vr-1" class="v-tab">Wariant 1<span class="sub">human 87/100</span></label>
+                <label for="vr-2" class="v-tab">Wariant 2<span class="sub">human 82/100</span></label>
+                <label for="vr-3" class="v-tab">Wariant 3<span class="sub">human 91/100</span></label>
+              </div>
+
+              <div class="v-content">
+                <div class="v-c-1 stack-sm">
+                  <div class="card stack-sm">
+                    <div class="row-between">
+                      <span class="human-score good">
+                        <svg style="width:16px;height:16px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                        Human score 87/100
+                      </span>
+                      <span class="badge badge-warning">1 warn</span>
+                    </div>
+                    <pre class="post-preview">Szukam u nas w Pruszkowie spawacza MIG/MAG do hali.
+
+Stawka 7 200 netto + premia 500/m za wieczorówki. Dwie zmiany, hala na Powstańców 12. Dojazd autobusem 197, 5 min od przystanku.
+
+Ludzie odpadają zwykle na "a gdzie to dokładnie" - więc piszę od razu.
+
+Zostaw numer w komentarzu, oddzwaniam dziś.</pre>
+                    <div class="row" style="gap: 8px">
+                      <button class="btn btn-primary btn-sm" style="flex: 1">Zapisz w bibliotece</button>
+                      <button class="btn btn-secondary btn-sm">Regeneruj</button>
+                      <button class="btn btn-ghost btn-sm">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" stroke-linecap="round"/></svg>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="v-c-2 stack-sm">
+                  <div class="card stack-sm">
+                    <div class="row-between">
+                      <span class="human-score mid">
+                        <svg style="width:16px;height:16px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 8v4 M12 16h.01" stroke-linecap="round"/><circle cx="12" cy="12" r="10"/></svg>
+                        Human score 82/100
+                      </span>
+                      <span class="badge badge-success">clean</span>
+                    </div>
+                    <pre class="post-preview">Hej grupa Bemowo!
+
+Mamy wakat - spawacz MIG/MAG, hala B na Powstańców 12.
 
 U nas konkretnie: 7 200 netto + premia, decyzja w 24h od rozmowy, hala 5 min od przystanku 197. Bez ściemy o "konkurencyjnym wynagrodzeniu".
 
-Kto się odzywa dziś, dzwonimy jeszcze przed weekendem. Zostaw numer w komentarzu, oddzwaniam dziś.</pre>
-                </div>
-                <div class="card stack-sm">
-                  <div class="row-between"><h3>Humanize checklist</h3><span class="text-xs text-muted">5/6</span></div>
-                  <ul class="checklist">
-                    <li><span class="pass">✓</span><span>Konkretna liczba/kwota</span></li>
-                    <li><span class="pass">✓</span><span>Nazwa własna (Bemowo, Powstańców)</span></li>
-                    <li><span class="pass">✓</span><span>Brak em-dashy (—)</span></li>
-                    <li><span class="fail">○</span><span class="text-muted">Krótkie zdanie (≤5 słów) — brak</span></li>
-                    <li><span class="pass">✓</span><span>Branżowy żargon / kolokwializm</span></li>
-                    <li><span class="pass">✓</span><span>Długość 384 znaków &lt; 900</span></li>
-                  </ul>
-                </div>
-                <div class="row">
-                  <button class="btn btn-primary" style="flex: 1">Zapisz w bibliotece</button>
-                  <button class="btn btn-secondary">Regeneruj</button>
-                </div>
-              </div>
-
-              <!-- Variant 3 -->
-              <div class="v-c-3 stack-sm">
-                <div class="card stack-sm">
-                  <div class="row-between">
-                    <div class="human-score good">Human score: 91/100 ✓ brzmi jak człowiek</div>
-                    <span class="badge badge-success">clean</span>
+Kto się odzywa dziś, dzwonimy jeszcze przed weekendem.</pre>
+                    <div class="row" style="gap: 8px">
+                      <button class="btn btn-primary btn-sm" style="flex: 1">Zapisz w bibliotece</button>
+                      <button class="btn btn-secondary btn-sm">Regeneruj</button>
+                    </div>
                   </div>
-                  <pre class="post-preview">Trzy lata temu Marek dojeżdżał 1h 20 min do roboty. Teraz robi u nas, 12 min od domu.
+                </div>
+
+                <div class="v-c-3 stack-sm">
+                  <div class="card stack-sm">
+                    <div class="row-between">
+                      <span class="human-score good">
+                        <svg style="width:16px;height:16px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                        Human score 91/100
+                      </span>
+                      <span class="badge badge-success">clean</span>
+                    </div>
+                    <pre class="post-preview">Trzy lata temu Marek dojeżdżał 1h 20 min do roboty. Teraz robi u nas, 12 min od domu.
 
 Szukamy kolejnego spawacza MIG/MAG. Hala Bemowo. 7 200 netto + premia 500/m za wieczorówki.
 
 Nie obiecuję "pracy marzeń". Obiecuję konkret: 5 min od autobusu 197, ekipa 8 osób, brygadzista co tłumaczy raz a porządnie.
 
 Zostaw numer, oddzwaniam.</pre>
+                    <div class="row" style="gap: 8px">
+                      <button class="btn btn-primary btn-sm" style="flex: 1">Zapisz w bibliotece</button>
+                      <button class="btn btn-secondary btn-sm">Regeneruj</button>
+                    </div>
+                  </div>
                 </div>
-                <div class="card stack-sm">
-                  <div class="row-between"><h3>Humanize checklist</h3><span class="text-xs text-muted">6/6</span></div>
-                  <ul class="checklist">
-                    <li><span class="pass">✓</span><span>Konkretna liczba/kwota</span></li>
-                    <li><span class="pass">✓</span><span>Nazwa własna (Bemowo)</span></li>
-                    <li><span class="pass">✓</span><span>Brak em-dashy</span></li>
-                    <li><span class="pass">✓</span><span>Krótkie zdanie ≤5 słów</span></li>
-                    <li><span class="pass">✓</span><span>Branżowy żargon (u nas, ekipa, oddzwaniam)</span></li>
-                    <li><span class="pass">✓</span><span>Długość 388 znaków &lt; 900</span></li>
-                  </ul>
+              </div>
+
+              <div class="card">
+                <div class="card-header">
+                  <h3 class="card-title">Humanize checklist</h3>
+                  <span class="text-xs text-muted">6/6 passed</span>
                 </div>
-                <div class="row">
-                  <button class="btn btn-primary" style="flex: 1">Zapisz w bibliotece</button>
-                  <button class="btn btn-secondary">Regeneruj</button>
+                <ul class="checklist">
+                  <li><svg class="check-icon pass" style="width:14px;height:14px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/></svg>Konkretne liczby/kwoty (7200, 500, 197)</li>
+                  <li><svg class="check-icon pass" style="width:14px;height:14px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/></svg>Nazwy własne (Pruszków, Powstańców)</li>
+                  <li><svg class="check-icon pass" style="width:14px;height:14px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/></svg>Brak em-dashy (—) <span class="text-xs text-muted">— autocorrected 2×</span></li>
+                  <li><svg class="check-icon pass" style="width:14px;height:14px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/></svg>Krótkie zdanie (≤5 słów)</li>
+                  <li><svg class="check-icon pass" style="width:14px;height:14px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/></svg>Branżowy żargon (u nas, oddzwaniam)</li>
+                  <li><svg class="check-icon pass" style="width:14px;height:14px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/></svg>Długość 312 znaków &lt; 900</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ============================== GROUPS ============================== -->
+        <section class="view v-groups stack">
+          <div class="page-header">
+            <div>
+              <h1 class="page-title">Grupy Facebook</h1>
+              <p class="page-subtitle">237 aktywnych · cooldown 4h domyślny · ostatnia synchronizacja 2 min temu</p>
+            </div>
+            <div class="page-actions">
+              <button class="btn btn-secondary btn-sm">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 019-9 9.75 9.75 0 016.74 2.74L21 8 M21 3v5h-5 M21 12a9 9 0 01-9 9 9.75 9.75 0 01-6.74-2.74L3 16 M3 21v-5h5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                Synchronizuj
+              </button>
+              <button class="btn btn-primary btn-sm">+ Dodaj ręcznie</button>
+            </div>
+          </div>
+
+          <div class="grid-4">
+            <div class="stat" style="padding: 14px"><div class="stat-label">Łącznie</div><div class="stat-value" style="font-size: 22px">248</div></div>
+            <div class="stat" style="padding: 14px"><div class="stat-label">Aktywne</div><div class="stat-value" style="font-size: 22px; color: var(--success)">237</div></div>
+            <div class="stat" style="padding: 14px"><div class="stat-label">Z aprobatą</div><div class="stat-value" style="font-size: 22px; color: var(--warning)">31</div></div>
+            <div class="stat" style="padding: 14px"><div class="stat-label">Średnio członków</div><div class="stat-value" style="font-size: 22px">42k</div></div>
+          </div>
+
+          <div class="card" style="padding: 12px">
+            <div class="row" style="gap: 8px">
+              <div class="search-box" style="flex: 1; max-width: none">
+                <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.35-4.35" stroke-linecap="round"/></svg>
+                <input placeholder="Szukaj grup..." />
+              </div>
+              <select style="flex: 0 0 160px"><option>Wszystkie tagi</option></select>
+              <select style="flex: 0 0 160px"><option>Wszystkie miasta</option></select>
+              <button class="btn btn-secondary btn-sm">Filtry</button>
+            </div>
+          </div>
+
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th></th><th>Nazwa</th><th class="right">Członkowie</th><th>Tagi</th><th>Setting</th><th class="right">Cooldown</th><th class="right">Ostatni post</th></tr></thead>
+              <tbody>
+                <tr>
+                  <td style="width: 28px"><input type="checkbox" style="width: 14px; height: 14px" /></td>
+                  <td><div style="font-weight: 500">Praca Warszawa i okolice 2026</div><div class="text-xs text-muted" style="margin-top: 2px">facebook.com/groups/123456</div></td>
+                  <td class="right">87 234</td>
+                  <td><span class="group-tag">warszawa</span><span class="group-tag">praca</span></td>
+                  <td><span class="badge badge-success badge-dot">aktywna</span></td>
+                  <td class="right text-muted">240 min</td>
+                  <td class="right text-xs text-muted">2h temu</td>
+                </tr>
+                <tr>
+                  <td><input type="checkbox" style="width: 14px; height: 14px" /></td>
+                  <td><div style="font-weight: 500">Bemowo — sprzedam, kupię, oddam</div><div class="text-xs text-muted" style="margin-top: 2px">12 856 członków · public</div></td>
+                  <td class="right">12 856</td>
+                  <td><span class="group-tag">warszawa</span><span class="group-tag">bemowo</span></td>
+                  <td><span class="badge badge-success badge-dot">aktywna</span></td>
+                  <td class="right text-muted">360 min</td>
+                  <td class="right text-xs text-muted">6h temu</td>
+                </tr>
+                <tr>
+                  <td><input type="checkbox" style="width: 14px; height: 14px" /></td>
+                  <td><div style="font-weight: 500">Praca Wrocław — oferty</div><div class="text-xs text-muted" style="margin-top: 2px">45 120 członków · public</div></td>
+                  <td class="right">45 120</td>
+                  <td><span class="group-tag">wroclaw</span><span class="group-tag">praca</span></td>
+                  <td><span class="badge badge-success badge-dot">aktywna</span></td>
+                  <td class="right text-muted">240 min</td>
+                  <td class="right text-xs text-muted">1d temu</td>
+                </tr>
+                <tr>
+                  <td><input type="checkbox" style="width: 14px; height: 14px" /></td>
+                  <td><div style="font-weight: 500">Spawacze, ślusarze, mechanicy PL</div><div class="text-xs text-muted" style="margin-top: 2px">23 445 członków · public</div></td>
+                  <td class="right">23 445</td>
+                  <td><span class="group-tag">praca</span><span class="group-tag">rzemioslo</span></td>
+                  <td><span class="badge badge-warning badge-dot">wymaga aprobaty</span></td>
+                  <td class="right text-muted">480 min</td>
+                  <td class="right text-xs text-muted">4h temu</td>
+                </tr>
+                <tr>
+                  <td><input type="checkbox" style="width: 14px; height: 14px" /></td>
+                  <td><div style="font-weight: 500">Kierowcy zawodowi — oferty pracy</div><div class="text-xs text-muted" style="margin-top: 2px">67 890 członków · public</div></td>
+                  <td class="right">67 890</td>
+                  <td><span class="group-tag">praca</span><span class="group-tag">kierowcy</span></td>
+                  <td><span class="badge badge-success badge-dot">aktywna</span></td>
+                  <td class="right text-muted">240 min</td>
+                  <td class="right text-xs text-muted">8h temu</td>
+                </tr>
+                <tr>
+                  <td><input type="checkbox" style="width: 14px; height: 14px" /></td>
+                  <td><div style="font-weight: 500">Pruszków — co się dzieje</div><div class="text-xs text-muted" style="margin-top: 2px">19 200 członków · public</div></td>
+                  <td class="right">19 200</td>
+                  <td><span class="group-tag">pruszkow</span></td>
+                  <td><span class="badge badge-success badge-dot">aktywna</span></td>
+                  <td class="right text-muted">360 min</td>
+                  <td class="right text-xs text-muted">12h temu</td>
+                </tr>
+                <tr>
+                  <td><input type="checkbox" style="width: 14px; height: 14px" /></td>
+                  <td><div style="font-weight: 500">Łódź — praca i ogłoszenia</div><div class="text-xs text-muted" style="margin-top: 2px">34 110 członków · public</div></td>
+                  <td class="right">34 110</td>
+                  <td><span class="group-tag">lodz</span><span class="group-tag">praca</span></td>
+                  <td><span class="badge badge-success badge-dot">aktywna</span></td>
+                  <td class="right text-muted">240 min</td>
+                  <td class="right text-xs text-muted">3h temu</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- ============================== CAMPAIGNS LIST ============================== -->
+        <section class="view v-campaigns stack">
+          <div class="page-header">
+            <div>
+              <h1 class="page-title">Kampanie</h1>
+              <p class="page-subtitle">5 kampanii · 3 aktywne · system pilnuje cooldown i daily cap automatycznie</p>
+            </div>
+            <div class="page-actions">
+              <button class="btn btn-primary">+ Nowa kampania</button>
+            </div>
+          </div>
+
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Kampania</th><th>Status</th><th>Postęp</th><th class="right">Success</th><th class="right">Plan</th><th class="right">Akcja</th></tr></thead>
+              <tbody>
+                <tr>
+                  <td>
+                    <label for="r-campaign-detail" style="cursor: pointer; font-weight: 500">Rekrutacja spawacz maj 2026</label>
+                    <div class="text-xs text-muted" style="margin-top: 2px">Spawacz Pruszków · 87 targetów · od 18 maja</div>
+                  </td>
+                  <td><span class="badge badge-success badge-dot">w toku</span></td>
+                  <td><div class="row" style="gap: 8px"><div style="flex: 1; min-width: 100px"><div class="progress"><div class="progress-bar success" style="width: 73%"></div></div></div><span class="text-2xs text-muted">64/87</span></div></td>
+                  <td class="right" style="font-weight: 600; color: var(--success)">73%</td>
+                  <td class="right text-xs text-muted">dziś — 12 więcej</td>
+                  <td class="right"><button class="btn btn-ghost btn-sm">Pauza</button></td>
+                </tr>
+                <tr>
+                  <td><div style="font-weight: 500">iPhone 14 Pro — szybka sprzedaż</div><div class="text-xs text-muted" style="margin-top: 2px">iPhone 14 Pro · 42 targetów · od 19 maja</div></td>
+                  <td><span class="badge badge-success badge-dot">w toku</span></td>
+                  <td><div class="row" style="gap: 8px"><div style="flex: 1; min-width: 100px"><div class="progress"><div class="progress-bar" style="width: 66%"></div></div></div><span class="text-2xs text-muted">28/42</span></div></td>
+                  <td class="right" style="font-weight: 600">66%</td>
+                  <td class="right text-xs text-muted">dziś — 8 więcej</td>
+                  <td class="right"><button class="btn btn-ghost btn-sm">Pauza</button></td>
+                </tr>
+                <tr>
+                  <td><div style="font-weight: 500">Kierowcy C+E — Warszawa</div><div class="text-xs text-muted" style="margin-top: 2px">Kierowca C+E · 156 targetów · od 22 maja</div></td>
+                  <td><span class="badge badge-primary badge-dot">zaplanowana</span></td>
+                  <td><div class="row" style="gap: 8px"><div style="flex: 1; min-width: 100px"><div class="progress"><div class="progress-bar" style="width: 0%"></div></div></div><span class="text-2xs text-muted">0/156</span></div></td>
+                  <td class="right text-muted">—</td>
+                  <td class="right text-xs text-muted">start 22.05 09:00</td>
+                  <td class="right"><button class="btn btn-primary btn-sm">Start teraz</button></td>
+                </tr>
+                <tr style="opacity: 0.7">
+                  <td><div style="font-weight: 500">Klimatyzacja lipiec</div><div class="text-xs text-muted" style="margin-top: 2px">Klimatyzacja · 73 targetów · 1-7 lipca</div></td>
+                  <td><span class="badge badge-muted badge-dot">zakończona</span></td>
+                  <td><div class="row" style="gap: 8px"><div style="flex: 1; min-width: 100px"><div class="progress"><div class="progress-bar success" style="width: 97%"></div></div></div><span class="text-2xs text-muted">71/73</span></div></td>
+                  <td class="right" style="font-weight: 600; color: var(--success)">97%</td>
+                  <td class="right text-xs text-muted">zakończona</td>
+                  <td class="right text-muted text-xs">—</td>
+                </tr>
+                <tr>
+                  <td><div style="font-weight: 500">Magazynier Łódź — test</div><div class="text-xs text-muted" style="margin-top: 2px">Magazynier nocny · 24 targetów · od 15 maja</div></td>
+                  <td><span class="badge badge-warning badge-dot">pauza</span></td>
+                  <td><div class="row" style="gap: 8px"><div style="flex: 1; min-width: 100px"><div class="progress"><div class="progress-bar warning" style="width: 33%"></div></div></div><span class="text-2xs text-muted">8/24</span></div></td>
+                  <td class="right" style="font-weight: 600">33%</td>
+                  <td class="right text-xs text-muted">wstrzymana</td>
+                  <td class="right"><button class="btn btn-primary btn-sm">Wznów</button></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- ============================== CAMPAIGN DETAIL ============================== -->
+        <section class="view v-campaign-detail stack">
+          <div class="page-header">
+            <div>
+              <div class="row" style="gap: 8px; margin-bottom: 4px">
+                <label for="r-campaigns" class="text-xs text-muted" style="cursor: pointer">← Kampanie</label>
+              </div>
+              <h1 class="page-title">Rekrutacja spawacz maj 2026</h1>
+              <p class="page-subtitle">Spawacz Pruszków — hala B · PAS · uruchomiona 18 maja, 09:14</p>
+            </div>
+            <div class="page-actions">
+              <span class="badge badge-success badge-dot" style="padding: 6px 12px; font-size: 12px"><span class="pulse-dot"></span>w toku</span>
+              <button class="btn btn-secondary">Edytuj</button>
+              <button class="btn btn-ghost">Pauza</button>
+            </div>
+          </div>
+
+          <div class="grid-4">
+            <div class="stat" style="padding: 14px"><div class="stat-label">Razem</div><div class="stat-value" style="font-size: 22px">87</div></div>
+            <div class="stat" style="padding: 14px"><div class="stat-label">Opublikowane</div><div class="stat-value" style="font-size: 22px; color: var(--success)">64</div></div>
+            <div class="stat" style="padding: 14px"><div class="stat-label">Pominięte</div><div class="stat-value" style="font-size: 22px; color: var(--warning)">4</div></div>
+            <div class="stat" style="padding: 14px"><div class="stat-label">Pozostałe</div><div class="stat-value" style="font-size: 22px">19</div></div>
+          </div>
+
+          <div class="grid-2-3-1">
+            <div class="card">
+              <div class="card-header">
+                <h3 class="card-title">Targety</h3>
+                <span class="text-xs text-muted">87 grup</span>
+              </div>
+              <div class="table-wrap" style="border: 0">
+                <table>
+                  <thead><tr><th>Grupa</th><th>Status</th><th class="right">Opublikowano</th></tr></thead>
+                  <tbody>
+                    <tr><td>Praca Warszawa i okolice 2026</td><td><span class="badge badge-success badge-dot">opublikowany</span></td><td class="right text-xs text-muted">2 min temu</td></tr>
+                    <tr><td>Bemowo — sprzedam, kupię, oddam</td><td><span class="badge badge-success badge-dot">opublikowany</span></td><td class="right text-xs text-muted">7 min temu</td></tr>
+                    <tr><td>Spawacze, ślusarze, mechanicy PL</td><td><span class="badge badge-warning badge-dot">pominięty</span></td><td class="right text-xs text-muted">cooldown 4h</td></tr>
+                    <tr><td>Kierowcy zawodowi — oferty pracy</td><td><span class="badge badge-success badge-dot">opublikowany</span></td><td class="right text-xs text-muted">18 min temu</td></tr>
+                    <tr><td>Pruszków — co się dzieje</td><td><span class="badge badge-success badge-dot">opublikowany</span></td><td class="right text-xs text-muted">24 min temu</td></tr>
+                    <tr><td>Łódź — praca i ogłoszenia</td><td><span class="badge badge-primary badge-dot">w kolejce</span></td><td class="right text-xs text-muted">za ~6 min</td></tr>
+                    <tr><td>Sprzedam kupie ogarnę — Trójmiasto</td><td><span class="badge badge-primary badge-dot">w kolejce</span></td><td class="right text-xs text-muted">za ~13 min</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <div class="stack-sm">
+              <div class="card">
+                <div class="card-header">
+                  <h3 class="card-title">Wydajność</h3>
+                </div>
+                <div class="row" style="gap: 16px; align-items: center">
+                  <div class="ring-chart" style="width: 100px; height: 100px">
+                    <div>
+                      <div class="ring-value" style="font-size: 18px">73<span style="font-size: 11px; color: var(--muted)">%</span></div>
+                      <div class="ring-label" style="font-size: 10px">success</div>
+                    </div>
+                  </div>
+                  <div class="stack-sm flex-1" style="font-size: 12px">
+                    <div class="row-between"><span class="text-muted">Cooldown</span><span style="font-weight: 600">240 min</span></div>
+                    <div class="row-between"><span class="text-muted">Delay</span><span style="font-weight: 600">90-240s</span></div>
+                    <div class="row-between"><span class="text-muted">Daily cap</span><span style="font-weight: 600">25/dzień</span></div>
+                    <div class="row-between"><span class="text-muted">Wariator</span><span style="color: var(--success); font-weight: 600">ON</span></div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="card">
+                <div class="card-header"><h3 class="card-title">Treść posta</h3></div>
+                <pre class="post-preview" style="font-size: 12px">Szukam u nas w Pruszkowie spawacza MIG/MAG do hali.
+
+Stawka 7 200 netto + premia 500/m. Dwie zmiany, hala Powstańców 12. Dojazd autobusem 197.
+
+Zostaw numer w komentarzu, oddzwaniam dziś.</pre>
+                <div class="row" style="margin-top: 12px; gap: 6px">
+                  <span class="human-score good" style="font-size: 13px"><svg style="width:14px;height:14px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/></svg>87/100</span>
+                  <span class="badge badge-violet">job</span>
+                  <span class="badge badge-muted">PAS</span>
                 </div>
               </div>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      <!-- ====== GROUPS ====== -->
-      <section class="view v-groups stack">
-        <div class="row-between">
-          <div>
-            <h1>Grupy</h1>
-            <p class="text-sm text-muted" style="margin-top: 4px">237 grup zaimportowanych przez rozszerzenie · cooldown 4h domyślny</p>
-          </div>
-          <button class="btn btn-primary">↻ Synchronizuj z FB</button>
-        </div>
-        <div class="card row" style="padding: 12px; gap: 8px">
-          <input placeholder="Szukaj po nazwie..." style="flex: 1; min-width: 0" />
-          <select style="flex: 0 0 180px; max-width: 100%">
-            <option>Wszystkie tagi</option><option>warszawa</option><option>praca</option>
-          </select>
-        </div>
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th>Nazwa</th><th class="right">Członkowie</th><th>Prywatność</th><th>Tagi</th><th class="right">Cooldown</th><th class="right">Ostatni post</th></tr></thead>
-            <tbody>
-              <tr><td>Praca Warszawa i okolice 2026</td><td class="right">87 234</td><td class="text-muted text-xs">public</td><td><span class="badge badge-muted">warszawa</span><span class="badge badge-muted">praca</span></td><td class="right text-muted">240 min</td><td class="right text-muted text-xs">2h temu</td></tr>
-              <tr><td>Bemowo - sprzedam, kupię, oddam</td><td class="right">12 856</td><td class="text-muted text-xs">public</td><td><span class="badge badge-muted">warszawa</span><span class="badge badge-muted">bemowo</span></td><td class="right text-muted">360 min</td><td class="right text-muted text-xs">6h temu</td></tr>
-              <tr><td>Praca Wrocław - oferty</td><td class="right">45 120</td><td class="text-muted text-xs">public</td><td><span class="badge badge-muted">wroclaw</span><span class="badge badge-muted">praca</span></td><td class="right text-muted">240 min</td><td class="right text-muted text-xs">1d temu</td></tr>
-              <tr><td>Spawacze, ślusarze, mechanicy PL</td><td class="right">23 445</td><td class="text-muted text-xs">public</td><td><span class="badge badge-muted">praca</span><span class="badge badge-muted">rzemioslo</span></td><td class="right text-muted">480 min</td><td class="right text-muted text-xs">4h temu</td></tr>
-              <tr><td>Kierowcy zawodowi - oferty pracy</td><td class="right">67 890</td><td class="text-muted text-xs">public</td><td><span class="badge badge-muted">praca</span><span class="badge badge-muted">kierowcy</span></td><td class="right text-muted">240 min</td><td class="right text-muted text-xs">8h temu</td></tr>
-              <tr><td>Pruszków - co się dzieje</td><td class="right">19 200</td><td class="text-muted text-xs">public</td><td><span class="badge badge-muted">pruszkow</span></td><td class="right text-muted">360 min</td><td class="right text-muted text-xs">12h temu</td></tr>
-              <tr><td>Łódź - praca i ogłoszenia</td><td class="right">34 110</td><td class="text-muted text-xs">public</td><td><span class="badge badge-muted">lodz</span><span class="badge badge-muted">praca</span></td><td class="right text-muted">240 min</td><td class="right text-muted text-xs">3h temu</td></tr>
-              <tr><td>Sprzedam kupie ogarnę - Trójmiasto</td><td class="right">78 900</td><td class="text-muted text-xs">public</td><td><span class="badge badge-muted">trojmiasto</span></td><td class="right text-muted">360 min</td><td class="right text-muted text-xs">5h temu</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </section>
-
-      <!-- ====== CAMPAIGNS ====== -->
-      <section class="view v-campaigns stack">
-        <div class="row-between">
-          <div>
-            <h1>Kampanie</h1>
-            <p class="text-sm text-muted" style="margin-top: 4px">Wybierz post + grupy → system pilnuje cooldownu i kolejki.</p>
-          </div>
-          <button class="btn btn-primary">+ Nowa kampania</button>
-        </div>
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th>Nazwa</th><th>Post</th><th>Status</th><th class="right">Posted / All</th><th class="right">Skipped</th><th class="right">% sukcesu</th><th class="right">Akcja</th></tr></thead>
-            <tbody>
-              <tr><td>Rekrutacja spawacz maj 2026</td><td class="text-muted text-xs">Spawacz Pruszków</td><td><span class="badge badge-success">w toku</span></td><td class="right">64 / 87</td><td class="right" style="color: var(--warning)">4</td><td class="right" style="font-weight: 600">73%</td><td class="right"><button class="btn btn-ghost btn-sm">Pauza</button></td></tr>
-              <tr><td>iPhone 14 Pro - szybka sprzedaż</td><td class="text-muted text-xs">iPhone 14 Pro</td><td><span class="badge badge-success">w toku</span></td><td class="right">28 / 42</td><td class="right" style="color: var(--warning)">2</td><td class="right" style="font-weight: 600">66%</td><td class="right"><button class="btn btn-ghost btn-sm">Pauza</button></td></tr>
-              <tr><td>Kierowcy C+E - Warszawa</td><td class="text-muted text-xs">Kierowca C+E</td><td><span class="badge badge-primary">zaplanowana</span></td><td class="right">0 / 156</td><td class="right">0</td><td class="right" style="font-weight: 600">0%</td><td class="right"><button class="btn btn-primary btn-sm">Start</button></td></tr>
-              <tr><td>Klimatyzacja lipiec</td><td class="text-muted text-xs">Klimatyzacja</td><td><span class="badge badge-muted">zakończona</span></td><td class="right">71 / 73</td><td class="right" style="color: var(--warning)">2</td><td class="right" style="font-weight: 600">97%</td><td class="right"><span class="text-muted text-xs">—</span></td></tr>
-              <tr><td>Magazynier Łódź - test</td><td class="text-muted text-xs">Magazynier nocny</td><td><span class="badge badge-warning">pauza</span></td><td class="right">8 / 24</td><td class="right" style="color: var(--warning)">1</td><td class="right" style="font-weight: 600">33%</td><td class="right"><button class="btn btn-primary btn-sm">Wznów</button></td></tr>
-            </tbody>
-          </table>
-        </div>
-      </section>
-
-      <!-- ====== ANALYTICS ====== -->
-      <section class="view v-analytics stack">
-        <h1>Analytics</h1>
-
-        <div class="card">
-          <h3 style="margin-bottom: 14px">Posty per dzień (ostatnie 14)</h3>
-          <div class="chart-bars">
-            <div class="bar" style="height: 16%"></div>
-            <div class="bar" style="height: 25%"></div>
-            <div class="bar" style="height: 33%"></div>
-            <div class="bar" style="height: 42%"></div>
-            <div class="bar" style="height: 30%"></div>
-            <div class="bar" style="height: 11%"></div>
-            <div class="bar" style="height: 19%"></div>
-            <div class="bar" style="height: 38%"></div>
-            <div class="bar" style="height: 48%"></div>
-            <div class="bar" style="height: 56%"></div>
-            <div class="bar" style="height: 52%"></div>
-            <div class="bar" style="height: 71%"></div>
-            <div class="bar" style="height: 64%"></div>
-            <div class="bar" style="height: 100%"></div>
-          </div>
-          <div class="chart-labels">
-            <span>Pn</span><span>Wt</span><span>Śr</span><span>Cz</span><span>Pt</span><span>So</span><span>Nd</span><span>Pn</span><span>Wt</span><span>Śr</span><span>Cz</span><span>Pt</span><span>So</span><span>Nd</span>
-          </div>
-        </div>
-
-        <div class="card">
-          <h3 style="margin-bottom: 14px">Najlepsze godziny publikacji</h3>
-          <div class="chart-bars" style="height: 120px">
-            <div class="bar" style="height: 1%"></div><div class="bar" style="height: 1%"></div><div class="bar" style="height: 1%"></div><div class="bar" style="height: 1%"></div>
-            <div class="bar" style="height: 3%"></div><div class="bar" style="height: 5%"></div><div class="bar" style="height: 11%"></div><div class="bar" style="height: 21%"></div>
-            <div class="bar" style="height: 37%"></div><div class="bar" style="height: 58%"></div><div class="bar" style="height: 74%"></div><div class="bar" style="height: 82%"></div>
-            <div class="bar" style="height: 76%"></div><div class="bar" style="height: 68%"></div><div class="bar" style="height: 63%"></div><div class="bar" style="height: 74%"></div>
-            <div class="bar" style="height: 84%"></div><div class="bar" style="height: 100%"></div><div class="bar" style="height: 89%"></div><div class="bar" style="height: 58%"></div>
-            <div class="bar" style="height: 32%"></div><div class="bar" style="height: 16%"></div><div class="bar" style="height: 5%"></div><div class="bar" style="height: 3%"></div>
-          </div>
-          <div class="chart-labels">
-            <span>0</span><span>3</span><span>6</span><span>9</span><span>12</span><span>15</span><span>18</span><span>21</span><span>23</span>
-          </div>
-        </div>
-
-        <div class="grid-2">
-          <div class="card">
-            <h3 style="margin-bottom: 14px">Top grupy (success rate)</h3>
-            <div class="stack-sm" style="font-size: 13px">
-              <div class="row-between" style="padding: 6px 0; border-bottom: 1px solid var(--border)"><div class="flex-1 truncate" style="padding-right: 12px">Spawacze, ślusarze, mechanicy PL</div><div class="text-muted text-xs" style="margin-right: 12px">18/18</div><div style="font-weight: 600; color: var(--success)">100%</div></div>
-              <div class="row-between" style="padding: 6px 0; border-bottom: 1px solid var(--border)"><div class="flex-1 truncate" style="padding-right: 12px">Praca Warszawa i okolice</div><div class="text-muted text-xs" style="margin-right: 12px">22/24</div><div style="font-weight: 600; color: var(--success)">92%</div></div>
-              <div class="row-between" style="padding: 6px 0; border-bottom: 1px solid var(--border)"><div class="flex-1 truncate" style="padding-right: 12px">Kierowcy zawodowi</div><div class="text-muted text-xs" style="margin-right: 12px">13/15</div><div style="font-weight: 600; color: var(--warning)">87%</div></div>
-              <div class="row-between" style="padding: 6px 0"><div class="flex-1 truncate" style="padding-right: 12px">Pruszków - co się dzieje</div><div class="text-muted text-xs" style="margin-right: 12px">10/12</div><div style="font-weight: 600; color: var(--warning)">83%</div></div>
+        <!-- ============================== ANALYTICS ============================== -->
+        <section class="view v-analytics stack">
+          <div class="page-header">
+            <div>
+              <h1 class="page-title">Analytics</h1>
+              <p class="page-subtitle">Ostatnie 14 dni · 412 publikacji · 89% średni success rate</p>
+            </div>
+            <div class="page-actions">
+              <select style="width: 140px"><option>Ostatnie 14 dni</option><option>Ostatnie 30 dni</option><option>Ten miesiąc</option></select>
+              <button class="btn btn-secondary btn-sm">Eksport CSV</button>
             </div>
           </div>
-          <div class="card">
-            <h3 style="margin-bottom: 14px">Najczęstsze błędy</h3>
-            <div class="stack-sm" style="font-size: 13px">
-              <div class="row-between" style="padding: 6px 0; border-bottom: 1px solid var(--border)"><code>cooldown</code><span class="text-muted">23×</span></div>
-              <div class="row-between" style="padding: 6px 0; border-bottom: 1px solid var(--border)"><code>daily_cap</code><span class="text-muted">8×</span></div>
-              <div class="row-between" style="padding: 6px 0; border-bottom: 1px solid var(--border)"><code>no_publish_detected</code><span class="text-muted">2×</span></div>
-              <div class="row-between" style="padding: 6px 0"><code>login_required</code><span class="text-muted">1×</span></div>
+
+          <div class="grid-4">
+            <div class="stat"><div class="stat-icon-wrap success"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14 M22 4L12 14.01l-3-3" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="stat-label">Łącznie publikacji</div><div class="stat-value">412</div><div class="stat-delta">+23% vs poprzedni okres</div></div>
+            <div class="stat"><div class="stat-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18 M7 14l4-4 4 4 5-7" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="stat-label">Średni success rate</div><div class="stat-value">89%</div><div class="stat-delta">+4 pp vs poprzedni okres</div></div>
+            <div class="stat"><div class="stat-icon-wrap warning"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2" stroke-linecap="round"/></svg></div><div class="stat-label">Średni czas/post</div><div class="stat-value">3.4 min</div><div class="stat-delta neutral">user click do publikacji</div></div>
+            <div class="stat"><div class="stat-icon-wrap violet"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1v22 M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6" stroke-linecap="round"/></svg></div><div class="stat-label">Koszt AI (30d)</div><div class="stat-value">$2.84</div><div class="stat-delta neutral">342 generacje</div></div>
+          </div>
+
+          <div class="grid-2-3-1">
+            <div class="card">
+              <div class="card-header">
+                <h3 class="card-title">Publikacje per dzień</h3>
+                <span class="text-xs text-muted">ostatnie 14 dni</span>
+              </div>
+              <div class="chart-bars">
+                <div class="bar" style="height: 16%"></div>
+                <div class="bar" style="height: 25%"></div>
+                <div class="bar" style="height: 33%"></div>
+                <div class="bar" style="height: 42%"></div>
+                <div class="bar" style="height: 30%"></div>
+                <div class="bar" style="height: 11%"></div>
+                <div class="bar" style="height: 19%"></div>
+                <div class="bar" style="height: 38%"></div>
+                <div class="bar" style="height: 48%"></div>
+                <div class="bar" style="height: 56%"></div>
+                <div class="bar" style="height: 52%"></div>
+                <div class="bar" style="height: 71%"></div>
+                <div class="bar" style="height: 64%"></div>
+                <div class="bar peak" style="height: 100%"></div>
+              </div>
+              <div class="chart-labels">
+                <span>7.05</span><span>8.05</span><span>9.05</span><span>10.05</span><span>11.05</span><span>12.05</span><span>13.05</span><span>14.05</span><span>15.05</span><span>16.05</span><span>17.05</span><span>18.05</span><span>19.05</span><span>dzisiaj</span>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-header"><h3 class="card-title">Success rate</h3></div>
+              <div style="display: flex; flex-direction: column; align-items: center; gap: 8px">
+                <div class="ring-chart" style="background: conic-gradient(var(--success) 0% 89%, var(--surface-2) 89% 100%)">
+                  <div>
+                    <div class="ring-value" style="color: var(--success)">89<span style="font-size: 14px; color: var(--muted)">%</span></div>
+                    <div class="ring-label">14 dni</div>
+                  </div>
+                </div>
+                <div class="text-xs text-success" style="font-weight: 600">+4 pp vs poprzedni okres</div>
+              </div>
             </div>
           </div>
+
+          <div class="card">
+            <div class="card-header">
+              <h3 class="card-title">Heatmapa publikacji (kiedy najlepiej postuje się)</h3>
+              <span class="text-xs text-muted">kolor = liczba opublikowanych postów</span>
+            </div>
+            <div class="heatmap">
+              <span class="heatmap-day">Pn</span>
+              <div class="heatmap-cell"></div><div class="heatmap-cell"></div><div class="heatmap-cell"></div><div class="heatmap-cell"></div><div class="heatmap-cell"></div><div class="heatmap-cell h1"></div><div class="heatmap-cell h2"></div><div class="heatmap-cell h3"></div><div class="heatmap-cell h4"></div><div class="heatmap-cell h5"></div><div class="heatmap-cell h5"></div><div class="heatmap-cell h4"></div><div class="heatmap-cell h3"></div><div class="heatmap-cell h3"></div><div class="heatmap-cell h4"></div><div class="heatmap-cell h5"></div><div class="heatmap-cell h5"></div><div class="heatmap-cell h4"></div><div class="heatmap-cell h3"></div><div class="heatmap-cell h2"></div><div class="heatmap-cell h1"></div><div class="heatmap-cell"></div><div class="heatmap-cell"></div><div class="heatmap-cell"></div>
+
+              <span class="heatmap-day">Wt</span>
+              <div class="heatmap-cell"></div><div class="heatmap-cell"></div><div class="heatmap-cell"></div><div class="heatmap-cell"></div><div class="heatmap-cell"></div><div class="heatmap-cell h1"></div><div class="heatmap-cell h2"></div><div class="heatmap-cell h3"></div><div class="heatmap-cell h4"></div><div class="heatmap-cell h5"></div><div class="heatmap-cell h5"></div><div class="heatmap-cell h5"></div><div class="heatmap-cell h4"></div><div class="heatmap-cell h3"></div><div class="heatmap-cell h4"></div><div class="heatmap-cell h5"></div><div class="heatmap-cell h5"></div><div class="heatmap-cell h4"></div><div class="heatmap-cell h3"></div><div class="heatmap-cell h2"></div><div class="heatmap-cell h1"></div><div class="heatmap-cell"></div><div class="heatmap-cell"></div><div class="heatmap-cell"></div>
+
+              <span class="heatmap-day">Śr</span>
+              <div class="heatmap-cell"></div><div class="heatmap-cell"></div><div class="heatmap-cell"></div><div class="heatmap-cell"></div><div class="heatmap-cell"></div><div class="heatmap-cell h2"></div><div class="heatmap-cell h3"></div><div class="heatmap-cell h4"></div><div class="heatmap-cell h5"></div><div class="heatmap-cell h5"></div><div class="heatmap-cell h5"></div><div class="heatmap-cell h5"></div><div class="heatmap-cell h4"></div><div class="heatmap-cell h4"></div><div class="heatmap-cell h5"></div><div class="heatmap-cell h5"></div><div class="heatmap-cell h5"></div><div class="heatmap-cell h4"></div><div class="heatmap-cell h3"></div><div class="heatmap-cell h2"></div><div class="heatmap-cell h1"></div><div class="heatmap-cell"></div><div class="heatmap-cell"></div><div class="heatmap-cell"></div>
+
+              <span class="heatmap-day">Cz</span>
+              <div class="heatmap-cell"></div><div class="heatmap-cell"></div><div class="heatmap-cell"></div><div class="heatmap-cell"></div><div class="heatmap-cell"></div><div class="heatmap-cell h1"></div><div class="heatmap-cell h3"></div><div class="heatmap-cell h4"></div><div class="heatmap-cell h5"></div><div class="heatmap-cell h5"></div><div class="heatmap-cell h5"></div><div class="heatmap-cell h5"></div><div class="heatmap-cell h4"></div><div class="heatmap-cell h3"></div><div class="heatmap-cell h4"></div><div class="heatmap-cell h5"></div><div class="heatmap-cell h5"></div><div class="heatmap-cell h4"></div><div class="heatmap-cell h3"></div><div class="heatmap-cell h2"></div><div class="heatmap-cell h1"></div><div class="heatmap-cell"></div><div class="heatmap-cell"></div><div class="heatmap-cell"></div>
+
+              <span class="heatmap-day">Pt</span>
+              <div class="heatmap-cell"></div><div class="heatmap-cell"></div><div class="heatmap-cell"></div><div class="heatmap-cell"></div><div class="heatmap-cell"></div><div class="heatmap-cell h1"></div><div class="heatmap-cell h2"></div><div class="heatmap-cell h3"></div><div class="heatmap-cell h4"></div><div class="heatmap-cell h4"></div><div class="heatmap-cell h4"></div><div class="heatmap-cell h3"></div><div class="heatmap-cell h3"></div><div class="heatmap-cell h2"></div><div class="heatmap-cell h2"></div><div class="heatmap-cell h2"></div><div class="heatmap-cell h2"></div><div class="heatmap-cell h1"></div><div class="heatmap-cell h1"></div><div class="heatmap-cell h1"></div><div class="heatmap-cell"></div><div class="heatmap-cell"></div><div class="heatmap-cell"></div><div class="heatmap-cell"></div>
+
+              <span class="heatmap-day">So</span>
+              <div class="heatmap-cell"></div><div class="heatmap-cell"></div><div class="heatmap-cell"></div><div class="heatmap-cell"></div><div class="heatmap-cell"></div><div class="heatmap-cell"></div><div class="heatmap-cell h1"></div><div class="heatmap-cell h2"></div><div class="heatmap-cell h2"></div><div class="heatmap-cell h2"></div><div class="heatmap-cell h2"></div><div class="heatmap-cell h2"></div><div class="heatmap-cell h2"></div><div class="heatmap-cell h2"></div><div class="heatmap-cell h2"></div><div class="heatmap-cell h2"></div><div class="heatmap-cell h2"></div><div class="heatmap-cell h2"></div><div class="heatmap-cell h1"></div><div class="heatmap-cell h1"></div><div class="heatmap-cell"></div><div class="heatmap-cell"></div><div class="heatmap-cell"></div><div class="heatmap-cell"></div>
+
+              <span class="heatmap-day">Nd</span>
+              <div class="heatmap-cell"></div><div class="heatmap-cell"></div><div class="heatmap-cell"></div><div class="heatmap-cell"></div><div class="heatmap-cell"></div><div class="heatmap-cell"></div><div class="heatmap-cell"></div><div class="heatmap-cell h1"></div><div class="heatmap-cell h1"></div><div class="heatmap-cell h2"></div><div class="heatmap-cell h3"></div><div class="heatmap-cell h3"></div><div class="heatmap-cell h3"></div><div class="heatmap-cell h3"></div><div class="heatmap-cell h3"></div><div class="heatmap-cell h3"></div><div class="heatmap-cell h2"></div><div class="heatmap-cell h2"></div><div class="heatmap-cell h2"></div><div class="heatmap-cell h1"></div><div class="heatmap-cell h1"></div><div class="heatmap-cell"></div><div class="heatmap-cell"></div><div class="heatmap-cell"></div>
+            </div>
+            <div class="heatmap-hours">
+              <span></span>
+              <span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>10</span><span>11</span><span>12</span><span>13</span><span>14</span><span>15</span><span>16</span><span>17</span><span>18</span><span>19</span><span>20</span><span>21</span><span>22</span><span>23</span>
+            </div>
+            <div class="heatmap-legend">
+              <span>mniej</span>
+              <div class="legend-cells">
+                <div style="background: var(--surface-2)"></div>
+                <div class="heatmap-cell h1" style="aspect-ratio: auto"></div>
+                <div class="heatmap-cell h2" style="aspect-ratio: auto"></div>
+                <div class="heatmap-cell h3" style="aspect-ratio: auto"></div>
+                <div class="heatmap-cell h4" style="aspect-ratio: auto"></div>
+                <div class="heatmap-cell h5" style="aspect-ratio: auto"></div>
+              </div>
+              <span>więcej</span>
+              <span style="margin-left: auto">peak: wt-cz, 10:00-17:00</span>
+            </div>
+          </div>
+
+          <div class="grid-2">
+            <div class="card">
+              <div class="card-header"><h3 class="card-title">Top grupy</h3></div>
+              <div class="stack-sm">
+                <div class="row-between" style="padding: 8px 0; border-bottom: 1px solid var(--border-subtle)">
+                  <div class="flex-1 truncate" style="padding-right: 12px">Spawacze, ślusarze, mechanicy PL</div>
+                  <div style="width: 80px"><div class="progress"><div class="progress-bar success" style="width: 100%"></div></div></div>
+                  <span class="text-xs" style="margin-left: 12px; font-weight: 600; color: var(--success); min-width: 40px; text-align: right">100%</span>
+                </div>
+                <div class="row-between" style="padding: 8px 0; border-bottom: 1px solid var(--border-subtle)">
+                  <div class="flex-1 truncate" style="padding-right: 12px">Praca Warszawa i okolice</div>
+                  <div style="width: 80px"><div class="progress"><div class="progress-bar success" style="width: 92%"></div></div></div>
+                  <span class="text-xs" style="margin-left: 12px; font-weight: 600; color: var(--success); min-width: 40px; text-align: right">92%</span>
+                </div>
+                <div class="row-between" style="padding: 8px 0; border-bottom: 1px solid var(--border-subtle)">
+                  <div class="flex-1 truncate" style="padding-right: 12px">Kierowcy zawodowi</div>
+                  <div style="width: 80px"><div class="progress"><div class="progress-bar success" style="width: 87%"></div></div></div>
+                  <span class="text-xs" style="margin-left: 12px; font-weight: 600; color: var(--success); min-width: 40px; text-align: right">87%</span>
+                </div>
+                <div class="row-between" style="padding: 8px 0">
+                  <div class="flex-1 truncate" style="padding-right: 12px">Pruszków — co się dzieje</div>
+                  <div style="width: 80px"><div class="progress"><div class="progress-bar warning" style="width: 83%"></div></div></div>
+                  <span class="text-xs" style="margin-left: 12px; font-weight: 600; color: var(--warning); min-width: 40px; text-align: right">83%</span>
+                </div>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-header"><h3 class="card-title">Błędy / pominięcia</h3></div>
+              <div class="stack-sm">
+                <div class="row-between" style="padding: 8px 0; border-bottom: 1px solid var(--border-subtle)">
+                  <div><code>cooldown</code><div class="text-xs text-muted" style="margin-top: 2px">Grupa była postowana <4h temu</div></div>
+                  <span class="badge badge-warning">23×</span>
+                </div>
+                <div class="row-between" style="padding: 8px 0; border-bottom: 1px solid var(--border-subtle)">
+                  <div><code>daily_cap</code><div class="text-xs text-muted" style="margin-top: 2px">Dzienny limit grupy osiągnięty</div></div>
+                  <span class="badge badge-warning">8×</span>
+                </div>
+                <div class="row-between" style="padding: 8px 0; border-bottom: 1px solid var(--border-subtle)">
+                  <div><code>no_publish_detected</code><div class="text-xs text-muted" style="margin-top: 2px">User nie kliknął "Publikuj" w 90s</div></div>
+                  <span class="badge badge-danger">2×</span>
+                </div>
+                <div class="row-between" style="padding: 8px 0">
+                  <div><code>login_required</code><div class="text-xs text-muted" style="margin-top: 2px">Sesja FB wygasła</div></div>
+                  <span class="badge badge-danger">1×</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ============================== TEAM ============================== -->
+        <section class="view v-team stack">
+          <div class="page-header">
+            <div>
+              <h1 class="page-title">Zespół</h1>
+              <p class="page-subtitle">3 użytkowników z 5 w planie Pro · zaproś więcej</p>
+            </div>
+            <div class="page-actions">
+              <button class="btn btn-primary">+ Zaproś użytkownika</button>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <h3 class="card-title">Członkowie organizacji</h3>
+              <span class="text-xs text-muted">Stalmet Pruszków</span>
+            </div>
+            <div class="table-wrap" style="border: 0">
+              <table>
+                <thead><tr><th>Użytkownik</th><th>Rola</th><th>Ostatnia aktywność</th><th class="right">Posty</th><th class="right">Akcja</th></tr></thead>
+                <tbody>
+                  <tr>
+                    <td><div class="row" style="gap: 10px"><div class="avatar avatar-lg">PZ</div><div><div style="font-weight: 500">Piotr Zając <span class="badge badge-primary" style="margin-left: 4px">Ty</span></div><div class="text-xs text-muted">piotr@stalmet.pl</div></div></div></td>
+                    <td><span class="badge badge-violet">Owner</span></td>
+                    <td class="text-xs text-muted">teraz</td>
+                    <td class="right">28</td>
+                    <td class="right text-muted text-xs">—</td>
+                  </tr>
+                  <tr>
+                    <td><div class="row" style="gap: 10px"><div class="avatar avatar-lg" style="background: linear-gradient(135deg,#10b981,#22c55e)">AK</div><div><div style="font-weight: 500">Anna Kowalska</div><div class="text-xs text-muted">anna@stalmet.pl</div></div></div></td>
+                    <td><span class="badge badge-primary">Admin</span></td>
+                    <td class="text-xs text-muted">2h temu</td>
+                    <td class="right">14</td>
+                    <td class="right"><button class="btn btn-ghost btn-sm">⋮</button></td>
+                  </tr>
+                  <tr>
+                    <td><div class="row" style="gap: 10px"><div class="avatar avatar-lg" style="background: linear-gradient(135deg,#f59e0b,#fbbf24)">MN</div><div><div style="font-weight: 500">Marek Nowak</div><div class="text-xs text-muted">marek@stalmet.pl</div></div></div></td>
+                    <td><span class="badge badge-info">Editor</span></td>
+                    <td class="text-xs text-muted">wczoraj</td>
+                    <td class="right">0</td>
+                    <td class="right"><button class="btn btn-ghost btn-sm">⋮</button></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header"><h3 class="card-title">Oczekujące zaproszenia</h3></div>
+            <div class="empty" style="padding: 32px 24px">
+              <div class="empty-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 2L11 13 M22 2l-7 20-4-9-9-4 20-7z" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+              <div class="empty-title">Brak oczekujących zaproszeń</div>
+              <div class="empty-desc">Zaproszenie wygasa po 7 dniach. Zaproś użytkownika emailem żeby dołączył do tej organizacji.</div>
+              <button class="btn btn-primary btn-sm">+ Zaproś</button>
+            </div>
+          </div>
+        </section>
+
+        <!-- ============================== EXTENSION ============================== -->
+        <section class="view v-extension stack">
+          <div class="page-header">
+            <div>
+              <h1 class="page-title">Rozszerzenie Chrome</h1>
+              <p class="page-subtitle">Status, ustawienia, historia synchronizacji</p>
+            </div>
+            <div class="page-actions">
+              <span class="badge badge-success badge-dot" style="padding: 6px 12px"><span class="pulse-dot"></span>aktywne</span>
+            </div>
+          </div>
+
+          <div class="grid-2">
+            <div class="card stack-sm">
+              <div class="card-header"><h3 class="card-title">Status połączenia</h3></div>
+              <div class="row-between"><span class="text-xs text-muted">Wersja</span><span>0.1.0 <span class="text-xs text-muted">(aktualna)</span></span></div>
+              <div class="row-between"><span class="text-xs text-muted">Device ID</span><code>chr_a8f2b9c1d4e7</code></div>
+              <div class="row-between"><span class="text-xs text-muted">Browser</span><span>Chrome 124.0.6367.91</span></div>
+              <div class="row-between"><span class="text-xs text-muted">OS</span><span>Windows 11</span></div>
+              <div class="row-between"><span class="text-xs text-muted">Last seen</span><span style="color: var(--success)">2 min temu</span></div>
+              <div class="row-between"><span class="text-xs text-muted">Token wygasa</span><span>16.06.2026 (28 dni)</span></div>
+              <div class="divider"></div>
+              <button class="btn btn-secondary btn-sm">Odnów token</button>
+              <button class="btn btn-danger btn-sm">Odwołaj urządzenie</button>
+            </div>
+            <div class="card stack-sm">
+              <div class="card-header"><h3 class="card-title">Sesja Facebook</h3></div>
+              <div class="row" style="gap: 16px; align-items: center">
+                <div class="ring-chart" style="width: 100px; height: 100px; background: conic-gradient(var(--success) 0% 100%, var(--surface-2) 0% 0%)">
+                  <div>
+                    <div class="ring-value" style="font-size: 18px; color: var(--success)">✓</div>
+                    <div class="ring-label" style="font-size: 10px">aktywna</div>
+                  </div>
+                </div>
+                <div class="stack-sm flex-1" style="font-size: 12px">
+                  <div class="row-between"><span class="text-muted">Konto FB</span><span style="font-weight: 600">Default</span></div>
+                  <div class="row-between"><span class="text-muted">Ostatni post</span><span style="font-weight: 600">2 min temu</span></div>
+                  <div class="row-between"><span class="text-muted">Postów dzisiaj</span><span style="font-weight: 600">73 / 100</span></div>
+                  <div class="row-between"><span class="text-muted">Selector miss (7d)</span><span style="color: var(--success); font-weight: 600">0</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header"><h3 class="card-title">Konfiguracja</h3></div>
+            <div class="grid-2">
+              <div class="form-group">
+                <label class="form-label">Min delay między postami</label>
+                <input value="90" /> <span class="form-hint">sekundy · domyślnie 90</span>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Max delay między postami</label>
+                <input value="240" /> <span class="form-hint">sekundy · domyślnie 240</span>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Daily cap (per konto)</label>
+                <input value="100" /> <span class="form-hint">postów dziennie</span>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Domyślny cooldown grupy</label>
+                <input value="240" /> <span class="form-hint">minuty · domyślnie 240 (4h)</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header"><h3 class="card-title">Health rozszerzenia (selector miss)</h3><span class="text-xs text-success" style="font-weight: 600">100% sprawne</span></div>
+            <div class="empty" style="padding: 24px">
+              <div class="empty-icon" style="background: var(--success-soft); color: var(--success); border-color: var(--success)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+              <div class="empty-title">Brak błędów detekcji DOM</div>
+              <div class="empty-desc">Rozszerzenie poprawnie znalazło wszystkie elementy Facebook UI w ostatnich 7 dniach. Jeśli FB zmieni DOM, zobaczysz tu raport.</div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ============================== SETTINGS ============================== -->
+        <section class="view v-settings stack">
+          <div class="page-header">
+            <div>
+              <h1 class="page-title">Ustawienia</h1>
+              <p class="page-subtitle">Organizacja · API · powiadomienia · billing</p>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header"><h3 class="card-title">Organizacja</h3></div>
+            <div class="grid-2">
+              <div class="form-group">
+                <label class="form-label">Nazwa</label>
+                <input value="Stalmet Pruszków" />
+              </div>
+              <div class="form-group">
+                <label class="form-label">Slug</label>
+                <input value="stalmet-pruszkow" /> <span class="form-hint">URL: app.mapjob.pl/o/stalmet-pruszkow</span>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Plan</label>
+                <div class="row"><span class="badge badge-violet">Pro</span><span class="text-xs text-muted">5 użytkowników, 200 generacji AI/dzień</span></div>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Język</label>
+                <select><option>Polski</option><option>English</option></select>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header"><h3 class="card-title">Powiadomienia</h3></div>
+            <div class="stack-sm">
+              <div class="row-between" style="padding: 8px 0; border-bottom: 1px solid var(--border-subtle)">
+                <div><div style="font-weight: 500">Email — kampania zakończona</div><div class="text-xs text-muted">Powiadom kiedy kampania osiągnie 100%</div></div>
+                <input type="checkbox" checked style="width: 36px; height: 20px" />
+              </div>
+              <div class="row-between" style="padding: 8px 0; border-bottom: 1px solid var(--border-subtle)">
+                <div><div style="font-weight: 500">Email — sesja FB wygasła</div><div class="text-xs text-muted">Powiadom kiedy rozszerzenie nie może postować</div></div>
+                <input type="checkbox" checked style="width: 36px; height: 20px" />
+              </div>
+              <div class="row-between" style="padding: 8px 0; border-bottom: 1px solid var(--border-subtle)">
+                <div><div style="font-weight: 500">Email — błąd selectora Facebook</div><div class="text-xs text-muted">Powiadom adminów żeby zaktualizowali rozszerzenie</div></div>
+                <input type="checkbox" style="width: 36px; height: 20px" />
+              </div>
+              <div class="row-between" style="padding: 8px 0">
+                <div><div style="font-weight: 500">Email — daily limit AI</div><div class="text-xs text-muted">Powiadom kiedy zbliżasz się do limitu generacji</div></div>
+                <input type="checkbox" checked style="width: 36px; height: 20px" />
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <h3 class="card-title">Niebezpieczne</h3>
+              <span class="badge badge-danger">danger zone</span>
+            </div>
+            <div class="stack-sm">
+              <div class="row-between" style="padding: 8px 0; border-bottom: 1px solid var(--border-subtle)">
+                <div><div style="font-weight: 500">Transferuj organizację</div><div class="text-xs text-muted">Przenieś własność do innego użytkownika</div></div>
+                <button class="btn btn-secondary btn-sm">Transferuj</button>
+              </div>
+              <div class="row-between" style="padding: 8px 0">
+                <div><div style="font-weight: 500" class="text-danger">Usuń organizację</div><div class="text-xs text-muted">Wszystkie dane (posty, kampanie, grupy) zostaną usunięte permanentnie</div></div>
+                <button class="btn btn-danger btn-sm">Usuń</button>
+              </div>
+            </div>
+          </div>
+        </section>
+
         </div>
-      </section>
-    </main>
+      </div>
+    </div>
   </body>
 </html>
