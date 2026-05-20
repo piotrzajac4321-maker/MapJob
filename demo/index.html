@@ -942,7 +942,9 @@
           const warn = warnings[i];
 
           const hasNumber = /\d/.test(text);
-          const hasProper = /(?<=[^.!?]\s)[A-ZĄĆĘŁŃÓŚŹŻ][a-ząćęłńóśźż]+/.test(text);
+          // Bez lookbehind — iOS Safari < 16.4 nie wspiera (?<=...)
+          // Znajdź wielką literę po znaku interpunkcji lub na początku linii.
+          const hasProper = /(?:^|[^.!?]\s)[A-ZĄĆĘŁŃÓŚŹŻ][a-ząćęłńóśźż]{2,}/.test(text);
           const hasEmDash = /—/.test(text);
           const sentences = text.split(/[.!?]+/).map((s) => s.trim()).filter(Boolean);
           const hasShort = sentences.some((s) => s.split(/\s+/).length <= 5);
@@ -1087,9 +1089,27 @@
       }
 
       // ====== INIT ======
-      window.addEventListener('hashchange', route);
-      route();
-      setBanner();
+      try {
+        window.addEventListener('hashchange', route);
+        route();
+        setBanner();
+      } catch (err) {
+        const v = document.getElementById('view');
+        if (v) {
+          v.innerHTML = '<div class="card" style="border-color: var(--danger); background: var(--danger-soft); color: var(--text)">' +
+            '<h2 style="margin-bottom: 8px">Błąd ładowania demo</h2>' +
+            '<p class="text-sm" style="margin-bottom: 12px">Twoja przeglądarka odrzuciła skrypt. Najczęściej: stare iOS Safari (<16.4) nie obsługuje regex lookbehind. Spróbuj zaktualizować system lub otworzyć w Chrome.</p>' +
+            '<pre class="post-preview" style="font-size: 11px">' + String(err && err.message || err).replace(/</g, '&lt;') + '</pre>' +
+            '</div>';
+        }
+        const b = document.getElementById('status-banner');
+        if (b) { b.className = 'banner err'; b.innerHTML = '✗ Błąd inicjalizacji JS'; }
+      }
     </script>
+    <noscript>
+      <div style="padding: 40px 20px; text-align: center; color: var(--muted)">
+        Ten prototyp wymaga JavaScript. Włącz JS i odśwież.
+      </div>
+    </noscript>
   </body>
 </html>
