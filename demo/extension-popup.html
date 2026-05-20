@@ -1,0 +1,930 @@
+<!doctype html>
+<html lang="pl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>MapJob FB Poster</title>
+    <style>
+      :root {
+        --bg: #0a1628;
+        --bg-2: #0f1e36;
+        --card: #131f3a;
+        --card-2: #1a2847;
+        --border: #1f2f52;
+        --border-strong: #2a3656;
+        --text: #e5edf9;
+        --muted: #94a3b8;
+        --muted-2: #64748b;
+        --primary: #3b82f6;
+        --primary-hover: #2563eb;
+        --primary-light: #60a5fa;
+        --primary-soft: rgba(59, 130, 246, 0.14);
+        --success: #22c55e;
+        --success-soft: rgba(34, 197, 94, 0.14);
+        --warning: #f59e0b;
+        --warning-soft: rgba(245, 158, 11, 0.14);
+        --danger: #ef4444;
+        --danger-soft: rgba(239, 68, 68, 0.14);
+        --r: 8px;
+        --r-sm: 6px;
+        --gradient: linear-gradient(135deg, #3b82f6 0%, #60a5fa 100%);
+      }
+      * { box-sizing: border-box; margin: 0; padding: 0; }
+      body {
+        width: 380px;
+        min-height: 480px;
+        font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', sans-serif;
+        font-size: 13px;
+        line-height: 1.5;
+        color: var(--text);
+        background: var(--bg);
+        -webkit-font-smoothing: antialiased;
+      }
+      a { color: var(--primary-light); text-decoration: none; }
+      button {
+        font: inherit;
+        cursor: pointer;
+        border: 0;
+        background: none;
+        color: inherit;
+      }
+      input, select, textarea {
+        font: inherit; font-size: 13px;
+        color: var(--text); background: var(--bg-2);
+        border: 1px solid var(--border-strong);
+        border-radius: var(--r-sm);
+        padding: 8px 10px; width: 100%;
+        outline: 0;
+        -webkit-appearance: none;
+        appearance: none;
+      }
+      input:focus, textarea:focus, select:focus {
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px var(--primary-soft);
+      }
+      code { font-family: ui-monospace, monospace; font-size: 11.5px; background: var(--bg-2); padding: 1px 5px; border-radius: 3px; color: var(--primary-light); }
+      pre { white-space: pre-wrap; word-break: break-word; font-family: -apple-system, sans-serif; }
+
+      header {
+        padding: 14px 16px;
+        border-bottom: 1px solid var(--border);
+        display: flex; align-items: center; gap: 10px;
+        position: sticky; top: 0;
+        background: var(--bg);
+        z-index: 10;
+      }
+      .logo-mark {
+        width: 28px; height: 28px;
+        background: var(--gradient);
+        border-radius: var(--r-sm);
+        display: flex; align-items: center; justify-content: center;
+        color: white; font-weight: 700; font-size: 13px;
+        box-shadow: 0 4px 12px rgba(59, 130, 246, 0.35);
+      }
+      .logo-text { font-weight: 600; font-size: 14px; flex: 1; }
+      .pulse { width: 6px; height: 6px; border-radius: 999px; background: var(--success); animation: pulse 2s infinite; }
+      @keyframes pulse { 0%,100% { opacity: 1 } 50% { opacity: 0.4 } }
+
+      .tabs {
+        display: flex;
+        padding: 6px;
+        gap: 2px;
+        background: var(--bg-2);
+        border-bottom: 1px solid var(--border);
+        position: sticky; top: 56px;
+        z-index: 9;
+      }
+      .tabs input { display: none }
+      .tab-label {
+        flex: 1; text-align: center;
+        padding: 7px 4px;
+        border-radius: var(--r-sm);
+        font-size: 12px;
+        color: var(--muted);
+        cursor: pointer;
+        font-weight: 500;
+        transition: all 0.15s;
+      }
+      .tab-label:hover { color: var(--text); }
+
+      .tab-pane { display: none; padding: 14px 16px; }
+      #tab-home:checked       ~ .panes .tp-home,
+      #tab-groups:checked     ~ .panes .tp-groups,
+      #tab-posts:checked      ~ .panes .tp-posts,
+      #tab-assistant:checked  ~ .panes .tp-assistant,
+      #tab-camp:checked       ~ .panes .tp-camp,
+      #tab-log:checked        ~ .panes .tp-log,
+      #tab-settings:checked   ~ .panes .tp-settings { display: block; }
+
+      #tab-home:checked       ~ .tabs label[for="tab-home"],
+      #tab-groups:checked     ~ .tabs label[for="tab-groups"],
+      #tab-posts:checked      ~ .tabs label[for="tab-posts"],
+      #tab-assistant:checked  ~ .tabs label[for="tab-assistant"],
+      #tab-camp:checked       ~ .tabs label[for="tab-camp"],
+      #tab-log:checked        ~ .tabs label[for="tab-log"],
+      #tab-settings:checked   ~ .tabs label[for="tab-settings"] {
+        background: var(--card);
+        color: var(--primary-light);
+        box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+      }
+      .tab-label[for="tab-settings"] { flex: 0 0 32px; font-size: 14px; }
+
+      /* MODAL EDYCJI */
+      .modal-backdrop {
+        position: fixed; inset: 0;
+        background: rgba(0, 0, 0, 0.75);
+        z-index: 100;
+        display: none;
+        align-items: flex-start;
+        justify-content: center;
+        padding: 16px;
+        overflow-y: auto;
+        -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px);
+      }
+      .modal-backdrop.show { display: flex; }
+      .modal {
+        background: var(--card);
+        border: 1px solid var(--border-strong);
+        border-radius: var(--r);
+        padding: 16px;
+        width: 100%; max-width: 360px;
+        margin-top: 20px;
+        box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+      }
+      .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+      .modal-title { font-weight: 600; font-size: 14px; }
+      .modal-close { color: var(--muted); cursor: pointer; padding: 4px 8px; font-size: 18px; line-height: 1; }
+      .modal-close:hover { color: var(--text); }
+      .modal-footer { display: flex; gap: 6px; margin-top: 12px; }
+
+      /* SYNC STATUS w headerze */
+      .sync-pill {
+        font-size: 10px;
+        padding: 2px 7px;
+        border-radius: 999px;
+        display: inline-flex; align-items: center; gap: 3px;
+        font-weight: 500;
+      }
+      .sync-pill::before { content: ''; width: 5px; height: 5px; border-radius: 999px; background: currentColor; }
+      .sync-pill.ok { color: var(--success); background: var(--success-soft); }
+      .sync-pill.off { color: var(--muted); background: var(--bg-2); }
+      .sync-pill.err { color: var(--danger); background: var(--danger-soft); }
+      .sync-pill.unk { color: var(--warning); background: var(--warning-soft); }
+
+      /* QUICK STATS */
+      .qs-row {
+        display: flex; justify-content: space-between; align-items: baseline;
+        padding: 4px 0;
+      }
+      .qs-label { font-size: 12px; color: var(--muted); }
+      .qs-value { font-size: 13px; font-weight: 600; color: var(--text); }
+
+      /* STORAGE BAR */
+      .storage-bar {
+        height: 4px;
+        background: var(--bg-2);
+        border-radius: 999px;
+        margin: 6px 0;
+        overflow: hidden;
+      }
+      .storage-fill {
+        height: 100%; border-radius: 999px;
+        background: var(--success);
+        transition: width 0.3s, background 0.3s;
+      }
+      .storage-fill.warn { background: var(--warning); }
+      .storage-fill.critical { background: var(--danger); }
+
+      .card {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: var(--r);
+        padding: 12px;
+        margin-bottom: 10px;
+      }
+      .row { display: flex; align-items: center; gap: 8px; }
+      .row-between { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+      .stack { display: flex; flex-direction: column; gap: 8px; }
+
+      .btn {
+        display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+        padding: 8px 12px;
+        border-radius: var(--r-sm);
+        font-size: 12.5px; font-weight: 500;
+        transition: all 0.15s;
+        border: 1px solid transparent;
+        white-space: nowrap;
+        line-height: 1;
+      }
+      .btn-primary { background: var(--gradient); color: white; box-shadow: 0 2px 8px rgba(59,130,246,0.35); }
+      .btn-primary:hover { box-shadow: 0 4px 14px rgba(59,130,246,0.45); }
+      .btn-secondary { background: var(--card-2); border-color: var(--border-strong); color: var(--text); }
+      .btn-secondary:hover { background: var(--bg-2); }
+      .btn-ghost { color: var(--muted); }
+      .btn-ghost:hover { color: var(--text); background: var(--card-2); }
+      .btn-block { width: 100%; }
+      .btn-sm { padding: 5px 9px; font-size: 11.5px; }
+      .btn:disabled { opacity: 0.55; cursor: not-allowed; }
+
+      .badge {
+        display: inline-flex; align-items: center; gap: 4px;
+        padding: 2px 7px;
+        border-radius: 999px;
+        font-size: 10.5px; font-weight: 500;
+      }
+      .badge-success { background: var(--success-soft); color: var(--success); }
+      .badge-warning { background: var(--warning-soft); color: var(--warning); }
+      .badge-danger  { background: var(--danger-soft); color: var(--danger); }
+      .badge-muted   { background: var(--bg-2); color: var(--muted); }
+      .badge-primary { background: var(--primary-soft); color: var(--primary-light); }
+      .badge-dot::before { content: ''; width: 5px; height: 5px; border-radius: 999px; background: currentColor; display: inline-block; }
+
+      .stat-mini {
+        flex: 1;
+        background: var(--bg-2);
+        border-radius: var(--r-sm);
+        padding: 10px 12px;
+        text-align: center;
+      }
+      .stat-mini .v { font-size: 18px; font-weight: 700; }
+      .stat-mini .l { font-size: 10.5px; color: var(--muted); margin-top: 2px; }
+
+      .group-row {
+        padding: 8px 10px;
+        background: var(--bg-2);
+        border-radius: var(--r-sm);
+        margin-bottom: 4px;
+        display: flex; align-items: center; gap: 8px;
+      }
+      .group-row input[type="checkbox"] { width: 14px; height: 14px; cursor: pointer; flex-shrink: 0; }
+      .group-row-info { flex: 1; min-width: 0; }
+      .group-row-name { font-size: 12.5px; font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+      .group-row-meta { font-size: 10.5px; color: var(--muted); }
+
+      .status-banner {
+        margin: 12px 16px 0;
+        padding: 10px 12px;
+        border-radius: var(--r-sm);
+        font-size: 12px;
+      }
+      .status-banner.ok { background: var(--success-soft); color: var(--success); }
+      .status-banner.warn { background: var(--warning-soft); color: var(--warning); }
+      .status-banner.err { background: var(--danger-soft); color: var(--danger); }
+      .status-banner.info { background: var(--primary-soft); color: var(--primary-light); }
+
+      .empty {
+        padding: 28px 16px;
+        text-align: center;
+        color: var(--muted);
+        font-size: 12.5px;
+      }
+      .form-label { font-size: 11.5px; color: var(--muted); margin-bottom: 4px; display: block; font-weight: 500; }
+
+      .log-item { padding: 6px 0; border-bottom: 1px solid var(--border); font-size: 12px; }
+      .log-item:last-child { border-bottom: 0; }
+      .log-time { font-size: 10.5px; color: var(--muted); }
+      .log-msg { margin-top: 2px; }
+
+      /* ASYSTENT */
+      .framework-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 12px; }
+      .framework-card {
+        background: var(--bg-2); border: 1px solid var(--border-strong);
+        border-radius: var(--r-sm); padding: 8px 10px; cursor: pointer;
+        transition: all 0.15s;
+      }
+      .framework-card:hover { border-color: var(--primary); background: var(--card-2); }
+      .framework-card.active { border-color: var(--primary); background: var(--primary-soft); box-shadow: 0 0 0 1px var(--primary); }
+      .framework-card .fw-name { font-weight: 600; font-size: 12.5px; color: var(--text); }
+      .framework-card .fw-desc { font-size: 10.5px; color: var(--muted); margin-top: 2px; line-height: 1.35; }
+
+      .hook-chips { display: flex; flex-wrap: wrap; gap: 4px; max-height: 110px; overflow-y: auto; padding: 2px; }
+      .hook-chip {
+        font-size: 11px; padding: 4px 8px;
+        background: var(--bg-2); border: 1px solid var(--border-strong);
+        border-radius: 999px; cursor: pointer;
+        transition: all 0.15s;
+        max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+      }
+      .hook-chip:hover { background: var(--primary-soft); border-color: var(--primary); color: var(--primary-light); }
+      .hook-category { font-size: 10px; color: var(--muted-2); margin: 6px 0 3px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.04em; width: 100%; }
+
+      /* DROPZONE OBRAZKÓW */
+      .dropzone {
+        border: 2px dashed var(--border-strong);
+        border-radius: var(--r);
+        padding: 16px;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.15s;
+        font-size: 11.5px; color: var(--muted);
+        background: var(--bg-2);
+      }
+      .dropzone:hover, .dropzone.drag-over { border-color: var(--primary); background: var(--primary-soft); color: var(--primary-light); }
+      .dropzone-icon { font-size: 22px; margin-bottom: 4px; }
+
+      .thumbs { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px; }
+      .thumb {
+        position: relative;
+        width: 60px; height: 60px;
+        border-radius: var(--r-sm);
+        background-size: cover; background-position: center;
+        border: 1px solid var(--border-strong);
+        overflow: hidden;
+      }
+      .thumb-remove {
+        position: absolute; top: 2px; right: 2px;
+        width: 18px; height: 18px;
+        background: rgba(0,0,0,0.7);
+        color: white; border-radius: 50%;
+        font-size: 12px; line-height: 18px;
+        text-align: center; cursor: pointer;
+        opacity: 0.85;
+      }
+      .thumb-remove:hover { opacity: 1; background: var(--danger); }
+
+      /* SCORE BAR */
+      .score-bar {
+        position: relative;
+        height: 6px;
+        background: var(--bg-2);
+        border-radius: 999px;
+        overflow: hidden;
+        margin-top: 6px;
+      }
+      .score-fill {
+        position: absolute; left: 0; top: 0; bottom: 0;
+        border-radius: 999px;
+        transition: width 0.3s, background 0.3s;
+      }
+      .score-fill.low { background: var(--danger); }
+      .score-fill.mid { background: var(--warning); }
+      .score-fill.high { background: var(--success); }
+
+      .warning-list { font-size: 11px; color: var(--warning); margin-top: 6px; }
+      .warning-list li { margin-bottom: 2px; }
+
+      /* POST LIST z thumbami */
+      .post-row {
+        padding: 10px;
+        background: var(--bg-2);
+        border-radius: var(--r-sm);
+        margin-bottom: 6px;
+        display: flex; gap: 10px; align-items: flex-start;
+      }
+      .post-thumb {
+        width: 48px; height: 48px;
+        border-radius: var(--r-sm);
+        background-size: cover; background-position: center;
+        flex-shrink: 0;
+        border: 1px solid var(--border);
+      }
+      .post-thumb.placeholder {
+        background: var(--card-2);
+        display: flex; align-items: center; justify-content: center;
+        color: var(--muted); font-size: 18px;
+      }
+      .post-content { flex: 1; min-width: 0; }
+      .post-title { font-size: 12.5px; font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+      .post-meta { font-size: 10.5px; color: var(--muted); margin-top: 2px; }
+      .post-actions { display: flex; gap: 4px; }
+
+      ::-webkit-scrollbar { width: 6px; }
+      ::-webkit-scrollbar-track { background: var(--bg); }
+      ::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 3px; }
+
+      .switch {
+        position: relative;
+        width: 32px; height: 18px;
+        background: var(--border-strong);
+        border-radius: 999px;
+        cursor: pointer;
+        transition: background 0.2s;
+      }
+      .switch::after {
+        content: '';
+        position: absolute;
+        top: 2px; left: 2px;
+        width: 14px; height: 14px;
+        background: var(--text);
+        border-radius: 999px;
+        transition: transform 0.2s;
+      }
+      .switch.on { background: var(--success); }
+      .switch.on::after { transform: translateX(14px); }
+    </style>
+    <script type="module" crossorigin src="/src/popup/index.js"></script>
+  </head>
+  <body>
+    <header>
+      <div class="logo-mark">M</div>
+      <div class="logo-text">MapJob FB Poster</div>
+      <span class="sync-pill unk" id="license-pill" title="Status licencji">…</span>
+      <span class="sync-pill unk" id="sync-pill" title="Status backupu w chmurze">sync…</span>
+      <div id="fb-status-dot"></div>
+    </header>
+
+    <div id="banner-host"></div>
+
+    <input type="radio" name="tabs" id="tab-home" checked />
+    <input type="radio" name="tabs" id="tab-groups" />
+    <input type="radio" name="tabs" id="tab-posts" />
+    <input type="radio" name="tabs" id="tab-camp" />
+    <input type="radio" name="tabs" id="tab-assistant" />
+    <input type="radio" name="tabs" id="tab-log" />
+    <input type="radio" name="tabs" id="tab-settings" />
+
+    <div class="tabs">
+      <label for="tab-home"      class="tab-label">Home</label>
+      <label for="tab-groups"    class="tab-label">Grupy</label>
+      <label for="tab-posts"     class="tab-label">Posty</label>
+      <label for="tab-assistant" class="tab-label">Asystent</label>
+      <label for="tab-camp"      class="tab-label">Kampanie</label>
+      <label for="tab-log"       class="tab-label">Log</label>
+      <label for="tab-settings"  class="tab-label">⚙</label>
+    </div>
+
+    <div class="panes">
+      <!-- HOME -->
+      <div class="tab-pane tp-home">
+        <div class="card">
+          <div class="row-between" style="margin-bottom: 10px">
+            <div>
+              <div style="font-weight: 600">Status systemu</div>
+              <div style="font-size: 11.5px; color: var(--muted); margin-top: 2px" id="status-summary">Sprawdzam...</div>
+            </div>
+            <div class="row" style="gap: 6px; align-items: center">
+              <button class="btn btn-ghost btn-sm" id="smart-pause-btn" title="Wstrzymaj do…">⏸ Wstrzymaj…</button>
+              <div id="pause-toggle" class="switch on" title="Pauza / wznów"></div>
+            </div>
+          </div>
+          <div class="row" style="gap: 6px">
+            <div class="stat-mini"><div class="v" id="stat-groups">0</div><div class="l">Grupy</div></div>
+            <div class="stat-mini"><div class="v" id="stat-posts">0</div><div class="l">Posty</div></div>
+            <div class="stat-mini"><div class="v" id="stat-today">0</div><div class="l">Dziś</div></div>
+          </div>
+        </div>
+
+        <!-- Quick Stats Panel -->
+        <div class="card" id="qs-card">
+          <div class="row-between" style="margin-bottom: 12px">
+            <div style="font-weight: 600">📊 Dzisiaj</div>
+            <div style="font-size: 10.5px; color: var(--muted)" id="qs-day-label"></div>
+          </div>
+
+          <div class="qs-row">
+            <div class="qs-label">Opublikowano</div>
+            <div class="qs-value" id="qs-today-progress">— / —</div>
+          </div>
+          <div class="storage-bar" style="margin: 6px 0 12px"><div class="storage-fill" id="qs-today-fill" style="width: 0%"></div></div>
+
+          <div class="qs-row">
+            <div class="qs-label">⏱ Następny post</div>
+            <div class="qs-value" id="qs-next-post">—</div>
+          </div>
+          <div class="qs-row" id="qs-next-group-row" style="display: none">
+            <div class="qs-label" style="color: var(--muted-2); font-size: 10.5px">w grupie</div>
+            <div style="font-size: 11px; color: var(--muted); text-align: right" id="qs-next-group">—</div>
+          </div>
+
+          <div style="border-top: 1px solid var(--border); margin: 10px 0 0; padding-top: 10px">
+            <div class="qs-row">
+              <div class="qs-label">📈 Success rate</div>
+              <div class="qs-value" id="qs-success">—%</div>
+            </div>
+            <div class="qs-row">
+              <div class="qs-label">🕐 Najlepsza godzina</div>
+              <div class="qs-value" id="qs-best-hour">—</div>
+            </div>
+          </div>
+
+          <div style="border-top: 1px solid var(--border); margin: 10px 0 0; padding-top: 10px">
+            <div class="qs-row">
+              <div class="qs-label">7 dni: 👍 / 💬</div>
+              <div class="qs-value"><span id="qs-week-react">0</span> · <span id="qs-week-comm">0</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div style="font-weight: 600; margin-bottom: 6px">Facebook</div>
+          <div id="fb-status">Sprawdzam sesję FB...</div>
+          <div class="row" style="margin-top: 10px; gap: 6px">
+            <button class="btn btn-secondary btn-sm btn-block" id="open-fb">Otwórz Facebook</button>
+            <button class="btn btn-primary btn-sm btn-block" id="import-groups">↻ Importuj grupy</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <div style="font-weight: 600; margin-bottom: 8px">Limity miesięczne</div>
+          <div id="quotas-home"></div>
+        </div>
+
+        <div class="card">
+          <div style="font-weight: 600; margin-bottom: 8px">Szybki post</div>
+          <textarea id="quick-text" rows="4" placeholder="Treść posta..."></textarea>
+          <div style="margin-top: 8px">
+            <button class="btn btn-primary btn-block" id="quick-save">Zapisz post</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- GROUPS -->
+      <div class="tab-pane tp-groups">
+        <div class="row-between" style="margin-bottom: 10px">
+          <div style="font-weight: 600" id="groups-count">0 grup</div>
+          <button class="btn btn-secondary btn-sm" id="refresh-groups">↻</button>
+        </div>
+        <input id="group-filter" placeholder="Szukaj..." style="margin-bottom: 10px" />
+        <div id="groups-list" style="max-height: 380px; overflow-y: auto"></div>
+      </div>
+
+      <!-- POSTS -->
+      <div class="tab-pane tp-posts">
+        <div id="insights-card" style="display: none; margin-bottom: 10px"></div>
+        <div class="row-between" style="margin-bottom: 10px">
+          <div style="font-weight: 600" id="posts-count">0 postów</div>
+          <button class="btn btn-primary btn-sm" id="new-post">+ Nowy</button>
+        </div>
+        <div id="posts-list" style="max-height: 400px; overflow-y: auto"></div>
+      </div>
+
+      <!-- ASYSTENT -->
+      <div class="tab-pane tp-assistant">
+        <div class="card">
+          <div class="form-label">1. Typ posta</div>
+          <select id="as-type">
+            <option value="job">Oferta pracy</option>
+            <option value="sales">Sprzedaż / usługa</option>
+            <option value="other">Inne / ogłoszenie</option>
+          </select>
+        </div>
+
+        <div class="card">
+          <div class="form-label">2. Framework (układ tekstu)</div>
+          <div class="framework-grid" id="as-frameworks"></div>
+        </div>
+
+        <div class="card">
+          <div class="form-label">3. Hook (pierwsza linia) — kliknij żeby użyć</div>
+          <div class="hook-chips" id="as-hooks"></div>
+        </div>
+
+        <div class="card">
+          <div class="form-label">4. Wypełnij pola</div>
+          <div id="as-fields" class="stack"></div>
+        </div>
+
+        <div class="card">
+          <div class="form-label">5. Zdjęcia (max 4, auto-kompresja)</div>
+          <div class="dropzone" id="as-dropzone">
+            <div class="dropzone-icon">📷</div>
+            <div><strong>Przeciągnij zdjęcia tutaj</strong> lub kliknij</div>
+            <div style="margin-top: 4px; font-size: 10.5px">JPG/PNG/WebP · max 15MB każde</div>
+          </div>
+          <input type="file" id="as-file-input" accept="image/*" multiple style="display: none" />
+          <div class="thumbs" id="as-thumbs"></div>
+        </div>
+
+        <div class="card">
+          <div class="form-label">6. Podgląd posta</div>
+          <textarea id="as-preview" rows="10" placeholder="Wypełnij pola wyżej — tekst pojawi się tutaj. Możesz edytować przed zapisem."></textarea>
+          <div class="row-between" style="margin-top: 8px; font-size: 11.5px">
+            <div><span style="color: var(--muted)">Score:</span> <strong id="as-score-value">—</strong>/100</div>
+            <div style="color: var(--muted)" id="as-length">0 znaków · 0 słów</div>
+          </div>
+          <div class="score-bar"><div class="score-fill" id="as-score-fill" style="width: 0%"></div></div>
+          <ul class="warning-list" id="as-warnings"></ul>
+        </div>
+
+        <div class="row" style="gap: 6px">
+          <input id="as-title" placeholder="Tytuł posta (krótki, np. Spawacz Pruszków)" style="flex: 2" />
+          <button class="btn btn-primary" id="as-save" style="flex: 1">💾 Zapisz</button>
+        </div>
+      </div>
+
+      <!-- CAMPAIGNS -->
+      <div class="tab-pane tp-camp">
+        <div id="camp-step-1">
+          <div class="card">
+            <div class="form-label">1. Wybierz post</div>
+            <select id="camp-post"><option value="">— wybierz —</option></select>
+          </div>
+          <div class="card">
+            <div class="form-label">2. Wybierz grupy <span id="camp-selected-count" style="color: var(--primary-light); font-weight: 600">0</span> z <span id="camp-total-count">0</span></div>
+            <input id="camp-group-filter" placeholder="Filtruj grupy..." style="margin-bottom: 8px" />
+            <div class="row" style="gap: 4px; margin-bottom: 8px">
+              <button class="btn btn-ghost btn-sm" id="camp-select-all">Zaznacz wszystkie</button>
+              <button class="btn btn-ghost btn-sm" id="camp-select-none">Wyczyść</button>
+            </div>
+            <div id="camp-groups" style="max-height: 220px; overflow-y: auto"></div>
+          </div>
+          <div class="card">
+            <div class="form-label">3. Delay między postami (sekundy)</div>
+            <div class="row" style="gap: 6px">
+              <input id="camp-min-delay" value="90" type="number" placeholder="Min" />
+              <input id="camp-max-delay" value="240" type="number" placeholder="Max" />
+            </div>
+            <div style="font-size: 10.5px; color: var(--muted); margin-top: 6px">Cooldown per grupa: 4h (zalecane przez FB anti-spam)</div>
+          </div>
+          <button class="btn btn-primary btn-block" id="camp-start">🚀 Uruchom kampanię</button>
+        </div>
+
+        <div style="font-weight: 600; font-size: 12.5px; margin: 14px 0 8px">Twoje kampanie</div>
+        <div id="campaigns-list"></div>
+      </div>
+
+      <!-- SETTINGS -->
+      <div class="tab-pane tp-settings">
+
+        <div class="card">
+          <div class="form-label">Licencja</div>
+          <div id="license-info">Sprawdzam status...</div>
+          <button class="btn btn-secondary btn-block" id="open-activate" style="margin-top: 10px">🔑 Wpisz klucz aktywacyjny</button>
+        </div>
+
+        <div class="card" id="kill-switch-card" style="display: none; border-color: var(--danger)">
+          <div style="color: var(--danger); font-weight: 600; font-size: 13px; margin-bottom: 6px">🚨 KILL SWITCH AKTYWNY</div>
+          <div style="font-size: 11.5px" id="kill-switch-info"></div>
+          <button class="btn btn-secondary btn-block" id="kill-switch-clear" style="margin-top: 8px">Wznów ręcznie (na własne ryzyko)</button>
+        </div>
+
+        <div class="card">
+          <div class="form-label">Tryb bezpieczeństwa</div>
+          <div id="safety-modes" style="display: grid; gap: 6px"></div>
+          <div id="safety-warning" style="font-size: 11px; color: var(--warning); margin-top: 8px; display: none"></div>
+        </div>
+
+        <div class="card">
+          <div class="row" style="gap: 8px; align-items: center; margin-bottom: 8px">
+            <input type="checkbox" id="sch-enabled" style="width: auto" />
+            <label for="sch-enabled" style="font-size: 12px; flex: 1; cursor: pointer; font-weight: 500">📅 Harmonogram tygodniowy</label>
+          </div>
+          <div style="font-size: 10.5px; color: var(--muted); margin-bottom: 10px">
+            Gdy włączony, system postuje tylko w wybranych dniach i godzinach. Wyłącza losowy delay z trybu bezpieczeństwa.
+          </div>
+          <div id="sch-days" style="display: grid; gap: 4px"></div>
+          <div class="row" style="gap: 6px; margin-top: 10px">
+            <div style="flex: 1">
+              <div style="font-size: 11px; color: var(--muted); margin-bottom: 3px">Co (minut)</div>
+              <input id="sch-interval" type="number" min="30" max="720" value="90" />
+            </div>
+            <div style="flex: 1">
+              <div style="font-size: 11px; color: var(--muted); margin-bottom: 3px">± jitter (min)</div>
+              <input id="sch-jitter" type="number" min="0" max="60" value="20" />
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="form-label">Godziny ciszy (Sleep hours)</div>
+          <div class="row" style="gap: 6px; align-items: center">
+            <input type="checkbox" id="set-sleep-enabled" style="width: auto" />
+            <label for="set-sleep-enabled" style="font-size: 12px; flex: 1; cursor: pointer">Nie postuj w nocy</label>
+          </div>
+          <div class="row" style="gap: 6px; margin-top: 8px">
+            <div style="flex: 1">
+              <div style="font-size: 11px; color: var(--muted); margin-bottom: 3px">Od godziny</div>
+              <input id="set-sleep-start" type="number" min="0" max="23" value="22" />
+            </div>
+            <div style="flex: 1">
+              <div style="font-size: 11px; color: var(--muted); margin-bottom: 3px">Do godziny</div>
+              <input id="set-sleep-end" type="number" min="0" max="23" value="8" />
+            </div>
+          </div>
+          <div style="font-size: 10.5px; color: var(--muted); margin-top: 4px">
+            Ludzie śpią, bot nie — postowanie 24/7 to czerwona flaga dla FB.
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="row" style="gap: 8px; align-items: center">
+            <input type="checkbox" id="set-variator" style="width: auto" />
+            <label for="set-variator" style="font-size: 12px; flex: 1; cursor: pointer">
+              <div style="font-weight: 500">Wariator treści</div>
+              <div style="font-size: 10.5px; color: var(--muted); margin-top: 2px">
+                Auto-modyfikuje tekst dla każdej grupy (synonimy CTA, otwarcie, hashtagi) — chroni przed flagą "duplicate post".
+              </div>
+            </label>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="form-label">Globalny dzienny limit publikacji</div>
+          <input id="set-daily-cap" type="number" min="1" max="200" value="50" />
+          <div style="font-size: 10.5px; color: var(--muted); margin-top: 4px">
+            Maks. ile postów dziennie ze wszystkich grup. <strong>Zalecane: 50</strong> żeby FB nie flagował.
+          </div>
+        </div>
+        <div class="card">
+          <div class="form-label">Delay między postami (sekundy)</div>
+          <div class="row" style="gap: 6px">
+            <input id="set-min-delay" type="number" min="10" max="3600" value="30" placeholder="min" />
+            <input id="set-max-delay" type="number" min="10" max="3600" value="90" placeholder="max" />
+          </div>
+          <div style="font-size: 10.5px; color: var(--muted); margin-top: 4px">
+            Losowy odstęp. <strong>30-90s</strong> wygląda naturalnie, mniej = ryzyko.
+          </div>
+        </div>
+        <div class="card">
+          <div class="form-label">Domyślne ustawienia per grupa</div>
+          <div class="row" style="gap: 6px; margin-bottom: 6px">
+            <div style="flex: 1">
+              <div style="font-size: 11px; color: var(--muted); margin-bottom: 3px">Cooldown (min)</div>
+              <input id="set-cooldown" type="number" min="60" max="1440" value="240" />
+            </div>
+            <div style="flex: 1">
+              <div style="font-size: 11px; color: var(--muted); margin-bottom: 3px">Daily cap / grupa</div>
+              <input id="set-group-cap" type="number" min="1" max="10" value="2" />
+            </div>
+          </div>
+          <div style="font-size: 10.5px; color: var(--muted)">
+            <strong>4h cooldown + 2 posty/grupa/dzień</strong> = bezpieczne tempo dla większości grup.
+          </div>
+        </div>
+        <div class="card">
+          <div class="form-label">Limity miesięczne (pakiet)</div>
+          <div id="quotas-settings"></div>
+        </div>
+        <div class="card">
+          <div class="form-label">Zużycie storage</div>
+          <div class="row-between" style="font-size: 11.5px">
+            <div id="storage-used">— / 10 MB</div>
+            <div id="storage-percent" style="color: var(--muted)">0%</div>
+          </div>
+          <div class="storage-bar"><div class="storage-fill" id="storage-fill" style="width: 0%"></div></div>
+          <div style="font-size: 10.5px; color: var(--muted)">
+            chrome.storage.local ma limit 10 MB. Głównie zdjęcia (≈300 KB każde).
+          </div>
+        </div>
+        <div class="card">
+          <div class="form-label">Backup w chmurze</div>
+          <div style="font-size: 11.5px" id="cloud-info">Sprawdzam status…</div>
+        </div>
+        <button class="btn btn-primary btn-block" id="set-save">💾 Zapisz ustawienia</button>
+        <button class="btn btn-secondary btn-block" id="set-reset" style="margin-top: 6px">Przywróć domyślne</button>
+        <button class="btn btn-ghost btn-block" id="set-export" style="margin-top: 6px">Eksportuj dane (JSON backup)</button>
+      </div>
+
+      <!-- LOG -->
+      <div class="tab-pane tp-log">
+        <div class="row-between" style="margin-bottom: 10px">
+          <div style="font-weight: 600">Ostatnia aktywność</div>
+          <button class="btn btn-ghost btn-sm" id="clear-log">Wyczyść</button>
+        </div>
+        <div id="log-list" style="max-height: 400px; overflow-y: auto"></div>
+      </div>
+    </div>
+
+    <!-- ONBOARDING MODAL -->
+    <div class="modal-backdrop" id="onboarding-modal">
+      <div class="modal" style="max-width: 380px">
+        <div style="text-align: center; margin-bottom: 14px">
+          <div style="font-size: 28px; margin-bottom: 8px">🎉</div>
+          <div style="font-weight: 700; font-size: 16px; margin-bottom: 4px">Witaj w MapJob FB Poster</div>
+          <div style="color: var(--muted); font-size: 12px">7 dni za darmo · bez karty</div>
+        </div>
+
+        <div class="card" style="background: var(--bg-2); margin-bottom: 12px">
+          <div style="font-size: 12px; font-weight: 600; margin-bottom: 6px">Co dostajesz w trialu:</div>
+          <div style="font-size: 11.5px; color: var(--muted); line-height: 1.7">
+            ✓ Pełna funkcjonalność przez 7 dni<br/>
+            ✓ Wszystkie 3 tryby bezpieczeństwa<br/>
+            ✓ Asystent + biblioteka hooków<br/>
+            ✓ 500 publikacji w okresie próbnym
+          </div>
+        </div>
+
+        <div style="margin-bottom: 10px">
+          <label class="form-label">Email *</label>
+          <input id="onb-email" type="email" placeholder="ty@firma.pl" />
+        </div>
+
+        <div style="margin-bottom: 10px">
+          <label class="form-label">Telefon *</label>
+          <input id="onb-phone" type="tel" placeholder="123 456 789" />
+          <div style="font-size: 10.5px; color: var(--muted); margin-top: 4px">
+            Bez karty. Kontakt do Ciebie w sprawie aktywacji pełnej wersji po trialu.
+          </div>
+        </div>
+
+        <div style="margin-bottom: 12px">
+          <label style="display: flex; align-items: flex-start; gap: 8px; cursor: pointer; font-size: 11.5px">
+            <input id="onb-tos" type="checkbox" style="width: auto; margin-top: 2px" />
+            <span>
+              Rozumiem że narzędzie automatyzuje działania na FB i akceptuję <strong>ryzyko ograniczenia konta</strong>. Aplikacja wykorzystuje tryby bezpieczeństwa, ale nie daje 100% gwarancji.
+            </span>
+          </label>
+        </div>
+
+        <button class="btn btn-primary btn-block" id="onb-start" disabled>
+          🚀 Rozpocznij 7-dniowy trial
+        </button>
+
+        <div style="text-align: center; margin-top: 10px; font-size: 11px; color: var(--muted)">
+          Masz już klucz licencyjny? <a href="#" id="onb-have-key">Wpisz tutaj →</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- ACTIVATE KEY MODAL -->
+    <div class="modal-backdrop" id="activate-modal">
+      <div class="modal" style="max-width: 380px">
+        <div class="modal-header">
+          <div class="modal-title">Aktywacja klucza</div>
+          <div class="modal-close" id="activate-cancel">×</div>
+        </div>
+        <div style="font-size: 12px; margin-bottom: 8px; color: var(--muted)">
+          Wklej klucz otrzymany mailem po zakupie.
+        </div>
+        <input id="activate-key" placeholder="MJFB-PLAN-XXXX-YYYY" style="font-family: ui-monospace, monospace; text-transform: uppercase" />
+        <div id="activate-msg" style="font-size: 11.5px; margin-top: 8px; min-height: 18px"></div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary btn-block" id="activate-discard">Anuluj</button>
+          <button class="btn btn-primary btn-block" id="activate-submit">Aktywuj</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- LICENSE EXPIRED MODAL -->
+    <div class="modal-backdrop" id="expired-modal">
+      <div class="modal" style="max-width: 380px; text-align: center">
+        <div style="font-size: 32px; margin-bottom: 8px">⏰</div>
+        <div style="font-weight: 700; font-size: 16px; margin-bottom: 6px">Okres próbny zakończony</div>
+        <div style="color: var(--muted); font-size: 12px; margin-bottom: 16px">
+          Twoje 7 dni testów minęło. Postowanie zostało wstrzymane.
+        </div>
+
+        <div class="card" style="background: var(--bg-2); margin-bottom: 12px; text-align: left">
+          <div style="font-weight: 600; font-size: 12.5px; margin-bottom: 6px">Plany pełnej wersji:</div>
+          <div style="font-size: 11.5px; line-height: 1.8">
+            <div class="row-between"><span><strong>🟢 Basic</strong> · 500 publikacji/m</span><span style="color: var(--primary-light); font-weight: 600">25 zł</span></div>
+            <div class="row-between"><span><strong>🟡 Pro</strong> · 2000 publikacji/m</span><span style="color: var(--primary-light); font-weight: 600">75 zł</span></div>
+            <div class="row-between"><span><strong>🔴 Studio</strong> · 5000 publikacji/m</span><span style="color: var(--primary-light); font-weight: 600">199 zł</span></div>
+          </div>
+        </div>
+
+        <div style="font-size: 11.5px; color: var(--muted); margin-bottom: 12px">
+          Zamów klucz: <strong>kontakt@mapjob.pl</strong>
+        </div>
+        <button class="btn btn-primary btn-block" id="expired-activate">Mam klucz — aktywuj</button>
+      </div>
+    </div>
+
+    <!-- SMART PAUSE MODAL -->
+    <div class="modal-backdrop" id="pause-modal">
+      <div class="modal" style="max-width: 360px">
+        <div class="modal-header">
+          <div class="modal-title">⏸ Wstrzymaj postowanie</div>
+          <div class="modal-close" id="pause-cancel">×</div>
+        </div>
+        <div style="font-size: 12px; color: var(--muted); margin-bottom: 12px">
+          System auto-wznowi się gdy minie wybrany czas.
+        </div>
+        <div class="stack" style="gap: 6px">
+          <button class="btn btn-secondary btn-block pause-preset" data-preset="tomorrow_9">📅 Do jutra 9:00</button>
+          <button class="btn btn-secondary btn-block pause-preset" data-preset="monday_8">🗓 Do poniedziałku 8:00</button>
+          <button class="btn btn-secondary btn-block pause-preset" data-preset="2hours">⏰ Na 2 godziny</button>
+          <button class="btn btn-secondary btn-block pause-preset" data-preset="evening">🌙 Do wieczora (20:00)</button>
+          <button class="btn btn-secondary btn-block pause-preset" data-preset="7days">✈ Urlop 7 dni</button>
+        </div>
+        <div style="border-top: 1px solid var(--border); margin: 12px 0; padding-top: 12px">
+          <label class="form-label">Lub własny czas</label>
+          <input type="datetime-local" id="pause-custom" />
+          <button class="btn btn-primary btn-block" id="pause-custom-btn" style="margin-top: 8px">Wstrzymaj do tego czasu</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODAL EDYCJI POSTA -->
+    <div class="modal-backdrop" id="edit-modal">
+      <div class="modal">
+        <div class="modal-header">
+          <div class="modal-title">Edytuj post</div>
+          <div class="modal-close" id="edit-cancel">×</div>
+        </div>
+        <div class="stack">
+          <div>
+            <label class="form-label">Tytuł</label>
+            <input id="edit-title" />
+          </div>
+          <div>
+            <label class="form-label">Treść</label>
+            <textarea id="edit-body" rows="8"></textarea>
+            <div style="font-size: 10.5px; color: var(--muted); margin-top: 4px" id="edit-length">0 znaków · 0 słów</div>
+          </div>
+          <div>
+            <label class="form-label">Zdjęcia (<span id="edit-img-count">0</span>/4)</label>
+            <div class="thumbs" id="edit-thumbs"></div>
+            <button class="btn btn-secondary btn-sm btn-block" id="edit-add-img" style="margin-top: 6px">+ Dodaj zdjęcie</button>
+            <input type="file" id="edit-file-input" accept="image/*" multiple style="display: none" />
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary btn-block" id="edit-discard">Anuluj</button>
+          <button class="btn btn-primary btn-block" id="edit-save">Zapisz zmiany</button>
+        </div>
+      </div>
+    </div>
+
+  </body>
+</html>

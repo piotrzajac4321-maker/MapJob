@@ -1,0 +1,41 @@
+{
+  "manifest_version": 3,
+  "name": "MapJob FB Poster",
+  "version": "0.1.0",
+  "description": "Półautomatyczne masowe postowanie ogłoszeń na grupy Facebook. Standalone — bez logowania, działa od razu.",
+  "permissions": ["storage", "scripting", "alarms", "notifications", "tabs"],
+  "host_permissions": ["*://*.facebook.com/*"],
+  "background": {
+    "service_worker": "src/background/service-worker.ts",
+    "type": "module"
+  },
+  "action": {
+    "default_popup": "src/popup/index.html",
+    "default_title": "MapJob FB Poster",
+    "default_icon": {
+      "16": "icon-16.png",
+      "32": "icon-32.png",
+      "48": "icon-48.png",
+      "128": "icon-128.png"
+    }
+  },
+  "icons": {
+    "16": "icon-16.png",
+    "32": "icon-32.png",
+    "48": "icon-48.png",
+    "128": "icon-128.png"
+  },
+  "content_scripts": [
+    {
+      "matches": ["*://www.facebook.com/groups/feed/*", "*://www.facebook.com/groups/joins/*"],
+      "js": ["src/content/fb-groups-scrape.ts"],
+      "run_at": "document_idle"
+    },
+    {
+      "matches": ["*://www.facebook.com/groups/*"],
+      "exclude_matches": ["*://www.facebook.com/groups/feed/*", "*://www.facebook.com/groups/joins/*"],
+      "js": ["src/content/fb-composer-paste.ts", "src/content/fb-publish-detect.ts"],
+      "run_at": "document_idle"
+    }
+  ]
+}

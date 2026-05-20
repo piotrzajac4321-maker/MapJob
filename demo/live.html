@@ -1,0 +1,579 @@
+<!doctype html>
+<html lang="pl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#0a0e1a" />
+    <title>MapJob FB Poster — Live Dashboard</title>
+    <style>
+      :root {
+        --bg: #0a0e1a;
+        --bg-elevated: #0e1421;
+        --surface: #131a2b;
+        --surface-2: #1a2238;
+        --border: #1f2940;
+        --border-strong: #2a3656;
+        --border-subtle: #161e30;
+        --text: #f1f5f9;
+        --muted: #94a3b8;
+        --muted-2: #64748b;
+        --primary: #3b82f6;
+        --primary-hover: #2563eb;
+        --primary-light: #60a5fa;
+        --primary-soft: rgba(59, 130, 246, 0.12);
+        --primary-glow: rgba(59, 130, 246, 0.35);
+        --success: #22c55e;
+        --success-soft: rgba(34, 197, 94, 0.12);
+        --warning: #f59e0b;
+        --warning-soft: rgba(245, 158, 11, 0.12);
+        --danger: #ef4444;
+        --danger-soft: rgba(239, 68, 68, 0.12);
+        --violet: #8b5cf6;
+        --violet-soft: rgba(139, 92, 246, 0.12);
+        --r-md: 8px;
+        --r-lg: 12px;
+        --r-sm: 6px;
+        --r-xs: 4px;
+        --gradient: linear-gradient(135deg, #3b82f6 0%, #60a5fa 100%);
+        --gradient-strong: linear-gradient(135deg, #2563eb 0%, #3b82f6 50%, #60a5fa 100%);
+        --shadow-md: 0 4px 16px rgba(0,0,0,0.3);
+      }
+      *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+      body {
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, system-ui, sans-serif;
+        font-size: 14px; line-height: 1.5; color: var(--text); background: var(--bg);
+        -webkit-font-smoothing: antialiased; min-height: 100vh; letter-spacing: -0.005em;
+      }
+      code { background: var(--surface-2); padding: 2px 6px; border-radius: var(--r-xs); color: #93c5fd; font-size: 12px; font-family: ui-monospace, monospace; }
+      pre { white-space: pre-wrap; word-break: break-word; }
+
+      .status-banner {
+        padding: 10px 24px;
+        text-align: center;
+        font-size: 13px;
+        border-bottom: 1px solid var(--border);
+        background: var(--surface);
+      }
+      .status-banner.ok { background: var(--success-soft); color: var(--success); border-color: var(--success); }
+      .status-banner.err { background: var(--danger-soft); color: var(--danger); border-color: var(--danger); }
+      .status-banner.warn { background: var(--warning-soft); color: var(--warning); border-color: var(--warning); }
+      .pulse-dot { width: 6px; height: 6px; border-radius: 999px; background: var(--success); display: inline-block; margin-right: 6px; animation: pulse 2s infinite; }
+      @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+      header {
+        position: sticky; top: 0; z-index: 30;
+        background: rgba(10, 14, 26, 0.85);
+        -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px);
+        border-bottom: 1px solid var(--border);
+        padding: 14px 28px;
+        display: flex; align-items: center; gap: 16px;
+      }
+      .logo { display: flex; align-items: center; gap: 10px; font-weight: 600; }
+      .logo-mark {
+        width: 32px; height: 32px;
+        background: var(--gradient-strong);
+        border-radius: var(--r-md);
+        display: flex; align-items: center; justify-content: center;
+        color: white; font-weight: 700; font-size: 14px;
+        box-shadow: 0 4px 14px var(--primary-glow);
+      }
+      .live-indicator {
+        margin-left: auto;
+        display: flex; align-items: center; gap: 8px;
+        padding: 6px 12px;
+        background: var(--success-soft);
+        border-radius: 999px;
+        font-size: 12px;
+        color: var(--success);
+        font-weight: 500;
+      }
+
+      main { max-width: 1280px; margin: 0 auto; padding: 28px; }
+      .page-title { font-size: 28px; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 8px; }
+      .page-subtitle { color: var(--muted); font-size: 14px; margin-bottom: 28px; }
+
+      .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 24px; }
+      .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+      .grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; margin-bottom: 24px; }
+      .grid-2-3-1 { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; margin-bottom: 24px; }
+
+      @media (max-width: 768px) {
+        header { padding: 12px 16px; }
+        main { padding: 16px; }
+        .grid-4 { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+        .grid-3 { grid-template-columns: 1fr; }
+        .grid-2, .grid-2-3-1 { grid-template-columns: 1fr; gap: 14px; }
+        .page-title { font-size: 22px; }
+      }
+
+      .stat {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--r-lg);
+        padding: 18px;
+        position: relative; overflow: hidden;
+        transition: all 0.2s;
+      }
+      .stat:hover { border-color: var(--border-strong); transform: translateY(-1px); box-shadow: var(--shadow-md); }
+      .stat-icon-wrap {
+        width: 36px; height: 36px;
+        border-radius: var(--r-md);
+        background: var(--primary-soft);
+        color: var(--primary-light);
+        display: flex; align-items: center; justify-content: center;
+        margin-bottom: 12px;
+        font-size: 18px;
+      }
+      .stat-icon-wrap.success { background: var(--success-soft); color: var(--success); }
+      .stat-icon-wrap.warning { background: var(--warning-soft); color: var(--warning); }
+      .stat-icon-wrap.violet { background: var(--violet-soft); color: var(--violet); }
+      .stat-label { color: var(--muted); font-size: 12px; font-weight: 500; }
+      .stat-value { font-size: 28px; font-weight: 700; margin-top: 2px; letter-spacing: -0.02em; line-height: 1.1; }
+      .stat-delta { font-size: 12px; margin-top: 6px; color: var(--muted); }
+
+      .card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--r-lg);
+        padding: 20px;
+      }
+      .card-header {
+        display: flex; align-items: center; justify-content: space-between;
+        margin-bottom: 14px;
+        gap: 12px;
+      }
+      .card-title { font-size: 14px; font-weight: 600; }
+      .text-muted { color: var(--muted); }
+      .text-xs { font-size: 12px; }
+      .text-2xs { font-size: 11px; }
+
+      .table-wrap {
+        overflow-x: auto; -webkit-overflow-scrolling: touch;
+        border-radius: var(--r-md);
+        border: 1px solid var(--border);
+      }
+      table { width: 100%; border-collapse: collapse; font-size: 13px; min-width: 500px; }
+      thead { background: var(--bg-elevated); }
+      th { text-align: left; padding: 10px 14px; font-size: 11px; font-weight: 600;
+           text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted);
+           border-bottom: 1px solid var(--border); }
+      td { padding: 11px 14px; border-bottom: 1px solid var(--border-subtle); }
+      tr:last-child td { border-bottom: 0; }
+      tr:hover td { background: var(--bg-elevated); }
+      th.right, td.right { text-align: right; }
+
+      .badge {
+        display: inline-flex; align-items: center; gap: 4px;
+        padding: 3px 9px; border-radius: 999px;
+        font-size: 11px; font-weight: 500;
+      }
+      .badge-success { background: var(--success-soft); color: var(--success); }
+      .badge-warning { background: var(--warning-soft); color: var(--warning); }
+      .badge-danger { background: var(--danger-soft); color: var(--danger); }
+      .badge-muted { background: var(--surface-2); color: var(--muted); }
+      .badge-primary { background: var(--primary-soft); color: var(--primary-light); }
+      .badge-violet { background: var(--violet-soft); color: var(--violet); }
+      .badge-dot::before { content: ''; width: 6px; height: 6px; border-radius: 999px; background: currentColor; display: inline-block; }
+
+      .timeline { display: flex; flex-direction: column; gap: 12px; }
+      .timeline-item {
+        display: flex; gap: 12px;
+        padding: 10px 12px;
+        background: var(--bg-elevated);
+        border-radius: var(--r-md);
+        border: 1px solid var(--border-subtle);
+      }
+      .timeline-dot { width: 10px; height: 10px; border-radius: 999px; flex-shrink: 0; margin-top: 5px; background: var(--primary); }
+      .timeline-dot.success { background: var(--success); }
+      .timeline-dot.warning { background: var(--warning); }
+      .timeline-dot.danger { background: var(--danger); }
+      .timeline-content { flex: 1; min-width: 0; }
+      .timeline-title { font-size: 13px; font-weight: 500; }
+      .timeline-time { font-size: 11px; color: var(--muted); margin-top: 2px; }
+
+      .ring-chart {
+        width: 140px; height: 140px;
+        border-radius: 50%;
+        position: relative;
+        display: flex; align-items: center; justify-content: center;
+        flex-shrink: 0;
+      }
+      .ring-chart::before {
+        content: '';
+        position: absolute; inset: 14px;
+        background: var(--surface);
+        border-radius: 50%;
+      }
+      .ring-value { position: relative; font-size: 24px; font-weight: 700; line-height: 1; }
+      .ring-label { position: relative; font-size: 11px; color: var(--muted); margin-top: 4px; }
+
+      .progress { height: 6px; background: var(--surface-2); border-radius: 999px; overflow: hidden; }
+      .progress-bar { height: 100%; background: var(--gradient); border-radius: 999px; transition: width 0.3s; }
+      .progress-bar.success { background: linear-gradient(135deg, #16a34a 0%, #22c55e 100%); }
+      .progress-bar.warning { background: var(--warning); }
+
+      .chart-bars { display: flex; align-items: end; gap: 6px; height: 160px; padding-top: 12px; }
+      .chart-bars .bar { flex: 1; background: var(--gradient); border-radius: var(--r-xs) var(--r-xs) 0 0; min-height: 4px; }
+      .chart-bars .bar.peak { background: var(--gradient-strong); }
+      .chart-labels { display: flex; gap: 6px; margin-top: 8px; font-size: 10px; color: var(--muted); }
+      .chart-labels span { flex: 1; text-align: center; }
+
+      .skeleton {
+        background: linear-gradient(90deg, var(--surface) 0%, var(--surface-2) 50%, var(--surface) 100%);
+        background-size: 200% 100%;
+        animation: shimmer 1.4s linear infinite;
+        border-radius: var(--r-md);
+        height: 18px;
+      }
+      @keyframes shimmer { from { background-position: 200% 0; } to { background-position: -200% 0; } }
+
+      .btn {
+        display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+        padding: 8px 14px;
+        border-radius: var(--r-md);
+        font: inherit; font-size: 13px; font-weight: 500;
+        border: 1px solid transparent;
+        cursor: pointer;
+        background: none; color: inherit;
+      }
+      .btn-primary { background: var(--gradient); color: white; box-shadow: 0 2px 10px var(--primary-glow); }
+      .btn-secondary { background: var(--surface); border-color: var(--border-strong); }
+      .btn-secondary:hover { background: var(--surface-2); }
+
+      .err-detail {
+        background: var(--danger-soft);
+        border: 1px solid var(--danger);
+        border-radius: var(--r-md);
+        padding: 16px;
+        color: var(--danger);
+        font-size: 13px;
+      }
+      .err-detail code { background: rgba(0,0,0,0.2); color: var(--danger); }
+
+      .pubs-mini { display: flex; gap: 4px; margin-top: 8px; }
+      .pubs-mini > div {
+        flex: 1; height: 8px; border-radius: 2px; background: var(--surface-2);
+      }
+      .pubs-mini > .posted { background: var(--success); }
+      .pubs-mini > .skipped { background: var(--warning); }
+      .pubs-mini > .failed { background: var(--danger); }
+    </style>
+  </head>
+  <body>
+    <div id="status-banner" class="status-banner">
+      <span class="text-muted">⏳ Łączę się z bazą...</span>
+    </div>
+
+    <header>
+      <div class="logo">
+        <div class="logo-mark">M</div>
+        <div>
+          <div style="font-size: 14px; font-weight: 600">MapJob FB Poster</div>
+          <div style="font-size: 11px; color: var(--muted)">Live Analytics</div>
+        </div>
+      </div>
+      <div class="live-indicator">
+        <span class="pulse-dot"></span>
+        <span id="live-label">LIVE</span>
+        <span style="opacity: 0.6; margin-left: 4px" id="last-refresh">—</span>
+      </div>
+    </header>
+
+    <main>
+      <h1 class="page-title">Live Dashboard</h1>
+      <p class="page-subtitle">Analityka publikacji · auto-refresh co 10s · synchronizacja z extension</p>
+
+      <!-- Stat cards -->
+      <div class="grid-4" id="stats">
+        <div class="stat"><div class="skeleton" style="margin-bottom: 14px; width: 36px"></div><div class="skeleton" style="width: 80%"></div></div>
+        <div class="stat"><div class="skeleton" style="margin-bottom: 14px; width: 36px"></div><div class="skeleton" style="width: 80%"></div></div>
+        <div class="stat"><div class="skeleton" style="margin-bottom: 14px; width: 36px"></div><div class="skeleton" style="width: 80%"></div></div>
+        <div class="stat"><div class="skeleton" style="margin-bottom: 14px; width: 36px"></div><div class="skeleton" style="width: 80%"></div></div>
+      </div>
+
+      <div class="grid-2-3-1">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">Publikacje per dzień</div>
+            <span class="text-xs text-muted">ostatnie 14 dni</span>
+          </div>
+          <div id="chart-perday" style="min-height: 200px"></div>
+        </div>
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">Sukces (7 dni)</div>
+          </div>
+          <div id="chart-success" style="display: flex; justify-content: center; min-height: 200px; align-items: center"></div>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">Top grupy</div>
+            <span class="text-xs text-muted">wg liczby publikacji</span>
+          </div>
+          <div id="top-groups"></div>
+        </div>
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">Aktywność live</div>
+            <span class="text-xs text-muted">ostatnie 20 zdarzeń</span>
+          </div>
+          <div id="activity-feed"></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">Wszystkie publikacje</div>
+          <span class="text-xs text-muted" id="pubs-count">—</span>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>Kiedy</th><th>Grupa</th><th>Kampania</th><th>Status</th><th class="right">Reakcje</th><th class="right">Komentarze</th><th class="right">Link</th></tr>
+            </thead>
+            <tbody id="publications"></tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+
+    <script>
+      const SUPA_URL = 'https://ahgzjneegvptudphibdm.supabase.co';
+      const SUPA_KEY = 'sb_publishable__B7I_Ji4umLpI3mzW3CM6A_1YAxYmhb';
+      const DEVICE_ID = 'test-device-001';
+
+      const banner = document.getElementById('status-banner');
+      const setBanner = (msg, kind = '') => {
+        banner.className = 'status-banner ' + kind;
+        banner.innerHTML = msg;
+      };
+
+      async function api(path) {
+        const url = `${SUPA_URL}/rest/v1${path}`;
+        const res = await fetch(url, {
+          headers: {
+            apikey: SUPA_KEY,
+            Authorization: `Bearer ${SUPA_KEY}`,
+            'Content-Type': 'application/json',
+          },
+        });
+        if (!res.ok) throw new Error(`HTTP ${res.status}: ${await res.text()}`);
+        return res.json();
+      }
+
+      const fmt = {
+        time: (iso) => new Date(iso).toLocaleString('pl-PL', { hour: '2-digit', minute: '2-digit', day: '2-digit', month: '2-digit' }),
+        timeAgo: (iso) => {
+          if (!iso) return '—';
+          const diff = (Date.now() - new Date(iso).getTime()) / 1000;
+          if (diff < 60) return 'przed chwilą';
+          if (diff < 3600) return Math.floor(diff / 60) + ' min temu';
+          if (diff < 86400) return Math.floor(diff / 3600) + ' h temu';
+          return Math.floor(diff / 86400) + ' d temu';
+        },
+        n: (n) => Number(n ?? 0).toLocaleString('pl-PL'),
+      };
+
+      const statusBadges = {
+        posted: ['badge-success', 'opublikowany'],
+        skipped: ['badge-warning', 'pominięty'],
+        failed: ['badge-danger', 'błąd'],
+        pending: ['badge-muted', 'oczekuje'],
+        queued: ['badge-primary', 'kolejka'],
+        in_progress: ['badge-primary', 'w trakcie'],
+      };
+      const eventBadges = {
+        scrape: ['📥', 'import'],
+        post_started: ['▶', 'start'],
+        post_done: ['✓', 'wysłany'],
+        post_failed: ['✗', 'błąd'],
+        login_needed: ['🔒', 'login'],
+        campaign_started: ['🚀', 'kampania'],
+        sync: ['↻', 'sync'],
+      };
+
+      function badge(status) {
+        const [cls, label] = statusBadges[status] || ['badge-muted', status];
+        return `<span class="badge ${cls} badge-dot">${label}</span>`;
+      }
+
+      async function loadStats() {
+        const rows = await api(`/mjfb_v_dashboard_stats?device_id=eq.${DEVICE_ID}`);
+        const s = rows[0] ?? {};
+        const el = document.getElementById('stats');
+        el.innerHTML = `
+          <div class="stat">
+            <div class="stat-icon-wrap success">✓</div>
+            <div class="stat-label">Opublikowane łącznie</div>
+            <div class="stat-value">${fmt.n(s.total_posted)}</div>
+            <div class="stat-delta">${fmt.n(s.posted_today)} dzisiaj · ${fmt.n(s.posted_7d)} w 7 dni</div>
+          </div>
+          <div class="stat">
+            <div class="stat-icon-wrap">👥</div>
+            <div class="stat-label">Aktywne grupy</div>
+            <div class="stat-value">${fmt.n(s.active_groups)}</div>
+            <div class="stat-delta">z ${fmt.n(s.total_groups)} zaimportowanych</div>
+          </div>
+          <div class="stat">
+            <div class="stat-icon-wrap warning">⏳</div>
+            <div class="stat-label">W kolejce</div>
+            <div class="stat-value">${fmt.n(s.pending)}</div>
+            <div class="stat-delta">do publikacji</div>
+          </div>
+          <div class="stat">
+            <div class="stat-icon-wrap violet">⚠</div>
+            <div class="stat-label">Błędy (7 dni)</div>
+            <div class="stat-value">${fmt.n(s.failed_7d)}</div>
+            <div class="stat-delta">do sprawdzenia</div>
+          </div>
+        `;
+      }
+
+      async function loadPerDay() {
+        const rows = await api(`/mjfb_v_publications_per_day?device_id=eq.${DEVICE_ID}&order=day.desc&limit=14`);
+        rows.reverse();
+        const el = document.getElementById('chart-perday');
+        if (rows.length === 0) {
+          el.innerHTML = '<div class="text-muted" style="padding: 40px 0; text-align: center">Brak danych jeszcze.</div>';
+          return;
+        }
+        const max = Math.max(...rows.map((r) => r.posted), 1);
+        const peak = max;
+        el.innerHTML = `
+          <div class="chart-bars">
+            ${rows.map((r) => `
+              <div class="bar ${r.posted === peak ? 'peak' : ''}" style="height: ${(r.posted / max * 100).toFixed(0)}%" title="${r.day}: ${r.posted} opublikowanych"></div>
+            `).join('')}
+          </div>
+          <div class="chart-labels">
+            ${rows.map((r) => `<span>${new Date(r.day).toLocaleDateString('pl-PL', { day: '2-digit', month: '2-digit' })}</span>`).join('')}
+          </div>
+        `;
+      }
+
+      async function loadSuccessRing() {
+        const pubs = await api(`/mjfb_publications?device_id=eq.${DEVICE_ID}&posted_at=gte.${new Date(Date.now() - 7 * 86400000).toISOString()}&select=status`);
+        const total = pubs.length;
+        const posted = pubs.filter((p) => p.status === 'posted').length;
+        const pct = total === 0 ? 0 : Math.round((posted / total) * 100);
+        const el = document.getElementById('chart-success');
+        el.innerHTML = `
+          <div>
+            <div class="ring-chart" style="background: conic-gradient(var(--success) 0% ${pct}%, var(--surface-2) ${pct}% 100%);">
+              <div style="text-align: center">
+                <div class="ring-value" style="color: var(--success)">${pct}<span style="font-size: 14px; color: var(--muted)">%</span></div>
+                <div class="ring-label">${posted} / ${total}</div>
+              </div>
+            </div>
+            <div style="text-align: center; margin-top: 12px; font-size: 12px; color: var(--muted)">7-dniowy success rate</div>
+          </div>
+        `;
+      }
+
+      async function loadTopGroups() {
+        const rows = await api(`/mjfb_v_top_groups?device_id=eq.${DEVICE_ID}&order=posted_count.desc&limit=8`);
+        const el = document.getElementById('top-groups');
+        if (rows.length === 0) {
+          el.innerHTML = '<div class="text-muted" style="padding: 24px 0; text-align: center">Brak danych.</div>';
+          return;
+        }
+        const max = Math.max(...rows.map((r) => r.posted_count), 1);
+        el.innerHTML = rows.map((r) => `
+          <div style="padding: 10px 0; border-bottom: 1px solid var(--border-subtle); display: flex; gap: 12px; align-items: center">
+            <div style="flex: 1; min-width: 0">
+              <div style="font-size: 13px; font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap">${r.group_name || r.fb_group_id}</div>
+              <div style="font-size: 11px; color: var(--muted); margin-top: 2px">${r.posted_count} opublik. · ${r.total_reactions} 👍 · ${r.total_comments} 💬</div>
+            </div>
+            <div style="width: 80px"><div class="progress"><div class="progress-bar success" style="width: ${(r.posted_count / max * 100).toFixed(0)}%"></div></div></div>
+            <div style="min-width: 40px; text-align: right; font-weight: 600; font-size: 13px">${r.posted_count}</div>
+          </div>
+        `).join('');
+      }
+
+      async function loadActivity() {
+        const rows = await api(`/mjfb_activity_log?device_id=eq.${DEVICE_ID}&order=created_at.desc&limit=20`);
+        const el = document.getElementById('activity-feed');
+        if (rows.length === 0) {
+          el.innerHTML = '<div class="text-muted" style="padding: 24px 0; text-align: center">Brak aktywności.</div>';
+          return;
+        }
+        el.innerHTML = `<div class="timeline">${rows.map((r) => {
+          const [icon] = eventBadges[r.event_type] || ['•', r.event_type];
+          const dotClass = r.event_type === 'post_done' || r.event_type === 'scrape' ? 'success' :
+                          r.event_type === 'post_failed' ? 'danger' :
+                          r.event_type === 'login_needed' ? 'warning' : '';
+          return `
+            <div class="timeline-item">
+              <div class="timeline-dot ${dotClass}"></div>
+              <div class="timeline-content">
+                <div class="timeline-title">${icon} ${r.message || r.event_type}</div>
+                <div class="timeline-time">${fmt.timeAgo(r.created_at)}${r.fb_group_id ? ' · grupa ' + r.fb_group_id : ''}</div>
+              </div>
+            </div>
+          `;
+        }).join('')}</div>`;
+      }
+
+      async function loadPublications() {
+        const rows = await api(`/mjfb_publications?device_id=eq.${DEVICE_ID}&order=posted_at.desc.nullslast&limit=20`);
+        document.getElementById('pubs-count').textContent = `${rows.length} ostatnich`;
+
+        // Pobierz engagement dla każdej publication
+        const pubIds = rows.filter((p) => p.status === 'posted').map((p) => p.id);
+        let engageMap = new Map();
+        if (pubIds.length > 0) {
+          const eng = await api(`/mjfb_engagement?publication_id=in.(${pubIds.join(',')})&order=scraped_at.desc`);
+          for (const e of eng) {
+            if (!engageMap.has(e.publication_id)) engageMap.set(e.publication_id, e);
+          }
+        }
+
+        const el = document.getElementById('publications');
+        el.innerHTML = rows.map((p) => {
+          const e = engageMap.get(p.id);
+          return `
+            <tr>
+              <td class="text-xs text-muted">${p.posted_at ? fmt.timeAgo(p.posted_at) : '—'}</td>
+              <td><div style="font-size: 13px">${p.group_name || p.fb_group_id}</div><div class="text-2xs text-muted">${p.fb_group_id}</div></td>
+              <td class="text-xs">${p.campaign_name || '—'}</td>
+              <td>${badge(p.status)}</td>
+              <td class="right">${e ? e.reactions_count : '—'}</td>
+              <td class="right">${e ? e.comments_count : '—'}</td>
+              <td class="right">${p.fb_post_url ? `<a href="${p.fb_post_url}" target="_blank" style="color: var(--primary-light)">otwórz ↗</a>` : '<span class="text-muted">—</span>'}</td>
+            </tr>
+          `;
+        }).join('');
+      }
+
+      async function refresh() {
+        try {
+          await Promise.all([
+            loadStats(),
+            loadPerDay(),
+            loadSuccessRing(),
+            loadTopGroups(),
+            loadActivity(),
+            loadPublications(),
+          ]);
+          setBanner(
+            `<span class="pulse-dot"></span>Połączono · device <code>${DEVICE_ID}</code>`,
+            'ok'
+          );
+          document.getElementById('last-refresh').textContent = new Date().toLocaleTimeString('pl-PL', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+        } catch (err) {
+          setBanner(
+            `✗ Błąd ładowania: <code>${String(err).slice(0, 200)}</code>`,
+            'err'
+          );
+          console.error(err);
+        }
+      }
+
+      refresh();
+      setInterval(refresh, 10000);
+    </script>
+  </body>
+</html>
