@@ -113,18 +113,79 @@
       #tab-posts:checked      ~ .panes .tp-posts,
       #tab-assistant:checked  ~ .panes .tp-assistant,
       #tab-camp:checked       ~ .panes .tp-camp,
-      #tab-log:checked        ~ .panes .tp-log { display: block; }
+      #tab-log:checked        ~ .panes .tp-log,
+      #tab-settings:checked   ~ .panes .tp-settings { display: block; }
 
       #tab-home:checked       ~ .tabs label[for="tab-home"],
       #tab-groups:checked     ~ .tabs label[for="tab-groups"],
       #tab-posts:checked      ~ .tabs label[for="tab-posts"],
       #tab-assistant:checked  ~ .tabs label[for="tab-assistant"],
       #tab-camp:checked       ~ .tabs label[for="tab-camp"],
-      #tab-log:checked        ~ .tabs label[for="tab-log"] {
+      #tab-log:checked        ~ .tabs label[for="tab-log"],
+      #tab-settings:checked   ~ .tabs label[for="tab-settings"] {
         background: var(--card);
         color: var(--primary-light);
         box-shadow: 0 1px 2px rgba(0,0,0,0.2);
       }
+      .tab-label[for="tab-settings"] { flex: 0 0 32px; font-size: 14px; }
+
+      /* MODAL EDYCJI */
+      .modal-backdrop {
+        position: fixed; inset: 0;
+        background: rgba(0, 0, 0, 0.75);
+        z-index: 100;
+        display: none;
+        align-items: flex-start;
+        justify-content: center;
+        padding: 16px;
+        overflow-y: auto;
+        -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px);
+      }
+      .modal-backdrop.show { display: flex; }
+      .modal {
+        background: var(--card);
+        border: 1px solid var(--border-strong);
+        border-radius: var(--r);
+        padding: 16px;
+        width: 100%; max-width: 360px;
+        margin-top: 20px;
+        box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+      }
+      .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+      .modal-title { font-weight: 600; font-size: 14px; }
+      .modal-close { color: var(--muted); cursor: pointer; padding: 4px 8px; font-size: 18px; line-height: 1; }
+      .modal-close:hover { color: var(--text); }
+      .modal-footer { display: flex; gap: 6px; margin-top: 12px; }
+
+      /* SYNC STATUS w headerze */
+      .sync-pill {
+        font-size: 10px;
+        padding: 2px 7px;
+        border-radius: 999px;
+        display: inline-flex; align-items: center; gap: 3px;
+        font-weight: 500;
+      }
+      .sync-pill::before { content: ''; width: 5px; height: 5px; border-radius: 999px; background: currentColor; }
+      .sync-pill.ok { color: var(--success); background: var(--success-soft); }
+      .sync-pill.off { color: var(--muted); background: var(--bg-2); }
+      .sync-pill.err { color: var(--danger); background: var(--danger-soft); }
+      .sync-pill.unk { color: var(--warning); background: var(--warning-soft); }
+
+      /* STORAGE BAR */
+      .storage-bar {
+        height: 4px;
+        background: var(--bg-2);
+        border-radius: 999px;
+        margin: 6px 0;
+        overflow: hidden;
+      }
+      .storage-fill {
+        height: 100%; border-radius: 999px;
+        background: var(--success);
+        transition: width 0.3s, background 0.3s;
+      }
+      .storage-fill.warn { background: var(--warning); }
+      .storage-fill.critical { background: var(--danger); }
 
       .card {
         background: var(--card);
@@ -348,6 +409,7 @@
     <header>
       <div class="logo-mark">M</div>
       <div class="logo-text">MapJob FB Poster</div>
+      <span class="sync-pill unk" id="sync-pill" title="Status sync z Supabase">sync…</span>
       <div id="fb-status-dot"></div>
     </header>
 
@@ -359,6 +421,7 @@
     <input type="radio" name="tabs" id="tab-camp" />
     <input type="radio" name="tabs" id="tab-assistant" />
     <input type="radio" name="tabs" id="tab-log" />
+    <input type="radio" name="tabs" id="tab-settings" />
 
     <div class="tabs">
       <label for="tab-home"      class="tab-label">Home</label>
@@ -367,6 +430,7 @@
       <label for="tab-assistant" class="tab-label">Asystent</label>
       <label for="tab-camp"      class="tab-label">Kampanie</label>
       <label for="tab-log"       class="tab-label">Log</label>
+      <label for="tab-settings"  class="tab-label">⚙</label>
     </div>
 
     <div class="panes">
@@ -506,6 +570,61 @@
         </div>
       </div>
 
+      <!-- SETTINGS -->
+      <div class="tab-pane tp-settings">
+        <div class="card">
+          <div class="form-label">Globalny dzienny limit publikacji</div>
+          <input id="set-daily-cap" type="number" min="1" max="200" value="50" />
+          <div style="font-size: 10.5px; color: var(--muted); margin-top: 4px">
+            Maks. ile postów dziennie ze wszystkich grup. <strong>Zalecane: 50</strong> żeby FB nie flagował.
+          </div>
+        </div>
+        <div class="card">
+          <div class="form-label">Delay między postami (sekundy)</div>
+          <div class="row" style="gap: 6px">
+            <input id="set-min-delay" type="number" min="10" max="3600" value="30" placeholder="min" />
+            <input id="set-max-delay" type="number" min="10" max="3600" value="90" placeholder="max" />
+          </div>
+          <div style="font-size: 10.5px; color: var(--muted); margin-top: 4px">
+            Losowy odstęp. <strong>30-90s</strong> wygląda naturalnie, mniej = ryzyko.
+          </div>
+        </div>
+        <div class="card">
+          <div class="form-label">Domyślne ustawienia per grupa</div>
+          <div class="row" style="gap: 6px; margin-bottom: 6px">
+            <div style="flex: 1">
+              <div style="font-size: 11px; color: var(--muted); margin-bottom: 3px">Cooldown (min)</div>
+              <input id="set-cooldown" type="number" min="60" max="1440" value="240" />
+            </div>
+            <div style="flex: 1">
+              <div style="font-size: 11px; color: var(--muted); margin-bottom: 3px">Daily cap / grupa</div>
+              <input id="set-group-cap" type="number" min="1" max="10" value="2" />
+            </div>
+          </div>
+          <div style="font-size: 10.5px; color: var(--muted)">
+            <strong>4h cooldown + 2 posty/grupa/dzień</strong> = bezpieczne tempo dla większości grup.
+          </div>
+        </div>
+        <div class="card">
+          <div class="form-label">Zużycie storage</div>
+          <div class="row-between" style="font-size: 11.5px">
+            <div id="storage-used">— / 10 MB</div>
+            <div id="storage-percent" style="color: var(--muted)">0%</div>
+          </div>
+          <div class="storage-bar"><div class="storage-fill" id="storage-fill" style="width: 0%"></div></div>
+          <div style="font-size: 10.5px; color: var(--muted)">
+            chrome.storage.local ma limit 10 MB. Głównie zdjęcia (≈300 KB każde).
+          </div>
+        </div>
+        <div class="card">
+          <div class="form-label">Sync do chmury (Supabase)</div>
+          <div style="font-size: 11.5px" id="cloud-info">Sprawdzam status…</div>
+        </div>
+        <button class="btn btn-primary btn-block" id="set-save">💾 Zapisz ustawienia</button>
+        <button class="btn btn-secondary btn-block" id="set-reset" style="margin-top: 6px">Przywróć domyślne</button>
+        <button class="btn btn-ghost btn-block" id="set-export" style="margin-top: 6px">Eksportuj dane (JSON backup)</button>
+      </div>
+
       <!-- LOG -->
       <div class="tab-pane tp-log">
         <div class="row-between" style="margin-bottom: 10px">
@@ -513,6 +632,37 @@
           <button class="btn btn-ghost btn-sm" id="clear-log">Wyczyść</button>
         </div>
         <div id="log-list" style="max-height: 400px; overflow-y: auto"></div>
+      </div>
+    </div>
+
+    <!-- MODAL EDYCJI POSTA -->
+    <div class="modal-backdrop" id="edit-modal">
+      <div class="modal">
+        <div class="modal-header">
+          <div class="modal-title">Edytuj post</div>
+          <div class="modal-close" id="edit-cancel">×</div>
+        </div>
+        <div class="stack">
+          <div>
+            <label class="form-label">Tytuł</label>
+            <input id="edit-title" />
+          </div>
+          <div>
+            <label class="form-label">Treść</label>
+            <textarea id="edit-body" rows="8"></textarea>
+            <div style="font-size: 10.5px; color: var(--muted); margin-top: 4px" id="edit-length">0 znaków · 0 słów</div>
+          </div>
+          <div>
+            <label class="form-label">Zdjęcia (<span id="edit-img-count">0</span>/4)</label>
+            <div class="thumbs" id="edit-thumbs"></div>
+            <button class="btn btn-secondary btn-sm btn-block" id="edit-add-img" style="margin-top: 6px">+ Dodaj zdjęcie</button>
+            <input type="file" id="edit-file-input" accept="image/*" multiple style="display: none" />
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary btn-block" id="edit-discard">Anuluj</button>
+          <button class="btn btn-primary btn-block" id="edit-save">Zapisz zmiany</button>
+        </div>
       </div>
     </div>
 

@@ -54,16 +54,18 @@ export interface ExtensionSettings {
   paused: boolean;
   globalDailyCap: number;
   defaultCooldownMinutes: number;
+  defaultGroupDailyCap: number;
   minDelaySeconds: number;
   maxDelaySeconds: number;
 }
 
 const DEFAULT_SETTINGS: ExtensionSettings = {
   paused: false,
-  globalDailyCap: 100,
+  globalDailyCap: 50,
   defaultCooldownMinutes: 240,
-  minDelaySeconds: 90,
-  maxDelaySeconds: 240,
+  defaultGroupDailyCap: 2,
+  minDelaySeconds: 30,
+  maxDelaySeconds: 90,
 };
 
 // ============ GROUPS ============
@@ -280,4 +282,40 @@ export async function markGroupPosted(fbGroupId: string): Promise<void> {
     g.lastPostedAt = Date.now();
     await saveGroups(all);
   }
+}
+
+export interface StorageUsage {
+  bytesUsed: number;
+  bytesQuota: number;
+  percentUsed: number;
+  warning: 'ok' | 'warn' | 'critical'; // ok < 70%, warn 70-90%, critical > 90%
+}
+
+/**
+ * Sprawdza zużycie storage. Pozwala ostrzec usera przed limitem 10MB.
+ */
+export async function getStorageUsage(): Promise<StorageUsage> {
+  // chrome.storage.local.QUOTA_BYTES = 10485760 (10 MB)
+  const quota = (chrome.storage.local as unknown as { QUOTA_BYTES?: number }).QUOTA_BYTES ?? 10_485_760;
+  const used = await chrome.storage.local.getBytesInUse?.(null) ?? 0;
+  const percent = (used / quota) * 100;
+  const warning = percent >= 90 ? 'critical' : percent >= 70 ? 'warn' : 'ok';
+  return { bytesUsed: used, bytesQuota: quota, percentUsed: percent, warning };
+}
+
+/**
+ * Duplikuje post (nowy ID, "kopia" w tytule).
+ */
+export async function duplicatePost(id: string): Promise<PostTemplate | null> {
+  const all = await getPosts();
+  const orig = all.find((p) => p.id === id);
+  if (!orig) return null;
+  const copy: PostTemplate = {
+    ...orig,
+    id: crypto.randomUUID(),
+    title: orig.title.startsWith('Kopia: ') ? orig.title : `Kopia: ${orig.title}`,
+    createdAt: Date.now(),
+  };
+  await savePost(copy);
+  return copy;
 }

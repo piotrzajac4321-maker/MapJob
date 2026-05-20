@@ -71,10 +71,16 @@ function parseGroupCard(card: Element): ScrapedGroup | null {
   };
 }
 
-async function autoScroll(maxScrolls = 100): Promise<void> {
+async function autoScroll(maxScrolls = 100, hardTimeoutMs = 90_000): Promise<void> {
+  const startedAt = Date.now();
   let stableCount = 0;
   let lastHeight = 0;
   for (let i = 0; i < maxScrolls && stableCount < 4; i++) {
+    // Hard timeout — nigdy więcej niż 90s (default), nawet jeśli FB jest powolny.
+    if (Date.now() - startedAt > hardTimeoutMs) {
+      console.warn('[MapJob scrape] autoScroll: hit hardTimeout', hardTimeoutMs, 'ms');
+      return;
+    }
     window.scrollTo(0, document.documentElement.scrollHeight);
     await new Promise((r) => setTimeout(r, 700 + Math.random() * 400));
     const h = document.documentElement.scrollHeight;

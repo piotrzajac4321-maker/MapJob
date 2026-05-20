@@ -115,27 +115,53 @@ async function tick(): Promise<void> {
     // Czekaj na load
     await waitForTab(tab.id);
 
+    // Re-check grupa jeszcze aktywna (user mógł odznaczyć w międzyczasie)
+    const freshGroups = await chrome.storage.local.get('groups');
+    const stillActive = (freshGroups.groups as Array<{ fbGroupId: string; isActive: boolean }> | undefined)
+      ?.find((g) => g.fbGroupId === group.fbGroupId)?.isActive;
+    if (!stillActive) {
+      console.log('[MapJob BG] Grupa', group.name, 'została dezaktywowana, skip');
+      await updateTarget(target.id, { status: 'skipped', errorCode: 'group_inactive', errorMessage: 'Grupa dezaktywowana przez usera' });
+      await chrome.tabs.remove(tab.id).catch(() => null);
+      return;
+    }
+
     // Pobierz obrazki z postu (jeśli są)
     const { posts: allPosts = [], campaigns: allCampaigns = [] } = await chrome.storage.local.get(['posts', 'campaigns']);
     const campaign = (allCampaigns as Array<{ id: string; postId: string }>).find((c) => c.id === target.campaignId);
     const post = (allPosts as Array<{ id: string; imageDataUrls?: string[] }>).find((p) => p.id === campaign?.postId);
     const imageDataUrls = post?.imageDataUrls ?? [];
 
-    // Wyślij PASTE_POST
-    const pasteResp = await chrome.tabs.sendMessage(tab.id, {
-      type: 'PASTE_POST',
-      text: target.renderedText,
-      targetId: target.id,
-      imageDataUrls,
-    }).catch((e) => ({ ok: false, error: String(e) }));
+    // Wyślij PASTE_POST z retry (3 próby, 2s/5s backoff)
+    // Composer może się otworzyć z opóźnieniem albo FB DOM jeszcze nie gotowy.
+    let pasteResp: { ok?: boolean; error?: string } | null = null;
+    for (let attempt = 0; attempt < 3; attempt++) {
+      pasteResp = await chrome.tabs.sendMessage(tab.id, {
+        type: 'PASTE_POST',
+        text: target.renderedText,
+        targetId: target.id,
+        imageDataUrls,
+      }).catch((e) => ({ ok: false, error: String(e) }));
+
+      if (pasteResp?.ok) break;
+      if (attempt < 2) {
+        console.warn(`[MapJob BG] Paste attempt ${attempt + 1} failed, retry za ${[2, 5][attempt]}s. Err:`, pasteResp?.error);
+        await new Promise((r) => setTimeout(r, [2000, 5000][attempt]));
+      }
+    }
 
     if (!pasteResp?.ok) {
       await updateTarget(target.id, {
         status: 'failed',
         errorCode: 'paste_failed',
-        errorMessage: pasteResp?.error ?? 'Nie udało się wkleić treści',
+        errorMessage: pasteResp?.error ?? 'Nie udało się wkleić treści po 3 próbach',
       });
-      await logActivity({ type: 'fail', message: 'Wklejanie nie powiodło się', groupName: group.name });
+      await logActivity({ type: 'fail', message: `Wklejanie nie powiodło się (3× retry)`, groupName: group.name });
+      void cloud.updatePublicationStatus(target.id, {
+        status: 'failed',
+        errorCode: 'paste_failed',
+        errorMessage: pasteResp?.error ?? 'paste failed 3×',
+      });
       return;
     }
 

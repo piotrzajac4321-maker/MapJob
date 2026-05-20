@@ -20,6 +20,12 @@ const COMMON_HEADERS: Record<string, string> = {
 };
 
 let syncEnabled = true; // wyłączone jeśli REST zwraca 404 (schema nie wgrana)
+let lastSyncStatus: 'ok' | 'offline' | 'no_schema' | 'unknown' = 'unknown';
+let lastSyncAt = 0;
+
+export function getSyncStatus(): { status: typeof lastSyncStatus; lastSyncAt: number; enabled: boolean } {
+  return { status: lastSyncStatus, lastSyncAt, enabled: syncEnabled };
+}
 
 async function call(path: string, init: RequestInit = {}): Promise<Response | null> {
   if (!syncEnabled) return null;
@@ -28,23 +34,42 @@ async function call(path: string, init: RequestInit = {}): Promise<Response | nu
     /^\/(devices|imported_groups|publications|engagement|activity_log)/,
     `/${TABLE_PREFIX}$1`,
   );
-  try {
-    const res = await fetch(`${SUPA_URL}/rest/v1${prefixed}`, {
-      ...init,
-      headers: { ...COMMON_HEADERS, ...(init.headers ?? {}) },
-    });
-    if (res.status === 404) {
-      console.warn('[MapJob cloud] schema nie wgrana — wyłączam sync');
-      syncEnabled = false;
-    } else if (!res.ok) {
+
+  // Retry z exponential backoff (1s, 3s, 7s) — tylko dla błędów sieciowych
+  let lastErr: unknown;
+  for (let attempt = 0; attempt < 3; attempt++) {
+    try {
+      const res = await fetch(`${SUPA_URL}/rest/v1${prefixed}`, {
+        ...init,
+        headers: { ...COMMON_HEADERS, ...(init.headers ?? {}) },
+      });
+      if (res.status === 404) {
+        console.warn('[MapJob cloud] schema nie wgrana — wyłączam sync');
+        syncEnabled = false;
+        lastSyncStatus = 'no_schema';
+        return res;
+      }
+      if (res.ok) {
+        lastSyncStatus = 'ok';
+        lastSyncAt = Date.now();
+        return res;
+      }
+      // 4xx/5xx — log + nie retry (4xx jest klientem, 5xx za 1s nie zmieni)
       const txt = await res.text().catch(() => '');
       console.warn('[MapJob cloud] HTTP', res.status, txt.slice(0, 200));
+      lastSyncStatus = 'offline';
+      return res;
+    } catch (err) {
+      lastErr = err;
+      // Network error — retry
+      if (attempt < 2) {
+        await new Promise((r) => setTimeout(r, [1000, 3000, 7000][attempt]));
+      }
     }
-    return res;
-  } catch (err) {
-    console.warn('[MapJob cloud] network error:', err);
-    return null;
   }
+  console.warn('[MapJob cloud] network error po 3 próbach:', lastErr);
+  lastSyncStatus = 'offline';
+  return null;
 }
 
 export async function registerDevice(deviceId: string, label?: string): Promise<void> {

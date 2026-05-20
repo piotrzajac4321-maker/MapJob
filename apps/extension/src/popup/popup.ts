@@ -7,6 +7,8 @@ import {
   upsertGroups,
   getPosts,
   savePost,
+  deletePost,
+  duplicatePost,
   saveCampaign,
   saveTargets,
   getTargets,
@@ -15,6 +17,7 @@ import {
   setSettings,
   logActivity,
   getDeviceId,
+  getStorageUsage,
   type Campaign,
   type CampaignTarget,
   type ActivityEvent,
@@ -40,7 +43,9 @@ function banner(msg: string, kind: 'ok' | 'warn' | 'err' | 'info' = 'info', ms =
 }
 
 async function refreshHome(): Promise<void> {
-  const [groups, posts, targets, settings] = await Promise.all([getGroups(), getPosts(), getTargets(), getSettings()]);
+  const [groups, posts, targets, settings, usage] = await Promise.all([
+    getGroups(), getPosts(), getTargets(), getSettings(), getStorageUsage(),
+  ]);
   const activeGroups = groups.filter((g) => g.isActive).length;
   const todayStart = new Date();
   todayStart.setHours(0, 0, 0, 0);
@@ -56,6 +61,16 @@ async function refreshHome(): Promise<void> {
 
   const toggle = $('pause-toggle');
   toggle.classList.toggle('on', !settings.paused);
+
+  // Storage warning (przy 70%+)
+  if (usage.warning !== 'ok') {
+    const mb = (usage.bytesUsed / 1024 / 1024).toFixed(1);
+    const cls = usage.warning === 'critical' ? 'err' : 'warn';
+    const msg = usage.warning === 'critical'
+      ? `⚠ Storage ${mb} MB / 10 MB (${usage.percentUsed.toFixed(0)}%) — usuń stare posty albo zdjęcia.`
+      : `Storage ${mb} MB / 10 MB (${usage.percentUsed.toFixed(0)}%) — uwaga na limit.`;
+    banner(msg, cls, 8000);
+  }
 }
 
 async function refreshFBStatus(): Promise<void> {
@@ -193,7 +208,12 @@ async function refreshGroupsTab(): Promise<void> {
       </div>`;
   }).join('');
 
-  $('groups-list').innerHTML = html || '<div class="empty">Brak grup. Kliknij "Importuj grupy" na ekranie głównym.</div>';
+  $('groups-list').innerHTML = html || `
+    <div class="empty">
+      Nie masz jeszcze zaimportowanych grup.<br/>
+      <button class="btn btn-primary btn-sm" id="empty-import-groups" style="margin-top: 10px">↻ Importuj z FB</button>
+    </div>`;
+  document.getElementById('empty-import-groups')?.addEventListener('click', () => $('import-groups').click());
 
   $('groups-list').querySelectorAll('input[type="checkbox"]').forEach((cb) => {
     cb.addEventListener('change', async (e) => {
@@ -231,22 +251,49 @@ async function refreshPostsTab(): Promise<void> {
               <div style="color: var(--muted); font-size: 10.5px; margin-top: 2px">
                 ${escapeHtml(p.body.slice(0, 80))}${p.body.length > 80 ? '…' : ''}
               </div>
-              <div class="row" style="margin-top: 6px; gap: 6px">
+              <div class="row" style="margin-top: 6px; gap: 4px">
                 <span class="badge badge-muted">${p.type}</span>
                 ${imgBadge}
                 <span style="flex: 1"></span>
-                <button class="btn btn-ghost btn-sm" data-del="${p.id}">Usuń</button>
+                <button class="btn btn-ghost btn-sm" data-edit="${p.id}" title="Edytuj">✏</button>
+                <button class="btn btn-ghost btn-sm" data-dup="${p.id}" title="Duplikuj">⎘</button>
+                <button class="btn btn-ghost btn-sm" data-del="${p.id}" title="Usuń">🗑</button>
               </div>
             </div>
           </div>`;
       }).join('')
-    : '<div class="empty">Brak postów. Stwórz pierwszy na ekranie głównym lub klikając "Nowy".</div>';
+    : `<div class="empty">
+        Brak postów jeszcze.<br/>
+        <button class="btn btn-primary btn-sm" id="empty-go-assistant" style="margin-top: 10px">🧠 Otwórz Asystenta</button>
+      </div>`;
 
+  // CTA empty
+  document.getElementById('empty-go-assistant')?.addEventListener('click', () => {
+    ($('tab-assistant') as HTMLInputElement).checked = true;
+  });
+
+  $('posts-list').querySelectorAll('[data-edit]').forEach((b) => {
+    b.addEventListener('click', (e) => {
+      const id = (e.currentTarget as HTMLElement).dataset.edit!;
+      void openEditModal(id);
+    });
+  });
+  $('posts-list').querySelectorAll('[data-dup]').forEach((b) => {
+    b.addEventListener('click', async (e) => {
+      const id = (e.currentTarget as HTMLElement).dataset.dup!;
+      const copy = await duplicatePost(id);
+      if (copy) {
+        banner(`✓ Duplikowano: "${copy.title}"`, 'ok');
+        await refreshPostsTab();
+        await refreshHome();
+      }
+    });
+  });
   $('posts-list').querySelectorAll('[data-del]').forEach((b) => {
     b.addEventListener('click', async (e) => {
       const id = (e.currentTarget as HTMLElement).dataset.del!;
-      const all = await getPosts();
-      await chrome.storage.local.set({ posts: all.filter((p) => p.id !== id) });
+      if (!confirm('Usunąć ten post na zawsze?')) return;
+      await deletePost(id);
       await refreshPostsTab();
       await refreshHome();
     });
@@ -254,8 +301,98 @@ async function refreshPostsTab(): Promise<void> {
 }
 
 $('new-post').addEventListener('click', () => {
-  ($('tab-home') as HTMLInputElement).checked = true;
-  ($('quick-text') as HTMLTextAreaElement).focus();
+  ($('tab-assistant') as HTMLInputElement).checked = true;
+});
+
+// ============ EDIT POST MODAL ============
+let editingPostId: string | null = null;
+const editState = { images: [] as string[] };
+
+async function openEditModal(id: string): Promise<void> {
+  const posts = await getPosts();
+  const post = posts.find((p) => p.id === id);
+  if (!post) return;
+  editingPostId = id;
+  editState.images = (post.imageDataUrls ?? []).slice();
+  ($('edit-title') as HTMLInputElement).value = post.title;
+  ($('edit-body') as HTMLTextAreaElement).value = post.body;
+  renderEditThumbs();
+  updateEditLength();
+  $('edit-modal').classList.add('show');
+}
+
+function closeEditModal(): void {
+  editingPostId = null;
+  editState.images = [];
+  $('edit-modal').classList.remove('show');
+}
+
+function renderEditThumbs(): void {
+  $('edit-img-count').textContent = String(editState.images.length);
+  const host = $('edit-thumbs');
+  host.innerHTML = editState.images
+    .map((url, i) => `
+      <div class="thumb" style="background-image: url('${url}')">
+        <div class="thumb-remove" data-edit-rm="${i}">×</div>
+      </div>
+    `).join('');
+  host.querySelectorAll('[data-edit-rm]').forEach((el) => {
+    el.addEventListener('click', () => {
+      const i = parseInt(el.getAttribute('data-edit-rm')!, 10);
+      editState.images.splice(i, 1);
+      renderEditThumbs();
+    });
+  });
+}
+
+function updateEditLength(): void {
+  const t = ($('edit-body') as HTMLTextAreaElement).value;
+  const words = t.split(/\s+/).filter(Boolean).length;
+  $('edit-length').textContent = `${t.length} znaków · ${words} słów`;
+}
+
+$('edit-body').addEventListener('input', updateEditLength);
+$('edit-cancel').addEventListener('click', closeEditModal);
+$('edit-discard').addEventListener('click', closeEditModal);
+$('edit-modal').addEventListener('click', (e) => {
+  if (e.target === $('edit-modal')) closeEditModal();
+});
+
+$('edit-add-img').addEventListener('click', () => {
+  if (editState.images.length >= MAX_IMAGES_PER_POST) {
+    banner(`Limit ${MAX_IMAGES_PER_POST} zdjęć — usuń jedno żeby dodać.`, 'warn');
+    return;
+  }
+  ($('edit-file-input') as HTMLInputElement).click();
+});
+
+($('edit-file-input') as HTMLInputElement).addEventListener('change', async (e) => {
+  const files = (e.target as HTMLInputElement).files;
+  if (!files) return;
+  const remaining = MAX_IMAGES_PER_POST - editState.images.length;
+  const { dataUrls, errors } = await uploadImages(Array.from(files).slice(0, remaining));
+  editState.images.push(...dataUrls);
+  renderEditThumbs();
+  if (errors.length) banner(`Błędy: ${errors.length} (${errors[0]!.reason})`, 'warn');
+  (e.target as HTMLInputElement).value = '';
+});
+
+$('edit-save').addEventListener('click', async () => {
+  if (!editingPostId) return;
+  const title = ($('edit-title') as HTMLInputElement).value.trim();
+  const body = ($('edit-body') as HTMLTextAreaElement).value.trim();
+  if (title.length < 3) { banner('Tytuł za krótki', 'warn'); return; }
+  if (body.length < 20) { banner('Treść za krótka (min 20 znaków)', 'warn'); return; }
+  const posts = await getPosts();
+  const post = posts.find((p) => p.id === editingPostId);
+  if (!post) return;
+  post.title = title;
+  post.body = body;
+  post.imageDataUrls = editState.images.slice();
+  await savePost(post);
+  closeEditModal();
+  banner(`✓ Zapisano "${title}"`, 'ok');
+  await refreshPostsTab();
 });
 
 // ============ CAMPAIGNS ============
@@ -624,9 +761,98 @@ function typeLabel(t: ActivityEvent['type']): string {
   return { scrape: '📥 import', post: '✓ post', skip: '⏭ skip', fail: '✗ błąd', login_needed: '🔒 login' }[t];
 }
 
+// ============ SETTINGS ============
+const DEFAULT_SETTINGS = {
+  paused: false,
+  minDelaySeconds: 30,
+  maxDelaySeconds: 90,
+  globalDailyCap: 50,
+  defaultCooldownMinutes: 240,
+  defaultGroupDailyCap: 2,
+};
+
+async function refreshSettingsTab(): Promise<void> {
+  const s = await getSettings();
+  ($('set-daily-cap') as HTMLInputElement).value = String(s.globalDailyCap);
+  ($('set-min-delay') as HTMLInputElement).value = String(s.minDelaySeconds);
+  ($('set-max-delay') as HTMLInputElement).value = String(s.maxDelaySeconds);
+  ($('set-cooldown') as HTMLInputElement).value = String(s.defaultCooldownMinutes);
+  ($('set-group-cap') as HTMLInputElement).value = String(s.defaultGroupDailyCap);
+
+  await refreshStorageUsage();
+  await refreshCloudInfo();
+}
+
+async function refreshStorageUsage(): Promise<void> {
+  const u = await getStorageUsage();
+  const mb = (u.bytesUsed / 1024 / 1024).toFixed(2);
+  const quotaMb = (u.bytesQuota / 1024 / 1024).toFixed(0);
+  $('storage-used').textContent = `${mb} / ${quotaMb} MB`;
+  $('storage-percent').textContent = `${u.percentUsed.toFixed(1)}%`;
+  const fill = $('storage-fill') as HTMLElement;
+  fill.style.width = `${Math.min(100, u.percentUsed)}%`;
+  fill.className = 'storage-fill ' + (u.warning === 'critical' ? 'critical' : u.warning === 'warn' ? 'warn' : '');
+}
+
+async function refreshCloudInfo(): Promise<void> {
+  const c = cloud.getCloudConfig();
+  const s = cloud.getSyncStatus();
+  const lastSync = s.lastSyncAt ? timeAgo(s.lastSyncAt) : 'nigdy';
+  const statusLabel = s.status === 'ok' ? '✓ Połączono' : s.status === 'no_schema' ? '⚠ Schema nie wgrana' : s.status === 'offline' ? '✗ Offline' : '? Sprawdzam';
+  $('cloud-info').innerHTML = `
+    <div style="margin-bottom: 4px">URL: <code>${c.url.replace('https://', '').slice(0, 28)}…</code></div>
+    <div style="margin-bottom: 4px">Status: <strong>${statusLabel}</strong></div>
+    <div style="color: var(--muted); font-size: 10.5px">Ostatni sync: ${lastSync}</div>
+  `;
+}
+
+function refreshSyncPill(): void {
+  const s = cloud.getSyncStatus();
+  const pill = $('sync-pill');
+  if (s.status === 'ok') { pill.className = 'sync-pill ok'; pill.textContent = 'sync OK'; pill.title = `Ostatni sync: ${timeAgo(s.lastSyncAt)}`; }
+  else if (s.status === 'no_schema') { pill.className = 'sync-pill err'; pill.textContent = 'no schema'; pill.title = 'Wgraj init-apkafb.sql do Supabase'; }
+  else if (s.status === 'offline') { pill.className = 'sync-pill err'; pill.textContent = 'offline'; pill.title = 'Brak połączenia z Supabase'; }
+  else { pill.className = 'sync-pill unk'; pill.textContent = 'sync…'; pill.title = 'Nie wykonano jeszcze żadnej operacji'; }
+}
+
+$('set-save').addEventListener('click', async () => {
+  const get = (id: string) => parseInt(($(id) as HTMLInputElement).value, 10);
+  const minD = Math.max(10, get('set-min-delay'));
+  const maxD = Math.max(minD, get('set-max-delay'));
+  await setSettings({
+    globalDailyCap: Math.max(1, Math.min(200, get('set-daily-cap'))),
+    minDelaySeconds: minD,
+    maxDelaySeconds: maxD,
+    defaultCooldownMinutes: Math.max(60, get('set-cooldown')),
+    defaultGroupDailyCap: Math.max(1, get('set-group-cap')),
+  });
+  banner('✓ Ustawienia zapisane', 'ok');
+  await refreshSettingsTab();
+});
+
+$('set-reset').addEventListener('click', async () => {
+  if (!confirm('Przywrócić domyślne ustawienia?')) return;
+  await setSettings(DEFAULT_SETTINGS);
+  await refreshSettingsTab();
+  banner('Przywrócono domyślne', 'ok');
+});
+
+$('set-export').addEventListener('click', async () => {
+  const data = await chrome.storage.local.get(null);
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `mapjob-backup-${new Date().toISOString().slice(0, 10)}.json`;
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+  banner('✓ Backup pobrany', 'ok');
+});
+
 // ============ INIT ============
 async function refreshAll(): Promise<void> {
-  await Promise.all([refreshHome(), refreshFBStatus(), refreshGroupsTab(), refreshPostsTab(), refreshCampTab(), refreshLog()]);
+  await Promise.all([refreshHome(), refreshFBStatus(), refreshGroupsTab(), refreshPostsTab(), refreshCampTab(), refreshLog(), refreshSettingsTab()]);
+  refreshSyncPill();
 }
 
 document.querySelectorAll('input[name="tabs"]').forEach((input) => {
@@ -644,3 +870,4 @@ bindAssistant();
 
 void refreshAll();
 setInterval(refreshFBStatus, 5000);
+setInterval(refreshSyncPill, 10_000);
