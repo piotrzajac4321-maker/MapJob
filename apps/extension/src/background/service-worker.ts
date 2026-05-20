@@ -14,9 +14,12 @@ import {
   markGroupPosted,
   logActivity,
   getSettings,
+  setSettings,
   getDeviceId,
 } from '../lib/store';
 import * as cloud from '../lib/cloud';
+import { variateForGroup } from '../lib/variator';
+import { BLOCK_PAUSE_HOURS } from '../lib/safety';
 
 const ALARM_TICK = 'mapjob-tick';
 const ALARM_ENGAGEMENT = 'mapjob-engagement';
@@ -132,13 +135,24 @@ async function tick(): Promise<void> {
     const post = (allPosts as Array<{ id: string; imageDataUrls?: string[] }>).find((p) => p.id === campaign?.postId);
     const imageDataUrls = post?.imageDataUrls ?? [];
 
+    // VARIATOR — lekko różnicuje tekst per grupa, żeby FB nie flagował duplikatu.
+    // Deterministyczny (ten sam seed → ten sam wariant — replay-safe).
+    let textToSend = target.renderedText;
+    if (settings.variatorEnabled !== false) {
+      const variated = variateForGroup(target.renderedText, {
+        seed: `${target.campaignId}:${target.groupId}`,
+      });
+      textToSend = variated.text;
+      console.log('[MapJob BG] Variator changes:', variated.changes);
+    }
+
     // Wyślij PASTE_POST z retry (3 próby, 2s/5s backoff)
     // Composer może się otworzyć z opóźnieniem albo FB DOM jeszcze nie gotowy.
     let pasteResp: { ok?: boolean; error?: string } | null = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       pasteResp = await chrome.tabs.sendMessage(tab.id, {
         type: 'PASTE_POST',
-        text: target.renderedText,
+        text: textToSend,
         targetId: target.id,
         imageDataUrls,
       }).catch((e) => ({ ok: false, error: String(e) }));
@@ -162,6 +176,21 @@ async function tick(): Promise<void> {
         errorCode: 'paste_failed',
         errorMessage: pasteResp?.error ?? 'paste failed 3×',
       });
+
+      // Increment group failure counter — po 3 fail z rzędu auto-disable
+      const { groups: gAll } = await chrome.storage.local.get('groups');
+      const grpArr = (gAll as Array<{ fbGroupId: string; consecutiveFailures?: number; isActive: boolean; autoDisabledAt?: number; autoDisabledReason?: string }>) ?? [];
+      const grp = grpArr.find((g) => g.fbGroupId === group.fbGroupId);
+      if (grp) {
+        grp.consecutiveFailures = (grp.consecutiveFailures ?? 0) + 1;
+        if (grp.consecutiveFailures >= 3) {
+          grp.isActive = false;
+          grp.autoDisabledAt = Date.now();
+          grp.autoDisabledReason = '3× błąd publikacji z rzędu (anti-ban guard)';
+          await logActivity({ type: 'fail', message: `⚠ Auto-wyłączono grupę: 3× błąd z rzędu`, groupName: group.name });
+        }
+        await chrome.storage.local.set({ groups: grpArr });
+      }
       return;
     }
 
@@ -230,6 +259,15 @@ async function handleMessage(msg: { type?: string; [k: string]: unknown }, sende
     await updateTarget(targetId, { status: 'posted', postedAt });
     await markGroupPosted(target.groupId);
 
+    // Reset consecutive failures counter na sukces
+    const { groups: gAll2 } = await chrome.storage.local.get('groups');
+    const grpArr2 = (gAll2 as Array<{ fbGroupId: string; consecutiveFailures?: number }>) ?? [];
+    const grp2 = grpArr2.find((g) => g.fbGroupId === target.groupId);
+    if (grp2 && grp2.consecutiveFailures && grp2.consecutiveFailures > 0) {
+      grp2.consecutiveFailures = 0;
+      await chrome.storage.local.set({ groups: grpArr2 });
+    }
+
     const group = ((snap.groups as Array<{ fbGroupId: string; name: string }> | undefined) ?? [])
       .find((g) => g.fbGroupId === target.groupId);
     await logActivity({ type: 'post', message: 'Opublikowany ✓', groupName: group?.name ?? target.groupId });
@@ -286,6 +324,50 @@ async function handleMessage(msg: { type?: string; [k: string]: unknown }, sende
         iconUrl: 'icon-128.png',
         title: 'MapJob — wymagane logowanie',
         message: 'Twoja sesja FB wygasła. Zaloguj się ponownie żeby wznowić.',
+      });
+    } catch {}
+  } else if (msg.type === 'BLOCK_DETECTED') {
+    // KILL SWITCH — FB wykryło automatyzację, włączamy 24h pauzę
+    const reason = (msg.reason as string) ?? 'unknown';
+    const keyword = (msg.keyword as string) ?? '';
+    const targetId = msg.targetId as string | undefined;
+
+    console.error('[MapJob BG] 🚨 BLOCK DETECTED:', reason, keyword);
+
+    if (targetId) {
+      await updateTarget(targetId, {
+        status: 'failed',
+        errorCode: 'block_detected',
+        errorMessage: `FB blok: ${reason} (${keyword.slice(0, 60)})`,
+      });
+    }
+
+    // Kill switch + pause
+    await setSettings({
+      killSwitch: true,
+      killSwitchReason: `${reason}: ${keyword.slice(0, 100)}`,
+      killSwitchAt: Date.now(),
+      paused: true,
+    });
+
+    await logActivity({
+      type: 'fail',
+      message: `🚨 KILL SWITCH: FB blokuje. Wznów ręcznie za ${BLOCK_PAUSE_HOURS}h. Powód: ${reason}`,
+    });
+
+    const deviceId = await getDeviceId();
+    void cloud.logActivity(deviceId, {
+      eventType: 'post_failed',
+      message: `KILL SWITCH: ${reason}`,
+      meta: { keyword, paused_for_hours: BLOCK_PAUSE_HOURS },
+    });
+
+    try {
+      await chrome.notifications.create({
+        type: 'basic',
+        iconUrl: 'icon-128.png',
+        title: '🚨 MapJob — WYKRYTO BLOKADĘ FB',
+        message: `System wstrzymany na 24h dla bezpieczeństwa. Sprawdź swoje konto FB.`,
       });
     } catch {}
   }

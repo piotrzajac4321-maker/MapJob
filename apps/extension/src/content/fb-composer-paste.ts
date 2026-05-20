@@ -86,6 +86,15 @@ async function attachImages(dataUrls: string[]): Promise<boolean> {
 async function pasteText(text: string, imageDataUrls?: string[]): Promise<{ ok: boolean; error?: string }> {
   console.log('[MapJob] Próbuję wkleić post (', text.length, 'znaków)');
 
+  // ANTI-BAN: krótki random scroll przed kliknięciem composera (symuluje przeglądanie feedu)
+  try {
+    const scrollAmount = 200 + Math.floor(Math.random() * 600);
+    window.scrollBy({ top: scrollAmount, behavior: 'smooth' });
+    await new Promise((r) => setTimeout(r, 800 + Math.random() * 1500));
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    await new Promise((r) => setTimeout(r, 500 + Math.random() * 800));
+  } catch {}
+
   // Czy composer jest otwarty?
   let textbox = await waitFor<HTMLElement>(
     [

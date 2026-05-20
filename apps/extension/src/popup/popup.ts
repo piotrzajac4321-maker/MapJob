@@ -39,6 +39,7 @@ import {
   canAddGroups,
   canAddImages,
 } from '../lib/quotas';
+import { SAFETY_PRESETS, type SafetyMode } from '../lib/safety';
 
 const $ = <T extends HTMLElement = HTMLElement>(id: string) => document.getElementById(id) as T;
 
@@ -62,9 +63,14 @@ async function refreshHome(): Promise<void> {
   $('stat-posts').textContent = String(posts.length);
   $('stat-today').textContent = String(today);
 
-  $('status-summary').textContent = settings.paused
-    ? 'Wstrzymane (kliknij switch żeby wznowić)'
-    : `Aktywne · ${activeGroups} grup · ${posts.length} postów`;
+  if (settings.killSwitch) {
+    $('status-summary').innerHTML = '<span style="color: var(--danger)">🚨 KILL SWITCH — sprawdź zakładkę Ustawienia ⚙</span>';
+  } else if (settings.paused) {
+    $('status-summary').textContent = 'Wstrzymane (kliknij switch żeby wznowić)';
+  } else {
+    const mode = SAFETY_PRESETS[settings.safetyMode]?.name ?? '';
+    $('status-summary').innerHTML = `${mode} · ${activeGroups} grup · ${posts.length} postów`;
+  }
 
   const toggle = $('pause-toggle');
   toggle.classList.toggle('on', !settings.paused);
@@ -818,10 +824,79 @@ async function refreshSettingsTab(): Promise<void> {
   ($('set-max-delay') as HTMLInputElement).value = String(s.maxDelaySeconds);
   ($('set-cooldown') as HTMLInputElement).value = String(s.defaultCooldownMinutes);
   ($('set-group-cap') as HTMLInputElement).value = String(s.defaultGroupDailyCap);
+  ($('set-sleep-enabled') as HTMLInputElement).checked = s.sleepHoursEnabled;
+  ($('set-sleep-start') as HTMLInputElement).value = String(s.sleepStartHour);
+  ($('set-sleep-end') as HTMLInputElement).value = String(s.sleepEndHour);
+  ($('set-variator') as HTMLInputElement).checked = s.variatorEnabled;
+
+  // Safety modes
+  renderSafetyModes(s.safetyMode);
+
+  // Kill switch banner
+  const ksCard = $('kill-switch-card');
+  if (s.killSwitch) {
+    ksCard.style.display = 'block';
+    const since = s.killSwitchAt ? timeAgo(s.killSwitchAt) : 'nieznana';
+    $('kill-switch-info').innerHTML = `
+      <div style="margin-bottom: 4px">Aktywowany: <strong>${since}</strong></div>
+      <div style="margin-bottom: 4px">Powód: <code>${escapeHtml(s.killSwitchReason ?? 'unknown')}</code></div>
+      <div style="color: var(--muted)">System wstrzymany na 24h dla bezpieczeństwa Twojego konta. Sprawdź FB ręcznie — czy nie ma blokady/captcha.</div>
+    `;
+  } else {
+    ksCard.style.display = 'none';
+  }
 
   await refreshStorageUsage();
   await refreshCloudInfo();
   await refreshQuotasView('quotas-settings', false);
+}
+
+function renderSafetyModes(active: SafetyMode): void {
+  const host = $('safety-modes');
+  host.innerHTML = (['safe', 'standard', 'aggressive'] as SafetyMode[])
+    .map((mode) => {
+      const p = SAFETY_PRESETS[mode];
+      const isActive = mode === active;
+      return `
+        <div class="framework-card ${isActive ? 'active' : ''}" data-mode="${mode}">
+          <div class="row-between">
+            <div class="fw-name">${p.name}</div>
+            <div style="font-size: 10px; color: var(--muted)">${p.globalDailyCap}/dzień · ${p.minDelaySeconds / 60}-${p.maxDelaySeconds / 60} min delay</div>
+          </div>
+          <div class="fw-desc" style="margin-top: 4px">${p.description}</div>
+        </div>
+      `;
+    }).join('');
+
+  host.querySelectorAll('[data-mode]').forEach((el) => {
+    el.addEventListener('click', async () => {
+      const mode = el.getAttribute('data-mode') as SafetyMode;
+      const preset = SAFETY_PRESETS[mode];
+      if (mode === 'aggressive') {
+        if (!confirm(preset.warning + '\n\nNa pewno chcesz włączyć tryb Agresywny?')) return;
+      }
+      await setSettings({
+        safetyMode: mode,
+        globalDailyCap: preset.globalDailyCap,
+        minDelaySeconds: preset.minDelaySeconds,
+        maxDelaySeconds: preset.maxDelaySeconds,
+        defaultCooldownMinutes: preset.defaultCooldownMinutes,
+        defaultGroupDailyCap: preset.defaultGroupDailyCap,
+      });
+      banner(`✓ Tryb: ${preset.name}`, 'ok');
+      await refreshSettingsTab();
+    });
+  });
+
+  // Warning dla aggressive
+  const warn = $('safety-warning');
+  const presetActive = SAFETY_PRESETS[active];
+  if (presetActive.warning) {
+    warn.style.display = 'block';
+    warn.textContent = presetActive.warning;
+  } else {
+    warn.style.display = 'none';
+  }
 }
 
 async function refreshQuotasView(hostId: string, compact = false): Promise<void> {
@@ -891,9 +966,34 @@ $('set-save').addEventListener('click', async () => {
     maxDelaySeconds: maxD,
     defaultCooldownMinutes: Math.max(60, get('set-cooldown')),
     defaultGroupDailyCap: Math.max(1, get('set-group-cap')),
+    sleepHoursEnabled: ($('set-sleep-enabled') as HTMLInputElement).checked,
+    sleepStartHour: Math.max(0, Math.min(23, get('set-sleep-start'))),
+    sleepEndHour: Math.max(0, Math.min(23, get('set-sleep-end'))),
+    variatorEnabled: ($('set-variator') as HTMLInputElement).checked,
   });
   banner('✓ Ustawienia zapisane', 'ok');
   await refreshSettingsTab();
+});
+
+$('kill-switch-clear').addEventListener('click', async () => {
+  if (!confirm(
+    '⚠ UWAGA: Kill switch aktywuje się gdy FB wykryje automatyzację.\n\n' +
+    'Wznowienie bez sprawdzenia konta może doprowadzić do BANA.\n\n' +
+    'Czy:\n' +
+    '1. Sprawdziłeś swoje konto FB ręcznie?\n' +
+    '2. Nie ma captcha / blokady / restriction?\n' +
+    '3. Możesz publikować normalnie ręcznie?\n\n' +
+    'Wznawiać?'
+  )) return;
+  await setSettings({
+    killSwitch: false,
+    killSwitchReason: undefined,
+    killSwitchAt: undefined,
+    paused: false,
+  });
+  banner('System wznowiony. Postępuj ostrożnie!', 'ok');
+  await refreshSettingsTab();
+  await refreshHome();
 });
 
 $('set-reset').addEventListener('click', async () => {

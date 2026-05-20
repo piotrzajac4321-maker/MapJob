@@ -578,6 +578,52 @@
 
       <!-- SETTINGS -->
       <div class="tab-pane tp-settings">
+
+        <div class="card" id="kill-switch-card" style="display: none; border-color: var(--danger)">
+          <div style="color: var(--danger); font-weight: 600; font-size: 13px; margin-bottom: 6px">🚨 KILL SWITCH AKTYWNY</div>
+          <div style="font-size: 11.5px" id="kill-switch-info"></div>
+          <button class="btn btn-secondary btn-block" id="kill-switch-clear" style="margin-top: 8px">Wznów ręcznie (na własne ryzyko)</button>
+        </div>
+
+        <div class="card">
+          <div class="form-label">Tryb bezpieczeństwa</div>
+          <div id="safety-modes" style="display: grid; gap: 6px"></div>
+          <div id="safety-warning" style="font-size: 11px; color: var(--warning); margin-top: 8px; display: none"></div>
+        </div>
+
+        <div class="card">
+          <div class="form-label">Godziny ciszy (Sleep hours)</div>
+          <div class="row" style="gap: 6px; align-items: center">
+            <input type="checkbox" id="set-sleep-enabled" style="width: auto" />
+            <label for="set-sleep-enabled" style="font-size: 12px; flex: 1; cursor: pointer">Nie postuj w nocy</label>
+          </div>
+          <div class="row" style="gap: 6px; margin-top: 8px">
+            <div style="flex: 1">
+              <div style="font-size: 11px; color: var(--muted); margin-bottom: 3px">Od godziny</div>
+              <input id="set-sleep-start" type="number" min="0" max="23" value="22" />
+            </div>
+            <div style="flex: 1">
+              <div style="font-size: 11px; color: var(--muted); margin-bottom: 3px">Do godziny</div>
+              <input id="set-sleep-end" type="number" min="0" max="23" value="8" />
+            </div>
+          </div>
+          <div style="font-size: 10.5px; color: var(--muted); margin-top: 4px">
+            Ludzie śpią, bot nie — postowanie 24/7 to czerwona flaga dla FB.
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="row" style="gap: 8px; align-items: center">
+            <input type="checkbox" id="set-variator" style="width: auto" />
+            <label for="set-variator" style="font-size: 12px; flex: 1; cursor: pointer">
+              <div style="font-weight: 500">Wariator treści</div>
+              <div style="font-size: 10.5px; color: var(--muted); margin-top: 2px">
+                Auto-modyfikuje tekst dla każdej grupy (synonimy CTA, otwarcie, hashtagi) — chroni przed flagą "duplicate post".
+              </div>
+            </label>
+          </div>
+        </div>
+
         <div class="card">
           <div class="form-label">Globalny dzienny limit publikacji</div>
           <input id="set-daily-cap" type="number" min="1" max="200" value="50" />

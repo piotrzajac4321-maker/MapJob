@@ -12,6 +12,34 @@ const PUBLISH_KEYWORDS = [
 
 const PUBLISH_RE = new RegExp(PUBLISH_KEYWORDS.map((k) => k.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|'), 'i');
 
+// Keywords wskazujące na blokadę / restriction / captcha FB.
+// Po wykryciu → wysyłamy BLOCK_DETECTED do service-worker → kill switch 24h.
+const BLOCK_KEYWORDS = [
+  'security check', 'kontrola bezpieczeństwa', 'potwierdź swoją tożsamość', 'confirm your identity',
+  'captcha', 'recaptcha',
+  'temporarily blocked', 'tymczasowo zablokowany', 'tymczasowo zablokowane',
+  'slow down', 'zwolnij tempo', 'you are posting too quickly', 'publikujesz zbyt szybko',
+  'we limit how often', 'ograniczamy częstotliwość',
+  'account restricted', 'konto ograniczone', 'this feature is currently blocked',
+  'ta funkcja jest obecnie zablokowana', 'naruszenie standardów',
+  'community standards', 'standardów społeczności',
+];
+const BLOCK_RE = new RegExp(
+  BLOCK_KEYWORDS.map((k) => k.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|'),
+  'i',
+);
+
+function detectBlockOnPage(): { matched: boolean; keyword?: string } {
+  // Skanuj tylko widoczny tekst (alerts + dialogs + main content)
+  const containers = document.querySelectorAll('[role="alert"], [role="dialog"], [role="status"], main, [data-pagelet]');
+  for (const el of Array.from(containers)) {
+    const txt = (el.textContent ?? '').slice(0, 2000);
+    const m = txt.match(BLOCK_RE);
+    if (m) return { matched: true, keyword: m[0] };
+  }
+  return { matched: false };
+}
+
 const PUBLISH_TIMEOUT_MS = 120_000; // 2 minuty
 let publishObserver: MutationObserver | null = null;
 let dialogPresent = false;
@@ -66,6 +94,21 @@ function startPublishWatch(targetId: string): void {
       console.log('[MapJob detect] Login required');
       resolved = true;
       chrome.runtime.sendMessage({ type: 'LOGIN_REQUIRED', targetId });
+      stopWatch();
+      return;
+    }
+
+    // KILL SWITCH — FB pokazuje captcha / blokadę / restriction
+    const block = detectBlockOnPage();
+    if (block.matched) {
+      console.error('[MapJob detect] 🚨 BLOCK DETECTED:', block.keyword);
+      resolved = true;
+      chrome.runtime.sendMessage({
+        type: 'BLOCK_DETECTED',
+        targetId,
+        reason: 'fb_block_message',
+        keyword: block.keyword,
+      });
       stopWatch();
       return;
     }

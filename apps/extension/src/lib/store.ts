@@ -15,6 +15,9 @@ export interface FBGroup {
   isActive: boolean;
   tags: string[];
   postApprovalRequired?: boolean;
+  consecutiveFailures?: number;     // auto-disable po 3 błędach z rzędu
+  autoDisabledAt?: number;          // timestamp auto-disable (do pokazania w UI)
+  autoDisabledReason?: string;
 }
 
 export interface PostTemplate {
@@ -57,15 +60,29 @@ export interface ExtensionSettings {
   defaultGroupDailyCap: number;
   minDelaySeconds: number;
   maxDelaySeconds: number;
+  safetyMode: 'safe' | 'standard' | 'aggressive';
+  sleepHoursEnabled: boolean;
+  sleepStartHour: number;
+  sleepEndHour: number;
+  variatorEnabled: boolean;        // automatyczna wariacja treści per grupa
+  killSwitch: boolean;             // automatyczna pauza po wykryciu blokady FB
+  killSwitchReason?: string;
+  killSwitchAt?: number;
 }
 
 const DEFAULT_SETTINGS: ExtensionSettings = {
   paused: false,
-  globalDailyCap: 50,
-  defaultCooldownMinutes: 240,
-  defaultGroupDailyCap: 2,
-  minDelaySeconds: 30,
-  maxDelaySeconds: 90,
+  globalDailyCap: 10,                // SAFE preset
+  defaultCooldownMinutes: 360,
+  defaultGroupDailyCap: 1,
+  minDelaySeconds: 240,
+  maxDelaySeconds: 900,
+  safetyMode: 'safe',
+  sleepHoursEnabled: true,
+  sleepStartHour: 22,
+  sleepEndHour: 8,
+  variatorEnabled: true,
+  killSwitch: false,
 };
 
 // ============ GROUPS ============
@@ -185,6 +202,16 @@ export async function pickNextTarget(): Promise<{ target: CampaignTarget; group:
   ]);
 
   if (settings.paused) return null;
+  if (settings.killSwitch) return null;
+
+  // Sleep hours — nie postuj 22:00-08:00 (domyślnie)
+  if (settings.sleepHoursEnabled) {
+    const h = new Date().getHours();
+    const inSleep = settings.sleepStartHour < settings.sleepEndHour
+      ? (h >= settings.sleepStartHour && h < settings.sleepEndHour)
+      : (h >= settings.sleepStartHour || h < settings.sleepEndHour);
+    if (inSleep) return null;
+  }
 
   // Dzienny licznik
   const todayStart = new Date();
@@ -209,6 +236,8 @@ export async function pickNextTarget(): Promise<{ target: CampaignTarget; group:
     if (t.scheduledAt && t.scheduledAt > Date.now()) return false;
     const group = groupById.get(t.groupId);
     if (!group || !group.isActive) return false;
+    // Skip grup auto-wyłączonych przez safety (3× failures)
+    if ((group.consecutiveFailures ?? 0) >= 3) return false;
     // Cooldown
     if (group.lastPostedAt) {
       const cooldownMs = group.cooldownMinutes * 60_000;
