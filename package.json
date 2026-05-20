@@ -1,0 +1,30 @@
+{
+  "name": "mapjob-fb-poster",
+  "version": "0.1.0",
+  "private": true,
+  "description": "MapJob FB Poster — półautomatyczne masowe postowanie ogłoszeń na grupy Facebook (web + Chrome extension + AI generator).",
+  "packageManager": "pnpm@9.12.0",
+  "engines": {
+    "node": ">=20.11.0",
+    "pnpm": ">=9.0.0"
+  },
+  "scripts": {
+    "build": "turbo run build",
+    "dev": "turbo run dev",
+    "lint": "turbo run lint",
+    "typecheck": "turbo run typecheck",
+    "test": "turbo run test",
+    "clean": "turbo run clean && rm -rf node_modules",
+    "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md,css}\"",
+    "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,json,md,css}\"",
+    "db:types": "pnpm --filter @mapjob/db run db:types",
+    "db:push": "pnpm --filter @mapjob/db run db:push",
+    "db:reset": "supabase db reset"
+  },
+  "devDependencies": {
+    "@types/node": "^20.14.0",
+    "prettier": "^3.3.3",
+    "turbo": "^2.1.0",
+    "typescript": "^5.6.0"
+  }
+}
