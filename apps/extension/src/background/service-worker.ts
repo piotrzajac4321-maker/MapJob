@@ -18,23 +18,58 @@ import {
 } from '../lib/store';
 import * as cloud from '../lib/cloud';
 
-const ALARM_NAME = 'mapjob-tick';
+const ALARM_TICK = 'mapjob-tick';
+const ALARM_ENGAGEMENT = 'mapjob-engagement';
 
 chrome.runtime.onInstalled.addListener(async () => {
-  chrome.alarms.create(ALARM_NAME, { periodInMinutes: 0.5 });
+  chrome.alarms.create(ALARM_TICK, { periodInMinutes: 0.5 });
+  chrome.alarms.create(ALARM_ENGAGEMENT, { periodInMinutes: 30 });
   console.log('[MapJob BG] Extension installed');
   const deviceId = await getDeviceId();
   void cloud.registerDevice(deviceId, `Chrome — ${navigator.platform}`);
 });
 chrome.runtime.onStartup.addListener(async () => {
-  chrome.alarms.create(ALARM_NAME, { periodInMinutes: 0.5 });
+  chrome.alarms.create(ALARM_TICK, { periodInMinutes: 0.5 });
+  chrome.alarms.create(ALARM_ENGAGEMENT, { periodInMinutes: 30 });
   const deviceId = await getDeviceId();
   void cloud.pingDevice(deviceId);
 });
 
 chrome.alarms.onAlarm.addListener((alarm) => {
-  if (alarm.name === ALARM_NAME) void tick();
+  if (alarm.name === ALARM_TICK) void tick();
+  if (alarm.name === ALARM_ENGAGEMENT) void scrapeEngagementBatch();
 });
+
+async function scrapeEngagementBatch(): Promise<void> {
+  const deviceId = await getDeviceId();
+  const config = cloud.getCloudConfig();
+  try {
+    const res = await fetch(
+      `${config.url}/rest/v1/mjfb_publications?device_id=eq.${encodeURIComponent(deviceId)}&status=eq.posted&fb_post_url=not.is.null&posted_at=gte.${new Date(Date.now() - 24 * 3600 * 1000).toISOString()}&select=id,fb_post_url&limit=10`,
+      { headers: { apikey: config.key, Authorization: `Bearer ${config.key}` } },
+    );
+    if (!res.ok) return;
+    const pubs = (await res.json()) as { id: string; fb_post_url: string }[];
+    console.log('[MapJob BG] Re-scrape engagement:', pubs.length);
+    for (const pub of pubs) {
+      try {
+        const tab = await chrome.tabs.create({ url: pub.fb_post_url, active: false });
+        if (!tab.id) continue;
+        await new Promise((r) => setTimeout(r, 4000));
+        const result = await chrome.tabs.sendMessage(tab.id, { type: 'SCRAPE_ENGAGEMENT', fbPostUrl: pub.fb_post_url }).catch(() => null);
+        if (result?.ok) {
+          await cloud.recordEngagement(pub.id, result.reactions ?? 0, result.comments ?? 0, result.shares ?? 0);
+        }
+        await chrome.tabs.remove(tab.id).catch(() => null);
+        await new Promise((r) => setTimeout(r, 2000));
+      } catch (err) {
+        console.warn('[MapJob BG] Engagement scrape failed:', err);
+      }
+    }
+  } catch (err) {
+    console.warn('[MapJob BG] Engagement batch error:', err);
+  }
+}
 
 let busy = false;
 

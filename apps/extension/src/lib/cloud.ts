@@ -6,8 +6,11 @@
  * Jeśli sync padnie, extension dalej działa lokalnie.
  */
 
-const SUPA_URL = 'https://afqibinzwgdidumvjxyo.supabase.co';
-const SUPA_KEY = 'sb_publishable_VhLOmFJm4sgHiQesoNioBg_YlSjwWLi';
+// Domyślny projekt: MapJob test (działa od razu, ma żywe dane do podejrzenia w live.html).
+// Po wgraniu init-apkafb.sql do Twojego projektu Apka fb można zmienić te 2 stałe.
+const SUPA_URL = 'https://ahgzjneegvptudphibdm.supabase.co';
+const SUPA_KEY = 'sb_publishable__B7I_Ji4umLpI3mzW3CM6A_1YAxYmhb';
+const TABLE_PREFIX = 'mjfb_'; // Dla Apka fb: pusty (init-apkafb.sql nie używa prefiksu)
 
 const COMMON_HEADERS: Record<string, string> = {
   apikey: SUPA_KEY,
@@ -20,8 +23,13 @@ let syncEnabled = true; // wyłączone jeśli REST zwraca 404 (schema nie wgrana
 
 async function call(path: string, init: RequestInit = {}): Promise<Response | null> {
   if (!syncEnabled) return null;
+  // Auto-prefix dla tabel
+  const prefixed = path.replace(
+    /^\/(devices|imported_groups|publications|engagement|activity_log)/,
+    `/${TABLE_PREFIX}$1`,
+  );
   try {
-    const res = await fetch(`${SUPA_URL}/rest/v1${path}`, {
+    const res = await fetch(`${SUPA_URL}/rest/v1${prefixed}`, {
       ...init,
       headers: { ...COMMON_HEADERS, ...(init.headers ?? {}) },
     });
