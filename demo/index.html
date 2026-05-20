@@ -1,258 +1,574 @@
 <!doctype html>
-<html lang="pl" class="dark">
+<html lang="pl">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>MapJob FB Poster — demo UI</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script type="module">
-      import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.45.0';
-      window.__supabase = createClient(
-        'https://afqibinzwgdidumvjxyo.supabase.co',
-        'sb_publishable_VhLOmFJm4sgHiQesoNioBg_YlSjwWLi',
-        { auth: { persistSession: true, autoRefreshToken: true } }
-      );
-      window.dispatchEvent(new Event('supabase-ready'));
-    </script>
-    <script>
-      tailwind.config = {
-        darkMode: 'class',
-        theme: {
-          extend: {
-            colors: {
-              bg: '#0a0a0a',
-              card: '#141414',
-              cardHover: '#1a1a1a',
-              border: '#262626',
-              muted: '#a3a3a3',
-              accent: '#3b82f6',
-              accentHover: '#2563eb',
-              green: '#22c55e',
-              yellow: '#eab308',
-              red: '#ef4444',
-            },
-            fontFamily: {
-              sans: ['-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
-            },
-          },
-        },
-      };
-    </script>
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#0a1628" />
+    <title>MapJob FB Poster — demo</title>
     <style>
-      body { background: #0a0a0a; color: #e5e5e5; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
-      .nav-link.active { color: #3b82f6; background: #1a1a1a; }
-      .badge { display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 9999px; font-size: 11px; font-weight: 500; }
-      .scrollbar::-webkit-scrollbar { width: 6px; }
-      .scrollbar::-webkit-scrollbar-thumb { background: #404040; border-radius: 3px; }
-      pre, code, .mono { font-family: ui-monospace, SFMono-Regular, Monaco, monospace; }
-      .fade-in { animation: fadeIn 0.2s ease-out; }
-      @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
-      .pulse-dot { width: 8px; height: 8px; border-radius: 50%; background: #22c55e; animation: pulse 2s infinite; }
-      @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
-      .checkmark { color: #22c55e; }
-      .crossmark { color: #737373; }
+      /* ============ TOKENS (niebieski theme) ============ */
+      :root {
+        --bg: #0a1628;
+        --bg-2: #0f1e36;
+        --card: #131f3a;
+        --card-2: #1a2847;
+        --border: #1f2f52;
+        --border-2: #2a3f6b;
+        --text: #e5edf9;
+        --muted: #94a3b8;
+        --muted-2: #64748b;
+        --primary: #3b82f6;
+        --primary-hover: #2563eb;
+        --primary-light: #60a5fa;
+        --primary-soft: rgba(59, 130, 246, 0.14);
+        --primary-glow: rgba(59, 130, 246, 0.4);
+        --success: #10b981;
+        --success-soft: rgba(16, 185, 129, 0.14);
+        --warning: #f59e0b;
+        --warning-soft: rgba(245, 158, 11, 0.14);
+        --danger: #ef4444;
+        --danger-soft: rgba(239, 68, 68, 0.14);
+        --r: 10px;
+        --r-sm: 6px;
+        --shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+        --gradient: linear-gradient(135deg, #3b82f6 0%, #60a5fa 100%);
+        --gradient-bg: radial-gradient(ellipse 1200px 600px at top, rgba(59, 130, 246, 0.08), transparent 60%);
+      }
+
+      *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+      html { -webkit-text-size-adjust: 100%; }
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', Roboto, system-ui, sans-serif;
+        font-size: 15px;
+        line-height: 1.5;
+        color: var(--text);
+        background: var(--bg);
+        background-image: var(--gradient-bg);
+        background-attachment: fixed;
+        -webkit-font-smoothing: antialiased;
+        min-height: 100vh;
+        min-height: 100dvh;
+      }
+
+      a { color: var(--primary-light); text-decoration: none; }
+      a:hover { color: var(--primary); }
+      button { font: inherit; cursor: pointer; border: 0; background: none; color: inherit; }
+      input, select, textarea {
+        font: inherit;
+        font-size: 14px;
+        color: var(--text);
+        background: var(--bg-2);
+        border: 1px solid var(--border);
+        border-radius: var(--r-sm);
+        padding: 10px 12px;
+        width: 100%;
+        outline: 0;
+        transition: border-color .15s, box-shadow .15s;
+        -webkit-appearance: none;
+        appearance: none;
+      }
+      input:focus, select:focus, textarea:focus {
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px var(--primary-soft);
+      }
+      code, pre, .mono { font-family: ui-monospace, 'SF Mono', Monaco, Consolas, monospace; font-size: 12.5px; }
+      code { background: var(--bg-2); padding: 1px 6px; border-radius: 4px; color: #93c5fd; }
+      pre { white-space: pre-wrap; word-break: break-word; }
+
+      /* ============ HEADER ============ */
+      header {
+        position: sticky; top: 0; z-index: 30;
+        background: rgba(10, 22, 40, 0.85);
+        backdrop-filter: saturate(180%) blur(14px);
+        -webkit-backdrop-filter: saturate(180%) blur(14px);
+        border-bottom: 1px solid var(--border);
+      }
+      .header-inner {
+        max-width: 1280px; margin: 0 auto;
+        padding: 0 16px; height: 56px;
+        display: flex; align-items: center; justify-content: space-between; gap: 12px;
+      }
+      .logo { display: flex; align-items: center; gap: 10px; font-weight: 600; color: var(--text); }
+      .logo-mark {
+        width: 30px; height: 30px;
+        background: var(--gradient);
+        border-radius: 8px;
+        display: flex; align-items: center; justify-content: center;
+        color: white; font-weight: 700;
+        box-shadow: 0 4px 14px var(--primary-glow);
+        flex-shrink: 0;
+      }
+      .nav { display: flex; align-items: center; gap: 2px; flex: 1; justify-content: center; }
+      .nav a {
+        padding: 7px 14px; border-radius: var(--r-sm);
+        font-size: 14px; color: var(--muted);
+        transition: all .15s; white-space: nowrap;
+      }
+      .nav a:hover { background: var(--card-2); color: var(--text); }
+      .nav a.active { background: var(--primary-soft); color: var(--primary-light); }
+      .header-actions { display: flex; align-items: center; gap: 6px; }
+
+      /* ============ BUTTONS ============ */
+      .btn {
+        display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+        padding: 9px 16px; border-radius: var(--r-sm);
+        font-size: 14px; font-weight: 500;
+        transition: all .15s; border: 1px solid transparent;
+        white-space: nowrap; line-height: 1;
+        -webkit-tap-highlight-color: transparent;
+      }
+      .btn-primary {
+        background: var(--gradient); color: white;
+        box-shadow: 0 2px 10px var(--primary-glow);
+      }
+      .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 6px 20px var(--primary-glow); }
+      .btn-primary:active { transform: translateY(0); }
+      .btn-primary:disabled { opacity: 0.55; cursor: not-allowed; transform: none; }
+      .btn-secondary {
+        background: var(--card); border-color: var(--border); color: var(--text);
+      }
+      .btn-secondary:hover { background: var(--card-2); border-color: var(--border-2); }
+      .btn-ghost { color: var(--muted); }
+      .btn-ghost:hover { color: var(--text); background: var(--card-2); }
+      .btn-sm { padding: 6px 11px; font-size: 13px; }
+      .btn-lg { padding: 12px 18px; font-size: 15px; }
+      .btn-block { width: 100%; }
+
+      /* ============ STATUS BANNER ============ */
+      .banner {
+        padding: 10px 16px;
+        text-align: center;
+        font-size: 13px;
+        border-bottom: 1px solid var(--border);
+        background: var(--card);
+      }
+      .banner.ok { background: var(--success-soft); color: var(--success); border-color: var(--success); }
+      .banner.warn { background: var(--warning-soft); color: var(--warning); border-color: var(--warning); }
+      .banner.err { background: var(--danger-soft); color: var(--danger); border-color: var(--danger); }
+      .banner button { text-decoration: underline; font-weight: 600; }
+
+      /* ============ MAIN ============ */
+      main { max-width: 1280px; margin: 0 auto; padding: 28px 16px; }
+      .fade-in { animation: fadeIn .25s ease-out; }
+      @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+
+      h1 { font-size: 28px; font-weight: 700; letter-spacing: -0.02em; }
+      h2 { font-size: 18px; font-weight: 600; }
+      h3 { font-size: 15px; font-weight: 600; }
+      .text-muted { color: var(--muted); }
+      .text-sm { font-size: 13px; }
+      .text-xs { font-size: 12px; }
+      .gradient-text {
+        background: var(--gradient);
+        -webkit-background-clip: text; background-clip: text;
+        -webkit-text-fill-color: transparent; color: transparent;
+      }
+
+      /* ============ CARDS ============ */
+      .card {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: var(--r);
+        padding: 20px;
+      }
+      .stat {
+        background: linear-gradient(135deg, var(--card) 0%, var(--bg-2) 100%);
+        border: 1px solid var(--border);
+        border-radius: var(--r);
+        padding: 18px;
+        position: relative;
+        overflow: hidden;
+      }
+      .stat::after {
+        content: '';
+        position: absolute; top: 0; right: 0;
+        width: 100px; height: 100px;
+        background: var(--primary-soft);
+        border-radius: 999px;
+        filter: blur(40px);
+        opacity: 0.5;
+      }
+      .stat-label { color: var(--muted); font-size: 12px; position: relative; z-index: 1; }
+      .stat-value { font-size: 30px; font-weight: 700; margin-top: 4px; letter-spacing: -0.02em; position: relative; z-index: 1; }
+      .stat-delta { font-size: 12px; margin-top: 6px; color: var(--success); position: relative; z-index: 1; }
+      .stat-delta.neutral { color: var(--muted); }
+
+      /* ============ LAYOUTS ============ */
+      .row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+      .row-between { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+      .stack { display: flex; flex-direction: column; gap: 20px; }
+      .stack-sm { display: flex; flex-direction: column; gap: 8px; }
+      .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+      .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+      .grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
+
+      @media (max-width: 768px) {
+        .grid-4 { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+        .grid-3 { grid-template-columns: 1fr; gap: 10px; }
+        .grid-2 { grid-template-columns: 1fr; gap: 14px; }
+        h1 { font-size: 22px; }
+        h2 { font-size: 16px; }
+        main { padding: 16px 12px; }
+        .stat-value { font-size: 24px; }
+        .stat { padding: 14px; }
+      }
+
+      /* ============ TABLE ============ */
+      .table-wrap {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: var(--r);
+        overflow: hidden;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+      }
+      table { width: 100%; border-collapse: collapse; font-size: 13.5px; min-width: 600px; }
+      thead { background: var(--bg-2); }
+      th {
+        text-align: left; padding: 10px 14px;
+        font-size: 11px; font-weight: 600;
+        text-transform: uppercase; letter-spacing: 0.06em;
+        color: var(--muted);
+        border-bottom: 1px solid var(--border);
+        white-space: nowrap;
+      }
+      td { padding: 12px 14px; border-bottom: 1px solid var(--border); }
+      tr:last-child td { border-bottom: 0; }
+      tr:hover td { background: var(--card-2); }
+      th.right, td.right { text-align: right; }
+
+      /* ============ BADGES ============ */
+      .badge {
+        display: inline-flex; align-items: center;
+        padding: 3px 9px;
+        border-radius: 999px;
+        font-size: 11px; font-weight: 500;
+        line-height: 1.5;
+        white-space: nowrap;
+      }
+      .badge-primary { background: var(--primary-soft); color: var(--primary-light); }
+      .badge-success { background: var(--success-soft); color: var(--success); }
+      .badge-warning { background: var(--warning-soft); color: var(--warning); }
+      .badge-danger  { background: var(--danger-soft); color: var(--danger); }
+      .badge-muted   { background: var(--bg-2); color: var(--muted); }
+
+      /* ============ AVATAR ============ */
+      .avatar {
+        width: 30px; height: 30px;
+        border-radius: 999px;
+        background: var(--gradient);
+        color: white;
+        display: inline-flex; align-items: center; justify-content: center;
+        font-weight: 600; font-size: 12px;
+        flex-shrink: 0;
+      }
+      .user-chip { display: flex; align-items: center; gap: 8px; }
+
+      /* ============ MODALS ============ */
+      .modal-backdrop {
+        position: fixed; inset: 0; z-index: 50;
+        background: rgba(0, 8, 24, 0.78);
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+        display: none;
+        align-items: center; justify-content: center;
+        padding: 16px;
+      }
+      .modal-backdrop.open { display: flex; }
+      .modal {
+        background: var(--card);
+        border: 1px solid var(--border-2);
+        border-radius: 14px;
+        width: 100%;
+        max-width: 480px;
+        max-height: 90vh;
+        max-height: 90dvh;
+        display: flex; flex-direction: column;
+        box-shadow: var(--shadow);
+        animation: modalIn .2s ease-out;
+        overflow: hidden;
+      }
+      .modal-wide { max-width: 720px; }
+      @keyframes modalIn { from { opacity: 0; transform: scale(.96); } to { opacity: 1; transform: scale(1); } }
+      .modal-header { padding: 20px 22px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: start; gap: 16px; }
+      .modal-body { padding: 22px; overflow-y: auto; flex: 1; }
+      .modal-close { font-size: 26px; color: var(--muted); line-height: 1; padding: 0 8px; border-radius: 6px; }
+      .modal-close:hover { color: var(--text); background: var(--card-2); }
+
+      /* ============ FORMS ============ */
+      .form-group { display: flex; flex-direction: column; gap: 6px; }
+      .form-label { font-size: 12.5px; font-weight: 500; color: var(--muted); }
+      fieldset { border: 1px solid var(--border); border-radius: var(--r-sm); padding: 14px; display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+      legend { padding: 0 8px; font-size: 12px; color: var(--muted); }
+
+      /* ============ AI GENERATOR ============ */
+      .variant-tabs { display: flex; gap: 6px; flex-wrap: wrap; }
+      .variant-tab {
+        flex: 1 1 100px; padding: 9px 12px;
+        border-radius: var(--r-sm);
+        border: 1px solid var(--border);
+        background: var(--card);
+        cursor: pointer; font-size: 13px;
+        text-align: center;
+        transition: all .15s;
+        -webkit-tap-highlight-color: transparent;
+      }
+      .variant-tab:hover { border-color: var(--border-2); }
+      .variant-tab.active { background: var(--gradient); border-color: transparent; color: white; box-shadow: 0 2px 8px var(--primary-glow); }
+      .variant-tab .sub { display: block; font-size: 11px; opacity: 0.85; margin-top: 2px; }
+
+      .post-preview {
+        background: var(--bg-2);
+        border: 1px solid var(--border);
+        border-radius: var(--r-sm);
+        padding: 14px;
+        font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+        font-size: 14px;
+        white-space: pre-wrap;
+        line-height: 1.55;
+      }
+
+      .human-score { font-weight: 600; font-size: 14px; }
+      .human-score.good { color: var(--success); }
+      .human-score.mid { color: var(--warning); }
+      .human-score.bad { color: var(--danger); }
+
+      .checklist { list-style: none; padding: 0; }
+      .checklist li { display: flex; gap: 10px; padding: 5px 0; font-size: 13px; }
+      .checklist .pass { color: var(--success); flex-shrink: 0; }
+      .checklist .fail { color: var(--muted-2); flex-shrink: 0; }
+      .checklist .item-fail { color: var(--muted); }
+
+      .placeholder-box {
+        background: var(--card);
+        border: 1px dashed var(--border-2);
+        border-radius: var(--r);
+        padding: 40px 20px;
+        text-align: center;
+        color: var(--muted);
+        font-size: 14px;
+      }
+
+      /* ============ CHARTS ============ */
+      .chart-bars { display: flex; align-items: end; gap: 4px; height: 160px; }
+      .chart-bars .bar {
+        flex: 1; background: var(--gradient); border-radius: 4px 4px 0 0;
+        min-height: 3px;
+        transition: opacity .2s;
+      }
+      .chart-bars .bar:hover { opacity: 0.7; }
+      .chart-labels { display: flex; gap: 4px; margin-top: 6px; font-size: 10px; color: var(--muted); }
+      .chart-labels span { flex: 1; text-align: center; }
+
+      /* ============ MOBILE NAV ============ */
+      .mobile-toggle { display: none; padding: 6px 10px; }
+      @media (max-width: 900px) {
+        .nav {
+          display: none; position: absolute; top: 56px; left: 0; right: 0;
+          background: var(--card); border-bottom: 1px solid var(--border);
+          padding: 8px; flex-direction: column; gap: 0;
+          box-shadow: var(--shadow);
+        }
+        .nav.open { display: flex; }
+        .nav a { padding: 12px 16px; border-radius: 0; text-align: left; }
+        .mobile-toggle { display: inline-flex; }
+        .logo span:not(.logo-mark) { display: none; }
+        .header-actions .btn:not(.mobile-toggle) { padding: 7px 11px; font-size: 13px; }
+        .header-actions #logout-btn { padding: 5px 8px; }
+      }
+
+      /* ============ UTILITIES ============ */
+      .hidden { display: none !important; }
+      .flex-1 { flex: 1; }
+      .pulse {
+        width: 8px; height: 8px; border-radius: 999px;
+        background: var(--success);
+        animation: pulse 2s infinite;
+        display: inline-block;
+        margin-right: 4px;
+      }
+      @keyframes pulse {
+        0%, 100% { opacity: 1; box-shadow: 0 0 0 0 var(--success); }
+        50% { opacity: 0.6; box-shadow: 0 0 0 6px transparent; }
+      }
+      .truncate { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     </style>
   </head>
-  <body class="min-h-screen">
-    <!-- Status banner — live connection check -->
-    <div id="status-banner" class="border-b border-border text-xs px-4 py-2 text-center bg-card">
-      <span class="text-muted">Łączę się z Supabase...</span>
+  <body>
+    <!-- Status banner -->
+    <div id="status-banner" class="banner">
+      <span class="text-muted">Wczytuję demo…</span>
     </div>
 
-    <!-- Top nav -->
-    <header class="border-b border-border bg-card/50 backdrop-blur sticky top-0 z-10">
-      <div class="max-w-7xl mx-auto px-4 h-14 flex items-center justify-between">
-        <a href="#dashboard" class="flex items-center gap-2 font-semibold">
-          <span class="w-7 h-7 rounded-md bg-accent flex items-center justify-center text-white text-sm">M</span>
+    <!-- Header -->
+    <header>
+      <div class="header-inner">
+        <a href="#dashboard" class="logo">
+          <span class="logo-mark">M</span>
           <span>MapJob FB Poster</span>
         </a>
-        <nav class="hidden md:flex items-center gap-1 text-sm">
-          <a href="#dashboard" data-route="dashboard" class="nav-link px-3 py-1.5 rounded-md hover:bg-cardHover">Dashboard</a>
-          <a href="#posts" data-route="posts" class="nav-link px-3 py-1.5 rounded-md hover:bg-cardHover">Posty</a>
-          <a href="#ai" data-route="ai" class="nav-link px-3 py-1.5 rounded-md hover:bg-cardHover">Generator AI</a>
-          <a href="#groups" data-route="groups" class="nav-link px-3 py-1.5 rounded-md hover:bg-cardHover">Grupy</a>
-          <a href="#campaigns" data-route="campaigns" class="nav-link px-3 py-1.5 rounded-md hover:bg-cardHover">Kampanie</a>
-          <a href="#analytics" data-route="analytics" class="nav-link px-3 py-1.5 rounded-md hover:bg-cardHover">Analytics</a>
+        <nav class="nav" id="nav">
+          <a href="#dashboard" data-route="dashboard">Dashboard</a>
+          <a href="#posts" data-route="posts">Posty</a>
+          <a href="#ai" data-route="ai">Generator AI</a>
+          <a href="#groups" data-route="groups">Grupy</a>
+          <a href="#campaigns" data-route="campaigns">Kampanie</a>
+          <a href="#analytics" data-route="analytics">Analytics</a>
         </nav>
-        <div class="flex items-center gap-2 text-sm">
-          <button id="open-setup" class="hidden md:block text-xs text-muted hover:text-white px-3 py-1.5 rounded-md hover:bg-cardHover">⚙ Setup bazy</button>
-          <button id="auth-btn" class="bg-accent hover:bg-accentHover px-3 py-1.5 rounded-md text-xs font-medium">Zaloguj</button>
-          <div id="user-chip" class="hidden items-center gap-2 text-xs">
-            <div class="w-8 h-8 rounded-full bg-accent/20 text-accent flex items-center justify-center font-semibold" id="user-initials">—</div>
-            <button id="logout-btn" class="text-muted hover:text-white">wyloguj</button>
+        <div class="header-actions">
+          <button id="open-setup" class="btn btn-ghost btn-sm">⚙</button>
+          <button id="auth-btn" class="btn btn-primary btn-sm">Zaloguj</button>
+          <div id="user-chip" class="user-chip hidden">
+            <div class="avatar" id="user-initials">—</div>
+            <button id="logout-btn" class="btn btn-ghost btn-sm">wyloguj</button>
           </div>
+          <button id="mobile-toggle" class="mobile-toggle btn btn-ghost btn-sm">☰</button>
         </div>
       </div>
     </header>
 
-    <main id="view" class="max-w-7xl mx-auto px-4 py-8"></main>
+    <main id="view"></main>
 
-    <!-- ====== Modal: Login (magic link) ====== -->
-    <div id="auth-modal" class="hidden fixed inset-0 z-50 bg-black/70 flex items-center justify-center p-4">
-      <div class="bg-card border border-border rounded-lg w-full max-w-md p-6">
-        <div class="flex justify-between items-start mb-4">
+    <!-- Auth modal -->
+    <div id="auth-modal" class="modal-backdrop">
+      <div class="modal">
+        <div class="modal-header">
           <div>
-            <h2 class="text-lg font-semibold">Zaloguj się / załóż konto</h2>
-            <p class="text-xs text-muted mt-1">Magic link — bez haseł. Otrzymasz email z linkiem aktywacyjnym.</p>
+            <h2>Zaloguj się / załóż konto</h2>
+            <p class="text-sm text-muted" style="margin-top:4px">Magic link — bez haseł.</p>
           </div>
-          <button class="modal-close text-muted hover:text-white text-xl leading-none">×</button>
+          <button class="modal-close" data-close>×</button>
         </div>
-
-        <div id="auth-state-idle">
-          <input id="auth-email" type="email" placeholder="ty@firma.pl" class="w-full bg-bg border border-border rounded-md px-3 py-2 text-sm mb-3" />
-          <button id="auth-send" class="w-full bg-accent hover:bg-accentHover px-4 py-2.5 rounded-md text-sm font-medium">Wyślij magic link</button>
-          <p id="auth-error" class="text-red text-xs mt-2 hidden"></p>
-          <div class="mt-4 pt-4 border-t border-border text-xs text-muted">
-            Łączy się prosto z <code class="text-white">afqibinzwgdidumvjxyo.supabase.co</code>.
-            Nikt poza Tobą nie zobaczy emaila.
+        <div class="modal-body">
+          <div id="auth-idle" class="stack-sm">
+            <input id="auth-email" type="email" placeholder="ty@firma.pl" autocomplete="email" inputmode="email" />
+            <button id="auth-send" class="btn btn-primary btn-block btn-lg">Wyślij magic link</button>
+            <p id="auth-error" class="text-sm hidden" style="color: var(--danger)"></p>
+            <div class="text-xs text-muted" style="padding-top:12px; border-top: 1px solid var(--border); margin-top: 4px">
+              W trybie demo (otwierane z pliku) auth nie wyśle realnego maila — to tylko wizualizacja.
+              W aplikacji web podłączamy do Supabase.
+            </div>
           </div>
-        </div>
-
-        <div id="auth-state-sent" class="hidden">
-          <div class="bg-green/10 border border-green/30 text-green rounded-md p-4 text-sm text-center">
-            ✓ Link wysłany na <strong id="auth-sent-email"></strong>.<br>
-            Sprawdź skrzynkę (również spam) i kliknij link.
+          <div id="auth-sent" class="hidden" style="background: var(--success-soft); border: 1px solid var(--success); border-radius: var(--r-sm); padding: 16px; text-align: center; font-size: 14px; color: var(--success)">
+            ✓ Demo: w realnej apce link poleciałby na <strong id="auth-sent-email"></strong>.
           </div>
         </div>
       </div>
     </div>
 
-    <!-- ====== Modal: Setup (SQL do wklejenia w Supabase) ====== -->
-    <div id="setup-modal" class="hidden fixed inset-0 z-50 bg-black/70 flex items-center justify-center p-4">
-      <div class="bg-card border border-border rounded-lg w-full max-w-3xl max-h-[90vh] flex flex-col">
-        <div class="flex justify-between items-start p-6 border-b border-border">
+    <!-- Setup modal -->
+    <div id="setup-modal" class="modal-backdrop">
+      <div class="modal modal-wide">
+        <div class="modal-header">
           <div>
-            <h2 class="text-lg font-semibold">Setup bazy — instalacja schematu</h2>
-            <p class="text-xs text-muted mt-1">Jednorazowe. Wykonaj poniższy SQL w Supabase SQL Editor, żeby aktywować pełną aplikację.</p>
+            <h2>Setup bazy — instrukcja</h2>
+            <p class="text-sm text-muted" style="margin-top:4px">Jak uruchomić prawdziwą aplikację (nie tylko demo).</p>
           </div>
-          <button class="modal-close text-muted hover:text-white text-xl leading-none">×</button>
+          <button class="modal-close" data-close>×</button>
         </div>
-        <div class="p-6 space-y-4 overflow-y-auto scrollbar flex-1">
-          <ol class="text-sm space-y-3 list-decimal pl-5">
-            <li>Otwórz <a href="https://supabase.com/dashboard/project/afqibinzwgdidumvjxyo/sql/new" target="_blank" class="text-accent hover:underline">Supabase SQL Editor →</a></li>
-            <li>Kliknij <strong>"Copy SQL"</strong> poniżej i wklej w edytorze (Ctrl+V).</li>
-            <li>Kliknij <strong>"Run"</strong> w prawym dolnym rogu. Skrypt utworzy 11 tabel, 6 widoków, triggery, RLS, RPC.</li>
-            <li>Wróć tu i odśwież stronę — banner zmieni kolor na zielony.</li>
+        <div class="modal-body">
+          <ol style="padding-left: 20px; display: flex; flex-direction: column; gap: 8px; font-size: 14px; margin-bottom: 16px;">
+            <li>Stwórz projekt Supabase (region <strong>Frankfurt</strong>).</li>
+            <li>Skopiuj <code>init.sql</code> z repo (plik obok tego HTML, 36 KB).</li>
+            <li>Wklej do <strong>Supabase → SQL Editor → New query → Run</strong>.</li>
+            <li>Sklonuj <a href="https://github.com/piotrzajac4321-maker/MapJob/tree/claude/fb-auto-posting-app-44Q4X" target="_blank">repo</a>, <code>pnpm install</code>, uzupełnij <code>.env.local</code> kluczami z Supabase.</li>
+            <li><code>pnpm --filter @mapjob/web dev</code> → <code>localhost:3000</code>.</li>
           </ol>
-          <div class="flex gap-2">
-            <button id="copy-sql" class="bg-accent hover:bg-accentHover px-4 py-2 rounded-md text-sm font-medium">📋 Copy SQL do schowka</button>
-            <a href="https://supabase.com/dashboard/project/afqibinzwgdidumvjxyo/sql/new" target="_blank" class="border border-border hover:bg-cardHover px-4 py-2 rounded-md text-sm">Otwórz SQL Editor ↗</a>
-          </div>
-          <div>
-            <p class="text-xs text-muted mb-2">Podgląd (skróconego) SQL — pełna treść w schowku po kliknięciu Copy:</p>
-            <pre id="sql-preview" class="bg-bg border border-border rounded-md p-3 text-xs mono overflow-x-auto whitespace-pre"></pre>
-          </div>
-          <details class="text-xs text-muted">
-            <summary class="cursor-pointer">Co dokładnie tworzy ten SQL?</summary>
-            <ul class="list-disc pl-5 mt-2 space-y-1">
-              <li><strong>organizations</strong> + <strong>org_members</strong> — multi-tenant z rolami owner/admin/editor/viewer</li>
-              <li><strong>profiles</strong> + auto-trigger na auth.users (każdy signup tworzy profile)</li>
-              <li><strong>posts</strong> + <strong>post_media</strong> + Storage bucket "post-media"</li>
-              <li><strong>fb_accounts</strong> (tylko etykieta, bez hasła!) + <strong>groups</strong> + <strong>extension_devices</strong></li>
-              <li><strong>campaigns</strong> + <strong>campaign_targets</strong> z triggerem cooldown (4h domyślny) + RPC <code>next_target_for_device</code></li>
-              <li><strong>ai_generations</strong> + funkcja <code>assert_ai_quota</code> (20/h user, 200/dzień org)</li>
-              <li><strong>audit_log</strong> append-only + 6 views analitycznych</li>
-              <li>RLS na wszystkich tabelach (helper <code>is_org_member</code>, <code>is_org_role</code>)</li>
-            </ul>
-          </details>
+          <p class="text-sm text-muted">
+            Ten HTML to klikalny prototyp UI bez backendu. Po setupie powyżej dostajesz pełną apkę z auth, bazą, generatorem AI, rozszerzeniem Chrome.
+          </p>
         </div>
       </div>
     </div>
 
-    <!-- Templates -->
+    <!-- ====================== TEMPLATES ====================== -->
+
     <template id="tmpl-dashboard">
-      <div class="fade-in space-y-8">
-        <div class="flex items-center justify-between">
+      <div class="fade-in stack">
+        <div class="row-between">
           <div>
-            <h1 class="text-3xl font-bold">Dashboard</h1>
-            <p class="text-muted text-sm mt-1">Cześć Piotr 👋 — masz <strong class="text-white">3 aktywne kampanie</strong> i <strong class="text-white">237 grup</strong> w bibliotece.</p>
+            <h1>Dashboard</h1>
+            <p class="text-sm text-muted" id="greeting" style="margin-top: 4px">Cześć 👋 — podgląd UI z fake danymi.</p>
           </div>
-          <a href="#ai" class="bg-accent hover:bg-accentHover px-4 py-2 rounded-md text-sm font-medium">+ Generuj post AI</a>
+          <a href="#ai" class="btn btn-primary">+ Generuj post AI</a>
         </div>
 
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <div class="bg-card border border-border rounded-lg p-5">
-            <div class="text-xs text-muted">Posty w bibliotece</div>
-            <div class="text-3xl font-bold mt-1">42</div>
-            <div class="text-xs text-green mt-2">↑ 8 w tym tygodniu</div>
+        <div class="grid-4">
+          <div class="stat">
+            <div class="stat-label">Posty w bibliotece</div>
+            <div class="stat-value">42</div>
+            <div class="stat-delta">↑ 8 w tym tygodniu</div>
           </div>
-          <div class="bg-card border border-border rounded-lg p-5">
-            <div class="text-xs text-muted">Aktywne grupy</div>
-            <div class="text-3xl font-bold mt-1">237</div>
-            <div class="text-xs text-muted mt-2">z 248 zaimportowanych</div>
+          <div class="stat">
+            <div class="stat-label">Aktywne grupy</div>
+            <div class="stat-value">237</div>
+            <div class="stat-delta neutral">z 248 zaimportowanych</div>
           </div>
-          <div class="bg-card border border-border rounded-lg p-5">
-            <div class="text-xs text-muted">Postów dzisiaj</div>
-            <div class="text-3xl font-bold mt-1">73</div>
-            <div class="text-xs text-green mt-2">96% success rate</div>
+          <div class="stat">
+            <div class="stat-label">Postów dzisiaj</div>
+            <div class="stat-value">73</div>
+            <div class="stat-delta">96% success rate</div>
           </div>
-          <div class="bg-card border border-border rounded-lg p-5">
-            <div class="text-xs text-muted">Aktywne kampanie</div>
-            <div class="text-3xl font-bold mt-1">3</div>
-            <div class="text-xs text-muted mt-2">2 w toku, 1 zaplanowana</div>
+          <div class="stat">
+            <div class="stat-label">Aktywne kampanie</div>
+            <div class="stat-value">3</div>
+            <div class="stat-delta neutral">2 w toku, 1 zaplanowana</div>
           </div>
         </div>
 
-        <section>
-          <h2 class="text-lg font-semibold mb-3">Aktywne kampanie</h2>
-          <div class="bg-card border border-border rounded-lg overflow-hidden">
-            <table class="w-full text-sm">
-              <thead class="bg-cardHover border-b border-border text-muted text-xs uppercase">
+        <div class="stack-sm">
+          <h2>Aktywne kampanie</h2>
+          <div class="table-wrap">
+            <table>
+              <thead>
                 <tr>
-                  <th class="text-left px-4 py-2.5">Nazwa</th>
-                  <th class="text-left px-4 py-2.5">Status</th>
-                  <th class="text-right px-4 py-2.5">Posted</th>
-                  <th class="text-right px-4 py-2.5">Pending</th>
-                  <th class="text-right px-4 py-2.5">Skipped</th>
-                  <th class="text-right px-4 py-2.5">% sukcesu</th>
+                  <th>Nazwa</th><th>Status</th>
+                  <th class="right">Posted</th><th class="right">Pending</th>
+                  <th class="right">Skipped</th><th class="right">% sukcesu</th>
                 </tr>
               </thead>
               <tbody id="dashboard-campaigns"></tbody>
             </table>
           </div>
-        </section>
+        </div>
 
-        <section class="grid md:grid-cols-2 gap-4">
-          <div class="bg-card border border-border rounded-lg p-5">
-            <h3 class="font-semibold mb-3">Ostatnie publikacje</h3>
-            <div id="recent-publications" class="space-y-2 text-sm"></div>
+        <div class="grid-2">
+          <div class="card">
+            <h3 style="margin-bottom: 14px">Ostatnie publikacje</h3>
+            <div id="recent-publications" class="stack-sm"></div>
           </div>
-          <div class="bg-card border border-border rounded-lg p-5">
-            <h3 class="font-semibold mb-3">Health rozszerzenia</h3>
-            <div class="space-y-2 text-sm">
-              <div class="flex justify-between"><span class="text-muted">Wersja</span><span>0.1.0</span></div>
-              <div class="flex justify-between"><span class="text-muted">Ostatnia aktywność</span><span class="text-green">2 min temu</span></div>
-              <div class="flex justify-between"><span class="text-muted">Selector miss (7 dni)</span><span class="text-green">0</span></div>
-              <div class="flex justify-between"><span class="text-muted">Sesja FB</span><span class="text-green">aktywna</span></div>
-              <div class="flex justify-between"><span class="text-muted">Token wygasa za</span><span>28 dni</span></div>
+          <div class="card">
+            <h3 style="margin-bottom: 14px">Health rozszerzenia</h3>
+            <div class="stack-sm" style="font-size: 13px">
+              <div class="row-between"><span class="text-muted">Wersja</span><span>0.1.0</span></div>
+              <div class="row-between"><span class="text-muted">Ostatnia aktywność</span><span style="color: var(--success)">2 min temu</span></div>
+              <div class="row-between"><span class="text-muted">Selector miss (7 dni)</span><span style="color: var(--success)">0</span></div>
+              <div class="row-between"><span class="text-muted">Sesja FB</span><span style="color: var(--success)"><span class="pulse"></span>aktywna</span></div>
+              <div class="row-between"><span class="text-muted">Token wygasa za</span><span>28 dni</span></div>
             </div>
           </div>
-        </section>
+        </div>
       </div>
     </template>
 
     <template id="tmpl-posts">
-      <div class="fade-in">
-        <div class="flex items-center justify-between mb-6">
+      <div class="fade-in stack">
+        <div class="row-between">
           <div>
-            <h1 class="text-3xl font-bold">Posty</h1>
-            <p class="text-muted text-sm mt-1">Biblioteka treści — manualne i wygenerowane przez AI.</p>
+            <h1>Posty</h1>
+            <p class="text-sm text-muted" style="margin-top: 4px">Biblioteka treści — manualne i wygenerowane przez AI.</p>
           </div>
-          <div class="flex gap-2">
-            <a href="#ai" class="bg-accent hover:bg-accentHover px-4 py-2 rounded-md text-sm font-medium">+ Generator AI</a>
-            <button class="border border-border px-4 py-2 rounded-md text-sm hover:bg-cardHover">+ Napisz ręcznie</button>
+          <div class="row">
+            <a href="#ai" class="btn btn-primary">+ Generator AI</a>
+            <button class="btn btn-secondary">+ Napisz ręcznie</button>
           </div>
         </div>
-        <div class="bg-card border border-border rounded-lg overflow-hidden">
-          <table class="w-full text-sm">
-            <thead class="bg-cardHover border-b border-border text-muted text-xs uppercase">
+        <div class="table-wrap">
+          <table>
+            <thead>
               <tr>
-                <th class="text-left px-4 py-2.5">Tytuł</th>
-                <th class="text-left px-4 py-2.5">Typ</th>
-                <th class="text-left px-4 py-2.5">Framework</th>
-                <th class="text-left px-4 py-2.5">Status</th>
-                <th class="text-right px-4 py-2.5">Human score</th>
-                <th class="text-right px-4 py-2.5">Utworzony</th>
+                <th>Tytuł</th><th>Typ</th><th>Framework</th><th>Status</th>
+                <th class="right">Human</th><th class="right">Utworzony</th>
               </tr>
             </thead>
             <tbody id="posts-list"></tbody>
@@ -262,109 +578,100 @@
     </template>
 
     <template id="tmpl-ai">
-      <div class="fade-in grid lg:grid-cols-2 gap-8">
-        <section>
-          <h1 class="text-2xl font-bold mb-1">Generator AI</h1>
-          <p class="text-muted text-sm mb-6">Brief → Claude generuje warianty z anti-AI filter + per-grupa wariancja.</p>
-
-          <div class="space-y-3">
-            <div class="grid grid-cols-2 gap-3">
-              <label class="block">
-                <span class="text-xs text-muted mb-1 block">Typ posta</span>
-                <select id="ai-type" class="w-full bg-card border border-border rounded-md px-3 py-2 text-sm">
-                  <option value="job">Ogłoszenie pracy</option>
-                  <option value="sales">Sprzedażowe</option>
-                </select>
-              </label>
-              <label class="block">
-                <span class="text-xs text-muted mb-1 block">Framework</span>
-                <select id="ai-framework" class="w-full bg-card border border-border rounded-md px-3 py-2 text-sm">
-                  <option value="PAS">PAS — Problem, Agitation, Solution</option>
-                  <option value="AIDA">AIDA — Attention, Interest, Desire, Action</option>
-                  <option value="BAB">BAB — Before, After, Bridge</option>
-                  <option value="FAB">FAB — Features, Advantages, Benefits</option>
-                </select>
-              </label>
-            </div>
-
-            <label class="block">
-              <span class="text-xs text-muted mb-1 block">Audience</span>
-              <textarea id="ai-audience" rows="2" class="w-full bg-card border border-border rounded-md px-3 py-2 text-sm" placeholder="np. mężczyźni 25-45, kierowcy kat. C, z Pruszkowa i okolic"></textarea>
-            </label>
-
-            <fieldset class="border border-border rounded-md p-3 space-y-2">
-              <legend class="text-xs text-muted px-1">Marka / firma</legend>
-              <input id="ai-brand-name" placeholder="Nazwa firmy" class="w-full bg-card border border-border rounded-md px-3 py-2 text-sm" />
-              <input id="ai-brand-oneliner" placeholder="W jednym zdaniu — co robisz" class="w-full bg-card border border-border rounded-md px-3 py-2 text-sm" />
-              <textarea id="ai-brand-usp" rows="2" placeholder="USP (każdy w nowej linii)" class="w-full bg-card border border-border rounded-md px-3 py-2 text-sm mono"></textarea>
-            </fieldset>
-
-            <label class="block">
-              <span class="text-xs text-muted mb-1 block">Oferta</span>
-              <textarea id="ai-offer" rows="4" class="w-full bg-card border border-border rounded-md px-3 py-2 text-sm" placeholder="np. szukamy spawacza MIG/MAG na hali Bemowo, dwie zmiany, stawka od 7200 netto, premia 500/m za wieczorówki"></textarea>
-            </label>
-
-            <div class="grid grid-cols-3 gap-3">
-              <input id="ai-region" placeholder="Region (Warszawa, Bemowo)" class="bg-card border border-border rounded-md px-3 py-2 text-sm" />
-              <input id="ai-budget" placeholder="Stawka (7200 PLN netto)" class="bg-card border border-border rounded-md px-3 py-2 text-sm" />
-              <input id="ai-contact" placeholder="Kontakt (DM, 555-...)" class="bg-card border border-border rounded-md px-3 py-2 text-sm" />
-            </div>
-
-            <input id="ai-cta" placeholder="CTA (Zostaw numer, oddzwaniam)" class="w-full bg-card border border-border rounded-md px-3 py-2 text-sm" />
-
-            <button id="ai-generate-btn" class="w-full bg-accent hover:bg-accentHover px-4 py-2.5 rounded-md text-sm font-medium">
-              ⚡ Wygeneruj 3 warianty (Claude Sonnet 4.6)
-            </button>
-            <p class="text-xs text-muted text-center">Średni czas: 4-7 s · Koszt: ~$0.008 / generacja</p>
+      <div class="fade-in grid-2" style="gap: 28px">
+        <section class="stack-sm">
+          <div>
+            <h1>Generator AI</h1>
+            <p class="text-sm text-muted" style="margin-top: 4px">Brief → Claude generuje warianty + anti-AI filter + per-grupa wariancja.</p>
           </div>
+
+          <div class="grid-2" style="gap: 10px">
+            <div class="form-group">
+              <label class="form-label">Typ posta</label>
+              <select id="ai-type">
+                <option value="job">Ogłoszenie pracy</option>
+                <option value="sales">Sprzedażowe</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Framework</label>
+              <select id="ai-framework">
+                <option value="PAS">PAS — Problem, Agitation, Solution</option>
+                <option value="AIDA">AIDA</option>
+                <option value="BAB">BAB — Before, After, Bridge</option>
+                <option value="FAB">FAB</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Audience</label>
+            <textarea id="ai-audience" rows="2" placeholder="np. mężczyźni 25-50, spawacze z Pruszkowa"></textarea>
+          </div>
+
+          <fieldset>
+            <legend>Marka / firma</legend>
+            <input id="ai-brand-name" placeholder="Nazwa firmy" />
+            <input id="ai-brand-oneliner" placeholder="W jednym zdaniu — co robisz" />
+            <textarea id="ai-brand-usp" rows="2" placeholder="USP (każdy w nowej linii)"></textarea>
+          </fieldset>
+
+          <div class="form-group">
+            <label class="form-label">Oferta</label>
+            <textarea id="ai-offer" rows="3" placeholder="np. szukamy spawacza MIG/MAG..."></textarea>
+          </div>
+
+          <div class="grid-3">
+            <input id="ai-region" placeholder="Region" />
+            <input id="ai-budget" placeholder="Stawka / cena" />
+            <input id="ai-contact" placeholder="Kontakt" />
+          </div>
+
+          <input id="ai-cta" placeholder="CTA (np. Zostaw numer, oddzwaniam)" />
+
+          <button id="ai-generate-btn" class="btn btn-primary btn-block btn-lg">⚡ Wygeneruj 3 warianty</button>
+          <p class="text-xs text-muted" style="text-align: center">Demo mock — w prawdziwej apce Claude Sonnet 4.6, ~4-7s, $0.008</p>
         </section>
 
-        <section class="space-y-4">
-          <div class="flex items-center justify-between">
-            <h2 class="text-lg font-semibold">Wynik</h2>
+        <section class="stack-sm">
+          <div class="row-between">
+            <h2>Wynik</h2>
             <span id="ai-result-meta" class="text-xs text-muted"></span>
           </div>
 
-          <div id="ai-result-placeholder" class="bg-card/30 border border-dashed border-border rounded-lg p-12 text-center text-muted text-sm">
-            Wypełnij brief po lewej i kliknij Wygeneruj.<br>
+          <div id="ai-result-placeholder" class="placeholder-box">
+            Wypełnij brief po lewej i kliknij Wygeneruj.<br />
             Zobaczysz 3 warianty + human score + checklistę.
           </div>
 
-          <div id="ai-result" class="hidden space-y-4"></div>
+          <div id="ai-result" class="hidden stack-sm"></div>
         </section>
       </div>
     </template>
 
     <template id="tmpl-groups">
-      <div class="fade-in">
-        <div class="flex items-center justify-between mb-6">
+      <div class="fade-in stack">
+        <div class="row-between">
           <div>
-            <h1 class="text-3xl font-bold">Grupy</h1>
-            <p class="text-muted text-sm mt-1">237 grup zaimportowanych przez rozszerzenie · cooldown 4h domyślny</p>
+            <h1>Grupy</h1>
+            <p class="text-sm text-muted" style="margin-top: 4px">237 grup zaimportowanych przez rozszerzenie · cooldown 4h domyślny</p>
           </div>
-          <button class="bg-accent hover:bg-accentHover px-4 py-2 rounded-md text-sm font-medium">↻ Synchronizuj z FB</button>
+          <button class="btn btn-primary">↻ Synchronizuj z FB</button>
         </div>
-
-        <div class="bg-card border border-border rounded-lg p-3 mb-4 flex gap-2 items-center text-sm">
-          <input placeholder="Szukaj po nazwie..." class="flex-1 bg-bg border border-border rounded-md px-3 py-1.5" />
-          <select class="bg-bg border border-border rounded-md px-3 py-1.5">
+        <div class="card row" style="padding: 12px; gap: 8px">
+          <input placeholder="Szukaj po nazwie..." style="flex: 1; min-width: 0" />
+          <select style="flex: 0 0 180px; max-width: 100%">
             <option>Wszystkie tagi</option>
-            <option>warszawa</option>
-            <option>praca</option>
-            <option>sprzedaz</option>
+            <option>warszawa</option><option>praca</option><option>sprzedaz</option>
           </select>
         </div>
-
-        <div class="bg-card border border-border rounded-lg overflow-hidden">
-          <table class="w-full text-sm">
-            <thead class="bg-cardHover border-b border-border text-muted text-xs uppercase">
+        <div class="table-wrap">
+          <table>
+            <thead>
               <tr>
-                <th class="text-left px-4 py-2.5">Nazwa</th>
-                <th class="text-right px-4 py-2.5">Członkowie</th>
-                <th class="text-left px-4 py-2.5">Prywatność</th>
-                <th class="text-left px-4 py-2.5">Tagi</th>
-                <th class="text-right px-4 py-2.5">Cooldown</th>
-                <th class="text-right px-4 py-2.5">Ostatni post</th>
+                <th>Nazwa</th><th class="right">Członkowie</th>
+                <th>Prywatność</th><th>Tagi</th>
+                <th class="right">Cooldown</th><th class="right">Ostatni post</th>
               </tr>
             </thead>
             <tbody id="groups-list"></tbody>
@@ -374,26 +681,21 @@
     </template>
 
     <template id="tmpl-campaigns">
-      <div class="fade-in">
-        <div class="flex items-center justify-between mb-6">
+      <div class="fade-in stack">
+        <div class="row-between">
           <div>
-            <h1 class="text-3xl font-bold">Kampanie</h1>
-            <p class="text-muted text-sm mt-1">Wybierz post + grupy → system pilnuje cooldownu i kolejki.</p>
+            <h1>Kampanie</h1>
+            <p class="text-sm text-muted" style="margin-top: 4px">Wybierz post + grupy → system pilnuje cooldownu i kolejki.</p>
           </div>
-          <button class="bg-accent hover:bg-accentHover px-4 py-2 rounded-md text-sm font-medium">+ Nowa kampania</button>
+          <button class="btn btn-primary">+ Nowa kampania</button>
         </div>
-
-        <div class="bg-card border border-border rounded-lg overflow-hidden">
-          <table class="w-full text-sm">
-            <thead class="bg-cardHover border-b border-border text-muted text-xs uppercase">
+        <div class="table-wrap">
+          <table>
+            <thead>
               <tr>
-                <th class="text-left px-4 py-2.5">Nazwa</th>
-                <th class="text-left px-4 py-2.5">Post</th>
-                <th class="text-left px-4 py-2.5">Status</th>
-                <th class="text-right px-4 py-2.5">Posted / All</th>
-                <th class="text-right px-4 py-2.5">Skipped</th>
-                <th class="text-right px-4 py-2.5">% sukcesu</th>
-                <th class="text-right px-4 py-2.5">Akcja</th>
+                <th>Nazwa</th><th>Post</th><th>Status</th>
+                <th class="right">Posted / All</th><th class="right">Skipped</th>
+                <th class="right">% sukcesu</th><th class="right">Akcja</th>
               </tr>
             </thead>
             <tbody id="campaigns-list"></tbody>
@@ -403,42 +705,38 @@
     </template>
 
     <template id="tmpl-analytics">
-      <div class="fade-in space-y-8">
-        <h1 class="text-3xl font-bold">Analytics</h1>
+      <div class="fade-in stack">
+        <h1>Analytics</h1>
 
-        <section>
-          <h2 class="text-lg font-semibold mb-3">Posty per dzień (ostatnie 14)</h2>
-          <div class="bg-card border border-border rounded-lg p-5">
-            <div id="chart-perday" class="flex items-end gap-1 h-40"></div>
-            <div id="chart-perday-labels" class="flex gap-1 text-[10px] text-muted mt-2"></div>
+        <section class="card">
+          <h3 style="margin-bottom: 14px">Posty per dzień (ostatnie 14)</h3>
+          <div id="chart-perday" class="chart-bars"></div>
+          <div id="chart-perday-labels" class="chart-labels"></div>
+        </section>
+
+        <section class="card">
+          <h3 style="margin-bottom: 14px">Najlepsze godziny publikacji</h3>
+          <div id="chart-hours" class="chart-bars" style="height: 120px"></div>
+          <div class="chart-labels">
+            <span>0</span><span>3</span><span>6</span><span>9</span><span>12</span><span>15</span><span>18</span><span>21</span><span>23</span>
           </div>
         </section>
 
-        <section>
-          <h2 class="text-lg font-semibold mb-3">Najlepsze godziny publikacji</h2>
-          <div class="bg-card border border-border rounded-lg p-5">
-            <div id="chart-hours" class="flex items-end gap-1 h-32"></div>
-            <div class="flex gap-1 text-[10px] text-muted mt-2">
-              <span class="flex-1 text-center">0</span><span class="flex-1 text-center">3</span><span class="flex-1 text-center">6</span><span class="flex-1 text-center">9</span><span class="flex-1 text-center">12</span><span class="flex-1 text-center">15</span><span class="flex-1 text-center">18</span><span class="flex-1 text-center">21</span><span class="flex-1 text-center">23</span>
-            </div>
-          </div>
-        </section>
-
-        <div class="grid md:grid-cols-2 gap-4">
-          <section class="bg-card border border-border rounded-lg p-5">
-            <h2 class="text-lg font-semibold mb-3">Top grupy (success rate)</h2>
-            <div id="top-groups" class="space-y-2 text-sm"></div>
+        <div class="grid-2">
+          <section class="card">
+            <h3 style="margin-bottom: 14px">Top grupy (success rate)</h3>
+            <div id="top-groups" class="stack-sm" style="font-size: 13px"></div>
           </section>
-          <section class="bg-card border border-border rounded-lg p-5">
-            <h2 class="text-lg font-semibold mb-3">Najczęstsze błędy</h2>
-            <div id="top-errors" class="space-y-1 text-sm"></div>
+          <section class="card">
+            <h3 style="margin-bottom: 14px">Najczęstsze błędy</h3>
+            <div id="top-errors" class="stack-sm" style="font-size: 13px"></div>
           </section>
         </div>
       </div>
     </template>
 
     <script>
-      // ============== DEMO DATA ==============
+      // ====== DEMO DATA ======
       const POSTS = [
         { id: 1, title: 'Spawacz Pruszków - hala B', type: 'job', framework: 'PAS', status: 'ready', human: 87, created: '2026-05-20' },
         { id: 2, title: 'Kierowca C+E - Wrocław centrum', type: 'job', framework: 'AIDA', status: 'ready', human: 79, created: '2026-05-19' },
@@ -447,26 +745,23 @@
         { id: 5, title: 'Klimatyzacja - montaż 4h', type: 'sales', framework: 'PAS', status: 'ready', human: 83, created: '2026-05-17' },
         { id: 6, title: 'Programista junior Pruszków', type: 'job', framework: '4U', status: 'archived', human: 71, created: '2026-05-12' },
       ];
-
       const CAMPAIGNS = [
-        { id: 1, name: 'Rekrutacja spawacz maj 2026', post: 'Spawacz Pruszków - hala B', status: 'running', total: 87, posted: 64, pending: 19, skipped: 4, failed: 0, pct: 73 },
-        { id: 2, name: 'iPhone 14 Pro - szybka sprzedaż', post: 'iPhone 14 Pro sprzedam', status: 'running', total: 42, posted: 28, pending: 12, skipped: 2, failed: 0, pct: 66 },
-        { id: 3, name: 'Kierowcy C+E - Warszawa', post: 'Kierowca C+E - Wrocław centrum', status: 'scheduled', total: 156, posted: 0, pending: 156, skipped: 0, failed: 0, pct: 0 },
-        { id: 4, name: 'Klimatyzacja lipiec', post: 'Klimatyzacja - montaż 4h', status: 'done', total: 73, posted: 71, pending: 0, skipped: 2, failed: 0, pct: 97 },
-        { id: 5, name: 'Magazynier Łódź - test', post: 'Magazynier nocny - Łódź', status: 'paused', total: 24, posted: 8, pending: 14, skipped: 1, failed: 1, pct: 33 },
+        { id: 1, name: 'Rekrutacja spawacz maj 2026', post: 'Spawacz Pruszków', status: 'running', total: 87, posted: 64, pending: 19, skipped: 4, failed: 0, pct: 73 },
+        { id: 2, name: 'iPhone 14 Pro - szybka sprzedaż', post: 'iPhone 14 Pro', status: 'running', total: 42, posted: 28, pending: 12, skipped: 2, failed: 0, pct: 66 },
+        { id: 3, name: 'Kierowcy C+E - Warszawa', post: 'Kierowca C+E', status: 'scheduled', total: 156, posted: 0, pending: 156, skipped: 0, failed: 0, pct: 0 },
+        { id: 4, name: 'Klimatyzacja lipiec', post: 'Klimatyzacja', status: 'done', total: 73, posted: 71, pending: 0, skipped: 2, failed: 0, pct: 97 },
+        { id: 5, name: 'Magazynier Łódź - test', post: 'Magazynier nocny', status: 'paused', total: 24, posted: 8, pending: 14, skipped: 1, failed: 1, pct: 33 },
       ];
-
       const GROUPS = [
         { name: 'Praca Warszawa i okolice 2026', members: 87234, privacy: 'public', tags: ['warszawa', 'praca'], cooldown: 240, lastPost: '2h temu' },
-        { name: 'Bemowo - sprzedam, kupię, oddam', members: 12856, privacy: 'public', tags: ['warszawa', 'bemowo', 'sprzedaz'], cooldown: 360, lastPost: '6h temu' },
+        { name: 'Bemowo - sprzedam, kupię, oddam', members: 12856, privacy: 'public', tags: ['warszawa', 'bemowo'], cooldown: 360, lastPost: '6h temu' },
         { name: 'Praca Wrocław - oferty', members: 45120, privacy: 'public', tags: ['wroclaw', 'praca'], cooldown: 240, lastPost: '1d temu' },
         { name: 'Spawacze, ślusarze, mechanicy PL', members: 23445, privacy: 'public', tags: ['praca', 'rzemioslo'], cooldown: 480, lastPost: '4h temu' },
         { name: 'Kierowcy zawodowi - oferty pracy', members: 67890, privacy: 'public', tags: ['praca', 'kierowcy'], cooldown: 240, lastPost: '8h temu' },
         { name: 'Pruszków - co się dzieje', members: 19200, privacy: 'public', tags: ['pruszkow', 'lokalne'], cooldown: 360, lastPost: '12h temu' },
         { name: 'Łódź - praca i ogłoszenia', members: 34110, privacy: 'public', tags: ['lodz', 'praca'], cooldown: 240, lastPost: '3h temu' },
-        { name: 'Sprzedam kupie ogarnę - Trójmiasto', members: 78900, privacy: 'public', tags: ['trojmiasto', 'sprzedaz'], cooldown: 360, lastPost: '5h temu' },
+        { name: 'Sprzedam kupie ogarnę - Trójmiasto', members: 78900, privacy: 'public', tags: ['trojmiasto'], cooldown: 360, lastPost: '5h temu' },
       ];
-
       const RECENT = [
         { group: 'Praca Warszawa i okolice 2026', when: '2 min temu', status: 'posted' },
         { group: 'Bemowo - sprzedam, kupię', when: '7 min temu', status: 'posted' },
@@ -474,14 +769,12 @@
         { group: 'Kierowcy zawodowi', when: '18 min temu', status: 'posted' },
         { group: 'Pruszków - co się dzieje', when: '24 min temu', status: 'posted' },
       ];
-
       const ERRORS = [
         { code: 'cooldown', count: 23 },
         { code: 'daily_cap', count: 8 },
         { code: 'no_publish_detected', count: 2 },
         { code: 'login_required', count: 1 },
       ];
-
       const TOP_GROUPS = [
         { name: 'Spawacze, ślusarze, mechanicy PL', attempts: 18, posted: 18, pct: 100 },
         { name: 'Praca Warszawa i okolice', attempts: 24, posted: 22, pct: 92 },
@@ -489,214 +782,171 @@
         { name: 'Pruszków - co się dzieje', attempts: 12, posted: 10, pct: 83 },
       ];
 
-      // ============== ROUTER ==============
+      const BADGE = {
+        ready: ['badge-success', 'gotowy'],
+        draft: ['badge-warning', 'szkic'],
+        archived: ['badge-muted', 'archiwum'],
+        running: ['badge-success', 'w toku'],
+        scheduled: ['badge-primary', 'zaplanowana'],
+        paused: ['badge-warning', 'pauza'],
+        done: ['badge-muted', 'zakończona'],
+        posted: ['badge-success', 'opublikowany'],
+        skipped: ['badge-warning', 'pominięty'],
+        failed: ['badge-danger', 'błąd'],
+      };
+      const badge = (s) => { const [c, l] = BADGE[s] || ['badge-muted', s]; return `<span class="badge ${c}">${l}</span>`; };
+      const human = (s) => `<span class="human-score ${s >= 75 ? 'good' : s >= 60 ? 'mid' : 'bad'}">${s}/100</span>`;
+
+      // ====== ROUTER ======
       const view = document.getElementById('view');
       function route() {
         const hash = (location.hash || '#dashboard').slice(1);
         document.querySelectorAll('[data-route]').forEach((el) => {
           el.classList.toggle('active', el.dataset.route === hash);
         });
-        const tmpl = document.getElementById(`tmpl-${hash}`);
+        const tmpl = document.getElementById('tmpl-' + hash);
         if (!tmpl) { view.innerHTML = '<p class="text-muted">Brak widoku.</p>'; return; }
         view.innerHTML = '';
         view.appendChild(tmpl.content.cloneNode(true));
-        if (renderers[hash]) renderers[hash]();
+        if (R[hash]) R[hash]();
+        document.getElementById('nav').classList.remove('open');
+        window.scrollTo({ top: 0, behavior: 'instant' });
       }
 
-      // ============== RENDERERS ==============
-      const renderers = {};
+      const R = {};
 
-      function statusBadge(status) {
-        const map = {
-          ready: ['bg-green/20', 'text-green', 'gotowy'],
-          draft: ['bg-yellow/20', 'text-yellow', 'szkic'],
-          archived: ['bg-muted/20', 'text-muted', 'archiwum'],
-          running: ['bg-green/20', 'text-green', 'w toku'],
-          scheduled: ['bg-accent/20', 'text-accent', 'zaplanowana'],
-          paused: ['bg-yellow/20', 'text-yellow', 'pauza'],
-          done: ['bg-muted/20', 'text-muted', 'zakończona'],
-          posted: ['bg-green/20', 'text-green', 'opublikowany'],
-          skipped: ['bg-yellow/20', 'text-yellow', 'pominięty'],
-        };
-        const [bg, fg, label] = map[status] || ['bg-muted/20', 'text-muted', status];
-        return `<span class="badge ${bg} ${fg}">${label}</span>`;
-      }
+      R.dashboard = () => {
+        document.getElementById('dashboard-campaigns').innerHTML = CAMPAIGNS
+          .filter((c) => c.status === 'running' || c.status === 'scheduled')
+          .map((c) => `<tr>
+            <td>${c.name}</td><td>${badge(c.status)}</td>
+            <td class="right">${c.posted}</td><td class="right">${c.pending}</td>
+            <td class="right" style="color: var(--warning)">${c.skipped}</td>
+            <td class="right" style="font-weight: 600">${c.pct}%</td>
+          </tr>`).join('');
 
-      function humanBadge(score) {
-        const color = score >= 75 ? 'text-green' : score >= 60 ? 'text-yellow' : 'text-red';
-        return `<span class="${color} font-semibold">${score}/100</span>`;
-      }
-
-      renderers.dashboard = () => {
-        const cbody = document.getElementById('dashboard-campaigns');
-        cbody.innerHTML = CAMPAIGNS.filter(c => c.status === 'running' || c.status === 'scheduled')
-          .map(c => `
-            <tr class="border-b border-border last:border-0 hover:bg-cardHover">
-              <td class="px-4 py-3">${c.name}</td>
-              <td class="px-4 py-3">${statusBadge(c.status)}</td>
-              <td class="px-4 py-3 text-right">${c.posted}</td>
-              <td class="px-4 py-3 text-right">${c.pending}</td>
-              <td class="px-4 py-3 text-right text-yellow">${c.skipped}</td>
-              <td class="px-4 py-3 text-right font-semibold">${c.pct}%</td>
-            </tr>
-          `).join('');
-
-        document.getElementById('recent-publications').innerHTML = RECENT.map(r => `
-          <div class="flex items-center justify-between border-b border-border pb-2 last:border-0">
-            <div>
-              <div class="text-white">${r.group}</div>
+        document.getElementById('recent-publications').innerHTML = RECENT.map((r) => `
+          <div class="row-between" style="padding: 8px 0; border-bottom: 1px solid var(--border)">
+            <div style="min-width: 0; flex: 1">
+              <div class="truncate">${r.group}</div>
               <div class="text-xs text-muted">${r.when}${r.reason ? ' · ' + r.reason : ''}</div>
             </div>
-            ${statusBadge(r.status)}
+            ${badge(r.status)}
           </div>
         `).join('');
       };
 
-      renderers.posts = () => {
-        document.getElementById('posts-list').innerHTML = POSTS.map(p => `
-          <tr class="border-b border-border last:border-0 hover:bg-cardHover">
-            <td class="px-4 py-3">${p.title}</td>
-            <td class="px-4 py-3 text-muted">${p.type}</td>
-            <td class="px-4 py-3 mono text-xs">${p.framework}</td>
-            <td class="px-4 py-3">${statusBadge(p.status)}</td>
-            <td class="px-4 py-3 text-right">${humanBadge(p.human)}</td>
-            <td class="px-4 py-3 text-right text-muted text-xs">${p.created}</td>
-          </tr>
-        `).join('');
+      R.posts = () => {
+        document.getElementById('posts-list').innerHTML = POSTS.map((p) => `<tr>
+          <td>${p.title}</td><td class="text-muted">${p.type}</td>
+          <td><code>${p.framework}</code></td><td>${badge(p.status)}</td>
+          <td class="right">${human(p.human)}</td>
+          <td class="right text-muted text-xs">${p.created}</td>
+        </tr>`).join('');
       };
 
-      renderers.groups = () => {
-        document.getElementById('groups-list').innerHTML = GROUPS.map(g => `
-          <tr class="border-b border-border last:border-0 hover:bg-cardHover">
-            <td class="px-4 py-3">${g.name}</td>
-            <td class="px-4 py-3 text-right">${g.members.toLocaleString('pl-PL')}</td>
-            <td class="px-4 py-3 text-muted text-xs">${g.privacy}</td>
-            <td class="px-4 py-3">${g.tags.map(t => `<span class="badge bg-cardHover text-muted mr-1">${t}</span>`).join('')}</td>
-            <td class="px-4 py-3 text-right text-muted">${g.cooldown} min</td>
-            <td class="px-4 py-3 text-right text-muted text-xs">${g.lastPost}</td>
-          </tr>
-        `).join('');
+      R.groups = () => {
+        document.getElementById('groups-list').innerHTML = GROUPS.map((g) => `<tr>
+          <td>${g.name}</td>
+          <td class="right">${g.members.toLocaleString('pl-PL')}</td>
+          <td class="text-muted text-xs">${g.privacy}</td>
+          <td>${g.tags.map((t) => `<span class="badge badge-muted" style="margin-right: 4px">${t}</span>`).join('')}</td>
+          <td class="right text-muted">${g.cooldown} min</td>
+          <td class="right text-muted text-xs">${g.lastPost}</td>
+        </tr>`).join('');
       };
 
-      renderers.campaigns = () => {
-        document.getElementById('campaigns-list').innerHTML = CAMPAIGNS.map(c => `
-          <tr class="border-b border-border last:border-0 hover:bg-cardHover">
-            <td class="px-4 py-3">${c.name}</td>
-            <td class="px-4 py-3 text-muted text-xs">${c.post}</td>
-            <td class="px-4 py-3">${statusBadge(c.status)}</td>
-            <td class="px-4 py-3 text-right">${c.posted} / ${c.total}</td>
-            <td class="px-4 py-3 text-right text-yellow">${c.skipped}</td>
-            <td class="px-4 py-3 text-right font-semibold">${c.pct}%</td>
-            <td class="px-4 py-3 text-right">
-              ${c.status === 'running' ? '<button class="text-xs text-muted hover:text-white">Pauza</button>' :
-                c.status === 'paused' ? '<button class="text-xs text-accent">Wznów</button>' :
-                c.status === 'draft' || c.status === 'scheduled' ? '<button class="text-xs text-accent">Start</button>' :
-                '<span class="text-xs text-muted">—</span>'}
-            </td>
-          </tr>
-        `).join('');
+      R.campaigns = () => {
+        document.getElementById('campaigns-list').innerHTML = CAMPAIGNS.map((c) => `<tr>
+          <td>${c.name}</td><td class="text-muted text-xs">${c.post}</td>
+          <td>${badge(c.status)}</td>
+          <td class="right">${c.posted} / ${c.total}</td>
+          <td class="right" style="color: var(--warning)">${c.skipped}</td>
+          <td class="right" style="font-weight: 600">${c.pct}%</td>
+          <td class="right">${
+            c.status === 'running' ? '<button class="btn btn-ghost btn-sm">Pauza</button>' :
+            c.status === 'paused' ? '<button class="btn btn-primary btn-sm">Wznów</button>' :
+            c.status === 'draft' || c.status === 'scheduled' ? '<button class="btn btn-primary btn-sm">Start</button>' :
+            '<span class="text-muted text-xs">—</span>'
+          }</td>
+        </tr>`).join('');
       };
 
-      renderers.analytics = () => {
-        // Per-day bar chart
+      R.analytics = () => {
         const days = [12, 18, 24, 31, 22, 8, 14, 28, 35, 41, 38, 52, 47, 73];
-        const max = Math.max(...days);
-        document.getElementById('chart-perday').innerHTML = days.map(v => `
-          <div class="flex-1 flex flex-col items-center justify-end gap-1 group cursor-pointer">
-            <div class="text-[10px] text-muted opacity-0 group-hover:opacity-100">${v}</div>
-            <div class="w-full bg-accent rounded-t" style="height: ${(v/max)*100}%; min-height: 4px;"></div>
-          </div>
-        `).join('');
-        document.getElementById('chart-perday-labels').innerHTML = ['Pn','Wt','Śr','Cz','Pt','So','Nd','Pn','Wt','Śr','Cz','Pt','So','Nd'].map(d => `<span class="flex-1 text-center">${d}</span>`).join('');
+        const dmax = Math.max(...days);
+        document.getElementById('chart-perday').innerHTML = days.map((v) =>
+          `<div class="bar" style="height: ${(v / dmax) * 100}%" title="${v} postów"></div>`
+        ).join('');
+        document.getElementById('chart-perday-labels').innerHTML = ['Pn','Wt','Śr','Cz','Pt','So','Nd','Pn','Wt','Śr','Cz','Pt','So','Nd'].map((d) => `<span>${d}</span>`).join('');
 
-        // Hours
         const hours = [0,0,0,0,1,2,4,8,14,22,28,31,29,26,24,28,32,38,34,22,12,6,2,1];
-        const hMax = Math.max(...hours);
-        document.getElementById('chart-hours').innerHTML = hours.map(v => `
-          <div class="flex-1 bg-accent rounded-t" style="height: ${(v/hMax)*100}%; min-height: 2px;" title="${v} postów"></div>
-        `).join('');
+        const hmax = Math.max(...hours);
+        document.getElementById('chart-hours').innerHTML = hours.map((v) =>
+          `<div class="bar" style="height: ${(v / hmax) * 100}%" title="${v} postów"></div>`
+        ).join('');
 
-        document.getElementById('top-groups').innerHTML = TOP_GROUPS.map(g => `
-          <div class="flex items-center justify-between border-b border-border pb-2 last:border-0">
-            <div class="flex-1 truncate pr-3">${g.name}</div>
-            <div class="text-muted text-xs mr-3">${g.posted}/${g.attempts}</div>
-            <div class="font-semibold ${g.pct >= 90 ? 'text-green' : g.pct >= 70 ? 'text-yellow' : 'text-red'}">${g.pct}%</div>
+        document.getElementById('top-groups').innerHTML = TOP_GROUPS.map((g) => `
+          <div class="row-between" style="padding: 6px 0; border-bottom: 1px solid var(--border)">
+            <div class="flex-1 truncate" style="padding-right: 12px">${g.name}</div>
+            <div class="text-muted text-xs" style="margin-right: 12px">${g.posted}/${g.attempts}</div>
+            <div style="font-weight: 600; color: ${g.pct >= 90 ? 'var(--success)' : g.pct >= 70 ? 'var(--warning)' : 'var(--danger)'}">${g.pct}%</div>
           </div>
         `).join('');
 
-        document.getElementById('top-errors').innerHTML = ERRORS.map(e => `
-          <div class="flex items-center justify-between border-b border-border pb-2 last:border-0">
-            <code class="text-xs">${e.code}</code>
-            <span class="text-muted">${e.count}×</span>
+        document.getElementById('top-errors').innerHTML = ERRORS.map((e) => `
+          <div class="row-between" style="padding: 6px 0; border-bottom: 1px solid var(--border)">
+            <code>${e.code}</code><span class="text-muted">${e.count}×</span>
           </div>
         `).join('');
       };
 
-      // ============== AI GENERATOR (mock) ==============
+      // ====== AI MOCK ======
       function mockGenerate() {
         const type = document.getElementById('ai-type').value;
-        const framework = document.getElementById('ai-framework').value;
-        const audience = document.getElementById('ai-audience').value || '[audience nieuzupełnione]';
-        const brand = document.getElementById('ai-brand-name').value || 'Twoja firma';
-        const offer = document.getElementById('ai-offer').value || 'oferty';
         const region = document.getElementById('ai-region').value || 'okolicy';
         const budget = document.getElementById('ai-budget').value || '';
-        const cta = document.getElementById('ai-cta').value || 'Pisz w wiadomości, oddzwaniam dziś';
+        const offer = (document.getElementById('ai-offer').value || 'naszej ofercie').split('.')[0].slice(0, 120);
+        const cta = document.getElementById('ai-cta').value || 'Pisz w wiadomości, oddzwaniam';
         const contact = document.getElementById('ai-contact').value || '';
 
-        const offerShort = offer.split('.')[0].slice(0, 120);
-
         const variants = type === 'job' ? [
-          // PAS
-          `Szukam u nas w ${region} osoby do roboty.\n\n${offerShort}.${budget ? ' Stawka ' + budget + '.' : ''} Dwie zmiany, hala B na Powstańców 12. Mam też premię 500/m za wieczorówki.\n\nLudzie odpadają zwykle na "a gdzie to dokładnie" - więc piszę od razu: 5 min od przystanku autobusu 197.\n\n${cta}.${contact ? ' ' + contact : ''}`,
-          // AIDA
-          `Hej grupa ${region}! 👋\n\n${offerShort}.\n\nU nas konkretnie: ${budget || 'stawka uczciwa'}, decyzja w 24h od rozmowy, hala 5 min od przystanku. Bez ściemy o "konkurencyjnym wynagrodzeniu".\n\nKto się odzywa dziś, dzwonimy jeszcze przed weekendem. ${cta}.`,
-          // BAB
-          `Trzy lata temu Marek dojeżdżał 1h 20 min do roboty. Teraz robi u nas w ${region}, 12 min od domu.\n\n${offerShort}.${budget ? ' ' + budget + ' netto + premia.' : ''}\n\nNie obiecuję "pracy marzeń". Obiecuję konkret: 5 min od autobusu, ekipa 8 osób, brygadzista co tłumaczy raz a porządnie.\n\n${cta}.`,
+          `Szukam u nas w ${region} osoby do roboty.\n\n${offer}.${budget ? ' Stawka ' + budget + '.' : ''} Dwie zmiany, hala B na Powstańców 12. Mam też premię 500/m za wieczorówki.\n\nLudzie odpadają zwykle na "a gdzie to dokładnie" - więc piszę od razu: 5 min od przystanku autobusu 197.\n\n${cta}.${contact ? ' ' + contact : ''}`,
+          `Hej grupa ${region}!\n\n${offer}.\n\nU nas konkretnie: ${budget || 'stawka uczciwa'}, decyzja w 24h od rozmowy, hala 5 min od przystanku. Bez ściemy o "konkurencyjnym wynagrodzeniu".\n\nKto się odzywa dziś, dzwonimy jeszcze przed weekendem. ${cta}.`,
+          `Trzy lata temu Marek dojeżdżał 1h 20 min do roboty. Teraz robi u nas w ${region}, 12 min od domu.\n\n${offer}.${budget ? ' ' + budget + ' netto + premia.' : ''}\n\nNie obiecuję "pracy marzeń". Obiecuję konkret: 5 min od autobusu, ekipa 8 osób, brygadzista co tłumaczy raz a porządnie.\n\n${cta}.`,
         ] : [
-          // SALES PAS
-          `Klima w samochodzie dmucha ciepłe powietrze a lipiec już za rogiem? Tyle.\n\n${offerShort}.${budget ? ' ' + budget + ', wszystko w cenie.' : ''} Montujemy u Ciebie pod blokiem, w 4h, gwarancja 5 lat. Zostały 4 terminy w lipcu - serwisy w mieście są już zarobione.\n\n${cta}.${contact ? ' ' + contact : ''}`,
-          // SALES AIDA
-          `27 stopni w aucie o 8 rano i dopiero rośnie. ☀️\n\n${offerShort}. ${budget || 'Cena uczciwa'}, robota w 4h, 5 lat gwarancji. Jeździsz do roboty z dzieckiem - ważne.\n\n${cta}.`,
-          // SALES BAB
-          `Stara klima: 30 minut w korku w aucie z dzieckiem to tortura. Nowa: chłodno w 90 sekund.\n\n${offerShort}.\n\nMontaż 4h u Ciebie, gwarancja 5 lat. ${budget ? budget + ', bez dopłat.' : ''} ${cta}.`,
+          `Klima w samochodzie dmucha ciepłe powietrze a lipiec już za rogiem? Tyle.\n\n${offer}.${budget ? ' ' + budget + ', wszystko w cenie.' : ''} Montujemy u Ciebie pod blokiem, w 4h, gwarancja 5 lat. Zostały 4 terminy w lipcu - serwisy w mieście są już zarobione.\n\n${cta}.${contact ? ' ' + contact : ''}`,
+          `27 stopni w aucie o 8 rano i dopiero rośnie.\n\n${offer}. ${budget || 'Cena uczciwa'}, robota w 4h, 5 lat gwarancji. Jeździsz z dzieckiem - ważne.\n\n${cta}.`,
+          `Stara klima: 30 minut w korku w aucie z dzieckiem to tortura. Nowa: chłodno w 90 sekund.\n\n${offer}.\n\nMontaż 4h u Ciebie, gwarancja 5 lat. ${budget ? budget + ', bez dopłat.' : ''} ${cta}.`,
         ];
+        const scores = [87, 82, 91];
+        const warnings = [['em_dash: zamieniono 2x'], [], ['too_uniform_sentences: σ=2.1']];
 
-        const human = [87, 82, 91];
-        const warnings = [['em_dash: zamieniono 2× —'], [], ['too_uniform_sentences: σ=2.1 (warn)']];
+        document.getElementById('ai-result-placeholder').classList.add('hidden');
+        const r = document.getElementById('ai-result');
+        r.classList.remove('hidden');
+        document.getElementById('ai-result-meta').innerHTML = '<span class="pulse"></span>4.2s · 1240+680 tok · $0.0084';
 
-        const resultEl = document.getElementById('ai-result');
-        const placeholderEl = document.getElementById('ai-result-placeholder');
-        const meta = document.getElementById('ai-result-meta');
-
-        placeholderEl.classList.add('hidden');
-        resultEl.classList.remove('hidden');
-        meta.innerHTML = `<span class="text-green">●</span> 4.2s · Tokens: 1240+680 · Koszt: $0.0084 · 1× regenerate`;
-
-        resultEl.innerHTML = `
-          <div class="flex gap-2">
-            ${variants.map((_, i) => `
-              <button data-var="${i}" class="variant-tab flex-1 px-3 py-2 rounded-md text-sm border ${i===0 ? 'bg-accent border-accent text-white' : 'bg-card border-border'}">
-                Wariant ${i+1}<br><span class="text-xs opacity-75">human ${human[i]}/100</span>
-              </button>
-            `).join('')}
+        r.innerHTML = `
+          <div class="variant-tabs">
+            ${variants.map((_, i) => `<button data-var="${i}" class="variant-tab ${i === 0 ? 'active' : ''}">
+              Wariant ${i + 1}<span class="sub">human ${scores[i]}/100</span>
+            </button>`).join('')}
           </div>
           <div id="variant-content"></div>
         `;
 
-        function showVariant(i) {
+        function show(i) {
           const text = variants[i];
-          const score = human[i];
+          const score = scores[i];
           const warn = warnings[i];
 
-          // Compute live checks (z anti-AI filter logiki)
           const hasNumber = /\d/.test(text);
           const hasProper = /(?<=[^.!?]\s)[A-ZĄĆĘŁŃÓŚŹŻ][a-ząćęłńóśźż]+/.test(text);
           const hasEmDash = /—/.test(text);
-          const sentences = text.split(/[.!?]+/).map(s=>s.trim()).filter(Boolean);
-          const hasShort = sentences.some(s => s.split(/\s+/).length <= 5);
+          const sentences = text.split(/[.!?]+/).map((s) => s.trim()).filter(Boolean);
+          const hasShort = sentences.some((s) => s.split(/\s+/).length <= 5);
           const hasColloquial = /\b(daj znać|odzywaj|pisz|dm|tagnij|u nas|tu w|po sąsiedzku|domknąć|rekru|cv-k|lead|krótko mówiąc)\b/i.test(text);
-          const tooLong = text.length > 900;
 
           const checks = [
             { label: 'Konkretna liczba/kwota', ok: hasNumber },
@@ -704,1155 +954,142 @@
             { label: 'Brak em-dashy (—)', ok: !hasEmDash },
             { label: 'Krótkie zdanie (≤5 słów)', ok: hasShort },
             { label: 'Branżowy żargon / kolokwializm', ok: hasColloquial },
-            { label: `Długość ${text.length} < 900`, ok: !tooLong },
+            { label: 'Długość ' + text.length + ' < 900', ok: text.length < 900 },
           ];
+          const cls = score >= 75 ? 'good' : score >= 60 ? 'mid' : 'bad';
+          const lbl = score >= 75 ? '✓ brzmi jak człowiek' : score >= 60 ? '⚠ sprawdź checklist' : '✗ pachnie AI';
 
           document.getElementById('variant-content').innerHTML = `
-            <div class="bg-card border border-border rounded-lg p-4 mb-3">
-              <div class="flex items-center justify-between mb-3">
-                <div class="${score>=75?'text-green':score>=60?'text-yellow':'text-red'} font-semibold">
-                  Human score: ${score}/100 ${score>=75?'✓ brzmi jak człowiek':score>=60?'⚠ sprawdź checklist':'✗ pachnie AI'}
-                </div>
-                ${warn.length ? '<span class="badge bg-yellow/20 text-yellow">'+warn.length+' warn</span>' : '<span class="badge bg-green/20 text-green">clean</span>'}
+            <div class="card stack-sm" style="margin-top: 12px">
+              <div class="row-between">
+                <div class="human-score ${cls}">Human score: ${score}/100 ${lbl}</div>
+                ${warn.length ? '<span class="badge badge-warning">' + warn.length + ' warn</span>' : '<span class="badge badge-success">clean</span>'}
               </div>
-              <pre class="whitespace-pre-wrap mono text-sm bg-bg p-3 rounded border border-border">${text.replace(/</g,'&lt;')}</pre>
+              <pre class="post-preview">${text.replace(/</g, '&lt;')}</pre>
             </div>
 
-            <div class="bg-card border border-border rounded-lg p-4">
-              <div class="flex items-center justify-between mb-3">
-                <h3 class="font-semibold text-sm">Humanize checklist</h3>
-                <span class="text-xs text-muted">${checks.filter(c=>c.ok).length}/${checks.length}</span>
+            <div class="card stack-sm">
+              <div class="row-between">
+                <h3>Humanize checklist</h3>
+                <span class="text-xs text-muted">${checks.filter((c) => c.ok).length}/${checks.length}</span>
               </div>
-              <ul class="space-y-1.5 text-sm">
-                ${checks.map(c => `
-                  <li class="flex gap-2">
-                    <span class="${c.ok?'checkmark':'crossmark'}">${c.ok?'✓':'○'}</span>
-                    <span class="${c.ok?'':'text-muted'}">${c.label}</span>
-                  </li>
-                `).join('')}
+              <ul class="checklist">
+                ${checks.map((c) => `<li>
+                  <span class="${c.ok ? 'pass' : 'fail'}">${c.ok ? '✓' : '○'}</span>
+                  <span class="${c.ok ? '' : 'item-fail'}">${c.label}</span>
+                </li>`).join('')}
               </ul>
             </div>
 
-            ${warn.length ? `
-              <div class="bg-yellow/10 border border-yellow/30 text-yellow/90 rounded-md p-3 text-sm mt-3">
-                <strong>Anti-AI filter:</strong> ${warn.join(', ')}
-              </div>
-            ` : ''}
+            ${warn.length ? `<div style="background: var(--warning-soft); border: 1px solid var(--warning); border-radius: var(--r-sm); padding: 12px; font-size: 13px; color: var(--warning)">
+              <strong>Anti-AI filter:</strong> ${warn.join(', ')}
+            </div>` : ''}
 
-            <div class="flex gap-2 mt-3">
-              <button class="flex-1 bg-accent hover:bg-accentHover px-4 py-2 rounded-md text-sm font-medium">Zapisz w bibliotece</button>
-              <button class="border border-border px-4 py-2 rounded-md text-sm hover:bg-cardHover">Regeneruj</button>
+            <div class="row">
+              <button class="btn btn-primary flex-1">Zapisz w bibliotece</button>
+              <button class="btn btn-secondary">Regeneruj</button>
             </div>
           `;
         }
 
-        showVariant(0);
-        resultEl.querySelectorAll('.variant-tab').forEach(btn => {
-          btn.addEventListener('click', (e) => {
-            resultEl.querySelectorAll('.variant-tab').forEach(b => b.className = 'variant-tab flex-1 px-3 py-2 rounded-md text-sm border bg-card border-border');
-            e.currentTarget.className = 'variant-tab flex-1 px-3 py-2 rounded-md text-sm border bg-accent border-accent text-white';
-            showVariant(Number(e.currentTarget.dataset.var));
+        show(0);
+        r.querySelectorAll('.variant-tab').forEach((b) => {
+          b.addEventListener('click', (e) => {
+            r.querySelectorAll('.variant-tab').forEach((x) => x.classList.remove('active'));
+            e.currentTarget.classList.add('active');
+            show(Number(e.currentTarget.dataset.var));
           });
         });
       }
 
-      renderers.ai = () => {
-        // Wstępne dane przykładowe
-        document.getElementById('ai-audience').value = 'mężczyźni 25-50, spawacze, mieszkańcy Pruszkowa i Warszawy zachodniej';
+      R.ai = () => {
+        document.getElementById('ai-audience').value = 'mężczyźni 25-50, spawacze z Pruszkowa i Warszawy zachodniej';
         document.getElementById('ai-brand-name').value = 'Stalmet Pruszków';
         document.getElementById('ai-brand-oneliner').value = 'Zakład spawalniczy z 14-osobową ekipą, hala na Powstańców 12';
         document.getElementById('ai-brand-usp').value = 'Dwie zmiany, bez weekendów\nStawka 7 200+ premia\nBrygadzista co tłumaczy raz';
         document.getElementById('ai-offer').value = 'szukamy spawacza MIG/MAG, hala Bemowo Powstańców 12, dwie zmiany, stawka od 7 200 netto, premia 500/m za wieczorówki, dojazd autobusem 197';
-        document.getElementById('ai-region').value = 'Warszawa Bemowo / Pruszków';
+        document.getElementById('ai-region').value = 'Warszawa Bemowo';
         document.getElementById('ai-budget').value = '7 200 PLN netto + premia';
         document.getElementById('ai-contact').value = 'tel. 555-123-456';
-        document.getElementById('ai-cta').value = 'Zostaw numer w komentarzu, oddzwaniam jeszcze dziś';
+        document.getElementById('ai-cta').value = 'Zostaw numer w komentarzu, oddzwaniam dziś';
 
         document.getElementById('ai-generate-btn').addEventListener('click', () => {
-          const btn = document.getElementById('ai-generate-btn');
-          btn.disabled = true;
-          btn.textContent = '⏳ Claude generuje... (Sonnet 4.6)';
+          const b = document.getElementById('ai-generate-btn');
+          b.disabled = true;
+          b.textContent = '⏳ Claude generuje...';
           setTimeout(() => {
             mockGenerate();
-            btn.disabled = false;
-            btn.innerHTML = '⚡ Wygeneruj kolejne 3 warianty';
-          }, 1800);
+            b.disabled = false;
+            b.innerHTML = '⚡ Wygeneruj kolejne 3 warianty';
+          }, 1400);
         });
       };
 
-      
-      // ============== SUPABASE — REAL CONNECTION ==============
-      const INIT_SQL = `-- =============================================================================
--- 0001_init — extensions, helpery, common triggers
--- =============================================================================
-
-create extension if not exists pgcrypto;
-create extension if not exists pg_cron with schema extensions;
-
--- -----------------------------------------------------------------------------
--- updated_at trigger
--- -----------------------------------------------------------------------------
-create or replace function public.set_updated_at()
-returns trigger
-language plpgsql
-as $
-begin
-  new.updated_at = now();
-  return new;
-end;
-$;
-
--- -----------------------------------------------------------------------------
--- Helper RLS: is_org_member(_org_id) — czy zalogowany user należy do org
--- -----------------------------------------------------------------------------
-create or replace function public.is_org_member(_org_id uuid)
-returns boolean
-language sql
-stable
-security definer
-set search_path = public
-as $
-  select exists (
-    select 1
-    from public.org_members
-    where org_id = _org_id
-      and user_id = auth.uid()
-      and accepted_at is not null
-  );
-$;
-
--- -----------------------------------------------------------------------------
--- Helper RLS: is_org_role(_org_id, _role) — czy user ma co najmniej daną rolę
--- Hierarchia: owner > admin > editor > viewer
--- -----------------------------------------------------------------------------
-create or replace function public.is_org_role(_org_id uuid, _min_role text)
-returns boolean
-language sql
-stable
-security definer
-set search_path = public
-as $
-  with role_rank as (
-    select case _min_role
-      when 'viewer' then 1
-      when 'editor' then 2
-      when 'admin'  then 3
-      when 'owner'  then 4
-      else 99
-    end as min_rank
-  ),
-  user_rank as (
-    select case role
-      when 'viewer' then 1
-      when 'editor' then 2
-      when 'admin'  then 3
-      when 'owner'  then 4
-      else 0
-    end as user_rank
-    from public.org_members
-    where org_id = _org_id and user_id = auth.uid() and accepted_at is not null
-  )
-  select coalesce((select user_rank from user_rank), 0) >= (select min_rank from role_rank);
-$;
-
-comment on function public.is_org_member is 'RLS helper — czy zalogowany user należy do organizacji.';
-comment on function public.is_org_role is 'RLS helper — czy zalogowany user ma rolę >= _min_role w organizacji.';
--- =============================================================================
--- 0002_orgs_members — organizations, profiles, org_members
--- =============================================================================
-
--- -----------------------------------------------------------------------------
--- organizations (tenant root)
--- -----------------------------------------------------------------------------
-create table public.organizations (
-  id uuid primary key default gen_random_uuid(),
-  name text not null,
-  slug text not null unique,
-  plan text not null default 'free',
-  created_at timestamptz not null default now(),
-  updated_at timestamptz not null default now()
-);
-
-create trigger trg_organizations_updated
-before update on public.organizations
-for each row execute function public.set_updated_at();
-
-alter table public.organizations enable row level security;
-
--- -----------------------------------------------------------------------------
--- profiles (1:1 z auth.users)
--- -----------------------------------------------------------------------------
-create table public.profiles (
-  id uuid primary key references auth.users(id) on delete cascade,
-  full_name text,
-  avatar_url text,
-  locale text not null default 'pl',
-  created_at timestamptz not null default now(),
-  updated_at timestamptz not null default now()
-);
-
-create trigger trg_profiles_updated
-before update on public.profiles
-for each row execute function public.set_updated_at();
-
-alter table public.profiles enable row level security;
-
-create policy "profile_self_select" on public.profiles
-  for select using (id = auth.uid());
-
-create policy "profile_self_update" on public.profiles
-  for update using (id = auth.uid()) with check (id = auth.uid());
-
-create policy "profile_self_insert" on public.profiles
-  for insert with check (id = auth.uid());
-
--- Auto-create profile po signup
-create or replace function public.handle_new_user()
-returns trigger
-language plpgsql
-security definer
-set search_path = public
-as $
-begin
-  insert into public.profiles (id, full_name)
-  values (new.id, coalesce(new.raw_user_meta_data->>'full_name', new.email))
-  on conflict (id) do nothing;
-  return new;
-end;
-$;
-
-create trigger on_auth_user_created
-after insert on auth.users
-for each row execute function public.handle_new_user();
-
--- -----------------------------------------------------------------------------
--- org_members
--- -----------------------------------------------------------------------------
-create table public.org_members (
-  id uuid primary key default gen_random_uuid(),
-  org_id uuid not null references public.organizations(id) on delete cascade,
-  user_id uuid references auth.users(id) on delete cascade,
-  invited_email text,
-  role text not null check (role in ('owner','admin','editor','viewer')),
-  accepted_at timestamptz,
-  invite_token uuid default gen_random_uuid(),
-  created_at timestamptz not null default now(),
-  updated_at timestamptz not null default now(),
-  unique (org_id, user_id),
-  check (user_id is not null or invited_email is not null)
-);
-
-create index idx_org_members_user on public.org_members(user_id);
-create index idx_org_members_org on public.org_members(org_id);
-create index idx_org_members_invite_token on public.org_members(invite_token) where accepted_at is null;
-
-create trigger trg_org_members_updated
-before update on public.org_members
-for each row execute function public.set_updated_at();
-
-alter table public.org_members enable row level security;
-
-create policy "org_members_self_select" on public.org_members
-  for select using (
-    user_id = auth.uid()
-    or public.is_org_member(org_id)
-  );
-
-create policy "org_members_admin_insert" on public.org_members
-  for insert with check (public.is_org_role(org_id, 'admin'));
-
-create policy "org_members_admin_update" on public.org_members
-  for update using (public.is_org_role(org_id, 'admin'));
-
-create policy "org_members_admin_delete" on public.org_members
-  for delete using (public.is_org_role(org_id, 'admin'));
-
--- -----------------------------------------------------------------------------
--- organizations RLS (po stworzeniu org_members)
--- -----------------------------------------------------------------------------
-create policy "org_member_select" on public.organizations
-  for select using (public.is_org_member(id));
-
-create policy "org_admin_update" on public.organizations
-  for update using (public.is_org_role(id, 'admin'));
-
-create policy "org_authenticated_insert" on public.organizations
-  for insert with check (auth.uid() is not null);
-
--- Trigger: po stworzeniu organizacji, jej autor automatycznie staje się owner
-create or replace function public.handle_new_organization()
-returns trigger
-language plpgsql
-security definer
-set search_path = public
-as $
-begin
-  insert into public.org_members (org_id, user_id, role, accepted_at)
-  values (new.id, auth.uid(), 'owner', now())
-  on conflict do nothing;
-  return new;
-end;
-$;
-
-create trigger on_org_created
-after insert on public.organizations
-for each row execute function public.handle_new_organization();
-
-comment on table public.organizations is 'Tenant root. Plan placeholder pod billing (free / starter / pro / team).';
-comment on table public.org_members is 'Członkowie organizacji + zaproszenia. invite_token używany dla niezaakceptowanych zaproszeń.';
--- =============================================================================
--- 0003_posts_media — posts, post_media + storage bucket
--- =============================================================================
-
-create table public.posts (
-  id uuid primary key default gen_random_uuid(),
-  org_id uuid not null references public.organizations(id) on delete cascade,
-  author_user_id uuid references auth.users(id) on delete set null,
-  type text not null check (type in ('job','sales','other')),
-  title text not null,
-  body_md text not null,
-  framework text check (framework in ('AIDA','PAS','BAB','FAB','4U','PASTOR')),
-  variants jsonb not null default '[]'::jsonb,
-  ai_generation_id uuid,
-  status text not null default 'draft' check (status in ('draft','ready','archived')),
-  created_at timestamptz not null default now(),
-  updated_at timestamptz not null default now()
-);
-
-create index idx_posts_org_status on public.posts(org_id, status);
-create index idx_posts_search on public.posts using gin (to_tsvector('simple', coalesce(title,'') || ' ' || body_md));
-
-create trigger trg_posts_updated
-before update on public.posts
-for each row execute function public.set_updated_at();
-
-alter table public.posts enable row level security;
-
-create policy "posts_org_select" on public.posts
-  for select using (public.is_org_member(org_id));
-
-create policy "posts_editor_insert" on public.posts
-  for insert with check (public.is_org_role(org_id, 'editor'));
-
-create policy "posts_editor_update" on public.posts
-  for update using (public.is_org_role(org_id, 'editor'));
-
-create policy "posts_admin_delete" on public.posts
-  for delete using (public.is_org_role(org_id, 'admin'));
-
--- -----------------------------------------------------------------------------
--- post_media
--- -----------------------------------------------------------------------------
-create table public.post_media (
-  id uuid primary key default gen_random_uuid(),
-  org_id uuid not null references public.organizations(id) on delete cascade,
-  post_id uuid not null references public.posts(id) on delete cascade,
-  storage_path text not null,
-  mime text,
-  width int,
-  height int,
-  bytes int,
-  position int not null default 0,
-  created_at timestamptz not null default now()
-);
-
-create index idx_post_media_post on public.post_media(post_id, position);
-
-alter table public.post_media enable row level security;
-
-create policy "post_media_org_select" on public.post_media
-  for select using (public.is_org_member(org_id));
-
-create policy "post_media_editor_insert" on public.post_media
-  for insert with check (public.is_org_role(org_id, 'editor'));
-
-create policy "post_media_editor_update" on public.post_media
-  for update using (public.is_org_role(org_id, 'editor'));
-
-create policy "post_media_editor_delete" on public.post_media
-  for delete using (public.is_org_role(org_id, 'editor'));
-
--- -----------------------------------------------------------------------------
--- Storage bucket: post-media
--- Layout: post-media/<org_id>/<post_id>/<filename>
--- -----------------------------------------------------------------------------
-insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
-values (
-  'post-media',
-  'post-media',
-  false,
-  8388608, -- 8 MiB
-  array['image/jpeg','image/png','image/webp','image/gif']
-)
-on conflict (id) do nothing;
-
-create policy "post_media_storage_select"
-on storage.objects for select
-using (
-  bucket_id = 'post-media'
-  and public.is_org_member((storage.foldername(name))[1]::uuid)
-);
-
-create policy "post_media_storage_insert"
-on storage.objects for insert
-with check (
-  bucket_id = 'post-media'
-  and public.is_org_role((storage.foldername(name))[1]::uuid, 'editor')
-);
-
-create policy "post_media_storage_update"
-on storage.objects for update
-using (
-  bucket_id = 'post-media'
-  and public.is_org_role((storage.foldername(name))[1]::uuid, 'editor')
-);
-
-create policy "post_media_storage_delete"
-on storage.objects for delete
-using (
-  bucket_id = 'post-media'
-  and public.is_org_role((storage.foldername(name))[1]::uuid, 'editor')
-);
-
-comment on table public.posts is 'Biblioteka treści — kreatywa do późniejszego wrzucenia w kampanie. Wariancja A/B w variants jsonb.';
-comment on table public.post_media is 'Obrazy/media dla posta. Storage layout: post-media/<org_id>/<post_id>/<filename>.';
--- =============================================================================
--- 0004_groups — fb_accounts, groups, extension_devices
--- =============================================================================
-
--- -----------------------------------------------------------------------------
--- fb_accounts — logiczna reprezentacja konta FB (TYLKO etykieta!)
--- Nigdy nie przechowujemy loginu/hasła. Cookie sesji jest w przeglądarce usera.
--- -----------------------------------------------------------------------------
-create table public.fb_accounts (
-  id uuid primary key default gen_random_uuid(),
-  org_id uuid not null references public.organizations(id) on delete cascade,
-  owner_user_id uuid not null references auth.users(id) on delete cascade,
-  fb_user_label text not null,
-  extension_fingerprint text,
-  last_seen_at timestamptz,
-  created_at timestamptz not null default now(),
-  updated_at timestamptz not null default now()
-);
-
-create index idx_fb_accounts_org on public.fb_accounts(org_id);
-create unique index idx_fb_accounts_owner_label on public.fb_accounts(owner_user_id, fb_user_label);
-
-create trigger trg_fb_accounts_updated
-before update on public.fb_accounts
-for each row execute function public.set_updated_at();
-
-alter table public.fb_accounts enable row level security;
-
-create policy "fb_accounts_org_select" on public.fb_accounts
-  for select using (public.is_org_member(org_id));
-
-create policy "fb_accounts_owner_modify" on public.fb_accounts
-  for all using (owner_user_id = auth.uid()) with check (owner_user_id = auth.uid());
-
--- -----------------------------------------------------------------------------
--- extension_devices — para (user, urządzenie). Pozwala revoke konkretnego device.
--- -----------------------------------------------------------------------------
-create table public.extension_devices (
-  id uuid primary key default gen_random_uuid(),
-  org_id uuid not null references public.organizations(id) on delete cascade,
-  user_id uuid not null references auth.users(id) on delete cascade,
-  device_id text not null unique,
-  version text,
-  ua text,
-  last_seen_at timestamptz,
-  revoked_at timestamptz,
-  created_at timestamptz not null default now()
-);
-
-create index idx_extension_devices_user on public.extension_devices(user_id);
-create index idx_extension_devices_org on public.extension_devices(org_id);
-
-alter table public.extension_devices enable row level security;
-
-create policy "extension_devices_owner_all" on public.extension_devices
-  for all using (user_id = auth.uid()) with check (user_id = auth.uid());
-
-create policy "extension_devices_admin_view" on public.extension_devices
-  for select using (public.is_org_role(org_id, 'admin'));
-
--- -----------------------------------------------------------------------------
--- groups — grupy FB importowane przez extension
--- -----------------------------------------------------------------------------
-create table public.groups (
-  id uuid primary key default gen_random_uuid(),
-  org_id uuid not null references public.organizations(id) on delete cascade,
-  fb_account_id uuid not null references public.fb_accounts(id) on delete cascade,
-  fb_group_id text not null,
-  name text not null,
-  url text not null,
-  members_count int,
-  privacy text check (privacy in ('public','private','unknown')) default 'unknown',
-  post_approval_required boolean not null default false,
-  category text,
-  tags text[] not null default '{}'::text[],
-  cooldown_minutes int not null default 240 check (cooldown_minutes >= 0),
-  daily_cap int not null default 2 check (daily_cap >= 0),
-  last_posted_at timestamptz,
-  is_active boolean not null default true,
-  created_at timestamptz not null default now(),
-  updated_at timestamptz not null default now(),
-  unique (fb_account_id, fb_group_id)
-);
-
-create index idx_groups_org on public.groups(org_id);
-create index idx_groups_last_posted on public.groups(last_posted_at);
-create index idx_groups_tags on public.groups using gin (tags);
-create index idx_groups_active on public.groups(org_id, is_active) where is_active = true;
-
-create trigger trg_groups_updated
-before update on public.groups
-for each row execute function public.set_updated_at();
-
-alter table public.groups enable row level security;
-
-create policy "groups_org_select" on public.groups
-  for select using (public.is_org_member(org_id));
-
-create policy "groups_editor_insert" on public.groups
-  for insert with check (public.is_org_role(org_id, 'editor'));
-
-create policy "groups_editor_update" on public.groups
-  for update using (public.is_org_role(org_id, 'editor'));
-
-create policy "groups_admin_delete" on public.groups
-  for delete using (public.is_org_role(org_id, 'admin'));
-
-comment on table public.fb_accounts is 'Logiczne konto FB usera. Tylko etykieta — sesja FB żyje w cookie przeglądarki, nigdy w naszej bazie.';
-comment on table public.groups is 'Grupy FB importowane przez rozszerzenie z facebook.com/groups/joins/. Cooldown 4h default chroni przed flagowaniem.';
-comment on table public.extension_devices is 'Para (user, device). Revoke przez revoked_at — Edge Function odrzuca token z revoked device.';
--- =============================================================================
--- 0005_campaigns — campaigns, campaign_targets, schedules + RPC next_target
--- =============================================================================
-
-create table public.campaigns (
-  id uuid primary key default gen_random_uuid(),
-  org_id uuid not null references public.organizations(id) on delete cascade,
-  name text not null,
-  post_id uuid not null references public.posts(id) on delete restrict,
-  status text not null default 'draft' check (status in ('draft','scheduled','running','paused','done')),
-  randomize_order boolean not null default true,
-  min_delay_seconds int not null default 90 check (min_delay_seconds >= 30),
-  max_delay_seconds int not null default 240 check (max_delay_seconds >= min_delay_seconds),
-  daily_cap_per_account int not null default 25 check (daily_cap_per_account >= 1),
-  start_at timestamptz,
-  end_at timestamptz,
-  created_by uuid references auth.users(id) on delete set null,
-  created_at timestamptz not null default now(),
-  updated_at timestamptz not null default now()
-);
-
-create index idx_campaigns_org_status on public.campaigns(org_id, status);
-
-create trigger trg_campaigns_updated
-before update on public.campaigns
-for each row execute function public.set_updated_at();
-
-alter table public.campaigns enable row level security;
-
-create policy "campaigns_org_select" on public.campaigns
-  for select using (public.is_org_member(org_id));
-
-create policy "campaigns_editor_insert" on public.campaigns
-  for insert with check (public.is_org_role(org_id, 'editor'));
-
-create policy "campaigns_editor_update" on public.campaigns
-  for update using (public.is_org_role(org_id, 'editor'));
-
-create policy "campaigns_admin_delete" on public.campaigns
-  for delete using (public.is_org_role(org_id, 'admin'));
-
--- -----------------------------------------------------------------------------
--- campaign_targets — materializacja post→grupa
--- -----------------------------------------------------------------------------
-create table public.campaign_targets (
-  id uuid primary key default gen_random_uuid(),
-  org_id uuid not null references public.organizations(id) on delete cascade,
-  campaign_id uuid not null references public.campaigns(id) on delete cascade,
-  group_id uuid not null references public.groups(id) on delete cascade,
-  status text not null default 'pending' check (status in ('pending','queued','in_progress','posted','skipped','failed')),
-  scheduled_at timestamptz,
-  attempted_at timestamptz,
-  posted_at timestamptz,
-  error_code text,
-  error_message text,
-  fb_post_url text,
-  content_hash text,
-  rendered_text text,
-  variator_changes text[],
-  created_at timestamptz not null default now(),
-  updated_at timestamptz not null default now(),
-  unique (campaign_id, group_id)
-);
-
-create index idx_targets_status_sched on public.campaign_targets(status, scheduled_at);
-create index idx_targets_group_posted on public.campaign_targets(group_id, posted_at desc);
-create index idx_targets_campaign_status on public.campaign_targets(campaign_id, status);
-
-create trigger trg_campaign_targets_updated
-before update on public.campaign_targets
-for each row execute function public.set_updated_at();
-
-alter table public.campaign_targets enable row level security;
-
-create policy "campaign_targets_org_select" on public.campaign_targets
-  for select using (public.is_org_member(org_id));
-
-create policy "campaign_targets_editor_modify" on public.campaign_targets
-  for all using (public.is_org_role(org_id, 'editor'))
-  with check (public.is_org_role(org_id, 'editor'));
-
--- -----------------------------------------------------------------------------
--- enforce_cooldown — trigger BEFORE UPDATE to in_progress
--- Jeśli grupa była postowana za niedawno → ustaw status = 'skipped'
--- -----------------------------------------------------------------------------
-create or replace function public.enforce_cooldown()
-returns trigger
-language plpgsql
-security definer
-set search_path = public
-as $
-declare
-  v_last_posted timestamptz;
-  v_cooldown int;
-  v_daily_count int;
-  v_daily_cap int;
-begin
-  if new.status <> 'in_progress' or old.status = 'in_progress' then
-    return new;
-  end if;
-
-  select last_posted_at, cooldown_minutes, daily_cap
-    into v_last_posted, v_cooldown, v_daily_cap
-  from public.groups
-  where id = new.group_id;
-
-  if v_last_posted is not null
-     and v_last_posted > now() - make_interval(mins => v_cooldown) then
-    new.status := 'skipped';
-    new.error_code := 'cooldown';
-    new.error_message := format('Grupa była postowana %s temu (cooldown: %s min).',
-      age(now(), v_last_posted), v_cooldown);
-    return new;
-  end if;
-
-  select count(*)
-    into v_daily_count
-  from public.campaign_targets
-  where group_id = new.group_id
-    and posted_at >= date_trunc('day', now())
-    and status = 'posted';
-
-  if v_daily_count >= v_daily_cap then
-    new.status := 'skipped';
-    new.error_code := 'daily_cap';
-    new.error_message := format('Daily cap %s osiągnięty dla tej grupy.', v_daily_cap);
-    return new;
-  end if;
-
-  new.attempted_at := now();
-  return new;
-end;
-$;
-
-create trigger trg_enforce_cooldown
-before update on public.campaign_targets
-for each row execute function public.enforce_cooldown();
-
--- -----------------------------------------------------------------------------
--- Po pomyślnym posted → update groups.last_posted_at
--- -----------------------------------------------------------------------------
-create or replace function public.update_group_last_posted()
-returns trigger
-language plpgsql
-security definer
-set search_path = public
-as $
-begin
-  if new.status = 'posted' and (old.status is distinct from 'posted') then
-    new.posted_at := coalesce(new.posted_at, now());
-    update public.groups
-       set last_posted_at = new.posted_at
-     where id = new.group_id;
-  end if;
-  return new;
-end;
-$;
-
-create trigger trg_update_group_last_posted
-before update on public.campaign_targets
-for each row execute function public.update_group_last_posted();
-
--- -----------------------------------------------------------------------------
--- RPC: next_target_for_device(_device_id text) → uuid
--- Bierze pod uwagę: revoked, org membership, status running, cooldown, daily_cap,
--- scheduled_at, randomize_order.
--- -----------------------------------------------------------------------------
-create or replace function public.next_target_for_device(_device_id text)
-returns table (
-  target_id uuid,
-  group_id uuid,
-  campaign_id uuid,
-  fb_group_id text,
-  group_url text,
-  rendered_text text,
-  delay_seconds int
-)
-language plpgsql
-security definer
-set search_path = public
-as $
-declare
-  v_user uuid;
-  v_org uuid;
-begin
-  select user_id, org_id into v_user, v_org
-  from public.extension_devices
-  where device_id = _device_id
-    and revoked_at is null;
-
-  if v_user is null then
-    return;
-  end if;
-
-  return query
-  with eligible as (
-    select t.id as target_id,
-           t.group_id,
-           t.campaign_id,
-           g.fb_group_id,
-           g.url as group_url,
-           t.rendered_text,
-           c.min_delay_seconds,
-           c.max_delay_seconds,
-           c.randomize_order
-    from public.campaign_targets t
-    join public.campaigns c on c.id = t.campaign_id
-    join public.groups g on g.id = t.group_id
-    where t.org_id = v_org
-      and t.status in ('pending','queued')
-      and c.status = 'running'
-      and (c.start_at is null or c.start_at <= now())
-      and (c.end_at is null or c.end_at > now())
-      and (t.scheduled_at is null or t.scheduled_at <= now())
-      and g.is_active = true
-      and (
-        g.last_posted_at is null
-        or g.last_posted_at < now() - make_interval(mins => g.cooldown_minutes)
-      )
-  ),
-  picked as (
-    select * from eligible
-    order by case when randomize_order then random() else 0 end, target_id
-    limit 1
-  )
-  select p.target_id,
-         p.group_id,
-         p.campaign_id,
-         p.fb_group_id,
-         p.group_url,
-         p.rendered_text,
-         (p.min_delay_seconds + floor(random() * (p.max_delay_seconds - p.min_delay_seconds + 1)))::int as delay_seconds
-  from picked p;
-end;
-$;
-
-grant execute on function public.next_target_for_device(text) to authenticated;
-
--- -----------------------------------------------------------------------------
--- schedules — wzorce cron dla kampanii (placeholder pod harmonogram)
--- -----------------------------------------------------------------------------
-create table public.schedules (
-  id uuid primary key default gen_random_uuid(),
-  org_id uuid not null references public.organizations(id) on delete cascade,
-  campaign_id uuid not null references public.campaigns(id) on delete cascade,
-  cron_expr text not null,
-  timezone text not null default 'Europe/Warsaw',
-  is_active boolean not null default true,
-  created_at timestamptz not null default now(),
-  updated_at timestamptz not null default now()
-);
-
-create index idx_schedules_org on public.schedules(org_id);
-
-create trigger trg_schedules_updated
-before update on public.schedules
-for each row execute function public.set_updated_at();
-
-alter table public.schedules enable row level security;
-
-create policy "schedules_org_select" on public.schedules
-  for select using (public.is_org_member(org_id));
-
-create policy "schedules_editor_all" on public.schedules
-  for all using (public.is_org_role(org_id, 'editor'))
-  with check (public.is_org_role(org_id, 'editor'));
-
-comment on table public.campaign_targets is 'Materializacja kampania→grupa. Trigger enforce_cooldown automatycznie przepuszcza skipped jeśli za szybko po ostatnim poście.';
-comment on function public.next_target_for_device is 'Extension RPC — bierze następny target do postowania, respektuje cooldown, daily_cap, scheduled_at i randomize_order.';
--- =============================================================================
--- 0006_ai_generations — audyt + koszty AI + rate limiting
--- =============================================================================
-
-create table public.ai_generations (
-  id uuid primary key default gen_random_uuid(),
-  org_id uuid not null references public.organizations(id) on delete cascade,
-  user_id uuid references auth.users(id) on delete set null,
-  model text not null,
-  framework text,
-  brief jsonb not null,
-  system_prompt_hash text,
-  prompt_tokens int not null default 0,
-  output_tokens int not null default 0,
-  cost_usd numeric(10,4) not null default 0,
-  output_md text not null,
-  variants jsonb not null default '[]'::jsonb,
-  human_score int,
-  warnings text[] not null default '{}'::text[],
-  regenerated int not null default 0,
-  created_at timestamptz not null default now()
-);
-
-create index idx_ai_generations_org_created on public.ai_generations(org_id, created_at desc);
-create index idx_ai_generations_user_created on public.ai_generations(user_id, created_at desc);
-
-alter table public.ai_generations enable row level security;
-
-create policy "ai_generations_org_select" on public.ai_generations
-  for select using (public.is_org_member(org_id));
-
--- Insert tylko przez Edge Function (service role), nie z klienta
--- Brak policy dla INSERT → tylko service_role może wstawiać
-
--- -----------------------------------------------------------------------------
--- assert_ai_quota — rate limiting per user/h i per org/day
--- -----------------------------------------------------------------------------
-create or replace function public.assert_ai_quota(_org_id uuid, _user_id uuid)
-returns void
-language plpgsql
-security definer
-set search_path = public
-as $
-declare
-  v_user_hour int;
-  v_org_day int;
-  v_user_limit int := 20;
-  v_org_limit int := 200;
-begin
-  select count(*) into v_user_hour
-  from public.ai_generations
-  where user_id = _user_id
-    and created_at >= now() - interval '1 hour';
-
-  if v_user_hour >= v_user_limit then
-    raise exception 'AI quota exceeded (per user / hour)'
-      using errcode = 'P0001', detail = format('limit=%s window=1h', v_user_limit);
-  end if;
-
-  select count(*) into v_org_day
-  from public.ai_generations
-  where org_id = _org_id
-    and created_at >= now() - interval '24 hours';
-
-  if v_org_day >= v_org_limit then
-    raise exception 'AI quota exceeded (per org / day)'
-      using errcode = 'P0001', detail = format('limit=%s window=24h', v_org_limit);
-  end if;
-end;
-$;
-
-grant execute on function public.assert_ai_quota(uuid, uuid) to authenticated;
-
--- Foreign key z posts.ai_generation_id → ai_generations(id) (po stworzeniu tabeli)
-alter table public.posts
-  add constraint posts_ai_generation_fk
-  foreign key (ai_generation_id) references public.ai_generations(id) on delete set null;
-
-comment on table public.ai_generations is 'Audyt każdej generacji AI: model, brief, tokeny, koszt, human_score. Insert tylko przez Edge Function ai-generate.';
-comment on function public.assert_ai_quota is 'Rate limiting: 20/h per user, 200/24h per org. Rzuca P0001 przy przekroczeniu.';
--- =============================================================================
--- 0007_audit_log — append-only audit + telemetria
--- =============================================================================
-
-create table public.audit_log (
-  id bigserial primary key,
-  org_id uuid not null references public.organizations(id) on delete cascade,
-  actor_user_id uuid references auth.users(id) on delete set null,
-  action text not null,
-  entity_type text,
-  entity_id uuid,
-  meta jsonb not null default '{}'::jsonb,
-  ip inet,
-  user_agent text,
-  created_at timestamptz not null default now()
-);
-
-create index idx_audit_org_created on public.audit_log(org_id, created_at desc);
-create index idx_audit_entity on public.audit_log(entity_type, entity_id);
-create index idx_audit_action on public.audit_log(action);
-
-alter table public.audit_log enable row level security;
-
-create policy "audit_org_select" on public.audit_log
-  for select using (public.is_org_member(org_id));
-
--- INSERT tylko przez log_audit() (SECURITY DEFINER) lub service_role
-revoke insert on public.audit_log from authenticated;
-
-create or replace function public.log_audit(
-  _org_id uuid,
-  _action text,
-  _entity_type text default null,
-  _entity_id uuid default null,
-  _meta jsonb default '{}'::jsonb
-)
-returns bigint
-language plpgsql
-security definer
-set search_path = public
-as $
-declare
-  v_id bigint;
-begin
-  if not public.is_org_member(_org_id) then
-    raise exception 'not a member of org %', _org_id;
-  end if;
-
-  insert into public.audit_log (org_id, actor_user_id, action, entity_type, entity_id, meta)
-  values (_org_id, auth.uid(), _action, _entity_type, _entity_id, coalesce(_meta, '{}'::jsonb))
-  returning id into v_id;
-
-  return v_id;
-end;
-$;
-
-grant execute on function public.log_audit(uuid, text, text, uuid, jsonb) to authenticated;
-
-comment on table public.audit_log is 'Append-only audit. Insert tylko przez log_audit() (SECURITY DEFINER) — zapewnia integralność.';
--- =============================================================================
--- 0008_analytics_views — agregaty pod dashboard
--- =============================================================================
-
--- Posty per dzień (organizacja)
-create or replace view public.v_posts_per_day as
-select
-  org_id,
-  date_trunc('day', posted_at) as day,
-  count(*) filter (where status = 'posted') as posted_count,
-  count(*) filter (where status = 'skipped') as skipped_count,
-  count(*) filter (where status = 'failed') as failed_count
-from public.campaign_targets
-where posted_at is not null or status in ('skipped','failed')
-group by org_id, date_trunc('day', posted_at);
-
--- Success rate per grupa
-create or replace view public.v_group_success_rate as
-select
-  g.org_id,
-  g.id as group_id,
-  g.name as group_name,
-  g.url as group_url,
-  count(t.*) filter (where t.status = 'posted') as posted_count,
-  count(t.*) filter (where t.status in ('failed','skipped')) as failed_count,
-  count(t.*) as total_attempts,
-  case
-    when count(t.*) > 0
-    then round(100.0 * count(t.*) filter (where t.status = 'posted') / count(t.*), 1)
-    else null
-  end as success_rate_pct,
-  max(t.posted_at) as last_posted_at
-from public.groups g
-left join public.campaign_targets t on t.group_id = g.id
-group by g.org_id, g.id, g.name, g.url;
-
--- Wydajność kampanii
-create or replace view public.v_campaign_summary as
-select
-  c.org_id,
-  c.id as campaign_id,
-  c.name as campaign_name,
-  c.status as campaign_status,
-  c.created_at,
-  count(t.*) as targets_total,
-  count(t.*) filter (where t.status = 'pending') as pending,
-  count(t.*) filter (where t.status = 'posted') as posted,
-  count(t.*) filter (where t.status = 'skipped') as skipped,
-  count(t.*) filter (where t.status = 'failed') as failed,
-  case
-    when count(t.*) > 0
-    then round(100.0 * count(t.*) filter (where t.status = 'posted') / count(t.*), 1)
-    else 0
-  end as posted_pct
-from public.campaigns c
-left join public.campaign_targets t on t.campaign_id = c.id
-group by c.org_id, c.id, c.name, c.status, c.created_at;
-
--- Best posting hours (kiedy najlepiej publikować, godzinach 0-23)
-create or replace view public.v_best_hours as
-select
-  org_id,
-  extract(hour from posted_at)::int as hour_of_day,
-  count(*) filter (where status = 'posted') as posted_count
-from public.campaign_targets
-where posted_at is not null
-group by org_id, extract(hour from posted_at)::int;
-
--- Top problemy (telemetria błędów)
-create or replace view public.v_error_codes as
-select
-  org_id,
-  error_code,
-  count(*) as occurrences,
-  max(created_at) as last_seen
-from public.campaign_targets
-where status in ('failed','skipped') and error_code is not null
-group by org_id, error_code;
-
--- Selector health (z audit_log: events 'selector_miss')
-create or replace view public.v_selector_health as
-select
-  org_id,
-  (meta->>'selector_name') as selector_name,
-  count(*) as misses,
-  max(created_at) as last_miss
-from public.audit_log
-where action = 'extension.selector_miss'
-  and created_at >= now() - interval '7 days'
-group by org_id, (meta->>'selector_name');
-
-comment on view public.v_posts_per_day is 'Dashboard: ile postów dziennie / status breakdown.';
-comment on view public.v_group_success_rate is 'Dashboard: która grupa najlepiej działa.';
-comment on view public.v_campaign_summary is 'Dashboard: status pasków kampanii (X/Y posted).';
-comment on view public.v_best_hours is 'Dashboard: heatmapa godzinowa skutecznych publikacji.';
-comment on view public.v_error_codes is 'Telemetria: najczęstsze błędy postowania (cooldown, daily_cap, no_publish_detected, login_required).';
-comment on view public.v_selector_health is 'Admin: które selektory DOM Facebooka się sypią (sygnał do update extension).';
-`;
-      const SUPA_URL = 'https://afqibinzwgdidumvjxyo.supabase.co';
-      const SUPA_KEY = 'sb_publishable_VhLOmFJm4sgHiQesoNioBg_YlSjwWLi';
-
-      async function checkSchema() {
-        const banner = document.getElementById('status-banner');
-        try {
-          const res = await fetch(`${SUPA_URL}/rest/v1/organizations?select=id&limit=1`, {
-            headers: { apikey: SUPA_KEY, Authorization: 'Bearer ' + SUPA_KEY },
-          });
-          if (res.ok) {
-            banner.className = 'border-b border-green/30 text-green text-xs px-4 py-2 text-center bg-green/5';
-            banner.innerHTML = '✓ <strong>Połączono z Supabase</strong> · schema zainstalowana · projekt <code class="mx-1">afqibinzwgdidumvjxyo</code> · gotowy do użycia';
-            return true;
-          }
-          if (res.status === 404 || res.status === 400) {
-            banner.className = 'border-b border-yellow/30 text-yellow text-xs px-4 py-2 text-center bg-yellow/5';
-            banner.innerHTML = '⚠ <strong>Połączono z Supabase</strong> ale schemat nie zaaplikowany. <button id="banner-setup" class="underline ml-1">Zainstaluj teraz →</button>';
-            document.getElementById('banner-setup').addEventListener('click', () => openSetup());
-            return false;
-          }
-          throw new Error('HTTP ' + res.status);
-        } catch (err) {
-          banner.className = 'border-b border-red/30 text-red text-xs px-4 py-2 text-center bg-red/5';
-          banner.innerHTML = '✗ Brak połączenia z Supabase: ' + err.message;
-          return false;
-        }
-      }
-
-      function openAuth() { const m = document.getElementById('auth-modal'); m.classList.remove('hidden'); m.classList.add('flex'); }
-      function closeAuth() { const m = document.getElementById('auth-modal'); m.classList.add('hidden'); m.classList.remove('flex'); }
-      function openSetup() {
-        const m = document.getElementById('setup-modal');
-        m.classList.remove('hidden');
-        m.classList.add('flex');
-        const preview = document.getElementById('sql-preview');
-        const lines = INIT_SQL.split('\n').slice(0, 40);
-        preview.textContent = lines.join('\n') + '\n\n-- ... łącznie ' + INIT_SQL.split('\n').length + ' linii, ' + (INIT_SQL.length / 1024).toFixed(1) + ' KB ...';
-      }
-      function closeSetup() { const m = document.getElementById('setup-modal'); m.classList.add('hidden'); m.classList.remove('flex'); }
-
-      document.querySelectorAll('.modal-close').forEach(b => b.addEventListener('click', () => {
-        closeAuth(); closeSetup();
+      // ====== MODALS + AUTH MOCK ======
+      const openAuth = () => document.getElementById('auth-modal').classList.add('open');
+      const openSetup = () => document.getElementById('setup-modal').classList.add('open');
+      document.querySelectorAll('[data-close]').forEach((b) => b.addEventListener('click', () => {
+        document.querySelectorAll('.modal-backdrop').forEach((m) => m.classList.remove('open'));
       }));
+      document.querySelectorAll('.modal-backdrop').forEach((m) => {
+        m.addEventListener('click', (e) => {
+          if (e.target === m) m.classList.remove('open');
+        });
+      });
       document.getElementById('open-setup').addEventListener('click', openSetup);
-      document.getElementById('copy-sql').addEventListener('click', async () => {
-        try {
-          await navigator.clipboard.writeText(INIT_SQL);
-          const btn = document.getElementById('copy-sql');
-          const orig = btn.textContent;
-          btn.textContent = '✓ Skopiowano! Wklej w SQL Editor';
-          btn.classList.add('bg-green');
-          setTimeout(() => { btn.textContent = orig; btn.classList.remove('bg-green'); }, 2500);
-        } catch (e) {
-          alert('Clipboard zablokowany. Pobierz init.sql z repo i wklej w SQL Editor.');
-        }
-      });
-
       document.getElementById('auth-btn').addEventListener('click', openAuth);
+      document.getElementById('mobile-toggle').addEventListener('click', () => {
+        document.getElementById('nav').classList.toggle('open');
+      });
 
-      document.getElementById('auth-send').addEventListener('click', async () => {
+      document.getElementById('auth-send').addEventListener('click', () => {
         const email = document.getElementById('auth-email').value.trim();
-        const errEl = document.getElementById('auth-error');
-        errEl.classList.add('hidden');
-        if (!email || !email.includes('@')) { errEl.textContent = 'Podaj prawidłowy email.'; errEl.classList.remove('hidden'); return; }
-        const btn = document.getElementById('auth-send');
-        btn.disabled = true;
-        btn.textContent = 'Wysyłam...';
-
-        try {
-          const { error } = await window.__supabase.auth.signInWithOtp({
-            email,
-            options: { emailRedirectTo: window.location.href },
-          });
-          if (error) throw error;
-          document.getElementById('auth-state-idle').classList.add('hidden');
-          document.getElementById('auth-state-sent').classList.remove('hidden');
-          document.getElementById('auth-sent-email').textContent = email;
-        } catch (err) {
-          errEl.textContent = 'Błąd: ' + (err.message || err);
-          errEl.classList.remove('hidden');
-        } finally {
-          btn.disabled = false;
-          btn.textContent = 'Wyślij magic link';
+        const err = document.getElementById('auth-error');
+        err.classList.add('hidden');
+        if (!email || !email.includes('@')) {
+          err.textContent = 'Podaj prawidłowy email.';
+          err.classList.remove('hidden');
+          return;
         }
-      });
-
-      document.getElementById('logout-btn').addEventListener('click', async () => {
-        await window.__supabase.auth.signOut();
-        location.reload();
-      });
-
-      async function refreshUserChip() {
-        const { data: { user } } = await window.__supabase.auth.getUser();
-        const chip = document.getElementById('user-chip');
-        const btn = document.getElementById('auth-btn');
-        if (user) {
+        // Mock login — symulujemy zalogowanego usera
+        document.getElementById('auth-idle').classList.add('hidden');
+        document.getElementById('auth-sent').classList.remove('hidden');
+        document.getElementById('auth-sent-email').textContent = email;
+        setTimeout(() => {
+          document.getElementById('auth-modal').classList.remove('open');
+          // "zaloguj" usera w UI
+          document.getElementById('auth-btn').classList.add('hidden');
+          const chip = document.getElementById('user-chip');
           chip.classList.remove('hidden');
-          chip.classList.add('flex');
-          btn.classList.add('hidden');
-          const initials = (user.email || 'U').slice(0, 2).toUpperCase();
-          document.getElementById('user-initials').textContent = initials;
-          document.getElementById('user-initials').title = user.email;
-          const greet = document.querySelector('#view h1 + p');
-          if (greet && greet.textContent.includes('Piotr')) {
-            greet.innerHTML = 'Cześć <strong class="text-white">' + user.email + '</strong> 👋 — pokaz UI z fake danymi. Po wgraniu schematu zobaczysz prawdziwą bazę.';
-          }
-        } else {
-          chip.classList.add('hidden');
-          btn.classList.remove('hidden');
-        }
+          document.getElementById('user-initials').textContent = email.slice(0, 2).toUpperCase();
+          document.getElementById('user-initials').title = email;
+          const g = document.getElementById('greeting');
+          if (g) g.innerHTML = 'Cześć <strong style="color: var(--text)">' + email + '</strong> 👋 — demo, fake dane.';
+          // reset modalu na następny raz
+          document.getElementById('auth-idle').classList.remove('hidden');
+          document.getElementById('auth-sent').classList.add('hidden');
+          document.getElementById('auth-email').value = '';
+        }, 1200);
+      });
+      document.getElementById('logout-btn').addEventListener('click', () => {
+        document.getElementById('user-chip').classList.add('hidden');
+        document.getElementById('auth-btn').classList.remove('hidden');
+        const g = document.getElementById('greeting');
+        if (g) g.innerHTML = 'Cześć 👋 — podgląd UI z fake danymi.';
+      });
+
+      // ====== BANNER ======
+      function setBanner() {
+        const b = document.getElementById('status-banner');
+        b.className = 'banner';
+        b.innerHTML = '🧪 <strong>Demo mode</strong> — klikalny prototyp UI z fake danymi. <button id="banner-setup">Jak uruchomić prawdziwą apkę →</button>';
+        document.getElementById('banner-setup').addEventListener('click', openSetup);
       }
 
-      window.addEventListener('supabase-ready', async () => {
-        await checkSchema();
-        await refreshUserChip();
-        window.__supabase.auth.onAuthStateChange(() => refreshUserChip());
-      });
-
-
+      // ====== INIT ======
       window.addEventListener('hashchange', route);
       route();
+      setBanner();
     </script>
   </body>
 </html>
