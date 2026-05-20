@@ -2,55 +2,358 @@
 <html lang="pl">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>MapJob FB Poster</title>
     <style>
-      :root { color-scheme: light; }
-      * { box-sizing: border-box; }
+      :root {
+        --bg: #0a1628;
+        --bg-2: #0f1e36;
+        --card: #131f3a;
+        --card-2: #1a2847;
+        --border: #1f2f52;
+        --border-strong: #2a3656;
+        --text: #e5edf9;
+        --muted: #94a3b8;
+        --muted-2: #64748b;
+        --primary: #3b82f6;
+        --primary-hover: #2563eb;
+        --primary-light: #60a5fa;
+        --primary-soft: rgba(59, 130, 246, 0.14);
+        --success: #22c55e;
+        --success-soft: rgba(34, 197, 94, 0.14);
+        --warning: #f59e0b;
+        --warning-soft: rgba(245, 158, 11, 0.14);
+        --danger: #ef4444;
+        --danger-soft: rgba(239, 68, 68, 0.14);
+        --r: 8px;
+        --r-sm: 6px;
+        --gradient: linear-gradient(135deg, #3b82f6 0%, #60a5fa 100%);
+      }
+      * { box-sizing: border-box; margin: 0; padding: 0; }
       body {
-        margin: 0;
-        padding: 16px;
-        width: 320px;
-        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-        font-size: 14px;
-        color: #111;
-        background: #fff;
-      }
-      h1 { font-size: 16px; margin: 0 0 12px; }
-      .status { padding: 8px 12px; border-radius: 6px; margin-bottom: 12px; font-size: 13px; }
-      .status.ok { background: #ecfdf5; color: #065f46; }
-      .status.warn { background: #fef3c7; color: #92400e; }
-      .status.err { background: #fee2e2; color: #991b1b; }
-      button {
-        width: 100%;
-        padding: 8px 12px;
-        border: 1px solid #d1d5db;
-        background: #fff;
-        border-radius: 6px;
+        width: 380px;
+        min-height: 480px;
+        font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', sans-serif;
         font-size: 13px;
-        cursor: pointer;
-        margin-bottom: 8px;
+        line-height: 1.5;
+        color: var(--text);
+        background: var(--bg);
+        -webkit-font-smoothing: antialiased;
       }
-      button.primary { background: #2563eb; color: #fff; border-color: #2563eb; }
-      button:disabled { opacity: 0.5; cursor: not-allowed; }
-      .row { display: flex; gap: 6px; }
-      .row button { flex: 1; }
-      .meta { font-size: 11px; color: #6b7280; margin-top: 8px; line-height: 1.4; }
+      a { color: var(--primary-light); text-decoration: none; }
+      button {
+        font: inherit;
+        cursor: pointer;
+        border: 0;
+        background: none;
+        color: inherit;
+      }
+      input, select, textarea {
+        font: inherit; font-size: 13px;
+        color: var(--text); background: var(--bg-2);
+        border: 1px solid var(--border-strong);
+        border-radius: var(--r-sm);
+        padding: 8px 10px; width: 100%;
+        outline: 0;
+        -webkit-appearance: none;
+        appearance: none;
+      }
+      input:focus, textarea:focus, select:focus {
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px var(--primary-soft);
+      }
+      code { font-family: ui-monospace, monospace; font-size: 11.5px; background: var(--bg-2); padding: 1px 5px; border-radius: 3px; color: var(--primary-light); }
+      pre { white-space: pre-wrap; word-break: break-word; font-family: -apple-system, sans-serif; }
+
+      header {
+        padding: 14px 16px;
+        border-bottom: 1px solid var(--border);
+        display: flex; align-items: center; gap: 10px;
+        position: sticky; top: 0;
+        background: var(--bg);
+        z-index: 10;
+      }
+      .logo-mark {
+        width: 28px; height: 28px;
+        background: var(--gradient);
+        border-radius: var(--r-sm);
+        display: flex; align-items: center; justify-content: center;
+        color: white; font-weight: 700; font-size: 13px;
+        box-shadow: 0 4px 12px rgba(59, 130, 246, 0.35);
+      }
+      .logo-text { font-weight: 600; font-size: 14px; flex: 1; }
+      .pulse { width: 6px; height: 6px; border-radius: 999px; background: var(--success); animation: pulse 2s infinite; }
+      @keyframes pulse { 0%,100% { opacity: 1 } 50% { opacity: 0.4 } }
+
+      .tabs {
+        display: flex;
+        padding: 6px;
+        gap: 2px;
+        background: var(--bg-2);
+        border-bottom: 1px solid var(--border);
+        position: sticky; top: 56px;
+        z-index: 9;
+      }
+      .tabs input { display: none }
+      .tab-label {
+        flex: 1; text-align: center;
+        padding: 7px 4px;
+        border-radius: var(--r-sm);
+        font-size: 12px;
+        color: var(--muted);
+        cursor: pointer;
+        font-weight: 500;
+        transition: all 0.15s;
+      }
+      .tab-label:hover { color: var(--text); }
+
+      .tab-pane { display: none; padding: 14px 16px; }
+      #tab-home:checked    ~ .panes .tp-home,
+      #tab-groups:checked  ~ .panes .tp-groups,
+      #tab-posts:checked   ~ .panes .tp-posts,
+      #tab-camp:checked    ~ .panes .tp-camp,
+      #tab-log:checked     ~ .panes .tp-log { display: block; }
+
+      #tab-home:checked    ~ .tabs label[for="tab-home"],
+      #tab-groups:checked  ~ .tabs label[for="tab-groups"],
+      #tab-posts:checked   ~ .tabs label[for="tab-posts"],
+      #tab-camp:checked    ~ .tabs label[for="tab-camp"],
+      #tab-log:checked     ~ .tabs label[for="tab-log"] {
+        background: var(--card);
+        color: var(--primary-light);
+        box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+      }
+
+      .card {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: var(--r);
+        padding: 12px;
+        margin-bottom: 10px;
+      }
+      .row { display: flex; align-items: center; gap: 8px; }
+      .row-between { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+      .stack { display: flex; flex-direction: column; gap: 8px; }
+
+      .btn {
+        display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+        padding: 8px 12px;
+        border-radius: var(--r-sm);
+        font-size: 12.5px; font-weight: 500;
+        transition: all 0.15s;
+        border: 1px solid transparent;
+        white-space: nowrap;
+        line-height: 1;
+      }
+      .btn-primary { background: var(--gradient); color: white; box-shadow: 0 2px 8px rgba(59,130,246,0.35); }
+      .btn-primary:hover { box-shadow: 0 4px 14px rgba(59,130,246,0.45); }
+      .btn-secondary { background: var(--card-2); border-color: var(--border-strong); color: var(--text); }
+      .btn-secondary:hover { background: var(--bg-2); }
+      .btn-ghost { color: var(--muted); }
+      .btn-ghost:hover { color: var(--text); background: var(--card-2); }
+      .btn-block { width: 100%; }
+      .btn-sm { padding: 5px 9px; font-size: 11.5px; }
+      .btn:disabled { opacity: 0.55; cursor: not-allowed; }
+
+      .badge {
+        display: inline-flex; align-items: center; gap: 4px;
+        padding: 2px 7px;
+        border-radius: 999px;
+        font-size: 10.5px; font-weight: 500;
+      }
+      .badge-success { background: var(--success-soft); color: var(--success); }
+      .badge-warning { background: var(--warning-soft); color: var(--warning); }
+      .badge-danger  { background: var(--danger-soft); color: var(--danger); }
+      .badge-muted   { background: var(--bg-2); color: var(--muted); }
+      .badge-primary { background: var(--primary-soft); color: var(--primary-light); }
+      .badge-dot::before { content: ''; width: 5px; height: 5px; border-radius: 999px; background: currentColor; display: inline-block; }
+
+      .stat-mini {
+        flex: 1;
+        background: var(--bg-2);
+        border-radius: var(--r-sm);
+        padding: 10px 12px;
+        text-align: center;
+      }
+      .stat-mini .v { font-size: 18px; font-weight: 700; }
+      .stat-mini .l { font-size: 10.5px; color: var(--muted); margin-top: 2px; }
+
+      .group-row {
+        padding: 8px 10px;
+        background: var(--bg-2);
+        border-radius: var(--r-sm);
+        margin-bottom: 4px;
+        display: flex; align-items: center; gap: 8px;
+      }
+      .group-row input[type="checkbox"] { width: 14px; height: 14px; cursor: pointer; flex-shrink: 0; }
+      .group-row-info { flex: 1; min-width: 0; }
+      .group-row-name { font-size: 12.5px; font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+      .group-row-meta { font-size: 10.5px; color: var(--muted); }
+
+      .status-banner {
+        margin: 12px 16px 0;
+        padding: 10px 12px;
+        border-radius: var(--r-sm);
+        font-size: 12px;
+      }
+      .status-banner.ok { background: var(--success-soft); color: var(--success); }
+      .status-banner.warn { background: var(--warning-soft); color: var(--warning); }
+      .status-banner.err { background: var(--danger-soft); color: var(--danger); }
+      .status-banner.info { background: var(--primary-soft); color: var(--primary-light); }
+
+      .empty {
+        padding: 28px 16px;
+        text-align: center;
+        color: var(--muted);
+        font-size: 12.5px;
+      }
+      .form-label { font-size: 11.5px; color: var(--muted); margin-bottom: 4px; display: block; font-weight: 500; }
+
+      .log-item { padding: 6px 0; border-bottom: 1px solid var(--border); font-size: 12px; }
+      .log-item:last-child { border-bottom: 0; }
+      .log-time { font-size: 10.5px; color: var(--muted); }
+      .log-msg { margin-top: 2px; }
+
+      ::-webkit-scrollbar { width: 6px; }
+      ::-webkit-scrollbar-track { background: var(--bg); }
+      ::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 3px; }
+
+      .switch {
+        position: relative;
+        width: 32px; height: 18px;
+        background: var(--border-strong);
+        border-radius: 999px;
+        cursor: pointer;
+        transition: background 0.2s;
+      }
+      .switch::after {
+        content: '';
+        position: absolute;
+        top: 2px; left: 2px;
+        width: 14px; height: 14px;
+        background: var(--text);
+        border-radius: 999px;
+        transition: transform 0.2s;
+      }
+      .switch.on { background: var(--success); }
+      .switch.on::after { transform: translateX(14px); }
     </style>
   </head>
   <body>
-    <h1>MapJob FB Poster</h1>
-    <div id="status" class="status warn">Sprawdzam status…</div>
+    <header>
+      <div class="logo-mark">M</div>
+      <div class="logo-text">MapJob FB Poster</div>
+      <div id="fb-status-dot"></div>
+    </header>
 
-    <button id="btn-login" class="primary" style="display:none">Zaloguj przez web app</button>
-    <button id="btn-scrape" style="display:none">Importuj grupy z Facebooka</button>
-    <div class="row" style="display:none" id="row-toggle">
-      <button id="btn-pause">Pauza</button>
-      <button id="btn-resume">Wznów</button>
+    <div id="banner-host"></div>
+
+    <input type="radio" name="tabs" id="tab-home" checked />
+    <input type="radio" name="tabs" id="tab-groups" />
+    <input type="radio" name="tabs" id="tab-posts" />
+    <input type="radio" name="tabs" id="tab-camp" />
+    <input type="radio" name="tabs" id="tab-log" />
+
+    <div class="tabs">
+      <label for="tab-home"   class="tab-label">Home</label>
+      <label for="tab-groups" class="tab-label">Grupy</label>
+      <label for="tab-posts"  class="tab-label">Posty</label>
+      <label for="tab-camp"   class="tab-label">Kampanie</label>
+      <label for="tab-log"    class="tab-label">Log</label>
     </div>
-    <button id="btn-logout" style="display:none">Wyloguj</button>
 
-    <div class="meta" id="meta"></div>
+    <div class="panes">
+      <!-- HOME -->
+      <div class="tab-pane tp-home">
+        <div class="card">
+          <div class="row-between" style="margin-bottom: 10px">
+            <div>
+              <div style="font-weight: 600">Status systemu</div>
+              <div style="font-size: 11.5px; color: var(--muted); margin-top: 2px" id="status-summary">Sprawdzam...</div>
+            </div>
+            <div id="pause-toggle" class="switch on" title="Pauza / wznów"></div>
+          </div>
+          <div class="row" style="gap: 6px">
+            <div class="stat-mini"><div class="v" id="stat-groups">0</div><div class="l">Grupy</div></div>
+            <div class="stat-mini"><div class="v" id="stat-posts">0</div><div class="l">Posty</div></div>
+            <div class="stat-mini"><div class="v" id="stat-today">0</div><div class="l">Dziś</div></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div style="font-weight: 600; margin-bottom: 6px">Facebook</div>
+          <div id="fb-status">Sprawdzam sesję FB...</div>
+          <div class="row" style="margin-top: 10px; gap: 6px">
+            <button class="btn btn-secondary btn-sm btn-block" id="open-fb">Otwórz Facebook</button>
+            <button class="btn btn-primary btn-sm btn-block" id="import-groups">↻ Importuj grupy</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <div style="font-weight: 600; margin-bottom: 8px">Szybki post</div>
+          <textarea id="quick-text" rows="4" placeholder="Treść posta..."></textarea>
+          <div style="margin-top: 8px">
+            <button class="btn btn-primary btn-block" id="quick-save">Zapisz post</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- GROUPS -->
+      <div class="tab-pane tp-groups">
+        <div class="row-between" style="margin-bottom: 10px">
+          <div style="font-weight: 600" id="groups-count">0 grup</div>
+          <button class="btn btn-secondary btn-sm" id="refresh-groups">↻</button>
+        </div>
+        <input id="group-filter" placeholder="Szukaj..." style="margin-bottom: 10px" />
+        <div id="groups-list" style="max-height: 380px; overflow-y: auto"></div>
+      </div>
+
+      <!-- POSTS -->
+      <div class="tab-pane tp-posts">
+        <div class="row-between" style="margin-bottom: 10px">
+          <div style="font-weight: 600" id="posts-count">0 postów</div>
+          <button class="btn btn-primary btn-sm" id="new-post">+ Nowy</button>
+        </div>
+        <div id="posts-list" style="max-height: 400px; overflow-y: auto"></div>
+      </div>
+
+      <!-- CAMPAIGNS -->
+      <div class="tab-pane tp-camp">
+        <div id="camp-step-1">
+          <div class="card">
+            <div class="form-label">1. Wybierz post</div>
+            <select id="camp-post"><option value="">— wybierz —</option></select>
+          </div>
+          <div class="card">
+            <div class="form-label">2. Wybierz grupy <span id="camp-selected-count" style="color: var(--primary-light); font-weight: 600">0</span> z <span id="camp-total-count">0</span></div>
+            <input id="camp-group-filter" placeholder="Filtruj grupy..." style="margin-bottom: 8px" />
+            <div class="row" style="gap: 4px; margin-bottom: 8px">
+              <button class="btn btn-ghost btn-sm" id="camp-select-all">Zaznacz wszystkie</button>
+              <button class="btn btn-ghost btn-sm" id="camp-select-none">Wyczyść</button>
+            </div>
+            <div id="camp-groups" style="max-height: 220px; overflow-y: auto"></div>
+          </div>
+          <div class="card">
+            <div class="form-label">3. Delay między postami (sekundy)</div>
+            <div class="row" style="gap: 6px">
+              <input id="camp-min-delay" value="90" type="number" placeholder="Min" />
+              <input id="camp-max-delay" value="240" type="number" placeholder="Max" />
+            </div>
+            <div style="font-size: 10.5px; color: var(--muted); margin-top: 6px">Cooldown per grupa: 4h (zalecane przez FB anti-spam)</div>
+          </div>
+          <button class="btn btn-primary btn-block" id="camp-start">🚀 Uruchom kampanię</button>
+        </div>
+      </div>
+
+      <!-- LOG -->
+      <div class="tab-pane tp-log">
+        <div class="row-between" style="margin-bottom: 10px">
+          <div style="font-weight: 600">Ostatnia aktywność</div>
+          <button class="btn btn-ghost btn-sm" id="clear-log">Wyczyść</button>
+        </div>
+        <div id="log-list" style="max-height: 400px; overflow-y: auto"></div>
+      </div>
+    </div>
 
     <script type="module" src="./popup.ts"></script>
   </body>

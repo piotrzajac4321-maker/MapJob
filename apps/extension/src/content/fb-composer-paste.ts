@@ -1,90 +1,151 @@
 /**
- * fb-composer-paste — content script na /groups/<id>/. Czeka aż background wyśle
- * {type: 'PASTE_POST', text}. Otwiera composer (jeśli nie jest otwarty), wkleja tekst.
+ * Wkleja treść posta w composer grupy FB.
  * NIE klika "Publikuj" — user musi sam (zgodność z ToS).
  */
-
-import { querySelectorWithFallback, ACTIVE_SELECTORS } from './selectors/registry';
 
 interface PasteMessage {
   type: 'PASTE_POST';
   text: string;
   targetId: string;
+  imageDataUrls?: string[];
 }
 
 async function waitFor<T extends Element>(selectors: string[], timeoutMs = 8000): Promise<T | null> {
   const start = Date.now();
   while (Date.now() - start < timeoutMs) {
-    const el = querySelectorWithFallback<T>(document, selectors);
-    if (el) return el;
-    await new Promise((r) => setTimeout(r, 200));
+    for (const sel of selectors) {
+      try {
+        const el = document.querySelector(sel) as T | null;
+        if (el && (el as HTMLElement).offsetParent !== null) return el;
+      } catch {}
+    }
+    await new Promise((r) => setTimeout(r, 250));
   }
   return null;
 }
 
 function findComposerTrigger(): HTMLElement | null {
-  // "Napisz coś..." / "Write something..." entry tile w group feed
+  // "Napisz coś" / "Write something" tile w group feed
   const candidates = Array.from(
-    document.querySelectorAll('[role="button"], [role="textbox"]'),
+    document.querySelectorAll('[role="button"], [role="textbox"], [aria-label]'),
   ) as HTMLElement[];
 
-  return (
-    candidates.find((el) => {
-      const text = el.textContent?.toLowerCase() ?? '';
-      const aria = el.getAttribute('aria-label')?.toLowerCase() ?? '';
-      return (
-        text.includes('napisz coś') ||
-        text.includes('write something') ||
-        aria.includes('napisz') ||
-        aria.includes('create post')
-      );
-    }) ?? null
-  );
+  for (const el of candidates) {
+    if ((el as HTMLElement).offsetParent === null) continue;
+    const text = (el.textContent ?? '').toLowerCase().slice(0, 80);
+    const aria = (el.getAttribute('aria-label') ?? '').toLowerCase();
+    if (
+      text.includes('napisz coś') ||
+      text.includes('write something') ||
+      aria.includes('napisz coś') ||
+      aria.includes('write something') ||
+      aria.includes('create a post') ||
+      aria.includes('utwórz post')
+    ) {
+      return el;
+    }
+  }
+  return null;
 }
 
-async function pasteText(text: string): Promise<boolean> {
+async function dataUrlToFile(dataUrl: string, filename: string): Promise<File> {
+  const res = await fetch(dataUrl);
+  const blob = await res.blob();
+  return new File([blob], filename, { type: blob.type });
+}
+
+async function attachImages(dataUrls: string[]): Promise<boolean> {
+  if (dataUrls.length === 0) return true;
+  const dialog = document.querySelector('[role="dialog"]');
+  if (!dialog) return false;
+
+  // Znajdź input file (ukryty)
+  const fileInput = dialog.querySelector('input[type="file"]') as HTMLInputElement | null;
+  if (fileInput) {
+    const files = await Promise.all(dataUrls.map((u, i) => dataUrlToFile(u, `image-${i}.png`)));
+    const dt = new DataTransfer();
+    for (const f of files) dt.items.add(f);
+    fileInput.files = dt.files;
+    fileInput.dispatchEvent(new Event('change', { bubbles: true }));
+    await new Promise((r) => setTimeout(r, 1500));
+    return true;
+  }
+
+  // Fallback: drop event
+  const dropTarget = dialog.querySelector('[role="textbox"]') ?? dialog;
+  const files = await Promise.all(dataUrls.map((u, i) => dataUrlToFile(u, `image-${i}.png`)));
+  const dt = new DataTransfer();
+  for (const f of files) dt.items.add(f);
+  dropTarget.dispatchEvent(
+    new DragEvent('drop', { bubbles: true, cancelable: true, dataTransfer: dt }),
+  );
+  await new Promise((r) => setTimeout(r, 1500));
+  return true;
+}
+
+async function pasteText(text: string, imageDataUrls?: string[]): Promise<{ ok: boolean; error?: string }> {
+  console.log('[MapJob] Próbuję wkleić post (', text.length, 'znaków)');
+
   // Czy composer jest otwarty?
-  let textbox = querySelectorWithFallback<HTMLElement>(document, ACTIVE_SELECTORS.composerTextbox);
+  let textbox = await waitFor<HTMLElement>(
+    [
+      '[role="dialog"] [role="textbox"][contenteditable="true"][data-lexical-editor="true"]',
+      '[role="dialog"] [role="textbox"][contenteditable="true"]',
+      '[role="dialog"] [contenteditable="true"]',
+    ],
+    1500,
+  );
 
   if (!textbox) {
     const trigger = findComposerTrigger();
-    if (trigger) {
-      trigger.click();
-      await new Promise((r) => setTimeout(r, 1200));
-    }
-    textbox = await waitFor<HTMLElement>(ACTIVE_SELECTORS.composerTextbox);
-  }
-
-  if (!textbox) {
-    return false;
-  }
-
-  // Focus + insertText (działa z Lexicalem FB)
-  textbox.focus();
-  await new Promise((r) => setTimeout(r, 200));
-
-  // execCommand jest "deprecated" ale wciąż jedyny niezawodny sposób na Lexical
-  const ok = document.execCommand('insertText', false, text);
-  if (!ok) {
-    // Plan B: InputEvent
-    textbox.dispatchEvent(
-      new InputEvent('beforeinput', { inputType: 'insertFromPaste', data: text, bubbles: true }),
+    if (!trigger) return { ok: false, error: 'Nie znaleziono triggera composera' };
+    console.log('[MapJob] Klikam trigger composera');
+    trigger.click();
+    await new Promise((r) => setTimeout(r, 1500));
+    textbox = await waitFor<HTMLElement>(
+      [
+        '[role="dialog"] [role="textbox"][contenteditable="true"][data-lexical-editor="true"]',
+        '[role="dialog"] [role="textbox"][contenteditable="true"]',
+        '[role="dialog"] [contenteditable="true"]',
+      ],
+      6000,
     );
   }
 
-  await new Promise((r) => setTimeout(r, 400));
-  return true;
+  if (!textbox) return { ok: false, error: 'Nie udało się otworzyć composera' };
+
+  console.log('[MapJob] Composer otwarty, wklejam tekst');
+  textbox.focus();
+  await new Promise((r) => setTimeout(r, 200));
+
+  const ok = document.execCommand('insertText', false, text);
+  if (!ok) {
+    // Plan B: clipboardData + paste event
+    const dt = new DataTransfer();
+    dt.setData('text/plain', text);
+    textbox.dispatchEvent(new ClipboardEvent('paste', { clipboardData: dt, bubbles: true, cancelable: true }));
+  }
+
+  await new Promise((r) => setTimeout(r, 500));
+
+  // Załącz obrazy
+  if (imageDataUrls && imageDataUrls.length > 0) {
+    const attached = await attachImages(imageDataUrls);
+    if (!attached) console.warn('[MapJob] Nie udało się dołączyć obrazów');
+  }
+
+  return { ok: true };
 }
 
 chrome.runtime.onMessage.addListener((msg: PasteMessage, _sender, sendResponse) => {
   if (msg?.type === 'PASTE_POST') {
-    void pasteText(msg.text).then((ok) => {
-      sendResponse({ ok, targetId: msg.targetId });
+    void pasteText(msg.text, msg.imageDataUrls).then((r) => {
+      sendResponse({ ...r, targetId: msg.targetId });
     });
     return true;
   }
   return false;
 });
 
-// Sygnał gotowości
-chrome.runtime.sendMessage({ type: 'CONTENT_READY', context: 'group-page' }).catch(() => {});
+chrome.runtime.sendMessage({ type: 'CONTENT_READY', page: 'group' }).catch(() => {});
+console.log('[MapJob] Composer script gotowy na', location.href);

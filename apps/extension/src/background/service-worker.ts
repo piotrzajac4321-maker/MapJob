@@ -1,31 +1,33 @@
 /**
- * Service worker (background) — koordynuje całe postowanie.
+ * Service worker — orchestrator standalone (bez backendu).
  *
  * Pętla:
- * 1. `chrome.alarms` budzi nas co 60s.
- * 2. Jeśli paused → skip.
- * 3. Pobierz next target (RPC next_target_for_device).
- * 4. Otwórz/aktywuj tab z grupą.
- * 5. Wyślij PASTE_POST do content scriptu z renderedText (po wariancji per-grupa).
- * 6. Włącz WATCH_PUBLISH. Wait for PUBLISH_DETECTED / PUBLISH_TIMEOUT / LOGIN_REQUIRED.
- * 7. PATCH campaign_targets → posted/failed.
- * 8. Sleep delay_seconds, dalej.
+ * 1. Co 30s: pobierz next target z lokalnego store.
+ * 2. Otwórz tab grupy, wyślij PASTE_POST do content script.
+ * 3. Aktywuj tab → user widzi composer wypełniony, klika Publikuj.
+ * 4. fb-publish-detect raportuje PUBLISH_DETECTED → mark posted.
  */
 
-import { getAuth, getSettings } from '../lib/storage';
-import { fetchNextTarget, updateTarget, trackEvent } from '../lib/api';
-import { variateForGroup } from '../lib/variator';
+import {
+  pickNextTarget,
+  updateTarget,
+  markGroupPosted,
+  logActivity,
+  getSettings,
+} from '../lib/store';
 
 const ALARM_NAME = 'mapjob-tick';
 
 chrome.runtime.onInstalled.addListener(() => {
-  chrome.alarms.create(ALARM_NAME, { periodInMinutes: 1 });
+  chrome.alarms.create(ALARM_NAME, { periodInMinutes: 0.5 });
+  console.log('[MapJob BG] Extension installed');
+});
+chrome.runtime.onStartup.addListener(() => {
+  chrome.alarms.create(ALARM_NAME, { periodInMinutes: 0.5 });
 });
 
 chrome.alarms.onAlarm.addListener((alarm) => {
-  if (alarm.name === ALARM_NAME) {
-    void tick();
-  }
+  if (alarm.name === ALARM_NAME) void tick();
 });
 
 let busy = false;
@@ -34,68 +36,70 @@ async function tick(): Promise<void> {
   if (busy) return;
   busy = true;
   try {
-    const auth = await getAuth();
-    if (!auth) return;
     const settings = await getSettings();
     if (settings.paused) return;
 
-    const target = await fetchNextTarget();
-    if (!target) return;
+    const next = await pickNextTarget();
+    if (!next) return;
 
-    await trackEvent('extension.post_attempted', {
-      campaignId: target.campaign_id,
-      groupId: target.group_id,
-    }, 'campaign_target', target.target_id);
+    const { target, group, delaySec } = next;
+    console.log('[MapJob BG] Next target:', group.name, 'delay:', delaySec, 's');
 
-    // Wariancja per grupa
-    const variated = variateForGroup(target.rendered_text, `${target.campaign_id}:${target.group_id}`);
+    await updateTarget(target.id, { status: 'in_progress', attemptedAt: Date.now() });
+    await logActivity({ type: 'post', message: 'Otwieram grupę', groupName: group.name });
 
-    // Otwórz tab i wykonaj postowanie
-    const tab = await chrome.tabs.create({ url: target.group_url, active: false });
+    // Otwórz tab z grupą
+    const tab = await chrome.tabs.create({ url: group.url, active: false });
     if (!tab.id) {
-      await updateTarget(target.target_id, {
-        status: 'failed',
-        error_code: 'no_tab',
-        error_message: 'Could not open tab',
-      });
+      await updateTarget(target.id, { status: 'failed', errorCode: 'no_tab', errorMessage: 'Nie udało się otworzyć karty' });
       return;
     }
 
-    // Czekaj na complete + content script ready
-    await waitForTabLoad(tab.id);
+    // Czekaj na load
+    await waitForTab(tab.id);
 
-    // Paste
-    await chrome.tabs.sendMessage(tab.id, {
+    // Wyślij PASTE_POST
+    const pasteResp = await chrome.tabs.sendMessage(tab.id, {
       type: 'PASTE_POST',
-      text: variated.text,
-      targetId: target.target_id,
-    }).catch(() => null);
+      text: target.renderedText,
+      targetId: target.id,
+    }).catch((e) => ({ ok: false, error: String(e) }));
 
-    // Watch
-    await chrome.tabs.sendMessage(tab.id, {
-      type: 'WATCH_PUBLISH',
-      targetId: target.target_id,
-    }).catch(() => null);
+    if (!pasteResp?.ok) {
+      await updateTarget(target.id, {
+        status: 'failed',
+        errorCode: 'paste_failed',
+        errorMessage: pasteResp?.error ?? 'Nie udało się wkleić treści',
+      });
+      await logActivity({ type: 'fail', message: 'Wklejanie nie powiodło się', groupName: group.name });
+      return;
+    }
 
-    // Aktywuj tab żeby user mógł kliknąć Publikuj
+    // Włącz watch
+    await chrome.tabs.sendMessage(tab.id, { type: 'WATCH_PUBLISH', targetId: target.id }).catch(() => null);
+
+    // Aktywuj tab — user widzi composer i klika Publikuj
     await chrome.tabs.update(tab.id, { active: true });
 
-    await chrome.notifications.create({
-      type: 'basic',
-      iconUrl: 'icons/icon-128.png',
-      title: 'MapJob — kliknij Publikuj',
-      message: `Treść została wklejona w grupie. Sprawdź i kliknij Publikuj.`,
-    }).catch(() => null);
+    try {
+      await chrome.notifications.create({
+        type: 'basic',
+        iconUrl: 'icon-128.png',
+        title: 'MapJob — kliknij Publikuj',
+        message: `Treść wklejona w grupie "${group.name}". Sprawdź i kliknij Publikuj.`,
+      });
+    } catch {}
 
     // Delay przed następną iteracją
-    const delayMs = Math.max(target.delay_seconds * 1000, settings.minDelayMs);
-    await new Promise((r) => setTimeout(r, delayMs));
+    await new Promise((r) => setTimeout(r, delaySec * 1000));
+  } catch (err) {
+    console.error('[MapJob BG] tick error:', err);
   } finally {
     busy = false;
   }
 }
 
-async function waitForTabLoad(tabId: number, timeoutMs = 30_000): Promise<void> {
+function waitForTab(tabId: number, timeoutMs = 30_000): Promise<void> {
   return new Promise((resolve) => {
     const timer = setTimeout(() => {
       chrome.tabs.onUpdated.removeListener(listener);
@@ -106,8 +110,7 @@ async function waitForTabLoad(tabId: number, timeoutMs = 30_000): Promise<void> 
       if (id === tabId && info.status === 'complete') {
         chrome.tabs.onUpdated.removeListener(listener);
         clearTimeout(timer);
-        // Daj 2s na render JS
-        setTimeout(resolve, 2000);
+        setTimeout(resolve, 2200);
       }
     };
     chrome.tabs.onUpdated.addListener(listener);
@@ -115,59 +118,64 @@ async function waitForTabLoad(tabId: number, timeoutMs = 30_000): Promise<void> 
 }
 
 // Listener na eventy z content scriptów
-chrome.runtime.onMessage.addListener((msg, sender, _sendResponse) => {
+chrome.runtime.onMessage.addListener((msg: { type?: string; [k: string]: unknown }, sender) => {
   void handleMessage(msg, sender);
 });
 
 async function handleMessage(msg: { type?: string; [k: string]: unknown }, sender: chrome.runtime.MessageSender): Promise<void> {
-  switch (msg.type) {
-    case 'PUBLISH_DETECTED': {
-      const targetId = msg.targetId as string;
-      const fbPostUrl = msg.fbPostUrl as string | undefined;
+  if (msg.type === 'PUBLISH_DETECTED') {
+    const targetId = msg.targetId as string;
+    const fbPostUrl = msg.fbPostUrl as string | undefined;
+
+    // Mark posted
+    const { targets, groups } = await chrome.storage.local.get(['targets', 'groups']);
+    const target = (targets as any[])?.find((t: any) => t.id === targetId);
+    if (target) {
       await updateTarget(targetId, {
         status: 'posted',
-        posted_at: new Date().toISOString(),
-        fb_post_url: fbPostUrl ?? null,
+        postedAt: Date.now(),
+        errorCode: fbPostUrl ? undefined : undefined,
       });
-      await trackEvent('extension.post_posted', { targetId, fbPostUrl }, 'campaign_target', targetId);
-      if (sender.tab?.id) {
-        await chrome.tabs.sendMessage(sender.tab.id, { type: 'STOP_WATCH' }).catch(() => null);
-      }
-      break;
+      await markGroupPosted(target.groupId);
+      const group = (groups as any[])?.find((g: any) => g.fbGroupId === target.groupId);
+      await logActivity({ type: 'post', message: 'Opublikowany ✓', groupName: group?.name ?? target.groupId });
     }
-    case 'PUBLISH_TIMEOUT': {
-      const targetId = msg.targetId as string;
+
+    if (sender.tab?.id) {
+      await chrome.tabs.sendMessage(sender.tab.id, { type: 'STOP_WATCH' }).catch(() => null);
+      // Zamknij tab po krótkiej pauzie
+      setTimeout(() => chrome.tabs.remove(sender.tab!.id!).catch(() => null), 3000);
+    }
+  } else if (msg.type === 'PUBLISH_TIMEOUT') {
+    const targetId = msg.targetId as string;
+    await updateTarget(targetId, {
+      status: 'failed',
+      errorCode: 'no_publish_detected',
+      errorMessage: 'User nie kliknął Publikuj w 90 sekund',
+    });
+    await logActivity({ type: 'fail', message: 'Nie kliknięto Publikuj' });
+  } else if (msg.type === 'LOGIN_REQUIRED') {
+    const targetId = msg.targetId as string;
+    if (targetId) {
       await updateTarget(targetId, {
         status: 'failed',
-        error_code: 'no_publish_detected',
-        error_message: 'Timeout — user did not click Publish in 90s',
+        errorCode: 'login_required',
+        errorMessage: 'Sesja Facebook wygasła',
       });
-      await trackEvent('extension.post_failed', { targetId, code: 'no_publish_detected' }, 'campaign_target', targetId);
-      break;
     }
-    case 'LOGIN_REQUIRED': {
-      const targetId = msg.targetId as string;
-      await updateTarget(targetId, {
-        status: 'failed',
-        error_code: 'login_required',
-        error_message: 'FB session expired',
-      });
-      await trackEvent('extension.login_required', { targetId }, 'campaign_target', targetId);
-      // Pause wszystko
-      const settings = await chrome.storage.local.get('settings');
-      await chrome.storage.local.set({
-        settings: { ...((settings.settings as object) ?? {}), paused: true },
-      });
+    // Pauza wszystko
+    const { settings } = await chrome.storage.local.get('settings');
+    await chrome.storage.local.set({
+      settings: { ...((settings as object) ?? {}), paused: true },
+    });
+    await logActivity({ type: 'login_needed', message: 'Wymagane ponowne zalogowanie do FB' });
+    try {
       await chrome.notifications.create({
         type: 'basic',
-        iconUrl: 'icons/icon-128.png',
+        iconUrl: 'icon-128.png',
         title: 'MapJob — wymagane logowanie',
-        message: 'Twoja sesja Facebook wygasła. Zaloguj się ponownie, a postowanie wznowi się.',
-      }).catch(() => null);
-      break;
-    }
-    case 'CONTENT_READY':
-      // ignore — informacyjne
-      break;
+        message: 'Twoja sesja FB wygasła. Zaloguj się ponownie żeby wznowić.',
+      });
+    } catch {}
   }
 }

@@ -13,17 +13,19 @@
     <h1>Łączenie z MapJob</h1>
     <div id="status">Odbieram token…</div>
     <script type="module">
-      const hash = new URLSearchParams(window.location.hash.slice(1));
-      const token = hash.get('token');
-      const orgId = hash.get('org_id');
-      const status = document.getElementById('status');
+      (async () => {
+        const hash = new URLSearchParams(window.location.hash.slice(1));
+        const token = hash.get('token');
+        const orgId = hash.get('org_id');
+        const status = document.getElementById('status');
 
-      if (!token || !orgId) {
-        status.className = 'err';
-        status.textContent = 'Brak tokenu w URL.';
-      } else {
+        if (!token || !orgId) {
+          status.className = 'err';
+          status.textContent = 'Brak tokenu w URL.';
+          return;
+        }
+
         const deviceId = (await chrome.storage.local.get('deviceId')).deviceId;
-        // Decode JWT do exp + sub
         const [, payloadB64] = token.split('.');
         const payload = JSON.parse(atob(payloadB64.replace(/-/g, '+').replace(/_/g, '/')));
         await chrome.storage.session.set({
@@ -38,7 +40,7 @@
         status.className = 'ok';
         status.textContent = 'Połączono. Możesz zamknąć tę kartę i wrócić do popupu rozszerzenia.';
         setTimeout(() => window.close(), 2500);
-      }
+      })();
     </script>
   </body>
 </html>
