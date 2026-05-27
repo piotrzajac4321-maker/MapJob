@@ -3803,6 +3803,45 @@ body.light-mode .mj-theme-btn:hover{ background: var(--surf2) }
       <button onclick="document.getElementById('qr-section').style.display='block';document.getElementById('qr-section').scrollIntoView({behavior:'smooth'});setTimeout(function(){drawQR();},100)" style="background:none;border:none;font-family:var(--ff);font-size:11px;color:var(--text3);cursor:pointer">📱 QR kod</button>
     </div>
 
+    <!-- SEO: popularne wyszukiwania — widoczne dla użytkowników gdy wejdą w Profil, indeksowane przez Google -->
+    <details id="mj-popular-searches" style="margin:18px 16px 12px;background:var(--surf);border:1px solid var(--border3);border-radius:14px;overflow:hidden">
+      <summary style="padding:13px 16px;font-size:13px;font-weight:800;cursor:pointer;color:var(--text);list-style:none;display:flex;align-items:center;justify-content:space-between;user-select:none">
+        <span>🔎 Popularne wyszukiwania pracy</span>
+        <span style="font-size:11px;color:var(--text3);font-weight:600">rozwiń</span>
+      </summary>
+      <div style="padding:6px 14px 16px;border-top:1px solid var(--border)">
+        <div style="font-size:10px;font-weight:800;letter-spacing:.5px;text-transform:uppercase;color:var(--text3);margin:14px 0 6px">Praca w Polsce</div>
+        <div style="display:flex;flex-wrap:wrap;gap:5px">
+          <a href="/praca-w-polsce/" style="font-size:11.5px;color:var(--text2);background:var(--surf2);border:1px solid var(--border);border-radius:999px;padding:5px 10px;text-decoration:none">Praca w Polsce</a>
+          <a href="/praca-warszawa/" style="font-size:11.5px;color:var(--text2);background:var(--surf2);border:1px solid var(--border);border-radius:999px;padding:5px 10px;text-decoration:none">Praca Warszawa</a>
+          <a href="/praca-trener-personalny/" style="font-size:11.5px;color:var(--text2);background:var(--surf2);border:1px solid var(--border);border-radius:999px;padding:5px 10px;text-decoration:none">Trener personalny</a>
+        </div>
+        <div style="font-size:10px;font-weight:800;letter-spacing:.5px;text-transform:uppercase;color:var(--text3);margin:14px 0 6px">Praca za granicą</div>
+        <div style="display:flex;flex-wrap:wrap;gap:5px">
+          <a href="/praca-za-granica/" style="font-size:11.5px;color:var(--text2);background:var(--surf2);border:1px solid var(--border);border-radius:999px;padding:5px 10px;text-decoration:none">Praca za granicą</a>
+          <a href="/praca-niemcy/" style="font-size:11.5px;color:var(--text2);background:var(--surf2);border:1px solid var(--border);border-radius:999px;padding:5px 10px;text-decoration:none">Praca w Niemczech</a>
+          <a href="/praca-holandia/" style="font-size:11.5px;color:var(--text2);background:var(--surf2);border:1px solid var(--border);border-radius:999px;padding:5px 10px;text-decoration:none">Praca w Holandii</a>
+        </div>
+        <div style="font-size:10px;font-weight:800;letter-spacing:.5px;text-transform:uppercase;color:var(--text3);margin:14px 0 6px">Praca wg branży</div>
+        <div style="display:flex;flex-wrap:wrap;gap:5px">
+          <a href="/praca-magazynier/" style="font-size:11.5px;color:var(--text2);background:var(--surf2);border:1px solid var(--border);border-radius:999px;padding:5px 10px;text-decoration:none">Magazynier</a>
+          <a href="/praca-produkcja/" style="font-size:11.5px;color:var(--text2);background:var(--surf2);border:1px solid var(--border);border-radius:999px;padding:5px 10px;text-decoration:none">Produkcja</a>
+        </div>
+        <div style="font-size:10px;font-weight:800;letter-spacing:.5px;text-transform:uppercase;color:var(--text3);margin:14px 0 6px">Dla firm</div>
+        <div style="display:flex;flex-wrap:wrap;gap:5px">
+          <a href="/podgladowe-profile/" style="font-size:11.5px;color:var(--text2);background:var(--surf2);border:1px solid var(--border);border-radius:999px;padding:5px 10px;text-decoration:none">Przykładowe profile firm</a>
+          <a href="/mapjob-dla-firm.html" style="font-size:11.5px;color:var(--text2);background:var(--surf2);border:1px solid var(--border);border-radius:999px;padding:5px 10px;text-decoration:none">MapJob dla firm</a>
+        </div>
+        <div style="margin-top:14px;padding-top:12px;border-top:1px solid var(--border);font-size:10.5px;color:var(--text3);display:flex;flex-wrap:wrap;gap:10px;justify-content:center">
+          <a href="/regulamin.html" style="color:var(--text3);text-decoration:none">Regulamin</a>
+          <span>·</span>
+          <a href="/polityka-prywatnosci.html" style="color:var(--text3);text-decoration:none">Polityka prywatności</a>
+          <span>·</span>
+          <a href="/sitemap.xml" style="color:var(--text3);text-decoration:none">Mapa serwisu</a>
+        </div>
+      </div>
+    </details>
+
     <div style="text-align:center;padding:4px 0 8px"><div style="font-size:10px;color:var(--text3)">MapJob v1.0.0 · Made with ❤️ in Poland</div></div>
 
   </div>
@@ -19948,68 +19987,6 @@ window.renderHubJobs = function(){
   window._mjReferralPanelRender = renderPanel;
 })();
 </script>
-
-<!-- ===== SEO FOOTER: popularne wyszukiwania ===== -->
-<!-- Widoczny element w DOM (bez display:none / cloakingu). Linkuje do statycznych landingów    -->
-<!-- z prawdziwymi ofertami. Pomaga Google'owi zrozumieć strukturę i indeksować podstrony.       -->
-<style>
-.mj-seo-foot{position:relative;z-index:1;background:#080D18;border-top:1px solid rgba(255,255,255,.07);padding:28px 22px 36px;font-family:var(--ff,'Inter',sans-serif);color:#94A3B8;font-size:13px;line-height:1.55}
-.mj-seo-foot .wrap{max-width:1080px;margin:0 auto}
-.mj-seo-foot h2{font-size:14px;font-weight:800;color:#F0F4FF;letter-spacing:-.2px;margin:0 0 12px;text-transform:none}
-.mj-seo-foot .grp{margin-bottom:18px}
-.mj-seo-foot .grp-t{font-size:11px;font-weight:800;letter-spacing:.5px;text-transform:uppercase;color:#64748B;margin-bottom:8px}
-.mj-seo-foot .ll{display:flex;flex-wrap:wrap;gap:6px}
-.mj-seo-foot .ll a{font-size:12.5px;font-weight:600;color:#CBD5E1;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06);border-radius:999px;padding:6px 12px;text-decoration:none;transition:all .15s}
-.mj-seo-foot .ll a:hover{background:rgba(96,165,250,.14);border-color:rgba(96,165,250,.4);color:#60A5FA}
-.mj-seo-foot .bot{margin-top:18px;padding-top:14px;border-top:1px solid rgba(255,255,255,.05);font-size:11.5px;color:#64748B;display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;align-items:center}
-.mj-seo-foot .bot a{color:#94A3B8;text-decoration:none}
-.mj-seo-foot .bot a:hover{color:#F0F4FF;text-decoration:underline}
-</style>
-<footer class="mj-seo-foot" role="contentinfo" aria-label="Popularne wyszukiwania i informacje o serwisie">
-  <div class="wrap">
-    <h2>Popularne wyszukiwania pracy</h2>
-    <div class="grp">
-      <div class="grp-t">Praca w Polsce</div>
-      <div class="ll">
-        <a href="/praca-w-polsce/">Praca w Polsce</a>
-        <a href="/praca-warszawa/">Praca Warszawa</a>
-        <a href="/praca-trener-personalny/">Trener personalny Warszawa</a>
-      </div>
-    </div>
-    <div class="grp">
-      <div class="grp-t">Praca za granicą</div>
-      <div class="ll">
-        <a href="/praca-za-granica/">Praca za granicą</a>
-        <a href="/praca-niemcy/">Praca w Niemczech</a>
-        <a href="/praca-holandia/">Praca w Holandii</a>
-      </div>
-    </div>
-    <div class="grp">
-      <div class="grp-t">Praca wg branży</div>
-      <div class="ll">
-        <a href="/praca-magazynier/">Praca magazynier</a>
-        <a href="/praca-produkcja/">Praca w produkcji</a>
-      </div>
-    </div>
-    <div class="grp">
-      <div class="grp-t">Dla firm i agencji</div>
-      <div class="ll">
-        <a href="/?action=add-pin">Dodaj ogłoszenie</a>
-        <a href="/podgladowe-profile/">Przykładowe profile firm</a>
-        <a href="/mapjob-dla-firm.html">MapJob dla firm</a>
-      </div>
-    </div>
-    <div class="bot">
-      <div>© <span id="mj-foot-year">2026</span> MapJob — mapa ogłoszeń o pracę w Polsce i za granicą</div>
-      <div>
-        <a href="/regulamin.html">Regulamin</a> ·
-        <a href="/polityka-prywatnosci.html">Polityka prywatności</a> ·
-        <a href="/sitemap.xml">Mapa serwisu</a>
-      </div>
-    </div>
-  </div>
-</footer>
-<script>(function(){var y=document.getElementById('mj-foot-year');if(y)y.textContent=new Date().getFullYear();})();</script>
 
 </body>
 </html>
