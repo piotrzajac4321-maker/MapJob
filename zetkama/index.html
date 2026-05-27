@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>MapJob — podgląd profilu firmy: ZETKAMA Sp. z o.o. (do akceptacji)</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"/>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<style>
+  :root{
+    --bg:#0B0D10;--surf:#15181F;--surf2:#1C2029;--border:rgba(255,255,255,.09);--border2:rgba(255,255,255,.14);
+    --text:#F5F7FA;--text2:#A1A9B8;--text3:#6B7280;--green:#10B981;--gold:#D97706;
+    --brand:#1E57A0;--brand2:#143A6B;
+    --ff:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:var(--ff);background:#070809;color:var(--text);-webkit-font-smoothing:antialiased;line-height:1.4}
+  .topbar{display:flex;align-items:center;gap:12px;padding:14px 22px;background:rgba(7,8,9,.9);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:50}
+  .topbar .brand{display:flex;align-items:center;gap:8px;font-size:16px;font-weight:900;letter-spacing:-.3px}
+  .badge-akc{margin-left:auto;font-size:10px;font-weight:800;letter-spacing:.8px;text-transform:uppercase;color:var(--gold);background:rgba(217,119,6,.14);border:1px solid rgba(217,119,6,.35);padding:5px 11px;border-radius:999px}
+
+  .wrap{max-width:560px;margin:0 auto;padding:34px 22px 8px}
+  .wrap h1{font-size:25px;font-weight:900;letter-spacing:-.5px;line-height:1.25;margin-bottom:12px;text-align:center}
+  .wrap h1 .hl{color:#60A5FA}
+  .intro{font-size:14px;color:var(--text2);line-height:1.65;margin:0 auto 24px;text-align:center;max-width:500px}
+  .intro b{color:var(--text)}
+
+  .stage{display:flex;justify-content:center;padding:0 0 6px}
+  .desc{max-width:490px;margin:30px auto 0}
+  .okbox{background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.3);border-left:3px solid var(--green);border-radius:0 12px 12px 0;padding:14px 16px;margin-bottom:18px}
+  .okbox b{color:#34D399}
+  .okbox p{margin:0;font-size:13.5px;color:var(--text2)}
+  .feat{list-style:none}
+  .feat li{font-size:13.5px;color:var(--text2);padding-left:24px;position:relative;margin-bottom:10px;line-height:1.5}
+  .feat li::before{content:'✓';position:absolute;left:0;top:0;color:var(--green);font-weight:900}
+  .feat li b{color:var(--text)}
+  .note{font-size:12px;color:var(--text3);margin-top:18px;line-height:1.6}
+
+  .phone{width:392px;max-width:100%;background:var(--bg);border-radius:36px;border:1px solid var(--border2);box-shadow:0 0 0 9px #121419,0 40px 90px rgba(0,0,0,.6);overflow:hidden}
+  .notch{height:28px;display:flex;align-items:center;justify-content:center}
+  .notch::after{content:'';width:110px;height:6px;border-radius:99px;background:#26292f}
+  .pscroll{height:720px;overflow-y:auto;scrollbar-width:thin}
+  .pscroll::-webkit-scrollbar{width:5px}.pscroll::-webkit-scrollbar-thumb{background:#2a2e36;border-radius:4px}
+  @media(max-width:640px){
+    .pscroll{height:auto;overflow:visible}
+    .phone{box-shadow:0 0 0 6px #121419,0 20px 50px rgba(0,0,0,.5)}
+  }
+  .pbar{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:10px;padding:12px 14px;background:rgba(11,13,16,.92);backdrop-filter:blur(8px)}
+  .pbar .bk{width:32px;height:32px;border-radius:50%;background:var(--surf2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;color:var(--text2);font-size:15px}
+  .pbar .ti{font-size:13px;font-weight:700;color:var(--text2)}
+
+  .cover{height:104px;position:relative;background:linear-gradient(135deg,var(--brand),var(--brand2))}
+  .cover::after{content:'';position:absolute;inset:0;background:radial-gradient(120% 120% at 80% -20%,rgba(255,255,255,.18),transparent 55%)}
+  .logo{position:absolute;left:18px;bottom:-30px;z-index:2;width:260px;height:52px;border-radius:12px;padding:6px;box-shadow:0 6px 18px rgba(0,0,0,.28);background:#fff;display:flex;align-items:center;justify-content:center;border:4px solid var(--bg);overflow:hidden}
+  .logo img{width:92%;height:92%;object-fit:contain}
+  .head{padding:42px 18px 6px}
+  .name{font-size:21px;font-weight:900;letter-spacing:-.4px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  .verif{font-size:10px;font-weight:800;color:#fff;background:var(--green);border-radius:7px;padding:4px 9px;display:inline-flex;align-items:center;gap:4px}
+  .ind{font-size:13px;color:var(--text2);margin-top:5px;font-weight:600}
+  .loc{font-size:12px;color:var(--text3);margin-top:3px}
+  .descco{font-size:12.5px;color:var(--text2);line-height:1.6;margin-top:11px}
+  .trust{display:flex;flex-wrap:wrap;gap:7px;margin-top:13px}
+  .tchip{font-size:11px;font-weight:700;color:#34D399;background:rgba(16,185,129,.12);border:1px solid rgba(16,185,129,.3);border-radius:999px;padding:6px 11px}
+
+  .stats{display:flex;margin:16px 18px 4px;background:var(--surf);border:1px solid var(--border);border-radius:14px;overflow:hidden}
+  .stats>div{flex:1;text-align:center;padding:13px 6px;border-right:1px solid var(--border)}
+  .stats>div:last-child{border-right:none}
+  .stats .v{font-size:19px;font-weight:900}
+  .stats .v small{font-size:11px;font-weight:800;color:var(--text2)}
+  .stats .k{font-size:9.5px;color:var(--text3);text-transform:uppercase;letter-spacing:.4px;margin-top:2px}
+
+  .sec{font-size:11px;font-weight:800;letter-spacing:.5px;text-transform:uppercase;color:var(--text3);margin:18px 18px 9px}
+  .bens{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:0 18px}
+  .ben{display:flex;align-items:center;gap:9px;background:var(--surf);border:1px solid var(--border);border-radius:11px;padding:10px 11px}
+  .ben .i{width:28px;height:28px;border-radius:8px;background:rgba(16,185,129,.14);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
+  .ben .t{font-size:11.5px;font-weight:700;line-height:1.2}
+
+  .map{height:215px;margin:0 18px;border-radius:14px;overflow:hidden;border:1px solid var(--border)}
+  .map .leaflet-control-zoom a{background:var(--surf2);color:var(--text);border-color:var(--border)}
+  .maphint{font-size:11px;color:var(--text3);margin:7px 18px 0;text-align:center}
+
+  .filters{display:flex;gap:7px;overflow-x:auto;padding:2px 18px 4px;scrollbar-width:none}
+  .filters::-webkit-scrollbar{display:none}
+  .fchip{flex-shrink:0;font-size:12px;font-weight:700;color:var(--text2);background:var(--surf);border:1px solid var(--border);border-radius:999px;padding:7px 13px;cursor:pointer;white-space:nowrap;transition:.12s}
+  .fchip.on{color:#fff;background:var(--brand);border-color:var(--brand)}
+
+  .offers{padding:6px 18px 8px}
+  .offer{background:var(--surf);border:1px solid var(--border);border-radius:14px;padding:13px;margin-bottom:10px;transition:border-color .15s}
+  .offer:hover{border-color:var(--border2)}
+  .offer-top{display:flex;gap:11px;align-items:flex-start}
+  .offer-logo{width:38px;height:38px;border-radius:10px;background:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0;overflow:hidden}
+  .offer-logo img{width:90%;height:90%;object-fit:contain}
+  .offer-t{font-size:14px;font-weight:800;line-height:1.25}
+  .offer-loc{font-size:11.5px;color:var(--text3);margin-top:3px}
+  .obadges{display:flex;flex-wrap:wrap;gap:5px;margin-top:9px}
+  .ob{font-size:9.5px;font-weight:800;padding:3px 7px;border-radius:8px;letter-spacing:.2px}
+  .ob.sup{background:rgba(217,119,6,.16);color:#F59E0B;border:1px solid rgba(217,119,6,.35)}
+  .ob.oz{background:rgba(239,68,68,.13);color:#F87171;border:1px solid rgba(239,68,68,.28)}
+  .ob.ua{background:rgba(56,135,255,.14);color:#7FB0FF;border:1px solid rgba(56,135,255,.32)}
+  .ob.cv{background:rgba(16,185,129,.13);color:#34D399;border:1px solid rgba(16,185,129,.3)}
+  .ob.vac{background:var(--surf2);color:var(--text2);border:1px solid var(--border)}
+  .ob.lvl{background:var(--surf2);color:var(--text2);border:1px solid var(--border)}
+  .offer-bottom{display:flex;align-items:center;gap:10px;margin-top:11px;padding-top:11px;border-top:1px solid var(--border)}
+  .salary{font-size:12.5px;font-weight:900;color:#34D399;flex:1}
+  .salary.none{color:var(--text3);font-weight:700;font-size:11.5px}
+  .date{font-size:10.5px;color:var(--text3);flex-shrink:0}
+  .apply{background:var(--brand);color:#fff;border:none;border-radius:10px;padding:8px 14px;font-family:var(--ff);font-size:12px;font-weight:800;flex-shrink:0}
+  .nores{padding:18px;text-align:center;color:var(--text3);font-size:12.5px}
+  .morebtn{display:block;width:calc(100% - 36px);margin:2px 18px 8px;padding:13px;border-radius:13px;background:var(--surf);border:1px solid var(--border2);color:var(--text);font-family:var(--ff);font-size:13px;font-weight:800;cursor:pointer;transition:.12s}
+  .morebtn:hover{background:var(--surf2);border-color:rgba(30,87,160,.5)}
+  .morebtn .cnt{color:var(--brand)}
+
+  .followbar{display:flex;gap:8px;padding:6px 18px 18px}
+  .followbar .fb{flex:1;padding:12px;border-radius:13px;background:var(--brand);border:none;font-family:var(--ff);font-size:13.5px;font-weight:800;color:#fff}
+  .followbar .ca{padding:12px 15px;border-radius:13px;background:rgba(34,197,94,.14);border:1px solid rgba(34,197,94,.45);font-family:var(--ff);font-size:13px;font-weight:800;color:#22C55E;display:flex;align-items:center;gap:6px}
+
+  .footer{border-top:1px solid var(--border);padding:34px 22px 48px;text-align:center;margin-top:8px}
+  .bpin .head2{width:36px;height:36px;border-radius:50% 50% 50% 0;background:#fff;transform:rotate(-45deg);box-shadow:0 4px 10px rgba(0,0,0,.4);border:3px solid var(--brand);display:flex;align-items:center;justify-content:center}
+  .bpin .head2 .ic{transform:rotate(45deg);width:21px;height:21px;display:flex;align-items:center;justify-content:center}
+  .bpin .head2 .ic img{width:100%;height:100%;object-fit:contain}
+  .leaflet-popup-content-wrapper{background:var(--surf);color:var(--text);border-radius:10px;border:1px solid var(--border2)}
+  .leaflet-popup-tip{background:var(--surf)}
+  .leaflet-popup-content{margin:9px 12px;font-family:var(--ff)}
+  .leaflet-popup-content b{font-size:13px}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <div class="brand"><svg width="20" height="24" viewBox="0 0 18 22" fill="none"><path d="M9 0C4.03 0 0 4.03 0 9c0 6.75 9 13 9 13s9-6.25 9-13c0-4.97-4.03-9-9-9z" fill="#60A5FA"/><circle cx="9" cy="9" r="3.5" fill="#080D18"/></svg><span><span style="color:#F0F4FF">Map</span><span style="color:#60A5FA">Job</span><span style="color:#F0F4FF">.pl</span></span></div>
+  <span class="badge-akc">Podgląd · do akceptacji</span>
+</div>
+
+<div class="wrap">
+  <h1>Tak będzie wyglądać profil <span style="color:#1E57A0">ZETKAMA</span> na Map<span class="hl">Job</span>.pl</h1>
+  <p class="intro">Przygotowaliśmy kompletny <b>profil firmy</b> wraz ze wszystkimi aktualnymi ogłoszeniami. Kandydaci znajdą Wasze oferty na mapie i zaaplikują jednym kliknięciem — bez logowania, bez zbędnych formularzy.</p>
+
+  <div class="stage">
+    <div class="phone">
+      <div class="notch"></div>
+      <div class="pscroll">
+        <div class="pbar"><div class="bk">←</div><div class="ti">Profil firmy</div></div>
+        <div class="cover"><div class="logo"><img id="hd-logo" alt="ZETKAMA"></div></div>
+        <div class="head">
+          <div class="name">ZETKAMA <span class="verif">✓ Zweryfikowana</span></div>
+          <div class="ind">Producent armatury przemysłowej</div>
+          <div class="loc">📍 Ścinawka Średnia (centrala) · Sosnowiec · <span id="st-ci2">2</span> lokalizacje</div>
+          <div class="descco">ZETKAMA Sp. z o.o. to czołowy polski producent armatury przemysłowej — zaworów, zasuw i armatury odcinającej dla energetyki, przemysłu i instalacji. Centrala i zakład produkcyjny mieszczą się w Ścinawce Średniej (pow. kłodzki), a wyroby trafiają na rynki w całej Europie i na świecie.</div>
+          <div class="trust">
+            <span class="tchip">Polski producent</span>
+            <span class="tchip">Armatura przemysłowa</span>
+            <span class="tchip">Umowa o pracę</span>
+            <span class="tchip">Eksporter</span>
+          </div>
+        </div>
+
+        <div class="stats">
+          <div><div class="v" id="st-count">5</div><div class="k">Aktywnych ofert</div></div>
+          <div><div class="v" id="st-ci">2</div><div class="k">Lokalizacje</div></div>
+          <div><div class="v">100%</div><div class="k">Umowa o pracę</div></div>
+        </div>
+
+        <div class="sec">🎁 Co oferuje ZETKAMA</div>
+        <div class="bens">
+          <div class="ben"><div class="i">💼</div><div class="t">Umowa o pracę</div></div>
+          <div class="ben"><div class="i">🎓</div><div class="t">Szkolenia i rozwój</div></div>
+          <div class="ben"><div class="i">🏥</div><div class="t">Prywatna opieka medyczna</div></div>
+          <div class="ben"><div class="i">🎁</div><div class="t">Pakiet socjalny (ZFŚS)</div></div>
+          <div class="ben"><div class="i">📈</div><div class="t">System premiowy</div></div>
+          <div class="ben"><div class="i">🌍</div><div class="t">Praca u eksportera</div></div>
+        </div>
+
+        <div class="sec">🗺️ Oferty na mapie</div>
+        <div class="map" id="z-map"></div>
+        <div class="maphint">✋ Przeciągnij i przybliż mapę · 🔵 <span id="mh-n">5</span> ofert w <span id="mh-c">2</span> lokalizacjach</div>
+
+        <div class="sec" data-anchor="oferty" style="margin-bottom:11px">💼 Aktywne ogłoszenia (<span id="sec-count">5</span>)</div>
+        <div class="filters" id="filters">
+          <span class="fchip on" data-f="all">Wszystkie</span>
+          <span class="fchip" data-f="oz">⚡ Od zaraz</span>
+          <span class="fchip" data-f="sales">💼 Sprzedaż</span>
+          <span class="fchip" data-f="hr">👥 HR</span>
+          <span class="fchip" data-f="prod">⚙️ Produkcja</span>
+        </div>
+        <div class="offers" id="offers"></div>
+        <button class="morebtn" id="morebtn" style="display:none"></button>
+
+        <div class="followbar">
+          <button class="fb">🔔 Obserwuj firmę</button>
+          <div class="ca">📞 Kontakt</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="desc">
+    <div class="okbox"><p><b>Nie musicie nic robić ani niczego wypełniać</b> — cały profil i wszystkie ogłoszenia przygotowaliśmy za Was na podstawie Waszych ofert. Wystarczy, że <b>zatwierdzicie</b>, a my opublikujemy. Publikacja jest <b style="color:#F87171">BEZPŁATNA</b>.</p></div>
+    <ul class="feat">
+      <li><b>Jeden profil firmy</b> ze wszystkimi ogłoszeniami — kandydat widzi całą ofertę ZETKAMA w jednym miejscu</li>
+      <li><b>Piny na mapie</b> — centrala i zakład w Ścinawce Średniej oraz oferta w Sosnowcu</li>
+      <li><b>Filtry</b> — od zaraz, sprzedaż, HR, produkcja</li>
+      <li><b>Szybki kontakt</b> — „Aplikuj szybko" przy każdej ofercie, bez logowania</li>
+      <li><b>Wasze logo i barwy marki</b> — profil w kolorystyce ZETKAMA</li>
+    </ul>
+    <div class="note">To tylko podgląd — nic nie zostało jeszcze opublikowane. Po Waszej akceptacji profil pojawi się na mapjob.pl. W każdej chwili go dla Was zmienimy lub usuniemy.</div>
+  </div>
+</div>
+
+<div class="footer">
+  <div style="font-size:19px;font-weight:900;letter-spacing:-.3px;margin-bottom:8px">Zatwierdzacie profil?</div>
+  <p style="font-size:14px;color:var(--text2);max-width:520px;margin:0 auto 20px;line-height:1.65">Jeśli wszystko się zgadza — <b style="color:var(--text)">odpowiedzcie na wiadomość, w której dostaliście ten link</b>. <b style="color:#34D399">Czekamy na potwierdzenie i działamy</b> — opublikujemy profil od ręki na mapie MapJob. Publikacja jest <b style="color:#F87171">BEZPŁATNA</b>, a profil w każdej chwili dla Was zmienimy lub usuniemy.</p>
+  <div style="font-size:11px;color:var(--text3)">To tylko podgląd — nic nie zostało jeszcze opublikowane na mapjob.pl.</div>
+
+  <div style="margin-top:28px;font-size:14px;color:var(--text);font-weight:700">Wejdźcie na naszą stronę i zobaczcie, jak to działa</div>
+  <div style="margin-top:12px">
+    <a href="https://mapjob.pl" target="_blank" rel="noopener" style="display:inline-block;font-size:14px;font-weight:800;color:#fff;background:var(--surf);border:1px solid var(--border2);padding:13px 24px;border-radius:13px;text-decoration:none">🌐 Wejdź na Map<span style="color:#60A5FA">Job</span>.pl →</a>
+  </div>
+
+  <div style="margin-top:22px;font-size:13px;color:var(--text2);font-weight:600">📱 Już niedługo dostępni także w aplikacji mobilnej</div>
+  <div style="margin-top:10px;display:inline-flex;flex-wrap:wrap;gap:9px;justify-content:center">
+    <span style="display:inline-flex;align-items:center;gap:7px;font-size:12px;font-weight:700;color:var(--text2);background:var(--surf);border:1px solid var(--border);border-radius:10px;padding:9px 15px">▶ Google Play <span style="color:var(--text3);font-weight:600">· wkrótce</span></span>
+    <span style="display:inline-flex;align-items:center;gap:7px;font-size:12px;font-weight:700;color:var(--text2);background:var(--surf);border:1px solid var(--border);border-radius:10px;padding:9px 15px">🍎 App Store <span style="color:var(--text3);font-weight:600">· wkrótce</span></span>
+  </div>
+
+  <div style="margin-top:24px;display:inline-flex;align-items:center;gap:7px;font-size:14px;font-weight:800;opacity:.85"><svg width="16" height="20" viewBox="0 0 18 22" fill="none"><path d="M9 0C4.03 0 0 4.03 0 9c0 6.75 9 13 9 13s9-6.25 9-13c0-4.97-4.03-9-9-9z" fill="#60A5FA"/><circle cx="9" cy="9" r="3.5" fill="#080D18"/></svg><span><span style="color:#F0F4FF">Map</span><span style="color:#60A5FA">Job</span><span style="color:#F0F4FF">.pl</span></span> <span style="font-weight:600;color:var(--text3);font-size:12px">· mapa pracy i fachowców</span></div>
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+var OFFERS=[{"t": "Specjalista / Specjalistka ds. Sprzedaży", "loc": "Ścinawka Średnia (pow. kłodzki)", "lvl": "Specjalista", "cat": "sales", "date": "24 maja", "sal": "5 500 – 7 000 zł brutto / mies.", "oz": 1, "sup": 1, "uop": 1}, {"t": "Specjalista ds. Ciągłego Doskonalenia (m/k/n)", "loc": "Ścinawka Średnia (pow. kłodzki)", "lvl": "Specjalista", "cat": "prod", "date": "20 maja", "sal": "7 000 – 8 500 zł brutto / mies.", "sup": 1, "uop": 1}, {"t": "Specjalista / Specjalistka ds. Rekrutacji i Szkoleń", "loc": "Ścinawka Średnia (pow. kłodzki)", "lvl": "Specjalista", "cat": "hr", "date": "20 maja", "sal": "6 000 – 8 000 zł brutto / mies.", "oz": 1, "uop": 1}, {"t": "Kierownik ds. Sprzedaży eksportowej (m/k/x)", "loc": "Ścinawka Średnia (pow. kłodzki)", "lvl": "Kierownik", "cat": "sales", "date": "12 maja", "hyb": 1, "uop": 1}, {"t": "Specjalista ds. Ofertowania (K/M)", "loc": "Sosnowiec", "lvl": "Specjalista", "cat": "sales", "date": "20 maja", "sal": "6 500 – 8 000 zł brutto / mies.", "oz": 1, "sup": 1, "hyb": 1, "uop": 1}];
+var PINS=[["Ścinawka Średnia", 50.5847, 16.5469, 4], ["Sosnowiec", 50.2863, 19.1041, 1]];
+var STATS={"offers": 5, "cities": 2, "pins": 2};
+
+var LOGO="data:image/png;base64,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";
+var LOGO_MARK="data:image/png;base64,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";
+
+document.getElementById('hd-logo').src=LOGO;
+document.getElementById('st-count').textContent=STATS.offers;
+document.getElementById('st-ci').textContent=STATS.cities;
+document.getElementById('st-ci2').textContent=STATS.cities;
+document.getElementById('sec-count').textContent=STATS.offers;
+document.getElementById('mh-n').textContent=STATS.offers;
+document.getElementById('mh-c').textContent=STATS.cities;
+
+function badges(o){
+  var h='';
+  if(o.sup) h+='<span class="ob sup">★ Superoferta</span>';
+  if(o.oz) h+='<span class="ob oz">⚡ Od zaraz</span>';
+  h+='<span class="ob lvl">'+o.lvl+'</span>';
+  if(o.uop) h+='<span class="ob cv">Umowa o pracę</span>';
+  if(o.hyb) h+='<span class="ob vac">🏠 Hybrydowo</span>';
+  return h;
+}
+function card(o){
+  var sal=o.sal?'<div class="salary">'+o.sal+'</div>':'<div class="salary none">Wynagrodzenie do uzgodnienia</div>';
+  return '<div class="offer"><div class="offer-top"><div class="offer-logo"><img src="'+LOGO_MARK+'" alt=""></div><div style="flex:1;min-width:0"><div class="offer-t">'+o.t+'</div><div class="offer-loc">📍 '+o.loc+'</div></div></div><div class="obadges">'+badges(o)+'</div><div class="offer-bottom">'+sal+'<div class="date">'+o.date+'</div><button class="apply">Aplikuj szybko</button></div></div>';
+}
+var LIMIT=5, curFilter='all', expanded=false;
+var offersEl=document.getElementById('offers');
+var moreBtn=document.getElementById('morebtn');
+function filtered(){
+  if(curFilter==='all') return OFFERS;
+  if(curFilter==='oz') return OFFERS.filter(function(o){return o.oz;});
+  return OFFERS.filter(function(o){return o.cat===curFilter;});
+}
+function render(){
+  var list=filtered();
+  var shown=expanded?list:list.slice(0,LIMIT);
+  offersEl.innerHTML=shown.length?shown.map(card).join(''):'<div class="nores">Brak ofert w tej kategorii.</div>';
+  document.getElementById('sec-count').textContent=list.length;
+  if(list.length>LIMIT){
+    moreBtn.style.display='block';
+    moreBtn.innerHTML=expanded?'▴ Zwiń listę':('▾ Pokaż wszystkie ogłoszenia <span class="cnt">('+list.length+')</span>');
+  }else{moreBtn.style.display='none';}
+}
+moreBtn.addEventListener('click',function(){
+  expanded=!expanded; render();
+  if(!expanded){var a=document.querySelector('.sec[data-anchor="oferty"]'); if(a) a.scrollIntoView({behavior:'smooth',block:'start'});}
+});
+document.getElementById('filters').addEventListener('click',function(e){
+  var c=e.target.closest('.fchip'); if(!c) return;
+  document.querySelectorAll('.fchip').forEach(function(x){x.classList.remove('on');});
+  c.classList.add('on'); curFilter=c.dataset.f; expanded=false; render();
+});
+render();
+
+(function(){
+  function pin(){return L.divIcon({className:'',html:'<div class="bpin"><div class="head2"><span class="ic"><img src="'+LOGO_MARK+'"/></span></div></div>',iconSize:[36,42],iconAnchor:[18,42],popupAnchor:[0,-40]});}
+  try{
+    var m=L.map('z-map',{zoomControl:true,attributionControl:false,dragging:true,scrollWheelZoom:false,touchZoom:true,doubleClickZoom:true}).setView([50.43,17.85],7);
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',{maxZoom:19}).addTo(m);
+    var b=[];
+    PINS.forEach(function(p){
+      var mk=L.marker([p[1],p[2]],{icon:pin()}).addTo(m);
+      var word=p[3]===1?'oferta':(p[3]<5?'oferty':'ofert');
+      mk.bindPopup('<b>'+p[0]+'</b><br>'+p[3]+' '+word+' ZETKAMA');
+      b.push([p[1],p[2]]);
+    });
+    if(b.length>1) m.fitBounds(b,{padding:[34,34],maxZoom:8});
+    setTimeout(function(){m.invalidateSize();},200);
+  }catch(e){
+    var el=document.getElementById('z-map');
+    if(el) el.innerHTML='<div style="display:flex;align-items:center;justify-content:center;height:100%;color:#6B7280;font-size:12px;text-align:center;padding:14px">Mapa wczyta się po otwarciu strony z dostępem do internetu.</div>';
+  }
+})();
+</script>
+</body>
+</html>

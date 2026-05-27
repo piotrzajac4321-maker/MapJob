@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<title>MapJob — Kreacje dla firm (feed 1080×1080)</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap">
+<style>
+:root{
+  --bg:#070B14; --bg2:#0C1322; --surf:rgba(255,255,255,.05); --border:rgba(255,255,255,.10);
+  --accent:#2D7FF9; --mint:#2BE2C2; --ok:#3DD68C; --gold:#F5C451; --red:#F87171;
+  --text:#fff; --text2:rgba(255,255,255,.74); --text3:rgba(255,255,255,.46);
+}
+*{box-sizing:border-box;margin:0;padding:0;font-family:'Plus Jakarta Sans','Inter',system-ui,sans-serif}
+body{background:#15171e;color:#fff;padding:40px 20px}
+.page-header{max-width:1200px;margin:0 auto 28px;text-align:center}
+.page-header h1{font-size:30px;font-weight:800;letter-spacing:-.02em}
+.page-header p{color:#9aa0a8;font-size:14px;margin-top:8px}
+.instructions{max-width:1200px;margin:0 auto 44px;background:rgba(45,127,249,.1);border:1px solid rgba(45,127,249,.3);border-radius:14px;padding:18px 22px;font-size:13px;line-height:1.7;color:#cfe0ff}
+.instructions b{color:#7fb0ff}
+.mockup-wrap{max-width:1200px;margin:0 auto;display:flex;flex-direction:column;gap:60px}
+.mockup-label{font-size:17px;font-weight:800;margin-bottom:12px;display:flex;align-items:center;gap:12px}
+.mockup-label .badge{padding:4px 10px;background:rgba(45,127,249,.16);border:1px solid rgba(45,127,249,.34);border-radius:8px;font-size:11px;color:#7fb0ff;font-weight:700}
+.mockup-label .meta{font-size:12px;color:#7c828c;font-weight:500;margin-left:auto}
+
+/* frame 1080x1080 scaled to fit */
+.fb{width:1080px;height:1080px;background:var(--bg);overflow:hidden;position:relative;box-shadow:0 20px 60px rgba(0,0,0,.5);transform:scale(.55);transform-origin:top left;margin-bottom:-486px}
+@media(min-width:1250px){.fb{transform:scale(.85);margin-bottom:-162px}}
+
+/* shared brand bits */
+.logo{display:flex;align-items:center;gap:14px;z-index:5}
+.logo-mark{width:54px;height:54px;border-radius:14px;background:var(--accent);display:flex;align-items:center;justify-content:center}
+.logo-mark svg{width:30px;height:30px;stroke:#fff;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.logo-txt{font-size:30px;font-weight:800;letter-spacing:-.5px}
+.logo-txt .j{color:var(--accent)}
+.pill{display:inline-flex;align-items:center;gap:9px;padding:11px 20px;border-radius:999px;background:var(--surf);border:1px solid var(--border);font-size:18px;font-weight:700;color:var(--text2)}
+.pill.ok{background:rgba(61,214,140,.14);border-color:rgba(61,214,140,.34);color:#7eeab4}
+.pill.ok svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
+.cta{display:inline-flex;align-items:center;gap:14px;padding:24px 44px;border-radius:16px;background:var(--accent);font-size:30px;font-weight:800;color:#fff}
+.cta.mint{background:var(--mint);color:#062018}
+.foot{display:flex;align-items:center;justify-content:space-between;z-index:5}
+.foot-note{font-size:18px;color:var(--text3);font-weight:600}
+
+/* ============ #1 Twoja firma na mapie ============ */
+.c1{padding:70px 64px;display:flex;flex-direction:column;justify-content:space-between;
+  background:radial-gradient(circle at 50% 18%,#13213f 0%,#070B14 62%)}
+.c1-grid{position:absolute;inset:0;opacity:.5;background:
+  linear-gradient(rgba(255,255,255,.035) 1px,transparent 1px),
+  linear-gradient(90deg,rgba(255,255,255,.035) 1px,transparent 1px);background-size:64px 64px}
+.c1 .h{font-size:80px;font-weight:800;line-height:1.02;letter-spacing:-2px;z-index:5}
+.c1 .h .a{color:var(--accent)}
+.c1 .sub{font-size:27px;color:var(--text2);font-weight:600;z-index:5;max-width:780px;line-height:1.4}
+/* phone card mock */
+.phone{align-self:center;width:560px;background:#0B1018;border:1px solid var(--border);border-radius:28px;overflow:hidden;z-index:5;box-shadow:0 30px 70px rgba(0,0,0,.5)}
+.ph-cover{height:96px;background:linear-gradient(120deg,var(--accent),var(--mint))}
+.ph-body{padding:0 26px 26px}
+.ph-logo{width:84px;height:84px;border-radius:20px;background:#0E1420;border:4px solid #0B1018;margin-top:-42px;display:flex;align-items:center;justify-content:center;font-size:34px;font-weight:800;color:var(--accent)}
+.ph-name{font-size:30px;font-weight:800;margin-top:14px;display:flex;align-items:center;gap:12px}
+.ph-vbadge{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:999px;background:rgba(61,214,140,.14);border:1px solid rgba(61,214,140,.34);color:#7eeab4;font-size:16px;font-weight:700}
+.ph-vbadge svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:3}
+.ph-meta{display:flex;gap:10px;margin-top:14px;flex-wrap:wrap}
+.ph-chip{padding:8px 14px;border-radius:10px;background:var(--surf);border:1px solid var(--border);font-size:16px;font-weight:600;color:var(--text2)}
+.ph-cta{margin-top:18px;display:flex;gap:10px}
+.ph-cta .b1{flex:1.6;text-align:center;padding:15px;border-radius:12px;background:var(--accent);font-size:18px;font-weight:800}
+.ph-cta .b2{flex:1;text-align:center;padding:15px;border-radius:12px;background:var(--surf);border:1px solid var(--border);font-size:18px;font-weight:700;color:var(--text2)}
+
+/* ============ #2 Klienci i kandydaci (split) ============ */
+.c2{display:flex;flex-direction:column}
+.c2-head{padding:60px 64px 30px;text-align:center;background:linear-gradient(180deg,#0C1322,#070B14)}
+.c2-head .logo{justify-content:center;margin-bottom:26px}
+.c2-head .h{font-size:74px;font-weight:800;line-height:1.02;letter-spacing:-2px}
+.c2-head .h .a{color:var(--accent)} .c2-head .h .m{color:var(--mint)}
+.c2-head .sub{font-size:25px;color:var(--text2);font-weight:600;margin-top:16px}
+.c2-split{flex:1;display:grid;grid-template-columns:1fr 1fr;gap:2px;background:var(--border)}
+.c2-col{padding:48px 44px;display:flex;flex-direction:column;gap:22px}
+.c2-col.left{background:radial-gradient(circle at 40% 20%,rgba(45,127,249,.16),#070B14 60%)}
+.c2-col.right{background:radial-gradient(circle at 60% 20%,rgba(43,226,194,.14),#070B14 60%)}
+.c2-tag{font-size:18px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase}
+.c2-col.left .c2-tag{color:var(--accent)} .c2-col.right .c2-tag{color:var(--mint)}
+.c2-big{font-size:38px;font-weight:800;line-height:1.05;letter-spacing:-1px}
+.c2-li{display:flex;align-items:center;gap:14px;font-size:21px;color:var(--text2);font-weight:600}
+.c2-li .e{font-size:26px}
+
+/* ============ #3 Profil w 5 minut (kroki) ============ */
+.c3{padding:66px 64px;display:flex;flex-direction:column;gap:30px;background:linear-gradient(180deg,#070B14,#0C1322)}
+.c3 .h{font-size:76px;font-weight:800;line-height:1;letter-spacing:-2px}
+.c3 .h .a{color:var(--accent)}
+.c3 .sub{font-size:25px;color:var(--text2);font-weight:600}
+.c3-steps{display:flex;flex-direction:column;gap:16px;margin-top:6px}
+.c3-step{display:flex;align-items:center;gap:24px;padding:26px 30px;border-radius:18px;background:var(--surf);border:1px solid var(--border)}
+.c3-num{width:64px;height:64px;border-radius:16px;background:var(--accent);display:flex;align-items:center;justify-content:center;font-size:30px;font-weight:800;flex-shrink:0}
+.c3-st{flex:1}
+.c3-st .t{font-size:28px;font-weight:800}
+.c3-st .d{font-size:19px;color:var(--text2);font-weight:600;margin-top:4px}
+.c3-st .e{font-size:42px}
+
+/* ============ #4 Firma zweryfikowana (trust) ============ */
+.c4{padding:70px 64px;display:flex;flex-direction:column;justify-content:space-between;
+  background:radial-gradient(circle at 50% 24%,#10261d 0%,#070B14 60%)}
+.c4 .h{font-size:78px;font-weight:800;line-height:1.02;letter-spacing:-2px;z-index:5}
+.c4 .h .a{color:var(--ok)}
+.c4 .sub{font-size:25px;color:var(--text2);font-weight:600;z-index:5;max-width:760px;line-height:1.4}
+.c4-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;z-index:5}
+.c4-i{display:flex;align-items:center;gap:18px;padding:24px 26px;border-radius:16px;background:var(--surf);border:1px solid var(--border)}
+.c4-ic{width:56px;height:56px;border-radius:14px;background:rgba(61,214,140,.14);color:var(--ok);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.c4-ic svg{width:28px;height:28px;stroke:currentColor;fill:none;stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round}
+.c4-t{font-size:25px;font-weight:800}
+.c4-s{font-size:16px;color:var(--text3);font-weight:600;margin-top:2px}
+
+/* ============ #5 Zespół + realizacje ============ */
+.c5{padding:0;display:flex;flex-direction:column}
+.c5-head{padding:60px 64px 28px;background:linear-gradient(180deg,#0C1322,#070B14)}
+.c5-head .h{font-size:70px;font-weight:800;line-height:1.03;letter-spacing:-2px}
+.c5-head .h .a{color:var(--accent)}
+.c5-head .sub{font-size:23px;color:var(--text2);font-weight:600;margin-top:14px}
+.c5-team{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;padding:8px 64px 0}
+.c5-tm{padding:22px 10px;border-radius:16px;background:var(--surf);border:1px solid var(--border);text-align:center}
+.c5-av{width:76px;height:76px;border-radius:50%;margin:0 auto 12px;background:linear-gradient(135deg,var(--accent),var(--mint));display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:800}
+.c5-n{font-size:18px;font-weight:800} .c5-r{font-size:13px;color:var(--text3);font-weight:600;margin-top:3px}
+.c5-gal{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;padding:26px 64px 0}
+.c5-g{aspect-ratio:1;border-radius:14px;background:linear-gradient(135deg,#16213a,#0e1830);display:flex;align-items:center;justify-content:center;font-size:44px;border:1px solid var(--border)}
+.c5-foot{padding:30px 64px 60px;display:flex;align-items:center;justify-content:space-between;margin-top:auto}
+
+/* ============ #6 Porównanie ============ */
+.c6{padding:64px 60px;display:flex;flex-direction:column;gap:22px;background:linear-gradient(180deg,#070B14,#0C1322)}
+.c6 .top{display:flex;justify-content:space-between;align-items:center}
+.c6 .h{font-size:64px;font-weight:800;line-height:1.02;letter-spacing:-2px;margin:6px 0}
+.c6 .h .a{color:var(--accent)}
+.c6-rows{display:flex;flex-direction:column;gap:14px}
+.c6-row{display:flex;justify-content:space-between;align-items:center;padding:26px 30px;border-radius:16px;background:var(--surf);border:1px solid var(--border)}
+.c6-row.win{background:rgba(45,127,249,.12);border-color:rgba(45,127,249,.4)}
+.c6-l{font-size:28px;font-weight:800;display:flex;align-items:center;gap:14px}
+.c6-l .x{color:var(--red);font-size:30px} .c6-l .v{color:var(--ok);font-size:30px}
+.c6-sub{font-size:17px;color:var(--text3);font-weight:600;margin-top:4px;margin-left:44px}
+.c6-val{font-size:26px;font-weight:800;color:var(--text3)}
+.c6-row.win .c6-val{color:var(--mint)}
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <h1>MapJob — Kreacje dla firm</h1>
+  <p>6 kreacji 1080×1080 (feed FB/IG) celujących w firmy. Styl płaski, paleta electric-blue.</p>
+</div>
+
+<div class="instructions">
+  <b>Eksport PNG 1080×1080:</b> F12 (DevTools) → Ctrl+Shift+P → wpisz <b>„Capture node screenshot"</b> → kliknij element <b>.fb</b> danej kreacji. Zapisze się PNG w pełnej rozdzielczości. Alternatywnie Shift+Win+S (Wycinek) na ramce.
+</div>
+
+<div class="mockup-wrap">
+
+  <!-- #1 -->
+  <div>
+    <div class="mockup-label"><span class="badge">#1</span> Twoja firma na mapie Polski <span class="meta">1080×1080 · zimny ruch / akwizycja firm</span></div>
+    <div class="fb c1">
+      <div class="c1-grid"></div>
+      <div class="logo"><div class="logo-mark"><svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></div><div class="logo-txt">Map<span class="j">Job</span></div></div>
+      <div>
+        <div class="h">Twoja firma<br><span class="a">na mapie Polski.</span></div>
+        <div class="sub" style="margin-top:18px">Profesjonalny profil firmy — logo, zespół, realizacje, oferty pracy. Za 0 zł.</div>
+      </div>
+      <div class="phone">
+        <div class="ph-cover"></div>
+        <div class="ph-body">
+          <div class="ph-logo">PI</div>
+          <div class="ph-name">Przykład Instalacje <span class="ph-vbadge"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg> zweryfikowana</span></div>
+          <div class="ph-meta"><span class="ph-chip">⚡ Elektryk · HVAC</span><span class="ph-chip">👥 12 osób</span><span class="ph-chip">★ 4,9</span></div>
+          <div class="ph-cta"><div class="b1">Poproś o wycenę</div><div class="b2">Kariera</div></div>
+        </div>
+      </div>
+      <div class="foot">
+        <div class="cta">Załóż profil firmy →</div>
+        <div class="foot-note">mapjob.pl · 0 zł</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- #2 -->
+  <div>
+    <div class="mockup-label"><span class="badge">#2</span> Klienci i kandydaci — jeden profil <span class="meta">1080×1080 · USP „2 w 1"</span></div>
+    <div class="fb c2">
+      <div class="c2-head">
+        <div class="logo"><div class="logo-mark"><svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></div><div class="logo-txt">Map<span class="j">Job</span></div></div>
+        <div class="h">Klienci <span class="a">i</span> kandydaci.<br>Jeden <span class="m">profil firmy.</span></div>
+        <div class="sub">Sprzedawaj usługi i rekrutuj — z tej samej wizytówki.</div>
+      </div>
+      <div class="c2-split">
+        <div class="c2-col left">
+          <div class="c2-tag">Dla klientów</div>
+          <div class="c2-big">Usługi<br>i wycena</div>
+          <div class="c2-li"><span class="e">📋</span> Pakiety i cennik</div>
+          <div class="c2-li"><span class="e">🖼️</span> Realizacje</div>
+          <div class="c2-li"><span class="e">💬</span> Wycena na czacie</div>
+        </div>
+        <div class="c2-col right">
+          <div class="c2-tag">Dla kandydatów</div>
+          <div class="c2-big">Kariera<br>i oferty</div>
+          <div class="c2-li"><span class="e">📍</span> Oferty na mapie</div>
+          <div class="c2-li"><span class="e">👥</span> Twój zespół</div>
+          <div class="c2-li"><span class="e">📄</span> CV z AI Kreatora</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- #3 -->
+  <div>
+    <div class="mockup-label"><span class="badge">#3</span> Profil firmy w 5 minut <span class="meta">1080×1080 · prostota onboardingu</span></div>
+    <div class="fb c3">
+      <div class="logo"><div class="logo-mark"><svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></div><div class="logo-txt">Map<span class="j">Job</span></div></div>
+      <div>
+        <div class="h">Profil firmy<br>w <span class="a">5 minut.</span></div>
+        <div class="sub" style="margin-top:14px">Bez umów, bez abonamentu. Zaloguj się Googlem i gotowe.</div>
+      </div>
+      <div class="c3-steps">
+        <div class="c3-step"><div class="c3-num">1</div><div class="c3-st"><div class="t">Dodaj logo i nazwę</div><div class="d">Branding firmy, kolor, opis</div></div><div class="e">🏢</div></div>
+        <div class="c3-step"><div class="c3-num">2</div><div class="c3-st"><div class="t">Pokaż zespół i realizacje</div><div class="d">Buduj zaufanie zanim klient napisze</div></div><div class="e">👥</div></div>
+        <div class="c3-step"><div class="c3-num">3</div><div class="c3-st"><div class="t">Wystaw usługi i oferty pracy</div><div class="d">Klienci piszą, kandydaci aplikują</div></div><div class="e">📍</div></div>
+      </div>
+      <div class="foot"><div class="cta">Załóż profil firmy →</div><div class="foot-note">pierwszy pin 0 zł</div></div>
+    </div>
+  </div>
+
+  <!-- #4 -->
+  <div>
+    <div class="mockup-label"><span class="badge">#4</span> Firma zweryfikowana ✓ <span class="meta">1080×1080 · zaufanie / konwersja</span></div>
+    <div class="fb c4">
+      <div class="logo"><div class="logo-mark" style="background:var(--ok)"><svg viewBox="0 0 24 24"><path d="M12 2 4 5v6c0 5 3.4 8.5 8 10 4.6-1.5 8-5 8-10V5z"/><path d="m9 12 2 2 4-4"/></svg></div><div class="logo-txt">Map<span class="j">Job</span></div></div>
+      <div>
+        <div class="h"><span class="a">Firma zweryfikowana.</span><br>Klient widzi to od razu.</div>
+        <div class="sub" style="margin-top:16px">NIP z białej listy VAT, REGON, KRS, OC i certyfikaty — w jednej karcie zaufania.</div>
+      </div>
+      <div class="c4-grid">
+        <div class="c4-i"><div class="c4-ic"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></div><div><div class="c4-t">NIP · VAT</div><div class="c4-s">Biała lista</div></div></div>
+        <div class="c4-i"><div class="c4-ic"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></div><div><div class="c4-t">REGON</div><div class="c4-s">Zweryfikowany</div></div></div>
+        <div class="c4-i"><div class="c4-ic"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></div><div><div class="c4-t">KRS</div><div class="c4-s">Spółka</div></div></div>
+        <div class="c4-i"><div class="c4-ic"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></div><div><div class="c4-t">OC + certyfikaty</div><div class="c4-s">Uprawnienia</div></div></div>
+      </div>
+      <div class="foot"><div class="cta" style="background:var(--ok);color:#052016">Zweryfikuj firmę →</div><div class="foot-note">mapjob.pl</div></div>
+    </div>
+  </div>
+
+  <!-- #5 -->
+  <div>
+    <div class="mockup-label"><span class="badge">#5</span> Pokaż zespół. Pokaż realizacje. <span class="meta">1080×1080 · firma vs solo</span></div>
+    <div class="fb c5">
+      <div class="c5-head">
+        <div class="logo" style="margin-bottom:22px"><div class="logo-mark"><svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></div><div class="logo-txt">Map<span class="j">Job</span></div></div>
+        <div class="h">Pokaż zespół.<br><span class="a">Pokaż realizacje.</span></div>
+        <div class="sub">Firma to ludzie i robota — niech klient zobaczy jedno i drugie.</div>
+      </div>
+      <div class="c5-team">
+        <div class="c5-tm"><div class="c5-av">MK</div><div class="c5-n">Marek</div><div class="c5-r">Kierownik</div></div>
+        <div class="c5-tm"><div class="c5-av">AW</div><div class="c5-n">Anna</div><div class="c5-r">Wyceny</div></div>
+        <div class="c5-tm"><div class="c5-av">PZ</div><div class="c5-n">Paweł</div><div class="c5-r">Brygadzista</div></div>
+        <div class="c5-tm"><div class="c5-av">TL</div><div class="c5-n">Tomek</div><div class="c5-r">Serwis</div></div>
+      </div>
+      <div class="c5-gal">
+        <div class="c5-g">🏢</div><div class="c5-g">⚡</div><div class="c5-g">❄️</div><div class="c5-g">☀️</div>
+      </div>
+      <div class="c5-foot"><div class="cta">Załóż profil firmy →</div><div class="foot-note">0 zł · bez abonamentu</div></div>
+    </div>
+  </div>
+
+  <!-- #6 -->
+  <div>
+    <div class="mockup-label"><span class="badge">#6</span> MapJob vs portale <span class="meta">1080×1080 · porównanie kosztów</span></div>
+    <div class="fb c6">
+      <div class="top">
+        <div class="logo"><div class="logo-mark"><svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></div><div class="logo-txt">Map<span class="j">Job</span></div></div>
+        <div class="pill ok"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg> bez prowizji</div>
+      </div>
+      <div class="h">Leady i rekrutacja<br>bez <span class="a">kredytów na kontakt.</span></div>
+      <div class="c6-rows">
+        <div class="c6-row win">
+          <div><div class="c6-l"><span class="v">✓</span> MapJob</div><div class="c6-sub">Profil firmy + leady + oferty pracy · chat bezpośredni</div></div>
+          <div class="c6-val">0 zł</div>
+        </div>
+        <div class="c6-row">
+          <div><div class="c6-l"><span class="x">✕</span> Portale ze zleceniami</div><div class="c6-sub">Płacisz za każdy kontakt z klientem</div></div>
+          <div class="c6-val">kredyty</div>
+        </div>
+        <div class="c6-row">
+          <div><div class="c6-l"><span class="x">✕</span> Portale z ofertami pracy</div><div class="c6-sub">Płatne ogłoszenie za każdą rekrutację</div></div>
+          <div class="c6-val">za ogłoszenie</div>
+        </div>
+      </div>
+      <div class="foot" style="margin-top:6px"><div class="cta">Załóż profil firmy →</div><div class="foot-note">Zaloguj Googlem · 2 sek.</div></div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

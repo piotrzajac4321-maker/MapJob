@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>MapJob — Profil firmy v2 (makieta, inspiracja pracuj.pl)</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap">
+<style>
+  :root{
+    --bg:#0B0D10; --surf:#15181F; --surf2:#1C2029; --surf3:#23272F;
+    --border:rgba(255,255,255,.09); --border2:rgba(255,255,255,.14);
+    --text:#F5F7FA; --text2:#A1A9B8; --text3:#6B7280;
+    --blue:#2D7FF9; --blue2:#60A5FA; --bluedim:rgba(45,127,249,.14);
+    --green:#10B981; --greendim:rgba(16,185,129,.14);
+    --gold:#D97706; --brand:#E30613;
+    --ff:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:var(--ff);background:#070809;color:var(--text);-webkit-font-smoothing:antialiased;line-height:1.4}
+
+  .topbar{position:sticky;top:0;z-index:50;display:flex;align-items:center;gap:14px;padding:14px 22px;background:rgba(7,8,9,.85);backdrop-filter:blur(12px);border-bottom:1px solid var(--border)}
+  .topbar h1{font-size:15px;font-weight:800;letter-spacing:-.2px}
+  .topbar .sub{font-size:12px;color:var(--text3);font-weight:500}
+  .badge-makieta{margin-left:auto;font-size:10px;font-weight:800;letter-spacing:.8px;text-transform:uppercase;color:var(--gold);background:rgba(217,119,6,.14);border:1px solid rgba(217,119,6,.35);padding:5px 11px;border-radius:999px}
+
+  .layout{display:grid;grid-template-columns:1fr 380px;min-height:calc(100vh - 53px)}
+  @media(max-width:1080px){.layout{grid-template-columns:1fr}}
+  .stage{padding:28px 22px 70px;display:flex;flex-direction:column;align-items:center}
+
+  .legend{display:flex;gap:8px;justify-content:center;margin-bottom:20px;flex-wrap:wrap}
+  .legend span{font-size:11px;font-weight:700;color:var(--green);background:var(--greendim);border:1px solid rgba(16,185,129,.3);padding:5px 11px;border-radius:999px}
+  .legend span.new{color:var(--blue2);background:var(--bluedim);border-color:rgba(45,127,249,.35)}
+
+  .phone{width:396px;max-width:100%;background:var(--bg);border-radius:38px;border:1px solid var(--border2);box-shadow:0 0 0 9px #121419,0 40px 90px rgba(0,0,0,.6);overflow:hidden}
+  .notch{height:30px;display:flex;align-items:center;justify-content:center;background:var(--bg)}
+  .notch::after{content:'';width:120px;height:7px;border-radius:999px;background:#26292f}
+  .pscroll{height:760px;overflow-y:auto;overflow-x:hidden;scrollbar-width:thin}
+  .pscroll::-webkit-scrollbar{width:5px}.pscroll::-webkit-scrollbar-thumb{background:#2a2e36;border-radius:4px}
+
+  .pbar{position:sticky;top:0;z-index:10;display:flex;align-items:center;gap:10px;padding:12px 14px;background:rgba(11,13,16,.92);backdrop-filter:blur(8px)}
+  .pbar .bk{width:34px;height:34px;border-radius:50%;background:var(--surf);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;color:var(--text2);font-size:17px}
+  .pbar .ti{font-size:13px;font-weight:700;color:var(--text2)}
+  .pbar .sh{margin-left:auto;width:34px;height:34px;border-radius:50%;background:var(--surf);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;color:var(--text2);font-size:15px}
+
+  /* NEW: cover photo instead of flat color */
+  .cover{height:140px;position:relative;background-size:cover;background-position:center}
+  .cover::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(11,13,16,0) 30%,rgba(11,13,16,.65))}
+  .newtag{position:absolute;top:10px;right:10px;z-index:3;font-size:9px;font-weight:900;letter-spacing:.5px;text-transform:uppercase;color:#fff;background:rgba(45,127,249,.9);padding:3px 8px;border-radius:6px}
+  .logo{position:absolute;left:18px;bottom:-30px;z-index:2;width:74px;height:74px;border-radius:18px;background:#fff;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:30px;border:4px solid var(--bg);overflow:hidden}
+  .logo img{width:100%;height:100%;object-fit:cover}
+
+  .head{padding:40px 18px 4px}
+  .name{font-size:21px;font-weight:900;letter-spacing:-.4px;display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+  .verif{font-size:10px;font-weight:800;color:#fff;background:var(--green);border-radius:7px;padding:4px 9px;display:inline-flex;gap:4px;align-items:center}
+  .ind{font-size:13px;color:var(--text3);margin-top:5px}
+
+  .trust{display:flex;flex-wrap:wrap;gap:7px;margin-top:13px}
+  .tchip{font-size:11px;font-weight:700;color:var(--green);background:var(--greendim);border:1px solid rgba(16,185,129,.3);border-radius:999px;padding:6px 11px;display:flex;align-items:center;gap:5px}
+  .tchip.info{color:var(--blue2);background:var(--bluedim);border-color:rgba(45,127,249,.3)}
+
+  .cta{display:flex;gap:8px;padding:14px 18px 4px}
+  .cta button{flex:1;font-family:var(--ff);font-size:13px;font-weight:800;border-radius:12px;padding:11px;cursor:pointer;border:none}
+  .cta .follow{background:var(--surf);border:1px solid var(--border2);color:var(--text)}
+  .cta .all{background:var(--brand);color:#fff}
+
+  .stats{display:flex;gap:0;margin:16px 18px;background:var(--surf);border:1px solid var(--border);border-radius:14px;overflow:hidden}
+  .stats>div{flex:1;text-align:center;padding:13px 6px;border-right:1px solid var(--border)}
+  .stats>div:last-child{border-right:none}
+  .stats .v{font-size:18px;font-weight:900}.stats .k{font-size:9.5px;color:var(--text3);text-transform:uppercase;letter-spacing:.4px;margin-top:2px}
+
+  .sec-h{font-size:11px;font-weight:800;letter-spacing:.5px;text-transform:uppercase;color:var(--text3);margin:20px 18px 10px;display:flex;align-items:center;gap:7px}
+  .sec-h .nb{margin-left:auto;font-size:8.5px;font-weight:900;color:var(--blue2);background:var(--bluedim);border:1px solid rgba(45,127,249,.3);padding:2px 7px;border-radius:6px;letter-spacing:.5px}
+
+  .card{margin:0 18px;background:var(--surf);border:1px solid var(--border);border-radius:14px;padding:14px 15px}
+  .desc{font-size:13.5px;color:var(--text2);line-height:1.65}
+
+  /* NEW: benefits grid */
+  .bens{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin:0 18px}
+  .ben{display:flex;align-items:center;gap:10px;background:var(--surf);border:1px solid var(--border);border-radius:12px;padding:11px 12px}
+  .ben .ic{width:30px;height:30px;border-radius:9px;background:var(--greendim);display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0}
+  .ben .t{font-size:12px;font-weight:700;color:var(--text);line-height:1.25}
+
+  /* NEW: gallery */
+  .gal{display:flex;gap:9px;overflow-x:auto;padding:0 18px 4px;scrollbar-width:none}
+  .gal::-webkit-scrollbar{display:none}
+  .gal .g{width:150px;height:104px;border-radius:13px;flex-shrink:0;background-size:cover;background-position:center;border:1px solid var(--border);position:relative}
+  .gal .g .cap{position:absolute;left:0;right:0;bottom:0;font-size:10px;font-weight:700;color:#fff;padding:14px 9px 7px;background:linear-gradient(180deg,transparent,rgba(0,0,0,.75));border-radius:0 0 13px 13px}
+
+  .offer{background:var(--surf);border:1px solid var(--border);border-radius:14px;padding:14px;margin:0 18px 10px}
+  .offer-t{font-size:14.5px;font-weight:800}
+  .offer-loc{font-size:11.5px;color:var(--text3);margin-top:2px}
+  .offer-urgent{font-size:9px;font-weight:900;padding:2px 6px;border-radius:10px;background:rgba(239,68,68,.15);color:#F87171;border:1px solid rgba(239,68,68,.3)}
+  .offer-facts{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+  .fact{font-size:10.5px;font-weight:600;color:var(--text2);background:var(--surf2);border:1px solid var(--border);border-radius:8px;padding:4px 9px}
+  .offer-bottom{display:flex;align-items:center;gap:10px;margin-top:12px;padding-top:11px;border-top:1px solid var(--border)}
+  .salary{font-size:14px;font-weight:900;color:var(--green);flex:1}
+  .apply{background:var(--brand);color:#fff;border:none;border-radius:10px;padding:9px 16px;font-family:var(--ff);font-size:12.5px;font-weight:800}
+
+  /* NEW: aggregated reviews */
+  .rev-sum{display:flex;align-items:center;gap:16px;margin:0 18px 11px;background:var(--surf);border:1px solid var(--border);border-radius:14px;padding:15px}
+  .rev-sum .big{font-size:34px;font-weight:900;color:var(--gold);line-height:1}
+  .rev-sum .st{font-size:15px;color:var(--gold)}
+  .rev-sum .ct{font-size:11px;color:var(--text3);margin-top:3px}
+  .rev{background:var(--surf);border:1px solid var(--border);border-radius:14px;padding:13px;margin:0 18px 9px}
+  .rev-h{display:flex;align-items:center;gap:9px;margin-bottom:7px}
+  .rev-av{width:32px;height:32px;border-radius:50%;background:var(--surf3);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:var(--text2)}
+  .rev-n{font-size:12.5px;font-weight:700}
+  .rev-p{font-size:10px;color:var(--text3)}
+  .rev-c{font-size:12.5px;color:var(--text2);line-height:1.55}
+
+  .social{display:flex;gap:9px;margin:4px 18px 0}
+  .social a{flex:1;text-align:center;font-size:11.5px;font-weight:700;color:var(--text2);background:var(--surf);border:1px solid var(--border);border-radius:11px;padding:10px;text-decoration:none}
+
+  /* side rail */
+  .rail{background:var(--bg);border-left:1px solid var(--border);padding:28px 24px 60px}
+  @media(max-width:1080px){.rail{border-left:none;border-top:1px solid var(--border)}}
+  .rail h3{font-size:11px;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:var(--blue2);margin:22px 0 10px}
+  .rail h3:first-child{margin-top:0}
+  .rail p{font-size:13.5px;color:var(--text2);line-height:1.65;margin-bottom:12px}
+  .rail strong{color:var(--text);font-weight:700}
+  .rail .why{background:var(--surf);border:1px solid var(--border);border-left:3px solid var(--blue);border-radius:0 12px 12px 0;padding:13px 15px;margin-bottom:13px}
+  .rail .why .wl{font-size:10px;font-weight:800;letter-spacing:.6px;text-transform:uppercase;color:var(--blue2);margin-bottom:5px}
+  .rail .why p{margin:0;font-size:13px}
+  .rail ul{list-style:none;margin-bottom:13px}
+  .rail li{font-size:13px;color:var(--text2);line-height:1.5;padding-left:22px;position:relative;margin-bottom:9px}
+  .rail li b{color:var(--text)}
+  .rail li::before{content:'+';position:absolute;left:0;top:-1px;color:var(--green);font-weight:900;font-size:15px}
+  .rail li.have::before{content:'✓';color:var(--text3);font-size:12px}
+  .mig{background:var(--surf);border:1px solid var(--border);border-radius:12px;padding:13px;font-family:ui-monospace,Menlo,monospace;font-size:11px;color:#9ec3ff;line-height:1.6;white-space:pre;overflow-x:auto;margin-bottom:6px}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div>
+    <h1>Profil firmy v2 — wzbogacony (inspiracja pracuj.pl)</h1>
+    <div class="sub">Co dołożyć do obecnego profilu, żeby był „ładny" i zachęcał do aplikowania</div>
+  </div>
+  <span class="badge-makieta">Makieta · przed wdrożeniem</span>
+</div>
+
+<div class="layout">
+  <div class="stage">
+    <div class="legend">
+      <span>✓ Mamy dziś</span>
+      <span class="new">+ Nowe sekcje</span>
+    </div>
+
+    <div class="phone">
+      <div class="notch"></div>
+      <div class="pscroll">
+        <div class="pbar"><div class="bk">←</div><div class="ti">Profil pracodawcy</div><div class="sh">↗</div></div>
+
+        <!-- NEW: real cover photo -->
+        <div class="cover" style="background-image:url('https://images.unsplash.com/photo-1604719312566-8912e9227c6a?w=900&q=70')">
+          <span class="newtag">Nowe · zdjęcie w tle</span>
+        </div>
+        <div style="position:relative">
+          <div class="logo" style="color:var(--brand)">B</div>
+        </div>
+
+        <div class="head">
+          <div class="name">Biedronka <span class="verif">✓ Zweryfikowany</span></div>
+          <div class="ind">Handel detaliczny / sieć sklepów</div>
+          <div class="trust">
+            <span class="tchip">✓ NIP</span>
+            <span class="tchip">✓ REGON</span>
+            <span class="tchip">✓ KRS</span>
+            <span class="tchip info">⚡ Odpowiada w ~3 h</span>
+            <span class="tchip info">📅 Od 1995 · 75 tys. osób</span>
+          </div>
+        </div>
+
+        <!-- NEW: CTA row -->
+        <div class="cta">
+          <button class="follow">＋ Obserwuj firmę</button>
+          <button class="all">Wszystkie oferty (12)</button>
+        </div>
+
+        <div class="stats">
+          <div><div class="v">12</div><div class="k">oferty</div></div>
+          <div><div class="v">320</div><div class="k">lokalizacje</div></div>
+          <div><div class="v" style="color:var(--gold)">4.4★</div><div class="k">ocena</div></div>
+          <div><div class="v" style="color:var(--green)">86%</div><div class="k">poleca</div></div>
+        </div>
+
+        <div class="sec-h"><span>🏢</span> O firmie</div>
+        <div class="card desc">Największa sieć sklepów spożywczych w Polsce. Stałe rekrutacje w całym kraju — kasjerzy, kierownicy, magazynierzy. Stabilne zatrudnienie, jasne ścieżki awansu i szkolenia od pierwszego dnia.</div>
+
+        <!-- NEW: benefits grid -->
+        <div class="sec-h"><span>🎁</span> Co oferujemy <span class="nb">Nowe</span></div>
+        <div class="bens">
+          <div class="ben"><div class="ic">📄</div><div class="t">Umowa o pracę</div></div>
+          <div class="ben"><div class="ic">💰</div><div class="t">Premie miesięczne</div></div>
+          <div class="ben"><div class="ic">🚌</div><div class="t">Dofinansowanie dojazdu</div></div>
+          <div class="ben"><div class="ic">👕</div><div class="t">Odzież i sprzęt</div></div>
+          <div class="ben"><div class="ic">🎓</div><div class="t">Szkolenia i kursy</div></div>
+          <div class="ben"><div class="ic">🩺</div><div class="t">Opieka medyczna</div></div>
+        </div>
+
+        <!-- NEW: photo gallery -->
+        <div class="sec-h"><span>📸</span> Jak u nas pracuje się <span class="nb">Nowe</span></div>
+        <div class="gal">
+          <div class="g" style="background-image:url('https://images.unsplash.com/photo-1556740738-b6a63e27c4df?w=400&q=60')"><div class="cap">Nasz sklep</div></div>
+          <div class="g" style="background-image:url('https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=400&q=60')"><div class="cap">Zespół</div></div>
+          <div class="g" style="background-image:url('https://images.unsplash.com/photo-1581092918056-0c4c3acd3789?w=400&q=60')"><div class="cap">Magazyn</div></div>
+        </div>
+
+        <div class="sec-h"><span>🗺️</span> Mapa pracy (8)</div>
+        <div class="card" style="height:150px;display:flex;align-items:center;justify-content:center;color:var(--text3);font-size:12px;padding:0">[ mini-mapa ofert — już mamy ]</div>
+
+        <div class="sec-h"><span>💼</span> Aktywne oferty (12)</div>
+        <div class="offer">
+          <div class="offer-t">Kasjer-sprzedawca <span class="offer-urgent">PILNE</span></div>
+          <div class="offer-loc">Wrocław, ul. Legnicka · Handel</div>
+          <div class="offer-facts"><span class="fact">Pełny etat</span><span class="fact">Stacjonarnie</span><span class="fact">1 zmiana</span></div>
+          <div class="offer-bottom"><span class="salary">4 500 – 5 200 zł</span><button class="apply">Aplikuj</button></div>
+        </div>
+        <div class="offer">
+          <div class="offer-t">Kierownik zmiany</div>
+          <div class="offer-loc">Kraków, ul. Wielicka · Handel</div>
+          <div class="offer-facts"><span class="fact">Pełny etat</span><span class="fact">Stacjonarnie</span></div>
+          <div class="offer-bottom"><span class="salary">6 000 – 7 200 zł</span><button class="apply">Aplikuj</button></div>
+        </div>
+
+        <!-- NEW: aggregated company reviews -->
+        <div class="sec-h"><span>⭐</span> Opinie pracowników <span class="nb">Zagregowane</span></div>
+        <div class="rev-sum">
+          <div style="text-align:center">
+            <div class="big">4.4</div>
+            <div class="st">★★★★☆</div>
+            <div class="ct">28 opinii</div>
+          </div>
+          <div style="flex:1;font-size:12px;color:var(--text2);line-height:1.5">Oceny ze <strong style="color:var(--text)">wszystkich ofert</strong> tej firmy w jednym miejscu — nie trzeba wchodzić w każde ogłoszenie osobno.</div>
+        </div>
+        <div class="rev">
+          <div class="rev-h"><div class="rev-av">M</div><div><div class="rev-n">Marek K.</div><div class="rev-p">Kasjer · 2022–2024</div></div><div style="margin-left:auto;font-size:13px;color:var(--gold)">★★★★★</div></div>
+          <div class="rev-c">Wypłaty zawsze na czas, grafik dało się ułożyć pod studia. Kierownik konkretny.</div>
+        </div>
+        <div class="rev">
+          <div class="rev-h"><div class="rev-av">?</div><div><div class="rev-n">Anonimowo</div><div class="rev-p">Magazynier · 1 rok</div></div><div style="margin-left:auto;font-size:13px;color:var(--gold)">★★★★☆</div></div>
+          <div class="rev-c">Ciężka fizycznie praca, ale uczciwie. Premie realne, nie na papierze.</div>
+        </div>
+
+        <!-- NEW: social links -->
+        <div class="sec-h"><span>🔗</span> Firma w sieci <span class="nb">Nowe</span></div>
+        <div class="social">
+          <a href="#">🌐 Strona www</a>
+          <a href="#">f Facebook</a>
+          <a href="#">in LinkedIn</a>
+        </div>
+
+        <div style="height:30px"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="rail">
+    <h3>Co dokładam (nowe sekcje)</h3>
+    <ul>
+      <li><b>Zdjęcie w tle</b> — realne foto firmy/zespołu zamiast samego koloru. Największy skok wizualny.</li>
+      <li><b>„Co oferujemy"</b> — siatka benefitów z ikonami. Dla pracy fizycznej to konkret, który decyduje: umowa, dojazd, odzież, mieszkanie, szkolenia.</li>
+      <li><b>Galeria zdjęć</b> — sklep / budowa / zespół. Buduje zaufanie szybciej niż opis.</li>
+      <li><b>Opinie firmy (zagregowane)</b> — oceny ze <b>wszystkich</b> ofert w jednym miejscu + „% poleca".</li>
+      <li><b>„Odpowiada w ~Xh"</b> + rok założenia / liczba osób — realne sygnały, liczone z danych (zero fake).</li>
+      <li><b>Obserwuj firmę</b> — kandydat dostaje alert o nowej ofercie tej firmy.</li>
+      <li><b>Linki: www / FB / LinkedIn</b> — z istniejącego <code>social_links</code>.</li>
+    </ul>
+
+    <h3>Co już mamy (zostaje)</h3>
+    <ul>
+      <li class="have">Logo, nazwa, znak „Zweryfikowany"</li>
+      <li class="have">NIP / REGON / KRS</li>
+      <li class="have">Opis firmy</li>
+      <li class="have">Mapa pracy + lista aktywnych ofert</li>
+    </ul>
+
+    <h3>Jak to zachęca</h3>
+    <div class="why"><div class="wl">Kandydat</div><p>Bogaty profil = więcej zaufania = więcej aplikacji. Widzi benefity, twarze, opinie — nie samo gołe ogłoszenie.</p></div>
+    <div class="why"><div class="wl">Firma</div><p>„Siłę profilu" (mamy ją już dla osób) podpinamy pod firmę: nudge „firmy z pełnym profilem dostają więcej aplikacji" → firmy same uzupełniają zdjęcia i benefity.</p></div>
+
+    <h3>Migracja (dane w profiles)</h3>
+    <div class="mig">profiles +=
+  cover_url        text
+  benefits         jsonb   -- ['umowa','dojazd',...]
+  gallery          jsonb   -- [{url,caption}]
+  founded_year     int
+  employee_count   text
+  -- social_links: JUŻ JEST</div>
+    <p style="font-size:12px;color:var(--text3)">Opinie firmy: agregacja z <code>job_reviews</code> po jej <code>job_offers</code> (LATERAL — patrz nota o duplikatach przy multi-pin). „Odpowiada w Xh": z czasów odpowiedzi na aplikacje/czat.</p>
+
+    <h3>Kolejność wdrożenia (proponowana)</h3>
+    <ul>
+      <li><b>1.</b> Zdjęcie w tle + galeria (największy efekt, najmniej logiki)</li>
+      <li><b>2.</b> Benefity (siatka + edytor w profilu firmy)</li>
+      <li><b>3.</b> Zagregowane opinie + „% poleca"</li>
+      <li><b>4.</b> „Odpowiada w Xh" + obserwuj firmę</li>
+    </ul>
+  </div>
+</div>
+
+</body>
+</html>

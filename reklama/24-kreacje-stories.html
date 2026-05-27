@@ -1,0 +1,1240 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<title>MapJob — Kreacje Stories / Reels (animowane, 9:16)</title>
+<style>
+  :root {
+    --bg: #0A1228;
+    --bg2: #0F1B3A;
+    --surf: rgba(255,255,255,.06);
+    --border: rgba(255,255,255,.1);
+    --blue: #1D6FF2;
+    --blue2: #00D4FF;
+    --purple: #7C3AED;
+    --pink: #ff9ad6;
+    --green: #16C45E;
+    --gold: #FFD700;
+    --red: #F87171;
+    --text: #fff;
+    --text2: rgba(255,255,255,.75);
+    --text3: rgba(255,255,255,.5);
+    --ff: 'Plus Jakarta Sans', 'Inter', system-ui, sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; font-family: var(--ff); }
+  body {
+    background: #111827;
+    color: #fff;
+    padding: 40px 20px;
+    min-height: 100vh;
+  }
+  .page-header {
+    max-width: 1400px;
+    margin: 0 auto 30px;
+    text-align: center;
+  }
+  .page-header h1 {
+    font-size: 32px;
+    font-weight: 900;
+    margin-bottom: 10px;
+    background: linear-gradient(90deg, #6ee7ff, #c8b6ff, #ff9ad6);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .page-header p {
+    color: #aaa;
+    font-size: 14px;
+    max-width: 800px;
+    margin: 0 auto;
+  }
+  .info-box {
+    max-width: 1400px;
+    margin: 0 auto 40px;
+    padding: 16px 20px;
+    background: rgba(29,111,242,.1);
+    border: 1px solid rgba(29,111,242,.3);
+    border-radius: 12px;
+    font-size: 13px;
+    color: #ddd;
+    line-height: 1.6;
+  }
+  .info-box b { color: #6ee7ff; }
+  .grid {
+    max-width: 1400px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 30px;
+    justify-items: center;
+  }
+  .creative-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: center;
+  }
+  .creative-label {
+    font-size: 13px;
+    font-weight: 700;
+    color: #6ee7ff;
+    text-align: center;
+  }
+  .creative-label small {
+    display: block;
+    color: #888;
+    font-weight: 500;
+    font-size: 11px;
+    margin-top: 2px;
+  }
+
+  /* ============= STORY FRAME 9:16 (1080x1920 → scaled to 280x498) ============= */
+  .story {
+    width: 280px;
+    height: 498px;
+    border-radius: 20px;
+    overflow: hidden;
+    position: relative;
+    box-shadow: 0 20px 60px rgba(0,0,0,.5);
+    background: var(--bg);
+  }
+
+  /* ============= STORY #1 — „Klik Google" — animacja pulsing pin ============= */
+  .s1 {
+    background: radial-gradient(circle at 50% 30%, #1a2a5a 0%, #0A1228 100%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    padding: 30px 20px;
+    text-align: center;
+  }
+  .s1-top {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 10px;
+    z-index: 10;
+  }
+  .s1-logo {
+    width: 32px; height: 32px; border-radius: 8px;
+    background: linear-gradient(135deg, var(--blue), var(--purple));
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px;
+  }
+  .s1-brand { font-size: 14px; font-weight: 900; }
+  .s1-mid {
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 18px;
+  }
+  .s1-google-btn {
+    width: 220px;
+    padding: 14px 20px;
+    border-radius: 14px;
+    background: #fff;
+    color: #1a1a1a;
+    font-size: 14px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    box-shadow: 0 4px 20px rgba(255,255,255,.1);
+    animation: s1gbtn 2.4s infinite ease-in-out;
+  }
+  @keyframes s1gbtn {
+    0%,90%,100% { transform: scale(1); box-shadow: 0 4px 20px rgba(255,255,255,.1); }
+    45% { transform: scale(1.06); box-shadow: 0 8px 30px rgba(110,231,255,.5); }
+  }
+  .s1-google-btn svg { width: 18px; height: 18px; }
+  .s1-arrow {
+    font-size: 28px;
+    color: var(--blue2);
+    animation: s1arrow 1.5s infinite ease-in-out;
+  }
+  @keyframes s1arrow {
+    0%,100% { transform: translateY(0); opacity: .5; }
+    50% { transform: translateY(8px); opacity: 1; }
+  }
+  .s1-map {
+    width: 200px;
+    height: 140px;
+    border-radius: 14px;
+    background:
+      radial-gradient(circle at 30% 40%, rgba(0,212,255,.2) 0, transparent 30%),
+      radial-gradient(circle at 70% 60%, rgba(124,58,237,.2) 0, transparent 30%),
+      linear-gradient(135deg, #0f1b3a, #1a2a5a);
+    position: relative;
+    border: 1px solid rgba(255,255,255,.1);
+    overflow: hidden;
+  }
+  .s1-pin {
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+    background: var(--red);
+    box-shadow: 0 0 0 0 rgba(255,82,82,.7);
+    animation: s1pinPulse 1.8s infinite;
+  }
+  @keyframes s1pinPulse {
+    0% { box-shadow: 0 0 0 0 rgba(255,82,82,.7), 0 0 20px rgba(255,82,82,.6); }
+    70% { box-shadow: 0 0 0 30px rgba(255,82,82,0), 0 0 30px rgba(255,82,82,.8); }
+    100% { box-shadow: 0 0 0 0 rgba(255,82,82,0), 0 0 20px rgba(255,82,82,.6); }
+  }
+  .s1-mini-pin {
+    position: absolute;
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    opacity: .7;
+  }
+  .s1-mp1 { background: var(--blue); top: 25%; left: 20%; animation: s1mp 2s infinite; }
+  .s1-mp2 { background: var(--green); top: 70%; left: 75%; animation: s1mp 2s infinite .3s; }
+  .s1-mp3 { background: var(--gold); top: 35%; left: 80%; animation: s1mp 2s infinite .6s; }
+  .s1-mp4 { background: var(--purple); top: 75%; left: 25%; animation: s1mp 2s infinite .9s; }
+  @keyframes s1mp { 0%,100%{opacity:.3} 50%{opacity:1} }
+  .s1-headline {
+    font-size: 32px;
+    font-weight: 900;
+    line-height: 1.05;
+    letter-spacing: -1px;
+    margin-top: 8px;
+    z-index: 10;
+  }
+  .s1-headline .accent {
+    background: linear-gradient(90deg, #6ee7ff, #c8b6ff);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .s1-sub {
+    font-size: 13px;
+    color: var(--text2);
+    font-weight: 500;
+    margin-top: 4px;
+    z-index: 10;
+  }
+  .s1-cta {
+    z-index: 10;
+    width: 220px;
+    padding: 12px;
+    border-radius: 14px;
+    background: linear-gradient(135deg, var(--blue), var(--purple));
+    font-size: 13px;
+    font-weight: 800;
+    color: #fff;
+    text-align: center;
+    box-shadow: 0 6px 20px rgba(29,111,242,.5);
+    animation: s1ctaPulse 2.4s infinite;
+  }
+  @keyframes s1ctaPulse {
+    0%,100% { transform: scale(1); }
+    50% { transform: scale(1.04); box-shadow: 0 8px 28px rgba(29,111,242,.7); }
+  }
+  .s1-url { z-index: 10; font-size: 11px; color: var(--text3); margin-top: -5px; }
+
+  /* ============= STORY #2 — „Typing animation — Zero prowizji" ============= */
+  .s2 {
+    background: linear-gradient(180deg, #2a0a1a 0%, #0A1228 80%);
+    display: flex;
+    flex-direction: column;
+    padding: 30px 24px;
+    justify-content: space-between;
+  }
+  .s2-top { display: flex; align-items: center; gap: 8px; }
+  .s2-logo { width: 28px; height: 28px; border-radius: 7px; background: linear-gradient(135deg, var(--blue), var(--purple)); display: flex; align-items: center; justify-content: center; font-size: 14px; }
+  .s2-brand { font-size: 12px; font-weight: 800; }
+  .s2-headline {
+    font-size: 36px;
+    font-weight: 900;
+    line-height: 1.05;
+    letter-spacing: -1.5px;
+  }
+  .s2-crossed {
+    display: inline-block;
+    position: relative;
+    padding: 0 4px;
+    color: var(--text3);
+  }
+  .s2-crossed::after {
+    content: '';
+    position: absolute;
+    left: 0; right: 0; top: 50%;
+    height: 3px;
+    background: var(--red);
+    transform: scaleX(0);
+    transform-origin: left;
+    animation: s2Cross 3s infinite;
+    animation-delay: 1.2s;
+  }
+  @keyframes s2Cross {
+    0%,20% { transform: scaleX(0); }
+    30%,70% { transform: scaleX(1); }
+    80%,100% { transform: scaleX(0); }
+  }
+  .s2-compare {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin: 16px 0;
+  }
+  .s2-row {
+    padding: 10px 14px;
+    border-radius: 10px;
+    background: var(--surf);
+    border: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 12px;
+    animation: s2rowIn .5s both;
+  }
+  .s2-r1 { animation-delay: .3s; }
+  .s2-r2 { animation-delay: .5s; }
+  .s2-r3 { animation-delay: .7s; }
+  .s2-r4 { animation-delay: .9s; border-color: var(--green); background: rgba(22,196,94,.15); }
+  @keyframes s2rowIn {
+    from { opacity: 0; transform: translateX(-20px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+  .s2-row-name { font-weight: 700; color: var(--text); }
+  .s2-row-val { font-weight: 800; font-size: 13px; }
+  .s2-row-val.bad { color: var(--red); }
+  .s2-row-val.good { color: var(--green); }
+  .s2-cta {
+    padding: 12px;
+    border-radius: 14px;
+    background: linear-gradient(135deg, var(--green), #0a8a3e);
+    font-size: 13px;
+    font-weight: 800;
+    color: #fff;
+    text-align: center;
+    margin-top: 8px;
+  }
+  .s2-url {
+    font-size: 11px;
+    color: var(--text3);
+    text-align: center;
+    margin-top: 6px;
+  }
+
+  /* ============= STORY #3 — „Chat live animation" ============= */
+  .s3 {
+    background: linear-gradient(180deg, #0a1a28 0%, #0A1228 100%);
+    padding: 30px 24px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  .s3-top-row { display: flex; align-items: center; justify-content: space-between; }
+  .s3-logo { display: flex; align-items: center; gap: 8px; }
+  .s3-logo-ico { width: 28px; height: 28px; border-radius: 7px; background: linear-gradient(135deg, var(--blue), var(--purple)); display: flex; align-items: center; justify-content: center; font-size: 14px; }
+  .s3-logo-txt { font-size: 12px; font-weight: 800; }
+  .s3-time { font-size: 11px; color: var(--text3); }
+  .s3-title {
+    font-size: 26px;
+    font-weight: 900;
+    line-height: 1.1;
+    letter-spacing: -1px;
+    margin-top: 20px;
+  }
+  .s3-title .accent {
+    background: linear-gradient(90deg, var(--green), var(--blue2));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .s3-chat {
+    flex: 1;
+    margin: 20px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    justify-content: flex-end;
+  }
+  .s3-msg {
+    max-width: 75%;
+    padding: 10px 14px;
+    border-radius: 18px;
+    font-size: 12px;
+    line-height: 1.4;
+    animation: s3msgIn .4s both;
+  }
+  .s3-msg-them {
+    align-self: flex-start;
+    background: var(--surf);
+    border: 1px solid var(--border);
+    border-radius: 18px 18px 18px 4px;
+  }
+  .s3-msg-you {
+    align-self: flex-end;
+    background: linear-gradient(135deg, var(--blue), #1557B8);
+    color: #fff;
+    border-radius: 18px 18px 4px 18px;
+  }
+  .s3-m1 { animation-delay: .3s; }
+  .s3-m2 { animation-delay: 1.1s; }
+  .s3-m3 { animation-delay: 2.0s; }
+  .s3-m4 { animation-delay: 2.9s; }
+  @keyframes s3msgIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .s3-typing {
+    align-self: flex-end;
+    background: linear-gradient(135deg, var(--blue), #1557B8);
+    color: #fff;
+    padding: 10px 14px;
+    border-radius: 18px 18px 4px 18px;
+    display: flex;
+    gap: 4px;
+    animation: s3msgIn .4s 2.5s both;
+  }
+  .s3-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: #fff;
+    animation: s3dot 1s infinite;
+  }
+  .s3-dot:nth-child(2) { animation-delay: .2s; }
+  .s3-dot:nth-child(3) { animation-delay: .4s; }
+  @keyframes s3dot {
+    0%,100% { opacity: .3; transform: translateY(0); }
+    50% { opacity: 1; transform: translateY(-3px); }
+  }
+  .s3-cta {
+    padding: 12px;
+    border-radius: 14px;
+    background: linear-gradient(135deg, var(--blue), var(--purple));
+    font-size: 13px;
+    font-weight: 800;
+    color: #fff;
+    text-align: center;
+  }
+  .s3-url { font-size: 11px; color: var(--text3); text-align: center; margin-top: 6px; }
+
+  /* ============= STORY #4 — „Countdown 2 sekundy" ============= */
+  .s4 {
+    background: radial-gradient(circle at 50% 50%, #1a0a2a 0%, #0A1228 80%);
+    padding: 30px 24px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    text-align: center;
+  }
+  .s4-top { display: flex; align-items: center; gap: 8px; z-index: 10; }
+  .s4-logo-ico { width: 28px; height: 28px; border-radius: 7px; background: linear-gradient(135deg, var(--blue), var(--purple)); display: flex; align-items: center; justify-content: center; font-size: 14px; }
+  .s4-brand { font-size: 12px; font-weight: 800; }
+  .s4-pre { font-size: 18px; font-weight: 700; color: var(--text2); z-index: 10; }
+  .s4-number {
+    font-size: 180px;
+    font-weight: 900;
+    line-height: 1;
+    background: linear-gradient(180deg, #6ee7ff 0%, #c8b6ff 50%, #ff9ad6 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    letter-spacing: -8px;
+    filter: drop-shadow(0 0 30px rgba(200,182,255,.3));
+    animation: s4count 3s infinite ease-in-out;
+    z-index: 10;
+  }
+  @keyframes s4count {
+    0%,100% { transform: scale(1); }
+    50% { transform: scale(1.08); }
+  }
+  .s4-label {
+    font-size: 20px;
+    font-weight: 900;
+    letter-spacing: 2px;
+    color: var(--text);
+    z-index: 10;
+  }
+  .s4-body {
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--text2);
+    padding: 0 16px;
+    z-index: 10;
+  }
+  .s4-body b { color: var(--text); }
+  .s4-cta {
+    width: 220px;
+    padding: 12px;
+    border-radius: 14px;
+    background: linear-gradient(135deg, var(--blue), var(--purple));
+    font-size: 13px;
+    font-weight: 800;
+    color: #fff;
+    text-align: center;
+    z-index: 10;
+  }
+  .s4-url { font-size: 11px; color: var(--text3); z-index: 10; }
+
+  /* ============= STORY #5 — „AI Kreator CV — typing" ============= */
+  .s5 {
+    background: linear-gradient(180deg, #0a2a2a 0%, #0A1228 60%);
+    padding: 30px 24px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  .s5-top { display: flex; align-items: center; gap: 8px; }
+  .s5-logo-ico { width: 28px; height: 28px; border-radius: 7px; background: linear-gradient(135deg, var(--green), var(--blue2)); display: flex; align-items: center; justify-content: center; font-size: 14px; }
+  .s5-brand { font-size: 12px; font-weight: 800; }
+  .s5-badge { padding: 4px 10px; border-radius: 8px; background: rgba(22,196,94,.15); border: 1px solid rgba(22,196,94,.4); font-size: 10px; font-weight: 700; color: var(--green); text-transform: uppercase; letter-spacing: 1px; align-self: flex-start; margin-top: 12px; }
+  .s5-title {
+    font-size: 32px;
+    font-weight: 900;
+    line-height: 1.05;
+    letter-spacing: -1.5px;
+    margin-top: 12px;
+  }
+  .s5-title .accent { color: var(--blue2); }
+  .s5-doc {
+    margin: 20px 0;
+    padding: 18px;
+    border-radius: 12px;
+    background: rgba(255,255,255,.04);
+    border: 1px solid var(--border);
+    font-size: 11px;
+    line-height: 1.7;
+    color: var(--text2);
+    overflow: hidden;
+    position: relative;
+    font-family: 'SF Mono', Menlo, Consolas, monospace;
+  }
+  .s5-typing-line {
+    overflow: hidden;
+    white-space: nowrap;
+    animation: s5typing 2.5s steps(30) both;
+  }
+  .s5-tl1 { animation-delay: .5s; }
+  .s5-tl2 { animation-delay: 3s; color: var(--green); }
+  .s5-tl3 { animation-delay: 5.5s; }
+  @keyframes s5typing {
+    from { width: 0; }
+    to { width: 100%; }
+  }
+  .s5-tl1::before { content: '> '; color: var(--blue2); }
+  .s5-tl2::before { content: '✓ '; color: var(--green); }
+  .s5-tl3::before { content: '→ '; color: var(--pink); }
+  .s5-cta {
+    padding: 12px;
+    border-radius: 14px;
+    background: linear-gradient(135deg, var(--green), #0a8a3e);
+    font-size: 13px;
+    font-weight: 800;
+    color: #fff;
+    text-align: center;
+  }
+  .s5-url { font-size: 11px; color: var(--text3); text-align: center; margin-top: 6px; }
+
+  /* ============= STORY #6 — „Mapa z miast PL — slideshow" ============= */
+  .s6 {
+    background: #0A1228;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  .s6-top {
+    padding: 20px 20px 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    z-index: 10;
+  }
+  .s6-logo-ico { width: 28px; height: 28px; border-radius: 7px; background: linear-gradient(135deg, var(--blue), var(--purple)); display: flex; align-items: center; justify-content: center; font-size: 14px; }
+  .s6-brand { font-size: 12px; font-weight: 800; }
+  .s6-citypanel {
+    flex: 1;
+    position: relative;
+    overflow: hidden;
+  }
+  .s6-city {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    padding: 20px;
+    opacity: 0;
+    animation: s6fade 10s infinite;
+  }
+  .s6-c1 { animation-delay: 0s; }
+  .s6-c2 { animation-delay: 2s; }
+  .s6-c3 { animation-delay: 4s; }
+  .s6-c4 { animation-delay: 6s; }
+  .s6-c5 { animation-delay: 8s; }
+  @keyframes s6fade {
+    0%,15% { opacity: 0; transform: translateY(20px); }
+    20%,35% { opacity: 1; transform: translateY(0); }
+    40%,100% { opacity: 0; transform: translateY(-20px); }
+  }
+  .s6-cityname {
+    font-size: 48px;
+    font-weight: 900;
+    letter-spacing: -2px;
+    background: linear-gradient(90deg, #6ee7ff, #c8b6ff, #ff9ad6);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .s6-citysmall {
+    font-size: 13px;
+    color: var(--text3);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+  .s6-mappin {
+    width: 40px; height: 40px;
+    border-radius: 50%;
+    background: var(--red);
+    box-shadow: 0 0 40px var(--red);
+    margin-top: 14px;
+    animation: s6pin 2s infinite;
+  }
+  @keyframes s6pin {
+    0%,100% { transform: scale(1); box-shadow: 0 0 40px rgba(255,82,82,.6); }
+    50% { transform: scale(1.15); box-shadow: 0 0 60px rgba(255,82,82,.9); }
+  }
+  .s6-bottom {
+    padding: 20px;
+    background: linear-gradient(180deg, transparent, #0A1228 30%);
+    z-index: 10;
+  }
+  .s6-tagline {
+    font-size: 18px;
+    font-weight: 800;
+    text-align: center;
+    margin-bottom: 10px;
+    line-height: 1.2;
+  }
+  .s6-cta {
+    padding: 12px;
+    border-radius: 14px;
+    background: linear-gradient(135deg, var(--blue), var(--purple));
+    font-size: 13px;
+    font-weight: 800;
+    color: #fff;
+    text-align: center;
+  }
+  .s6-url { font-size: 11px; color: var(--text3); text-align: center; margin-top: 6px; }
+
+  /* ============= STORY #7 — „Anty-reklama" minimalistyczna ============= */
+  .s7 {
+    background: #000;
+    padding: 40px 28px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 20px;
+    position: relative;
+  }
+  .s7::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 50% 50%, rgba(255,255,255,.03) 0, transparent 70%);
+  }
+  .s7-stamp {
+    position: absolute;
+    top: 30px;
+    right: 30px;
+    padding: 6px 12px;
+    border: 2px solid var(--text3);
+    border-radius: 6px;
+    transform: rotate(12deg);
+    font-size: 10px;
+    font-weight: 900;
+    letter-spacing: 2px;
+    color: var(--text3);
+    text-transform: uppercase;
+    z-index: 10;
+  }
+  .s7-title {
+    font-size: 42px;
+    font-weight: 900;
+    line-height: 0.95;
+    letter-spacing: -2px;
+    z-index: 10;
+  }
+  .s7-title .crossed {
+    text-decoration: line-through;
+    text-decoration-color: var(--red);
+    text-decoration-thickness: 3px;
+    color: var(--text3);
+  }
+  .s7-body {
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--text2);
+    z-index: 10;
+  }
+  .s7-body b { color: var(--text); font-weight: 700; }
+  .s7-cta-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: auto;
+    z-index: 10;
+  }
+  .s7-cta {
+    padding: 14px;
+    border-radius: 4px;
+    background: transparent;
+    border: 2px solid var(--text);
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text);
+    text-align: center;
+  }
+  .s7-url { font-size: 11px; color: var(--text3); text-align: center; font-family: 'SF Mono', monospace; }
+
+  /* ============= STORY #8 — „Gradient hero mood" ============= */
+  .s8 {
+    background:
+      radial-gradient(circle at 20% 80%, rgba(255,154,214,.15) 0, transparent 50%),
+      radial-gradient(circle at 80% 20%, rgba(110,231,255,.15) 0, transparent 50%),
+      linear-gradient(180deg, #0a1228, #1a0a2a);
+    padding: 40px 28px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    position: relative;
+  }
+  .s8-bg-pattern {
+    position: absolute;
+    inset: 0;
+    background-image:
+      radial-gradient(circle at center, rgba(255,255,255,.04) 1px, transparent 1px);
+    background-size: 30px 30px;
+    opacity: .5;
+  }
+  .s8-top { display: flex; align-items: center; gap: 8px; z-index: 10; }
+  .s8-logo-ico { width: 28px; height: 28px; border-radius: 7px; background: linear-gradient(135deg, var(--blue), var(--purple)); display: flex; align-items: center; justify-content: center; font-size: 14px; }
+  .s8-brand { font-size: 12px; font-weight: 800; }
+  .s8-hero {
+    font-size: 56px;
+    font-weight: 900;
+    line-height: 0.95;
+    letter-spacing: -3px;
+    z-index: 10;
+  }
+  .s8-hero .gradient-text {
+    background: linear-gradient(135deg, #6ee7ff 0%, #c8b6ff 50%, #ff9ad6 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    animation: s8gradient 4s ease-in-out infinite;
+  }
+  @keyframes s8gradient {
+    0%,100% { filter: hue-rotate(0deg); }
+    50% { filter: hue-rotate(30deg); }
+  }
+  .s8-tag {
+    font-size: 14px;
+    color: var(--text2);
+    line-height: 1.5;
+    z-index: 10;
+  }
+  .s8-features {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    z-index: 10;
+  }
+  .s8-feat {
+    padding: 10px 12px;
+    border-radius: 10px;
+    background: rgba(255,255,255,.05);
+    border: 1px solid var(--border);
+    font-size: 11px;
+    font-weight: 600;
+    text-align: center;
+  }
+  .s8-cta {
+    padding: 14px;
+    border-radius: 14px;
+    background: linear-gradient(135deg, var(--blue), var(--purple));
+    font-size: 14px;
+    font-weight: 800;
+    color: #fff;
+    text-align: center;
+    box-shadow: 0 6px 24px rgba(29,111,242,.5);
+    z-index: 10;
+  }
+  .s8-url { font-size: 11px; color: var(--text3); text-align: center; z-index: 10; }
+
+  /* ============= STORY #9 — „Sezonowy — Kocioł kaszle" ============= */
+  .s9 {
+    background:
+      radial-gradient(circle at 50% 30%, rgba(248,113,113,.15) 0, transparent 50%),
+      linear-gradient(180deg, #1a0a0a 0%, #0A1228 60%);
+    padding: 30px 24px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  .s9-top { display: flex; justify-content: space-between; align-items: center; }
+  .s9-logo { display: flex; align-items: center; gap: 8px; }
+  .s9-logo-ico { width: 28px; height: 28px; border-radius: 7px; background: linear-gradient(135deg, var(--blue), var(--purple)); display: flex; align-items: center; justify-content: center; font-size: 14px; }
+  .s9-brand { font-size: 12px; font-weight: 800; }
+  .s9-season { padding: 4px 10px; border-radius: 6px; background: rgba(248,113,113,.2); border: 1px solid rgba(248,113,113,.5); font-size: 10px; font-weight: 800; color: var(--red); letter-spacing: 1px; }
+  .s9-icon {
+    font-size: 80px;
+    text-align: center;
+    animation: s9shake 0.5s infinite;
+    margin: 10px 0;
+  }
+  @keyframes s9shake {
+    0%,100% { transform: rotate(-3deg); }
+    50% { transform: rotate(3deg); }
+  }
+  .s9-title {
+    font-size: 34px;
+    font-weight: 900;
+    line-height: 1.05;
+    letter-spacing: -1.5px;
+    text-align: center;
+  }
+  .s9-title .warn { color: var(--red); }
+  .s9-sub {
+    font-size: 13px;
+    color: var(--text2);
+    text-align: center;
+    line-height: 1.5;
+    padding: 0 10px;
+  }
+  .s9-ticker {
+    padding: 12px 14px;
+    border-radius: 10px;
+    background: rgba(248,113,113,.1);
+    border-left: 3px solid var(--red);
+    font-size: 12px;
+    color: var(--text2);
+  }
+  .s9-ticker b { color: var(--red); }
+  .s9-cta {
+    padding: 12px;
+    border-radius: 14px;
+    background: linear-gradient(135deg, var(--red), #C03030);
+    font-size: 13px;
+    font-weight: 800;
+    color: #fff;
+    text-align: center;
+  }
+  .s9-url { font-size: 11px; color: var(--text3); text-align: center; margin-top: 6px; }
+
+  /* ============= STORY #10 — „Mood Instagram — ręce" ============= */
+  .s10 {
+    background: linear-gradient(180deg, #1a0f08 0%, #0a0406 100%);
+    padding: 40px 28px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    text-align: center;
+    position: relative;
+  }
+  .s10::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at 50% 60%, rgba(255,215,0,.08) 0, transparent 70%);
+  }
+  .s10-top { display: flex; justify-content: center; z-index: 10; }
+  .s10-logo-ico { width: 32px; height: 32px; border-radius: 8px; background: linear-gradient(135deg, var(--gold), #C0995A); display: flex; align-items: center; justify-content: center; font-size: 16px; }
+  .s10-hands {
+    font-size: 120px;
+    text-align: center;
+    filter: drop-shadow(0 0 40px rgba(255,215,0,.3));
+    z-index: 10;
+  }
+  .s10-title {
+    font-size: 36px;
+    font-weight: 900;
+    line-height: 1.05;
+    letter-spacing: -1.5px;
+    z-index: 10;
+    background: linear-gradient(180deg, var(--gold), #C0995A);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .s10-body {
+    font-size: 16px;
+    line-height: 1.6;
+    color: var(--text2);
+    padding: 0 10px;
+    z-index: 10;
+  }
+  .s10-body b { color: var(--gold); }
+  .s10-cta {
+    width: 220px;
+    padding: 12px;
+    border-radius: 14px;
+    background: transparent;
+    border: 2px solid var(--gold);
+    font-size: 13px;
+    font-weight: 800;
+    color: var(--gold);
+    text-align: center;
+    margin: 0 auto;
+    z-index: 10;
+  }
+  .s10-url { font-size: 11px; color: var(--text3); font-family: 'SF Mono', monospace; z-index: 10; }
+
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <h1>MapJob — Stories / Reels (animowane 9:16)</h1>
+  <p>10 nowych kreacji pionowych 1080×1920 z animacjami CSS. Gotowe do screenshot albo screen recording i wrzucenia jako reklamy Stories (Instagram / Facebook / TikTok).</p>
+</div>
+
+<div class="info-box">
+  <b>Jak użyć:</b> Każda kreacja animuje się w pętli w przeglądarce. Opcje:<br>
+  <b>(a) Screenshot statyczny:</b> prawy klik → <i>Inspect</i> → <i>Capture node screenshot</i> → PNG 1080×1920.<br>
+  <b>(b) Screen recording (wideo):</b> nagraj w pełnym ekranie (F11) przez 5–10s — CapCut / InShot do dopakowania napisami i muzyką → Reels/Stories ready.<br>
+  <b>(c) Export do MP4:</b> użyj <i>Puppeteer</i> z <i>puppeteer-video-recorder</i> albo narzędzia online typu <i>ScreenToGif</i>.<br><br>
+  Wszystkie kreacje zgodne z zasadami MapJob: <b>zero fake liczb, zero fake testymoniali, Google OAuth eksponowane</b>.
+</div>
+
+<div class="grid">
+
+  <!-- STORY #1 — „Klik Google" -->
+  <div class="creative-wrap">
+    <div class="creative-label">#1 Klik Google · Reklama A1<br><small>1080×1920 · Stories / Reels</small></div>
+    <div class="story s1">
+      <div class="s1-top">
+        <div class="s1-logo">📍</div>
+        <div class="s1-brand">MapJob</div>
+      </div>
+      <div class="s1-mid">
+        <div class="s1-google-btn">
+          <svg viewBox="0 0 24 24"><path fill="#4285F4" d="M22.5 12.3c0-.8-.1-1.5-.2-2.2H12v4.2h5.9c-.3 1.4-1 2.5-2.2 3.3v2.7h3.5c2-1.9 3.3-4.6 3.3-8z"/><path fill="#34A853" d="M12 23c3 0 5.5-1 7.3-2.7L15.8 17.6c-1 .7-2.2 1.1-3.8 1.1-2.9 0-5.4-2-6.3-4.6H2v2.8C3.8 20.5 7.6 23 12 23z"/><path fill="#FBBC05" d="M5.7 14.1c-.2-.7-.4-1.4-.4-2.1s.1-1.4.4-2.1V7.1H2C1.3 8.5 1 10.2 1 12s.3 3.5 1 4.9l3.7-2.8z"/><path fill="#EA4335" d="M12 5.4c1.6 0 3.1.6 4.2 1.6l3.1-3.1C17.5 2 14.9 1 12 1 7.6 1 3.8 3.5 2 7.1l3.7 2.9C6.6 7.4 9.1 5.4 12 5.4z"/></svg>
+          Kontynuuj z Google
+        </div>
+        <div class="s1-arrow">↓</div>
+        <div class="s1-map">
+          <div class="s1-mini-pin s1-mp1"></div>
+          <div class="s1-mini-pin s1-mp2"></div>
+          <div class="s1-mini-pin s1-mp3"></div>
+          <div class="s1-mini-pin s1-mp4"></div>
+          <div class="s1-pin"></div>
+        </div>
+        <div class="s1-headline">
+          2 sekundy.<br>
+          <span class="accent">Pin na mapie.</span>
+        </div>
+        <div class="s1-sub">Bez hasła · bez formularza · pierwszy pin 0 zł</div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:4px;align-items:center">
+        <div class="s1-cta">Zarejestruj się →</div>
+        <div class="s1-url">mapjob.pl</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STORY #2 — „Porównanie" -->
+  <div class="creative-wrap">
+    <div class="creative-label">#2 Porównanie portali · Reklama A5/A12<br><small>1080×1920 · Stories / Reels</small></div>
+    <div class="story s2">
+      <div class="s2-top">
+        <div class="s2-logo">📍</div>
+        <div class="s2-brand">MapJob</div>
+      </div>
+      <div>
+        <div class="s2-headline">
+          Ile płacisz za <span class="s2-crossed">klienta</span> kliknięcie?
+        </div>
+      </div>
+      <div class="s2-compare">
+        <div class="s2-row s2-r1">
+          <div class="s2-row-name">Oferia</div>
+          <div class="s2-row-val bad">Punkty</div>
+        </div>
+        <div class="s2-row s2-r2">
+          <div class="s2-row-name">Fixly</div>
+          <div class="s2-row-val bad">Kredyty</div>
+        </div>
+        <div class="s2-row s2-r3">
+          <div class="s2-row-name">OLX</div>
+          <div class="s2-row-val bad">Podbicia</div>
+        </div>
+        <div class="s2-row s2-r4">
+          <div class="s2-row-name">MapJob</div>
+          <div class="s2-row-val good">0 zł</div>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:4px">
+        <div class="s2-cta">Wbij pin za darmo →</div>
+        <div class="s2-url">mapjob.pl · logowanie Googlem</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STORY #3 — „Chat live" -->
+  <div class="creative-wrap">
+    <div class="creative-label">#3 Chat na żywo · Reklama A1/B2<br><small>1080×1920 · Stories / Reels</small></div>
+    <div class="story s3">
+      <div class="s3-top-row">
+        <div class="s3-logo">
+          <div class="s3-logo-ico">📍</div>
+          <div class="s3-logo-txt">MapJob</div>
+        </div>
+        <div class="s3-time">14:32</div>
+      </div>
+      <div class="s3-title">
+        Klient pisze<br><span class="accent">bezpośrednio.</span>
+      </div>
+      <div class="s3-chat">
+        <div class="s3-msg s3-msg-them s3-m1">Hej, widziałem Twój pin. Mam awarię kranu w kuchni.</div>
+        <div class="s3-msg s3-msg-you s3-m2">Dzień dobry! Dziś po 16:00 mógłbym wpaść. 100–150 zł.</div>
+        <div class="s3-msg s3-msg-them s3-m3">Świetnie! Adres wysyłam w wiadomości.</div>
+        <div class="s3-typing">
+          <div class="s3-dot"></div>
+          <div class="s3-dot"></div>
+          <div class="s3-dot"></div>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:4px">
+        <div class="s3-cta">Zaloguj Googlem →</div>
+        <div class="s3-url">mapjob.pl · bez prowizji · bez pośredników</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STORY #4 — „Countdown 2 sekundy" -->
+  <div class="creative-wrap">
+    <div class="creative-label">#4 Countdown · Reklama A1<br><small>1080×1920 · Stories / Reels</small></div>
+    <div class="story s4">
+      <div class="s4-top">
+        <div class="s4-logo-ico">📍</div>
+        <div class="s4-brand">MapJob</div>
+      </div>
+      <div class="s4-pre">Rejestracja w</div>
+      <div class="s4-number">2</div>
+      <div class="s4-label">SEKUNDACH</div>
+      <div class="s4-body">
+        Klik „Kontynuuj z Google".<br>
+        Wybierasz konto. <b>Gotowe.</b><br>
+        Zero formularzy, zero haseł.
+      </div>
+      <div style="display:flex;flex-direction:column;gap:4px;align-items:center">
+        <div class="s4-cta">Zaczynam →</div>
+        <div class="s4-url">mapjob.pl</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STORY #5 — „AI Kreator CV" -->
+  <div class="creative-wrap">
+    <div class="creative-label">#5 AI Kreator CV · Reklama A3<br><small>1080×1920 · Stories / Reels</small></div>
+    <div class="story s5">
+      <div class="s5-top">
+        <div class="s5-logo-ico">🤖</div>
+        <div class="s5-brand">MapJob · AI Kreator CV</div>
+      </div>
+      <div class="s5-badge">Nowa funkcja</div>
+      <div class="s5-title">
+        AI pisze CV<br>
+        <span class="accent">w 30 sekund.</span>
+      </div>
+      <div class="s5-doc">
+        <div class="s5-typing-line s5-tl1">Elektryk, 10 lat, Warszawa</div>
+        <div class="s5-typing-line s5-tl2">AI dopracowuje język...</div>
+        <div class="s5-typing-line s5-tl3">Pobieram PDF zgodny z ATS</div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:4px">
+        <div class="s5-cta">Utwórz konto →</div>
+        <div class="s5-url">mapjob.pl · polska apka · 0 zł pierwszy pin</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STORY #6 — „Miasta Polski — slideshow" -->
+  <div class="creative-wrap">
+    <div class="creative-label">#6 Polska mapa · Brand spot<br><small>1080×1920 · Stories / Reels · 10s loop</small></div>
+    <div class="story s6">
+      <div class="s6-top">
+        <div class="s6-logo-ico">📍</div>
+        <div class="s6-brand">MapJob</div>
+      </div>
+      <div class="s6-citypanel">
+        <div class="s6-city s6-c1">
+          <div class="s6-citysmall">📍 52°N</div>
+          <div class="s6-cityname">Warszawa</div>
+          <div class="s6-mappin"></div>
+        </div>
+        <div class="s6-city s6-c2">
+          <div class="s6-citysmall">📍 50°N</div>
+          <div class="s6-cityname">Kraków</div>
+          <div class="s6-mappin"></div>
+        </div>
+        <div class="s6-city s6-c3">
+          <div class="s6-citysmall">📍 54°N</div>
+          <div class="s6-cityname">Gdańsk</div>
+          <div class="s6-mappin"></div>
+        </div>
+        <div class="s6-city s6-c4">
+          <div class="s6-citysmall">📍 51°N</div>
+          <div class="s6-cityname">Wrocław</div>
+          <div class="s6-mappin"></div>
+        </div>
+        <div class="s6-city s6-c5">
+          <div class="s6-citysmall">📍 52°N</div>
+          <div class="s6-cityname">Poznań</div>
+          <div class="s6-mappin"></div>
+        </div>
+      </div>
+      <div class="s6-bottom">
+        <div class="s6-tagline">Polska mapa fachowców</div>
+        <div class="s6-cta">Otwórz mapę →</div>
+        <div class="s6-url">mapjob.pl · logowanie Googlem w 2 sek.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STORY #7 — „Anty-reklama" -->
+  <div class="creative-wrap">
+    <div class="creative-label">#7 Anty-reklama · Reklama A36<br><small>1080×1920 · Pattern interrupt</small></div>
+    <div class="story s7">
+      <div class="s7-stamp">Reklama</div>
+      <div class="s7-title">
+        To jest<br>
+        <span class="crossed">magia</span><br>
+        reklama.
+      </div>
+      <div class="s7-body">
+        Czytasz dalej, bo jesteś sceptyczny.<br>
+        Dobrze. <b>My też.</b><br><br>
+        MapJob: <b>pierwszy pin 0 zł</b>,<br>
+        bez karty, bez obietnic.<br><br>
+        Sprawdź sam.
+      </div>
+      <div class="s7-cta-wrap">
+        <div class="s7-cta">Sprawdzam, bez obietnic</div>
+        <div class="s7-url">mapjob.pl</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STORY #8 — „Gradient hero mood" -->
+  <div class="creative-wrap">
+    <div class="creative-label">#8 Hero mood · Reklama A37 Instagram<br><small>1080×1920 · Brand awareness</small></div>
+    <div class="story s8">
+      <div class="s8-bg-pattern"></div>
+      <div class="s8-top">
+        <div class="s8-logo-ico">📍</div>
+        <div class="s8-brand">MapJob</div>
+      </div>
+      <div class="s8-hero">
+        Polska<br>
+        mapa<br>
+        <span class="gradient-text">fachowców.</span>
+      </div>
+      <div class="s8-tag">
+        Mapa · Portfolio · Chat · AI Kreator CV<br>
+        Wszystko w jednej polskiej apce.
+      </div>
+      <div class="s8-features">
+        <div class="s8-feat">🔐 Google OAuth</div>
+        <div class="s8-feat">📍 Pin 0 zł</div>
+        <div class="s8-feat">💬 Chat bezpośrednio</div>
+        <div class="s8-feat">📱 PWA offline</div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:4px">
+        <div class="s8-cta">Zarejestruj się →</div>
+        <div class="s8-url">mapjob.pl</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STORY #9 — „Kocioł kaszle" sezonowy -->
+  <div class="creative-wrap">
+    <div class="creative-label">#9 Kocioł kaszle · Reklama B11 (jesień)<br><small>1080×1920 · Sezon wrzesień–październik</small></div>
+    <div class="story s9">
+      <div class="s9-top">
+        <div class="s9-logo">
+          <div class="s9-logo-ico">📍</div>
+          <div class="s9-brand">MapJob</div>
+        </div>
+        <div class="s9-season">Sezon jesień</div>
+      </div>
+      <div class="s9-icon">🥶</div>
+      <div class="s9-title">
+        Kocioł<br>
+        <span class="warn">kaszle?</span>
+      </div>
+      <div class="s9-sub">Wrzesień to ostatni miesiąc, żeby sprawdzić<br>bez paniki w grudniu.</div>
+      <div class="s9-ticker">
+        <b>💡 Fakt:</b> W grudniu hydraulicy mają kalendarz zapisany 2 tygodnie naprzód.<br>
+        <b>💡 Rada:</b> Sprawdź w październiku — ceny niższe, reakcja szybsza.
+      </div>
+      <div style="display:flex;flex-direction:column;gap:4px">
+        <div class="s9-cta">Znajdź hydraulika →</div>
+        <div class="s9-url">mapjob.pl · 0 zł dla klienta</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STORY #10 — „Dłonie" mood -->
+  <div class="creative-wrap">
+    <div class="creative-label">#10 Hands mood · Reklama A37 / brand<br><small>1080×1920 · Emocjonalne · IG</small></div>
+    <div class="story s10">
+      <div class="s10-top">
+        <div class="s10-logo-ico">📍</div>
+      </div>
+      <div class="s10-hands">🤝</div>
+      <div class="s10-title">
+        Dłonie,<br>
+        które budują<br>
+        Polskę.
+      </div>
+      <div class="s10-body">
+        Polska mapa fachowców.<br>
+        <b>Dla rąk, które pracują.</b><br><br>
+        Zaloguj Googlem w 2 sek.<br>
+        Pierwszy pin — 0 zł.
+      </div>
+      <div style="display:flex;flex-direction:column;gap:10px;align-items:center">
+        <div class="s10-cta">mapjob.pl</div>
+        <div class="s10-url">polska apka · bez prowizji</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div style="max-width:1400px;margin:40px auto 20px;padding:20px;background:rgba(110,231,255,.05);border:1px solid rgba(110,231,255,.2);border-radius:12px;font-size:13px;color:#ccc;line-height:1.7">
+  <b style="color:#6ee7ff;font-size:14px">💡 Pro-tipy produkcyjne:</b><br><br>
+  <b>1. Export jako wideo</b> (zamiast screenshot):<br>
+  Użyj narzędzia <i>ScreenToGif</i> (Windows) albo <i>Kap</i> (Mac) — nagraj 5–8s każdą kreację w pętli. Otrzymasz GIF/MP4 gotowy do Reels.<br><br>
+
+  <b>2. Pełna rozdzielczość 1080×1920:</b><br>
+  Otwórz tę stronę w Chrome, F11 (fullscreen), DevTools → Device emulation: <i>iPhone 14 Pro Max</i> (430×932, DPR 3) → responsive szerokość 1080 → <i>Capture full size screenshot</i>.<br><br>
+
+  <b>3. Dodanie muzyki:</b><br>
+  CapCut / InShot → import MP4 → dodaj ścieżkę z darmowej biblioteki (TikTok / Epidemic). 5s kreacji + 5s podlinkowanej muzyki = 10s Reels ready.<br><br>
+
+  <b>4. Text overlay w Reels:</b><br>
+  Meta premiuje tekst dodawany <i>natywnie w Reels</i> (nie w obrazie). Nagraj kreację jako tło, tekst dodaj dopiero w Meta Ads Manager przy wgrywaniu.<br><br>
+
+  <b>5. Wariacje A/B:</b><br>
+  Każda kreacja ma swoją paletę kolorów (#1 niebieski, #2 czerwony, #9 pomarańczowy...). Testuj, która paleta daje najwyższy CTR w Twojej audiencji.
+</div>
+
+</body>
+</html>

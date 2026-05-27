@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Makieta — ogłoszenia: logo + kwota</title>
+<style>
+:root{
+  --bg:#0B0D10; --bg2:#101318; --surf:#15181F; --surf2:#1C2029;
+  --border:rgba(255,255,255,.06); --border3:rgba(255,255,255,.09);
+  --text:#F5F7FA; --text2:#A1A9B8; --text3:#6B7280;
+  --blue:#3B82F6; --blue2:#60A5FA; --green:#10B981; --gold:#D97706; --red:#DC2626; --violet:#7C3AED;
+  --ff:'Inter','Plus Jakarta Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:var(--ff);-webkit-font-smoothing:antialiased;padding:28px 16px 80px}
+h1{font-size:20px;font-weight:900;margin:0 0 4px}
+.lead{color:var(--text2);font-size:13px;margin:0 0 28px;max-width:760px;line-height:1.6}
+.sec{max-width:920px;margin:0 auto 44px}
+.sec-h{font-size:14px;font-weight:800;letter-spacing:.4px;text-transform:uppercase;color:var(--blue2);margin:0 0 4px}
+.sec-d{font-size:12px;color:var(--text3);margin:0 0 18px;line-height:1.6}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:22px;align-items:start}
+@media(max-width:720px){.grid{grid-template-columns:1fr}}
+.col-h{display:flex;align-items:center;gap:8px;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.6px;margin:0 0 12px}
+.tag{font-size:9px;font-weight:900;padding:2px 8px;border-radius:6px}
+.tag.before{background:rgba(220,38,38,.12);border:1px solid rgba(220,38,38,.3);color:#F87171}
+.tag.after{background:rgba(16,185,129,.12);border:1px solid rgba(16,185,129,.3);color:#34D399}
+.stack{display:flex;flex-direction:column;gap:16px}
+.note{font-size:10px;color:var(--text3);margin-top:7px;padding-left:2px;line-height:1.5}
+.note b{color:var(--text2);font-weight:700}
+
+/* ---------- POPUP NA MAPIE ---------- */
+.pop{width:264px;background:#15181Fdd;backdrop-filter:blur(12px);border:1px solid var(--border3);border-radius:14px;padding:14px;color:var(--text)}
+.pop-top{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.pop-logo{width:46px;height:46px;border-radius:12px;flex-shrink:0;overflow:hidden;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:900;color:#fff}
+.pop-logo img{width:100%;height:100%;object-fit:cover;display:block}
+.pop-logo.ini{background:linear-gradient(135deg,#4F46E5,#7C3AED)}
+.pop-name{font-size:13px;font-weight:900;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pop-sub{font-size:11px;color:var(--text2);margin-bottom:5px}
+.b-urg{font-size:9px;font-weight:900;padding:2px 7px;border-radius:8px;background:rgba(220,38,38,.16);border:1px solid rgba(220,38,38,.4);color:#F87171;margin-right:4px}
+.b-cat{font-size:9px;font-weight:800;padding:2px 7px;border-radius:8px;background:rgba(124,58,237,.18);border:1px solid rgba(124,58,237,.4);color:#A78BFA}
+.pop-mid{display:flex;align-items:center;justify-content:space-between;margin:10px 0 8px;gap:8px}
+.pop-stars{color:rgba(255,255,255,.16);font-size:12px}
+.pop-stars i{font-style:normal}
+.pop-noscore{font-size:10px;color:var(--text3);margin-left:3px}
+.pop-sal{font-size:14px;font-weight:900;color:#A78BFA;text-align:right;line-height:1.15}
+.pop-sal.soft{font-size:12px;font-weight:800;color:var(--text2)}
+.pop-sal small{display:block;font-size:8.5px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.4px;margin-top:1px}
+.pop-meta{font-size:11px;color:var(--text3);margin-bottom:10px}
+.pop-btns{display:flex;gap:6px;margin-bottom:8px}
+.pb{flex:1;padding:9px 4px;border-radius:10px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;border:1px solid}
+.pb.port{background:rgba(217,119,6,.12);border-color:rgba(217,119,6,.32);color:#E0A14E}
+.pb.rev{background:rgba(217,119,6,.08);border-color:rgba(217,119,6,.25);color:#E0A14E}
+.pop-main{display:flex;gap:6px}
+.pb.main{flex:1;padding:10px;border-radius:10px;background:var(--violet);border:none;color:#fff;font-size:12px;font-weight:800;cursor:pointer;font-family:inherit}
+.pb.chat{padding:10px 14px;border-radius:10px;background:#1D6FF2;border:none;color:#fff;font-size:12px;font-weight:800;cursor:pointer}
+
+/* ---------- SZCZEGÓŁY OFERTY (header) ---------- */
+.dt{width:380px;max-width:100%;background:var(--bg);border:1px solid var(--border);border-radius:18px;overflow:hidden}
+.dt-bar{display:flex;align-items:center;gap:10px;padding:12px 14px;background:var(--bg2);border-bottom:1px solid var(--border)}
+.dt-back{width:34px;height:34px;border-radius:10px;background:var(--surf);border:1px solid var(--border3);color:var(--text2);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:16px}
+.dt-title{flex:1;font-size:14px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dt-body{padding:16px}
+.dt-head{display:flex;align-items:center;gap:14px;margin-bottom:16px}
+.dt-logo{width:60px;height:60px;border-radius:16px;flex-shrink:0;overflow:hidden;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:900;color:#fff;border:1px solid var(--border3)}
+.dt-logo img{width:100%;height:100%;object-fit:cover;display:block}
+.dt-logo.ini{background:linear-gradient(135deg,#3B82F6,#7C3AED)}
+.dt-h-name{font-size:18px;font-weight:900;line-height:1.2;margin-bottom:3px}
+.dt-h-co{font-size:13px;color:var(--text2);margin-bottom:3px}
+.dt-h-addr{font-size:11px;color:var(--text3)}
+.dt-chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px}
+.chip{padding:5px 11px;background:var(--surf);border:1px solid var(--border3);border-radius:20px;font-size:12px;color:var(--text2)}
+.chip.spots{background:rgba(16,185,129,.1);border-color:rgba(16,185,129,.3);color:var(--green);font-weight:700}
+.sal-box{border-radius:16px;padding:16px;margin-bottom:6px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.sal-box.full{background:rgba(59,130,246,.10);border:1px solid rgba(59,130,246,.22)}
+.sal-box.soft{background:var(--surf);border:1px solid var(--border3)}
+.sal-lbl{font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.8px;margin-bottom:4px}
+.sal-val{font-size:24px;font-weight:900;color:var(--text)}
+.sal-val.soft{font-size:18px;color:var(--text2)}
+.sal-ico{font-size:30px;opacity:.9}
+.legend{display:flex;flex-wrap:wrap;gap:14px;margin-top:10px;font-size:11px;color:var(--text3)}
+.legend span{display:inline-flex;align-items:center;gap:5px}
+.dot{width:8px;height:8px;border-radius:3px;display:inline-block}
+</style>
+</head>
+<body>
+
+<h1>Makieta — logo firmy + kwota w ogłoszeniach</h1>
+<p class="lead">Porównanie PRZED/PO dla dwóch ekranów, na których zgłosiłeś braki: <b>popup po kliknięciu pina ogłoszenia na mapie</b> oraz <b>nagłówek szczegółów oferty</b>. Trzy przykłady pokazują pełen łańcuch fallbacku: (A) firma ma logo i widełki, (B) brak logo ale jest avatar pracodawcy + kwota tylko w opisie, (C) brak wszystkiego → „Do uzgodnienia".</p>
+
+<!-- ============ POPUP NA MAPIE ============ -->
+<div class="sec">
+  <div class="sec-h">1 · Popup na mapie (klik w pin ogłoszenia)</div>
+  <div class="sec-d">PRZED: zawsze inicjały zamiast loga, kwota tylko gdy wpisano widełki. &nbsp;PO: logo firmy (z fallbackiem do avatara), kwota z opisu lub „Do uzgodnienia".</div>
+
+  <div class="grid">
+    <!-- PRZED -->
+    <div>
+      <div class="col-h"><span class="tag before">PRZED</span></div>
+      <div class="stack">
+
+        <!-- A -->
+        <div class="pop">
+          <div class="pop-top">
+            <div class="pop-logo ini">VI</div>
+            <div style="flex:1;min-width:0">
+              <div class="pop-name">Elektryk B2B — instalacje</div>
+              <div class="pop-sub">Volt Industrial · Warszawa</div>
+              <span class="b-urg">● PILNE</span><span class="b-cat">Elektryk</span>
+            </div>
+          </div>
+          <div class="pop-mid">
+            <div class="pop-stars"><i>★★★★★</i><span class="pop-noscore">brak ocen</span></div>
+            <div class="pop-sal">120 – 180 zł/h</div>
+          </div>
+          <div class="pop-meta">B2B · Stacjonarnie</div>
+          <div class="pop-btns"><div class="pb port">📊 Portfolio</div><div class="pb rev">⭐ Opinie</div></div>
+          <div class="pop-main"><div class="pb main">Sprawdź ofertę →</div><div class="pb chat">💬</div></div>
+        </div>
+
+        <!-- B -->
+        <div class="pop">
+          <div class="pop-top">
+            <div class="pop-logo ini">TI</div>
+            <div style="flex:1;min-width:0">
+              <div class="pop-name">Hydraulik — pompy ciepła</div>
+              <div class="pop-sub">Termofix Instalacje · Kraków</div>
+              <span class="b-cat">Hydraulik</span>
+            </div>
+          </div>
+          <div class="pop-mid">
+            <div class="pop-stars"><i>★★★★★</i><span class="pop-noscore">brak ocen</span></div>
+            <div class="pop-sal" style="color:transparent">—</div>
+          </div>
+          <div class="pop-meta">Etat · Stacjonarnie</div>
+          <div class="pop-btns"><div class="pb port">📊 Portfolio</div><div class="pb rev">⭐ Opinie</div></div>
+          <div class="pop-main"><div class="pb main">Sprawdź ofertę →</div><div class="pb chat">💬</div></div>
+          <div class="note">⛔ Kwota znika — widełki puste, mimo że w opisie jest „od 6 500 zł".</div>
+        </div>
+
+        <!-- C -->
+        <div class="pop">
+          <div class="pop-top">
+            <div class="pop-logo ini">MB</div>
+            <div style="flex:1;min-width:0">
+              <div class="pop-name">Pomocnik na budowę</div>
+              <div class="pop-sub">M. Budownictwo · Wrocław</div>
+              <span class="b-cat">Budownictwo</span>
+            </div>
+          </div>
+          <div class="pop-mid">
+            <div class="pop-stars"><i>★★★★★</i><span class="pop-noscore">brak ocen</span></div>
+            <div class="pop-sal" style="color:transparent">—</div>
+          </div>
+          <div class="pop-meta">Dorywczo · Stacjonarnie</div>
+          <div class="pop-btns"><div class="pb port">📊 Portfolio</div><div class="pb rev">⭐ Opinie</div></div>
+          <div class="pop-main"><div class="pb main">Sprawdź ofertę →</div><div class="pb chat">💬</div></div>
+          <div class="note">⛔ Brak loga i brak jakiejkolwiek kwoty — pusto.</div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- PO -->
+    <div>
+      <div class="col-h"><span class="tag after">PO</span></div>
+      <div class="stack">
+
+        <!-- A -->
+        <div class="pop">
+          <div class="pop-top">
+            <div class="pop-logo"><img src="https://ui-avatars.com/api/?name=VI&background=2563EB&color=fff&bold=true&size=92" alt=""/></div>
+            <div style="flex:1;min-width:0">
+              <div class="pop-name">Elektryk B2B — instalacje</div>
+              <div class="pop-sub">Volt Industrial · Warszawa</div>
+              <span class="b-urg">● PILNE</span><span class="b-cat">Elektryk</span>
+            </div>
+          </div>
+          <div class="pop-mid">
+            <div class="pop-stars"><i>★★★★★</i><span class="pop-noscore">brak ocen</span></div>
+            <div class="pop-sal">120 – 180 zł/h</div>
+          </div>
+          <div class="pop-meta">B2B · Stacjonarnie</div>
+          <div class="pop-btns"><div class="pb port">📊 Portfolio</div><div class="pb rev">⭐ Opinie</div></div>
+          <div class="pop-main"><div class="pb main">Sprawdź ofertę →</div><div class="pb chat">💬</div></div>
+          <div class="note"><b>Logo firmy</b> z <span style="color:var(--text2)">company_logo</span>.</div>
+        </div>
+
+        <!-- B -->
+        <div class="pop">
+          <div class="pop-top">
+            <div class="pop-logo"><img src="https://ui-avatars.com/api/?name=Termofix&background=0E7C5A&color=fff&bold=true&size=92" alt=""/></div>
+            <div style="flex:1;min-width:0">
+              <div class="pop-name">Hydraulik — pompy ciepła</div>
+              <div class="pop-sub">Termofix Instalacje · Kraków</div>
+              <span class="b-cat">Hydraulik</span>
+            </div>
+          </div>
+          <div class="pop-mid">
+            <div class="pop-stars"><i>★★★★★</i><span class="pop-noscore">brak ocen</span></div>
+            <div class="pop-sal">od 6 500 zł/mies.</div>
+          </div>
+          <div class="pop-meta">Etat · Stacjonarnie</div>
+          <div class="pop-btns"><div class="pb port">📊 Portfolio</div><div class="pb rev">⭐ Opinie</div></div>
+          <div class="pop-main"><div class="pb main">Sprawdź ofertę →</div><div class="pb chat">💬</div></div>
+          <div class="note"><b>Avatar pracodawcy</b> (brak company_logo) + kwota <b>wyłuskana z opisu</b>.</div>
+        </div>
+
+        <!-- C -->
+        <div class="pop">
+          <div class="pop-top">
+            <div class="pop-logo ini">MB</div>
+            <div style="flex:1;min-width:0">
+              <div class="pop-name">Pomocnik na budowę</div>
+              <div class="pop-sub">M. Budownictwo · Wrocław</div>
+              <span class="b-cat">Budownictwo</span>
+            </div>
+          </div>
+          <div class="pop-mid">
+            <div class="pop-stars"><i>★★★★★</i><span class="pop-noscore">brak ocen</span></div>
+            <div class="pop-sal soft">Do uzgodnienia<small>wynagrodzenie</small></div>
+          </div>
+          <div class="pop-meta">Dorywczo · Stacjonarnie</div>
+          <div class="pop-btns"><div class="pb port">📊 Portfolio</div><div class="pb rev">⭐ Opinie</div></div>
+          <div class="pop-main"><div class="pb main">Sprawdź ofertę →</div><div class="pb chat">💬</div></div>
+          <div class="note">Inicjały tylko gdy <b>naprawdę</b> brak loga i avatara. Kwota → neutralne „Do uzgodnienia".</div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ SZCZEGÓŁY OFERTY ============ -->
+<div class="sec">
+  <div class="sec-h">2 · Nagłówek szczegółów oferty</div>
+  <div class="sec-d">PRZED: gdy pracodawca nie wgrał osobnego loga firmy → same inicjały, choć ma zdjęcie profilowe. &nbsp;PO: logo → avatar → inicjały; box wynagrodzenia zawsze coś pokazuje.</div>
+
+  <div class="grid">
+    <!-- PRZED -->
+    <div>
+      <div class="col-h"><span class="tag before">PRZED</span></div>
+      <div class="dt">
+        <div class="dt-bar"><div class="dt-back">←</div><div class="dt-title">Hydraulik — pompy ciepła</div></div>
+        <div class="dt-body">
+          <div class="dt-head">
+            <div class="dt-logo ini">TI</div>
+            <div style="flex:1;min-width:0">
+              <div class="dt-h-name">Hydraulik — pompy ciepła</div>
+              <div class="dt-h-co">Termofix Instalacje</div>
+              <div class="dt-h-addr">📍 ul. Wielicka 12, Kraków</div>
+            </div>
+          </div>
+          <div class="dt-chips"><span class="chip">Etat (UoP)</span><span class="chip">Stacjonarnie</span><span class="chip">Hydraulik</span><span class="chip spots">2 wolne miejsca</span></div>
+          <div class="sal-box soft" style="background:transparent;border:1px dashed var(--border3);justify-content:center">
+            <div style="font-size:12px;color:var(--text3)">— brak boxu wynagrodzenia (widełki puste) —</div>
+          </div>
+          <div class="note">⛔ Inicjały „TI" mimo że firma ma zdjęcie profilowe. Brak kwoty, choć w opisie jest „od 6 500 zł".</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PO -->
+    <div>
+      <div class="col-h"><span class="tag after">PO</span></div>
+      <div class="dt">
+        <div class="dt-bar"><div class="dt-back">←</div><div class="dt-title">Hydraulik — pompy ciepła</div></div>
+        <div class="dt-body">
+          <div class="dt-head">
+            <div class="dt-logo"><img src="https://ui-avatars.com/api/?name=Termofix&background=0E7C5A&color=fff&bold=true&size=120" alt=""/></div>
+            <div style="flex:1;min-width:0">
+              <div class="dt-h-name">Hydraulik — pompy ciepła</div>
+              <div class="dt-h-co">Termofix Instalacje</div>
+              <div class="dt-h-addr">📍 ul. Wielicka 12, Kraków</div>
+            </div>
+          </div>
+          <div class="dt-chips"><span class="chip">Etat (UoP)</span><span class="chip">Stacjonarnie</span><span class="chip">Hydraulik</span><span class="chip spots">2 wolne miejsca</span></div>
+          <div class="sal-box full">
+            <div><div class="sal-lbl">Wynagrodzenie</div><div class="sal-val">od 6 500 zł/mies.</div></div>
+            <div class="sal-ico">💰</div>
+          </div>
+          <div class="note"><b>Avatar pracodawcy</b> zamiast inicjałów + kwota <b>wyłuskana z opisu</b>.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid" style="margin-top:22px">
+    <!-- PRZED C -->
+    <div>
+      <div class="col-h"><span class="tag before">PRZED — brak danych</span></div>
+      <div class="dt">
+        <div class="dt-bar"><div class="dt-back">←</div><div class="dt-title">Pomocnik na budowę</div></div>
+        <div class="dt-body">
+          <div class="dt-head">
+            <div class="dt-logo ini">MB</div>
+            <div style="flex:1;min-width:0">
+              <div class="dt-h-name">Pomocnik na budowę</div>
+              <div class="dt-h-co">M. Budownictwo</div>
+              <div class="dt-h-addr">📍 Wrocław</div>
+            </div>
+          </div>
+          <div class="dt-chips"><span class="chip">Dorywcza</span><span class="chip">Stacjonarnie</span><span class="chip">Budownictwo</span></div>
+          <div class="sal-box soft" style="background:transparent;border:1px dashed var(--border3);justify-content:center">
+            <div style="font-size:12px;color:var(--text3)">— brak boxu wynagrodzenia —</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PO C -->
+    <div>
+      <div class="col-h"><span class="tag after">PO — brak danych</span></div>
+      <div class="dt">
+        <div class="dt-bar"><div class="dt-back">←</div><div class="dt-title">Pomocnik na budowę</div></div>
+        <div class="dt-body">
+          <div class="dt-head">
+            <div class="dt-logo ini">MB</div>
+            <div style="flex:1;min-width:0">
+              <div class="dt-h-name">Pomocnik na budowę</div>
+              <div class="dt-h-co">M. Budownictwo</div>
+              <div class="dt-h-addr">📍 Wrocław</div>
+            </div>
+          </div>
+          <div class="dt-chips"><span class="chip">Dorywcza</span><span class="chip">Stacjonarnie</span><span class="chip">Budownictwo</span></div>
+          <div class="sal-box soft">
+            <div><div class="sal-lbl">Wynagrodzenie</div><div class="sal-val soft">Do uzgodnienia</div></div>
+            <div class="sal-ico" style="opacity:.5">🤝</div>
+          </div>
+          <div class="note">Gdy naprawdę nic nie ma: inicjały + neutralny box „Do uzgodnienia" (zamiast pustego miejsca).</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="legend">
+    <span><span class="dot" style="background:var(--blue)"></span> Łańcuch loga: <b style="color:var(--text2);font-weight:700">&nbsp;company_logo → avatar pracodawcy → inicjały</b></span>
+    <span><span class="dot" style="background:var(--green)"></span> Łańcuch kwoty: <b style="color:var(--text2);font-weight:700">&nbsp;widełki → z opisu → „Do uzgodnienia"</b></span>
+  </div>
+</div>
+
+</body>
+</html>

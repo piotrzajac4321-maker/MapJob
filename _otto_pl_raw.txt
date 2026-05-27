@@ -1,0 +1,88 @@
+Zlecenie na magazynie§Poznań§52.4167§16.9667§Pracownik magazynu§2026-05-17§0§0§0
+Pracownik magazynu§Swarzędz§52.4167§17.0833§Kompletacja zamówień§2025-12-01§1§0§0
+Pracownik magazynu ze znanymi kosmetykami§Garwolin§51.9§21.6333§Pracownik magazynu§2025-09-12§0§0§0
+Magazynier§Magnice§50.9667§16.9167§Pracownik magazynu§2025-09-11§0§0§0
+Pakowanie wyrobów u wiodącego producenta szkła§Radom§51.4167§21.15§Pracownik magazynu§2025-08-26§1§0§0
+Operator maszyn§Żywiec§49.6833§19.2167§Pracownik produkcji§2025-08-13§0§0§0
+Kompletacja towaru na magazynie§Moszna-Wieś§44.06063§-70.39367§Gastronomy employee§2025-08-07§1§0§0
+Operator wózka widłowego§Racibórz§50.0833§18.2§Operator wózka widłowego§2025-07-11§1§0§0
+Szycie pokrowców na meble ogrodowe§Nowy Tomyśl§52.3167§16.15§Pracownik produkcji§2025-06-23§0§0§0
+Operator wózka widłowego z udt§Łódź§51.75§19.4667§Pracownik magazynu§2025-06-21§0§0§1
+Praca na magazynie w soboty§Siedlce§52.1667§22.3§Pracownik magazynu§2025-05-11§1§0§0
+Monter/ka w Namysłowie§Namysłów§51.0833§17.7167§Monter§2025-05-11§0§0§0
+Prace pomocnicze - operowanie maszyną§Radom§51.4167§21.15§Pracownik produkcji§2025-03-13§0§0§0
+Pracownik magazynowy światowego lidera logistycznego§Bydgoszcz§53.15§18§Pracownik magazynu§2025-02-24§0§0§0
+Pracownik magazynowy światowego lidera logistycznego§Toruń§53.0333§18.6§Pracownik magazynu§2025-02-24§0§0§0
+Pracownik sortowni§Szydłowiec§51.2333§20.85§Pracownik produkcji§2025-02-17§0§0§0
+Pakowanie wyrobów szklanych§Szydłowiec§51.2333§20.85§Pracownik produkcji§2024-11-22§0§0§0
+Prace magazynowe§Robakowo§52.4167§17.0833§Pracownik magazynu§2024-10-17§0§0§0
+Pracownik magazynu§Łódź§51.75§19.4667§Pracownik magazynu§2024-10-17§0§0§0
+Operator produkcji w branży motoryzacyjnej§Sosnowiec§50.3§19.1667§Pracownik magazynu§2024-10-10§0§0§0
+Pracownik magazynu sklepu internetowego§Żerniki§52.4167§17.0833§Pracownik magazynu§2024-10-03§0§0§0
+Prace pomocnicze na magazynie§Gdynia§54.5§18.55§Pracownik produkcji§2024-09-27§0§0§0
+Pracownik magazynu automotive§Komorniki§52.35§16.8§Pracownik magazynu§2024-09-26§0§0§0
+Prace pomocnicze w magazynie§Emilianów§52.4167§21.1833§Kompletacja zamówień§2024-09-26§1§0§0
+Operator produkcji§Żory§50.05§18.7§Pracownik produkcji§2024-09-19§1§0§0
+Pracownik magazynu§Zielona Góra§51.9333§15.5§Pracownik magazynu§2024-09-13§0§0§0
+Pracownik magazynu§Sosnowiec§50.3§19.1667§Operacje§2024-08-22§0§0§0
+Praca przy linii produkcyjnej suszonych warzyw§Nowy Tomyśl§52.3167§16.15§Pracownik produkcji§2024-08-14§0§0§0
+Pracownik magazynu§Wrocław§51.1§17.0333§Pracownik magazynu§2024-08-13§0§0§0
+Pracownik magazynu§Kostrzyn§52.4167§17.0833§Pracownik magazynu§2024-08-13§0§0§0
+Pracownik produkcji / Operator maszyn§Krępice§50.33427§20.45617§Pracownik produkcji§2024-08-02§1§0§0
+Sortowanie paczek – praca na niepełny etat§Szczecin§53.3667§14.4667§Pracownik magazynu§2024-08-01§0§0§0
+Pracownik magazynowy§Stryków§51.9§19.6§Pracownik magazynu§2024-08-01§0§0§0
+Pracownik pomocniczy w magazynie§Moszna Parcela§44.06063§-70.39367§Kompletacja zamówień§2024-07-22§1§0§0
+Oferty pracy w Twojej okolicy!§Bielany Wrocławskie§50.9667§16.9167§Pracownik magazynu§2024-07-10§1§0§0
+Praca na Śląsku - sprawdź oferty w swojej okolicy!§Gliwice§50.2833§18.6667§Pracownik magazynu§2024-07-10§0§0§0
+Praca blisko Warszawy i w okolicach!§Warszawa§52.25§21§Pracownik magazynu§2024-07-10§1§0§0
+Pracownik magazynu z uprawnieniami na wózki UDT§Mława§53.1167§20.3833§Pracownik magazynu§2024-07-09§1§0§1
+Magazynier z uprawnieniami UDT§Przejazdowo§54.3§18.7333§Pracownik magazynu§2024-07-07§1§0§1
+Pracownik magazynu z UDT§Kąty Wrocławskie§51.0333§16.7667§Pracownik produkcji§2024-07-03§1§0§1
+Oferty pracy w Twojej okolicy!§Bielany Wrocławskie§50.9667§16.9167§Pracownik magazynu§2024-07-03§1§0§0
+Pracownik obsługi urządzeń do produkcji wyrobów z gumy§Budzyń§52.8833§16.9833§Pracownik produkcji§2024-06-14§0§0§0
+Pracownik magazynu z artykułami gospodarstwa domowego§Moszna-Wieś§44.06063§-70.39367§Pracownik produkcji§2024-06-13§0§0§0
+Prace montażowe§Wodzierady§51.7167§19.15§Monter§2024-06-07§0§0§0
+Pracownik działu kompletowania towaru (niepełny etat)§Poznań§52.4167§16.9667§Pracownik magazynu§2024-06-07§0§0§0
+Praca na magazynie znanej firmy kurierskiej§Warszawa§52.25§21§Operacje§2024-05-10§1§0§0
+Pracownik magazynu w Raciborzu§Racibórz§50.0833§18.2§Pracownik magazynu§2024-05-08§0§0§0
+Pracownik produkcji okien dachowych§Namysłów§51.0833§17.7167§Pracownik produkcji§2024-05-08§0§0§0
+Pracownik pomocniczy przy produkcji gier planszowych i karcianych§Podłęże§50.0167§20.1667§Pracownik produkcji§2024-04-24§0§0§0
+Pracownik pomocniczy w branży logistycznej§Niepołomice§50.0325§20.2166§Kompletacja zamówień§2024-04-18§0§0§0
+Pracownik administracji magazynowej§Śrem§52.0833§17.0167§Administracja§2024-04-15§0§0§0
+Pracownik gastronomii§Gdańsk§54.35§18.6667§Pracownik magazynu§2024-04-12§1§0§0
+Pracownik pomocniczy przy produkcji szkła§Barczewo§53.8305§20.6911§Pracownik magazynu§2024-04-12§1§0§0
+Pomocnik operatora maszyn§Szydłowiec§51.2333§20.85§Pracownik produkcji§2024-04-08§0§0§0
+Prace pomocnicze w magazynie§Tuchom§44.06063§-70.39367§Pracownik magazynu§2024-04-04§0§0§0
+Pracownik sklepu spożywczo-przemysłowego§Racibórz§50.0833§18.2§Sprzedaż§2024-03-26§0§0§0
+Pracownik magazynu z narzędziami i elektronarzędziami§Gliwice§50.2833§18.6667§Pracownik magazynu§2024-03-26§1§0§0
+Operator linii odlewniczej§Kędzierzyn-Koźle§50.35§18.2§Pracownik produkcji§2024-02-29§0§0§0
+Pracownik transportu w produkcji automotive§Sosnowiec§50.3§19.1667§Pracownik produkcji§2024-02-21§0§0§0
+Operator linii produkcyjnej§Dąbrowa Górnicza§50.3333§19.2§Pracownik produkcji§2024-02-21§0§0§0
+Pracownik magazynu w Radomsku§Radomsko§51.0667§19.45§Kompletacja zamówień§2024-02-14§0§0§0
+Operator wózka widłowego w centrum dystrybucyjnym§Olkusz§50.2833§19.5667§Operator wózka widłowego§2024-02-07§0§0§0
+Monter przy produkcji foteli do samochodów§Nowy Tomyśl§52.3167§16.15§Obróbka metali§2024-01-31§0§0§0
+Operator maszyn przy produkcji przewodów elektycznych§Ozorków§51.9667§19.2833§Operacje§2024-01-05§0§0§0
+Pracownik linii produkcyjnej – automotive i elektronika§Łódź§51.75§19.4667§Pracownik produkcji§2023-12-22§0§0§0
+Pracownik produkcji dla branży automotive i AGD§Łódź§51.75§19.4667§Pracownik produkcji§2023-12-19§0§0§0
+Pracownik produkcji wiązek kablowych§Łódź§51.75§19.4667§Pracownik produkcji§2023-12-19§0§0§0
+Pracownik magazynu z częściami samochodowymi§Zakroczym§52.4333§20.6333§Pracownik produkcji§2023-11-29§0§0§0
+Pracownik serwisu elektronicznego§Sękocin Stary§52.15§20.95§Pracownik produkcji§2023-11-24§0§0§0
+Pracownik produkcji – monter§Pruszków§52.1667§20.8333§Pracownik produkcji§2023-11-24§1§0§0
+Pracownik linii produkcyjnej u lidera w produkcji szyb samochodowych§Żary§51.64205§15.13727§Pracownik produkcji§2023-11-09§0§0§0
+Pracownik działu sortowania w magazynie logistycznym§Robakowo§52.4167§17.0833§Pracownik magazynu§2023-11-08§1§0§0
+Magazynier z uprawnieniami na wózki UDT§Modlniczka§50.1667§19.85§Operator wózka widłowego§2023-10-20§0§0§1
+Operator linii pakującej przy produkcji popularnych kosmetyków§Garwolin§51.9§21.6333§Pracownik produkcji§2023-10-17§0§0§0
+Pracownik produkcji części samochodowych§Jelcz-Laskowice§50.9389§17.3§Pracownik produkcji§2023-10-11§1§0§0
+Pracownik magazynowy w firmie logistycznej§Głuchów§51.6§19.55§Pracownik magazynu§2023-09-29§1§0§0
+Pakowacz w magazynie znanego sklepu internetowego§Adamów§52.1167§20.6333§Kompletacja zamówień§2023-08-17§1§0§0
+Najlepsze oferty pracy dla Ciebie!§Bielany Wrocławskie§50.9667§16.9167§Pracownik magazynu§2023-05-12§1§0§0
+Operator maszyn produkcyjnych w branży automotive§Tychy§50.1333§18.9833§Pracownik produkcji§2023-04-20§0§0§0
+Operator autoklawu na produkcji§Żywiec§49.6833§19.2167§Pracownik produkcji§2023-01-30§0§0§0
+Magazynier z uprawnieniami UDT§Jasionka§50.1167§22.0667§Pracownik magazynu§2023-01-27§0§0§1
+Operator maszyn / pracownik produkcji§Bielsko-Biała§49.8167§19.0333§Pracownik produkcji§2023-01-16§1§0§0
+Pracownik linii produkcyjnej – części samochodowe§Mielec§50.2833§21.4167§Pracownik produkcji§2022-10-19§0§0§0
+Pracownik magazynu CEVA z odzieżą znanych marek§Świebodzin§52.2694§15.4583§Pracownik magazynu§2022-10-06§0§0§0
+Operator maszyn pakujących w firmie farmaceutycznej§Konstantynów Łódzki§51.75§19.3333§Operacje§2022-10-04§0§0§0
+Operator maszyn i urządzeń przy produkcji węży do hydrauliki§Radomsko§51.0667§19.45§Pracownik produkcji§2022-09-09§0§0§0
+Pracownik magazynowy / prace pomocnicze§Kowale§54.35§18.6667§Pracownik magazynu§2022-07-12§0§0§0
+Pracownik produkcji komponentów hydraulicznych§Mysłowice§50.2423§19.1392§Pracownik produkcji§2022-07-01§1§0§0
