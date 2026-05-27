@@ -3195,7 +3195,14 @@ body.light-mode .mj-theme-btn:hover{ background: var(--surf2) }
   
   <div class="jb-collapse" style="flex-shrink:0;border-bottom:1px solid var(--border2)">
 
-    <div style="padding:8px 12px 6px;display:flex;gap:6px;align-items:center">
+    <div id="jobs-country-row" style="padding:8px 12px 4px;display:flex;gap:5px;overflow-x:auto;scrollbar-width:none;white-space:nowrap;">
+      <button class="fchip on" id="jcountry-" data-country="" onclick="filterJobsCountry('',this)">🌍 Wszystkie kraje</button>
+      <button class="fchip" id="jcountry-PL" data-country="PL" onclick="filterJobsCountry('PL',this)">🇵🇱 Polska</button>
+      <button class="fchip" id="jcountry-NL" data-country="NL" onclick="filterJobsCountry('NL',this)">🇳🇱 Holandia</button>
+      <button class="fchip" id="jcountry-DE" data-country="DE" onclick="filterJobsCountry('DE',this)">🇩🇪 Niemcy</button>
+    </div>
+
+    <div style="padding:6px 12px 6px;display:flex;gap:6px;align-items:center">
       <div style="flex:1;position:relative">
         <input id="jobs-search-inp" type="search" placeholder="🔍 Szukaj zawodu, miasta, firmy…"
           oninput="filterJobsSearch(this.value)"
@@ -3211,35 +3218,206 @@ body.light-mode .mj-theme-btn:hover{ background: var(--surf2) }
       <button id="jobs-alerts-btn" onclick="if(typeof _mjOpenJobAlerts==='function')_mjOpenJobAlerts()" title="Alerty o nowych ofertach"
         style="flex-shrink:0;padding:9px 11px;border-radius:12px;background:var(--surf);border:1px solid var(--border3);font-family:var(--ff);font-size:14px;cursor:pointer;color:var(--text2)">🔔</button>
     </div>
-    
-    <div id="jobs-filters-row" style="padding:4px 12px 6px;overflow-x:auto;scrollbar-width:none;display:flex;gap:5px;white-space:nowrap;">
-      <button class="fchip on" onclick="filterJobs(null,this)">Wszystkie</button>
-      <button class="fchip" onclick="filterJobs('electric',this)">⚡ Elektryk</button>
-      <button class="fchip" onclick="filterJobs('construction',this)">🏗 Budowlanka</button>
-      <button class="fchip" onclick="filterJobs('plumber',this)">🔧 Hydraulik</button>
-      <button class="fchip" onclick="filterJobs('welder',this)">🔥 Spawacz</button>
-      <button class="fchip" onclick="filterJobs('wykonczenia',this)">🏠 Wykończenia</button>
-      <button class="fchip" onclick="filterJobs('it',this)">💻 IT</button>
-      <button class="fchip" onclick="filterJobs('cook',this)">👩‍🍳 Gastronomia</button>
-      <button class="fchip" onclick="filterJobs('driver',this)">🚚 Transport</button>
-      <button class="fchip" onclick="filterJobs('industry',this)">🏭 Produkcja</button>
-      <button class="fchip" onclick="filterJobs('beauty',this)">💅 Uroda</button>
-      <button class="fchip" onclick="filterJobs('accountant',this)">📊 Finanse</button>
-      <button class="fchip" onclick="filterJobs('other',this)">Inne</button>
+
+    <div style="padding:0 12px 8px;display:flex;justify-content:flex-end">
+      <button type="button" id="jobs-more-toggle" onclick="toggleJobsMoreFilters()"
+        style="padding:5px 11px;border-radius:14px;background:transparent;border:1px solid var(--border3);font-family:var(--ff);font-size:11px;font-weight:700;color:var(--text3);cursor:pointer">+ Więcej filtrów</button>
     </div>
-    
-    <div style="padding:0 12px 8px;display:flex;gap:5px;overflow-x:auto;scrollbar-width:none;white-space:nowrap">
-      <button class="fchip on" id="jmode-all" onclick="filterJobsMode(null,this)">Wszystkie</button>
-      <button class="fchip" id="jmode-etat" onclick="filterJobsMode('etat',this)">📄 Etat</button>
-      <button class="fchip" id="jmode-b2b" onclick="filterJobsMode('b2b',this)">💼 B2B</button>
-      <button class="fchip" id="jmode-zlecenie" onclick="filterJobsMode('zlecenie',this)">📋 Zlecenie</button>
-      <button class="fchip" id="jmode-remote" onclick="filterJobsModeWork('remote',this)">🌐 Zdalnie</button>
-      <button class="fchip" id="jmode-urgent" onclick="filterJobsUrgent(this)">🔴 Pilne</button>
-      <button class="fchip" id="jsal-5000" data-min="5000" onclick="filterJobsSalary(5000,this)">💰 5000+</button>
-      <button class="fchip" id="jsal-8000" data-min="8000" onclick="filterJobsSalary(8000,this)">💰 8000+</button>
-      <button class="fchip" id="jsal-12000" data-min="12000" onclick="filterJobsSalary(12000,this)">💰 12000+</button>
+
+    <div id="jobs-more-filters" style="display:none">
+      <div style="padding:10px 14px 8px;border-bottom:1px solid var(--border2);background:var(--surf)">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;gap:8px">
+          <label style="font-size:11.5px;font-weight:700;color:var(--text2);display:inline-flex;align-items:center;gap:5px">📍 Maks. odległość od Ciebie</label>
+          <span id="jdist-val" style="font-size:12px;font-weight:900;padding:4px 11px;border-radius:14px;background:rgba(156,163,175,.18);border:1px solid rgba(156,163,175,.4);color:#9CA3AF;letter-spacing:.2px">wyłączone</span>
+        </div>
+        <input id="jdist-slider" type="range" min="0" max="300" step="5" value="0"
+          oninput="filterJobsDistance(parseInt(this.value,10))"
+          style="width:100%;accent-color:var(--blue)"/>
+        <div style="display:flex;justify-content:space-between;font-size:9.5px;color:var(--text3);margin-top:2px">
+          <span>wył.</span><span>50</span><span>100</span><span>200</span><span>300 km</span>
+        </div>
+        <div id="jdist-hint" style="font-size:10.5px;color:var(--text3);margin-top:5px;line-height:1.4">Przesuń suwak — poprosimy o lokalizację, potem pokażemy tylko oferty w zasięgu.</div>
+      </div>
+
+      <div style="padding:8px 12px 4px;display:flex;justify-content:flex-end">
+        <button type="button" id="jobs-adv-toggle" onclick="toggleJobsAdvFilters()"
+          style="padding:5px 11px;border-radius:14px;background:transparent;border:1px solid var(--border3);font-family:var(--ff);font-size:11px;font-weight:700;color:var(--text3);cursor:pointer">+ Zawód / typ / widełki</button>
+      </div>
+
+      <div id="jobs-adv-filters" style="display:none">
+      <div id="jobs-filters-row" style="padding:4px 12px 6px;overflow-x:auto;scrollbar-width:none;display:flex;gap:5px;white-space:nowrap;">
+        <button class="fchip on" data-cat="" onclick="filterJobs(null,this)">Wszystkie</button>
+        <button class="fchip" data-cat="industry" data-label="🏭 Produkcja / Magazyn" onclick="filterJobs('industry',this)">🏭 Produkcja / Magazyn</button>
+        <button class="fchip" data-cat="driver" data-label="🚚 Transport" onclick="filterJobs('driver',this)">🚚 Transport</button>
+        <button class="fchip" data-cat="construction" data-label="🏗 Budowlanka" onclick="filterJobs('construction',this)">🏗 Budowlanka</button>
+        <button class="fchip" data-cat="electric" data-label="⚡ Elektryk" onclick="filterJobs('electric',this)">⚡ Elektryk</button>
+        <button class="fchip" data-cat="plumber" data-label="🔧 Hydraulik" onclick="filterJobs('plumber',this)">🔧 Hydraulik</button>
+        <button class="fchip" data-cat="welder" data-label="🔥 Spawacz" onclick="filterJobs('welder',this)">🔥 Spawacz</button>
+        <button class="fchip" data-cat="wykonczenia" data-label="🏠 Wykończenia" onclick="filterJobs('wykonczenia',this)">🏠 Wykończenia</button>
+        <button class="fchip" data-cat="it" data-label="💻 IT" onclick="filterJobs('it',this)">💻 IT</button>
+        <button class="fchip" data-cat="cook" data-label="👩‍🍳 Gastronomia" onclick="filterJobs('cook',this)">👩‍🍳 Gastronomia</button>
+        <button class="fchip" data-cat="beauty" data-label="💅 Uroda" onclick="filterJobs('beauty',this)">💅 Uroda</button>
+        <button class="fchip" data-cat="accountant" data-label="📊 Finanse" onclick="filterJobs('accountant',this)">📊 Finanse</button>
+        <button class="fchip" data-cat="other" data-label="Inne" onclick="filterJobs('other',this)">Inne</button>
+      </div>
+
+      <div style="padding:0 12px 8px;display:flex;gap:5px;overflow-x:auto;scrollbar-width:none;white-space:nowrap">
+        <button class="fchip on" id="jmode-all" onclick="filterJobsMode(null,this)">Wszystkie</button>
+        <button class="fchip" id="jmode-etat" onclick="filterJobsMode('etat',this)">📄 Etat</button>
+        <button class="fchip" id="jmode-b2b" onclick="filterJobsMode('b2b',this)">💼 B2B</button>
+        <button class="fchip" id="jmode-zlecenie" onclick="filterJobsMode('zlecenie',this)">📋 Zlecenie</button>
+        <button class="fchip" id="jmode-remote" onclick="filterJobsModeWork('remote',this)">🌐 Zdalnie</button>
+        <button class="fchip" id="jmode-urgent" onclick="filterJobsUrgent(this)">🔴 Pilne</button>
+        <button class="fchip" id="jsal-5000" data-min="5000" onclick="filterJobsSalary(5000,this)">💰 5000+</button>
+        <button class="fchip" id="jsal-8000" data-min="8000" onclick="filterJobsSalary(8000,this)">💰 8000+</button>
+        <button class="fchip" id="jsal-12000" data-min="12000" onclick="filterJobsSalary(12000,this)">💰 12000+</button>
+      </div>
+      </div>
     </div>
   </div>
+
+  <script>
+  window.toggleJobsMoreFilters=function(){
+    var box=document.getElementById('jobs-more-filters');
+    var btn=document.getElementById('jobs-more-toggle');
+    var view=document.getElementById('v-jobs');
+    if(!box||!btn)return;
+    var open=box.style.display!=='none';
+    box.style.display=open?'none':'block';
+    btn.textContent=open?'+ Więcej filtrów':'− Mniej filtrów';
+    btn.style.color=open?'var(--text3)':'var(--text)';
+    btn.style.borderColor=open?'var(--border3)':'var(--border)';
+    if(view)view.classList.toggle('jb-more-open',!open);
+    if(open){
+      var adv=document.getElementById('jobs-adv-filters');
+      var advBtn=document.getElementById('jobs-adv-toggle');
+      if(adv)adv.style.display='none';
+      if(advBtn){advBtn.textContent='+ Zawód / typ / widełki';advBtn.style.color='var(--text3)';advBtn.style.borderColor='var(--border3)';}
+      if(view)view.classList.remove('jb-adv-open');
+    }
+  };
+
+  window.toggleJobsAdvFilters=function(){
+    var box=document.getElementById('jobs-adv-filters');
+    var btn=document.getElementById('jobs-adv-toggle');
+    var view=document.getElementById('v-jobs');
+    if(!box||!btn)return;
+    var open=box.style.display!=='none';
+    box.style.display=open?'none':'block';
+    btn.textContent=open?'+ Zawód / typ / widełki':'− Ukryj zawód / typ / widełki';
+    btn.style.color=open?'var(--text3)':'var(--text)';
+    btn.style.borderColor=open?'var(--border3)':'var(--border)';
+    if(view)view.classList.toggle('jb-adv-open',!open);
+  };
+
+  /* Country detection: bbox first, then string keywords. Default = PL. */
+  window._mjJobCountry=function(lat,lng,loc){
+    var la=(typeof lat==='number')?lat:parseFloat(lat);
+    var ln=(typeof lng==='number')?lng:parseFloat(lng);
+    if(!isNaN(la)&&!isNaN(ln)){
+      if(la>=50.7&&la<=53.6&&ln>=3.3&&ln<=7.2)return'NL';
+      if(la>=49.0&&la<=54.9&&ln>=14.0&&ln<=24.2)return'PL';
+      if(la>=47.2&&la<=55.1&&ln>=5.9&&ln<=15.1)return'DE';
+    }
+    var s=((loc||'')+'').toLowerCase();
+    if(s.indexOf('niemc')>=0||s.indexOf('german')>=0||s.indexOf('deutsch')>=0)return'DE';
+    if(s.indexOf('holand')>=0||s.indexOf('netherl')>=0||s.indexOf('niderl')>=0)return'NL';
+    if(s.indexOf('polsk')>=0||s.indexOf('poland')>=0)return'PL';
+    return'PL';
+  };
+
+  window._mjHaversine=function(lat1,lng1,lat2,lng2){
+    var R=6371,d2r=Math.PI/180;
+    var dLat=(lat2-lat1)*d2r,dLng=(lng2-lng1)*d2r;
+    var a=Math.sin(dLat/2)*Math.sin(dLat/2)+Math.cos(lat1*d2r)*Math.cos(lat2*d2r)*Math.sin(dLng/2)*Math.sin(dLng/2);
+    return 2*R*Math.asin(Math.sqrt(a));
+  };
+
+  window._jobCountry='';
+  window.filterJobsCountry=function(code,btn){
+    window._jobCountry=code||'';
+    document.querySelectorAll('#jobs-country-row .fchip').forEach(function(b){b.classList.remove('on');});
+    if(btn)btn.classList.add('on');
+    if(typeof _applyJobFilters==='function')_applyJobFilters();
+  };
+
+  window._jobMaxDist=0;
+  window._mjUserGeo=window._mjUserGeo||null;
+  window.filterJobsDistance=function(km){
+    var label=document.getElementById('jdist-val');
+    var hint=document.getElementById('jdist-hint');
+    var _setLbl=function(txt,active){
+      if(!label)return;
+      label.textContent=txt;
+      if(active){
+        label.style.color='#fff';
+        label.style.background='linear-gradient(135deg,#2563EB,#1D4ED8)';
+        label.style.border='1px solid #1D4ED8';
+        label.style.boxShadow='0 1px 4px rgba(37,99,235,.45)';
+      }else{
+        label.style.color='#9CA3AF';
+        label.style.background='rgba(156,163,175,.18)';
+        label.style.border='1px solid rgba(156,163,175,.4)';
+        label.style.boxShadow='none';
+      }
+    };
+    if(!km||km<=0){
+      window._jobMaxDist=0;
+      _setLbl('wyłączone',false);
+      if(hint){hint.textContent='Przesuń suwak — poprosimy o lokalizację, potem pokażemy tylko oferty w zasięgu.';hint.style.color='var(--text3)';}
+      if(typeof _applyJobFilters==='function')_applyJobFilters();
+      return;
+    }
+    window._jobMaxDist=km;
+    _setLbl(km+' km',true);
+    if(window._mjUserGeo){
+      if(hint){hint.textContent='Pokazujemy oferty w promieniu '+km+' km od Twojej lokalizacji.';hint.style.color='var(--text2)';}
+      if(typeof _applyJobFilters==='function')_applyJobFilters();
+      return;
+    }
+    if(!navigator.geolocation){
+      if(hint){hint.textContent='Geolokalizacja niedostępna w tej przeglądarce — filtr odległości nieaktywny.';hint.style.color='var(--red)';}
+      return;
+    }
+    if(hint){hint.textContent='Pobieram Twoją lokalizację…';hint.style.color='var(--text2)';}
+    navigator.geolocation.getCurrentPosition(function(pos){
+      window._mjUserGeo={lat:pos.coords.latitude,lng:pos.coords.longitude};
+      if(hint){hint.textContent='Pokazujemy oferty w promieniu '+window._jobMaxDist+' km od Twojej lokalizacji.';hint.style.color='var(--text2)';}
+      if(typeof _applyJobFilters==='function')_applyJobFilters();
+    },function(err){
+      if(hint){hint.textContent='Nie udało się pobrać lokalizacji ('+(err&&err.message||'odmowa dostępu')+'). Filtr nieaktywny.';hint.style.color='var(--red)';}
+    },{enableHighAccuracy:false,timeout:10000,maximumAge:5*60*1000});
+  };
+
+  /* Reorder category chips by count of currently loaded offers (most → least) */
+  window._mjReorderJobCats=function(){
+    var row=document.getElementById('jobs-filters-row');if(!row)return;
+    var cards=document.querySelectorAll('.job-card-item');
+    var counts={};
+    cards.forEach(function(c){var k=c.getAttribute('data-cat')||'';if(k)counts[k]=(counts[k]||0)+1;});
+    var chips=Array.from(row.querySelectorAll('.fchip'));
+    var allChip=null;
+    chips=chips.filter(function(c){
+      if((c.getAttribute('data-cat')||'')===''){allChip=c;return false;}
+      return true;
+    });
+    chips.sort(function(a,b){
+      var ka=a.getAttribute('data-cat')||'',kb=b.getAttribute('data-cat')||'';
+      var ca=counts[ka]||0,cb=counts[kb]||0;
+      if(cb!==ca)return cb-ca;
+      return ka.localeCompare(kb);
+    });
+    chips.forEach(function(c){
+      var k=c.getAttribute('data-cat')||'';
+      var n=counts[k]||0;
+      var base=c.getAttribute('data-label')||c.textContent.replace(/\s*\(\d+\)\s*$/,'').trim();
+      c.textContent=base+(n>0?' ('+n+')':'');
+    });
+    row.innerHTML='';
+    if(allChip)row.appendChild(allChip);
+    chips.forEach(function(c){row.appendChild(c);});
+  };
+  </script>
 
   
   <div class="scr" id="jobs-scr" style="padding:12px 14px;">
@@ -3291,7 +3469,9 @@ body.light-mode .mj-theme-btn:hover{ background: var(--surf2) }
 <style>
 /* Auto-hide jobs top bar (title+tabs+filters) on scroll down, reveal on scroll up */
 #v-jobs .jb-collapse{overflow:hidden;max-height:240px;transition:max-height .3s cubic-bezier(.4,0,.2,1),padding .3s cubic-bezier(.4,0,.2,1),border-width .3s ease,opacity .22s ease,transform .3s cubic-bezier(.4,0,.2,1);will-change:max-height}
-#v-jobs.jb-hidetop .jb-collapse{max-height:0;padding-top:0!important;padding-bottom:0!important;border-top-width:0!important;border-bottom-width:0!important;opacity:0;transform:translateY(-8px);pointer-events:none}
+#v-jobs.jb-more-open .jb-collapse{max-height:360px}
+#v-jobs.jb-more-open.jb-adv-open .jb-collapse{max-height:560px}
+#v-jobs.jb-hidetop .jb-collapse{max-height:0!important;padding-top:0!important;padding-bottom:0!important;border-top-width:0!important;border-bottom-width:0!important;opacity:0;transform:translateY(-8px);pointer-events:none}
 </style>
 <script>
 (function(){
@@ -11667,9 +11847,9 @@ window.initJobsView=async function(){var addBtn=document.getElementById('add-job
 if(_supaUser&&myOffersTab){myOffersTab.style.display='';}
 await loadJobOffers();if(_supaUser)await loadMyApplicationsBadge();};window.loadJobOffers=async function(){if(!_sb){_jobsData=DEMO_JOBS.slice();window._jobsData=_jobsData;renderJobsList(_jobsData);return;}
 if(typeof showJobsSkeleton==='function')showJobsSkeleton();try{var q=_sb.from('job_offers').select('*').eq('status','active').order('is_urgent',{ascending:false}).order('created_at',{ascending:false}).limit(200);if(_jobsFilter)q=q.eq('category',_jobsFilter);var res=await q;var supaJobs=res.data||[];var _totalActiveJobs=supaJobs.length;try{var _tq=_sb.from('job_offers').select('id',{count:'exact',head:true}).eq('status','active');if(_jobsFilter)_tq=_tq.eq('category',_jobsFilter);var _tr=await _tq;if(_tr&&typeof _tr.count==='number')_totalActiveJobs=_tr.count;}catch(_cE){}try{var _jUids=Array.from(new Set(supaJobs.map(function(o){return o.user_id;}).filter(Boolean)));if(_jUids.length){var _jPr=await _sb.from('profiles_public').select('id,avatar_url,name,is_verified').in('id',_jUids);if(_jPr&&_jPr.data){var _jAvMap={};_jPr.data.forEach(function(p){_jAvMap[p.id]=p;});supaJobs.forEach(function(o){var p=_jAvMap[o.user_id];if(p){o.creator_avatar=p.avatar_url||null;o.creator_name=p.name||null;o.employer_verified=!!p.is_verified;}});}}}catch(_jEnrErr){console.warn('[jobs] avatar enrich:',_jEnrErr);}var demoFiltered=_jobsFilter?DEMO_JOBS.filter(function(j){return j.category===_jobsFilter;}):DEMO_JOBS;_jobsData=supaJobs.length?supaJobs.concat(demoFiltered.slice(0,Math.max(0,6-supaJobs.length))):demoFiltered.slice();window._jobsData=_jobsData;var cnt=document.getElementById('jobs-live-cnt');if(cnt)cnt.textContent=_totalActiveJobs;renderJobsList(_jobsData);if(window._tendersHubSec==='jobs'&&typeof window.renderHubJobs==='function')window.renderHubJobs();if(typeof window.updateHubCounts==='function')window.updateHubCounts();}catch(e){console.warn('loadJobOffers:',e);_jobsData=DEMO_JOBS.slice();window._jobsData=_jobsData;renderJobsList(_jobsData);}};var _jobCatEmoji={electric:'⚡',plumber:'🔧',construction:'🏗',welder:'🔥',hvac:'🌬',painter:'🖌',carpenter:'🪚',it:'💻',driver:'🚚',wykonczenia:'🏠',cook:'👩‍🍳',hair:'💇',clean:'🧹',reception:'📋',accountant:'📊',nurse:'🏥',tailor:'🧵',beauty:'💅',florist:'🌸',teacher:'📚',gastro:'🍳',industry:'🏭',logistics:'📦',security:'🔒',garden:'🌿',other:'🔨'};var _jobCatIcon={electric:'zap',plumber:'wrench',construction:'hard-hat',welder:'flame',hvac:'wind',painter:'brush',carpenter:'hammer',it:'code',driver:'truck',wykonczenia:'home',cook:'utensils',hair:'scissors',clean:'sparkles',reception:'clipboard-list',accountant:'calculator',nurse:'stethoscope',tailor:'scissors',beauty:'sparkles',florist:'flower',teacher:'book-open',gastro:'utensils',industry:'factory',logistics:'package',security:'shield',garden:'leaf',other:'wrench'};var _jobCatColor={electric:'#3B82F6',plumber:'#3B82F6',construction:'#3B82F6',welder:'#3B82F6',hvac:'#3B82F6',painter:'#3B82F6',carpenter:'#3B82F6',it:'#3B82F6',driver:'#3B82F6',wykonczenia:'#3B82F6',cook:'#3B82F6',hair:'#3B82F6',clean:'#3B82F6',reception:'#3B82F6',accountant:'#3B82F6',nurse:'#3B82F6',tailor:'#3B82F6',beauty:'#3B82F6',florist:'#3B82F6',teacher:'#3B82F6',gastro:'#3B82F6',industry:'#3B82F6',logistics:'#3B82F6',security:'#3B82F6',garden:'#3B82F6',other:'#3B82F6'};function renderJobsList(offers){var list=document.getElementById('jobs-list');var empty=document.getElementById('jobs-empty');if(!list)return;if(!offers.length){if(empty)empty.style.display='block';if(list)list.innerHTML='';return;}
-if(empty)empty.style.display='none';list.innerHTML='';offers.forEach(function(o){var salary=jobSalaryStr(o);var catColor=_jobCatColor[o.category]||'#3B82F6';var catIconName=_jobCatIcon[o.category]||'wrench';var catIconSvg=(typeof window.mjIcon==='function')?window.mjIcon(catIconName,{size:22,color:catColor,stroke:2}):'';var empType=o.employment_type||'';var workMode=o.work_mode||'';var _ic=function(n){return (typeof window.mjIcon==='function')?'<span style="display:inline-flex;vertical-align:-3px;margin-right:5px">'+window.mjIcon(n,{size:13,stroke:2})+'</span>':'';};var empLabel={etat:_ic('file-text')+'Etat',b2b:_ic('briefcase')+'B2B',zlecenie:_ic('clipboard')+'Zlecenie',dorywcza:_ic('moon')+'Dorywczo'}[empType]||empType;var modeLabel={remote:_ic('globe')+'Zdalnie',hybrid:_ic('shuffle')+'Hybrydowo',onsite:_ic('map-pin')+'Stacjonarnie'}[workMode]||'';var curSymbol=(o.salary_currency==='EUR')?'€':'zł';var card=document.createElement('div');card.className='job-card'+(o.is_urgent?' urgent':'')+' job-card-item';card.setAttribute('data-cat',o.category||'');card.setAttribute('data-emptype',empType);card.setAttribute('data-workmode',workMode);card.setAttribute('data-urgent',o.is_urgent?'true':'false');card.setAttribute('data-salmax',o.salary_max||0);card.setAttribute('data-created',o.created_at||'');card.style.cssText='position:relative;overflow:hidden;cursor:pointer';var inner='';if(o.is_urgent)inner+='<div style="background:var(--red);padding:4px 14px;font-size:10px;font-weight:800;color:#fff;letter-spacing:.5px;display:flex;align-items:center;gap:6px">● PILNE — szybka rekrutacja</div>';inner+='<div style="display:flex">';inner+='<div style="width:4px;background:'+catColor+';flex-shrink:0"></div>';inner+='<div style="flex:1;padding:13px 14px">';inner+='<div style="display:flex;align-items:flex-start;gap:11px;margin-bottom:10px">';inner+=(o.company_logo?'<div style="width:44px;height:44px;border-radius:12px;border:1.5px solid '+catColor+'44;background:#fff;flex-shrink:0;overflow:hidden"><img src="'+escHtml(o.company_logo)+'" alt="" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block"/></div>':o.creator_avatar?'<div style="width:44px;height:44px;border-radius:50%;border:1.5px solid '+catColor+'44;background:var(--surf2);flex-shrink:0;overflow:hidden"><img src="'+escHtml(o.creator_avatar)+'" alt="" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block" onerror="this.parentNode.innerHTML=\''+catIconSvg.replace(/'/g,"&#39;")+'\';this.parentNode.style.cssText=\'width:44px;height:44px;border-radius:12px;background:'+catColor+'22;border:1.5px solid '+catColor+'44;display:flex;align-items:center;justify-content:center;flex-shrink:0\'"/></div>':'<div style="width:44px;height:44px;border-radius:12px;background:'+catColor+'22;border:1.5px solid '+catColor+'44;display:flex;align-items:center;justify-content:center;flex-shrink:0">'+catIconSvg+'</div>');inner+='<div style="flex:1;min-width:0">';inner+='<div style="font-size:14px;font-weight:800;color:var(--text);line-height:1.3;margin-bottom:2px">'+escHtml(o.title)+'</div>';inner+='<div style="font-size:12px;color:var(--text2);font-weight:600">'+escHtml(o.company_name||'')+'</div>';if(o.employer_verified)inner+='<div style="margin-top:4px">'+_mjVerBadge('short')+'</div>';inner+='</div>';inner+='<div style="font-size:10px;color:var(--text3);flex-shrink:0;text-align:right">'+timeAgo(o.created_at)+'</div>';inner+='</div>';inner+='<div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:10px">';if(o.location)inner+='<span style="display:inline-flex;align-items:center;gap:5px;padding:4px 9px;background:var(--surf2);border-radius:20px;font-size:11px;color:var(--text2);font-weight:600">'+_ic('map-pin')+escHtml(o.location)+'</span>';if(empLabel)inner+='<span style="padding:4px 9px;background:rgba(37,99,235,.1);border-radius:20px;font-size:11px;color:var(--blue2);font-weight:700">'+empLabel+'</span>';if(modeLabel)inner+='<span style="padding:4px 9px;background:var(--surf2);border-radius:20px;font-size:11px;color:var(--text2);font-weight:600">'+modeLabel+'</span>';if(o.spots>1)inner+='<span style="padding:4px 9px;background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.3);border-radius:20px;font-size:11px;color:var(--green);font-weight:800">'+o.spots+' miejsc</span>';inner+='</div>';inner+='<div style="display:flex;align-items:center;justify-content:space-between;gap:8px">';if(salary){inner+='<div><div style="font-size:16px;font-weight:900;color:var(--text);line-height:1">'+salary+'</div>';inner+='<div style="font-size:10px;color:var(--text3);margin-top:1px">'+(empType==='b2b'?'B2B netto':empType==='etat'?'brutto/mies.':'')+'</div></div>';}else{inner+='<div></div>';}
+if(empty)empty.style.display='none';list.innerHTML='';offers.forEach(function(o){var salary=jobSalaryStr(o);var catColor=_jobCatColor[o.category]||'#3B82F6';var catIconName=_jobCatIcon[o.category]||'wrench';var catIconSvg=(typeof window.mjIcon==='function')?window.mjIcon(catIconName,{size:22,color:catColor,stroke:2}):'';var empType=o.employment_type||'';var workMode=o.work_mode||'';var _ic=function(n){return (typeof window.mjIcon==='function')?'<span style="display:inline-flex;vertical-align:-3px;margin-right:5px">'+window.mjIcon(n,{size:13,stroke:2})+'</span>':'';};var empLabel={etat:_ic('file-text')+'Etat',b2b:_ic('briefcase')+'B2B',zlecenie:_ic('clipboard')+'Zlecenie',dorywcza:_ic('moon')+'Dorywczo'}[empType]||empType;var modeLabel={remote:_ic('globe')+'Zdalnie',hybrid:_ic('shuffle')+'Hybrydowo',onsite:_ic('map-pin')+'Stacjonarnie'}[workMode]||'';var curSymbol=(o.salary_currency==='EUR')?'€':'zł';var card=document.createElement('div');card.className='job-card'+(o.is_urgent?' urgent':'')+' job-card-item';card.setAttribute('data-cat',o.category||'');card.setAttribute('data-emptype',empType);card.setAttribute('data-workmode',workMode);card.setAttribute('data-urgent',o.is_urgent?'true':'false');card.setAttribute('data-salmax',o.salary_max||0);card.setAttribute('data-created',o.created_at||'');card.setAttribute('data-country',(typeof window._mjJobCountry==='function')?window._mjJobCountry(o.location_lat,o.location_lng,o.location):'');if(typeof o.location_lat==='number')card.setAttribute('data-lat',o.location_lat);if(typeof o.location_lng==='number')card.setAttribute('data-lng',o.location_lng);card.style.cssText='position:relative;overflow:hidden;cursor:pointer';var inner='';if(o.is_urgent)inner+='<div style="background:var(--red);padding:4px 14px;font-size:10px;font-weight:800;color:#fff;letter-spacing:.5px;display:flex;align-items:center;gap:6px">● PILNE — szybka rekrutacja</div>';inner+='<div style="display:flex">';inner+='<div style="width:4px;background:'+catColor+';flex-shrink:0"></div>';inner+='<div style="flex:1;padding:13px 14px">';inner+='<div style="display:flex;align-items:flex-start;gap:11px;margin-bottom:10px">';inner+=(o.company_logo?'<div style="width:44px;height:44px;border-radius:12px;border:1.5px solid '+catColor+'44;background:#fff;flex-shrink:0;overflow:hidden"><img src="'+escHtml(o.company_logo)+'" alt="" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block"/></div>':o.creator_avatar?'<div style="width:44px;height:44px;border-radius:50%;border:1.5px solid '+catColor+'44;background:var(--surf2);flex-shrink:0;overflow:hidden"><img src="'+escHtml(o.creator_avatar)+'" alt="" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block" onerror="this.parentNode.innerHTML=\''+catIconSvg.replace(/'/g,"&#39;")+'\';this.parentNode.style.cssText=\'width:44px;height:44px;border-radius:12px;background:'+catColor+'22;border:1.5px solid '+catColor+'44;display:flex;align-items:center;justify-content:center;flex-shrink:0\'"/></div>':'<div style="width:44px;height:44px;border-radius:12px;background:'+catColor+'22;border:1.5px solid '+catColor+'44;display:flex;align-items:center;justify-content:center;flex-shrink:0">'+catIconSvg+'</div>');inner+='<div style="flex:1;min-width:0">';inner+='<div style="font-size:14px;font-weight:800;color:var(--text);line-height:1.3;margin-bottom:2px">'+escHtml(o.title)+'</div>';inner+='<div style="font-size:12px;color:var(--text2);font-weight:600">'+escHtml(o.company_name||'')+'</div>';if(o.employer_verified)inner+='<div style="margin-top:4px">'+_mjVerBadge('short')+'</div>';inner+='</div>';inner+='<div style="font-size:10px;color:var(--text3);flex-shrink:0;text-align:right">'+timeAgo(o.created_at)+'</div>';inner+='</div>';inner+='<div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:10px">';if(o.location)inner+='<span style="display:inline-flex;align-items:center;gap:5px;padding:4px 9px;background:var(--surf2);border-radius:20px;font-size:11px;color:var(--text2);font-weight:600">'+_ic('map-pin')+escHtml(o.location)+'</span>';if(empLabel)inner+='<span style="padding:4px 9px;background:rgba(37,99,235,.1);border-radius:20px;font-size:11px;color:var(--blue2);font-weight:700">'+empLabel+'</span>';if(modeLabel)inner+='<span style="padding:4px 9px;background:var(--surf2);border-radius:20px;font-size:11px;color:var(--text2);font-weight:600">'+modeLabel+'</span>';if(o.spots>1)inner+='<span style="padding:4px 9px;background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.3);border-radius:20px;font-size:11px;color:var(--green);font-weight:800">'+o.spots+' miejsc</span>';inner+='</div>';inner+='<div style="display:flex;align-items:center;justify-content:space-between;gap:8px">';if(salary){inner+='<div><div style="font-size:16px;font-weight:900;color:var(--text);line-height:1">'+salary+'</div>';inner+='<div style="font-size:10px;color:var(--text3);margin-top:1px">'+(empType==='b2b'?'B2B netto':empType==='etat'?'brutto/mies.':'')+'</div></div>';}else{inner+='<div></div>';}
 var _isOwnJob=(typeof _supaUser!=='undefined'&&_supaUser&&o.user_id&&o.user_id===_supaUser.id);inner+='<div style="display:flex;gap:6px;flex-shrink:0">'+(_isOwnJob?'':'<button data-apply-id="'+escHtml(String(o.id))+'" onclick="event.stopPropagation();quickApplyJob(\''+String(o.id)+'\',this)" style="padding:10px 13px;border-radius:12px;background:rgba(34,197,94,.15);border:1px solid rgba(34,197,94,.4);font-family:var(--ff);font-size:12px;font-weight:800;color:#4ADE80;cursor:pointer;white-space:nowrap">⚡ Aplikuj</button>')+'<button data-apply-id="'+escHtml(String(o.id))+'" onclick="event.stopPropagation();openJobDetail(\''+String(o.id)+'\')" style="padding:10px 14px;border-radius:12px;background:linear-gradient(135deg,'+catColor+','+catColor+'cc);border:none;font-family:var(--ff);font-size:12px;font-weight:800;color:#fff;cursor:pointer;white-space:nowrap">Szczegóły</button></div>';inner+='</div>';if(o.applications_count>0){inner+='<div style="margin-top:8px;font-size:10px;color:var(--text3);display:flex;align-items:center;gap:5px">'+_ic('users')+o.applications_count+' '+(o.applications_count===1?'aplikacja':o.applications_count<5?'aplikacje':'aplikacji')+'</div>';}
-inner+='</div></div>';card.innerHTML=inner;(function(_jid,_jo){var _sal=typeof jobSalaryStr==='function'?jobSalaryStr(_jo):'';var _jpill=_fMakePill(String(_jid),{type:'job',name:_jo.title,sub:_jo.company_name,city:_jo.location,rate:_sal});var _jpd=card.querySelector('[style*="padding:13px"]');if(_jpd)_jpd.appendChild(_jpill);else card.appendChild(_jpill);})(o.id,o);(function(id){var _ts={x:0,y:0};card.addEventListener('touchstart',function(e){_ts.x=e.touches[0].clientX;_ts.y=e.touches[0].clientY;},{passive:true});card.addEventListener('touchend',function(e){var dx=Math.abs(e.changedTouches[0].clientX-_ts.x);var dy=Math.abs(e.changedTouches[0].clientY-_ts.y);if(dx<8&&dy<8&&!e.target.closest('[data-fpill]')&&!e.target.closest('[data-apply-id]')){e.preventDefault();openJobDetail(id);}},{passive:false});card.addEventListener('click',function(e){if(e.target.closest('[data-fpill]')||e.target.closest('[data-apply-id]'))return;openJobDetail(id);});})(o.id);list.appendChild(card);});if(typeof _applyJobFilters==='function')_applyJobFilters();}
+inner+='</div></div>';card.innerHTML=inner;(function(_jid,_jo){var _sal=typeof jobSalaryStr==='function'?jobSalaryStr(_jo):'';var _jpill=_fMakePill(String(_jid),{type:'job',name:_jo.title,sub:_jo.company_name,city:_jo.location,rate:_sal});var _jpd=card.querySelector('[style*="padding:13px"]');if(_jpd)_jpd.appendChild(_jpill);else card.appendChild(_jpill);})(o.id,o);(function(id){var _ts={x:0,y:0};card.addEventListener('touchstart',function(e){_ts.x=e.touches[0].clientX;_ts.y=e.touches[0].clientY;},{passive:true});card.addEventListener('touchend',function(e){var dx=Math.abs(e.changedTouches[0].clientX-_ts.x);var dy=Math.abs(e.changedTouches[0].clientY-_ts.y);if(dx<8&&dy<8&&!e.target.closest('[data-fpill]')&&!e.target.closest('[data-apply-id]')){e.preventDefault();openJobDetail(id);}},{passive:false});card.addEventListener('click',function(e){if(e.target.closest('[data-fpill]')||e.target.closest('[data-apply-id]'))return;openJobDetail(id);});})(o.id);list.appendChild(card);});if(typeof window._mjReorderJobCats==='function')window._mjReorderJobCats();if(typeof _applyJobFilters==='function')_applyJobFilters();}
 function showJobsSkeleton(){var list=document.getElementById('jobs-list');if(!list)return;list.innerHTML=[1,2,3].map(function(){return'<div class="skeleton-card">'
 +'<div style="display:flex;gap:12px;margin-bottom:12px">'
 +'<div class="skeleton" style="width:44px;height:44px;border-radius:12px;flex-shrink:0"></div>'
@@ -12688,7 +12868,7 @@ function setJobsSort(mode,btn){if(mode!=='newest'&&mode!=='salary')return;_jobSo
 function _applyJobFilters(){var cards=document.querySelectorAll('.job-card-item');var visible=0;var catFilter=null;document.querySelectorAll('#jobs-filters-row .fchip.on').forEach(function(b){if(b.textContent.trim()!=='Wszystkie')catFilter=b.getAttribute('data-cat')||null;});var list=document.getElementById('jobs-list');if(list&&_jobSortMode==='salary'){var arr=Array.from(cards);arr.sort(function(a,b){return(parseInt(b.getAttribute('data-salmax'))||0)-(parseInt(a.getAttribute('data-salmax'))||0);});arr.forEach(function(c){list.appendChild(c);});}else if(list&&_jobSortMode==='newest'){var arrN=Array.from(cards);arrN.sort(function(a,b){var au=(b.getAttribute('data-urgent')==='true'?1:0)-(a.getAttribute('data-urgent')==='true'?1:0);if(au!==0)return au;var ta=Date.parse(a.getAttribute('data-created')||'')||0;var tb=Date.parse(b.getAttribute('data-created')||'')||0;return tb-ta;});arrN.forEach(function(c){list.appendChild(c);});}
 /* PILNE re-interleave — co 8 niepilnych kart wstrzykujemy KLON kolejnej pilnej, by przy długim scrollu pilne ciągle się przewijały. */
 if(list){try{list.querySelectorAll('[data-urgent-echo]').forEach(function(n){n.remove();});var _all=Array.from(list.querySelectorAll('.job-card-item')).filter(function(c){return !c.hasAttribute('data-urgent-echo');});var _urg=_all.filter(function(c){return c.getAttribute('data-urgent')==='true';});if(_urg.length){var _norm=_all.filter(function(c){return c.getAttribute('data-urgent')!=='true';});_all.forEach(function(c){list.appendChild(c);});var _every=8;var _children=Array.from(list.children);var _normIdxs=[];_children.forEach(function(c,i){if(c.classList&&c.classList.contains('job-card-item')&&c.getAttribute('data-urgent')!=='true')_normIdxs.push(i);});var _injectAfter=[];for(var _ni=_every-1;_ni<_normIdxs.length;_ni+=_every){_injectAfter.push(_normIdxs[_ni]);}var _ui=0;for(var _k=_injectAfter.length-1;_k>=0;_k--){var _refIdx=_injectAfter[_k];var _refNode=list.children[_refIdx];if(!_refNode)continue;var _src=_urg[_ui%_urg.length];_ui++;var _clone=_src.cloneNode(true);_clone.setAttribute('data-urgent-echo','1');_clone.style.opacity='.96';var _bnr=_clone.querySelector('[style*="background:var(--red)"]');if(_bnr)_bnr.innerHTML='● PILNE — przypomnienie';var _aplBtn=_clone.querySelector('[data-apply-id]');var _jid=_aplBtn?_aplBtn.getAttribute('data-apply-id'):null;if(_jid){_clone.addEventListener('click',function(_id){return function(e){if(e.target.closest('[data-fpill]')||e.target.closest('[data-apply-id]'))return;if(typeof openJobDetail==='function')openJobDetail(_id);};}(_jid));}if(_refNode.nextSibling)list.insertBefore(_clone,_refNode.nextSibling);else list.appendChild(_clone);}}}catch(_eRpt){}}
-cards=document.querySelectorAll('.job-card-item');cards.forEach(function(card){var cat=card.getAttribute('data-cat')||'';var mode=card.getAttribute('data-emptype')||'';var work=card.getAttribute('data-workmode')||'';var urgent=card.getAttribute('data-urgent')==='true';var text=(card.textContent||'').toLowerCase();var show=true;if(catFilter&&cat!==catFilter)show=false;if(_jobModeFilter&&mode!==_jobModeFilter)show=false;if(_jobWorkFilter&&work!==_jobWorkFilter)show=false;if(_jobUrgentOnly&&!urgent)show=false;if(_jobMinSalary&&(parseInt(card.getAttribute('data-salmax'))||0)<_jobMinSalary)show=false;if(_jobSearchQuery&&!text.includes(_jobSearchQuery))show=false;card.style.display=show?'':'none';if(show)visible++;});var empty=document.getElementById('jobs-empty');if(empty){if(visible===0){if(typeof showJobsEmptyState==='function')showJobsEmptyState(catFilter);}else{empty.style.display='none';}}}
+cards=document.querySelectorAll('.job-card-item');cards.forEach(function(card){var cat=card.getAttribute('data-cat')||'';var mode=card.getAttribute('data-emptype')||'';var work=card.getAttribute('data-workmode')||'';var urgent=card.getAttribute('data-urgent')==='true';var text=(card.textContent||'').toLowerCase();var show=true;if(catFilter&&cat!==catFilter)show=false;if(_jobModeFilter&&mode!==_jobModeFilter)show=false;if(_jobWorkFilter&&work!==_jobWorkFilter)show=false;if(_jobUrgentOnly&&!urgent)show=false;if(_jobMinSalary&&(parseInt(card.getAttribute('data-salmax'))||0)<_jobMinSalary)show=false;if(_jobSearchQuery&&!text.includes(_jobSearchQuery))show=false;if(show&&window._jobCountry){var _cc=card.getAttribute('data-country')||'';if(_cc!==window._jobCountry)show=false;}if(show&&window._jobMaxDist>0&&window._mjUserGeo){var _la=parseFloat(card.getAttribute('data-lat'));var _ln=parseFloat(card.getAttribute('data-lng'));if(isNaN(_la)||isNaN(_ln)||window._mjHaversine(window._mjUserGeo.lat,window._mjUserGeo.lng,_la,_ln)>window._jobMaxDist)show=false;}card.style.display=show?'':'none';if(show)visible++;});var empty=document.getElementById('jobs-empty');if(empty){if(visible===0){if(typeof showJobsEmptyState==='function')showJobsEmptyState(catFilter);}else{empty.style.display='none';}}}
 window._mjJobAlertCats=[['','Wszystkie zawody'],['electric','⚡ Elektryk'],['construction','🏗 Budowlanka'],['plumber','🔧 Hydraulik'],['welder','🔥 Spawacz'],['wykonczenia','🏠 Wykończenia'],['it','💻 IT'],['cook','👩‍🍳 Gastronomia'],['driver','🚚 Transport'],['industry','🏭 Produkcja'],['beauty','💅 Uroda'],['accountant','📊 Finanse'],['other','Inne']];
 window._mjDeleteJobAlert=async function(id,btn){if(!_sb)return;try{await _sb.from('job_alerts').delete().eq('id',id);if(btn){var row=btn.closest('[data-ja-row]');if(row)row.remove();}if(typeof toast==='function')toast('Alert usunięty');}catch(e){if(typeof toast==='function')toast('Błąd');}};
 window._mjOpenJobAlerts=async function(){

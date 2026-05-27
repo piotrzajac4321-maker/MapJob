@@ -1154,10 +1154,11 @@ header{position:sticky;top:0;z-index:20;background:rgba(6,8,14,.94);backdrop-fil
         <div style="padding:11px 14px;background:linear-gradient(135deg,rgba(34,197,94,.10),rgba(34,197,94,.04));border:1px solid rgba(34,197,94,.30);border-radius:12px;margin-bottom:12px;font-size:12px;color:#22C55E;line-height:1.6">
           💼 <b>Giełda Pracy</b> — wszystkie ogłoszenia widoczne na zakładce „Praca" w aplikacji (tabela <code>job_offers</code>). Tutaj zarządzasz każdym ogłoszeniem niezależnie od tego, czy pochodzi z prawdziwego konta, fake profile czy z kreatora „Firmy & Praca". Status: <code>active</code> = widoczne, <code>archived/closed</code> = ukryte.
         </div>
-        <div class="stats-grid g3" style="margin-bottom:14px">
+        <div class="stats-grid g4" style="margin-bottom:14px">
           <div class="stat s-g"><div class="sv" id="j-tot">—</div><div class="sl">Wszystkich ogłoszeń</div></div>
           <div class="stat s-b"><div class="sv" id="j-act">—</div><div class="sl">Aktywnych</div></div>
-          <div class="stat s-o"><div class="sv" id="j-fake">—</div><div class="sl">Z fake konta</div></div>
+          <div class="stat s-o"><div class="sv" id="j-views">—</div><div class="sl">👁 Suma wyświetleń</div></div>
+          <div class="stat s-p"><div class="sv" id="j-fake">—</div><div class="sl">Z fake konta</div></div>
         </div>
         <div class="section">
           <div class="sec-hdr">
@@ -1176,6 +1177,8 @@ header{position:sticky;top:0;z-index:20;background:rgba(6,8,14,.94);backdrop-fil
             <button class="btn-s j-filter-btn" data-filter="real" onclick="jobsSetFilter('real',this)" style="font-size:11px">✅ Z realnych kont</button>
             <button class="btn-s j-filter-btn" data-filter="fake" onclick="jobsSetFilter('fake',this)" style="font-size:11px">🎭 Z fake kont</button>
             <button class="btn-s j-filter-btn" data-filter="orphan" onclick="jobsSetFilter('orphan',this)" style="font-size:11px">🧩 Bez tendera</button>
+            <span style="flex:1"></span>
+            <button class="btn-s" id="j-sort-btn" onclick="jobsToggleSort(this)" style="font-size:11px" title="Sortuj po liczbie wyświetleń">📅 Sort: najnowsze</button>
           </div>
           <div id="j-list"><div class="loader">Ładowanie ogłoszeń…</div></div>
         </div>
@@ -10719,6 +10722,24 @@ function escH(t) {
 ══════════════════════════════════════════════ */
 var _jAll = [];
 var _jFilter = 'all';
+var _jSort = 'newest'; /* 'newest' | 'views' */
+function jobsToggleSort(btn){
+  _jSort = (_jSort==='newest') ? 'views' : 'newest';
+  if(btn){
+    if(_jSort==='views'){
+      btn.textContent = '🔥 Sort: najpopularniejsze';
+      btn.style.borderColor = '#F59E0B';
+      btn.style.color = '#F59E0B';
+      btn.style.background = 'rgba(245,158,11,.10)';
+    }else{
+      btn.textContent = '📅 Sort: najnowsze';
+      btn.style.borderColor = '';
+      btn.style.color = '';
+      btn.style.background = '';
+    }
+  }
+  jobsRender();
+}
 var _jFakeUserIds = new Set();
 
 async function loadJobs() {
@@ -10749,9 +10770,12 @@ async function loadJobs() {
     _jAll = rows;
     var act = rows.filter(function(x){ return x.status === 'active'; }).length;
     var fake = rows.filter(function(x){ return x.user_id && _jFakeUserIds.has(x.user_id); }).length;
+    var totViews = rows.reduce(function(s,j){ return s + (j.views_count||0); }, 0);
     document.getElementById('j-tot').textContent = rows.length;
     document.getElementById('j-act').textContent = act;
     document.getElementById('j-fake').textContent = fake;
+    var jv = document.getElementById('j-views');
+    if(jv) jv.textContent = totViews.toLocaleString('pl-PL');
     jobsRender();
   } catch(e) {
     console.error('[loadJobs]', e);
@@ -10799,6 +10823,16 @@ function jobsRender() {
     list.innerHTML = '<div class="empty"><span>💼</span>Brak ogłoszeń pasujących do filtra</div>';
     return;
   }
+  /* Sortowanie: najnowsze (created_at desc) lub najpopularniejsze (views_count desc). */
+  if (_jSort === 'views') {
+    data.sort(function(a,b){
+      var av=(a.views_count||0), bv=(b.views_count||0);
+      if(bv!==av) return bv-av;
+      return new Date(b.created_at||0) - new Date(a.created_at||0);
+    });
+  } else {
+    data.sort(function(a,b){ return new Date(b.created_at||0) - new Date(a.created_at||0); });
+  }
   var ci = {electric:'⚡',plumber:'🔧',construction:'🏗',welder:'🔥',it:'💻',hvac:'🌬',ev:'🔋',painter:'🖌',carpenter:'🪚',driver:'🚚',teacher:'📚',mechanic:'🔩',mason:'🧱',dekarz:'🏠',pv:'☀️',other:'🔨'};
   var statusBadge = function(s){
     if (s === 'active')   return '<span style="font-size:9px;font-weight:800;padding:2px 7px;border-radius:6px;background:rgba(34,197,94,.18);border:1px solid rgba(34,197,94,.4);color:#22C55E">🟢 active</span>';
@@ -10826,6 +10860,10 @@ function jobsRender() {
       : '';
     var dt = j.created_at ? new Date(j.created_at) : null;
     var dtStr = dt ? (dt.getDate()+'.'+(dt.getMonth()+1)+'.'+dt.getFullYear()) : '-';
+    /* Współczynnik konwersji aplikacje/wyświetlenia — przydatny do oceny jakości ogłoszenia. */
+    var v = j.views_count||0, ap = j.applications_count||0;
+    var conv = v ? Math.round(ap*100/v) : 0;
+    var viewsChip = '<span style="display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:800;color:'+(v>=100?'#F59E0B':v>=20?'#60A5FA':'var(--text3)')+';padding:3px 8px;border-radius:6px;background:'+(v>=100?'rgba(245,158,11,.12)':v>=20?'rgba(96,165,250,.10)':'var(--surf)')+';border:1px solid '+(v>=100?'rgba(245,158,11,.3)':v>=20?'rgba(96,165,250,.25)':'var(--border3)')+'" title="Liczba wyświetleń tego ogłoszenia">👁 '+v+'</span>';
     return '<div style="background:var(--surf2);border:1px solid var(--border3);border-radius:14px;padding:14px;margin-bottom:8px;cursor:pointer;transition:border-color .15s" onmouseover="this.style.borderColor=\'#22C55E\'" onmouseout="this.style.borderColor=\'var(--border3)\'" onclick="openJobAdmin(\''+escH(j.id)+'\')">'
       + '<div style="display:flex;align-items:flex-start;gap:12px">'
       +   '<div style="width:46px;height:46px;border-radius:10px;background:linear-gradient(135deg,#22C55E,#15803D);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0">'+icon+'</div>'
@@ -10833,10 +10871,10 @@ function jobsRender() {
       +     '<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:4px">'
       +       (j.is_urgent?'<span style="font-size:10px">🔴</span>':'')
       +       '<div style="font-size:14px;font-weight:800;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%">'+escH(j.title||'(bez tytułu)')+'</div>'
-      +       statusBadge(j.status) + fakeBadge + orphanBadge
+      +       statusBadge(j.status) + fakeBadge + orphanBadge + viewsChip
       +     '</div>'
       +     '<div style="font-size:11px;color:var(--text3);margin-bottom:4px">'+escH(j.company_name||'-')+' · '+escH(j.location||'-')+(j.category?(' · '+escH(j.category)):'')+'</div>'
-      +     '<div style="font-size:10px;color:var(--text3)">'+(salary?('💰 '+escH(salary)+' · '):'')+'📅 '+dtStr+(j.applications_count?(' · 📨 '+j.applications_count+' aplikacji'):'')+(j.views_count?(' · 👁 '+j.views_count):'')+'</div>'
+      +     '<div style="font-size:10px;color:var(--text3)">'+(salary?('💰 '+escH(salary)+' · '):'')+'📅 '+dtStr+(ap?(' · 📨 '+ap+' aplikacji'+(v?' ('+conv+'% konwersji)':'')):'')+'</div>'
       +   '</div>'
       +   '<div style="display:flex;flex-direction:column;gap:4px;flex-shrink:0" onclick="event.stopPropagation()">'
       +     (j.status==='active'
