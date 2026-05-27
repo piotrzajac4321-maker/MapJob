@@ -3467,8 +3467,8 @@ body.light-mode .mj-theme-btn:hover{ background: var(--surf2) }
 </div>
 
 <style>
-/* Auto-hide jobs top bar (title+tabs+filters) on scroll down, reveal on scroll up */
-#v-jobs .jb-collapse{overflow:hidden;max-height:240px;transition:max-height .3s cubic-bezier(.4,0,.2,1),padding .3s cubic-bezier(.4,0,.2,1),border-width .3s ease,opacity .22s ease,transform .3s cubic-bezier(.4,0,.2,1);will-change:max-height}
+/* Auto-hide jobs top bar (title+tabs+filters) on scroll down. Reveals ONLY when back at top — nie miga przy każdym ruchu palca. */
+#v-jobs .jb-collapse{overflow:hidden;max-height:240px;transition:max-height .55s cubic-bezier(.22,.61,.36,1),padding .55s cubic-bezier(.22,.61,.36,1),border-width .45s ease,opacity .45s ease,transform .55s cubic-bezier(.22,.61,.36,1);will-change:max-height}
 #v-jobs.jb-more-open .jb-collapse{max-height:360px}
 #v-jobs.jb-more-open.jb-adv-open .jb-collapse{max-height:560px}
 #v-jobs.jb-hidetop .jb-collapse{max-height:0!important;padding-top:0!important;padding-bottom:0!important;border-top-width:0!important;border-bottom-width:0!important;opacity:0;transform:translateY(-8px);pointer-events:none}
@@ -3477,13 +3477,10 @@ body.light-mode .mj-theme-btn:hover{ background: var(--surf2) }
 (function(){
   var scr=document.getElementById('jobs-scr'),view=document.getElementById('v-jobs');
   if(!scr||!view)return;
-  var last=0;
   scr.addEventListener('scroll',function(){
     var t=scr.scrollTop;
-    if(t<=4)view.classList.remove('jb-hidetop');
-    else if(t>last+6&&t>64)view.classList.add('jb-hidetop');
-    else if(t<last-6)view.classList.remove('jb-hidetop');
-    last=t;
+    if(t<=8){view.classList.remove('jb-hidetop');}
+    else if(t>96){view.classList.add('jb-hidetop');}
   },{passive:true});
 })();
 </script>
