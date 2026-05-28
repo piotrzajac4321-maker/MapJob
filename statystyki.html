@@ -206,9 +206,9 @@ function mapToObj(rows,keyField){ var m={}; (rows||[]).forEach(function(x){ if(x
 
 async function loadAll(){
   try{
-    var qJobs = sb.from('job_offers').select('id,title,company_name,location,views_count').order('views_count',{ascending:false,nullsFirst:false}).limit(300);
-    var qTen  = sb.from('tenders').select('id,title,city,poster_name,views_count').order('views_count',{ascending:false,nullsFirst:false}).limit(300);
-    var qPins = sb.from('pins').select('id,name,role,city,is_demo,views_count').eq('is_active',true).order('views_count',{ascending:false,nullsFirst:false}).limit(300);
+    var qJobs = sb.from('job_offers').select('id,title,company_name,location,views_count,contact_clicks_count,apply_clicks_count,applications_count').order('views_count',{ascending:false,nullsFirst:false}).limit(300);
+    var qTen  = sb.from('tenders').select('id,title,city,poster_name,views_count,contact_clicks_count').order('views_count',{ascending:false,nullsFirst:false}).limit(300);
+    var qPins = sb.from('pins').select('id,name,role,city,is_demo,views_count,contact_clicks_count').eq('is_active',true).order('views_count',{ascending:false,nullsFirst:false}).limit(300);
     var res = await Promise.all([qJobs,qTen,qPins,
       sb.rpc('admin_get_listing_unique_viewers',{p_page_type:'job'}),
       sb.rpc('admin_get_listing_unique_viewers',{p_page_type:'tender'}),
@@ -221,11 +221,11 @@ async function loadAll(){
     var uJob=mapToObj(res[3].data,'ref_id'), uTen=mapToObj(res[4].data,'ref_id'), uPin=mapToObj(res[5].data,'ref_id');
     var pJob=mapToObj(res[6].data,'ref_id'), pTen=mapToObj(res[7].data,'ref_id'), pPin=mapToObj(res[8].data,'ref_id');
     function mk(id,title,meta,vc,um,pm,kind){ var p=pm[id]||{}; return {id:id,title:title,meta:meta,views:vc||0,uniq:(um[id]&&um[id].uniq)||0,v24h:p.v24h||0,v7d:p.v7d||0,kind:kind}; }
-    var ogl = jobs.map(function(j){ return mk(j.id,'💼 '+(j.title||'(bez tytułu)'),[j.company_name,j.location].filter(Boolean).join(' · '),j.views_count,uJob,pJob,'job'); })
-      .concat(tens.map(function(t){ return mk(t.id,'📋 '+(t.title||'(bez tytułu)'),[t.city,t.poster_name].filter(Boolean).join(' · '),t.views_count,uTen,pTen,'tender'); }));
+    var ogl = jobs.map(function(j){ return mk(j.id,'💼 '+(j.title||'(bez tytułu)'),([j.company_name,j.location].filter(Boolean).join(' · '))+' · 📞 '+(j.contact_clicks_count||0)+' · ⚡ '+(j.apply_clicks_count||0)+'→📨 '+(j.applications_count||0),j.views_count,uJob,pJob,'job'); })
+      .concat(tens.map(function(t){ return mk(t.id,'📋 '+(t.title||'(bez tytułu)'),([t.city,t.poster_name].filter(Boolean).join(' · '))+' · 📞 '+(t.contact_clicks_count||0),t.views_count,uTen,pTen,'tender'); }));
     ogl.sort(function(a,b){ return (b.views||0)-(a.views||0); });
     data.ogl = ogl;
-    data.pins = pins.map(function(p){ return mk(p.id,'📍 '+(p.name||'(bez nazwy)')+(p.is_demo?' 🎭':''),[p.role,p.city].filter(Boolean).join(' · '),p.views_count,uPin,pPin,'pin'); });
+    data.pins = pins.map(function(p){ return mk(p.id,'📍 '+(p.name||'(bez nazwy)')+(p.is_demo?' 🎭':''),([p.role,p.city].filter(Boolean).join(' · '))+' · 📞 '+(p.contact_clicks_count||0),p.views_count,uPin,pPin,'pin'); });
     renderLists();
   }catch(e){ var el=$('list-ogl'); if(el) el.innerHTML='<div class="empty" style="color:#F87171">Błąd ładowania: '+esc(String(e))+'</div>'; }
 }

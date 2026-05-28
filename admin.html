@@ -8605,31 +8605,31 @@ function loadViews(){
 }
 async function loadViewsPins(){
   var el=document.getElementById('vw-pins'); if(!el) return; el.innerHTML='<div class="loader">Ładowanie…</div>';
-  var r = await _sb.from('pins').select('id,name,role,city,is_demo,views_count').eq('is_active',true).order('views_count',{ascending:false,nullsFirst:false}).limit(300);
+  var r = await _sb.from('pins').select('id,name,role,city,is_demo,views_count,contact_clicks_count').eq('is_active',true).order('views_count',{ascending:false,nullsFirst:false}).limit(300);
   if(r.error){ el.innerHTML='<div class="loader" style="color:var(--red)">Błąd: '+r.error.message+'</div>'; return; }
   var uniq = await vwUniques('pin');
   _vwData.pins = (r.data||[]).map(function(p){
-    return { title:(p.name||'(bez nazwy)')+(p.is_demo?' 🎭':''), meta:[p.role,p.city].filter(Boolean).join(' · '), views:p.views_count||0, uniq:uniq[p.id]||0 };
+    return { title:(p.name||'(bez nazwy)')+(p.is_demo?' 🎭':''), meta:([p.role,p.city].filter(Boolean).join(' · '))+' · 📞 '+(p.contact_clicks_count||0), views:p.views_count||0, uniq:uniq[p.id]||0 };
   });
   vwRender('vw-pins', _vwData.pins, 'vw-pins-sum'); vwApplyFilter();
 }
 async function loadViewsTenders(){
   var el=document.getElementById('vw-tenders'); if(!el) return; el.innerHTML='<div class="loader">Ładowanie…</div>';
-  var r = await _sb.from('tenders').select('id,title,city,poster_name,views_count').order('views_count',{ascending:false,nullsFirst:false}).limit(300);
+  var r = await _sb.from('tenders').select('id,title,city,poster_name,views_count,contact_clicks_count').order('views_count',{ascending:false,nullsFirst:false}).limit(300);
   if(r.error){ el.innerHTML='<div class="loader" style="color:var(--red)">Błąd: '+r.error.message+'</div>'; return; }
   var uniq = await vwUniques('tender');
   _vwData.tenders = (r.data||[]).map(function(t){
-    return { title:t.title||'(bez tytułu)', meta:[t.city,t.poster_name].filter(Boolean).join(' · '), views:t.views_count||0, uniq:uniq[t.id]||0 };
+    return { title:t.title||'(bez tytułu)', meta:([t.city,t.poster_name].filter(Boolean).join(' · '))+' · 📞 '+(t.contact_clicks_count||0), views:t.views_count||0, uniq:uniq[t.id]||0 };
   });
   vwRender('vw-tenders', _vwData.tenders, 'vw-tenders-sum'); vwApplyFilter();
 }
 async function loadViewsJobs(){
   var el=document.getElementById('vw-jobs'); if(!el) return; el.innerHTML='<div class="loader">Ładowanie…</div>';
-  var r = await _sb.from('job_offers').select('id,title,company_name,location,views_count').order('views_count',{ascending:false,nullsFirst:false}).limit(300);
+  var r = await _sb.from('job_offers').select('id,title,company_name,location,views_count,contact_clicks_count,apply_clicks_count,applications_count').order('views_count',{ascending:false,nullsFirst:false}).limit(300);
   if(r.error){ el.innerHTML='<div class="loader" style="color:var(--red)">Błąd: '+r.error.message+'</div>'; return; }
   var uniq = await vwUniques('job');
   _vwData.jobs = (r.data||[]).map(function(j){
-    return { title:j.title||'(bez tytułu)', meta:[j.company_name,j.location].filter(Boolean).join(' · '), views:j.views_count||0, uniq:uniq[j.id]||0 };
+    return { title:j.title||'(bez tytułu)', meta:([j.company_name,j.location].filter(Boolean).join(' · '))+' · 📞 '+(j.contact_clicks_count||0)+' · ⚡ '+(j.apply_clicks_count||0)+'→📨 '+(j.applications_count||0), views:j.views_count||0, uniq:uniq[j.id]||0 };
   });
   vwRender('vw-jobs', _vwData.jobs, 'vw-jobs-sum'); vwApplyFilter();
 }
@@ -10951,7 +10951,7 @@ async function loadJobs() {
   list.innerHTML = '<div class="loader">Ładowanie ogłoszeń pracy…</div>';
   try {
     var jr = await _sb.from('job_offers')
-      .select('id,user_id,company_name,company_logo,title,description,category,employment_type,work_mode,salary_min,salary_max,salary_type,salary_currency,location,location_lat,location_lng,is_urgent,status,spots,deadline,views_count,applications_count,tender_id,fake_pin_id,created_at,updated_at')
+      .select('id,user_id,company_name,company_logo,title,description,category,employment_type,work_mode,salary_min,salary_max,salary_type,salary_currency,location,location_lat,location_lng,is_urgent,status,spots,deadline,views_count,applications_count,contact_clicks_count,apply_clicks_count,tender_id,fake_pin_id,created_at,updated_at')
       .order('created_at',{ascending:false})
       .limit(2000);
     if (jr.error) throw jr.error;
@@ -11135,7 +11135,7 @@ function openJobAdmin(jobId) {
     +   '<b style="color:var(--text2)">utworzone:</b> '+(j.created_at?new Date(j.created_at).toLocaleString():'-')+'<br/>'
     +   (j.updated_at?'<b style="color:var(--text2)">zmiana:</b> '+new Date(j.updated_at).toLocaleString()+'<br/>':'')
     +   (j.tender_id?'<b style="color:var(--text2)">tender_id:</b> <code style="font-size:10px">'+escH(j.tender_id)+'</code><br/>':'')
-    +   '<b style="color:var(--text2)">👁 wyświetlenia:</b> '+(j.views_count||0)+' · <b style="color:var(--text2)">📨 aplikacje:</b> '+(j.applications_count||0)
+    +   '<b style="color:var(--text2)">👁 wyświetlenia:</b> '+(j.views_count||0)+' · <b style="color:var(--text2)">📞 kontakt:</b> '+(j.contact_clicks_count||0)+' · <b style="color:var(--text2)">⚡ kliknięć Aplikuj:</b> '+(j.apply_clicks_count||0)+' · <b style="color:var(--text2)">📨 aplikacje:</b> '+(j.applications_count||0)
     + '</div>'
     + '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:8px">'
     +   (j.status==='active'
