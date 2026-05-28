@@ -85,20 +85,31 @@ def load_offers():
     """
     snapshot_path = os.path.join(ROOT, "oferty-snapshot.json")
     use_remote = FORCE_REMOTE or (SUPABASE_URL and SUPABASE_KEY)
+    has_snapshot = os.path.exists(snapshot_path)
 
+    offers = None
     if use_remote:
         print("Tryb: LIVE z Supabase REST")
-        offers = fetch_from_supabase()
-        print(f"  Pobrano: {len(offers)} ofert")
-    elif os.path.exists(snapshot_path):
-        print(f"Tryb: snapshot lokalny ({snapshot_path})")
-        with open(snapshot_path, encoding="utf-8") as f:
-            offers = json.load(f)["offers"]
-    else:
-        raise RuntimeError(
-            "Brak oferty-snapshot.json i brak SUPABASE_URL w env. "
-            "Ustaw zmienne lub uruchom _extract_db_snapshot.py."
-        )
+        try:
+            offers = fetch_from_supabase()
+            print(f"  Pobrano: {len(offers)} ofert")
+        except Exception as e:
+            # Nie wysadzaj deployu na Vercelu przez chwilowy blad sieci/Supabase —
+            # spadnij na snapshot w repo, byle build sie zakonczyl sukcesem.
+            print(f"  ! Remote fetch nieudany ({e}); fallback do snapshotu")
+            if not has_snapshot:
+                raise
+
+    if offers is None:
+        if has_snapshot:
+            print(f"Tryb: snapshot lokalny ({snapshot_path})")
+            with open(snapshot_path, encoding="utf-8") as f:
+                offers = json.load(f)["offers"]
+        else:
+            raise RuntimeError(
+                "Brak oferty-snapshot.json i brak SUPABASE_URL w env. "
+                "Ustaw zmienne lub uruchom _extract_db_snapshot.py."
+            )
 
     # Wzbogać o source_url ze scrape'ów (DB nie zapisała) — match po tytule
     scraped_source_urls = {}
