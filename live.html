@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#080D18">
+<meta name="robots" content="noindex,nofollow">
+<title>Ruch na żywo — MapJob</title>
+<style>
+:root{--bg:#080D18;--surf2:#1A2438;--border:rgba(255,255,255,.10);--text:#F0F4FF;--text3:#5A6678;--blue:#60A5FA;--green:#22C55E;}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;min-height:100dvh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:18px;gap:14px}
+h1{font-size:15px;font-weight:800;color:var(--text3);letter-spacing:.5px;text-transform:uppercase}
+.grid{display:grid;grid-template-columns:1fr;gap:12px;width:100%;max-width:420px}
+.card{background:var(--surf2);border:1px solid var(--border);border-radius:16px;padding:18px 20px;display:flex;align-items:center;gap:16px}
+.ico{font-size:30px;flex-shrink:0;width:44px;text-align:center}
+.lab{font-size:12px;color:var(--text3);font-weight:700}
+.val{font-size:34px;font-weight:900;line-height:1;margin-top:3px}
+.dot{display:inline-block;width:9px;height:9px;border-radius:50%;background:var(--green);margin-right:6px;animation:pulse 1.6s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+.foot{font-size:11px;color:var(--text3);text-align:center}
+</style>
+</head>
+<body>
+<h1>📡 Ruch na żywo · MapJob</h1>
+<div class="grid">
+  <div class="card"><div class="ico">🟢</div><div><div class="lab"><span class="dot"></span>Aktywni teraz</div><div class="val" id="v-online" style="color:var(--green)">—</div></div></div>
+  <div class="card"><div class="ico">👥</div><div><div class="lab">Realne wejścia dziś (24h)</div><div class="val" id="v-24h" style="color:var(--blue)">—</div></div></div>
+  <div class="card"><div class="ico">📅</div><div><div class="lab">Realne wejścia · 7 dni</div><div class="val" id="v-7d" style="color:var(--blue)">—</div></div></div>
+</div>
+<div class="foot" id="foot">Odświeżanie automatyczne co 20 s · bez botów i adminów</div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+var SB_URL='https://ahgzjneegvptudphibdm.supabase.co';
+var SB_KEY='sb_publishable__B7I_Ji4umLpI3mzW3CM6A_1YAxYmhb';
+var sb;
+function set(id,v){ var e=document.getElementById(id); if(e) e.textContent=(v==null?'—':v); }
+async function tick(){
+  try{
+    var r = await sb.rpc('public_get_live_stats');
+    if(r && r.data){ set('v-online', r.data.online); set('v-24h', r.data.real_24h); set('v-7d', r.data.real_7d);
+      document.getElementById('foot').textContent='Aktualizacja: '+new Date().toLocaleTimeString('pl-PL')+' · co 20 s · bez botów i adminów';
+    }
+  }catch(e){}
+}
+window.addEventListener('load', function(){
+  if(typeof supabase==='undefined'){ document.getElementById('foot').textContent='Brak połączenia — odśwież.'; return; }
+  sb = supabase.createClient(SB_URL, SB_KEY, {auth:{persistSession:false}});
+  tick();
+  setInterval(function(){ if(document.visibilityState!=='hidden') tick(); }, 20000);
+  document.addEventListener('visibilitychange', function(){ if(document.visibilityState!=='hidden') tick(); });
+});
+</script>
+</body>
+</html>
