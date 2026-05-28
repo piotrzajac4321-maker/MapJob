@@ -161,10 +161,11 @@ function renderDashboard(k){
     +  '<button class="btn" id="refresh" style="flex-shrink:0">🔄</button>'
     + '</div>'
     + '<div class="kpis">'
-    +   kpiCard('👥 Realne dziś', k.visits_real_24h, 'var(--blue)')
-    +   kpiCard('👥 Realne 7 dni', k.visits_real_7d, 'var(--blue)')
-    +   kpiCard('👥 Realne 30 dni', k.visits_real_30d, 'var(--blue)')
-    +   kpiCard('🟢 Online teraz', k.online, 'var(--green)')
+    +   kpiCard('🟢 Online (2 min)', k.online, 'var(--green)')
+    +   kpiCard('🧑 Unikalni (24h)', k.visitors_real_24h, 'var(--blue)')
+    +   kpiCard('🧑 Unikalni (7 dni)', k.visitors_real_7d, 'var(--blue)')
+    +   kpiCard('📊 Sesje (24h)', k.visits_real_24h, 'var(--purple)')
+    +   kpiCard('📊 Sesje (7 dni)', k.visits_real_7d, 'var(--purple)')
     + '</div>'
     + '<div class="summary" id="gen-sum">'+genSumHtml(k)+'</div>'
     + '<button class="more" id="ogl-toggle">📢 Zobacz statystyki ogłoszeń ▾</button>'
@@ -190,12 +191,13 @@ function renderDashboard(k){
 }
 
 async function refreshKpis(){
-  try{ var r=await sb.rpc('admin_get_view_kpis'); if(r&&r.data){ var d=r.data; var ks=document.querySelectorAll('.kpi .v'); if(ks.length>=4){ ks[0].textContent=d.visits_real_24h; ks[1].textContent=d.visits_real_7d; ks[2].textContent=d.visits_real_30d; ks[3].textContent=d.online; } var gs=$('gen-sum'); if(gs) gs.innerHTML=genSumHtml(d); } }catch(e){}
+  try{ var r=await sb.rpc('admin_get_view_kpis'); if(r&&r.data){ var d=r.data; var ks=document.querySelectorAll('.kpi .v'); if(ks.length>=5){ ks[0].textContent=d.online; ks[1].textContent=d.visitors_real_24h; ks[2].textContent=d.visitors_real_7d; ks[3].textContent=d.visits_real_24h; ks[4].textContent=d.visits_real_7d; } var gs=$('gen-sum'); if(gs) gs.innerHTML=genSumHtml(d); } }catch(e){}
 }
 function genSumHtml(k){
   function T(x){ return (x!=null?x:'—'); }
-  return '🧑 Unikalni użytkownicy: <b style="color:var(--blue)">'+T(k.visitors_total)+'</b> łącznie · 7 dni: <b>'+T(k.visitors_7d)+'</b> · 30 dni: <b>'+T(k.visitors_30d)+'</b><br>'
-    + '📊 Wszystkie wejścia (z botami/adminem): dziś <b>'+T(k.visits_24h)+'</b> · 7 dni <b>'+T(k.visits_7d)+'</b> · 30 dni <b>'+T(k.visits_30d)+'</b><br>'
+  return '🧑 Unikalni (30 dni): <b style="color:var(--blue)">'+T(k.visitors_real_30d)+'</b> · łącznie od początku: <b>'+T(k.visitors_total)+'</b><br>'
+    + '📊 Sesje (30 dni): <b style="color:var(--purple)">'+T(k.visits_real_30d)+'</b><br>'
+    + '🤖 Wszystkie wejścia (z botami i adminem): 24h <b>'+T(k.visits_24h)+'</b> · 7 dni <b>'+T(k.visits_7d)+'</b> · 30 dni <b>'+T(k.visits_30d)+'</b><br>'
     + '👁 Wyświetlenia ogłoszeń (30 dni): <b style="color:var(--blue)">'+T(k.views_30d)+'</b> · łącznie: <b>'+T(k.views_total)+'</b>';
 }
 function toggleOgl(){ var w=$('ogl-wrap'); var open=w.style.display==='none'; w.style.display=open?'':'none'; $('ogl-toggle').textContent = open ? '📢 Ukryj statystyki ogłoszeń ▴' : '📢 Zobacz statystyki ogłoszeń ▾'; }
