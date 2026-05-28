@@ -3,7 +3,8 @@
   "buildCommand": "python3 build_seo_landings.py",
   "outputDirectory": ".",
   "rewrites": [
-    { "source": "/firma/(.*)", "destination": "/index.html" }
+    { "source": "/firma/(.*)", "destination": "/index.html" },
+    { "source": "/statystyki", "destination": "/statystyki.html" }
   ],
   "headers": [
     {
