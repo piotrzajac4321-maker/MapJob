@@ -12960,16 +12960,14 @@ if(typeof toast==='function')toast('Nie znaleziono profilu');};</script>
 
 <div id="cookie-banner" style="display:none;position:fixed;inset:0;z-index:9999;align-items:center;justify-content:center;padding:20px;pointer-events:none;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif">
   <div style="width:100%;max-width:420px;background:var(--bg2,#0F1620);border:1px solid var(--border3,rgba(255,255,255,.12));border-radius:16px;padding:22px 22px 18px;box-shadow:0 24px 60px rgba(0,0,0,.55);pointer-events:auto">
-    <div style="font-size:15px;font-weight:700;color:var(--text,#F4F4F5);margin-bottom:6px">Pliki cookie</div>
+    <div style="font-size:16px;font-weight:800;color:var(--text,#F4F4F5);margin-bottom:8px">Cenimy Twoją prywatność</div>
     <div style="font-size:13px;line-height:1.55;color:var(--text2,#D4D4D8);margin-bottom:16px">
-      Używamy ich do analizy ruchu i ulepszania MapJob.
+      Używamy plików cookie do analizy ruchu i badania działań na stronie, aby ulepszać MapJob i pokazywać Ci trafniejsze oferty. Możesz przyjąć wszystkie albo dostosować wybór.
       <button onclick="openTerms('privacy')" style="background:none;border:none;padding:0;color:var(--blue,#60A5FA);font:inherit;cursor:pointer;text-decoration:underline">Polityka prywatności</button>
-      <span style="color:var(--text3,#6B7280);margin:0 2px">·</span>
-      <button id="cookie-customize" style="background:none;border:none;padding:0;color:var(--blue,#60A5FA);font:inherit;cursor:pointer;text-decoration:underline">Ustawienia</button>
     </div>
     <div style="display:flex;gap:8px">
-      <button id="cookie-reject" style="flex:1;padding:11px 14px;border-radius:10px;background:transparent;border:1px solid var(--border3,rgba(255,255,255,.18));font-family:inherit;font-size:13px;font-weight:600;color:var(--text2,#D4D4D8);cursor:pointer;white-space:nowrap">Tylko niezbędne</button>
-      <button id="cookie-accept" style="flex:1;padding:11px 14px;border-radius:10px;background:var(--blue,#2563EB);border:none;font-family:inherit;font-size:13px;font-weight:700;color:#fff;cursor:pointer;white-space:nowrap">Akceptuję</button>
+      <button id="cookie-customize" style="flex:0 0 auto;padding:11px 18px;border-radius:10px;background:transparent;border:1px solid var(--border3,rgba(255,255,255,.18));font-family:inherit;font-size:13px;font-weight:600;color:var(--text2,#D4D4D8);cursor:pointer;white-space:nowrap">Dostosuj</button>
+      <button id="cookie-accept" style="flex:1;padding:11px 14px;border-radius:10px;background:var(--blue,#2563EB);border:none;font-family:inherit;font-size:13px;font-weight:700;color:#fff;cursor:pointer;white-space:nowrap">Akceptuj wszystkie</button>
     </div>
   </div>
 </div>
@@ -12991,7 +12989,9 @@ if(typeof toast==='function')toast('Nie znaleziono profilu');};</script>
     document.getElementById('cookie-accept').onclick = function(){
       try{localStorage.setItem('mj_cookie_consent','all');
         localStorage.setItem('mj_cookie_consent_ts', new Date().toISOString());
-        localStorage.setItem('mj_cookie_consent_v2', JSON.stringify({version:'2.0',level:'all',essential:true,analytics:true,marketing:true,ts:new Date().toISOString()}));
+        var _c={version:'2.0',level:'all',essential:true,analytics:true,marketing:true,ts:new Date().toISOString()};
+        localStorage.setItem('mj_cookie_consent_v2', JSON.stringify(_c));
+        try{window.dispatchEvent(new CustomEvent('mj-consent-changed',{detail:_c}));}catch(ee){}
       }catch(e){}
       hideCookieBanner();
     };
@@ -13020,7 +13020,8 @@ window.openCookieSettings = function(){
   var ov=document.createElement('div');
   ov.id='mj-cookie-settings';
   ov.style.cssText='position:fixed;inset:0;z-index:10001;background:rgba(0,0,0,.8);backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;padding:16px';
-  ov.onclick=function(e){if(e.target===ov) ov.remove();};
+  function _reopenBannerIfNeeded(){ try{ if(!localStorage.getItem('mj_cookie_consent_v2')){ var b=document.getElementById('cookie-banner'); if(b) b.style.display='flex'; } }catch(e){} }
+  ov.onclick=function(e){if(e.target===ov){ ov.remove(); _reopenBannerIfNeeded(); }};
   var box=document.createElement('div');
   box.style.cssText='width:100%;max-width:440px;background:#0F1620;border:1px solid rgba(255,255,255,.1);border-radius:22px;max-height:88vh;overflow-y:auto;box-shadow:0 24px 80px rgba(0,0,0,.7)';
   var hdr=document.createElement('div');
@@ -13030,7 +13031,7 @@ window.openCookieSettings = function(){
   var closeBtn=document.createElement('button');
   closeBtn.textContent='×';
   closeBtn.style.cssText='width:30px;height:30px;border-radius:50%;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);color:#A1A1AA;cursor:pointer;font-size:18px';
-  closeBtn.onclick=function(){ov.remove();};
+  closeBtn.onclick=function(){ov.remove(); _reopenBannerIfNeeded();};
   hdr.appendChild(hdrLeft);
   hdr.appendChild(closeBtn);
   box.appendChild(hdr);
@@ -13046,11 +13047,11 @@ window.openCookieSettings = function(){
       localStorage.setItem('mj_cookie_consent_v2', JSON.stringify(c));
       localStorage.setItem('mj_cookie_consent', marketing ? 'all' : 'essential');
       localStorage.setItem('mj_cookie_consent_ts', c.ts);
-      try{window.dispatchEvent(new CustomEvent('mjConsentChanged',{detail:c}));}catch(ee){}
+      try{window.dispatchEvent(new CustomEvent('mj-consent-changed',{detail:c}));window.dispatchEvent(new CustomEvent('mjConsentChanged',{detail:c}));}catch(ee){}
     }catch(e){}
   }
   var acceptAllBtn=document.createElement('button');
-  acceptAllBtn.textContent='✓ Zaakceptuj wszystkie';
+  acceptAllBtn.textContent='✓ Akceptuj wszystkie';
   acceptAllBtn.style.cssText='width:100%;padding:14px;border-radius:14px;background:linear-gradient(135deg,#2563EB,#1D4ED8);border:none;font-size:14px;font-weight:800;color:#fff;cursor:pointer;font-family:-apple-system,sans-serif;box-shadow:0 4px 16px rgba(37,99,235,.35);margin-bottom:8px';
   acceptAllBtn.onclick=function(){
     _persistConsent('all', true, true);
@@ -13058,9 +13059,19 @@ window.openCookieSettings = function(){
     if(typeof toast==='function') toast('✓ Dziękujemy! Wszystkie preferencje zapisane');
   };
   footer.appendChild(acceptAllBtn);
+  var btnRow=document.createElement('div');
+  btnRow.style.cssText='display:flex;gap:8px';
+  var rejectAllBtn=document.createElement('button');
+  rejectAllBtn.textContent='Odrzuć wszystkie';
+  rejectAllBtn.style.cssText='flex:1;padding:13px;border-radius:14px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);font-size:13px;font-weight:700;color:#D4D4D8;cursor:pointer;font-family:-apple-system,sans-serif';
+  rejectAllBtn.onclick=function(){
+    _persistConsent('essential', false, false);
+    ov.remove();
+    if(typeof toast==='function') toast('✓ Zapisano — tylko niezbędne cookies');
+  };
   var saveBtn=document.createElement('button');
-  saveBtn.textContent='💾 Zapisz mój wybór';
-  saveBtn.style.cssText='width:100%;padding:13px;border-radius:14px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);font-size:13px;font-weight:700;color:#F4F4F5;cursor:pointer;font-family:-apple-system,sans-serif';
+  saveBtn.textContent='Zapisz wybór';
+  saveBtn.style.cssText='flex:1;padding:13px;border-radius:14px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);font-size:13px;font-weight:700;color:#F4F4F5;cursor:pointer;font-family:-apple-system,sans-serif';
   saveBtn.onclick=function(){
     var a=document.getElementById('mjck-analytics');
     var mk=document.getElementById('mjck-marketing');
@@ -13068,16 +13079,9 @@ window.openCookieSettings = function(){
     ov.remove();
     if(typeof toast==='function') toast('✓ Preferencje prywatności zapisane');
   };
-  footer.appendChild(saveBtn);
-  var rejectAllBtn=document.createElement('button');
-  rejectAllBtn.textContent='Odrzuć wszystkie nieobowiązkowe';
-  rejectAllBtn.style.cssText='width:100%;padding:8px;background:none;border:none;font-size:11px;color:#6B7280;cursor:pointer;font-family:-apple-system,sans-serif;text-decoration:underline;margin-top:8px';
-  rejectAllBtn.onclick=function(){
-    _persistConsent('essential', false, false);
-    ov.remove();
-    if(typeof toast==='function') toast('✓ Zapisano — tylko niezbędne cookies');
-  };
-  footer.appendChild(rejectAllBtn);
+  btnRow.appendChild(rejectAllBtn);
+  btnRow.appendChild(saveBtn);
+  footer.appendChild(btnRow);
   var info=document.createElement('div');
   info.style.cssText='font-size:10px;color:#6B7280;text-align:center;margin-top:10px;line-height:1.5';
   info.innerHTML='Możesz zmienić preferencje w dowolnej chwili.<br>Administrator: MapJob<br><a href="mailto:kontakt@mapjob.pl" style="color:#3B82F6">kontakt@mapjob.pl</a>';
