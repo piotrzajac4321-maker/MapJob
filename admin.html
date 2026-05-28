@@ -8506,13 +8506,44 @@ function vwRow(rank, title, meta, views, uniq){
     + vwChip(views)
     + '</div>';
 }
+var VW_TOP = 10;               /* ile pozycji widać przed „Pokaż więcej" */
+var _vwExpanded = {};          /* czy dana lista rozwinięta */
 function vwRender(elId, rows, sumId){
   var el = document.getElementById(elId); if(!el) return;
   var sEl = sumId ? document.getElementById(sumId) : null;
   if(!rows.length){ el.innerHTML = '<div class="empty"><span>📭</span>Brak danych</div>'; if(sEl) sEl.textContent=''; return; }
   var total = rows.reduce(function(s,r){ return s + (r.views||0); }, 0);
   if(sEl) sEl.textContent = '· '+rows.length+' poz. · '+total+' wyświetleń łącznie';
-  el.innerHTML = rows.map(function(r,i){ return vwRow(i+1, r.title, r.meta, r.views, r.uniq); }).join('');
+  _vwExpanded[elId] = false;
+  var rowsHtml = rows.map(function(r,i){ return vwRow(i+1, r.title, r.meta, r.views, r.uniq); }).join('');
+  var moreBtn = rows.length>VW_TOP
+    ? '<button class="vw-more-btn" onclick="vwToggleMore(\''+elId+'\')" style="width:100%;padding:9px;margin-top:4px;border-radius:10px;background:var(--surf);border:1px solid var(--border3);color:var(--text2);font-family:var(--ff);font-size:12px;font-weight:800;cursor:pointer">Pokaż więcej ('+(rows.length-VW_TOP)+')</button>'
+    : '';
+  el.innerHTML = rowsHtml + moreBtn;
+  vwApplyVisibility(elId);
+}
+function vwToggleMore(elId){ _vwExpanded[elId] = !_vwExpanded[elId]; vwApplyVisibility(elId); }
+function vwApplyVisibility(elId){
+  var el = document.getElementById(elId); if(!el) return;
+  var qEl = document.getElementById('vw-q');
+  var q = (qEl ? qEl.value : '').trim().toLowerCase();
+  var expanded = !!_vwExpanded[elId];
+  var rows = [].slice.call(el.querySelectorAll('.vw-row'));
+  var shown = 0, matches = 0;
+  rows.forEach(function(row){
+    var hay = row.getAttribute('data-search')||'';
+    var ok = (!q || hay.indexOf(q)>=0);
+    if(!ok){ row.style.display='none'; return; }
+    matches++;
+    var within = q ? true : (expanded || shown < VW_TOP);   /* przy wyszukiwaniu pokaż wszystkie trafienia */
+    row.style.display = within ? '' : 'none';
+    if(within) shown++;
+  });
+  var btn = el.querySelector('.vw-more-btn');
+  if(btn){
+    if(q){ btn.style.display='none'; }
+    else { btn.style.display=''; btn.textContent = expanded ? 'Pokaż mniej' : 'Pokaż więcej ('+(matches-VW_TOP)+')'; }
+  }
 }
 /* Unikalni zalogowani userzy per ogłoszenie — agregat z page_views (admin-only RPC).
    Zwraca mapę { ref_id: liczba }. Cicho pomijane gdy brak uprawnień/danych. */
@@ -8555,14 +8586,7 @@ async function loadViewsJobs(){
   });
   vwRender('vw-jobs', _vwData.jobs, 'vw-jobs-sum'); vwApplyFilter();
 }
-function vwApplyFilter(){
-  var qEl = document.getElementById('vw-q');
-  var q = (qEl ? qEl.value : '').trim().toLowerCase();
-  document.querySelectorAll('#panel-views .vw-row').forEach(function(row){
-    var hay = row.getAttribute('data-search')||'';
-    row.style.display = (!q || hay.indexOf(q)>=0) ? '' : 'none';
-  });
-}
+function vwApplyFilter(){ ['vw-pins','vw-tenders','vw-jobs'].forEach(vwApplyVisibility); }
 
 /* Otwórz czat dla konkretnego ogłoszenia */
 async function openTenderChat(tenderId, ownerId) {
