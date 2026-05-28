@@ -125,36 +125,45 @@ function renderDashboard(k){
   expanded=false;
   $('app').innerHTML =
     '<div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:12px">'
-    +  '<div><h1>📊 Statystyki</h1><div class="sub">Ruch na ogłoszeniach · tylko dla Ciebie</div></div>'
+    +  '<div><h1>📊 Statystyki</h1><div class="sub">Wejścia na stronę i ruch · tylko dla Ciebie</div></div>'
     +  '<button class="btn" id="refresh" style="flex-shrink:0">🔄</button>'
     + '</div>'
     + '<div class="kpis">'
-    +   kpiCard('👁 Dziś (24h)', k.views_24h, 'var(--blue)')
-    +   kpiCard('👁 Tydzień (7 dni)', k.views_7d, 'var(--blue)')
-    +   kpiCard('👁 Miesiąc (30 dni)', k.views_30d, 'var(--blue)')
+    +   kpiCard('👥 Wejścia dziś', k.visits_24h, 'var(--blue)')
+    +   kpiCard('👥 Wejścia 7 dni', k.visits_7d, 'var(--blue)')
+    +   kpiCard('👥 Wejścia 30 dni', k.visits_30d, 'var(--blue)')
     +   kpiCard('🟢 Online teraz', k.online, 'var(--green)')
     + '</div>'
-    + '<input class="fi" id="q" placeholder="🔎 filtruj po nazwie / tytule / mieście">'
-    + '<div class="sec-h">📢 Ogłoszenia <span class="cnt" id="cnt-ogl"></span></div>'
-    + '<div id="list-ogl"><div class="loader">Ładowanie…</div></div>'
-    + '<button class="more" id="more-btn" style="display:none">Pokaż więcej statystyk ▾</button>'
-    + '<div id="extra" style="display:none">'
-    +   '<div class="summary" id="summary"></div>'
-    +   '<div class="sec-h">📍 Profile fachowców <span class="cnt" id="cnt-pins"></span></div>'
-    +   '<div id="list-pins"><div class="loader">Ładowanie…</div></div>'
+    + '<div class="summary" id="gen-sum">'
+    +   '🧑 Unikalni odwiedzający (30 dni): <b style="color:var(--blue)">'+(k.visitors_30d!=null?k.visitors_30d:'—')+'</b><br>'
+    +   '👁 Wyświetlenia ogłoszeń (30 dni): <b style="color:var(--blue)">'+(k.views_30d!=null?k.views_30d:'—')+'</b> · łącznie: <b>'+(k.views_total!=null?k.views_total:'—')+'</b>'
+    + '</div>'
+    + '<button class="more" id="ogl-toggle">📢 Zobacz statystyki ogłoszeń ▾</button>'
+    + '<div id="ogl-wrap" style="display:none">'
+    +   '<input class="fi" id="q" placeholder="🔎 filtruj po nazwie / tytule / mieście">'
+    +   '<div class="sec-h">📢 Ogłoszenia <span class="cnt" id="cnt-ogl"></span></div>'
+    +   '<div id="list-ogl"><div class="loader">Ładowanie…</div></div>'
+    +   '<button class="more" id="more-btn" style="display:none">Pokaż więcej statystyk ▾</button>'
+    +   '<div id="extra" style="display:none">'
+    +     '<div class="summary" id="summary"></div>'
+    +     '<div class="sec-h">📍 Profile fachowców <span class="cnt" id="cnt-pins"></span></div>'
+    +     '<div id="list-pins"><div class="loader">Ładowanie…</div></div>'
+    +   '</div>'
     + '</div>'
     + '<div style="text-align:center;margin:10px 0 30px"><button class="btn" id="logout">Wyloguj</button></div>';
   $('refresh').onclick=function(){ route(); };
   $('logout').onclick=async function(){ try{ await sb.auth.signOut(); }catch(e){} sessionStorage.removeItem('mj_stats_pin'); route(); };
   $('q').addEventListener('input', applyFilter);
   $('more-btn').onclick=toggleMore;
+  $('ogl-toggle').onclick=toggleOgl;
   loadAll();
   if(!window._statTimer){ window._statTimer=setInterval(refreshKpis, 30000); }
 }
 
 async function refreshKpis(){
-  try{ var r=await sb.rpc('admin_get_view_kpis'); if(r&&r.data){ var ks=document.querySelectorAll('.kpi .v'); if(ks.length>=4){ ks[0].textContent=r.data.views_24h; ks[1].textContent=r.data.views_7d; ks[2].textContent=r.data.views_30d; ks[3].textContent=r.data.online; } } }catch(e){}
+  try{ var r=await sb.rpc('admin_get_view_kpis'); if(r&&r.data){ var d=r.data; var ks=document.querySelectorAll('.kpi .v'); if(ks.length>=4){ ks[0].textContent=d.visits_24h; ks[1].textContent=d.visits_7d; ks[2].textContent=d.visits_30d; ks[3].textContent=d.online; } var gs=$('gen-sum'); if(gs) gs.innerHTML='🧑 Unikalni odwiedzający (30 dni): <b style="color:var(--blue)">'+(d.visitors_30d!=null?d.visitors_30d:'—')+'</b><br>👁 Wyświetlenia ogłoszeń (30 dni): <b style="color:var(--blue)">'+(d.views_30d!=null?d.views_30d:'—')+'</b> · łącznie: <b>'+(d.views_total!=null?d.views_total:'—')+'</b>'; } }catch(e){}
 }
+function toggleOgl(){ var w=$('ogl-wrap'); var open=w.style.display==='none'; w.style.display=open?'':'none'; $('ogl-toggle').textContent = open ? '📢 Ukryj statystyki ogłoszeń ▴' : '📢 Zobacz statystyki ogłoszeń ▾'; }
 
 function mapToObj(rows,keyField){ var m={}; (rows||[]).forEach(function(x){ if(x[keyField]!=null) m[x[keyField]]=x; }); return m; }
 
