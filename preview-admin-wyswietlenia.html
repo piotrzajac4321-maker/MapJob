@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Podgląd — Panel wyświetleń (redesign)</title>
+<style>
+:root{
+  --bg:#06080E;--bg2:#0C1018;--surf:#111827;--surf2:#1A2535;--surf3:#1E2D40;
+  --border:rgba(255,255,255,.07);--border2:rgba(255,255,255,.04);--border3:rgba(255,255,255,.11);
+  --text:#E8EFF8;--text2:#8BA4C0;--text3:#4A6480;
+  --blue:#1D6FF2;--blue2:#3B82F6;
+  --green:#16C45E;--gold:#C8A456;--red:#F04040;--violet:#A78BFA;
+  --ff:'SF Pro Display',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:var(--ff);padding:22px;max-width:760px;margin:0 auto;-webkit-font-smoothing:antialiased}
+.page-h{display:flex;align-items:center;gap:10px;margin-bottom:18px}
+.page-h .ic{width:38px;height:38px;border-radius:11px;background:linear-gradient(135deg,rgba(96,165,250,.18),rgba(96,165,250,.04));border:1px solid rgba(96,165,250,.28);display:flex;align-items:center;justify-content:center;font-size:18px}
+.page-h h1{font-size:18px;font-weight:900;letter-spacing:-.3px}
+.page-h p{font-size:11px;color:var(--text3);margin-top:1px}
+
+/* KPI */
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px}
+.kpi{background:linear-gradient(180deg,var(--surf2),var(--surf));border:1px solid var(--border3);border-radius:14px;padding:13px 14px;position:relative;overflow:hidden}
+.kpi .lbl{font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.6px;display:flex;align-items:center;gap:5px}
+.kpi .val{font-size:25px;font-weight:900;letter-spacing:-.5px;margin-top:7px;line-height:1}
+.kpi .sub{font-size:10.5px;color:var(--text3);margin-top:5px;font-weight:600}
+.kpi.accent .val{color:var(--blue2)}
+.kpi.violet .val{color:var(--violet)}
+.kpi.gold .val{color:var(--gold)}
+
+/* toolbar */
+.bar{display:flex;align-items:center;gap:8px;margin-bottom:16px;flex-wrap:wrap}
+.fi{flex:1;min-width:200px;background:var(--surf);border:1px solid var(--border3);border-radius:10px;color:var(--text);font-family:var(--ff);font-size:12px;padding:9px 13px;outline:none}
+.fi::placeholder{color:var(--text3)}
+.btn{background:var(--surf2);border:1px solid var(--border3);border-radius:10px;color:var(--text2);font-family:var(--ff);font-size:12px;font-weight:800;padding:9px 14px;cursor:pointer}
+.seg{display:inline-flex;background:var(--surf);border:1px solid var(--border3);border-radius:10px;padding:3px;gap:2px}
+.seg button{border:none;background:transparent;color:var(--text3);font-family:var(--ff);font-size:11.5px;font-weight:800;padding:6px 12px;border-radius:8px;cursor:pointer}
+.seg button.on{background:var(--bg2);color:var(--text)}
+
+/* section */
+.sect{background:var(--surf);border:1px solid var(--border);border-radius:16px;padding:14px;margin-bottom:14px}
+.sect-h{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;gap:10px}
+.sect-h .t{font-size:13.5px;font-weight:900;display:flex;align-items:center;gap:8px}
+.sect-h .badge{font-size:10px;font-weight:800;color:var(--text3);background:var(--surf2);border:1px solid var(--border3);padding:3px 9px;border-radius:20px}
+.sect-h .tot{font-size:11px;font-weight:700;color:var(--text2);text-align:right}
+.sect-h .tot b{color:var(--blue2);font-size:13px}
+
+/* row */
+.row{display:flex;align-items:center;gap:11px;padding:10px 11px;border-radius:11px;margin-bottom:5px;position:relative;background:var(--surf2);border:1px solid var(--border2)}
+.row.top1{background:linear-gradient(90deg,rgba(200,164,86,.10),rgba(200,164,86,.02));border-color:rgba(200,164,86,.28)}
+.rank{width:25px;height:25px;border-radius:8px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:900;color:var(--text3);background:var(--surf);border:1px solid var(--border3)}
+.rank.m1{background:rgba(200,164,86,.18);border-color:rgba(200,164,86,.4);color:var(--gold)}
+.rank.m2{background:rgba(180,200,220,.12);border-color:rgba(180,200,220,.3);color:#B8CADE}
+.rank.m3{background:rgba(190,120,70,.14);border-color:rgba(190,120,70,.34);color:#D08A55}
+.mid{flex:1;min-width:0}
+.mid .ti{font-size:13px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mid .me{font-size:11px;color:var(--text3);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.barwrap{height:4px;background:var(--surf);border-radius:3px;margin-top:7px;overflow:hidden}
+.barfill{height:100%;border-radius:3px;background:linear-gradient(90deg,var(--blue),var(--blue2))}
+.barfill.g{background:linear-gradient(90deg,var(--gold),#E0C078)}
+.chips{display:flex;gap:6px;flex-shrink:0;align-items:center}
+.chip{display:inline-flex;align-items:center;gap:4px;font-size:12.5px;font-weight:900;padding:5px 10px;border-radius:9px}
+.chip.v{color:var(--blue2);background:rgba(96,165,250,.10);border:1px solid rgba(96,165,250,.25)}
+.chip.v.hot{color:var(--gold);background:rgba(200,164,86,.12);border:1px solid rgba(200,164,86,.3)}
+.chip.u{color:var(--violet);background:rgba(139,92,246,.10);border:1px solid rgba(139,92,246,.25)}
+.note{background:rgba(96,165,250,.06);border:1px solid rgba(96,165,250,.2);border-radius:11px;padding:10px 13px;font-size:11px;color:var(--text2);line-height:1.6;margin-bottom:16px}
+.note .w{color:var(--text3)}
+</style>
+</head>
+<body>
+
+<div class="page-h">
+  <div class="ic">👁</div>
+  <div><h1>Wyświetlenia &amp; ruch</h1><p>Co naprawdę przyciąga uwagę na mapie — na żywo z bazy</p></div>
+</div>
+
+<!-- KPI -->
+<div class="kpis">
+  <div class="kpi accent"><div class="lbl">👁 Wyświetlenia</div><div class="val">14 820</div><div class="sub">łącznie, wszystkie</div></div>
+  <div class="kpi violet"><div class="lbl">👤 Unikalni</div><div class="val">3 142</div><div class="sub">zalogowani widzowie</div></div>
+  <div class="kpi"><div class="lbl">📌 Pozycje</div><div class="val">187</div><div class="sub">śledzone ogłoszenia</div></div>
+  <div class="kpi gold"><div class="lbl">🏆 Lider</div><div class="val">2 410</div><div class="sub">Elektryk · Wrocław</div></div>
+</div>
+
+<div class="note">
+  <b>👁 Ruch na każdym ogłoszeniu osobno.</b> <b style="color:#60A5FA">Wyświetlenia</b> = ile razy otwarto profil / zlecenie / ofertę (zalogowany max 1×/godz., anonim każde wejście; bez cookies). <b style="color:#A78BFA">Unikalni</b> = ilu różnych zalogowanych userów. Pasek pod nazwą pokazuje udział względem lidera w danej kategorii.<br><span class="w">⚠ Śledzenie opisane w polityce prywatności z prawem sprzeciwu.</span>
+</div>
+
+<!-- toolbar -->
+<div class="bar">
+  <input class="fi" placeholder="🔎 filtruj po nazwie / tytule / mieście"/>
+  <div class="seg"><button class="on">Wszystko</button><button>📍 Profile</button><button>📋 Zlecenia</button><button>💼 Oferty</button></div>
+  <button class="btn">🔄 Odśwież</button>
+</div>
+
+<!-- SECTION: pins -->
+<div class="sect">
+  <div class="sect-h">
+    <div class="t">📍 Profile fachowców <span class="badge">62 poz.</span></div>
+    <div class="tot"><b>6 240</b> wyświetleń · 1 510 unik.</div>
+  </div>
+  <div id="s1"></div>
+</div>
+
+<!-- SECTION: tenders -->
+<div class="sect">
+  <div class="sect-h">
+    <div class="t">📋 Zlecenia (ogłoszenia) <span class="badge">71 poz.</span></div>
+    <div class="tot"><b>5 180</b> wyświetleń · 1 040 unik.</div>
+  </div>
+  <div id="s2"></div>
+</div>
+
+<!-- SECTION: jobs -->
+<div class="sect">
+  <div class="sect-h">
+    <div class="t">💼 Oferty pracy <span class="badge">54 poz.</span></div>
+    <div class="tot"><b>3 400</b> wyświetleń · 592 unik.</div>
+  </div>
+  <div id="s3"></div>
+</div>
+
+<script>
+function row(rank,title,meta,views,uniq,max){
+  var pct=Math.max(4,Math.round(views/max*100));
+  var medal=rank===1?'m1':rank===2?'m2':rank===3?'m3':'';
+  var hot=views>=1000;
+  return '<div class="row '+(rank===1?'top1':'')+'">'
+    +'<div class="rank '+medal+'">'+rank+'</div>'
+    +'<div class="mid"><div class="ti">'+title+'</div><div class="me">'+meta+'</div>'
+    +'<div class="barwrap"><div class="barfill '+(rank===1?'g':'')+'" style="width:'+pct+'%"></div></div></div>'
+    +'<div class="chips">'+(uniq!=null?'<span class="chip u">👤 '+uniq+'</span>':'')+'<span class="chip v '+(hot?'hot':'')+'">👁 '+views+'</span></div>'
+    +'</div>';
+}
+var pins=[['Marek — Elektryk','⚡ Elektryk · Wrocław',2410,612],['ProInstal','🔧 Hydraulik · Kraków',1180,340],['Stolarnia K&K','🪚 Stolarz · Poznań',840,201],['Adam Spaw','🔥 Spawacz · Gdańsk',520,140],['BudMax','🏗 Budownictwo · Łódź',410,98],['IT Serwis','💻 IT · Warszawa',330,77],['Klima-Tech','🌬 HVAC · Katowice',290,61],['MalDecor','🖌 Malarz · Lublin',260,55]];
+var tenders=[['Remont łazienki pod klucz','Warszawa · Anna K.',1620,388],['Instalacja elektryczna — dom 140m²','Wrocław · Firma BHP',980,250],['Spawanie konstrukcji stalowej','Gdańsk · MetalPro',760,180],['Montaż klimatyzacji 3 szt.','Kraków · Biuro X',540,120],['Ocieplenie poddasza','Poznań · Jan W.',430,95],['Przyłącze wod-kan','Łódź · Spółdzielnia',310,70]];
+var jobs=[['Elektryk z uprawnieniami SEP','EnergiaPL · Wrocław',1320,300],['Spawacz MIG/MAG','MetalWorks · Gdańsk',870,205],['Monter instalacji sanitarnych','InstalGrupa · Kraków',560,130],['Operator CNC','Zetkama · Świdnica',420,98],['Kierowca C+E','TransPol · Poznań',230,52]];
+function render(id,arr){var max=arr[0][2];document.getElementById(id).innerHTML=arr.map(function(r,i){return row(i+1,r[0],r[1],r[2],r[3],max);}).join('');}
+render('s1',pins);render('s2',tenders);render('s3',jobs);
+</script>
+</body>
+</html>
