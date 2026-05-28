@@ -125,3 +125,33 @@ GRANT EXECUTE ON FUNCTION public.set_analytics_opt_out(boolean) TO authenticated
 -- NOTE: increment_pin_view / increment_tender_view / increment_job_view were also
 -- updated (CREATE OR REPLACE) to read profiles.analytics_opt_out and skip personal
 -- page_views logging for opted-out users. See migration body in Supabase history.
+
+-- =============================================================================
+-- KPI panelu + logowanie anonimowych wyświetleń (dla statystyk dziennych/tygodniowych)
+-- =============================================================================
+-- increment_pin_view / increment_tender_view / increment_job_view zostaly ponownie
+-- zaktualizowane (CREATE OR REPLACE): dla anonima logujemy teraz timestampowany wiersz
+-- w page_views (BEZ user_id / identyfikatora urzadzenia → anonimowy agregat, RODO-safe),
+-- zeby KPI 24h/7d odzwierciedlaly realny ruch, nie tylko zalogowanych. Pelne cialo
+-- funkcji w historii migracji Supabase (migracja: view_kpis_and_anon_logging).
+
+CREATE OR REPLACE FUNCTION public.admin_get_view_kpis()
+RETURNS jsonb LANGUAGE plpgsql SECURITY DEFINER SET search_path TO 'public', 'pg_temp'
+AS $function$
+DECLARE r jsonb;
+BEGIN
+  IF NOT is_admin() THEN RAISE EXCEPTION 'forbidden'; END IF;
+  SELECT jsonb_build_object(
+    'online', (SELECT count(*) FROM user_sessions WHERE ended_at IS NULL AND last_seen_at > now() - interval '2 minutes'),
+    'views_24h', (SELECT count(*) FROM page_views WHERE page_type IN ('pin','tender','job') AND created_at > now() - interval '24 hours'),
+    'views_7d', (SELECT count(*) FROM page_views WHERE page_type IN ('pin','tender','job') AND created_at > now() - interval '7 days'),
+    'views_total', (
+      (SELECT COALESCE(SUM(views_count),0) FROM pins)
+      + (SELECT COALESCE(SUM(views_count),0) FROM tenders)
+      + (SELECT COALESCE(SUM(views_count),0) FROM job_offers)
+    )
+  ) INTO r;
+  RETURN r;
+END;
+$function$;
+GRANT EXECUTE ON FUNCTION public.admin_get_view_kpis() TO authenticated;
