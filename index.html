@@ -2885,11 +2885,10 @@ body.light-mode .mj-theme-btn:hover{ background: var(--surf2) }
     <div id="map-full" style="width:100%;height:100%;position:absolute;top:0;left:0"></div>
 
     
-    <button class="mj-cta-pin mj-map-cta" onclick="openAddJobOffer()" type="button">
-      <span class="mj-cta-pin-ico">💼</span>
-      <span>Dodaj ogłoszenie</span>
-      <span class="mj-cta-pin-arrow">→</span>
-    </button>
+    <div style="position:absolute;left:0;right:0;bottom:18px;z-index:503;display:flex;gap:9px;justify-content:center;align-items:center;padding:0 12px;pointer-events:none">
+      <button onclick="goTab('jobs')" type="button" style="pointer-events:all;display:inline-flex;align-items:center;gap:7px;padding:10px 16px;border-radius:999px;background:rgba(4,13,26,.92);border:1.5px solid rgba(255,255,255,.2);color:#fff;font-family:var(--ff);font-size:13px;font-weight:700;cursor:pointer;box-shadow:0 4px 16px rgba(0,0,0,.5);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);white-space:nowrap">📋 Lista ofert pracy</button>
+      <button onclick="openAddJobOffer()" type="button" style="pointer-events:all;display:inline-flex;align-items:center;gap:7px;padding:10px 16px;border-radius:999px;background:var(--blue);border:none;color:#fff;font-family:var(--ff);font-size:13px;font-weight:600;cursor:pointer;box-shadow:0 4px 14px rgba(59,130,246,.30),inset 0 1px 0 rgba(255,255,255,.12);white-space:nowrap">💼 Dodaj ogłoszenie <span style="font-size:14px">→</span></button>
+    </div>
 
     <div id="map-total-badge" style="position:absolute;left:50%;bottom:78px;transform:translateX(-50%);z-index:502;display:none;align-items:center;gap:6px;padding:5px 12px;border-radius:18px;background:rgba(4,13,26,.9);border:1px solid rgba(255,255,255,.18);box-shadow:0 3px 12px rgba(0,0,0,.5);pointer-events:none;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);white-space:nowrap">
       <span style="width:6px;height:6px;border-radius:50%;background:#4ADE80;box-shadow:0 0 6px rgba(74,222,128,.6);flex-shrink:0"></span>
