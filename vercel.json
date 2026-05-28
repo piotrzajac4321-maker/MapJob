@@ -2,6 +2,9 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "buildCommand": "python3 build_seo_landings.py",
   "outputDirectory": ".",
+  "rewrites": [
+    { "source": "/firma/(.*)", "destination": "/index.html" }
+  ],
   "headers": [
     {
       "source": "/(.*)",
