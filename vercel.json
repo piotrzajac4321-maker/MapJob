@@ -4,7 +4,8 @@
   "outputDirectory": ".",
   "rewrites": [
     { "source": "/firma/(.*)", "destination": "/index.html" },
-    { "source": "/statystyki", "destination": "/statystyki.html" }
+    { "source": "/statystyki", "destination": "/statystyki.html" },
+    { "source": "/panel", "destination": "/statystyki.html" }
   ],
   "headers": [
     {
@@ -27,7 +28,7 @@
       ]
     },
     {
-      "source": "/statystyki(.html)?",
+      "source": "/(statystyki|panel)(.html)?",
       "headers": [
         { "key": "Cache-Control", "value": "no-cache, no-store, must-revalidate" }
       ]
