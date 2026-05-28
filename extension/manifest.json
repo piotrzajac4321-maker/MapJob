@@ -1,0 +1,19 @@
+{
+  "manifest_version": 3,
+  "name": "MapJob – Facebook Groups Scraper",
+  "version": "1.0.0",
+  "description": "Wyciąga listę grup Facebook, do których należysz (na potrzeby MapJob.pl).",
+  "permissions": ["activeTab", "scripting", "downloads"],
+  "host_permissions": ["https://www.facebook.com/*"],
+  "action": {
+    "default_title": "MapJob – Skaner grup FB",
+    "default_popup": "popup.html"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://www.facebook.com/*"],
+      "js": ["fb-groups-scrape.js"],
+      "run_at": "document_idle"
+    }
+  ]
+}
