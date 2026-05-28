@@ -2674,7 +2674,7 @@ body.light-mode .mj-theme-btn:hover{ background: var(--surf2) }
       <span>Dodaj ogłoszenie</span>
       <span class="mj-cta-pin-arrow">→</span>
     </button>
-    <button onclick="goTab('map')" type="button" style="display:inline-flex;align-items:center;gap:9px;padding:13px 22px;border-radius:999px;background:var(--surf);border:1px solid var(--border3);font-family:var(--ff);font-size:15px;font-weight:600;color:var(--text);cursor:pointer">
+    <button onclick="mjBrowseChooser()" type="button" style="display:inline-flex;align-items:center;gap:9px;padding:13px 22px;border-radius:999px;background:var(--surf);border:1px solid var(--border3);font-family:var(--ff);font-size:15px;font-weight:600;color:var(--text);cursor:pointer">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
       <span>Sprawdź ogłoszenia</span>
     </button>
@@ -20131,6 +20131,24 @@ window.renderHubJobs = function(){
   window._mjReferralPanelReload = reload;
   window._mjReferralPanelRender = renderPanel;
 })();
+</script>
+
+<script>
+/* Wybór po kliknięciu „Sprawdź ogłoszenia": wyśrodkowane okno z 2 kafelkami (lista / mapa) */
+window.mjBrowseChooser=function(){
+  var old=document.getElementById('mj-browse-chooser');if(old)old.remove();
+  var ov=document.createElement('div');
+  ov.id='mj-browse-chooser';
+  ov.style.cssText='position:fixed;inset:0;z-index:9600;background:rgba(0,0,0,.62);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);display:flex;align-items:center;justify-content:center;padding:20px;animation:mfade .2s ease';
+  var sh='0 6px 20px rgba(59,130,246,.34),inset 0 1px 0 rgba(255,255,255,.16)';
+  var btn='display:flex;align-items:center;justify-content:center;padding:18px;border-radius:16px;color:#fff;background:var(--blue);box-shadow:'+sh+';border:none;font-family:var(--ff);font-size:17px;font-weight:800;letter-spacing:-.3px;cursor:pointer';
+  ov.innerHTML='<div style="width:100%;max-width:300px;background:var(--bg2);border:1px solid var(--border3);border-radius:22px;padding:16px;box-shadow:0 24px 60px rgba(0,0,0,.6)"><div style="display:flex;flex-direction:column;gap:12px"><button id="mjbc-list" type="button" style="'+btn+'">Lista ogłoszeń</button><button id="mjbc-map" type="button" style="'+btn+'">Mapa ogłoszeń</button></div></div>';
+  ov.addEventListener('click',function(e){if(e.target===ov)ov.remove();});
+  document.body.appendChild(ov);
+  try{ov.style.zIndex=window._mjStackZ(9600);}catch(_z){}
+  document.getElementById('mjbc-list').onclick=function(){ov.remove();if(typeof goTab==='function')goTab('jobs');};
+  document.getElementById('mjbc-map').onclick=function(){ov.remove();if(typeof goTab==='function')goTab('map');};
+};
 </script>
 
 </body>
