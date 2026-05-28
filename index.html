@@ -194,10 +194,19 @@
       "@type": "Organization",
       "@id": "https://mapjob.pl/#organization",
       "name": "MapJob",
+      "alternateName": ["MapJob.pl", "Map Job"],
       "url": "https://mapjob.pl/",
-      "logo": "https://mapjob.pl/icons/icon-512.png",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://mapjob.pl/icons/icon-512.png",
+        "width": 512,
+        "height": 512
+      },
+      "image": "https://mapjob.pl/icons/icon-512.png",
+      "description": "MapJob to polska interaktywna mapa pracy i zleceń. Oferty pracy w Polsce i za granicą — Niemcy, Holandia, Europa.",
       "email": "kontakt@mapjob.pl",
       "areaServed": { "@type": "Country", "name": "Poland" },
+      "knowsLanguage": "pl",
       "sameAs": []
     },
     {
@@ -233,10 +242,13 @@
 <meta name="apple-mobile-web-app-capable" content="yes"/>
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
 <meta name="apple-mobile-web-app-title" content="MapJob"/>
-<link rel="apple-touch-icon" sizes="192x192" href="/icons/icon-192.png"/>
+<link rel="icon" href="/favicon.ico" sizes="any"/>
+<link rel="icon" type="image/png" sizes="32x32" href="/icons/icon-32.png"/>
+<link rel="icon" type="image/png" sizes="48x48" href="/icons/icon-48.png"/>
 <link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192.png"/>
 <link rel="icon" type="image/png" sizes="512x512" href="/icons/icon-512.png"/>
-<link rel="shortcut icon" type="image/png" href="/icons/icon-192.png"/>
+<link rel="apple-touch-icon" sizes="192x192" href="/icons/icon-192.png"/>
+<link rel="shortcut icon" href="/favicon.ico"/>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap"/>
