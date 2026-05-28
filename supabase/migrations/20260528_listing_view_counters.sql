@@ -155,3 +155,24 @@ BEGIN
 END;
 $function$;
 GRANT EXECUTE ON FUNCTION public.admin_get_view_kpis() TO authenticated;
+
+-- =============================================================================
+-- SECURITY FIX: is_admin() zwracalo NULL dla anonima (klauzula auth.email()=... daje
+-- NULL gdy brak sesji; false OR false OR NULL = NULL). Guardy `IF NOT is_admin()`
+-- liczyly wtedy `NOT NULL = NULL` → branch pomijany → admin-only RPC przeciekaly do
+-- anonima (kazdy z publicznym kluczem). COALESCE(...,false) zwraca scisly bool i
+-- naprawia WSZYSTKICH wywolujacych centralnie. Dodatkowo guardy KPI/unique => IS NOT TRUE.
+CREATE OR REPLACE FUNCTION public.is_admin()
+RETURNS boolean LANGUAGE sql STABLE SECURITY DEFINER SET search_path TO 'public'
+AS $function$
+  select coalesce(
+    exists (select 1 from public.admins a where a.user_id = auth.uid())
+    or exists (select 1 from public.admins a where a.email = auth.email() and a.email is not null)
+    or auth.email() = 'kontakt@mapjob.pl'
+  , false);
+$function$;
+-- admin_get_view_kpis / admin_get_listing_unique_viewers zaktualizowane na
+-- `IF is_admin() IS NOT TRUE THEN RAISE` (pelne cialo w historii Supabase: fix_is_admin_null_anon).
+
+-- Mobilny panel statystyk: statystyki.html (/statystyki) — read-only, korzysta z istniejacej
+-- sesji admina (ten sam origin) lub pokazuje logowanie; dane przez powyzsze admin-only RPC.
