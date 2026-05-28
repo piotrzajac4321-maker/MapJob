@@ -416,7 +416,9 @@ def common_head(*, title, meta_desc, canonical, og_type="website", extra_ld=()):
         f'<meta name="twitter:image" content="{SITE}/icons/icon-512.png"/>',
         # Other
         '<meta name="theme-color" content="#0B0D10"/>',
-        '<link rel="icon" href="/icons/icon-192.png"/>',
+        '<link rel="icon" href="/favicon.ico" sizes="any"/>',
+        '<link rel="icon" type="image/png" sizes="48x48" href="/icons/icon-48.png"/>',
+        '<link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192.png"/>',
         '<link rel="apple-touch-icon" href="/icons/icon-192.png"/>',
         '<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap"/>',
     ]
