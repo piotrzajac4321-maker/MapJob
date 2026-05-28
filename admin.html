@@ -799,6 +799,14 @@ header{position:sticky;top:0;z-index:20;background:rgba(6,8,14,.94);backdrop-fil
           👁 <b>Ruch na każdym ogłoszeniu osobno.</b> <b style="color:#60A5FA">👁 łączne wyświetlenia</b> = ile razy otwarto dany profil / zlecenie / ofertę (zalogowany max 1×/godz., anonim każde wejście; bez cookies, dane zagregowane). <b style="color:#A78BFA">👤 unikalni</b> = ilu różnych <i>zalogowanych</i> userów (po user_id, podstawa: uzasadniony interes). Sortowanie: od najczęściej oglądanych.<br><span style="color:var(--text3)">⚠ To śledzenie musi być opisane w polityce prywatności z prawem sprzeciwu — gotowy akapit dostałeś w czacie.</span>
         </div>
 
+        <!-- KPI szybki wgląd -->
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px;margin-bottom:12px">
+          <div style="padding:10px 12px;background:var(--surf2);border:1px solid var(--border3);border-radius:10px"><div style="font-size:10px;color:var(--text3);font-weight:700">🟢 Online teraz</div><div id="vw-kpi-online" style="font-size:20px;font-weight:900;margin-top:2px;color:#22C55E">—</div></div>
+          <div style="padding:10px 12px;background:var(--surf2);border:1px solid var(--border3);border-radius:10px"><div style="font-size:10px;color:var(--text3);font-weight:700">👁 Dziś (24h)</div><div id="vw-kpi-24h" style="font-size:20px;font-weight:900;margin-top:2px;color:#60A5FA">—</div></div>
+          <div style="padding:10px 12px;background:var(--surf2);border:1px solid var(--border3);border-radius:10px"><div style="font-size:10px;color:var(--text3);font-weight:700">👁 Tydzień (7 dni)</div><div id="vw-kpi-7d" style="font-size:20px;font-weight:900;margin-top:2px;color:#60A5FA">—</div></div>
+          <div style="padding:10px 12px;background:var(--surf2);border:1px solid var(--border3);border-radius:10px"><div style="font-size:10px;color:var(--text3);font-weight:700">👁 Łącznie</div><div id="vw-kpi-total" style="font-size:20px;font-weight:900;margin-top:2px">—</div></div>
+        </div>
+
         <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;flex-wrap:wrap">
           <input class="fi" id="vw-q" placeholder="🔎 filtruj po nazwie / tytule / mieście" style="margin:0;flex:1;min-width:200px;font-size:12px;padding:8px 12px" oninput="vwApplyFilter()"/>
           <button class="btn-s" onclick="loadViews()">🔄 Odśwież</button>
@@ -8555,7 +8563,20 @@ async function vwUniques(pageType){
     return m;
   }catch(e){ return {}; }
 }
-function loadViews(){ loadViewsPins(); loadViewsTenders(); loadViewsJobs(); }
+async function loadViewKpis(){
+  try{
+    var r = await _sb.rpc('admin_get_view_kpis');
+    if(r.error || !r.data) return;
+    var d = r.data;
+    function set(id,v){ var e=document.getElementById(id); if(e) e.textContent = (v==null?'—':v); }
+    set('vw-kpi-online', d.online); set('vw-kpi-24h', d.views_24h); set('vw-kpi-7d', d.views_7d); set('vw-kpi-total', d.views_total);
+  }catch(e){}
+}
+function loadViews(){
+  loadViewKpis(); loadViewsPins(); loadViewsTenders(); loadViewsJobs();
+  /* odświeżaj „online" co 30s gdy panel widoczny */
+  if(!window._vwKpiTimer){ window._vwKpiTimer=setInterval(function(){ var p=document.getElementById('panel-views'); if(p&&p.classList.contains('active')) loadViewKpis(); },30000); }
+}
 async function loadViewsPins(){
   var el=document.getElementById('vw-pins'); if(!el) return; el.innerHTML='<div class="loader">Ładowanie…</div>';
   var r = await _sb.from('pins').select('id,name,role,city,is_demo,views_count').eq('is_active',true).order('views_count',{ascending:false,nullsFirst:false}).limit(300);
