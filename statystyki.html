@@ -129,10 +129,10 @@ function renderDashboard(k){
     +  '<button class="btn" id="refresh" style="flex-shrink:0">🔄</button>'
     + '</div>'
     + '<div class="kpis">'
-    +   kpiCard('🟢 Online teraz', k.online, 'var(--green)')
     +   kpiCard('👁 Dziś (24h)', k.views_24h, 'var(--blue)')
     +   kpiCard('👁 Tydzień (7 dni)', k.views_7d, 'var(--blue)')
-    +   kpiCard('👁 Łącznie', k.views_total, null)
+    +   kpiCard('👁 Miesiąc (30 dni)', k.views_30d, 'var(--blue)')
+    +   kpiCard('🟢 Online teraz', k.online, 'var(--green)')
     + '</div>'
     + '<input class="fi" id="q" placeholder="🔎 filtruj po nazwie / tytule / mieście">'
     + '<div class="sec-h">📢 Ogłoszenia <span class="cnt" id="cnt-ogl"></span></div>'
@@ -153,7 +153,7 @@ function renderDashboard(k){
 }
 
 async function refreshKpis(){
-  try{ var r=await sb.rpc('admin_get_view_kpis'); if(r&&r.data){ var ks=document.querySelectorAll('.kpi .v'); if(ks.length>=4){ ks[0].textContent=r.data.online; ks[1].textContent=r.data.views_24h; ks[2].textContent=r.data.views_7d; ks[3].textContent=r.data.views_total; } } }catch(e){}
+  try{ var r=await sb.rpc('admin_get_view_kpis'); if(r&&r.data){ var ks=document.querySelectorAll('.kpi .v'); if(ks.length>=4){ ks[0].textContent=r.data.views_24h; ks[1].textContent=r.data.views_7d; ks[2].textContent=r.data.views_30d; ks[3].textContent=r.data.online; } } }catch(e){}
 }
 
 function mapToObj(rows,keyField){ var m={}; (rows||[]).forEach(function(x){ if(x[keyField]!=null) m[x[keyField]]=x; }); return m; }
