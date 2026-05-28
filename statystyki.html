@@ -41,6 +41,39 @@ h1{font-size:18px;font-weight:900;margin-bottom:2px}
 </head>
 <body>
 <div id="app"><div class="loader">Ładowanie…</div></div>
+<script src="https://js.hcaptcha.com/1/api.js?render=explicit&recaptchacompat=off" async defer></script>
+<script>
+/* hCaptcha invisible — wymagane przez Supabase Auth (captcha protection enabled). */
+window._MJ_HCAPTCHA_SITEKEY = '4e3e5de6-8e7a-49c4-93d2-c744d8d45722';
+window._mjCaptchaWidgetId = null;
+window._mjGetCaptchaToken = function(){
+  return new Promise(function(resolve){
+    try{
+      if(!window.hcaptcha || typeof window.hcaptcha.execute!=='function'){ resolve(null); return; }
+      var container = document.getElementById('mj-hcaptcha-container');
+      if(!container){
+        container = document.createElement('div');
+        container.id = 'mj-hcaptcha-container';
+        container.style.cssText = 'position:fixed;bottom:0;left:0;width:0;height:0;overflow:hidden;z-index:99999';
+        document.body.appendChild(container);
+      }
+      if(window._mjCaptchaWidgetId === null){
+        window._mjCaptchaWidgetId = window.hcaptcha.render(container, {
+          sitekey: window._MJ_HCAPTCHA_SITEKEY,
+          size: 'invisible',
+          callback: function(token){ window._mjCaptchaResolve && window._mjCaptchaResolve(token); },
+          'error-callback': function(){ window._mjCaptchaResolve && window._mjCaptchaResolve(null); },
+          'expired-callback': function(){ window._mjCaptchaResolve && window._mjCaptchaResolve(null); }
+        });
+      }
+      window._mjCaptchaResolve = function(t){ window._mjCaptchaResolve=null; resolve(t); };
+      try{ window.hcaptcha.reset(window._mjCaptchaWidgetId); }catch(_e){}
+      window.hcaptcha.execute(window._mjCaptchaWidgetId);
+      setTimeout(function(){ if(window._mjCaptchaResolve){ var r=window._mjCaptchaResolve; window._mjCaptchaResolve=null; r(null); } }, 30000);
+    }catch(e){ resolve(null); }
+  });
+};
+</script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 var SB_URL='https://ahgzjneegvptudphibdm.supabase.co';
@@ -108,8 +141,10 @@ async function doLogin(){
   var err=$('li-err'), btn=$('li-btn');
   if(!email||!pass){ err.textContent='Podaj e-mail i hasło.'; return; }
   btn.disabled=true; btn.textContent='Logowanie…'; err.textContent='';
+  var capTok=null; try{ capTok = await window._mjGetCaptchaToken(); }catch(_e){}
+  if(!capTok){ err.textContent='Captcha niedostępna — odśwież stronę i spróbuj ponownie.'; btn.disabled=false; btn.textContent='Zaloguj się →'; return; }
   try{
-    var r=await sb.auth.signInWithPassword({email:email,password:pass});
+    var r=await sb.auth.signInWithPassword({email:email,password:pass, options:{captchaToken:capTok}});
     if(r.error){ err.textContent='Błąd: '+r.error.message; btn.disabled=false; btn.textContent='Zaloguj się →'; return; }
     route();
   }catch(e){ err.textContent='Błąd logowania.'; btn.disabled=false; btn.textContent='Zaloguj się →'; }
