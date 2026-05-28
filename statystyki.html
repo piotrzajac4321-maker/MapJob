@@ -128,16 +128,10 @@ function showLogin(msg){
   $('app').innerHTML =
     '<div class="center"><h1>📊 Statystyki MapJob</h1><div class="sub">Panel tylko dla administratora</div></div>'
     + '<div style="max-width:340px;margin:0 auto">'
-    + '<div class="muted" style="margin-bottom:12px;text-align:center">'+esc(msg)+'</div>'
-    + '<a href="/" class="btn btnp" style="width:100%;display:block;text-align:center;text-decoration:none;margin-bottom:6px">📲 Zaloguj się w aplikacji MapJob →</a>'
-    + '<div class="muted" style="text-align:center;font-size:11px;margin-bottom:16px">Zaloguj się w apce, a potem wróć na tę stronę — rozpoznamy Cię automatycznie (bez captcha tutaj).</div>'
-    + '<div style="text-align:center;color:var(--text3);font-size:11px;margin-bottom:10px">— albo zaloguj się bezpośrednio —</div>'
-    + '<input class="fi" id="li-email" type="email" placeholder="E-mail admina" autocomplete="email">'
-    + '<input class="fi" id="li-pass" type="password" placeholder="Hasło" autocomplete="current-password">'
-    + '<button class="btn btnp" style="width:100%" id="li-btn">Zaloguj się →</button>'
-    + '<div class="err" id="li-err"></div></div>';
-  $('li-btn').onclick=doLogin;
-  $('li-pass').addEventListener('keydown',function(e){ if(e.key==='Enter')doLogin(); });
+    + '<div class="muted" style="margin-bottom:14px;text-align:center">'+esc(msg)+'</div>'
+    + '<a href="/" class="btn btnp" style="width:100%;display:block;text-align:center;text-decoration:none">📲 Zaloguj się w aplikacji MapJob →</a>'
+    + '<div class="muted" style="text-align:center;font-size:11px;margin-top:10px">Zaloguj się raz w aplikacji, a potem wchodź tutaj samym kodem PIN.</div>'
+    + '</div>';
 }
 async function doLogin(){
   var email=($('li-email').value||'').trim(), pass=$('li-pass').value||'';
