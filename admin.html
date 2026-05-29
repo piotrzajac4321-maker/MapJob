@@ -6703,6 +6703,7 @@ function editGenItem(i) {
       + '<div style="flex:1"><label style="font-size:10px;color:var(--text3);display:block;margin-bottom:3px">do</label><input class="fi" id="ge-sal-max" type="number" step="0.01" inputmode="decimal" value="'+escH(String(item.salary_max||''))+'" style="margin:0"/></div>'
       + '<select class="fi" id="ge-sal-type" style="margin:0;width:100px;align-self:flex-end"><option value="monthly"'+(item.salary_type==='monthly'?' selected':'')+'>/ mies.</option><option value="hourly"'+(item.salary_type==='hourly'?' selected':'')+'>/ h</option><option value="project"'+(item.salary_type==='project'?' selected':'')+'>/ proj.</option></select>'
       + '</div>'
+      + '<div style="display:flex;gap:6px;align-items:center;margin-bottom:8px"><label style="font-size:10px;color:var(--text3);white-space:nowrap">Stawka:</label><select class="fi" id="ge-sal-is-net" style="margin:0;flex:1"><option value=""'+(item.salary_is_net===null||item.salary_is_net===undefined?' selected':'')+'>— nieokreślona</option><option value="false"'+(item.salary_is_net===false?' selected':'')+'>Brutto</option><option value="true"'+(item.salary_is_net===true?' selected':'')+'>Netto</option></select></div>'
       + '<div class="fg" style="margin-bottom:8px">'
       + '<div><label style="font-size:10px;color:var(--text3);display:block;margin-bottom:3px">Zatrudnienie</label><select class="fi" id="ge-employment" style="margin:0"><option value="">—</option><option value="etat"'+(item.employment_type==='etat'?' selected':'')+'>Etat</option><option value="b2b"'+(item.employment_type==='b2b'?' selected':'')+'>B2B</option><option value="zlecenie"'+(item.employment_type==='zlecenie'?' selected':'')+'>Zlecenie</option></select></div>'
       + '<div><label style="font-size:10px;color:var(--text3);display:block;margin-bottom:3px">Tryb</label><select class="fi" id="ge-workmode" style="margin:0"><option value="">—</option><option value="onsite"'+(item.work_mode==='onsite'?' selected':'')+'>Stacjonarna</option><option value="hybrid"'+(item.work_mode==='hybrid'?' selected':'')+'>Hybrydowa</option><option value="remote"'+(item.work_mode==='remote'?' selected':'')+'>Zdalna</option></select></div>'
@@ -6752,6 +6753,7 @@ function saveGenItem(i) {
     item.salary_min = parseFloat(g('ge-sal-min'))||null;
     item.salary_max = parseFloat(g('ge-sal-max'))||null;
     item.salary_type = g('ge-sal-type');
+    var _gsin=g('ge-sal-is-net');item.salary_is_net=_gsin===''?null:_gsin==='true';
     item.employment_type = g('ge-employment');
     item.work_mode = g('ge-workmode');
     item.is_urgent = gc('ge-urgent');
