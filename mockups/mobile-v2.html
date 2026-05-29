@@ -725,6 +725,155 @@ body{
   box-shadow:0 4px 14px rgba(59,130,246,.25);
 }
 
+/* ═══ LANDING (NIEZALOGOWANY) ═══ */
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+@keyframes dots-pulse{0%,100%{opacity:.4;transform:scale(.9)}50%{opacity:1;transform:scale(1.1)}}
+
+.land-scroll{flex:1;overflow-y:auto;scrollbar-width:none;}
+.land-scroll::-webkit-scrollbar{display:none;}
+
+/* Hero with map bg */
+.land-hero{
+  position:relative;overflow:hidden;
+  height:320px;flex-shrink:0;
+}
+.land-map-bg{
+  position:absolute;inset:0;
+  background:#060810;
+}
+.land-map-bg::after{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(to bottom,rgba(6,8,16,.2) 0%,rgba(6,8,16,.7) 60%,rgba(11,13,16,1) 100%);
+}
+.land-hero-content{
+  position:relative;z-index:5;
+  display:flex;flex-direction:column;align-items:center;
+  padding:30px 20px 0;text-align:center;
+}
+.land-logo{
+  display:flex;align-items:center;gap:10px;margin-bottom:20px;
+  animation:float 4s ease-in-out infinite;
+}
+.land-logo-mark{
+  width:44px;height:44px;border-radius:14px;
+  background:var(--blue);
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 8px 24px rgba(59,130,246,.4);
+}
+.land-logo-text{font-size:24px;font-weight:900;color:var(--text);letter-spacing:-.04em;}
+
+.land-tagline{
+  font-size:26px;font-weight:900;color:var(--text);
+  letter-spacing:-.04em;line-height:1.15;margin-bottom:8px;
+}
+.land-tagline em{
+  font-style:normal;
+  background:linear-gradient(90deg,#3B82F6,#6366F1);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  background-clip:text;
+}
+.land-sub{font-size:13px;color:var(--text2);line-height:1.5;max-width:280px;}
+
+/* USP row */
+.land-usp{
+  padding:0 16px;
+  display:flex;flex-direction:column;gap:9px;
+  margin-top:-4px;
+}
+.land-usp-item{
+  display:flex;align-items:center;gap:10px;
+  padding:11px 13px;background:var(--surf);border:1px solid var(--line3);
+  border-radius:12px;
+}
+.land-usp-icon{
+  width:34px;height:34px;border-radius:9px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:16px;flex-shrink:0;
+}
+.land-usp-text{flex:1;}
+.land-usp-title{font-size:12.5px;font-weight:800;color:var(--text);margin-bottom:1px;}
+.land-usp-desc{font-size:11px;color:var(--text3);}
+.land-usp-check{color:var(--green);font-size:14px;font-weight:900;flex-shrink:0;}
+
+/* Social proof */
+.land-social{
+  margin:14px 16px 0;
+  display:flex;align-items:center;gap:10px;
+  padding:10px 13px;background:var(--surf2);border-radius:10px;
+}
+.land-avs{display:flex;flex-shrink:0;}
+.land-av{
+  width:26px;height:26px;border-radius:50%;
+  border:2px solid var(--surf2);
+  display:flex;align-items:center;justify-content:center;
+  font-size:8px;font-weight:900;color:#fff;margin-left:-8px;
+}
+.land-av:first-child{margin-left:0;}
+.land-social-text{font-size:11.5px;color:var(--text2);line-height:1.4;}
+.land-social-text b{color:var(--text);}
+
+/* CTA section */
+.land-cta-wrap{padding:14px 16px 0;}
+.land-btn-primary{
+  width:100%;height:52px;border:none;
+  background:var(--blue);color:#fff;
+  border-radius:14px;font-family:var(--ff);
+  font-size:16px;font-weight:800;cursor:pointer;
+  letter-spacing:-.01em;
+  box-shadow:0 8px 24px rgba(59,130,246,.4);
+  transition:all .15s;display:flex;align-items:center;justify-content:center;gap:8px;
+}
+.land-btn-primary:hover{background:#2563EB;box-shadow:0 8px 30px rgba(59,130,246,.5);}
+.land-btn-secondary{
+  width:100%;height:46px;margin-top:8px;
+  background:none;border:1px solid var(--line3);color:var(--text2);
+  border-radius:14px;font-family:var(--ff);
+  font-size:14px;font-weight:700;cursor:pointer;
+  transition:all .15s;
+}
+.land-btn-secondary:hover{background:var(--surf);color:var(--text);}
+.land-divider{
+  display:flex;align-items:center;gap:10px;
+  margin:10px 0;font-size:11px;color:var(--text3);
+}
+.land-divider::before,.land-divider::after{content:'';flex:1;height:1px;background:var(--line);}
+.land-btn-ghost{
+  width:100%;height:40px;
+  background:none;border:none;color:var(--text3);
+  font-family:var(--ff);font-size:12.5px;font-weight:600;cursor:pointer;
+  text-decoration:underline;text-underline-offset:3px;
+}
+
+/* Login screen */
+.login-scroll{flex:1;overflow-y:auto;scrollbar-width:none;padding-bottom:40px;}
+.login-scroll::-webkit-scrollbar{display:none;}
+.login-head{padding:30px 24px 20px;text-align:center;}
+.login-title{font-size:22px;font-weight:900;color:var(--text);letter-spacing:-.03em;margin-bottom:6px;}
+.login-sub{font-size:13px;color:var(--text3);}
+.login-form{padding:0 16px;}
+.lf-label{font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px;display:block;}
+.lf-input{
+  width:100%;height:48px;background:var(--surf);border:1px solid var(--line3);
+  border-radius:12px;padding:0 14px;font-family:var(--ff);font-size:14px;
+  color:var(--text);outline:none;margin-bottom:14px;box-sizing:border-box;
+  transition:border-color .15s;
+}
+.lf-input:focus{border-color:var(--blue);}
+.lf-input::placeholder{color:var(--text3);}
+.lf-forgot{float:right;font-size:11px;color:var(--blue2);margin-top:-10px;margin-bottom:16px;cursor:pointer;}
+.lf-divider{display:flex;align-items:center;gap:10px;margin:16px 0;font-size:11px;color:var(--text3);}
+.lf-divider::before,.lf-divider::after{content:'';flex:1;height:1px;background:var(--line);}
+.lf-social{display:flex;gap:8px;margin-bottom:16px;}
+.lf-social-btn{
+  flex:1;height:44px;background:var(--surf);border:1px solid var(--line3);
+  border-radius:11px;font-family:var(--ff);font-size:12.5px;font-weight:700;
+  color:var(--text2);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:7px;
+  transition:all .15s;
+}
+.lf-social-btn:hover{background:var(--surf2);}
+.lf-register{text-align:center;font-size:12.5px;color:var(--text3);margin-top:10px;}
+.lf-register a{color:var(--blue2);font-weight:700;cursor:pointer;}
+
 /* ═══ HOME SCREEN ═══ */
 @keyframes pulse-ring{0%{transform:scale(.8);opacity:.8}70%{transform:scale(1.6);opacity:0}100%{transform:scale(1.6);opacity:0}}
 @keyframes slide-up{from{transform:translateY(12px);opacity:0}to{transform:translateY(0);opacity:1}}
@@ -943,6 +1092,237 @@ body{
       <svg viewBox="0 0 26 14" fill="var(--text)"><rect x="0" y="1" width="22" height="12" rx="3" fill="none" stroke="var(--text)" stroke-width="1.5"/><rect x="1.5" y="2.5" width="16" height="9" rx="1.5"/><path d="M23 5v4a2 2 0 000-4z"/></svg>
     </div>
   </div>
+
+  <!-- ════ SCREEN: LANDING (niezalogowany) ════ -->
+  <div class="screen" id="screen-landing" style="padding-top:50px;">
+
+    <div class="land-scroll">
+      <!-- Hero with dark map background -->
+      <div class="land-hero">
+        <div class="land-map-bg">
+          <svg width="100%" height="100%" viewBox="0 0 393 320" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+            <rect width="393" height="320" fill="#060810"/>
+            <defs><pattern id="lg" width="24" height="24" patternUnits="userSpaceOnUse"><path d="M 24 0 L 0 0 0 24" fill="none" stroke="rgba(255,255,255,.03)" stroke-width="1"/></pattern></defs>
+            <rect width="393" height="320" fill="url(#lg)"/>
+            <!-- Roads -->
+            <line x1="0" y1="170" x2="393" y2="170" stroke="#1c2028" stroke-width="6"/>
+            <line x1="0" y1="170" x2="393" y2="170" stroke="#141619" stroke-width="2"/>
+            <line x1="196" y1="0" x2="196" y2="320" stroke="#16181e" stroke-width="7"/>
+            <line x1="80" y1="0" x2="100" y2="320" stroke="#121419" stroke-width="3.5"/>
+            <line x1="290" y1="0" x2="310" y2="320" stroke="#121419" stroke-width="3.5"/>
+            <line x1="0" y1="90" x2="393" y2="110" stroke="#141619" stroke-width="4"/>
+            <line x1="0" y1="245" x2="393" y2="260" stroke="#141619" stroke-width="4"/>
+            <!-- Ring road -->
+            <path d="M50 80 Q196 20 340 80 Q385 120 390 200" fill="none" stroke="#1e1a0e" stroke-width="6"/>
+            <path d="M50 80 Q196 20 340 80 Q385 120 390 200" fill="none" stroke="#2a2408" stroke-width="2.5"/>
+            <!-- Parks -->
+            <ellipse cx="75" cy="255" rx="50" ry="36" fill="#0d130b" opacity="0.9"/>
+            <ellipse cx="325" cy="100" rx="42" ry="28" fill="#0d130b" opacity="0.9"/>
+            <!-- River -->
+            <path d="M0 195 Q100 182 196 202 Q270 216 340 200 Q368 193 393 198" fill="none" stroke="#0a1520" stroke-width="20" stroke-linecap="round"/>
+            <path d="M0 195 Q100 182 196 202 Q270 216 340 200 Q368 193 393 198" fill="none" stroke="#0c1a28" stroke-width="10" stroke-linecap="round"/>
+            <!-- Buildings -->
+            <rect x="145" y="92" width="30" height="20" rx="3" fill="#0f111a" opacity="0.9"/>
+            <rect x="185" y="86" width="36" height="24" rx="3" fill="#0f111a" opacity="0.9"/>
+            <rect x="232" y="96" width="26" height="18" rx="3" fill="#0f111a" opacity="0.9"/>
+            <!-- District labels -->
+            <text x="100" y="68" font-family="Plus Jakarta Sans,sans-serif" font-size="8" font-weight="700" fill="rgba(255,255,255,.12)" letter-spacing="2" text-anchor="middle">KROWODRZA</text>
+            <text x="196" y="110" font-family="Plus Jakarta Sans,sans-serif" font-size="8" font-weight="700" fill="rgba(255,255,255,.12)" letter-spacing="2" text-anchor="middle">STARE MIASTO</text>
+            <text x="285" y="130" font-family="Plus Jakarta Sans,sans-serif" font-size="8" font-weight="700" fill="rgba(255,255,255,.12)" letter-spacing="2" text-anchor="middle">GRZEGÓRZKI</text>
+            <text x="196" y="248" font-family="Plus Jakarta Sans,sans-serif" font-size="8" font-weight="700" fill="rgba(255,255,255,.12)" letter-spacing="2" text-anchor="middle">PODGÓRZE</text>
+            <!-- User location -->
+            <circle cx="196" cy="240" r="22" fill="rgba(59,130,246,.08)" stroke="rgba(59,130,246,.2)" stroke-width="1.5"/>
+            <circle cx="196" cy="240" r="6" fill="#3B82F6"/>
+            <circle cx="196" cy="240" r="9" fill="none" stroke="white" stroke-width="2"/>
+            <!-- Job pins with glow -->
+            <g filter="url(#glow1)">
+              <rect x="88" y="56" width="50" height="20" rx="10" fill="#13172090" stroke="rgba(99,102,241,.5)" stroke-width="1.2"/>
+              <text x="113" y="69" text-anchor="middle" font-size="9" font-weight="800" fill="#10B981" font-family="Plus Jakarta Sans,sans-serif">15–22k</text>
+            </g>
+            <g>
+              <rect x="155" y="138" width="46" height="20" rx="10" fill="#13172090" stroke="rgba(239,68,68,.5)" stroke-width="1.2"/>
+              <text x="178" y="151" text-anchor="middle" font-size="9" font-weight="800" fill="#10B981" font-family="Plus Jakarta Sans,sans-serif">6,5–8k</text>
+            </g>
+            <g>
+              <rect x="255" y="78" width="42" height="20" rx="10" fill="#13172090" stroke="rgba(16,185,129,.4)" stroke-width="1.2"/>
+              <text x="276" y="91" text-anchor="middle" font-size="9" font-weight="800" fill="#10B981" font-family="Plus Jakarta Sans,sans-serif">9–14k</text>
+            </g>
+            <g>
+              <rect x="300" y="158" width="44" height="20" rx="10" fill="#13172090" stroke="rgba(59,130,246,.4)" stroke-width="1.2"/>
+              <text x="322" y="171" text-anchor="middle" font-size="9" font-weight="800" fill="#10B981" font-family="Plus Jakarta Sans,sans-serif">7–9,5k</text>
+            </g>
+            <g>
+              <rect x="28" y="120" width="44" height="20" rx="10" fill="#13172090" stroke="rgba(124,58,237,.4)" stroke-width="1.2"/>
+              <text x="50" y="133" text-anchor="middle" font-size="9" font-weight="800" fill="#10B981" font-family="Plus Jakarta Sans,sans-serif">12–18k</text>
+            </g>
+          </svg>
+        </div>
+        <div class="land-hero-content">
+          <div class="land-logo">
+            <div class="land-logo-mark">
+              <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" width="22" height="22"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            </div>
+            <span class="land-logo-text">MapJob</span>
+          </div>
+          <div class="land-tagline">Praca dosłownie<br><em>obok Ciebie</em></div>
+          <div class="land-sub">Znajdź pracę w swoim mieście. Zweryfikowane adresy, prawdziwe firmy.</div>
+        </div>
+      </div>
+
+      <!-- USP items -->
+      <div class="land-usp" style="margin-top:12px;">
+        <div class="land-usp-item">
+          <div class="land-usp-icon" style="background:rgba(59,130,246,.12);border:1px solid rgba(59,130,246,.2);">📍</div>
+          <div class="land-usp-text">
+            <div class="land-usp-title">Zweryfikowane adresy</div>
+            <div class="land-usp-desc">Zero ghost jobs — widzisz dokładne miejsce pracy na mapie</div>
+          </div>
+          <span class="land-usp-check">✓</span>
+        </div>
+        <div class="land-usp-item">
+          <div class="land-usp-icon" style="background:rgba(16,185,129,.10);border:1px solid rgba(16,185,129,.2);">💰</div>
+          <div class="land-usp-text">
+            <div class="land-usp-title">Widełki zawsze jawne</div>
+            <div class="land-usp-desc">Żadnych "wynagrodzenie do uzgodnienia" — zawsze wiesz ile zarobisz</div>
+          </div>
+          <span class="land-usp-check">✓</span>
+        </div>
+        <div class="land-usp-item">
+          <div class="land-usp-icon" style="background:rgba(217,119,6,.10);border:1px solid rgba(217,119,6,.2);">🎯</div>
+          <div class="land-usp-text">
+            <div class="land-usp-title">Darmowe konto na zawsze</div>
+            <div class="land-usp-desc">Aplikuj, przeglądaj, zapisuj — bez opłat, bez ukrytych kosztów</div>
+          </div>
+          <span class="land-usp-check">✓</span>
+        </div>
+      </div>
+
+      <!-- Social proof -->
+      <div class="land-social">
+        <div class="land-avs">
+          <div class="land-av" style="background:linear-gradient(135deg,#4F46E5,#6366F1);">KM</div>
+          <div class="land-av" style="background:linear-gradient(135deg,#DC2626,#EF4444);">AW</div>
+          <div class="land-av" style="background:linear-gradient(135deg,#059669,#10B981);">PK</div>
+          <div class="land-av" style="background:linear-gradient(135deg,#0891B2,#06B6D4);">MN</div>
+          <div class="land-av" style="background:linear-gradient(135deg,#7C3AED,#8B5CF6);">JS</div>
+        </div>
+        <div class="land-social-text"><b>1 207 osób</b> już korzysta z MapJob<br><span style="color:var(--text3);font-size:10.5px;">412 aktywnych ofert · Kraków</span></div>
+      </div>
+
+      <!-- CTAs -->
+      <div class="land-cta-wrap">
+        <button class="land-btn-primary" onclick="switchScreen('register')">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>
+          Zacznij za darmo →
+        </button>
+        <button class="land-btn-secondary" onclick="switchScreen('login')">Mam już konto · Zaloguj się</button>
+        <div class="land-divider">lub</div>
+        <button class="land-btn-ghost" onclick="switchScreen('home')">Przeglądaj oferty bez rejestracji</button>
+      </div>
+
+      <div style="padding:14px 16px 24px;text-align:center;font-size:10.5px;color:var(--text3);line-height:1.7;">
+        Rejestrując się akceptujesz <span style="color:var(--blue2);cursor:pointer;">Regulamin</span> i <span style="color:var(--blue2);cursor:pointer;">Politykę prywatności</span>
+      </div>
+    </div>
+  </div><!-- /screen-landing -->
+
+  <!-- ════ SCREEN: LOGIN ════ -->
+  <div class="screen" id="screen-login" style="padding-top:50px;">
+    <div class="tb">
+      <div class="tb-back" onclick="switchScreen('landing')">←</div>
+      <span class="tb-title" style="font-size:15px;">Zaloguj się</span>
+    </div>
+    <div class="login-scroll">
+      <div class="login-head">
+        <div style="font-size:36px;margin-bottom:10px;">👋</div>
+        <div class="login-title">Witaj z powrotem</div>
+        <div class="login-sub">Zaloguj się żeby przeglądać i aplikować</div>
+      </div>
+      <div class="login-form">
+        <!-- Social login -->
+        <div class="lf-social">
+          <button class="lf-social-btn">
+            <svg width="16" height="16" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+            Google
+          </button>
+          <button class="lf-social-btn">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="#1877F2"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+            Facebook
+          </button>
+        </div>
+        <div class="lf-divider">lub wpisz email</div>
+
+        <label class="lf-label">Email</label>
+        <input type="email" class="lf-input" placeholder="twoj@email.pl">
+
+        <label class="lf-label">Hasło</label>
+        <input type="password" class="lf-input" placeholder="••••••••">
+        <div class="lf-forgot">Zapomniałem hasła</div>
+
+        <button class="land-btn-primary" style="margin-top:6px;" onclick="switchScreen('home')">
+          Zaloguj się →
+        </button>
+
+        <div class="lf-register">
+          Nie masz konta? <a onclick="switchScreen('register')">Zarejestruj się</a>
+        </div>
+      </div>
+    </div>
+  </div><!-- /screen-login -->
+
+  <!-- ════ SCREEN: REJESTRACJA ════ -->
+  <div class="screen" id="screen-register" style="padding-top:50px;">
+    <div class="tb">
+      <div class="tb-back" onclick="switchScreen('landing')">←</div>
+      <span class="tb-title" style="font-size:15px;">Utwórz konto</span>
+    </div>
+    <div class="login-scroll">
+      <div class="login-head">
+        <div style="font-size:36px;margin-bottom:10px;">🚀</div>
+        <div class="login-title">Darmowe konto</div>
+        <div class="login-sub">Zajmuje 30 sekund · bez karty kredytowej</div>
+      </div>
+      <div class="login-form">
+        <div class="lf-social">
+          <button class="lf-social-btn">
+            <svg width="16" height="16" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+            Google
+          </button>
+          <button class="lf-social-btn">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="#1877F2"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+            Facebook
+          </button>
+        </div>
+        <div class="lf-divider">lub formularz</div>
+
+        <label class="lf-label">Imię i nazwisko</label>
+        <input type="text" class="lf-input" placeholder="Jan Kowalski">
+
+        <label class="lf-label">Email</label>
+        <input type="email" class="lf-input" placeholder="twoj@email.pl">
+
+        <label class="lf-label">Hasło</label>
+        <input type="password" class="lf-input" placeholder="min. 8 znaków">
+
+        <label class="lf-label">Lokalizacja</label>
+        <div style="position:relative;">
+          <input type="text" class="lf-input" placeholder="Kraków, Podgórze" style="padding-left:34px;">
+          <svg style="position:absolute;left:12px;top:16px;" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--text3)" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        </div>
+
+        <button class="land-btn-primary" style="margin-top:4px;" onclick="switchScreen('home')">
+          Utwórz konto za darmo →
+        </button>
+
+        <div class="lf-register">
+          Mam już konto. <a onclick="switchScreen('login')">Zaloguj się</a>
+        </div>
+        <div style="padding:12px 0 0;text-align:center;font-size:10.5px;color:var(--text3);">
+          Akceptujesz <span style="color:var(--blue2);">Regulamin</span> i <span style="color:var(--blue2);">Politykę prywatności</span>
+        </div>
+      </div>
+    </div>
+  </div><!-- /screen-register -->
 
   <!-- ════ SCREEN: HOME (default) ════ -->
   <div class="screen active" id="screen-home" style="padding-top:50px;">
@@ -1941,15 +2321,16 @@ body{
   <div class="ux-subtitle">Makieta 1:1 · 7 ekranów · wszystkie kliknięcia działają</div>
 
   <div class="nav-label-row">
-    <b>Nawigacja (4 zakładki):</b><br>
-    🏠 Start → strona główna (personalizacja)<br>
+    <b>Widok niezalogowany (kliknij):</b><br>
+    <span onclick="document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById('screen-landing').classList.add('active');" style="color:#60A5FA;cursor:pointer;font-weight:700;text-decoration:underline;">→ Pokaż Landing page</span><br>
+    <span onclick="document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById('screen-login').classList.add('active');" style="color:#60A5FA;cursor:pointer;font-weight:700;text-decoration:underline;">→ Pokaż Logowanie</span><br>
+    <span onclick="document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById('screen-register').classList.add('active');" style="color:#60A5FA;cursor:pointer;font-weight:700;text-decoration:underline;">→ Pokaż Rejestrację</span><br><br>
+    <b>Widok zalogowany (app):</b><br>
+    🏠 Start → strona główna<br>
     🗒️ Oferty → pełna lista kart<br>
-    🗺️ Mapa → mapa z pinami + lokalizacja<br>
-    👤 Profil → profil kandydata<br><br>
-    <b>Przepływ:</b><br>
-    Kliknij kartę lub kafelek → szczegóły oferty<br>
-    Szczegóły → "Firma" / "Więcej od..." → profil pracodawcy<br>
-    Szczegóły → "Podobne oferty" → inna oferta
+    🗺️ Mapa → mapa z pinami<br>
+    👤 Profil → profil kandydata<br>
+    Kliknij kartę → szczegóły → Firma → profil pracodawcy
   </div>
 
   <div class="ux-card">
