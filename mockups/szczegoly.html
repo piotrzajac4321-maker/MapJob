@@ -1,0 +1,823 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Senior Frontend Developer – Codewise | MapJob</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --primary: #2563EB;
+  --primary-dark: #1D4ED8;
+  --primary-light: #DBEAFE;
+  --success: #059669;
+  --success-light: #D1FAE5;
+  --warning: #D97706;
+  --warning-light: #FEF3C7;
+  --purple: #7C3AED;
+  --purple-light: #EDE9FE;
+  --bg: #F1F5F9;
+  --surface: #FFFFFF;
+  --border: #E2E8F0;
+  --text: #0F172A;
+  --text-secondary: #475569;
+  --text-muted: #94A3B8;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.08);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.10);
+  --shadow-lg: 0 12px 30px rgba(0,0,0,0.12);
+  --radius: 14px;
+  --radius-sm: 8px;
+  --radius-full: 999px;
+}
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: 'Inter', -apple-system, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+}
+
+/* ── HEADER ── */
+.header {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  height: 60px;
+  padding: 0 24px;
+  display: flex; align-items: center; gap: 16px;
+  position: sticky; top: 0; z-index: 100;
+}
+.logo { display: flex; align-items: center; gap: 8px; text-decoration: none; }
+.logo-mark {
+  width: 32px; height: 32px;
+  background: linear-gradient(135deg, #2563EB, #1D4ED8);
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+}
+.logo-mark svg { width: 18px; height: 18px; }
+.logo-name { font-size: 18px; font-weight: 800; letter-spacing: -0.5px; color: var(--text); }
+.logo-name span { color: var(--primary); }
+
+.breadcrumb {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 13px; color: var(--text-muted); margin-left: 8px;
+}
+.breadcrumb a { color: var(--text-secondary); text-decoration: none; }
+.breadcrumb a:hover { color: var(--primary); }
+.breadcrumb .sep { opacity: .4; }
+
+.header-actions { margin-left: auto; display: flex; align-items: center; gap: 8px; }
+.btn { border: none; cursor: pointer; font-family: inherit; transition: all .15s; display: flex; align-items: center; gap: 6px; border-radius: var(--radius-full); padding: 7px 16px; font-size: 13px; font-weight: 500; }
+.btn-ghost { background: none; color: var(--text-secondary); }
+.btn-ghost:hover { background: var(--bg); color: var(--text); }
+.btn-outline { border: 1.5px solid var(--border); background: var(--surface); color: var(--text-secondary); }
+.btn-outline:hover { border-color: var(--primary); color: var(--primary); background: var(--primary-light); }
+.avatar { width: 32px; height: 32px; border-radius: 50%; background: linear-gradient(135deg,#6366F1,#8B5CF6); display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; color: white; cursor: pointer; }
+
+/* ── LAYOUT ── */
+.page { max-width: 1200px; margin: 0 auto; padding: 28px 24px; display: grid; grid-template-columns: 1fr 340px; gap: 24px; align-items: start; }
+
+/* ── MAIN COLUMN ── */
+.main-col {}
+
+/* Company Banner */
+.company-banner {
+  background: var(--surface);
+  border-radius: var(--radius);
+  padding: 28px 32px;
+  margin-bottom: 16px;
+  box-shadow: var(--shadow-sm);
+  position: relative;
+  overflow: hidden;
+}
+.company-banner::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 4px;
+  background: linear-gradient(90deg, #2563EB, #6366F1, #8B5CF6);
+}
+
+.company-header { display: flex; gap: 20px; align-items: flex-start; margin-bottom: 20px; }
+.company-logo-lg {
+  width: 68px; height: 68px; border-radius: 14px;
+  background: linear-gradient(135deg,#4F46E5,#6366F1);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22px; font-weight: 800; color: white;
+  flex-shrink: 0; letter-spacing: -1px;
+  box-shadow: 0 4px 12px rgba(79,70,229,0.3);
+}
+.company-info { flex: 1; }
+.company-name-row { display: flex; align-items: center; gap: 10px; margin-bottom: 4px; }
+.company-name { font-size: 15px; font-weight: 600; color: var(--text-secondary); }
+.company-rating {
+  display: flex; align-items: center; gap: 3px;
+  font-size: 12px; font-weight: 600; color: #D97706;
+}
+.company-rating svg { width: 12px; height: 12px; fill: #D97706; }
+.company-reviews { font-size: 11px; color: var(--text-muted); }
+.company-verified {
+  display: flex; align-items: center; gap: 4px;
+  font-size: 11px; font-weight: 600; color: var(--success);
+  background: var(--success-light);
+  padding: 2px 8px; border-radius: var(--radius-full);
+}
+
+.job-title { font-size: 28px; font-weight: 800; color: var(--text); line-height: 1.2; margin-bottom: 14px; letter-spacing: -0.5px; }
+
+.job-meta-row { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+.meta-badge {
+  display: flex; align-items: center; gap: 5px;
+  padding: 5px 12px; border-radius: var(--radius-full);
+  font-size: 13px; font-weight: 500;
+  border: 1.5px solid var(--border); background: var(--bg);
+  color: var(--text-secondary);
+}
+.meta-badge svg { flex-shrink: 0; }
+.meta-badge.highlight { background: var(--purple-light); border-color: #C4B5FD; color: var(--purple); }
+.meta-badge.salary-badge { background: var(--success-light); border-color: #6EE7B7; color: var(--success); font-weight: 700; font-size: 15px; }
+
+.job-tags { display: flex; gap: 6px; flex-wrap: wrap; }
+.job-tag {
+  padding: 4px 12px; border-radius: var(--radius-full);
+  background: var(--bg); border: 1px solid var(--border);
+  font-size: 12px; font-weight: 500; color: var(--text-secondary);
+}
+.job-tag.tech { background: #EFF6FF; border-color: #BFDBFE; color: var(--primary); }
+
+/* Content sections */
+.content-card {
+  background: var(--surface);
+  border-radius: var(--radius);
+  padding: 28px 32px;
+  margin-bottom: 16px;
+  box-shadow: var(--shadow-sm);
+}
+.section-title {
+  font-size: 17px; font-weight: 700; color: var(--text);
+  margin-bottom: 16px; padding-bottom: 12px;
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; gap: 8px;
+}
+.section-title svg { color: var(--primary); flex-shrink: 0; }
+
+.prose { font-size: 14.5px; line-height: 1.75; color: var(--text-secondary); }
+.prose p { margin-bottom: 12px; }
+.prose p:last-child { margin-bottom: 0; }
+.prose strong { color: var(--text); font-weight: 600; }
+
+/* Requirement lists */
+.req-group { margin-bottom: 20px; }
+.req-group:last-child { margin-bottom: 0; }
+.req-label {
+  font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px;
+  margin-bottom: 10px; display: flex; align-items: center; gap: 6px;
+}
+.req-label.must { color: var(--text); }
+.req-label.nice { color: var(--text-muted); }
+.req-label .dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+.req-label.must .dot { background: var(--primary); }
+.req-label.nice .dot { background: var(--text-muted); }
+
+.req-list { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+.req-list li {
+  display: flex; align-items: flex-start; gap: 10px;
+  font-size: 14px; color: var(--text-secondary); line-height: 1.5;
+}
+.req-list li::before {
+  content: '';
+  width: 18px; height: 18px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; margin-top: 1px;
+  background: var(--primary-light);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='%232563EB' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: center;
+}
+.req-list li.nice-item::before { background-color: var(--bg); border: 1px dashed var(--border);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='%2394A3B8' stroke-width='3'%3E%3Cline x1='12' y1='5' x2='12' y2='19'/%3E%3Cline x1='5' y1='12' x2='19' y2='12'/%3E%3C/svg%3E");
+}
+
+/* Benefits grid */
+.benefits-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+.benefit-item {
+  display: flex; align-items: center; gap: 12px;
+  padding: 12px 14px; border-radius: var(--radius-sm);
+  background: var(--bg); border: 1px solid var(--border);
+}
+.benefit-icon {
+  width: 36px; height: 36px; border-radius: 9px;
+  background: var(--primary-light);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; font-size: 18px;
+}
+.benefit-text {}
+.benefit-name { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 1px; }
+.benefit-desc { font-size: 11.5px; color: var(--text-muted); }
+
+/* Mini map */
+.mini-map {
+  border-radius: var(--radius-sm); overflow: hidden;
+  height: 200px; background: #e8ede3; position: relative;
+  border: 1px solid var(--border);
+}
+.mini-map svg { width: 100%; height: 100%; }
+.mini-map-address {
+  margin-top: 12px; display: flex; align-items: center; gap: 8px;
+  font-size: 13px; color: var(--text-secondary);
+}
+.mini-map-address strong { color: var(--text); }
+
+/* ── SIDEBAR ── */
+.sidebar { display: flex; flex-direction: column; gap: 16px; }
+
+.sticky-apply {
+  background: var(--surface);
+  border-radius: var(--radius);
+  padding: 24px;
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--border);
+  position: sticky; top: 76px;
+}
+
+.apply-salary { font-size: 22px; font-weight: 800; color: var(--text); margin-bottom: 2px; }
+.apply-salary-sub { font-size: 12px; color: var(--text-muted); margin-bottom: 16px; }
+
+.apply-btn {
+  width: 100%; padding: 14px;
+  background: var(--primary); color: white;
+  border: none; border-radius: var(--radius-sm);
+  font-family: inherit; font-size: 16px; font-weight: 700;
+  cursor: pointer; transition: all .2s; margin-bottom: 10px;
+  letter-spacing: -0.2px;
+  box-shadow: 0 4px 14px rgba(37,99,235,0.35);
+}
+.apply-btn:hover {
+  background: var(--primary-dark);
+  box-shadow: 0 6px 20px rgba(37,99,235,0.45);
+  transform: translateY(-1px);
+}
+.apply-btn:active { transform: translateY(0); }
+
+.apply-secondary {
+  display: flex; gap: 8px; margin-bottom: 20px;
+}
+.apply-secondary button {
+  flex: 1; padding: 9px;
+  border: 1.5px solid var(--border); border-radius: var(--radius-sm);
+  background: var(--surface); font-family: inherit; font-size: 13px;
+  font-weight: 500; color: var(--text-secondary); cursor: pointer;
+  transition: all .15s; display: flex; align-items: center; justify-content: center; gap: 5px;
+}
+.apply-secondary button:hover { border-color: var(--primary); color: var(--primary); background: var(--primary-light); }
+
+.apply-divider { border: none; border-top: 1px solid var(--border); margin: 16px 0; }
+
+.apply-detail { display: flex; flex-direction: column; gap: 10px; }
+.apply-detail-row {
+  display: flex; align-items: center; gap: 10px;
+  font-size: 13px;
+}
+.apply-detail-icon {
+  width: 32px; height: 32px; border-radius: 8px;
+  background: var(--bg); display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; color: var(--text-secondary);
+}
+.apply-detail-label { color: var(--text-muted); font-size: 11px; }
+.apply-detail-value { font-weight: 600; color: var(--text); }
+
+/* Commute sidebar section */
+.commute-card {
+  background: var(--surface);
+  border-radius: var(--radius);
+  padding: 18px 20px;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--border);
+}
+.commute-card-title { font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 12px; }
+.commute-grid { display: flex; flex-direction: column; gap: 8px; }
+.commute-row-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 8px 10px; border-radius: var(--radius-sm); background: var(--bg);
+}
+.commute-icon { font-size: 16px; width: 24px; text-align: center; }
+.commute-mode { font-size: 13px; font-weight: 500; color: var(--text-secondary); flex: 1; }
+.commute-time { font-size: 14px; font-weight: 700; }
+.t-car { color: var(--primary); }
+.t-bike { color: #D97706; }
+.t-walk { color: var(--success); }
+.t-transit { color: var(--purple); }
+.commute-note { margin-top: 8px; font-size: 11px; color: var(--text-muted); text-align: center; }
+
+/* Similar jobs -->*/
+.similar-card {
+  background: var(--surface);
+  border-radius: var(--radius);
+  padding: 18px 20px;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--border);
+}
+.similar-title { font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 12px; }
+.similar-item {
+  display: flex; gap: 10px; align-items: flex-start;
+  padding: 10px 0; border-bottom: 1px solid var(--border);
+  cursor: pointer; transition: all .15s;
+}
+.similar-item:last-child { border-bottom: none; padding-bottom: 0; }
+.similar-item:hover .similar-job-title { color: var(--primary); }
+.similar-logo {
+  width: 34px; height: 34px; border-radius: 7px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 800; color: white; flex-shrink: 0;
+}
+.similar-info {}
+.similar-company { font-size: 11px; color: var(--text-muted); }
+.similar-job-title { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 2px; transition: color .15s; }
+.similar-salary { font-size: 12px; font-weight: 600; color: var(--success); }
+.similar-commute { font-size: 11px; color: var(--text-muted); }
+
+/* Share row -->*/
+.share-row {
+  display: flex; gap: 8px; flex-wrap: wrap;
+  padding-top: 16px; border-top: 1px solid var(--border);
+  margin-top: 4px;
+}
+.share-label { width: 100%; font-size: 11px; color: var(--text-muted); font-weight: 500; }
+.share-btn {
+  padding: 5px 12px; border: 1px solid var(--border);
+  border-radius: var(--radius-full);
+  background: none; font-family: inherit; font-size: 12px;
+  font-weight: 500; color: var(--text-secondary); cursor: pointer;
+  transition: all .15s; display: flex; align-items: center; gap: 4px;
+}
+.share-btn:hover { background: var(--bg); }
+
+/* Report link */
+.report-link { text-align: center; margin-top: 12px; }
+.report-link a { font-size: 11px; color: var(--text-muted); text-decoration: none; }
+.report-link a:hover { color: var(--text-secondary); text-decoration: underline; }
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════ HEADER ══════════════════════ -->
+<header class="header">
+  <a href="index.html" class="logo">
+    <div class="logo-mark">
+      <svg viewBox="0 0 20 20" fill="none" stroke="white" stroke-width="2" stroke-linecap="round">
+        <circle cx="10" cy="8" r="4"/>
+        <path d="M10 12 C6 12 3 15 3 18"/>
+        <path d="M10 12 C14 12 17 15 17 18"/>
+      </svg>
+    </div>
+    <span class="logo-name">Map<span>Job</span></span>
+  </a>
+
+  <div class="breadcrumb">
+    <span class="sep">/</span>
+    <a href="lista-mapa.html">Frontend Developer</a>
+    <span class="sep">/</span>
+    <span>Senior Frontend Developer – Codewise</span>
+  </div>
+
+  <div class="header-actions">
+    <button class="btn btn-ghost">← Wróć do wyników</button>
+    <button class="btn btn-outline">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+      Udostępnij
+    </button>
+    <div class="avatar">PZ</div>
+  </div>
+</header>
+
+<!-- ══════════════════════ PAGE ══════════════════════ -->
+<div class="page">
+
+  <!-- ──── MAIN COLUMN ──── -->
+  <div class="main-col">
+
+    <!-- Company / Job Banner -->
+    <div class="company-banner">
+      <div class="company-header">
+        <div class="company-logo-lg">CD</div>
+        <div class="company-info">
+          <div class="company-name-row">
+            <span class="company-name">Codewise Sp. z o.o.</span>
+            <span class="company-rating">
+              <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+              4,3
+            </span>
+            <span class="company-reviews">(42 opinie)</span>
+            <span class="company-verified">
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+              Zweryfikowana firma
+            </span>
+          </div>
+          <div style="font-size:12.5px;color:var(--text-muted);margin-top:4px;">
+            Technologia reklamowa · 200–500 pracowników · Kraków, Polska
+          </div>
+        </div>
+      </div>
+
+      <h1 class="job-title">Senior Frontend Developer</h1>
+
+      <div class="job-meta-row">
+        <span class="meta-badge salary-badge">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 100 7h5a3.5 3.5 0 110 7H6"/></svg>
+          15 000 – 22 000 PLN netto
+        </span>
+        <span class="meta-badge highlight">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+          Zdalnie
+        </span>
+        <span class="meta-badge">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          B2B lub UoP
+        </span>
+        <span class="meta-badge">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          Pełny etat
+        </span>
+        <span class="meta-badge">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          Kraków, Podgórze
+        </span>
+      </div>
+
+      <div class="job-tags">
+        <span class="job-tag tech">React</span>
+        <span class="job-tag tech">TypeScript</span>
+        <span class="job-tag tech">Next.js</span>
+        <span class="job-tag tech">GraphQL</span>
+        <span class="job-tag">Redux</span>
+        <span class="job-tag">Jest</span>
+        <span class="job-tag">CI/CD</span>
+      </div>
+
+      <div class="share-row">
+        <span class="share-label">Udostępnij ogłoszenie</span>
+        <button class="share-btn">LinkedIn</button>
+        <button class="share-btn">Facebook</button>
+        <button class="share-btn">📋 Kopiuj link</button>
+        <button class="share-btn">📧 E-mail</button>
+      </div>
+    </div>
+
+    <!-- About company -->
+    <div class="content-card">
+      <div class="section-title">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        O firmie
+      </div>
+      <div class="prose">
+        <p><strong>Codewise</strong> to globalny lider w technologii reklamowej dla branży afiliacyjnej. Nasze produkty przetwarzają ponad <strong>15 miliardów zdarzeń dziennie</strong> i pomagają tysiącom marketerów na całym świecie optymalizować kampanie w czasie rzeczywistym.</p>
+        <p>Zespół liczy ponad 300 specjalistów z 40 krajów. Pracujemy w trybie fully async z opcją pracy z naszego nowoczesnego biura w krakowskim Zabłociu.</p>
+      </div>
+    </div>
+
+    <!-- Role description -->
+    <div class="content-card">
+      <div class="section-title">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        Opis stanowiska
+      </div>
+      <div class="prose">
+        <p>Dołączysz do 6-osobowego zespołu Frontend budującego nową generację naszego dashboardu analitycznego. Pracujemy w 2-tygodniowych sprintach, z silnym naciskiem na jakość kodu i doświadczenie użytkownika.</p>
+        <p>Będziesz miał realny wpływ na architekturę — nie jesteśmy korporacją, gdzie decyzje zajmują miesiące. Twój kod trafi na produkcję w ciągu dni.</p>
+      </div>
+    </div>
+
+    <!-- Requirements -->
+    <div class="content-card">
+      <div class="section-title">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+        Wymagania
+      </div>
+
+      <div class="req-group">
+        <div class="req-label must">
+          <span class="dot"></span>
+          Wymagane (must have)
+        </div>
+        <ul class="req-list">
+          <li>Min. 4 lata doświadczenia z React.js w środowiskach produkcyjnych</li>
+          <li>Bardzo dobra znajomość TypeScript (generics, utility types, conditional types)</li>
+          <li>Doświadczenie z Next.js (SSR, ISR, App Router)</li>
+          <li>Znajomość wzorców zarządzania stanem (Redux Toolkit, Zustand lub Jotai)</li>
+          <li>Umiejętność pisania testów jednostkowych i E2E (Jest, Cypress lub Playwright)</li>
+          <li>Angielski na poziomie B2+ (codzienna komunikacja z zespołem globalnym)</li>
+        </ul>
+      </div>
+
+      <div class="req-group">
+        <div class="req-label nice">
+          <span class="dot"></span>
+          Mile widziane (nice to have)
+        </div>
+        <ul class="req-list">
+          <li class="nice-item">Doświadczenie z GraphQL (Apollo Client)</li>
+          <li class="nice-item">Znajomość Web Performance (Core Web Vitals, Lighthouse)</li>
+          <li class="nice-item">Doświadczenie z Webpack / Vite i optymalizacją bundla</li>
+          <li class="nice-item">Kontrybuowanie do open-source</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Benefits -->
+    <div class="content-card">
+      <div class="section-title">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+        Co oferujemy
+      </div>
+      <div class="benefits-grid">
+        <div class="benefit-item">
+          <div class="benefit-icon">💰</div>
+          <div class="benefit-text">
+            <div class="benefit-name">Wynagrodzenie B2B</div>
+            <div class="benefit-desc">15 000 – 22 000 PLN netto/mies.</div>
+          </div>
+        </div>
+        <div class="benefit-item">
+          <div class="benefit-icon">🏠</div>
+          <div class="benefit-text">
+            <div class="benefit-name">Pełna zdalność</div>
+            <div class="benefit-desc">Pracuj skąd chcesz, biuro do dyspozycji</div>
+          </div>
+        </div>
+        <div class="benefit-item">
+          <div class="benefit-icon">📚</div>
+          <div class="benefit-text">
+            <div class="benefit-name">Budżet szkoleniowy</div>
+            <div class="benefit-desc">5 000 PLN rocznie na konferencje i kursy</div>
+          </div>
+        </div>
+        <div class="benefit-item">
+          <div class="benefit-icon">🏥</div>
+          <div class="benefit-text">
+            <div class="benefit-name">Prywatna opieka medyczna</div>
+            <div class="benefit-desc">LuxMed – pakiet Premium dla Ciebie i rodziny</div>
+          </div>
+        </div>
+        <div class="benefit-item">
+          <div class="benefit-icon">🖥️</div>
+          <div class="benefit-text">
+            <div class="benefit-name">Sprzęt do wyboru</div>
+            <div class="benefit-desc">MacBook Pro M3 lub Dell XPS + monitor 4K</div>
+          </div>
+        </div>
+        <div class="benefit-item">
+          <div class="benefit-icon">🧘</div>
+          <div class="benefit-text">
+            <div class="benefit-name">MultiSport</div>
+            <div class="benefit-desc">Karta sportowa + dofinansowanie Medicover Sport</div>
+          </div>
+        </div>
+        <div class="benefit-item">
+          <div class="benefit-icon">🚀</div>
+          <div class="benefit-text">
+                        <div class="benefit-name">Equity / opcje</div>
+            <div class="benefit-desc">Program udziałów dla kluczowych pracowników</div>
+          </div>
+        </div>
+        <div class="benefit-item">
+          <div class="benefit-icon">🌍</div>
+          <div class="benefit-text">
+            <div class="benefit-name">Retreat co roku</div>
+            <div class="benefit-desc">Wyjazd integracyjny dla całego zespołu globalnego</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Recruitment process -->
+    <div class="content-card">
+      <div class="section-title">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81 19.79 19.79 0 01.22 1.18 2 2 0 012.18 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.91 7.09a16 16 0 006 6l.61-.61a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 14.92v2z"/></svg>
+        Proces rekrutacji
+      </div>
+      <div style="display:flex;gap:0;flex-direction:column;">
+        <div style="display:flex;gap:16px;align-items:flex-start;padding:10px 0;">
+          <div style="width:28px;height:28px;border-radius:50%;background:var(--primary);color:white;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;">1</div>
+          <div>
+            <div style="font-size:13px;font-weight:600;color:var(--text);">Rozmowa HR (30 min, online)</div>
+            <div style="font-size:12px;color:var(--text-muted);margin-top:2px;">Poznanie wzajemne, omówienie oczekiwań i projektu</div>
+          </div>
+        </div>
+        <div style="display:flex;gap:16px;align-items:flex-start;padding:10px 0;">
+          <div style="width:28px;height:28px;border-radius:50%;background:var(--primary-light);color:var(--primary);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;border:2px solid var(--primary);">2</div>
+          <div>
+            <div style="font-size:13px;font-weight:600;color:var(--text);">Zadanie techniczne (take-home, ~4h)</div>
+            <div style="font-size:12px;color:var(--text-muted);margin-top:2px;">Małe zadanie React – realistyczne, nie algorytmiczne</div>
+          </div>
+        </div>
+        <div style="display:flex;gap:16px;align-items:flex-start;padding:10px 0;">
+          <div style="width:28px;height:28px;border-radius:50%;background:var(--primary-light);color:var(--primary);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;border:2px solid var(--primary);">3</div>
+          <div>
+            <div style="font-size:13px;font-weight:600;color:var(--text);">Rozmowa techniczna + code review (90 min)</div>
+            <div style="font-size:12px;color:var(--text-muted);margin-top:2px;">Omówienie zadania z zespołem tech; brak whiteboard coding</div>
+          </div>
+        </div>
+        <div style="display:flex;gap:16px;align-items:flex-start;padding:10px 0;">
+          <div style="width:28px;height:28px;border-radius:50%;background:var(--primary-light);color:var(--primary);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;border:2px solid var(--primary);">4</div>
+          <div>
+            <div style="font-size:13px;font-weight:600;color:var(--text);">Oferta w ciągu 3 dni roboczych</div>
+            <div style="font-size:12px;color:var(--text-muted);margin-top:2px;">Cały proces trwa maksymalnie 2 tygodnie</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Location -->
+    <div class="content-card">
+      <div class="section-title">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        Lokalizacja biura
+      </div>
+
+      <!-- Mini Map -->
+      <div class="mini-map">
+        <svg viewBox="0 0 700 200" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+          <rect width="700" height="200" fill="#e8ede3"/>
+          <path d="M0 130 Q120 115 230 135 Q320 148 420 138 Q520 128 700 140" fill="none" stroke="#a8d4f5" stroke-width="18" stroke-linecap="round" opacity="0.7"/>
+          <line x1="280" y1="0" x2="310" y2="200" stroke="#fff" stroke-width="4" opacity="0.7"/>
+          <line x1="350" y1="60" x2="600" y2="100" stroke="#fff" stroke-width="4" opacity="0.7"/>
+          <line x1="350" y1="100" x2="700" y2="80" stroke="#fff" stroke-width="3.5" opacity="0.6"/>
+          <line x1="150" y1="0" x2="350" y2="130" stroke="#fff" stroke-width="3.5" opacity="0.6"/>
+          <rect x="320" y="100" width="55" height="30" rx="3" fill="#d6dbe3" opacity="0.7"/>
+          <rect x="380" y="95" width="40" height="25" rx="3" fill="#d6dbe3" opacity="0.6"/>
+          <!-- Pin -->
+          <circle cx="350" cy="110" r="14" fill="#2563EB" opacity="0.95"/>
+          <circle cx="350" cy="110" r="6" fill="white"/>
+          <text x="410" y="108" font-family="Inter,sans-serif" font-size="10" font-weight="600" fill="#0F172A">ul. Zabłocie 43</text>
+          <text x="410" y="122" font-family="Inter,sans-serif" font-size="10" fill="#64748B">Kraków, Podgórze</text>
+          <text x="120" y="145" font-family="Inter,sans-serif" font-size="9" font-style="italic" fill="rgba(100,160,220,0.7)">Wisła</text>
+          <text x="200" y="75" font-family="Inter,sans-serif" font-size="10" font-weight="600" fill="rgba(0,0,0,0.25)" letter-spacing="1.5">KAZIMIERZ</text>
+          <text x="390" y="155" font-family="Inter,sans-serif" font-size="10" font-weight="600" fill="rgba(0,0,0,0.25)" letter-spacing="1.5">PODGÓRZE</text>
+          <text x="510" y="75" font-family="Inter,sans-serif" font-size="10" font-weight="600" fill="rgba(0,0,0,0.25)" letter-spacing="1.5">ZABŁOCIE</text>
+        </svg>
+      </div>
+
+      <div class="mini-map-address">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        <div>
+          <strong>Codewise Sp. z o.o.</strong>
+          <span style="color:var(--text-muted)"> · ul. Zabłocie 43, 30-701 Kraków, Podgórze</span>
+        </div>
+      </div>
+
+      <div class="report-link" style="margin-top:16px;">
+        <a href="#">Zgłoś problem z lokalizacją</a>
+      </div>
+    </div>
+
+  </div><!-- /main-col -->
+
+  <!-- ──── SIDEBAR ──── -->
+  <div class="sidebar">
+
+    <!-- Apply sticky box -->
+    <div class="sticky-apply">
+      <div class="apply-salary">15 000 – 22 000 PLN</div>
+      <div class="apply-salary-sub">netto miesięcznie · B2B lub UoP</div>
+
+      <button class="apply-btn" onclick="alert('Aplikuj! W prawdziwym produkcie otworzyłby się formularz.')">
+        Aplikuj teraz →
+      </button>
+
+      <div class="apply-secondary">
+        <button>
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"/></svg>
+          Zapisz
+        </button>
+        <button>
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+          Udostępnij
+        </button>
+      </div>
+
+      <hr class="apply-divider">
+
+      <div class="apply-detail">
+        <div class="apply-detail-row">
+          <div class="apply-detail-icon">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          </div>
+          <div>
+            <div class="apply-detail-label">Dodano</div>
+            <div class="apply-detail-value">Dzisiaj (29 maja 2026)</div>
+          </div>
+        </div>
+        <div class="apply-detail-row">
+          <div class="apply-detail-icon">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+          </div>
+          <div>
+            <div class="apply-detail-label">Aplikacje</div>
+            <div class="apply-detail-value">37 kandydatów</div>
+          </div>
+        </div>
+        <div class="apply-detail-row">
+          <div class="apply-detail-icon">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          </div>
+          <div>
+            <div class="apply-detail-label">Ważne do</div>
+            <div class="apply-detail-value">28 czerwca 2026</div>
+          </div>
+        </div>
+        <div class="apply-detail-row">
+          <div class="apply-detail-icon">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/></svg>
+          </div>
+          <div>
+            <div class="apply-detail-label">Rodzaj umowy</div>
+            <div class="apply-detail-value">B2B lub UoP (do negocjacji)</div>
+          </div>
+        </div>
+        <div class="apply-detail-row">
+          <div class="apply-detail-icon">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+          </div>
+          <div>
+            <div class="apply-detail-label">Poziom</div>
+            <div class="apply-detail-value">Senior / Expert (5+ lat)</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="report-link">
+        <a href="#">Zgłoś nieaktualne ogłoszenie</a>
+      </div>
+    </div>
+
+    <!-- Commute box -->
+    <div class="commute-card">
+      <div class="commute-card-title">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:inline;vertical-align:-2px;margin-right:5px;color:var(--primary)"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        Czas dojazdu z centrum Krakowa
+      </div>
+      <div class="commute-grid">
+        <div class="commute-row-item">
+          <span class="commute-icon">🚗</span>
+          <span class="commute-mode">Samochodem</span>
+          <span class="commute-time t-car">12 min</span>
+        </div>
+        <div class="commute-row-item">
+          <span class="commute-icon">🚴</span>
+          <span class="commute-mode">Rowerem</span>
+          <span class="commute-time t-bike">26 min</span>
+        </div>
+        <div class="commute-row-item">
+          <span class="commute-icon">🚌</span>
+          <span class="commute-mode">Komunikacją MPK</span>
+          <span class="commute-time t-transit">18 min</span>
+        </div>
+        <div class="commute-row-item">
+          <span class="commute-icon">🚶</span>
+          <span class="commute-mode">Pieszo</span>
+          <span class="commute-time t-walk">38 min</span>
+        </div>
+      </div>
+      <div class="commute-note">
+        Czas weryfikowany na podstawie adresu · ul. Zabłocie 43
+      </div>
+    </div>
+
+    <!-- Similar jobs -->
+    <div class="similar-card">
+      <div class="similar-title">Podobne oferty w Krakowie</div>
+
+      <div class="similar-item" onclick="window.location.href='szczegoly.html'">
+        <div class="similar-logo" style="background:linear-gradient(135deg,#0891B2,#06B6D4)">KA</div>
+        <div class="similar-info">
+          <div class="similar-company">Kainos</div>
+          <div class="similar-job-title">React Developer (Mid/Senior)</div>
+          <div class="similar-salary">11 000 – 16 000 PLN</div>
+          <div class="similar-commute">🚗 8 min · Kazimierz</div>
+        </div>
+      </div>
+
+      <div class="similar-item" onclick="window.location.href='szczegoly.html'">
+        <div class="similar-logo" style="background:linear-gradient(135deg,#DC2626,#EF4444)">MK</div>
+        <div class="similar-info">
+          <div class="similar-company">Motorola Solutions</div>
+          <div class="similar-job-title">Frontend Developer – TS</div>
+          <div class="similar-salary">14 000 – 20 000 PLN</div>
+          <div class="similar-commute">🚗 15 min · Zabłocie</div>
+        </div>
+      </div>
+
+      <div class="similar-item" onclick="window.location.href='szczegoly.html'">
+        <div class="similar-logo" style="background:linear-gradient(135deg,#0369A1,#0284C7)">CG</div>
+        <div class="similar-info">
+          <div class="similar-company">Capgemini</div>
+          <div class="similar-job-title">Senior JS Developer</div>
+          <div class="similar-salary">15 000 – 21 000 PLN</div>
+          <div class="similar-commute">🚗 21 min · Bronowice</div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /sidebar -->
+
+</div><!-- /page -->
+
+</body>
+</html>

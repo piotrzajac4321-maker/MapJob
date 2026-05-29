@@ -1,0 +1,1017 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MapJob – Lista ogłoszeń z mapą</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --primary: #2563EB;
+  --primary-dark: #1D4ED8;
+  --primary-light: #DBEAFE;
+  --success: #059669;
+  --success-light: #D1FAE5;
+  --warning: #D97706;
+  --warning-light: #FEF3C7;
+  --purple: #7C3AED;
+  --purple-light: #EDE9FE;
+  --red: #DC2626;
+  --red-light: #FEE2E2;
+  --bg: #F1F5F9;
+  --surface: #FFFFFF;
+  --border: #E2E8F0;
+  --border-strong: #CBD5E1;
+  --text: #0F172A;
+  --text-secondary: #475569;
+  --text-muted: #94A3B8;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.10), 0 2px 4px -1px rgba(0,0,0,0.06);
+  --shadow-lg: 0 10px 25px -3px rgba(0,0,0,0.12), 0 4px 10px -2px rgba(0,0,0,0.06);
+  --radius: 12px;
+  --radius-sm: 8px;
+  --radius-full: 999px;
+}
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: 'Inter', -apple-system, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  height: 100vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+/* ── HEADER ── */
+.header {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  height: 60px;
+  padding: 0 20px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-shrink: 0;
+  z-index: 100;
+}
+.logo { display: flex; align-items: center; gap: 8px; text-decoration: none; flex-shrink: 0; }
+.logo-mark {
+  width: 34px; height: 34px;
+  background: linear-gradient(135deg, #2563EB 0%, #1D4ED8 100%);
+  border-radius: 9px;
+  display: flex; align-items: center; justify-content: center;
+}
+.logo-mark svg { width: 20px; height: 20px; }
+.logo-name {
+  font-size: 19px; font-weight: 800; letter-spacing: -0.6px;
+  color: var(--text);
+}
+.logo-name span { color: var(--primary); }
+
+.search-wrap {
+  flex: 1; max-width: 440px;
+  position: relative;
+}
+.search-wrap input {
+  width: 100%; height: 40px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-full);
+  padding: 0 42px 0 16px;
+  font-family: inherit; font-size: 14px; color: var(--text);
+  background: var(--bg); outline: none;
+  transition: border-color .2s, background .2s;
+}
+.search-wrap input:focus { border-color: var(--primary); background: var(--surface); }
+.search-wrap input::placeholder { color: var(--text-muted); }
+.search-icon {
+  position: absolute; right: 13px; top: 50%; transform: translateY(-50%);
+  color: var(--text-muted); pointer-events: none;
+}
+.header-nav {
+  margin-left: auto; display: flex; align-items: center; gap: 6px;
+}
+.btn { border: none; cursor: pointer; font-family: inherit; transition: all .15s; display: flex; align-items: center; gap: 6px; }
+.btn-ghost {
+  padding: 8px 14px; background: none; font-size: 14px; font-weight: 500;
+  color: var(--text-secondary); border-radius: var(--radius-full);
+}
+.btn-ghost:hover { background: var(--bg); color: var(--text); }
+.btn-primary {
+  padding: 8px 18px; background: var(--primary); color: #fff;
+  font-size: 14px; font-weight: 600; border-radius: var(--radius-full);
+}
+.btn-primary:hover { background: var(--primary-dark); }
+.avatar {
+  width: 34px; height: 34px; border-radius: 50%;
+  background: linear-gradient(135deg, #6366F1, #8B5CF6);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: 700; color: white; cursor: pointer;
+  flex-shrink: 0;
+}
+
+/* ── MAIN LAYOUT ── */
+.main { display: flex; flex: 1; overflow: hidden; }
+
+/* ── LEFT PANEL ── */
+.panel-left {
+  width: 430px; min-width: 380px;
+  display: flex; flex-direction: column; overflow: hidden;
+  flex-shrink: 0;
+  border-right: 1px solid var(--border);
+  background: var(--bg);
+}
+
+/* FILTERS */
+.filters-bar {
+  background: var(--surface);
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border);
+  display: flex; flex-direction: column; gap: 10px;
+}
+.filter-row {
+  display: flex; gap: 6px;
+  overflow-x: auto; scrollbar-width: none;
+}
+.filter-row::-webkit-scrollbar { display: none; }
+
+.filter-btn {
+  display: flex; align-items: center; gap: 5px;
+  padding: 6px 13px;
+  border: 1.5px solid var(--border); border-radius: var(--radius-full);
+  background: var(--surface);
+  font-family: inherit; font-size: 13px; font-weight: 500;
+  color: var(--text-secondary); cursor: pointer; white-space: nowrap;
+  transition: all .15s; flex-shrink: 0;
+}
+.filter-btn:hover { border-color: var(--primary); color: var(--primary); background: var(--primary-light); }
+.filter-btn.active { border-color: var(--primary); background: var(--primary); color: white; }
+.filter-btn.active svg { stroke: white; }
+.filter-btn .caret { font-size: 9px; }
+
+.tags-row {
+  display: flex; gap: 5px; overflow-x: auto; scrollbar-width: none;
+}
+.tags-row::-webkit-scrollbar { display: none; }
+.tag-pill {
+  padding: 3px 11px;
+  border: 1px solid var(--border); border-radius: var(--radius-full);
+  background: var(--bg);
+  font-size: 12px; font-weight: 500; color: var(--text-secondary);
+  cursor: pointer; white-space: nowrap; flex-shrink: 0;
+  transition: all .15s;
+}
+.tag-pill:hover { background: var(--primary-light); border-color: var(--primary); color: var(--primary); }
+.tag-pill.active { background: var(--primary-light); border-color: var(--primary); color: var(--primary); }
+
+/* RESULTS HEADER */
+.results-header {
+  padding: 10px 16px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.results-count { font-size: 13px; color: var(--text-secondary); }
+.results-count strong { color: var(--text); font-weight: 600; }
+.sort-select {
+  display: flex; align-items: center; gap: 5px;
+  font-size: 12px; color: var(--text-secondary); cursor: pointer;
+  background: none; border: none; font-family: inherit; font-weight: 500;
+}
+
+/* JOB LIST */
+.job-list {
+  flex: 1; overflow-y: auto; padding: 4px 10px 12px;
+  display: flex; flex-direction: column; gap: 7px;
+  scrollbar-width: thin; scrollbar-color: var(--border) transparent;
+}
+
+/* JOB CARD */
+.job-card {
+  background: var(--surface);
+  border-radius: var(--radius);
+  padding: 14px 16px;
+  border: 1.5px solid transparent;
+  cursor: pointer;
+  transition: all .2s;
+  position: relative;
+  box-shadow: var(--shadow-sm);
+}
+.job-card:hover {
+  border-color: var(--primary);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-1px);
+}
+.job-card.active {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(37,99,235,0.12), var(--shadow-md);
+}
+.job-card.active::before {
+  content: '';
+  position: absolute; left: -1.5px; top: 12px; bottom: 12px; width: 3px;
+  background: var(--primary); border-radius: 0 2px 2px 0;
+}
+
+.card-top { display: flex; gap: 11px; margin-bottom: 9px; align-items: flex-start; }
+.co-logo {
+  width: 42px; height: 42px; border-radius: 9px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 800; color: white; flex-shrink: 0;
+  letter-spacing: -0.5px;
+}
+.card-head { flex: 1; min-width: 0; }
+.card-company { font-size: 11.5px; font-weight: 500; color: var(--text-secondary); margin-bottom: 1px; }
+.card-title { font-size: 15px; font-weight: 700; color: var(--text); line-height: 1.25; margin-bottom: 5px; }
+.card-badges { display: flex; gap: 4px; flex-wrap: wrap; }
+
+.badge {
+  padding: 2px 8px; border-radius: var(--radius-full);
+  font-size: 10.5px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.4px;
+}
+.badge-remote { background: var(--purple-light); color: var(--purple); }
+.badge-hybrid { background: #FEF9C3; color: #92400E; }
+.badge-office { background: var(--bg); color: var(--text-secondary); border: 1px solid var(--border); }
+.badge-new { background: var(--success-light); color: var(--success); }
+.badge-hot { background: var(--red-light); color: var(--red); }
+
+.card-save {
+  width: 30px; height: 30px; border: 1.5px solid var(--border);
+  border-radius: 8px; background: none; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--text-muted); transition: all .15s; flex-shrink: 0;
+}
+.card-save:hover { border-color: var(--warning); color: var(--warning); background: var(--warning-light); }
+.card-save.saved { border-color: var(--warning); color: var(--warning); background: var(--warning-light); }
+
+/* Location row */
+.card-location {
+  display: flex; align-items: center; gap: 4px;
+  font-size: 12px; color: var(--text-secondary); margin-bottom: 8px;
+}
+.card-location svg { flex-shrink: 0; }
+
+/* Salary */
+.card-salary { display: flex; align-items: baseline; gap: 5px; margin-bottom: 8px; }
+.salary-range { font-size: 15px; font-weight: 700; color: var(--success); }
+.salary-meta { font-size: 11px; color: var(--text-muted); }
+
+/* Commute */
+.commute-row { display: flex; gap: 6px; margin-bottom: 9px; }
+.commute-chip {
+  display: flex; align-items: center; gap: 4px;
+  padding: 3px 9px; border-radius: var(--radius-full);
+  font-size: 11.5px; font-weight: 600;
+  background: var(--bg); border: 1px solid var(--border);
+}
+.c-car { color: var(--primary); }
+.c-bike { color: #D97706; }
+.c-walk { color: var(--success); }
+.c-transit { color: #7C3AED; }
+
+/* Tech tags */
+.tech-row { display: flex; gap: 4px; flex-wrap: wrap; margin-bottom: 8px; }
+.tech-tag {
+  padding: 2.5px 9px; border-radius: var(--radius-full);
+  background: var(--bg); border: 1px solid var(--border);
+  font-size: 11px; font-weight: 500; color: var(--text-secondary);
+}
+.tech-tag.highlight { background: #EFF6FF; border-color: #BFDBFE; color: var(--primary); }
+
+/* Card Footer */
+.card-footer {
+  padding-top: 9px; border-top: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.posted { font-size: 11px; color: var(--text-muted); }
+.apply-mini {
+  padding: 5px 12px; border: none; background: var(--primary);
+  color: white; border-radius: var(--radius-full);
+  font-family: inherit; font-size: 12px; font-weight: 600;
+  cursor: pointer; transition: background .15s;
+}
+.apply-mini:hover { background: var(--primary-dark); }
+
+/* ── MAP PANEL ── */
+.panel-map { flex: 1; position: relative; overflow: hidden; background: #e8ede3; }
+
+/* SVG Map */
+.map-svg { width: 100%; height: 100%; }
+
+/* Transport toggle */
+.transport-toggle {
+  position: absolute; top: 14px; left: 14px;
+  display: flex; background: white; border-radius: var(--radius-full);
+  padding: 4px; gap: 2px; box-shadow: var(--shadow-md); z-index: 10;
+}
+.transport-btn {
+  padding: 5px 12px; border: none; border-radius: var(--radius-full);
+  background: none; font-family: inherit; font-size: 12px; font-weight: 600;
+  cursor: pointer; transition: all .15s; display: flex; align-items: center; gap: 4px;
+  color: var(--text-secondary); white-space: nowrap;
+}
+.transport-btn.active { background: var(--primary); color: white; }
+.transport-btn:hover:not(.active) { background: var(--bg); }
+
+/* Map controls */
+.map-controls {
+  position: absolute; top: 14px; right: 14px;
+  display: flex; flex-direction: column; gap: 4px; z-index: 10;
+}
+.map-ctrl-btn {
+  width: 36px; height: 36px; background: white;
+  border: 1px solid var(--border); border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; font-size: 20px; font-weight: 300;
+  color: var(--text-secondary); box-shadow: var(--shadow-sm);
+  transition: all .15s; line-height: 1;
+}
+.map-ctrl-btn:hover { background: var(--primary-light); border-color: var(--primary); color: var(--primary); }
+
+/* Job pins */
+.map-pin {
+  position: absolute; transform: translate(-50%, -50%);
+  cursor: pointer; z-index: 5;
+  transition: transform .2s, z-index .2s;
+}
+.map-pin:hover { transform: translate(-50%, -50%) scale(1.15); z-index: 15; }
+.map-pin.active { transform: translate(-50%, -50%) scale(1.2); z-index: 20; }
+
+.pin-bubble {
+  background: white; border-radius: var(--radius-full);
+  padding: 5px 11px 5px 6px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.18);
+  display: flex; align-items: center; gap: 6px;
+  border: 2px solid white;
+  white-space: nowrap;
+  transition: all .2s;
+}
+.map-pin.active .pin-bubble { border-color: var(--primary); box-shadow: 0 4px 16px rgba(37,99,235,0.35); }
+.pin-dot {
+  width: 24px; height: 24px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 9px; font-weight: 800; color: white;
+  flex-shrink: 0; letter-spacing: -0.5px;
+}
+.pin-salary { font-size: 11.5px; font-weight: 700; color: var(--text); }
+.pin-salary em { color: var(--success); font-style: normal; }
+
+/* Map popup / tooltip */
+.map-card {
+  position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%);
+  background: white; border-radius: var(--radius);
+  box-shadow: var(--shadow-lg); z-index: 30;
+  width: 320px; padding: 14px 16px;
+  display: flex; gap: 12px; align-items: flex-start;
+  border-top: 3px solid var(--primary);
+  animation: slideUp .2s ease;
+}
+@keyframes slideUp { from { opacity:0; transform: translateX(-50%) translateY(8px); } }
+.map-card-logo {
+  width: 40px; height: 40px; border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 800; color: white; flex-shrink: 0;
+}
+.map-card-body { flex: 1; min-width: 0; }
+.map-card-company { font-size: 11px; color: var(--text-muted); margin-bottom: 1px; }
+.map-card-title { font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 3px; }
+.map-card-salary { font-size: 13px; font-weight: 700; color: var(--success); margin-bottom: 3px; }
+.map-card-commute { font-size: 11px; color: var(--text-secondary); }
+.map-card-arrow {
+  color: var(--primary); font-size: 20px; flex-shrink: 0; margin-top: 2px;
+  cursor: pointer;
+}
+
+/* Scale bar */
+.map-scale {
+  position: absolute; bottom: 14px; right: 14px;
+  background: rgba(255,255,255,0.9); padding: 4px 10px;
+  border-radius: 4px; font-size: 10px; color: var(--text-muted);
+  border: 1px solid var(--border); backdrop-filter: blur(4px);
+}
+
+/* District labels on map */
+.district-label {
+  position: absolute; font-size: 11px; font-weight: 600;
+  color: rgba(0,0,0,0.35); text-transform: uppercase;
+  letter-spacing: 1px; pointer-events: none; white-space: nowrap;
+}
+
+/* River */
+.river-label {
+  position: absolute; font-size: 10px; font-style: italic;
+  color: rgba(100,160,220,0.7); pointer-events: none;
+}
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════ HEADER ══════════════════════ -->
+<header class="header">
+  <a href="index.html" class="logo">
+    <div class="logo-mark">
+      <svg viewBox="0 0 20 20" fill="none" stroke="white" stroke-width="2" stroke-linecap="round">
+        <circle cx="10" cy="8" r="4"/>
+        <path d="M10 12 C6 12 3 15 3 18"/>
+        <path d="M10 12 C14 12 17 15 17 18"/>
+      </svg>
+    </div>
+    <span class="logo-name">Map<span>Job</span></span>
+  </a>
+
+  <div class="search-wrap">
+    <input type="text" placeholder="Stanowisko, umiejętność lub firma…" value="Frontend Developer">
+    <span class="search-icon">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/>
+      </svg>
+    </span>
+  </div>
+
+  <nav class="header-nav">
+    <button class="btn btn-ghost">Dla firm</button>
+    <button class="btn btn-ghost">Moje ogłoszenia</button>
+    <button class="btn btn-primary">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
+      Dodaj ogłoszenie
+    </button>
+    <div class="avatar">PZ</div>
+  </nav>
+</header>
+
+<!-- ══════════════════════ MAIN ══════════════════════ -->
+<main class="main">
+
+  <!-- ──── LEFT PANEL ──── -->
+  <div class="panel-left">
+
+    <!-- Filters -->
+    <div class="filters-bar">
+      <div class="filter-row">
+        <!-- Location filter -->
+        <button class="filter-btn">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          Kraków
+          <span class="caret">▾</span>
+        </button>
+        <!-- Work mode -->
+        <button class="filter-btn active">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+          Zdalna
+          <span class="caret" style="opacity:.7">▾</span>
+        </button>
+        <!-- Contract type -->
+        <button class="filter-btn">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          Rodzaj umowy
+          <span class="caret">▾</span>
+        </button>
+        <!-- Salary -->
+        <button class="filter-btn">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 100 7h5a3.5 3.5 0 110 7H6"/></svg>
+          Zarobki
+          <span class="caret">▾</span>
+        </button>
+        <!-- Experience -->
+        <button class="filter-btn">
+          Doświadczenie
+          <span class="caret">▾</span>
+        </button>
+        <!-- Commute time -->
+        <button class="filter-btn">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          Czas dojazdu
+          <span class="caret">▾</span>
+        </button>
+      </div>
+
+      <div class="tags-row">
+        <span class="tag-pill active">React</span>
+        <span class="tag-pill active">TypeScript</span>
+        <span class="tag-pill">Next.js</span>
+        <span class="tag-pill">Node.js</span>
+        <span class="tag-pill">Vue.js</span>
+        <span class="tag-pill">Python</span>
+        <span class="tag-pill">AWS</span>
+        <span class="tag-pill">GraphQL</span>
+        <span class="tag-pill">Docker</span>
+        <span class="tag-pill">+ więcej</span>
+      </div>
+    </div>
+
+    <!-- Results header -->
+    <div class="results-header">
+      <span class="results-count"><strong>127</strong> ogłoszeń w Krakowie</span>
+      <button class="sort-select">
+        Sortuj: Najtrafniejsze
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+    </div>
+
+    <!-- Job list -->
+    <div class="job-list">
+
+      <!-- ─── CARD 1 – ACTIVE ─── -->
+      <div class="job-card active" onclick="selectCard(this, 1)">
+        <div class="card-top">
+          <div class="co-logo" style="background:linear-gradient(135deg,#4F46E5,#6366F1)">CD</div>
+          <div class="card-head">
+            <div class="card-company">Codewise Sp. z o.o.</div>
+            <div class="card-title">Senior Frontend Developer</div>
+            <div class="card-badges">
+              <span class="badge badge-remote">Zdalnie</span>
+              <span class="badge badge-new">Nowe</span>
+            </div>
+          </div>
+          <button class="card-save saved" onclick="event.stopPropagation()">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="#D97706" stroke="#D97706" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"/></svg>
+          </button>
+        </div>
+
+        <div class="card-location">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          Kraków, Podgórze ul. Zabłocie 43
+        </div>
+
+        <div class="card-salary">
+          <span class="salary-range">15 000 – 22 000 PLN</span>
+          <span class="salary-meta">netto · B2B / UoP</span>
+        </div>
+
+        <div class="commute-row">
+          <span class="commute-chip c-car">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13" rx="2"/><path d="M16 8h4l3 3v4h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+            12 min
+          </span>
+          <span class="commute-chip c-bike">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="5.5" cy="17.5" r="3.5"/><circle cx="18.5" cy="17.5" r="3.5"/><path d="M15 6h-4L9 17.5"/><path d="M15 6l3.5 5.5H9"/></svg>
+            26 min
+          </span>
+          <span class="commute-chip c-transit">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="3" width="16" height="16" rx="2"/><path d="M4 11h16"/><path d="M12 3v8"/><circle cx="8.5" cy="17" r="1.5"/><circle cx="15.5" cy="17" r="1.5"/></svg>
+            18 min
+          </span>
+        </div>
+
+        <div class="tech-row">
+          <span class="tech-tag highlight">React</span>
+          <span class="tech-tag highlight">TypeScript</span>
+          <span class="tech-tag">Next.js</span>
+          <span class="tech-tag">GraphQL</span>
+          <span class="tech-tag">+2</span>
+        </div>
+
+        <div class="card-footer">
+          <span class="posted">Dodano dzisiaj</span>
+          <button class="apply-mini" onclick="window.location.href='szczegoly.html'">Zobacz ofertę →</button>
+        </div>
+      </div>
+
+      <!-- ─── CARD 2 ─── -->
+      <div class="job-card" onclick="selectCard(this, 2)">
+        <div class="card-top">
+          <div class="co-logo" style="background:linear-gradient(135deg,#0891B2,#06B6D4)">KA</div>
+          <div class="card-head">
+            <div class="card-company">Kainos Kraków</div>
+            <div class="card-title">UX/UI Designer (Senior)</div>
+            <div class="card-badges">
+              <span class="badge badge-hybrid">Hybrydowo</span>
+            </div>
+          </div>
+          <button class="card-save" onclick="event.stopPropagation()">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"/></svg>
+          </button>
+        </div>
+        <div class="card-location">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          Kraków, Kazimierz ul. Miodowa 7
+        </div>
+        <div class="card-salary">
+          <span class="salary-range">10 000 – 14 000 PLN</span>
+          <span class="salary-meta">netto · B2B</span>
+        </div>
+        <div class="commute-row">
+          <span class="commute-chip c-car">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13" rx="2"/><path d="M16 8h4l3 3v4h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+            8 min
+          </span>
+          <span class="commute-chip c-bike">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="5.5" cy="17.5" r="3.5"/><circle cx="18.5" cy="17.5" r="3.5"/><path d="M15 6h-4L9 17.5"/><path d="M15 6l3.5 5.5H9"/></svg>
+            14 min
+          </span>
+          <span class="commute-chip c-walk">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="5" r="2"/><path d="M12 7l-2 5 4 2-1 5"/><path d="M10 12l-3 3"/></svg>
+            22 min
+          </span>
+        </div>
+        <div class="tech-row">
+          <span class="tech-tag highlight">Figma</span>
+          <span class="tech-tag">Prototyping</span>
+          <span class="tech-tag">Design System</span>
+          <span class="tech-tag">User Research</span>
+        </div>
+        <div class="card-footer">
+          <span class="posted">2 dni temu</span>
+          <button class="apply-mini" onclick="window.location.href='szczegoly.html'">Zobacz ofertę →</button>
+        </div>
+      </div>
+
+      <!-- ─── CARD 3 ─── -->
+      <div class="job-card" onclick="selectCard(this, 3)">
+        <div class="card-top">
+          <div class="co-logo" style="background:linear-gradient(135deg,#059669,#10B981)">AB</div>
+          <div class="card-head">
+            <div class="card-company">Allegro Tech</div>
+            <div class="card-title">Product Manager – Marketplace</div>
+            <div class="card-badges">
+              <span class="badge badge-hybrid">Hybrydowo</span>
+              <span class="badge badge-hot">🔥 Gorące</span>
+            </div>
+          </div>
+          <button class="card-save" onclick="event.stopPropagation()">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"/></svg>
+          </button>
+        </div>
+        <div class="card-location">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          Kraków, Stare Miasto ul. Grzegórzecka 5
+        </div>
+        <div class="card-salary">
+          <span class="salary-range">13 000 – 19 000 PLN</span>
+          <span class="salary-meta">netto · B2B / UoP</span>
+        </div>
+        <div class="commute-row">
+          <span class="commute-chip c-car">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13" rx="2"/><path d="M16 8h4l3 3v4h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+            5 min
+          </span>
+          <span class="commute-chip c-walk">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="5" r="2"/><path d="M12 7l-2 5 4 2-1 5"/><path d="M10 12l-3 3"/></svg>
+            11 min
+          </span>
+        </div>
+        <div class="tech-row">
+          <span class="tech-tag">Agile / Scrum</span>
+          <span class="tech-tag">SQL</span>
+          <span class="tech-tag">Roadmapping</span>
+          <span class="tech-tag">A/B Testing</span>
+        </div>
+        <div class="card-footer">
+          <span class="posted">3 dni temu</span>
+          <button class="apply-mini" onclick="window.location.href='szczegoly.html'">Zobacz ofertę →</button>
+        </div>
+      </div>
+
+      <!-- ─── CARD 4 ─── -->
+      <div class="job-card" onclick="selectCard(this, 4)">
+        <div class="card-top">
+          <div class="co-logo" style="background:linear-gradient(135deg,#DC2626,#EF4444)">MK</div>
+          <div class="card-head">
+            <div class="card-company">Motorola Solutions</div>
+            <div class="card-title">Backend Developer – Node.js</div>
+            <div class="card-badges">
+              <span class="badge badge-remote">Zdalnie</span>
+            </div>
+          </div>
+          <button class="card-save" onclick="event.stopPropagation()">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"/></svg>
+          </button>
+        </div>
+        <div class="card-location">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          Kraków, Zabłocie ul. Monte Cassino 18
+        </div>
+        <div class="card-salary">
+          <span class="salary-range">16 000 – 24 000 PLN</span>
+          <span class="salary-meta">netto · B2B</span>
+        </div>
+        <div class="commute-row">
+          <span class="commute-chip c-car">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13" rx="2"/><path d="M16 8h4l3 3v4h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+            15 min
+          </span>
+          <span class="commute-chip c-transit">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="3" width="16" height="16" rx="2"/><path d="M4 11h16"/><path d="M12 3v8"/><circle cx="8.5" cy="17" r="1.5"/><circle cx="15.5" cy="17" r="1.5"/></svg>
+            22 min
+          </span>
+        </div>
+        <div class="tech-row">
+          <span class="tech-tag">Node.js</span>
+          <span class="tech-tag">PostgreSQL</span>
+          <span class="tech-tag">Redis</span>
+          <span class="tech-tag">Docker</span>
+          <span class="tech-tag">+3</span>
+        </div>
+        <div class="card-footer">
+          <span class="posted">5 dni temu</span>
+          <button class="apply-mini" onclick="window.location.href='szczegoly.html'">Zobacz ofertę →</button>
+        </div>
+      </div>
+
+      <!-- ─── CARD 5 ─── -->
+      <div class="job-card" onclick="selectCard(this, 5)">
+        <div class="card-top">
+          <div class="co-logo" style="background:linear-gradient(135deg,#7C3AED,#8B5CF6)">SA</div>
+          <div class="card-head">
+            <div class="card-company">Sabre Corporation</div>
+            <div class="card-title">Data Engineer / Analyst</div>
+            <div class="card-badges">
+              <span class="badge badge-hybrid">Hybrydowo</span>
+              <span class="badge badge-new">Nowe</span>
+            </div>
+          </div>
+          <button class="card-save" onclick="event.stopPropagation()">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"/></svg>
+          </button>
+        </div>
+        <div class="card-location">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          Kraków, Krowodrza ul. Armii Krajowej 18
+        </div>
+        <div class="card-salary">
+          <span class="salary-range">9 000 – 14 000 PLN</span>
+          <span class="salary-meta">netto · B2B / UoP</span>
+        </div>
+        <div class="commute-row">
+          <span class="commute-chip c-car">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13" rx="2"/><path d="M16 8h4l3 3v4h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+            19 min
+          </span>
+          <span class="commute-chip c-bike">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="5.5" cy="17.5" r="3.5"/><circle cx="18.5" cy="17.5" r="3.5"/><path d="M15 6h-4L9 17.5"/><path d="M15 6l3.5 5.5H9"/></svg>
+            28 min
+          </span>
+        </div>
+        <div class="tech-row">
+          <span class="tech-tag">Python</span>
+          <span class="tech-tag">SQL</span>
+          <span class="tech-tag">Spark</span>
+          <span class="tech-tag">Airflow</span>
+          <span class="tech-tag">dbt</span>
+        </div>
+        <div class="card-footer">
+          <span class="posted">Dzisiaj</span>
+          <button class="apply-mini" onclick="window.location.href='szczegoly.html'">Zobacz ofertę →</button>
+        </div>
+      </div>
+
+      <!-- ─── CARD 6 ─── -->
+      <div class="job-card" onclick="selectCard(this, 6)">
+        <div class="card-top">
+          <div class="co-logo" style="background:linear-gradient(135deg,#0369A1,#0284C7)">CG</div>
+          <div class="card-head">
+            <div class="card-company">Capgemini Polska</div>
+            <div class="card-title">DevOps Engineer / Cloud Architect</div>
+            <div class="card-badges">
+              <span class="badge badge-remote">Zdalnie</span>
+            </div>
+          </div>
+          <button class="card-save" onclick="event.stopPropagation()">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"/></svg>
+          </button>
+        </div>
+        <div class="card-location">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          Kraków, Bronowice Al. 29 Listopada 20
+        </div>
+        <div class="card-salary">
+          <span class="salary-range">18 000 – 26 000 PLN</span>
+          <span class="salary-meta">netto · B2B</span>
+        </div>
+        <div class="commute-row">
+          <span class="commute-chip c-car">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13" rx="2"/><path d="M16 8h4l3 3v4h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+            21 min
+          </span>
+          <span class="commute-chip c-transit">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="3" width="16" height="16" rx="2"/><path d="M4 11h16"/><path d="M12 3v8"/><circle cx="8.5" cy="17" r="1.5"/><circle cx="15.5" cy="17" r="1.5"/></svg>
+            35 min
+          </span>
+        </div>
+        <div class="tech-row">
+          <span class="tech-tag">AWS</span>
+          <span class="tech-tag">Kubernetes</span>
+          <span class="tech-tag">Terraform</span>
+          <span class="tech-tag">CI/CD</span>
+          <span class="tech-tag">+4</span>
+        </div>
+        <div class="card-footer">
+          <span class="posted">1 tydzień temu</span>
+          <button class="apply-mini" onclick="window.location.href='szczegoly.html'">Zobacz ofertę →</button>
+        </div>
+      </div>
+
+    </div><!-- /job-list -->
+  </div><!-- /panel-left -->
+
+  <!-- ──── MAP PANEL ──── -->
+  <div class="panel-map">
+
+    <!-- Transport mode toggle -->
+    <div class="transport-toggle">
+      <button class="transport-btn active">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="1" y="3" width="15" height="13" rx="2"/><path d="M16 8h4l3 3v4h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+        Auto
+      </button>
+      <button class="transport-btn">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="5.5" cy="17.5" r="3.5"/><circle cx="18.5" cy="17.5" r="3.5"/><path d="M15 6h-4L9 17.5"/><path d="M15 6l3.5 5.5H9"/></svg>
+        Rower
+      </button>
+      <button class="transport-btn">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="4" y="3" width="16" height="16" rx="2"/><path d="M4 11h16"/><path d="M12 3v8"/><circle cx="8.5" cy="17" r="1.5"/><circle cx="15.5" cy="17" r="1.5"/></svg>
+        MPK
+      </button>
+      <button class="transport-btn">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="5" r="2"/><path d="M12 7l-2 5 4 2-1 5"/><path d="M10 12l-3 3"/></svg>
+        Pieszo
+      </button>
+    </div>
+
+    <!-- Map zoom controls -->
+    <div class="map-controls">
+      <button class="map-ctrl-btn">+</button>
+      <button class="map-ctrl-btn">−</button>
+    </div>
+
+    <!-- SVG MAP - stylized Kraków -->
+    <svg class="map-svg" viewBox="0 0 800 600" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+      <!-- Background -->
+      <rect width="800" height="600" fill="#e8ede3"/>
+
+      <!-- Green areas / parks -->
+      <ellipse cx="200" cy="450" rx="80" ry="50" fill="#d4e6c3" opacity="0.7"/>
+      <ellipse cx="650" cy="200" rx="60" ry="40" fill="#d4e6c3" opacity="0.7"/>
+      <rect x="350" y="100" width="120" height="70" rx="15" fill="#d4e6c3" opacity="0.5"/>
+
+      <!-- Wisła river -->
+      <path d="M0 340 Q150 320 280 360 Q380 390 480 370 Q580 350 700 380 Q750 390 800 375"
+            fill="none" stroke="#a8d4f5" stroke-width="22" stroke-linecap="round" opacity="0.8"/>
+      <path d="M0 340 Q150 320 280 360 Q380 390 480 370 Q580 350 700 380 Q750 390 800 375"
+            fill="none" stroke="#c5e3fa" stroke-width="14" stroke-linecap="round" opacity="0.6"/>
+
+      <!-- Main roads -->
+      <!-- Al. Mickiewicza (N-S) -->
+      <line x1="390" y1="0" x2="380" y2="600" stroke="#fff" stroke-width="5" opacity="0.8"/>
+      <line x1="390" y1="0" x2="380" y2="600" stroke="#cdd3dc" stroke-width="2" opacity="0.5"/>
+
+      <!-- Al. Krasińskiego -->
+      <line x1="310" y1="0" x2="305" y2="340" stroke="#fff" stroke-width="4" opacity="0.7"/>
+      <line x1="310" y1="0" x2="305" y2="340" stroke="#cdd3dc" stroke-width="1.5" opacity="0.4"/>
+
+      <!-- Dietla -->
+      <line x1="340" y1="250" x2="500" y2="330" stroke="#fff" stroke-width="4" opacity="0.7"/>
+
+      <!-- Starowiślna -->
+      <line x1="400" y1="200" x2="520" y2="360" stroke="#fff" stroke-width="3.5" opacity="0.7"/>
+
+      <!-- Grzegórzecka -->
+      <line x1="440" y1="160" x2="620" y2="280" stroke="#fff" stroke-width="4" opacity="0.7"/>
+      <line x1="440" y1="160" x2="620" y2="280" stroke="#cdd3dc" stroke-width="1.5" opacity="0.4"/>
+
+      <!-- Zakopiańska -->
+      <line x1="350" y1="370" x2="400" y2="600" stroke="#fff" stroke-width="4" opacity="0.7"/>
+
+      <!-- Al. 29 Listopada -->
+      <line x1="330" y1="0" x2="220" y2="300" stroke="#fff" stroke-width="4" opacity="0.7"/>
+
+      <!-- Armii Krajowej (W) -->
+      <line x1="150" y1="200" x2="380" y2="230" stroke="#fff" stroke-width="4.5" opacity="0.8"/>
+      <line x1="150" y1="200" x2="380" y2="230" stroke="#cdd3dc" stroke-width="2" opacity="0.5"/>
+
+      <!-- Zabłocie area roads -->
+      <line x1="460" y1="340" x2="600" y2="370" stroke="#fff" stroke-width="3" opacity="0.6"/>
+      <line x1="480" y1="360" x2="480" y2="430" stroke="#fff" stroke-width="2.5" opacity="0.5"/>
+
+      <!-- Ring road segment -->
+      <path d="M 160 160 Q 380 80 560 140 Q 680 180 720 300"
+            fill="none" stroke="#e8c97a" stroke-width="6" opacity="0.6"/>
+      <path d="M 160 160 Q 380 80 560 140 Q 680 180 720 300"
+            fill="none" stroke="#f5d87a" stroke-width="3" opacity="0.4" stroke-dasharray="0"/>
+
+      <!-- Blocks / buildings (gray rectangles) -->
+      <rect x="280" y="180" width="40" height="30" rx="3" fill="#d6dbe3" opacity="0.6"/>
+      <rect x="330" y="170" width="50" height="35" rx="3" fill="#d6dbe3" opacity="0.6"/>
+      <rect x="420" y="200" width="35" height="25" rx="3" fill="#d6dbe3" opacity="0.6"/>
+      <rect x="460" y="370" width="60" height="35" rx="3" fill="#d6dbe3" opacity="0.5"/>
+      <rect x="530" y="240" width="45" height="30" rx="3" fill="#d6dbe3" opacity="0.5"/>
+      <rect x="200" y="250" width="55" height="40" rx="3" fill="#d6dbe3" opacity="0.5"/>
+
+      <!-- District labels -->
+      <text x="220" y="165" font-family="Inter,sans-serif" font-size="11" font-weight="600" fill="rgba(0,0,0,0.28)" letter-spacing="1.5" text-anchor="middle">KROWODRZA</text>
+      <text x="365" y="195" font-family="Inter,sans-serif" font-size="11" font-weight="600" fill="rgba(0,0,0,0.28)" letter-spacing="1.5" text-anchor="middle">STARE MIASTO</text>
+      <text x="510" y="225" font-family="Inter,sans-serif" font-size="11" font-weight="600" fill="rgba(0,0,0,0.28)" letter-spacing="1.5" text-anchor="middle">GRZEGÓRZKI</text>
+      <text x="355" y="295" font-family="Inter,sans-serif" font-size="11" font-weight="600" fill="rgba(0,0,0,0.28)" letter-spacing="1.5" text-anchor="middle">KAZIMIERZ</text>
+      <text x="480" y="320" font-family="Inter,sans-serif" font-size="11" font-weight="600" fill="rgba(0,0,0,0.28)" letter-spacing="1.5" text-anchor="middle">ZABŁOCIE</text>
+      <text x="380" y="430" font-family="Inter,sans-serif" font-size="11" font-weight="600" fill="rgba(0,0,0,0.28)" letter-spacing="1.5" text-anchor="middle">PODGÓRZE</text>
+      <text x="155" y="340" font-family="Inter,sans-serif" font-size="11" font-weight="600" fill="rgba(0,0,0,0.28)" letter-spacing="1.5" text-anchor="middle">DĘBNIKI</text>
+      <text x="170" y="110" font-family="Inter,sans-serif" font-size="11" font-weight="600" fill="rgba(0,0,0,0.28)" letter-spacing="1.5" text-anchor="middle">BRONOWICE</text>
+      <text x="650" y="310" font-family="Inter,sans-serif" font-size="10" font-weight="600" fill="rgba(0,0,0,0.22)" letter-spacing="1.5" text-anchor="middle">NOWA HUTA</text>
+
+      <!-- River label -->
+      <text x="150" y="348" font-family="Inter,sans-serif" font-size="10" font-style="italic" fill="rgba(100,160,220,0.7)">Wisła</text>
+
+      <!-- Wawel symbol -->
+      <rect x="348" y="298" width="28" height="18" rx="3" fill="#c8a96e" opacity="0.5"/>
+      <text x="362" y="310" font-family="Inter,sans-serif" font-size="8" font-weight="700" fill="rgba(120,80,20,0.6)" text-anchor="middle">WAWEL</text>
+
+      <!-- Commute radius (for active card = Podgórze) -->
+      <circle cx="390" cy="420" r="90" fill="rgba(37,99,235,0.05)" stroke="rgba(37,99,235,0.15)" stroke-width="1.5" stroke-dasharray="5,4"/>
+    </svg>
+
+    <!-- Job Pins (positioned absolutely over map) -->
+
+    <!-- Pin 1 – ACTIVE – Podgórze -->
+    <div class="map-pin active" style="left:38%;top:68%;" onclick="selectCard(document.querySelectorAll('.job-card')[0], 1)">
+      <div class="pin-bubble">
+        <div class="pin-dot" style="background:linear-gradient(135deg,#4F46E5,#6366F1)">CD</div>
+        <div class="pin-salary"><em>15–22k</em></div>
+      </div>
+    </div>
+
+    <!-- Pin 2 – Kazimierz -->
+    <div class="map-pin" style="left:42%;top:46%;" onclick="selectCard(document.querySelectorAll('.job-card')[1], 2)">
+      <div class="pin-bubble">
+        <div class="pin-dot" style="background:linear-gradient(135deg,#0891B2,#06B6D4)">KA</div>
+        <div class="pin-salary"><em>10–14k</em></div>
+      </div>
+    </div>
+
+    <!-- Pin 3 – Stare Miasto -->
+    <div class="map-pin" style="left:52%;top:30%;" onclick="selectCard(document.querySelectorAll('.job-card')[2], 3)">
+      <div class="pin-bubble">
+        <div class="pin-dot" style="background:linear-gradient(135deg,#059669,#10B981)">AB</div>
+        <div class="pin-salary"><em>13–19k</em></div>
+      </div>
+    </div>
+
+    <!-- Pin 4 – Zabłocie -->
+    <div class="map-pin" style="left:59%;top:55%;" onclick="selectCard(document.querySelectorAll('.job-card')[3], 4)">
+      <div class="pin-bubble">
+        <div class="pin-dot" style="background:linear-gradient(135deg,#DC2626,#EF4444)">MK</div>
+        <div class="pin-salary"><em>16–24k</em></div>
+      </div>
+    </div>
+
+    <!-- Pin 5 – Krowodrza -->
+    <div class="map-pin" style="left:29%;top:32%;" onclick="selectCard(document.querySelectorAll('.job-card')[4], 5)">
+      <div class="pin-bubble">
+        <div class="pin-dot" style="background:linear-gradient(135deg,#7C3AED,#8B5CF6)">SA</div>
+        <div class="pin-salary"><em>9–14k</em></div>
+      </div>
+    </div>
+
+    <!-- Pin 6 – Bronowice -->
+    <div class="map-pin" style="left:20%;top:18%;" onclick="selectCard(document.querySelectorAll('.job-card')[5], 6)">
+      <div class="pin-bubble">
+        <div class="pin-dot" style="background:linear-gradient(135deg,#0369A1,#0284C7)">CG</div>
+        <div class="pin-salary"><em>18–26k</em></div>
+      </div>
+    </div>
+
+    <!-- Map popup for active card -->
+    <div class="map-card" id="mapCard">
+      <div class="map-card-logo" style="background:linear-gradient(135deg,#4F46E5,#6366F1)">CD</div>
+      <div class="map-card-body">
+        <div class="map-card-company">Codewise Sp. z o.o.</div>
+        <div class="map-card-title">Senior Frontend Developer</div>
+        <div class="map-card-salary">15 000 – 22 000 PLN netto</div>
+        <div class="map-card-commute">
+          🚗 12 min · 🚌 18 min · Podgórze, ul. Zabłocie 43
+        </div>
+      </div>
+      <div class="map-card-arrow" onclick="window.location.href='szczegoly.html'">→</div>
+    </div>
+
+    <!-- Scale -->
+    <div class="map-scale">≈ 500 m</div>
+
+  </div><!-- /panel-map -->
+
+</main>
+
+<script>
+function selectCard(el, num) {
+  document.querySelectorAll('.job-card').forEach(c => c.classList.remove('active'));
+  document.querySelectorAll('.map-pin').forEach(p => p.classList.remove('active'));
+  if (el) el.classList.add('active');
+  const pins = document.querySelectorAll('.map-pin');
+  if (pins[num-1]) pins[num-1].classList.add('active');
+  if (el) el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+document.querySelectorAll('.filter-btn').forEach(btn => {
+  btn.addEventListener('click', function(e) {
+    e.stopPropagation();
+  });
+});
+
+document.querySelectorAll('.tag-pill').forEach(t => {
+  t.addEventListener('click', function() { this.classList.toggle('active'); });
+});
+
+document.querySelectorAll('.transport-btn').forEach(btn => {
+  btn.addEventListener('click', function() {
+    document.querySelectorAll('.transport-btn').forEach(b => b.classList.remove('active'));
+    this.classList.add('active');
+  });
+});
+</script>
+</body>
+</html>

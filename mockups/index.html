@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MapJob – Makiety UI</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --primary: #2563EB;
+  --text: #0F172A;
+  --text-secondary: #475569;
+  --text-muted: #94A3B8;
+  --border: #E2E8F0;
+  --bg: #F8FAFC;
+  --surface: #fff;
+  --success: #059669;
+  --radius: 14px;
+}
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: 'Inter', -apple-system, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+}
+.page { max-width: 960px; margin: 0 auto; padding: 48px 24px; }
+
+.header-section { text-align: center; margin-bottom: 52px; }
+.brand { display: inline-flex; align-items: center; gap: 10px; margin-bottom: 20px; text-decoration: none; }
+.brand-mark {
+  width: 44px; height: 44px;
+  background: linear-gradient(135deg, #2563EB, #1D4ED8);
+  border-radius: 12px; display: flex; align-items: center; justify-content: center;
+}
+.brand-mark svg { width: 24px; height: 24px; }
+.brand-name { font-size: 26px; font-weight: 800; letter-spacing: -0.8px; color: var(--text); }
+.brand-name span { color: var(--primary); }
+
+.headline { font-size: 32px; font-weight: 800; color: var(--text); letter-spacing: -1px; margin-bottom: 10px; }
+.subtitle { font-size: 16px; color: var(--text-secondary); max-width: 560px; margin: 0 auto 24px; line-height: 1.6; }
+
+.research-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: #EFF6FF; border: 1px solid #BFDBFE;
+  border-radius: 999px; padding: 5px 14px;
+  font-size: 12px; font-weight: 600; color: var(--primary);
+  margin-bottom: 8px;
+}
+
+/* Cards grid -->*/
+.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; margin-bottom: 48px; }
+
+.card {
+  background: var(--surface);
+  border-radius: var(--radius);
+  overflow: hidden;
+  border: 1.5px solid var(--border);
+  text-decoration: none; color: inherit;
+  transition: all .2s;
+  display: flex; flex-direction: column;
+}
+.card:hover {
+  border-color: var(--primary);
+  box-shadow: 0 8px 24px rgba(37,99,235,0.12);
+  transform: translateY(-3px);
+}
+
+.card-preview {
+  height: 200px; overflow: hidden; position: relative;
+  background: linear-gradient(135deg, #EFF6FF, #F5F3FF);
+  display: flex; align-items: center; justify-content: center;
+}
+.card-preview .preview-badge {
+  position: absolute; top: 12px; right: 12px;
+  background: var(--primary); color: white;
+  font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;
+  padding: 3px 10px; border-radius: 999px;
+}
+.preview-img {
+  font-size: 80px; opacity: 0.15; user-select: none;
+}
+.preview-label {
+  position: absolute; font-size: 14px; font-weight: 700;
+  color: var(--primary); background: white;
+  padding: 8px 16px; border-radius: 999px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+}
+
+.card-body { padding: 20px; flex: 1; }
+.card-num {
+  font-size: 11px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.8px; color: var(--primary); margin-bottom: 6px;
+}
+.card-title { font-size: 18px; font-weight: 700; color: var(--text); margin-bottom: 6px; }
+.card-desc { font-size: 13.5px; color: var(--text-secondary); line-height: 1.6; margin-bottom: 14px; }
+
+.card-features { display: flex; flex-direction: column; gap: 5px; margin-bottom: 16px; }
+.feature { display: flex; align-items: flex-start; gap: 7px; font-size: 12.5px; color: var(--text-secondary); }
+.feature::before { content: '✓'; color: var(--success); font-weight: 700; flex-shrink: 0; }
+
+.card-cta {
+  display: block; text-align: center; padding: 10px;
+  background: var(--primary); color: white;
+  border-radius: 8px; font-size: 13px; font-weight: 600;
+  text-decoration: none; margin: 0 20px 20px;
+  transition: background .15s;
+}
+.card-cta:hover { background: #1D4ED8; }
+
+/* Insights section -->*/
+.insights {
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+  padding: 32px 36px;
+  margin-bottom: 32px;
+}
+.insights-title {
+  font-size: 20px; font-weight: 700; color: var(--text); margin-bottom: 20px;
+  padding-bottom: 14px; border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; gap: 8px;
+}
+.insights-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
+.insight-item {}
+.insight-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; color: var(--text-muted); margin-bottom: 8px; }
+.insight-content { font-size: 13.5px; color: var(--text-secondary); line-height: 1.65; }
+.insight-content strong { color: var(--text); }
+
+.tag { display: inline-block; padding: 2px 8px; border-radius: 999px; font-size: 11px; font-weight: 600; margin: 2px; }
+.tag-blue { background: #EFF6FF; color: var(--primary); }
+.tag-green { background: #D1FAE5; color: #065F46; }
+.tag-purple { background: #EDE9FE; color: #5B21B6; }
+.tag-orange { background: #FEF3C7; color: #92400E; }
+
+/* USP section -->*/
+.usp { text-align: center; padding: 24px; }
+.usp-title { font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 14px; }
+.usp-pills { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
+.usp-pill {
+  display: flex; align-items: center; gap: 6px;
+  padding: 7px 16px; border-radius: 999px;
+  background: var(--surface); border: 1.5px solid var(--border);
+  font-size: 13px; font-weight: 500; color: var(--text-secondary);
+}
+.usp-pill.highlight { background: #EFF6FF; border-color: #BFDBFE; color: var(--primary); font-weight: 600; }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="header-section">
+    <a href="#" class="brand">
+      <div class="brand-mark">
+        <svg viewBox="0 0 20 20" fill="none" stroke="white" stroke-width="2" stroke-linecap="round">
+          <circle cx="10" cy="8" r="4"/>
+          <path d="M10 12 C6 12 3 15 3 18"/>
+          <path d="M10 12 C14 12 17 15 17 18"/>
+        </svg>
+      </div>
+      <span class="brand-name">Map<span>Job</span></span>
+    </a>
+
+    <div class="research-badge">
+      🔍 Makiety UX · Wersja 1.0 · Maj 2026
+    </div>
+
+    <h1 class="headline">Nowy design ogłoszeń</h1>
+    <p class="subtitle">
+      3 makiety 1:1 zainspirowane najlepszymi job boardami (NoFluffJobs, LinkedIn Jobs, Bulldogjob, Inhire.io).
+      Kliknij dowolną, aby zobaczyć pełny widok w przeglądarce.
+    </p>
+  </div>
+
+  <!-- MOCKUP CARDS -->
+  <div class="grid">
+
+    <!-- Makieta 1 -->
+    <a href="lista-mapa.html" class="card">
+      <div class="card-preview">
+        <div class="preview-badge">Desktop</div>
+        <div class="preview-img">🗺️</div>
+        <div class="preview-label">Lista + Mapa</div>
+      </div>
+      <div class="card-body">
+        <div class="card-num">Makieta 1</div>
+        <div class="card-title">Lista ogłoszeń z mapą</div>
+        <div class="card-desc">Split-screen: lista kart po lewej (40%), interaktywna mapa Krakowa po prawej (60%). Kliknięcie karty podświetla pin na mapie.</div>
+        <div class="card-features">
+          <div class="feature">Filtry: tryb pracy, zarobki, tagi technologii</div>
+          <div class="feature">Karta: czas dojazdu 3 trybami transportu</div>
+          <div class="feature">Piny na mapie z widełkami płacowymi</div>
+          <div class="feature">Popup szczegółów przy aktywnym pinie</div>
+          <div class="feature">Przełącznik trybu transportu (auto / rower / MPK)</div>
+        </div>
+      </div>
+      <a href="lista-mapa.html" class="card-cta">Otwórz makietę →</a>
+    </a>
+
+    <!-- Makieta 2 -->
+    <a href="szczegoly.html" class="card">
+      <div class="card-preview" style="background:linear-gradient(135deg,#F0FDF4,#ECFDF5);">
+        <div class="preview-badge">Desktop</div>
+        <div class="preview-img">📋</div>
+        <div class="preview-label">Szczegóły oferty</div>
+      </div>
+      <div class="card-body">
+        <div class="card-num">Makieta 2</div>
+        <div class="card-title">Strona szczegółów ogłoszenia</div>
+        <div class="card-desc">Pełna strona oferty z sidebar sticky: wynagrodzenie, przycisk aplikuj, czasy dojazdu, podobne oferty. Sekcje: O firmie, Wymagania, Benefity, Lokalizacja.</div>
+        <div class="card-features">
+          <div class="feature">Sticky sidebar: aplikuj + wynagrodzenie</div>
+          <div class="feature">Podział wymagań: must-have vs nice-to-have</div>
+          <div class="feature">Grid benefitów (ikona + nazwa + opis)</div>
+          <div class="feature">Mini-mapa z lokalizacją biura</div>
+          <div class="feature">Sekcja: Proces rekrutacji krok po kroku</div>
+          <div class="feature">Czas dojazdu 4 trybami w sidebarze</div>
+        </div>
+      </div>
+      <a href="szczegoly.html" class="card-cta">Otwórz makietę →</a>
+    </a>
+
+    <!-- Makieta 3 -->
+    <a href="mobile.html" class="card">
+      <div class="card-preview" style="background:linear-gradient(135deg,#FFF7ED,#FEF3C7);">
+        <div class="preview-badge">Mobile</div>
+        <div class="preview-img">📱</div>
+        <div class="preview-label">Widok mobilny</div>
+      </div>
+      <div class="card-body">
+        <div class="card-num">Makieta 3</div>
+        <div class="card-title">Aplikacja mobilna (iPhone frame)</div>
+        <div class="card-desc">Symulacja iPhone 15 Pro z ramką urządzenia. Trzy widoki: Lista, Mapa (piny + karty u dołu), Szczegóły oferty.</div>
+        <div class="card-features">
+          <div class="feature">Prawdziwy frame iPhone'a z notchem</div>
+          <div class="feature">Przełączanie: Lista ↔ Mapa (tab + FAB)</div>
+          <div class="feature">Karty ogłoszeń swipowalne w widoku mapy</div>
+          <div class="feature">Bottom navigation (5 zakładek)</div>
+          <div class="feature">Piny podświetlane kliknięciem na kartę</div>
+          <div class="feature">Pełny widok szczegółów z aplikuj</div>
+        </div>
+      </div>
+      <a href="mobile.html" class="card-cta">Otwórz makietę →</a>
+    </a>
+
+  </div>
+
+  <!-- INSIGHTS -->
+  <div class="insights">
+    <div class="insights-title">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      Co nowego vs. obecny design — wnioski z researchu
+    </div>
+
+    <div class="insights-grid">
+      <div class="insight-item">
+        <div class="insight-label">🏆 Główna przewaga MapJob</div>
+        <div class="insight-content">
+          <strong>Czas dojazdu w minutach</strong> — nie tylko odległość w km. Żaden z polskich job boardów nie pokazuje tego tak wyraźnie na karcie. To jest USP nr 1 do wyeksponowania w każdym elemencie UI.
+        </div>
+      </div>
+      <div class="insight-item">
+        <div class="insight-label">📐 Co zabraliśmy z NoFluffJobs</div>
+        <div class="insight-content">
+          <strong>Widełki wynagrodzenia zawsze widoczne</strong> na karcie (nie "ukryte do kliknięcia"), jasne tagi technologii, wyraźny podział must-have / nice-to-have w wymaganiach.
+        </div>
+      </div>
+      <div class="insight-item">
+        <div class="insight-label">📐 Co zabraliśmy z LinkedIn Jobs</div>
+        <div class="insight-content">
+          <strong>Sticky sidebar z przyciskiem Aplikuj</strong> zawsze widocznym podczas scrollowania szczegółów, sekcja "Podobne oferty", weryfikacja firmy jako trust signal.
+        </div>
+      </div>
+      <div class="insight-item">
+        <div class="insight-label">📐 Co zabraliśmy z Airbnb / Booking</div>
+        <div class="insight-content">
+          <strong>Split-screen lista + mapa</strong> z synchronizacją (hover karty = podświetlony pin) — wzorzec sprawdzony w branży nieruchomości i noclegów, idealny dla MapJob.
+        </div>
+      </div>
+      <div class="insight-item">
+        <div class="insight-label">🎨 Zmiany wizualne</div>
+        <div class="insight-content">
+          Wynagrodzenie w <strong style="color:var(--success)">zielonym kolorze</strong> (#059669) — zaufanie + pozytyw. Typ pracy w kolorowych badge'ach. Cienie tylko na hover — czystość. Bez ramek kart w spoczynku.
+        </div>
+      </div>
+      <div class="insight-item">
+        <div class="insight-label">📱 Mobile-first insights</div>
+        <div class="insight-content">
+          <strong>FAB "Pokaż na mapie"</strong> zamiast osobnego przycisku w nagłówku. Karty w widoku mapy <strong>przesuwalne poziomo</strong> u dołu ekranu (patent Airbnb). Bottom nav 5 zakładek.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- USPs -->
+  <div class="usp">
+    <div class="usp-title">Elementy wyróżniające MapJob w każdej makiecie</div>
+    <div class="usp-pills">
+      <div class="usp-pill highlight">🚗 12 min autem</div>
+      <div class="usp-pill highlight">🚴 26 min rowerem</div>
+      <div class="usp-pill highlight">🚌 18 min MPK</div>
+      <div class="usp-pill">📍 Adres zweryfikowany</div>
+      <div class="usp-pill">💰 Widełki zawsze widoczne</div>
+      <div class="usp-pill">🗺️ Mapa jako główny widok</div>
+      <div class="usp-pill">⚡ Bez ghost jobs</div>
+      <div class="usp-pill">📏 Dzielnica (nie tylko miasto)</div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

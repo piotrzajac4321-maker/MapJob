@@ -1,0 +1,981 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=375, maximum-scale=1">
+<title>MapJob Mobile – Widok ogłoszeń</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --primary: #2563EB;
+  --primary-dark: #1D4ED8;
+  --primary-light: #DBEAFE;
+  --success: #059669;
+  --success-light: #D1FAE5;
+  --warning: #D97706;
+  --warning-light: #FEF3C7;
+  --purple: #7C3AED;
+  --purple-light: #EDE9FE;
+  --bg: #F1F5F9;
+  --surface: #FFFFFF;
+  --border: #E2E8F0;
+  --text: #0F172A;
+  --text-secondary: #475569;
+  --text-muted: #94A3B8;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.08);
+  --shadow-md: 0 4px 14px rgba(0,0,0,0.12);
+  --shadow-lg: 0 12px 32px rgba(0,0,0,0.16);
+  --radius: 16px;
+  --radius-sm: 10px;
+  --radius-full: 999px;
+  --bottom-nav-h: 68px;
+}
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+/* Mobile device frame */
+body {
+  font-family: 'Inter', -apple-system, sans-serif;
+  background: #1a1a2e;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 20px;
+}
+
+.device-frame {
+  width: 390px;
+  height: 844px;
+  background: var(--bg);
+  border-radius: 48px;
+  overflow: hidden;
+  position: relative;
+  box-shadow: 0 0 0 12px #1c1c1e, 0 0 0 14px #3a3a3c, 0 40px 80px rgba(0,0,0,0.6);
+  display: flex;
+  flex-direction: column;
+}
+
+/* Device notch */
+.device-notch {
+  position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+  width: 130px; height: 34px;
+  background: #1c1c1e; border-radius: 0 0 20px 20px;
+  z-index: 200;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  padding-bottom: 2px;
+}
+.notch-cam { width: 10px; height: 10px; border-radius: 50%; background: #2a2a2d; border: 1px solid #3a3a3c; }
+.notch-face { width: 20px; height: 4px; border-radius: 2px; background: #2a2a2d; }
+
+/* Status bar */
+.status-bar {
+  height: 48px; background: var(--surface);
+  display: flex; align-items: flex-end; justify-content: space-between;
+  padding: 0 24px 8px; flex-shrink: 0;
+  font-size: 11px; font-weight: 700; color: var(--text);
+  border-bottom: 1px solid var(--border);
+}
+.status-time { font-size: 15px; font-weight: 700; }
+.status-icons { display: flex; gap: 5px; align-items: center; }
+
+/* App header */
+.app-header {
+  background: var(--surface);
+  padding: 12px 16px 10px;
+  display: flex; align-items: center; justify-content: space-between;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+.app-logo { font-size: 20px; font-weight: 800; letter-spacing: -0.5px; }
+.app-logo span { color: var(--primary); }
+
+.app-header-actions { display: flex; gap: 8px; }
+.icon-btn {
+  width: 38px; height: 38px;
+  border: none; border-radius: 10px;
+  background: var(--bg); cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--text-secondary);
+}
+.icon-btn.primary { background: var(--primary); color: white; }
+
+/* Search pill -->*/
+.search-pill {
+  margin: 10px 16px 0;
+  height: 42px;
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-full);
+  display: flex; align-items: center; gap: 10px;
+  padding: 0 14px;
+  box-shadow: var(--shadow-sm);
+  flex-shrink: 0;
+}
+.search-pill-text { font-size: 14px; color: var(--text-muted); flex: 1; }
+.search-pill-location {
+  font-size: 12px; font-weight: 600; color: var(--primary);
+  background: var(--primary-light);
+  padding: 3px 8px; border-radius: var(--radius-full);
+  white-space: nowrap;
+}
+
+/* Filter chips horizontal scroll -->*/
+.filter-chips {
+  padding: 10px 16px;
+  display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none;
+  flex-shrink: 0;
+}
+.filter-chips::-webkit-scrollbar { display: none; }
+.chip {
+  padding: 6px 12px; border-radius: var(--radius-full);
+  font-size: 12px; font-weight: 600; white-space: nowrap;
+  border: 1.5px solid var(--border); background: var(--surface);
+  color: var(--text-secondary); cursor: pointer;
+  display: flex; align-items: center; gap: 4px; flex-shrink: 0;
+}
+.chip.active { background: var(--primary); border-color: var(--primary); color: white; }
+.chip-count {
+  background: rgba(255,255,255,0.3); border-radius: var(--radius-full);
+  padding: 0 5px; font-size: 10px; min-width: 16px; text-align: center;
+}
+
+/* Tab switcher -->*/
+.tab-switcher {
+  margin: 0 16px 10px;
+  background: var(--bg);
+  border-radius: var(--radius-sm);
+  padding: 3px;
+  display: flex;
+  flex-shrink: 0;
+  border: 1px solid var(--border);
+}
+.tab-btn {
+  flex: 1; padding: 7px;
+  border: none; border-radius: 8px;
+  font-family: inherit; font-size: 13px; font-weight: 600;
+  cursor: pointer; transition: all .2s;
+  display: flex; align-items: center; justify-content: center; gap: 5px;
+  background: none; color: var(--text-muted);
+}
+.tab-btn.active { background: var(--surface); color: var(--text); box-shadow: var(--shadow-sm); }
+
+/* Results count -->*/
+.results-bar {
+  padding: 0 16px 6px;
+  display: flex; align-items: center; justify-content: space-between;
+  flex-shrink: 0;
+}
+.res-count { font-size: 12px; color: var(--text-muted); }
+.res-count strong { color: var(--text); }
+.sort-mini { font-size: 11px; color: var(--text-secondary); font-weight: 500; display: flex; align-items: center; gap: 3px; }
+
+/* Job list scrollable -->*/
+.job-list {
+  flex: 1;
+  overflow-y: auto; overflow-x: hidden;
+  padding: 0 12px;
+  display: flex; flex-direction: column; gap: 8px;
+  scrollbar-width: none;
+  padding-bottom: calc(var(--bottom-nav-h) + 16px);
+}
+.job-list::-webkit-scrollbar { display: none; }
+
+/* Mobile job card -->*/
+.m-card {
+  background: var(--surface);
+  border-radius: var(--radius);
+  padding: 14px 14px 12px;
+  border: 1.5px solid var(--border);
+  cursor: pointer; position: relative;
+  box-shadow: var(--shadow-sm);
+  transition: all .2s;
+}
+.m-card.featured {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(37,99,235,0.08), var(--shadow-sm);
+}
+.m-card.featured::before {
+  content: '⭐ Polecane';
+  position: absolute; top: -1px; right: 14px;
+  background: var(--primary); color: white;
+  font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;
+  padding: 3px 8px; border-radius: 0 0 6px 6px;
+}
+
+.m-card-top { display: flex; gap: 10px; align-items: flex-start; margin-bottom: 8px; }
+.m-logo {
+  width: 40px; height: 40px; border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 800; color: white; flex-shrink: 0;
+}
+.m-card-head { flex: 1; min-width: 0; }
+.m-company { font-size: 11px; color: var(--text-muted); margin-bottom: 1px; }
+.m-title { font-size: 14px; font-weight: 700; color: var(--text); line-height: 1.3; }
+.m-save {
+  width: 28px; height: 28px; border: 1.5px solid var(--border);
+  border-radius: 7px; background: none; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--text-muted);
+}
+.m-save.on { border-color: var(--warning); color: var(--warning); background: var(--warning-light); }
+
+/* Info row -->*/
+.m-info-row {
+  display: flex; gap: 8px; margin-bottom: 7px; flex-wrap: wrap;
+}
+.m-badge {
+  padding: 2px 8px; border-radius: var(--radius-full);
+  font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.3px;
+}
+.m-badge.remote { background: var(--purple-light); color: var(--purple); }
+.m-badge.hybrid { background: #FEF9C3; color: #92400E; }
+.m-badge.office { background: var(--bg); color: var(--text-secondary); border: 1px solid var(--border); }
+
+.m-location {
+  display: flex; align-items: center; gap: 3px;
+  font-size: 11.5px; color: var(--text-secondary);
+}
+
+/* Salary + commute row -->*/
+.m-bottom-row {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-top: 8px; padding-top: 8px;
+  border-top: 1px solid var(--border);
+}
+.m-salary { font-size: 14px; font-weight: 700; color: var(--success); }
+.m-salary-sub { font-size: 10px; color: var(--text-muted); font-weight: 400; }
+
+.m-commute-pills { display: flex; gap: 4px; }
+.m-commute-pill {
+  display: flex; align-items: center; gap: 3px;
+  padding: 2px 7px; border-radius: var(--radius-full);
+  font-size: 11px; font-weight: 600;
+  background: var(--bg); border: 1px solid var(--border);
+}
+.m-commute-pill.car { color: var(--primary); }
+.m-commute-pill.bike { color: #D97706; }
+.m-commute-pill.walk { color: var(--success); }
+.m-commute-pill.transit { color: var(--purple); }
+
+/* Map CTA floating btn -->*/
+.map-fab {
+  position: absolute;
+  bottom: calc(var(--bottom-nav-h) + 16px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--text);
+  color: white;
+  border: none; border-radius: var(--radius-full);
+  padding: 11px 20px;
+  font-family: inherit; font-size: 13px; font-weight: 700;
+  cursor: pointer;
+  display: flex; align-items: center; gap: 7px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+  z-index: 50;
+  white-space: nowrap;
+}
+
+/* Bottom navigation -->*/
+.bottom-nav {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  height: var(--bottom-nav-h);
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+  display: flex; align-items: flex-start; justify-content: space-around;
+  padding-top: 10px;
+  z-index: 100;
+  backdrop-filter: blur(8px);
+}
+.nav-item {
+  display: flex; flex-direction: column; align-items: center; gap: 3px;
+  cursor: pointer; flex: 1; padding: 0 4px;
+}
+.nav-icon { font-size: 22px; }
+.nav-label { font-size: 10px; font-weight: 600; color: var(--text-muted); }
+.nav-item.active .nav-label { color: var(--primary); }
+.nav-dot {
+  width: 5px; height: 5px; border-radius: 50%;
+  background: var(--primary);
+}
+
+/* ─── MAP VIEW (hidden by default) ─── */
+.map-view {
+  flex: 1; position: relative; display: none;
+  overflow: hidden;
+}
+.map-view.active { display: block; }
+.map-bg {
+  width: 100%; height: 100%;
+  background: #e8ede3; position: relative; overflow: hidden;
+}
+.map-bg svg { width: 100%; height: 100%; }
+
+/* Map top search -->*/
+.map-top-bar {
+  position: absolute; top: 10px; left: 12px; right: 12px;
+  background: white; border-radius: var(--radius-full);
+  padding: 10px 16px;
+  display: flex; align-items: center; gap: 8px;
+  box-shadow: var(--shadow-md); z-index: 20;
+  font-size: 14px; color: var(--text-muted);
+}
+
+/* Floating cards stack at bottom -->*/
+.map-cards-stack {
+  position: absolute; bottom: calc(var(--bottom-nav-h) + 12px);
+  left: 0; right: 0;
+  padding: 0 12px;
+  display: flex; gap: 10px; overflow-x: auto; scrollbar-width: none;
+  z-index: 20;
+}
+.map-cards-stack::-webkit-scrollbar { display: none; }
+
+.map-mini-card {
+  flex: 0 0 260px;
+  background: white; border-radius: var(--radius);
+  padding: 14px; box-shadow: var(--shadow-lg);
+  border: 2px solid transparent;
+  display: flex; gap: 10px; cursor: pointer;
+}
+.map-mini-card.active { border-color: var(--primary); }
+.map-mini-logo {
+  width: 38px; height: 38px; border-radius: 9px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: 800; color: white; flex-shrink: 0;
+}
+.map-mini-body {}
+.map-mini-company { font-size: 10px; color: var(--text-muted); }
+.map-mini-title { font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 2px; }
+.map-mini-salary { font-size: 12px; font-weight: 700; color: var(--success); }
+.map-mini-commute { font-size: 10.5px; color: var(--text-secondary); margin-top: 1px; }
+
+/* Map pins -->*/
+.m-pin {
+  position: absolute; transform: translate(-50%, -50%);
+  z-index: 10; cursor: pointer;
+}
+.m-pin-dot {
+  width: 38px; height: 38px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 10px; font-weight: 800; color: white;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+  border: 3px solid white;
+}
+.m-pin.active .m-pin-dot {
+  width: 46px; height: 46px;
+  box-shadow: 0 4px 16px rgba(37,99,235,0.4);
+}
+
+/* Map filters bar -->*/
+.map-filters {
+  position: absolute; top: 66px; left: 12px; right: 12px;
+  display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; z-index: 20;
+}
+.map-filters::-webkit-scrollbar { display: none; }
+.m-filter-chip {
+  padding: 5px 12px; border-radius: var(--radius-full);
+  background: white; border: 1px solid var(--border);
+  font-size: 11.5px; font-weight: 600; color: var(--text-secondary);
+  white-space: nowrap; box-shadow: var(--shadow-sm);
+  cursor: pointer; flex-shrink: 0;
+}
+.m-filter-chip.active { background: var(--primary); border-color: var(--primary); color: white; }
+
+/* Page tabs panel with both views -->*/
+.list-view { display: flex; flex-direction: column; flex: 1; overflow: hidden; }
+.list-view.hidden { display: none; }
+
+/* Detail view -->*/
+.detail-view {
+  flex: 1; overflow-y: auto; background: var(--bg);
+  display: none;
+  padding-bottom: calc(var(--bottom-nav-h) + 16px);
+}
+.detail-view.active { display: block; }
+
+.detail-back {
+  background: var(--surface); padding: 14px 16px;
+  display: flex; align-items: center; gap: 10px;
+  border-bottom: 1px solid var(--border);
+  font-size: 14px; font-weight: 600; color: var(--text);
+  cursor: pointer;
+}
+
+.detail-hero {
+  background: var(--surface);
+  padding: 20px 16px;
+  margin-bottom: 8px;
+}
+.detail-company-row { display: flex; gap: 12px; align-items: center; margin-bottom: 14px; }
+.detail-logo-sm {
+  width: 48px; height: 48px; border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 15px; font-weight: 800; color: white;
+}
+.detail-company-name { font-size: 13px; font-weight: 600; color: var(--text-secondary); }
+.detail-title { font-size: 22px; font-weight: 800; color: var(--text); letter-spacing: -0.5px; margin-bottom: 12px; line-height: 1.2; }
+.detail-salary { font-size: 19px; font-weight: 800; color: var(--success); margin-bottom: 14px; }
+.detail-salary span { font-size: 12px; font-weight: 400; color: var(--text-muted); }
+.detail-apply-btn {
+  width: 100%; padding: 14px; border: none;
+  background: var(--primary); color: white;
+  border-radius: var(--radius-sm);
+  font-family: inherit; font-size: 16px; font-weight: 700;
+  cursor: pointer; box-shadow: 0 4px 14px rgba(37,99,235,0.35);
+}
+.detail-commute-row {
+  display: flex; gap: 6px; margin: 14px 0 0; flex-wrap: wrap;
+}
+.detail-chip {
+  display: flex; align-items: center; gap: 4px;
+  padding: 5px 10px; border-radius: var(--radius-full);
+  font-size: 12px; font-weight: 600; background: var(--bg); border: 1px solid var(--border);
+}
+
+.detail-section {
+  background: var(--surface); padding: 18px 16px;
+  margin-bottom: 8px;
+}
+.detail-section-title {
+  font-size: 15px; font-weight: 700; color: var(--text);
+  margin-bottom: 12px; padding-bottom: 10px;
+  border-bottom: 1px solid var(--border);
+}
+.detail-list { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+.detail-list li {
+  display: flex; gap: 8px; font-size: 13.5px; color: var(--text-secondary); line-height: 1.5;
+}
+.detail-list li::before {
+  content: '✓'; font-weight: 700; color: var(--success); flex-shrink: 0; margin-top: 1px;
+}
+</style>
+</head>
+<body>
+
+<div class="device-frame" id="app">
+  <!-- Notch -->
+  <div class="device-notch">
+    <div class="notch-cam"></div>
+    <div class="notch-face"></div>
+    <div class="notch-cam"></div>
+  </div>
+
+  <!-- Status bar -->
+  <div class="status-bar">
+    <span class="status-time">9:41</span>
+    <div class="status-icons">
+      <svg width="16" height="12" viewBox="0 0 16 12" fill="currentColor">
+        <rect x="0" y="4" width="3" height="8" rx="1"/>
+        <rect x="4" y="2.5" width="3" height="9.5" rx="1"/>
+        <rect x="8" y="1" width="3" height="11" rx="1"/>
+        <rect x="12" y="0" width="3" height="12" rx="1"/>
+      </svg>
+      <svg width="16" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+        <path d="M1.42 9a16 16 0 0121.16 0M5 12.55a11 11 0 0114.08 0M10.54 16.1a6 6 0 012.92 0"/><circle cx="12" cy="20" r="1"/>
+      </svg>
+      <svg width="22" height="12" viewBox="0 0 24 12" fill="currentColor">
+        <rect x="0" y="1" width="20" height="10" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.5"/>
+        <rect x="1.5" y="2.5" width="15" height="7" rx="1.5"/>
+        <path d="M21 4v4a2 2 0 000-4z"/>
+      </svg>
+    </div>
+  </div>
+
+  <!-- ═══ LIST VIEW ═══ -->
+  <div class="list-view" id="listView">
+
+    <!-- App header -->
+    <div class="app-header">
+      <div class="app-logo">Map<span>Job</span></div>
+      <div class="app-header-actions">
+        <button class="icon-btn" title="Powiadomienia">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
+        </button>
+        <button class="icon-btn">
+          <div style="width:24px;height:24px;border-radius:50%;background:linear-gradient(135deg,#6366F1,#8B5CF6);display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:white;">PZ</div>
+        </button>
+      </div>
+    </div>
+
+    <!-- Search pill -->
+    <div class="search-pill" onclick="document.getElementById('searchInput').focus()">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+      <span class="search-pill-text" id="searchInput">Frontend Developer</span>
+      <span class="search-pill-location">📍 Kraków</span>
+    </div>
+
+    <!-- Filter chips -->
+    <div class="filter-chips">
+      <div class="chip active">
+        Zdalnie
+        <span class="chip-count">54</span>
+      </div>
+      <div class="chip">
+        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 100 7h5a3.5 3.5 0 110 7H6"/></svg>
+        10k+ PLN
+      </div>
+      <div class="chip">React</div>
+      <div class="chip">TypeScript</div>
+      <div class="chip">Senior</div>
+      <div class="chip">
+        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        &lt;30 min
+      </div>
+    </div>
+
+    <!-- Tab switcher -->
+    <div class="tab-switcher">
+      <button class="tab-btn active" onclick="showList()">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+        Lista
+      </button>
+      <button class="tab-btn" onclick="showMap()">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg>
+        Mapa
+      </button>
+    </div>
+
+    <!-- Results bar -->
+    <div class="results-bar">
+      <span class="res-count"><strong>127</strong> ofert · Kraków</span>
+      <span class="sort-mini">
+        Najtrafniejsze
+        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+      </span>
+    </div>
+
+    <!-- Job list -->
+    <div class="job-list">
+
+      <!-- Card 1 – Featured -->
+      <div class="m-card featured" onclick="showDetail()">
+        <div class="m-card-top">
+          <div class="m-logo" style="background:linear-gradient(135deg,#4F46E5,#6366F1)">CD</div>
+          <div class="m-card-head">
+            <div class="m-company">Codewise Sp. z o.o.</div>
+            <div class="m-title">Senior Frontend Developer</div>
+          </div>
+          <button class="m-save on" onclick="event.stopPropagation()">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="#D97706" stroke="#D97706" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"/></svg>
+          </button>
+        </div>
+        <div class="m-info-row">
+          <span class="m-badge remote">Zdalnie</span>
+          <div class="m-location">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            Podgórze
+          </div>
+        </div>
+        <div class="m-bottom-row">
+          <div>
+            <div class="m-salary">15–22k PLN</div>
+            <div class="m-salary-sub">netto · B2B</div>
+          </div>
+          <div class="m-commute-pills">
+            <span class="m-commute-pill car">🚗 12 min</span>
+            <span class="m-commute-pill bike">🚴 26 min</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 2 -->
+      <div class="m-card" onclick="showDetail()">
+        <div class="m-card-top">
+          <div class="m-logo" style="background:linear-gradient(135deg,#0891B2,#06B6D4)">KA</div>
+          <div class="m-card-head">
+            <div class="m-company">Kainos Kraków</div>
+            <div class="m-title">UX/UI Designer (Senior)</div>
+          </div>
+          <button class="m-save" onclick="event.stopPropagation()">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"/></svg>
+          </button>
+        </div>
+        <div class="m-info-row">
+          <span class="m-badge hybrid">Hybrydowo</span>
+          <div class="m-location">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            Kazimierz
+          </div>
+        </div>
+        <div class="m-bottom-row">
+          <div>
+            <div class="m-salary">10–14k PLN</div>
+            <div class="m-salary-sub">netto · B2B</div>
+          </div>
+          <div class="m-commute-pills">
+            <span class="m-commute-pill car">🚗 8 min</span>
+            <span class="m-commute-pill walk">🚶 22 min</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 3 -->
+      <div class="m-card" onclick="showDetail()">
+        <div class="m-card-top">
+          <div class="m-logo" style="background:linear-gradient(135deg,#059669,#10B981)">AB</div>
+          <div class="m-card-head">
+            <div class="m-company">Allegro Tech</div>
+            <div class="m-title">Product Manager</div>
+          </div>
+          <button class="m-save" onclick="event.stopPropagation()">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"/></svg>
+          </button>
+        </div>
+        <div class="m-info-row">
+          <span class="m-badge hybrid">Hybrydowo</span>
+          <div class="m-location">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            Stare Miasto
+          </div>
+        </div>
+        <div class="m-bottom-row">
+          <div>
+            <div class="m-salary">13–19k PLN</div>
+            <div class="m-salary-sub">netto · B2B / UoP</div>
+          </div>
+          <div class="m-commute-pills">
+            <span class="m-commute-pill car">🚗 5 min</span>
+            <span class="m-commute-pill walk">🚶 11 min</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 4 -->
+      <div class="m-card" onclick="showDetail()">
+        <div class="m-card-top">
+          <div class="m-logo" style="background:linear-gradient(135deg,#DC2626,#EF4444)">MK</div>
+          <div class="m-card-head">
+            <div class="m-company">Motorola Solutions</div>
+            <div class="m-title">Backend Developer – Node.js</div>
+          </div>
+          <button class="m-save" onclick="event.stopPropagation()">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"/></svg>
+          </button>
+        </div>
+        <div class="m-info-row">
+          <span class="m-badge remote">Zdalnie</span>
+          <div class="m-location">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            Zabłocie
+          </div>
+        </div>
+        <div class="m-bottom-row">
+          <div>
+            <div class="m-salary">16–24k PLN</div>
+            <div class="m-salary-sub">netto · B2B</div>
+          </div>
+          <div class="m-commute-pills">
+            <span class="m-commute-pill car">🚗 15 min</span>
+            <span class="m-commute-pill transit">🚌 22 min</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 5 -->
+      <div class="m-card" onclick="showDetail()">
+        <div class="m-card-top">
+          <div class="m-logo" style="background:linear-gradient(135deg,#7C3AED,#8B5CF6)">SA</div>
+          <div class="m-card-head">
+            <div class="m-company">Sabre Corporation</div>
+            <div class="m-title">Data Engineer / Analyst</div>
+          </div>
+          <button class="m-save" onclick="event.stopPropagation()">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"/></svg>
+          </button>
+        </div>
+        <div class="m-info-row">
+          <span class="m-badge hybrid">Hybrydowo</span>
+          <div class="m-location">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            Krowodrza
+          </div>
+        </div>
+        <div class="m-bottom-row">
+          <div>
+            <div class="m-salary">9–14k PLN</div>
+            <div class="m-salary-sub">netto · UoP</div>
+          </div>
+          <div class="m-commute-pills">
+            <span class="m-commute-pill car">🚗 19 min</span>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /job-list -->
+
+    <!-- Map FAB -->
+    <button class="map-fab" onclick="showMap()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/></svg>
+      Pokaż na mapie
+    </button>
+
+  </div><!-- /list-view -->
+
+  <!-- ═══ MAP VIEW ═══ -->
+  <div class="map-view" id="mapView">
+
+    <!-- Map top search -->
+    <div class="map-top-bar" onclick="showList()">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+      <span style="flex:1;color:var(--text-muted);">Frontend Developer</span>
+      <span style="font-size:12px;color:var(--primary);font-weight:600;">📍 Kraków</span>
+    </div>
+
+    <!-- Map filter chips -->
+    <div class="map-filters">
+      <div class="m-filter-chip active">🚗 Auto</div>
+      <div class="m-filter-chip">🚴 Rower</div>
+      <div class="m-filter-chip">🚌 MPK</div>
+      <div class="m-filter-chip">🚶 Pieszo</div>
+      <div class="m-filter-chip">Tylko zdalne</div>
+    </div>
+
+    <!-- Map background -->
+    <div class="map-bg">
+      <svg viewBox="0 0 390 580" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+        <rect width="390" height="580" fill="#e8ede3"/>
+        <!-- Parks -->
+        <ellipse cx="90" cy="400" rx="65" ry="45" fill="#d4e6c3" opacity="0.7"/>
+        <ellipse cx="320" cy="160" rx="50" ry="35" fill="#d4e6c3" opacity="0.6"/>
+        <!-- Wisła -->
+        <path d="M0 310 Q100 295 180 320 Q260 340 340 325 Q370 318 390 322" fill="none" stroke="#a8d4f5" stroke-width="22" stroke-linecap="round" opacity="0.8"/>
+        <path d="M0 310 Q100 295 180 320 Q260 340 340 325 Q370 318 390 322" fill="none" stroke="#c5e3fa" stroke-width="12" stroke-linecap="round" opacity="0.6"/>
+        <!-- Roads -->
+        <line x1="195" y1="0" x2="190" y2="580" stroke="#fff" stroke-width="4.5" opacity="0.8"/>
+        <line x1="150" y1="0" x2="148" y2="310" stroke="#fff" stroke-width="3.5" opacity="0.7"/>
+        <line x1="170" y1="225" x2="280" y2="298" stroke="#fff" stroke-width="3.5" opacity="0.7"/>
+        <line x1="220" y1="170" x2="320" y2="248" stroke="#fff" stroke-width="4" opacity="0.7"/>
+        <line x1="80" y1="160" x2="190" y2="205" stroke="#fff" stroke-width="4" opacity="0.7"/>
+        <line x1="175" y1="335" x2="210" y2="580" stroke="#fff" stroke-width="3.5" opacity="0.6"/>
+        <!-- Ring road -->
+        <path d="M70 140 Q190 75 300 120 Q370 150 385 260" fill="none" stroke="#e8c97a" stroke-width="5" opacity="0.55"/>
+        <!-- Blocks -->
+        <rect x="140" y="155" width="35" height="25" rx="3" fill="#d6dbe3" opacity="0.6"/>
+        <rect x="180" y="145" width="42" height="30" rx="3" fill="#d6dbe3" opacity="0.6"/>
+        <rect x="230" y="175" width="30" height="22" rx="3" fill="#d6dbe3" opacity="0.6"/>
+        <rect x="240" y="335" width="50" height="30" rx="3" fill="#d6dbe3" opacity="0.5"/>
+        <!-- Wawel -->
+        <rect x="170" y="266" width="24" height="15" rx="3" fill="#c8a96e" opacity="0.5"/>
+        <!-- Commute radius circle -->
+        <circle cx="195" cy="385" r="80" fill="rgba(37,99,235,0.05)" stroke="rgba(37,99,235,0.18)" stroke-width="1.5" stroke-dasharray="5,4"/>
+        <!-- District labels -->
+        <text x="100" y="145" font-family="Inter,sans-serif" font-size="9" font-weight="600" fill="rgba(0,0,0,0.28)" letter-spacing="1.2" text-anchor="middle">KROWODRZA</text>
+        <text x="180" y="178" font-family="Inter,sans-serif" font-size="9" font-weight="600" fill="rgba(0,0,0,0.28)" letter-spacing="1.2" text-anchor="middle">STARE MIASTO</text>
+        <text x="270" y="200" font-family="Inter,sans-serif" font-size="9" font-weight="600" fill="rgba(0,0,0,0.28)" letter-spacing="1.2" text-anchor="middle">GRZEGÓRZKI</text>
+        <text x="185" y="270" font-family="Inter,sans-serif" font-size="9" font-weight="600" fill="rgba(0,0,0,0.28)" letter-spacing="1.2" text-anchor="middle">KAZIMIERZ</text>
+        <text x="265" y="300" font-family="Inter,sans-serif" font-size="9" font-weight="600" fill="rgba(0,0,0,0.28)" letter-spacing="1.2" text-anchor="middle">ZABŁOCIE</text>
+        <text x="195" y="400" font-family="Inter,sans-serif" font-size="9" font-weight="600" fill="rgba(0,0,0,0.28)" letter-spacing="1.2" text-anchor="middle">PODGÓRZE</text>
+        <text x="75" y="330" font-family="Inter,sans-serif" font-size="9" font-weight="600" fill="rgba(0,0,0,0.22)" letter-spacing="1.2" text-anchor="middle">DĘBNIKI</text>
+        <text x="80" y="95" font-family="Inter,sans-serif" font-size="9" font-weight="600" fill="rgba(0,0,0,0.22)" letter-spacing="1.2" text-anchor="middle">BRONOWICE</text>
+        <text x="68" y="312" font-family="Inter,sans-serif" font-size="8" font-style="italic" fill="rgba(100,160,220,0.7)">Wisła</text>
+      </svg>
+
+      <!-- Map Pins -->
+      <div class="m-pin active" style="left:50%;top:66%;" onclick="scrollToMapCard(0)">
+        <div class="m-pin-dot" style="background:linear-gradient(135deg,#4F46E5,#6366F1)">CD</div>
+      </div>
+      <div class="m-pin" style="left:46%;top:45%;" onclick="scrollToMapCard(1)">
+        <div class="m-pin-dot" style="background:linear-gradient(135deg,#0891B2,#06B6D4)">KA</div>
+      </div>
+      <div class="m-pin" style="left:48%;top:30%;" onclick="scrollToMapCard(2)">
+        <div class="m-pin-dot" style="background:linear-gradient(135deg,#059669,#10B981)">AB</div>
+      </div>
+      <div class="m-pin" style="left:65%;top:52%;" onclick="scrollToMapCard(3)">
+        <div class="m-pin-dot" style="background:linear-gradient(135deg,#DC2626,#EF4444)">MK</div>
+      </div>
+      <div class="m-pin" style="left:26%;top:28%;" onclick="scrollToMapCard(4)">
+        <div class="m-pin-dot" style="background:linear-gradient(135deg,#7C3AED,#8B5CF6)">SA</div>
+      </div>
+    </div><!-- /map-bg -->
+
+    <!-- Bottom cards stack -->
+    <div class="map-cards-stack" id="mapCardsStack">
+      <div class="map-mini-card active" onclick="showDetail()">
+        <div class="map-mini-logo" style="background:linear-gradient(135deg,#4F46E5,#6366F1)">CD</div>
+        <div class="map-mini-body">
+          <div class="map-mini-company">Codewise</div>
+          <div class="map-mini-title">Senior Frontend Developer</div>
+          <div class="map-mini-salary">15 000 – 22 000 PLN</div>
+          <div class="map-mini-commute">🚗 12 min · Podgórze</div>
+        </div>
+      </div>
+      <div class="map-mini-card" onclick="showDetail()">
+        <div class="map-mini-logo" style="background:linear-gradient(135deg,#0891B2,#06B6D4)">KA</div>
+        <div class="map-mini-body">
+          <div class="map-mini-company">Kainos</div>
+          <div class="map-mini-title">UX/UI Designer (Senior)</div>
+          <div class="map-mini-salary">10 000 – 14 000 PLN</div>
+          <div class="map-mini-commute">🚗 8 min · Kazimierz</div>
+        </div>
+      </div>
+      <div class="map-mini-card" onclick="showDetail()">
+        <div class="map-mini-logo" style="background:linear-gradient(135deg,#059669,#10B981)">AB</div>
+        <div class="map-mini-body">
+          <div class="map-mini-company">Allegro Tech</div>
+          <div class="map-mini-title">Product Manager</div>
+          <div class="map-mini-salary">13 000 – 19 000 PLN</div>
+          <div class="map-mini-commute">🚗 5 min · Stare Miasto</div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /map-view -->
+
+  <!-- ═══ DETAIL VIEW ═══ -->
+  <div class="detail-view" id="detailView">
+
+    <div class="detail-back" onclick="showList()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+      Wróć do listy
+    </div>
+
+    <div class="detail-hero">
+      <div class="detail-company-row">
+        <div class="detail-logo-sm" style="background:linear-gradient(135deg,#4F46E5,#6366F1)">CD</div>
+        <div>
+          <div class="detail-company-name">Codewise Sp. z o.o.</div>
+          <div style="font-size:11px;color:var(--text-muted);">★ 4,3 · Zweryfikowana firma</div>
+        </div>
+      </div>
+
+      <div class="detail-title">Senior Frontend Developer</div>
+      <div class="detail-salary">15 000 – 22 000 PLN <span>netto · B2B / UoP</span></div>
+
+      <button class="detail-apply-btn">Aplikuj teraz →</button>
+
+      <div class="detail-commute-row">
+        <div class="detail-chip">🚗 12 min autem</div>
+        <div class="detail-chip">🚴 26 min rowerem</div>
+        <div class="detail-chip">🚌 18 min MPK</div>
+      </div>
+
+      <div style="margin-top:12px;font-size:12px;color:var(--text-muted);display:flex;align-items:center;gap:4px;">
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        Podgórze, ul. Zabłocie 43 · Adres zweryfikowany
+      </div>
+    </div>
+
+    <div class="detail-section">
+      <div class="detail-section-title">Wymagania (must have)</div>
+      <ul class="detail-list">
+        <li>React.js 4+ lata doświadczenia produkcyjnego</li>
+        <li>TypeScript (generics, conditional types)</li>
+        <li>Next.js (SSR, ISR, App Router)</li>
+        <li>Testy: Jest + Cypress lub Playwright</li>
+        <li>Angielski B2+ (dzienny kontakt z teamem)</li>
+      </ul>
+    </div>
+
+    <div class="detail-section">
+      <div class="detail-section-title">Co oferujemy</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+        <div style="background:var(--bg);border-radius:10px;padding:10px;font-size:12px;">
+          <div style="font-size:18px;margin-bottom:4px;">💰</div>
+          <div style="font-weight:600;color:var(--text);">15–22k PLN netto</div>
+          <div style="color:var(--text-muted);">B2B lub UoP</div>
+        </div>
+        <div style="background:var(--bg);border-radius:10px;padding:10px;font-size:12px;">
+          <div style="font-size:18px;margin-bottom:4px;">🏠</div>
+          <div style="font-weight:600;color:var(--text);">Pełna zdalność</div>
+          <div style="color:var(--text-muted);">+ biuro w Krakowie</div>
+        </div>
+        <div style="background:var(--bg);border-radius:10px;padding:10px;font-size:12px;">
+          <div style="font-size:18px;margin-bottom:4px;">📚</div>
+          <div style="font-weight:600;color:var(--text);">5 000 PLN/rok</div>
+          <div style="color:var(--text-muted);">budżet szkoleniowy</div>
+        </div>
+        <div style="background:var(--bg);border-radius:10px;padding:10px;font-size:12px;">
+          <div style="font-size:18px;margin-bottom:4px;">🏥</div>
+          <div style="font-weight:600;color:var(--text);">LuxMed Premium</div>
+          <div style="color:var(--text-muted);">dla Ciebie + rodziny</div>
+        </div>
+      </div>
+    </div>
+
+    <div style="padding:16px;background:var(--surface);">
+      <button onclick="showList()" style="width:100%;padding:12px;border:1.5px solid var(--border);border-radius:10px;background:none;font-family:inherit;font-size:14px;font-weight:600;color:var(--text-secondary);cursor:pointer;">
+        ← Wróć do listy ofert
+      </button>
+    </div>
+
+  </div><!-- /detail-view -->
+
+  <!-- ══════ BOTTOM NAV ══════ -->
+  <nav class="bottom-nav">
+    <div class="nav-item active" onclick="showList()">
+      <span class="nav-icon">🔍</span>
+      <span class="nav-label">Szukaj</span>
+      <div class="nav-dot"></div>
+    </div>
+    <div class="nav-item" onclick="showMap()">
+      <span class="nav-icon">🗺️</span>
+      <span class="nav-label">Mapa</span>
+    </div>
+    <div class="nav-item">
+      <span class="nav-icon">🔔</span>
+      <span class="nav-label">Alerty</span>
+    </div>
+    <div class="nav-item">
+      <span class="nav-icon">❤️</span>
+      <span class="nav-label">Zapisane</span>
+    </div>
+    <div class="nav-item">
+      <span class="nav-icon">👤</span>
+      <span class="nav-label">Profil</span>
+    </div>
+  </nav>
+
+</div><!-- /device-frame -->
+
+<script>
+function showList() {
+  document.getElementById('listView').style.display = 'flex';
+  document.getElementById('mapView').style.display = 'none';
+  document.getElementById('detailView').style.display = 'none';
+  updateNav(0);
+}
+function showMap() {
+  document.getElementById('listView').style.display = 'none';
+  document.getElementById('mapView').style.display = 'block';
+  document.getElementById('detailView').style.display = 'none';
+  updateNav(1);
+  // Sync tab switcher
+  document.querySelectorAll('.tab-btn').forEach((b,i) => b.classList.toggle('active', i === 1));
+}
+function showDetail() {
+  document.getElementById('listView').style.display = 'none';
+  document.getElementById('mapView').style.display = 'none';
+  document.getElementById('detailView').style.display = 'block';
+  document.getElementById('detailView').scrollTop = 0;
+  updateNav(0);
+}
+function updateNav(active) {
+  document.querySelectorAll('.nav-item').forEach((n,i) => {
+    n.classList.toggle('active', i === active);
+    const dot = n.querySelector('.nav-dot');
+    if (dot) dot.remove();
+    if (i === active) {
+      const d = document.createElement('div');
+      d.className = 'nav-dot';
+      n.appendChild(d);
+    }
+  });
+}
+function scrollToMapCard(idx) {
+  const stack = document.getElementById('mapCardsStack');
+  const cards = stack.querySelectorAll('.map-mini-card');
+  document.querySelectorAll('.m-pin').forEach((p,i) => p.classList.toggle('active', i === idx));
+  cards.forEach((c,i) => c.classList.toggle('active', i === idx));
+  if (cards[idx]) cards[idx].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+}
+// Tab btn sync
+document.querySelectorAll('.tab-btn').forEach((btn, i) => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach((b,j) => b.classList.toggle('active', j === i));
+    if (i === 0) showList(); else showMap();
+  });
+});
+</script>
+</body>
+</html>
