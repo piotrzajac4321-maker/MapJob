@@ -602,67 +602,68 @@ body{
 .rec-step-title{font-size:12.5px;font-weight:700;color:var(--text);margin-bottom:2px;}
 .rec-step-desc{font-size:11px;color:var(--text3);line-height:1.5;}
 
-/* ═══ CHAT SCREEN ═══ */
-.chat-list{flex:1;overflow-y:auto;padding:10px 14px;display:flex;flex-direction:column;gap:6px;scrollbar-width:none;}
-.chat-list::-webkit-scrollbar{display:none;}
-.chat-item{
-  display:flex;gap:10px;align-items:center;
-  padding:11px 10px;border-radius:12px;
-  background:var(--surf);border:1px solid var(--line);
-  cursor:pointer;transition:background .15s;
+/* ═══ EMPLOYER PROFILE SCREEN ═══ */
+.emp-cover{
+  height:100px;flex-shrink:0;
+  background:linear-gradient(135deg,#1a1f2e,#252A35);
+  position:relative;border-bottom:1px solid var(--line);
 }
-.chat-item:hover{background:var(--surf2);}
-.chat-av{
-  width:42px;height:42px;border-radius:11px;
+.emp-logo{
+  position:absolute;left:16px;bottom:-24px;
+  width:56px;height:56px;border-radius:14px;
+  border:2px solid var(--bg);
   display:flex;align-items:center;justify-content:center;
-  font-size:14px;font-weight:900;color:#fff;flex-shrink:0;
-  position:relative;
+  font-size:18px;font-weight:900;color:#fff;
+  box-shadow:0 4px 16px rgba(0,0,0,.4);
 }
-.chat-av .online{
-  position:absolute;bottom:1px;right:1px;
-  width:9px;height:9px;border-radius:50%;
-  background:var(--green);border:1.5px solid var(--surf);
-}
-.chat-body{flex:1;min-width:0;}
-.chat-name{font-size:13px;font-weight:700;color:var(--text);margin-bottom:1px;}
-.chat-preview{font-size:11.5px;color:var(--text3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.chat-meta{text-align:right;flex-shrink:0;}
-.chat-time{font-size:10px;color:var(--text3);margin-bottom:4px;}
-.chat-unread{
-  width:18px;height:18px;border-radius:50%;
-  background:var(--blue);color:#fff;
-  font-size:10px;font-weight:700;
-  display:flex;align-items:center;justify-content:center;
-  margin-left:auto;
-}
-
-/* Active chat */
-.chat-messages{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:10px;background:var(--bg);scrollbar-width:none;}
-.chat-messages::-webkit-scrollbar{display:none;}
-.chat-day{align-self:center;font-size:10px;color:var(--text3);
-  background:var(--surf2);padding:3px 10px;border-radius:20px;}
-.msg{max-width:80%;padding:9px 12px;font-size:12.5px;line-height:1.45;border-radius:14px;}
-.msg.them{align-self:flex-start;background:var(--surf);border:1px solid var(--line3);border-bottom-left-radius:4px;color:var(--text);}
-.msg.me{align-self:flex-end;background:var(--blue);color:#fff;border-bottom-right-radius:4px;}
-.msg .mt{display:block;font-size:9px;opacity:.6;margin-top:3px;}
-.chat-input{
-  flex-shrink:0;height:58px;
-  display:flex;align-items:center;gap:9px;
-  padding:0 14px;
-  background:var(--bg2);border-top:1px solid var(--line);
-}
-.chat-field{
-  flex:1;height:38px;border-radius:20px;
+.emp-body{flex:1;overflow-y:auto;padding:36px 16px 80px;scrollbar-width:none;}
+.emp-body::-webkit-scrollbar{display:none;}
+.emp-name{font-size:17px;font-weight:900;color:var(--text);letter-spacing:-.02em;
+  display:flex;align-items:center;gap:8px;margin-bottom:2px;}
+.emp-meta{font-size:12px;color:var(--text3);margin-bottom:6px;}
+.emp-rating{font-size:12px;color:var(--gold);margin-bottom:14px;}
+.emp-stats{
+  display:grid;grid-template-columns:repeat(3,1fr);
   background:var(--surf);border:1px solid var(--line3);
-  padding:0 14px;font-family:var(--ff);font-size:13px;
-  color:var(--text);outline:none;
+  border-radius:12px;overflow:hidden;margin-bottom:16px;
 }
-.chat-field::placeholder{color:var(--text3);}
-.chat-send{
-  width:38px;height:38px;border-radius:50%;
-  background:var(--blue);border:none;cursor:pointer;
+.emp-about{
+  background:var(--surf);border:1px solid var(--line);
+  border-radius:12px;padding:14px;margin-bottom:14px;
+}
+.emp-about-text{font-size:12.5px;color:var(--text2);line-height:1.6;}
+.emp-jobs-title{
+  font-size:10.5px;font-weight:800;color:var(--text3);
+  text-transform:uppercase;letter-spacing:.07em;
+  margin-bottom:10px;display:flex;align-items:center;gap:8px;
+}
+.emp-jobs-title::after{content:'';flex:1;height:1px;background:var(--line);}
+.emp-jcard{
+  background:var(--surf);border:1px solid var(--line3);
+  border-radius:12px;padding:12px;margin-bottom:8px;
+  cursor:pointer;transition:border-color .15s;
+}
+.emp-jcard:hover{border-color:rgba(59,130,246,.3);}
+.emp-jcard-title{font-size:13px;font-weight:800;color:var(--text);margin-bottom:4px;}
+.emp-jcard-meta{font-size:11px;color:var(--text3);display:flex;gap:8px;flex-wrap:wrap;}
+.emp-jcard-pay{font-size:12px;font-weight:800;color:var(--green);margin-top:4px;}
+
+/* ═══ SIMILAR JOBS SECTION ═══ */
+.sim-card{
+  background:var(--surf);border:1px solid var(--line3);
+  border-radius:12px;padding:12px;
+  cursor:pointer;transition:border-color .15s;flex-shrink:0;width:220px;
+}
+.sim-card:hover{border-color:rgba(59,130,246,.3);}
+.sim-card-logo{
+  width:34px;height:34px;border-radius:9px;
   display:flex;align-items:center;justify-content:center;
+  font-size:11px;font-weight:900;color:#fff;margin-bottom:7px;
 }
+.sim-card-title{font-size:12.5px;font-weight:800;color:var(--text);margin-bottom:2px;line-height:1.3;}
+.sim-card-co{font-size:10.5px;color:var(--text3);margin-bottom:4px;}
+.sim-card-pay{font-size:12px;font-weight:800;color:var(--green);}
+.sim-card-cm{font-size:10.5px;color:var(--text3);margin-top:3px;}
 
 /* ═══ PROFILE SCREEN ═══ */
 .pf-cover{
@@ -850,11 +851,6 @@ body{
           <span class="pay-val">15 000–22 000 zł</span>
           <span class="pay-meta">netto · B2B / UoP</span>
         </div>
-        <div class="jcard-commute">
-          <span class="cm-pill cm-car">🚗 12 min</span>
-          <span class="cm-pill cm-bike">🚴 26 min</span>
-          <span class="cm-pill cm-transit">🚌 18 min</span>
-        </div>
         <div class="jcard-tags">
           <span class="jtag hot">React</span>
           <span class="jtag hot">TypeScript</span>
@@ -891,10 +887,6 @@ body{
           <span class="pay-val">6 500–8 200 zł</span>
           <span class="pay-meta">brutto · UoP</span>
         </div>
-        <div class="jcard-commute">
-          <span class="cm-pill cm-car">🚗 8 min</span>
-          <span class="cm-pill cm-bike">🚴 18 min</span>
-        </div>
         <div class="jcard-tags">
           <span class="jtag">Elektryk</span>
           <span class="jtag">Instalacje</span>
@@ -929,10 +921,6 @@ body{
           <span class="pay-val">5 800–7 000 zł</span>
           <span class="pay-meta">brutto · UoP</span>
         </div>
-        <div class="jcard-commute">
-          <span class="cm-pill cm-car">🚗 11 min</span>
-          <span class="cm-pill cm-transit">🚌 24 min</span>
-        </div>
         <div class="jcard-tags">
           <span class="jtag">CNC</span><span class="jtag">Tokarstwo</span><span class="jtag">2 zmiany</span>
         </div>
@@ -966,10 +954,6 @@ body{
           <span class="pay-val">7 200–9 500 zł</span>
           <span class="pay-meta">brutto · UoP</span>
         </div>
-        <div class="jcard-commute">
-          <span class="cm-pill cm-car">🚗 19 min</span>
-          <span class="cm-pill cm-transit">🚌 38 min</span>
-        </div>
         <div class="jcard-tags">
           <span class="jtag">Kat. C+E</span><span class="jtag">ADR</span><span class="jtag">Kraj</span>
         </div>
@@ -1001,9 +985,6 @@ body{
         <div class="jcard-pay">
           <span class="pay-val">9 000–14 000 zł</span>
           <span class="pay-meta">netto · B2B</span>
-        </div>
-        <div class="jcard-commute">
-          <span class="cm-pill cm-car">🚗 14 min</span>
         </div>
         <div class="jcard-tags"><span class="jtag">Python</span><span class="jtag">SQL</span><span class="jtag">dbt</span><span class="jtag">Airflow</span></div>
         <div class="jcard-foot">
@@ -1041,13 +1022,6 @@ body{
           <svg viewBox="0 0 24 24"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/></svg>
         </div>
         <span class="ni-lbl">Mapa</span>
-      </button>
-      <button class="ni" onclick="switchScreen('czat')">
-        <div class="ni-icon" style="position:relative">
-          <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
-          <div style="position:absolute;top:-3px;right:-3px;width:8px;height:8px;border-radius:50%;background:var(--red);border:1.5px solid var(--bg2);"></div>
-        </div>
-        <span class="ni-lbl">Czat</span>
       </button>
       <button class="ni" onclick="switchScreen('profil')">
         <div class="ni-icon">
@@ -1215,10 +1189,6 @@ body{
         <span class="ni-lbl" style="color:var(--blue);">Mapa</span>
         <div class="ni-dot"></div>
       </button>
-      <button class="ni" onclick="switchScreen('czat')">
-        <div class="ni-icon" style="position:relative"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg><div style="position:absolute;top:-3px;right:-3px;width:8px;height:8px;border-radius:50%;background:var(--red);border:1.5px solid var(--bg2);"></div></div>
-        <span class="ni-lbl">Czat</span>
-      </button>
       <button class="ni" onclick="switchScreen('profil')">
         <div class="ni-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0116 0"/></svg></div>
         <span class="ni-lbl">Profil</span>
@@ -1266,9 +1236,9 @@ body{
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"/></svg>
             Zapisz
           </button>
-          <button class="det-sec-btn">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
-            Czat
+          <button class="det-sec-btn" onclick="showEmployer()">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/></svg>
+            Firma
           </button>
           <button class="det-sec-btn">
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
@@ -1277,32 +1247,13 @@ body{
         </div>
       </div>
 
-      <!-- Commute box -->
-      <div class="det-commute">
-        <div class="det-commute-title">Czas dojazdu z Twojej lokalizacji</div>
-        <div class="det-commute-grid">
-          <div class="dcm-item">
-            <span class="dcm-icon">🚗</span>
-            <span class="dcm-mode">Autem</span>
-            <span class="dcm-time dcm-car">12 min</span>
-          </div>
-          <div class="dcm-item">
-            <span class="dcm-icon">🚴</span>
-            <span class="dcm-mode">Rowerem</span>
-            <span class="dcm-time dcm-bike">26 min</span>
-          </div>
-          <div class="dcm-item">
-            <span class="dcm-icon">🚌</span>
-            <span class="dcm-mode">MPK</span>
-            <span class="dcm-time dcm-transit">18 min</span>
-          </div>
-          <div class="dcm-item">
-            <span class="dcm-icon">🚶</span>
-            <span class="dcm-mode">Pieszo</span>
-            <span class="dcm-time dcm-walk">38 min</span>
-          </div>
+      <!-- Location info -->
+      <div style="margin:10px 14px 0;padding:12px 14px;background:var(--surf);border:1px solid var(--line);border-radius:12px;display:flex;align-items:center;gap:10px;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--blue2)" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        <div>
+          <div style="font-size:12.5px;font-weight:700;color:var(--text);">ul. Zabłocie 43, Podgórze</div>
+          <div style="font-size:10.5px;color:var(--green);margin-top:1px;">✓ Adres zweryfikowany</div>
         </div>
-        <div class="det-commute-note">📍 ul. Zabłocie 43 · adres zweryfikowany</div>
       </div>
 
       <!-- Requirements -->
@@ -1369,8 +1320,66 @@ body{
         <div style="font-size:11px;color:var(--text3);">Poziom<br><b style="color:var(--text2);font-size:12px;font-weight:700;">Senior / Expert</b></div>
       </div>
 
+      <!-- More from employer -->
+      <div class="det-section" style="cursor:pointer;" onclick="showEmployer()">
+        <div class="det-sec-title">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/></svg>
+          Więcej od Codewise Sp. z o.o.
+        </div>
+        <div style="display:flex;gap:10px;align-items:center;margin-bottom:10px;">
+          <div style="width:44px;height:44px;border-radius:11px;background:linear-gradient(135deg,#4F46E5,#6366F1);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:900;color:#fff;flex-shrink:0;border:1px solid var(--line3);">CD</div>
+          <div>
+            <div style="font-size:13px;font-weight:800;color:var(--text);">Codewise Sp. z o.o.</div>
+            <div style="font-size:11px;color:var(--text3);">Technologia reklamowa · ✓ Zweryfikowana · ★ 4,3</div>
+          </div>
+          <div style="margin-left:auto;font-size:11px;font-weight:700;color:var(--blue);">Zobacz profil →</div>
+        </div>
+        <div class="emp-jcard" onclick="event.stopPropagation();showEmployer()">
+          <div class="emp-jcard-title">Full-Stack Engineer (React + Node)</div>
+          <div class="emp-jcard-meta"><span>🏠 Zdalnie</span><span>📍 Kraków</span></div>
+          <div class="emp-jcard-pay">12 000–18 000 zł netto</div>
+        </div>
+        <div class="emp-jcard" onclick="event.stopPropagation();showEmployer()">
+          <div class="emp-jcard-title">Product Designer</div>
+          <div class="emp-jcard-meta"><span>🏠 Hybrydowo</span><span>📍 Kraków</span></div>
+          <div class="emp-jcard-pay">9 000–13 000 zł netto</div>
+        </div>
+        <div style="text-align:center;margin-top:10px;font-size:11.5px;font-weight:700;color:var(--blue);">Wszystkie 7 ogłoszeń firmy →</div>
+      </div>
+
+      <!-- Similar jobs -->
+      <div style="margin:10px 14px 0;">
+        <div style="font-size:10.5px;font-weight:800;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:10px;display:flex;align-items:center;gap:8px;">
+          Podobne oferty
+          <span style="flex:1;height:1px;background:var(--line);display:block;"></span>
+        </div>
+        <div style="display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;padding-bottom:4px;">
+          <div class="sim-card" onclick="switchScreen('detail')">
+            <div class="sim-card-logo" style="background:linear-gradient(135deg,#7C3AED,#8B5CF6)">SA</div>
+            <div class="sim-card-title">Frontend Developer</div>
+            <div class="sim-card-co">Sabre Corp. · Krowodrza</div>
+            <div class="sim-card-pay">9 000–14 000 zł</div>
+            <div class="sim-card-cm">📍 3,8 km · Zdalnie</div>
+          </div>
+          <div class="sim-card" onclick="switchScreen('detail')">
+            <div class="sim-card-logo" style="background:linear-gradient(135deg,#0891B2,#06B6D4)">AB</div>
+            <div class="sim-card-title">React Developer</div>
+            <div class="sim-card-co">Abantu Digital · Śródmieście</div>
+            <div class="sim-card-pay">11 000–16 000 zł</div>
+            <div class="sim-card-cm">📍 1,2 km · Hybrydowo</div>
+          </div>
+          <div class="sim-card" onclick="switchScreen('detail')">
+            <div class="sim-card-logo" style="background:linear-gradient(135deg,#059669,#10B981)">GR</div>
+            <div class="sim-card-title">Senior JS Developer</div>
+            <div class="sim-card-co">Gremi Media · Zabłocie</div>
+            <div class="sim-card-pay">13 000–19 000 zł</div>
+            <div class="sim-card-cm">📍 0,6 km · Stacjonarnie</div>
+          </div>
+        </div>
+      </div>
+
       <!-- Footer link -->
-      <div style="padding:14px;text-align:center;">
+      <div style="padding:16px;text-align:center;">
         <span style="font-size:11px;color:var(--text3);cursor:pointer;text-decoration:underline;">Zgłoś problem z ogłoszeniem</span>
       </div>
     </div>
@@ -1378,83 +1387,89 @@ body{
     <div class="bnav">
       <button class="ni" onclick="switchScreen('lista')"><div class="ni-icon"><svg viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg></div><span class="ni-lbl">Oferty</span></button>
       <button class="ni" onclick="switchScreen('mapa')"><div class="ni-icon"><svg viewBox="0 0 24 24"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/></svg></div><span class="ni-lbl">Mapa</span></button>
-      <button class="ni" onclick="switchScreen('czat')"><div class="ni-icon"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></div><span class="ni-lbl">Czat</span></button>
       <button class="ni" onclick="switchScreen('profil')"><div class="ni-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0116 0"/></svg></div><span class="ni-lbl">Profil</span></button>
     </div>
   </div><!-- /screen-detail -->
 
-  <!-- ════ SCREEN: CZAT ════ -->
-  <div class="screen" id="screen-czat" style="padding-top:50px;">
+  <!-- ════ SCREEN: PROFIL PRACODAWCY ════ -->
+  <div class="screen" id="screen-employer" style="padding-top:50px;">
     <div class="tb">
-      <div class="tb-logo"><div class="tb-logo-mark"><svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></div>Wiadomości</div>
-      <div class="tb-spacer"></div>
-      <div class="tb-btn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg></div>
+      <div class="tb-back" onclick="goBack()">←</div>
+      <span class="tb-title" style="font-size:14px;">Profil firmy</span>
+      <div class="tb-btn">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+      </div>
     </div>
+    <div style="flex:1;overflow-y:auto;scrollbar-width:none;padding-bottom:80px;">
+      <!-- Cover + logo -->
+      <div class="emp-cover">
+        <div class="emp-logo" style="background:linear-gradient(135deg,#4F46E5,#6366F1);">CD</div>
+      </div>
+      <div class="emp-body">
+        <div class="emp-name">
+          Codewise Sp. z o.o.
+          <span style="font-size:9px;font-weight:900;padding:3px 8px;border-radius:6px;background:var(--blue-d);color:var(--blue2);border:1px solid var(--blue-m);">✓ ZWER.</span>
+        </div>
+        <div class="emp-meta">Technologia reklamowa · Kraków · 200–500 pracowników</div>
+        <div class="emp-rating">★★★★☆ 4,3 · 42 opinie pracowników</div>
 
-    <!-- Conversation list -->
-    <div class="chat-list">
-      <div class="chat-item" onclick="switchScreen('chat-active')">
-        <div class="chat-av" style="background:linear-gradient(135deg,#4F46E5,#6366F1)">CD<div class="online"></div></div>
-        <div class="chat-body">
-          <div class="chat-name">Codewise Sp. z o.o.</div>
-          <div class="chat-preview">Świetnie. Możemy umówić się na rozmowę...</div>
+        <!-- Stats -->
+        <div class="emp-stats">
+          <div class="pf-stat"><b>7</b><span>Ogłoszenia</span></div>
+          <div class="pf-stat"><b>4,3 ★</b><span>Ocena</span></div>
+          <div class="pf-stat"><b>2009</b><span>Założona</span></div>
         </div>
-        <div class="chat-meta">
-          <div class="chat-time">10:29</div>
-          <div class="chat-unread">2</div>
+
+        <!-- About -->
+        <div class="emp-about">
+          <div style="font-size:11px;font-weight:800;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:7px;">O firmie</div>
+          <div class="emp-about-text">Codewise to polska firma tworząca zaawansowane narzędzia do analizy i optymalizacji kampanii reklamowych online. Obsługujemy ponad 2 000 klientów w 60 krajach. Stawiamy na autonomię, brak mikrozarządzania i ciekawą technologię.</div>
         </div>
-      </div>
-      <div class="chat-item" onclick="switchScreen('chat-active')">
-        <div class="chat-av" style="background:linear-gradient(135deg,#DC2626,#EF4444)">P</div>
-        <div class="chat-body">
-          <div class="chat-name">Pramer Sp. z o.o.</div>
-          <div class="chat-preview">Dziękujemy za aplikację. Zapraszamy na...</div>
+
+        <!-- Tech stack chips -->
+        <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px;">
+          <span style="padding:4px 10px;border-radius:7px;background:var(--surf);border:1px solid var(--line3);font-size:11px;font-weight:600;color:var(--text2);">React</span>
+          <span style="padding:4px 10px;border-radius:7px;background:var(--surf);border:1px solid var(--line3);font-size:11px;font-weight:600;color:var(--text2);">Node.js</span>
+          <span style="padding:4px 10px;border-radius:7px;background:var(--surf);border:1px solid var(--line3);font-size:11px;font-weight:600;color:var(--text2);">TypeScript</span>
+          <span style="padding:4px 10px;border-radius:7px;background:var(--surf);border:1px solid var(--line3);font-size:11px;font-weight:600;color:var(--text2);">AWS</span>
+          <span style="padding:4px 10px;border-radius:7px;background:var(--surf);border:1px solid var(--line3);font-size:11px;font-weight:600;color:var(--text2);">PostgreSQL</span>
         </div>
-        <div class="chat-meta">
-          <div class="chat-time">wczoraj</div>
+
+        <!-- Job listings -->
+        <div class="emp-jobs-title">Aktywne ogłoszenia (7)</div>
+
+        <div class="emp-jcard" onclick="switchScreen('detail')">
+          <div class="emp-jcard-title">Senior Frontend Developer</div>
+          <div class="emp-jcard-meta"><span>🏠 Zdalnie</span><span>📍 Podgórze, ul. Zabłocie 43</span><span>⭐ Polecane</span></div>
+          <div class="emp-jcard-pay">15 000–22 000 zł netto</div>
         </div>
-      </div>
-      <div class="chat-item">
-        <div class="chat-av" style="background:linear-gradient(135deg,#0891B2,#06B6D4)">Z</div>
-        <div class="chat-body">
-          <div class="chat-name">Zetkama S.A.</div>
-          <div class="chat-preview">Twoje CV jest świetne. Czy jest Pan...</div>
+
+        <div class="emp-jcard" onclick="switchScreen('detail')">
+          <div class="emp-jcard-title">Full-Stack Engineer (React + Node)</div>
+          <div class="emp-jcard-meta"><span>🏠 Zdalnie</span><span>📍 Kraków</span></div>
+          <div class="emp-jcard-pay">12 000–18 000 zł netto</div>
         </div>
-        <div class="chat-meta">
-          <div class="chat-time">pon.</div>
+
+        <div class="emp-jcard" onclick="switchScreen('detail')">
+          <div class="emp-jcard-title">Product Designer</div>
+          <div class="emp-jcard-meta"><span>🏠 Hybrydowo</span><span>📍 Kraków</span></div>
+          <div class="emp-jcard-pay">9 000–13 000 zł netto</div>
         </div>
+
+        <div class="emp-jcard" onclick="switchScreen('detail')">
+          <div class="emp-jcard-title">Data Engineer</div>
+          <div class="emp-jcard-meta"><span>🏠 Zdalnie</span><span>📍 Kraków</span></div>
+          <div class="emp-jcard-pay">10 000–16 000 zł netto</div>
+        </div>
+
+        <div style="text-align:center;margin-top:8px;font-size:11.5px;font-weight:700;color:var(--text3);">+ 3 kolejne ogłoszenia</div>
       </div>
     </div>
 
     <div class="bnav">
       <button class="ni" onclick="switchScreen('lista')"><div class="ni-icon"><svg viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg></div><span class="ni-lbl">Oferty</span></button>
       <button class="ni" onclick="switchScreen('mapa')"><div class="ni-icon"><svg viewBox="0 0 24 24"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/></svg></div><span class="ni-lbl">Mapa</span></button>
-      <button class="ni"><div class="ni-icon" style="background:var(--blue-d);"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></div><span class="ni-lbl" style="color:var(--blue);">Czat</span><div class="ni-dot"></div></button>
       <button class="ni" onclick="switchScreen('profil')"><div class="ni-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0116 0"/></svg></div><span class="ni-lbl">Profil</span></button>
-    </div>
-  </div>
-
-  <!-- ════ SCREEN: CHAT ACTIVE ════ -->
-  <div class="screen" id="screen-chat-active" style="padding-top:50px;">
-    <div class="tb">
-      <div class="tb-back" onclick="switchScreen('czat')">←</div>
-      <div class="chat-av" style="background:linear-gradient(135deg,#4F46E5,#6366F1);width:32px;height:32px;border-radius:8px;font-size:11px;font-weight:900;">CD</div>
-      <div style="flex:1;min-width:0;">
-        <div style="font-size:13px;font-weight:700;color:var(--text);">Codewise Sp. z o.o.</div>
-        <div style="font-size:10.5px;color:var(--green);display:flex;align-items:center;gap:4px;"><span style="width:5px;height:5px;border-radius:50%;background:var(--green);display:inline-block;"></span>aktywny teraz</div>
-      </div>
-    </div>
-    <div class="chat-messages">
-      <div class="chat-day">Dzisiaj</div>
-      <div class="msg them">Dzień dobry, widzieliśmy Pana profil na MapJob. Czy jest Pan nadal zainteresowany stanowiskiem Senior Frontend Developera?<span class="mt">10:24</span></div>
-      <div class="msg me">Dzień dobry, tak — jak najbardziej. Bardzo interesująca oferta.<span class="mt">10:26</span></div>
-      <div class="msg them">Świetnie. Możemy umówić się na rozmowę wstępną w tym tygodniu?<span class="mt">10:27</span></div>
-      <div class="msg me">Pasuje mi czwartek po 15:00.<span class="mt">10:29</span></div>
-      <div class="msg them">Idealnie. Wyślę zaproszenie Google Meet na podany mail. Do zobaczenia!<span class="mt">10:31</span></div>
-    </div>
-    <div class="chat-input">
-      <input class="chat-field" placeholder="Napisz wiadomość…">
-      <button class="chat-send"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></button>
     </div>
   </div>
 
@@ -1490,10 +1505,9 @@ body{
       <div class="pf-row" style="cursor:pointer;border-bottom:none;"><div class="pf-row-ico">📋</div>Regulamin i polityka prywatności</div>
       <button class="pf-cta">Edytuj profil</button>
     </div>
-    <div class="bnav" style="position:fixed;">
+    <div class="bnav" style="position:absolute;">
       <button class="ni" onclick="switchScreen('lista')"><div class="ni-icon"><svg viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg></div><span class="ni-lbl">Oferty</span></button>
       <button class="ni" onclick="switchScreen('mapa')"><div class="ni-icon"><svg viewBox="0 0 24 24"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/></svg></div><span class="ni-lbl">Mapa</span></button>
-      <button class="ni" onclick="switchScreen('czat')"><div class="ni-icon"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></div><span class="ni-lbl">Czat</span></button>
       <button class="ni"><div class="ni-icon" style="background:var(--blue-d);"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0116 0"/></svg></div><span class="ni-lbl" style="color:var(--blue);">Profil</span><div class="ni-dot"></div></button>
     </div>
   </div>
@@ -1509,48 +1523,47 @@ body{
     <b>Nawigacja między ekranami:</b><br>
     🗒️ Oferty → lista kart<br>
     🗺️ Mapa → mapa z pinami<br>
-    💬 Czat → lista + aktywny czat<br>
     👤 Profil → profil kandydata<br>
-    Kliknij kartę → szczegóły oferty
+    Kliknij kartę → szczegóły oferty<br>
+    Szczegóły → przycisk "Firma" lub "Więcej od..." → profil pracodawcy<br>
+    Szczegóły → karty w "Podobne oferty" → inna oferta
   </div>
 
   <div class="ux-card">
     <div class="ux-card-title">
       <div class="dot" style="background:#10B981;"></div>
-      Co zostało ulepszone
+      Co zostało ulepszone (v3)
     </div>
     <div class="ux-item">Ciemny motyw <b>1:1 z repo</b> — tokeny, font Plus Jakarta Sans, border-radius 14px</div>
-    <div class="ux-item">Karta oferty: <b>czas dojazdu 3 trybami</b> widoczny od razu — USP nr 1 MapJob</div>
-    <div class="ux-item">Karta oferty: <b>wynagrodzenie zawsze zielone</b> i na pierwszym planie</div>
-    <div class="ux-item">Mapa: <b>ciemny styl</b> spójny z dark theme, siatka, opisy dzielnic</div>
-    <div class="ux-item">Mapa: <b>piny z widełkami</b> + swipowalne karty u dołu (patent Airbnb)</div>
-    <div class="ux-item">Szczegóły: <b>sticky CTA "Aplikuj"</b> nad scrollem, 3 secondary buttons</div>
-    <div class="ux-item">Beta banner: <b>scrolling marquee</b> jak w oryginalnym index.html</div>
+    <div class="ux-item"><b>Czat całkowicie usunięty</b> z nawigacji i wszystkich ekranów</div>
+    <div class="ux-item"><b>Bottom nav: 3 zakładki</b> — Oferty | Mapa | Profil</div>
+    <div class="ux-item">Karta oferty: <b>wynagrodzenie wyraźne i zielone</b> — bez elementów rozpraszających</div>
+    <div class="ux-item"><b>Podobne oferty</b> poziomo na dole szczegółów — discovery flow</div>
+    <div class="ux-item"><b>Profil pracodawcy</b> — o firmie, stack, wszystkie ogłoszenia, ocena</div>
+    <div class="ux-item">Mapa: <b>piny z widełkami</b> + swipowalne karty u dołu</div>
   </div>
 
   <div class="ux-card">
     <div class="ux-card-title">
       <div class="dot" style="background:#F59E0B;"></div>
-      Proponowane zmiany UX
+      Zasady wyświetlania danych
     </div>
-    <div class="ux-item"><b>Skróć bottom nav do 4 zakładek</b> (Oferty, Mapa, Czat, Profil) — mniej opcji = mniej wahania</div>
-    <div class="ux-item"><b>Odległość km zawsze na karcie</b> obok czasu — kandydaci patrzą na oba</div>
-    <div class="ux-item"><b>„Pilne" — lewa czerwona linia</b> zamiast glow efektu — profesjonalniej (już w makiecie)</div>
-    <div class="ux-item"><b>Commute ≤ 15 min</b> wyróżnij kolorem — to jest kluczowy decyzyjna metryka dla persony A (Anna)</div>
-    <div class="ux-item"><b>Sortuj domyślnie po odległości</b>, nie po datcie — to jest różnica vs Pracuj.pl</div>
-    <div class="ux-item"><b>Chat preview</b> w liście konwersacji — kandydat widzi kontekst bez wchodzenia</div>
-    <div class="ux-item"><b>Pull-to-refresh indykator</b> na liście — brakuje feedback że lista się odświeża</div>
+    <div class="ux-item"><b>Wynagrodzenie miesięczne</b> jako główne — jeśli jest stawka godzinowa + miesięczna, pokazuj miesięczną (stawkę/h mniejszą, pobocznie)</div>
+    <div class="ux-item"><b>Brak czasu dojazdu</b> na kartach — skupienie na treści ogłoszenia</div>
+    <div class="ux-item"><b>„Do uzgodnienia"</b> zawsze gdy widełki puste — nigdy puste pole</div>
+    <div class="ux-item"><b>Adres zweryfikowany ✓</b> w szczegółach — kluczowe USP MapJob</div>
+    <div class="ux-item"><b>„Pilne" — lewa czerwona linia</b> na karcie zamiast glow efektu</div>
   </div>
 
   <div class="ux-card">
     <div class="ux-card-title">
-      <div class="dot" style="background:#EF4444;"></div>
-      Problemy do naprawienia w UI
+      <div class="dot" style="background:#3B82F6;"></div>
+      Co dalej
     </div>
-    <div class="ux-item"><b>Shimmer urgency w oryginalnym CSS</b> (#founder-urgency) — design_refresh.css słusznie to killuje, upewnij się że jest załadowany</div>
-    <div class="ux-item"><b>Kwota "znika" gdy widełki puste</b> — preview-ogloszenia.html to dokumentuje. Fallback: "Do uzgodnienia" zawsze musi być</div>
-    <div class="ux-item"><b>Avatar vs inicjały</b> — łańcuch: company_logo → avatar pracodawcy → inicjały. Nigdy puste miejsce</div>
-    <div class="ux-item"><b>Brak "Adres zweryfikowany" badge</b> na karcie — to jest USP, użyj ✓ ikonki jak w szczegółach</div>
+    <div class="ux-item"><b>Zapisane ogłoszenia</b> w Profilu (zakładka/sekcja)</div>
+    <div class="ux-item"><b>Ekran onboarding</b> — lokalizacja + kategorie przy pierwszym uruchomieniu</div>
+    <div class="ux-item"><b>Notyfikacje push</b> — nowe oferty w Twojej okolicy</div>
+    <div class="ux-item"><b>Aplikacje w toku</b> — statusy w Profilu</div>
   </div>
 </div>
 
@@ -1573,8 +1586,13 @@ function showDetail(id) {
   switchScreen('detail');
 }
 
+function showEmployer() {
+  prevScreen = document.querySelector('.screen.active')?.id?.replace('screen-','') || 'detail';
+  switchScreen('employer');
+}
+
 function goBack() {
-  switchScreen(prevScreen === 'detail' ? 'lista' : prevScreen);
+  switchScreen(prevScreen === 'detail' ? 'lista' : prevScreen === 'employer' ? 'detail' : prevScreen);
 }
 
 function selectMapCard(idx) {

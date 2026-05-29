@@ -14,6 +14,23 @@ For rendered HTML preview (GitHub Pages / raw):
 
 **Never** deliver work as a local file path like `/home/user/MapJob/mockups/...` without also including the clickable link.
 
+## CRITICAL: Salary display rules
+
+- **Zawsze pokazuj wynagrodzenie miesięczne** jako główne (duże, zielone)
+- Jeśli w ogłoszeniu jest stawka godzinowa ORAZ miesięczna — pokaż miesięczną jako główną, stawkę/h tylko mniejszym tekstem obok/poniżej
+- Jeśli brak widełek → wyświetl "Do uzgodnienia" (nigdy puste pole)
+- Waluta: zł lub EUR — zawsze z jednostką i typem (netto/brutto, B2B/UoP)
+
+## CRITICAL: No commute times on job cards
+
+**Nie pokazuj czasu dojazdu** (autobus, rower, pieszy) na kartach ogłoszeń ani w listach. Skupiamy się na treści oferty pracy. Lokalizacja (km) może być pokazana, ale NIE wielotryby dojazdu.
+
+## CRITICAL: No chat feature
+
+**Czat jest całkowicie usunięty z projektu.** Nie dodawaj czatu nigdzie — ani w nawigacji, ani na ekranach, ani jako feature. Nie ma i nie będzie.
+
+Bottom nav ma 3 pozycje: **Oferty | Mapa | Profil**
+
 ## Project context
 
 - **App**: MapJob.pl — geolocation job marketplace, Poland
