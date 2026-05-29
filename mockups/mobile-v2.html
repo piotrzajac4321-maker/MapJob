@@ -1,0 +1,1605 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MapJob Mobile v2 – Makieta 1:1</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* ═══ PAGE SHELL ═══ */
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{
+  font-family:'Plus Jakarta Sans','Inter',-apple-system,sans-serif;
+  background:#080B12;
+  min-height:100vh;
+  display:flex;
+  align-items:flex-start;
+  justify-content:center;
+  padding:32px 20px 60px;
+  gap:36px;
+  flex-wrap:wrap;
+}
+
+/* ═══ UX NOTES PANEL ═══ */
+.ux-panel{
+  width:340px;
+  display:flex;
+  flex-direction:column;
+  gap:14px;
+  padding-top:8px;
+}
+.ux-title{
+  font-size:13px;font-weight:800;letter-spacing:.08em;
+  text-transform:uppercase;color:#60A5FA;margin-bottom:2px;
+}
+.ux-subtitle{font-size:12px;color:#6B7280;line-height:1.5;margin-bottom:8px;}
+.ux-card{
+  background:#0F1420;border:1px solid rgba(255,255,255,.07);
+  border-radius:12px;padding:14px 16px;
+}
+.ux-card-title{font-size:12px;font-weight:700;color:#F5F7FA;margin-bottom:8px;display:flex;align-items:center;gap:7px;}
+.ux-card-title .dot{width:6px;height:6px;border-radius:50%;}
+.ux-item{display:flex;gap:8px;font-size:11.5px;color:#9AA0AB;margin-bottom:7px;line-height:1.5;align-items:flex-start;}
+.ux-item:last-child{margin-bottom:0;}
+.ux-item::before{content:'→';color:#3B82F6;font-weight:700;flex-shrink:0;margin-top:1px;}
+.ux-item b{color:#E8EDF5;font-weight:600;}
+.nav-label-row{
+  background:#0F1420;border:1px solid rgba(255,255,255,.07);
+  border-radius:12px;padding:12px 14px;
+  font-size:11px;color:#6B7280;line-height:1.7;
+}
+.nav-label-row b{color:#E8EDF5;}
+
+/* ═══ DEVICE FRAME ═══ */
+.device{
+  width:393px;
+  height:852px;
+  background:#0a0a0c;
+  border-radius:52px;
+  overflow:hidden;
+  position:relative;
+  box-shadow:0 0 0 10px #1c1c1e,0 0 0 12px #2a2a2c,0 40px 80px rgba(0,0,0,.7),0 20px 40px rgba(0,0,0,.4);
+  flex-shrink:0;
+}
+
+/* Notch */
+.notch{
+  position:absolute;top:0;left:50%;transform:translateX(-50%);
+  width:126px;height:36px;background:#1c1c1e;
+  border-radius:0 0 22px 22px;z-index:200;
+  display:flex;align-items:center;justify-content:center;gap:8px;padding-bottom:4px;
+}
+.notch-cam{width:11px;height:11px;border-radius:50%;background:#2a2a2d;border:1.5px solid #3a3a3c;}
+.notch-id{width:22px;height:4px;border-radius:2px;background:#2a2a2d;}
+
+/* Status bar */
+.sbar{
+  height:50px;background:var(--bg2);
+  display:flex;align-items:flex-end;justify-content:space-between;
+  padding:0 26px 8px;flex-shrink:0;
+  border-bottom:1px solid var(--line);
+  position:relative;z-index:100;
+}
+.sbar-time{font-size:15px;font-weight:700;color:var(--text);}
+.sbar-icons{display:flex;align-items:center;gap:6px;}
+.sbar-icons svg{width:16px;height:12px;fill:var(--text);}
+
+/* CSS VARIABLES — exact MapJob tokens */
+:root{
+  --bg:#0B0D10;
+  --bg2:#101318;
+  --surf:#15181F;
+  --surf2:#1C2029;
+  --surf3:#252A35;
+  --line:rgba(255,255,255,.07);
+  --line2:rgba(255,255,255,.04);
+  --line3:rgba(255,255,255,.09);
+  --text:#F5F7FA;
+  --text2:#A1A9B8;
+  --text3:#6B7280;
+  --blue:#3B82F6;
+  --blue2:#60A5FA;
+  --blue-d:rgba(59,130,246,.12);
+  --blue-m:rgba(59,130,246,.22);
+  --green:#10B981;
+  --green-d:rgba(16,185,129,.10);
+  --gold:#D97706;
+  --gold-d:rgba(217,119,6,.10);
+  --red:#EF4444;
+  --red-d:rgba(239,68,68,.10);
+  --purple:#7C3AED;
+  --ff:'Plus Jakarta Sans','Inter',-apple-system,sans-serif;
+}
+
+/* ═══ SCREEN WRAPPER ═══ */
+.screen{
+  position:absolute;top:0;left:0;right:0;bottom:0;
+  background:var(--bg);
+  display:none;flex-direction:column;
+  overflow:hidden;
+  font-family:var(--ff);
+  -webkit-font-smoothing:antialiased;
+}
+.screen.active{display:flex;}
+
+/* ═══ TOPBAR ═══ */
+.tb{
+  flex-shrink:0;
+  height:54px;
+  background:var(--bg2);
+  border-bottom:1px solid var(--line);
+  display:flex;align-items:center;
+  padding:0 16px;gap:10px;
+  backdrop-filter:blur(12px);
+  position:relative;z-index:50;
+}
+.tb-logo{
+  font-size:17px;font-weight:900;letter-spacing:-.03em;
+  color:var(--text);display:flex;align-items:center;gap:6px;
+}
+.tb-logo-mark{
+  width:27px;height:27px;border-radius:8px;
+  background:var(--blue);
+  display:flex;align-items:center;justify-content:center;
+}
+.tb-logo-mark svg{width:15px;height:15px;}
+.tb-title{font-size:16px;font-weight:800;color:var(--text);flex:1;}
+.tb-spacer{flex:1;}
+.tb-btn{
+  width:36px;height:36px;border-radius:9px;
+  background:var(--surf);border:1px solid var(--line3);
+  display:flex;align-items:center;justify-content:center;
+  color:var(--text2);cursor:pointer;flex-shrink:0;
+  transition:all .15s;
+}
+.tb-btn:hover{background:var(--surf2);}
+.tb-back{
+  width:34px;height:34px;border-radius:9px;
+  background:var(--surf);border:1px solid var(--line3);
+  display:flex;align-items:center;justify-content:center;
+  color:var(--text2);cursor:pointer;flex-shrink:0;
+  font-size:16px;
+}
+.notif-dot{
+  position:absolute;top:3px;right:3px;
+  width:7px;height:7px;border-radius:50%;
+  background:var(--red);border:1.5px solid var(--bg2);
+}
+
+/* ═══ SEARCH BAR ═══ */
+.search-bar{
+  flex-shrink:0;
+  margin:10px 14px 0;
+  height:42px;
+  background:var(--surf);
+  border:1px solid var(--line3);
+  border-radius:24px;
+  display:flex;align-items:center;
+  padding:0 14px;gap:9px;
+  cursor:text;
+}
+.search-bar input{
+  flex:1;background:none;border:none;outline:none;
+  font-family:var(--ff);font-size:13.5px;color:var(--text);
+}
+.search-bar input::placeholder{color:var(--text3);}
+.search-loc{
+  font-size:11px;font-weight:700;color:var(--blue);
+  background:var(--blue-d);padding:3px 9px;border-radius:20px;
+  white-space:nowrap;flex-shrink:0;border:1px solid var(--blue-m);
+}
+
+/* ═══ CATEGORY CHIPS ═══ */
+.chips-row{
+  flex-shrink:0;
+  padding:10px 14px;
+  display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;
+}
+.chips-row::-webkit-scrollbar{display:none;}
+.fchip{
+  padding:6px 13px;border-radius:8px;
+  background:var(--surf);border:1px solid var(--line3);
+  font-size:12px;font-weight:700;color:var(--text2);
+  white-space:nowrap;flex-shrink:0;cursor:pointer;
+  transition:all .15s;
+}
+.fchip:hover{color:var(--text);border-color:var(--line3);}
+.fchip.on{background:var(--blue);border-color:var(--blue);color:#fff;}
+.fchip .cnt{
+  font-size:10px;background:rgba(255,255,255,.2);
+  padding:0 5px;border-radius:10px;margin-left:3px;
+}
+
+/* ═══ RESULTS BAR ═══ */
+.res-bar{
+  flex-shrink:0;
+  padding:2px 14px 8px;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.res-count{font-size:12px;color:var(--text3);}
+.res-count b{color:var(--text2);font-weight:600;}
+.sort-btn{
+  font-size:11.5px;font-weight:600;color:var(--blue2);
+  display:flex;align-items:center;gap:4px;cursor:pointer;
+}
+
+/* ═══ JOB LIST ═══ */
+.job-list{
+  flex:1;overflow-y:auto;overflow-x:hidden;
+  padding:0 12px;
+  display:flex;flex-direction:column;gap:8px;
+  scrollbar-width:none;
+  padding-bottom:80px;
+}
+.job-list::-webkit-scrollbar{display:none;}
+
+/* ═══ JOB CARD ═══ */
+.jcard{
+  background:var(--surf);
+  border:1px solid var(--line3);
+  border-radius:14px;
+  padding:14px;
+  cursor:pointer;
+  position:relative;
+  transition:border-color .15s;
+}
+.jcard:hover{border-color:rgba(59,130,246,.3);}
+.jcard.urgent{border-left:3px solid var(--red);}
+.jcard.featured{border-color:rgba(59,130,246,.4);box-shadow:0 0 0 3px rgba(59,130,246,.06);}
+.jcard-featured-tag{
+  position:absolute;top:-1px;right:14px;
+  background:var(--blue);color:#fff;
+  font-size:9px;font-weight:800;letter-spacing:.4px;text-transform:uppercase;
+  padding:3px 9px;border-radius:0 0 7px 7px;
+}
+.jcard-top{display:flex;gap:10px;align-items:flex-start;margin-bottom:9px;}
+.jcard-logo{
+  width:40px;height:40px;border-radius:10px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:14px;font-weight:900;color:#fff;
+  flex-shrink:0;border:1px solid var(--line3);
+}
+.jcard-info{flex:1;min-width:0;}
+.jcard-company{font-size:11px;color:var(--text3);margin-bottom:1px;
+  display:flex;align-items:center;gap:4px;}
+.jcard-company .vc{color:var(--blue2);font-size:10px;font-weight:700;}
+.jcard-title{font-size:14px;font-weight:800;color:var(--text);line-height:1.25;margin-bottom:5px;}
+.jcard-badges{display:flex;gap:4px;flex-wrap:wrap;}
+.badge{
+  padding:2px 7px;border-radius:6px;
+  font-size:9.5px;font-weight:800;text-transform:uppercase;letter-spacing:.3px;
+}
+.b-urg{background:var(--red-d);border:1px solid rgba(239,68,68,.3);color:#F87171;}
+.b-remote{background:rgba(124,58,237,.14);border:1px solid rgba(124,58,237,.3);color:#A78BFA;}
+.b-hybrid{background:rgba(245,158,11,.12);border:1px solid rgba(245,158,11,.28);color:#FCD34D;}
+.b-new{background:var(--green-d);border:1px solid rgba(16,185,129,.25);color:#6EE7B7;}
+.jcard-save{
+  width:30px;height:30px;border-radius:8px;
+  background:none;border:1px solid var(--line3);
+  display:flex;align-items:center;justify-content:center;
+  color:var(--text3);flex-shrink:0;cursor:pointer;
+  transition:all .15s;
+}
+.jcard-save.on{border-color:var(--gold);color:var(--gold);background:var(--gold-d);}
+
+/* Location row */
+.jcard-loc{
+  display:flex;align-items:center;gap:4px;
+  font-size:11.5px;color:var(--text3);margin-bottom:8px;
+}
+
+/* Salary row */
+.jcard-pay{
+  display:flex;align-items:baseline;gap:5px;margin-bottom:8px;
+}
+.pay-val{font-size:15px;font-weight:900;color:var(--green);}
+.pay-meta{font-size:10px;color:var(--text3);font-weight:600;}
+
+/* Commute row */
+.jcard-commute{display:flex;gap:5px;margin-bottom:9px;}
+.cm-pill{
+  display:flex;align-items:center;gap:4px;
+  padding:3px 8px;border-radius:6px;
+  font-size:11px;font-weight:700;
+  background:var(--surf2);border:1px solid var(--line2);
+}
+.cm-car{color:var(--blue2);}
+.cm-bike{color:var(--gold);}
+.cm-walk{color:var(--green);}
+.cm-transit{color:#A78BFA;}
+
+/* Tags */
+.jcard-tags{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:9px;}
+.jtag{
+  padding:2.5px 8px;border-radius:6px;
+  background:var(--surf2);border:1px solid var(--line2);
+  font-size:10.5px;font-weight:600;color:var(--text3);
+}
+.jtag.hot{background:var(--blue-d);border-color:var(--blue-m);color:var(--blue2);}
+
+/* Card footer */
+.jcard-foot{
+  padding-top:9px;border-top:1px solid var(--line2);
+  display:flex;align-items:center;justify-content:space-between;
+}
+.jcard-date{font-size:10.5px;color:var(--text3);}
+.jcard-apply{
+  padding:5px 12px;border-radius:7px;
+  background:var(--blue);color:#fff;
+  font-size:11.5px;font-weight:700;
+  border:none;cursor:pointer;font-family:var(--ff);
+  transition:background .15s;
+}
+.jcard-apply:hover{background:#2563EB;}
+
+/* ═══ MAP SCREEN ═══ */
+.map-wrap{flex:1;position:relative;overflow:hidden;background:#080A0D;}
+.map-svg{width:100%;height:100%;}
+
+/* Map top search */
+.map-search{
+  position:absolute;top:10px;left:14px;right:14px;
+  background:rgba(21,24,31,0.92);
+  backdrop-filter:blur(12px);
+  border:1px solid var(--line3);
+  border-radius:12px;
+  height:44px;
+  display:flex;align-items:center;
+  padding:0 14px;gap:9px;z-index:20;
+}
+.map-search span{font-size:13px;color:var(--text3);flex:1;}
+.map-search-loc{font-size:11px;font-weight:700;color:var(--blue);
+  background:var(--blue-d);padding:3px 9px;border-radius:20px;
+  border:1px solid var(--blue-m);}
+
+/* Transport mode toggle */
+.transport-toggle{
+  position:absolute;top:64px;left:14px;
+  background:rgba(21,24,31,0.92);
+  backdrop-filter:blur(12px);
+  border:1px solid var(--line3);
+  border-radius:10px;
+  display:flex;
+  overflow:hidden;z-index:20;
+}
+.tt-btn{
+  padding:7px 11px;border:none;
+  background:none;font-family:var(--ff);
+  font-size:11px;font-weight:700;color:var(--text3);
+  cursor:pointer;transition:all .15s;
+  display:flex;align-items:center;gap:4px;
+}
+.tt-btn.on{background:var(--blue);color:#fff;}
+.tt-btn:hover:not(.on){background:var(--surf2);color:var(--text2);}
+
+/* Map controls */
+.map-controls{
+  position:absolute;top:64px;right:14px;
+  display:flex;flex-direction:column;gap:4px;z-index:20;
+}
+.mc-btn{
+  width:36px;height:36px;
+  background:rgba(21,24,31,0.92);backdrop-filter:blur(8px);
+  border:1px solid var(--line3);border-radius:8px;
+  display:flex;align-items:center;justify-content:center;
+  color:var(--text2);font-size:18px;font-weight:300;
+  cursor:pointer;transition:all .15s;
+}
+.mc-btn:hover{color:var(--blue);}
+
+/* Map pins */
+.mp{
+  position:absolute;transform:translate(-50%,-50%);
+  cursor:pointer;z-index:10;transition:transform .2s;
+}
+.mp:hover,.mp.on{transform:translate(-50%,-50%) scale(1.12);z-index:15;}
+.mp-bubble{
+  display:flex;align-items:center;gap:5px;
+  padding:5px 9px 5px 6px;
+  background:var(--surf);border:1px solid var(--line3);
+  border-radius:20px;box-shadow:0 4px 12px rgba(0,0,0,.5);
+  white-space:nowrap;transition:border-color .2s;
+}
+.mp.on .mp-bubble{border-color:var(--blue);box-shadow:0 4px 16px rgba(59,130,246,.3);}
+.mp-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.mp-pay{font-size:11.5px;font-weight:800;color:var(--text);}
+.mp-pay em{color:var(--green);font-style:normal;}
+
+/* Swipeable bottom sheet */
+.map-sheet{
+  position:absolute;bottom:68px;left:0;right:0;z-index:25;
+}
+.sheet-cards{
+  padding:0 14px;
+  display:flex;gap:10px;overflow-x:auto;scrollbar-width:none;
+  padding-bottom:2px;
+}
+.sheet-cards::-webkit-scrollbar{display:none;}
+.scard{
+  flex:0 0 260px;
+  background:rgba(21,24,31,0.95);
+  backdrop-filter:blur(16px);
+  border:1px solid var(--line3);
+  border-radius:14px;padding:13px;
+  display:flex;gap:10px;
+  cursor:pointer;transition:border-color .2s;
+  box-shadow:0 8px 24px rgba(0,0,0,.5);
+}
+.scard.on{border-color:var(--blue);}
+.scard-logo{
+  width:38px;height:38px;border-radius:9px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:13px;font-weight:900;color:#fff;flex-shrink:0;
+}
+.scard-body{flex:1;min-width:0;}
+.scard-co{font-size:10px;color:var(--text3);}
+.scard-title{font-size:13px;font-weight:800;color:var(--text);margin-bottom:2px;}
+.scard-pay{font-size:12px;font-weight:900;color:var(--green);margin-bottom:2px;}
+.scard-meta{font-size:10.5px;color:var(--text3);}
+
+/* ═══ BOTTOM NAV ═══ */
+.bnav{
+  position:absolute;left:0;right:0;bottom:0;
+  height:72px;
+  background:rgba(16,19,24,0.96);
+  backdrop-filter:blur(12px);
+  border-top:1px solid var(--line);
+  display:flex;
+  padding-bottom:10px;
+  z-index:100;
+}
+.ni{
+  flex:1;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:3px;
+  cursor:pointer;padding:6px 2px 0;
+  border:none;background:none;font-family:var(--ff);
+  transition:color .15s;
+  color:var(--text3);
+}
+.ni.on{color:var(--blue);}
+.ni-icon{
+  width:24px;height:24px;
+  display:flex;align-items:center;justify-content:center;
+  border-radius:6px;transition:background .15s;
+}
+.ni.on .ni-icon{background:var(--blue-d);}
+.ni svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;}
+.ni-lbl{font-size:9.5px;font-weight:700;}
+.ni-dot{width:5px;height:5px;border-radius:50%;background:var(--blue);}
+
+/* ═══ DETAIL SCREEN ═══ */
+.detail-scroll{
+  flex:1;overflow-y:auto;scrollbar-width:none;
+  padding-bottom:80px;
+}
+.detail-scroll::-webkit-scrollbar{display:none;}
+
+/* Detail hero */
+.det-hero{
+  background:var(--surf);
+  padding:18px 16px 16px;
+  border-bottom:1px solid var(--line);
+  position:relative;
+}
+.det-hero::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:3px;
+  background:linear-gradient(90deg,var(--blue),var(--purple));
+}
+.det-co-row{display:flex;gap:12px;align-items:center;margin-bottom:14px;}
+.det-logo{
+  width:52px;height:52px;border-radius:13px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:17px;font-weight:900;color:#fff;
+  border:1px solid var(--line3);flex-shrink:0;
+}
+.det-co-name{font-size:14px;font-weight:700;color:var(--text2);}
+.det-co-meta{font-size:11px;color:var(--text3);margin-top:2px;
+  display:flex;align-items:center;gap:4px;}
+.det-co-meta .vbdg{
+  font-size:9px;font-weight:800;color:var(--blue2);
+  background:var(--blue-d);padding:1px 6px;border-radius:5px;
+  border:1px solid var(--blue-m);
+}
+.det-title{font-size:20px;font-weight:900;color:var(--text);letter-spacing:-.02em;margin-bottom:10px;line-height:1.2;}
+.det-pay-row{display:flex;align-items:baseline;gap:7px;margin-bottom:14px;}
+.det-pay{font-size:22px;font-weight:900;color:var(--green);}
+.det-pay-meta{font-size:11px;color:var(--text3);}
+.det-chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px;}
+.dchip{padding:5px 11px;border-radius:8px;background:var(--surf2);border:1px solid var(--line3);font-size:12px;color:var(--text2);font-weight:600;}
+.det-apply-btn{
+  width:100%;height:46px;border:none;
+  background:var(--blue);color:#fff;
+  border-radius:12px;
+  font-family:var(--ff);font-size:15px;font-weight:800;
+  cursor:pointer;transition:background .15s;
+  margin-bottom:10px;letter-spacing:-.01em;
+  box-shadow:0 4px 16px rgba(59,130,246,.3);
+}
+.det-apply-btn:hover{background:#2563EB;}
+.det-sec-btns{display:flex;gap:8px;}
+.det-sec-btn{
+  flex:1;height:38px;border:1px solid var(--line3);
+  background:none;border-radius:9px;color:var(--text2);
+  font-family:var(--ff);font-size:12px;font-weight:600;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;gap:5px;
+  transition:all .15s;
+}
+.det-sec-btn:hover{background:var(--surf2);}
+
+/* Commute box */
+.det-commute{
+  background:var(--surf);border:1px solid var(--line);
+  margin:10px 14px 0;border-radius:12px;padding:14px;
+}
+.det-commute-title{font-size:11px;font-weight:700;color:var(--text3);
+  text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px;}
+.det-commute-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;}
+.dcm-item{
+  display:flex;align-items:center;gap:8px;
+  padding:8px 10px;background:var(--surf2);border-radius:8px;
+}
+.dcm-icon{font-size:16px;width:22px;text-align:center;}
+.dcm-mode{font-size:12px;color:var(--text3);}
+.dcm-time{font-size:13px;font-weight:800;margin-left:auto;}
+.dcm-car{color:var(--blue2);}
+.dcm-bike{color:var(--gold);}
+.dcm-walk{color:var(--green);}
+.dcm-transit{color:#A78BFA;}
+.det-commute-note{margin-top:8px;font-size:10.5px;color:var(--text3);text-align:center;}
+
+/* Content sections */
+.det-section{
+  background:var(--surf);
+  margin:10px 14px 0;border-radius:12px;
+  padding:16px;border:1px solid var(--line);
+}
+.det-sec-title{font-size:13px;font-weight:800;color:var(--text);margin-bottom:12px;
+  display:flex;align-items:center;gap:6px;
+  padding-bottom:10px;border-bottom:1px solid var(--line);}
+.det-sec-title svg{color:var(--blue);flex-shrink:0;}
+
+/* Requirements */
+.req-group{margin-bottom:12px;}
+.req-group:last-child{margin-bottom:0;}
+.req-label{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;
+  color:var(--text3);margin-bottom:7px;display:flex;align-items:center;gap:5px;}
+.req-label.must .rdot{background:var(--blue);}
+.req-label.nice .rdot{background:var(--text3);}
+.rdot{width:5px;height:5px;border-radius:50%;flex-shrink:0;}
+.req-list{list-style:none;display:flex;flex-direction:column;gap:6px;}
+.req-list li{
+  display:flex;align-items:flex-start;gap:7px;
+  font-size:12.5px;color:var(--text2);line-height:1.45;
+}
+.req-list li::before{
+  content:'✓';font-weight:800;color:var(--green);flex-shrink:0;margin-top:1px;
+}
+.req-list li.ni-req::before{content:'+';color:var(--text3);}
+
+/* Benefits grid */
+.ben-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.ben-item{
+  background:var(--surf2);border-radius:9px;padding:10px;
+}
+.ben-icon{font-size:18px;margin-bottom:5px;}
+.ben-title{font-size:11.5px;font-weight:700;color:var(--text);margin-bottom:1px;}
+.ben-desc{font-size:10.5px;color:var(--text3);line-height:1.4;}
+
+/* Recruitment steps */
+.rec-steps{display:flex;flex-direction:column;gap:0;}
+.rec-step{
+  display:flex;gap:12px;align-items:flex-start;padding:10px 0;
+  border-bottom:1px solid var(--line2);
+}
+.rec-step:last-child{border-bottom:none;}
+.rec-num{
+  width:24px;height:24px;border-radius:50%;
+  background:var(--blue-d);border:1px solid var(--blue-m);
+  color:var(--blue2);font-size:11px;font-weight:800;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+}
+.rec-step-title{font-size:12.5px;font-weight:700;color:var(--text);margin-bottom:2px;}
+.rec-step-desc{font-size:11px;color:var(--text3);line-height:1.5;}
+
+/* ═══ CHAT SCREEN ═══ */
+.chat-list{flex:1;overflow-y:auto;padding:10px 14px;display:flex;flex-direction:column;gap:6px;scrollbar-width:none;}
+.chat-list::-webkit-scrollbar{display:none;}
+.chat-item{
+  display:flex;gap:10px;align-items:center;
+  padding:11px 10px;border-radius:12px;
+  background:var(--surf);border:1px solid var(--line);
+  cursor:pointer;transition:background .15s;
+}
+.chat-item:hover{background:var(--surf2);}
+.chat-av{
+  width:42px;height:42px;border-radius:11px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:14px;font-weight:900;color:#fff;flex-shrink:0;
+  position:relative;
+}
+.chat-av .online{
+  position:absolute;bottom:1px;right:1px;
+  width:9px;height:9px;border-radius:50%;
+  background:var(--green);border:1.5px solid var(--surf);
+}
+.chat-body{flex:1;min-width:0;}
+.chat-name{font-size:13px;font-weight:700;color:var(--text);margin-bottom:1px;}
+.chat-preview{font-size:11.5px;color:var(--text3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.chat-meta{text-align:right;flex-shrink:0;}
+.chat-time{font-size:10px;color:var(--text3);margin-bottom:4px;}
+.chat-unread{
+  width:18px;height:18px;border-radius:50%;
+  background:var(--blue);color:#fff;
+  font-size:10px;font-weight:700;
+  display:flex;align-items:center;justify-content:center;
+  margin-left:auto;
+}
+
+/* Active chat */
+.chat-messages{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:10px;background:var(--bg);scrollbar-width:none;}
+.chat-messages::-webkit-scrollbar{display:none;}
+.chat-day{align-self:center;font-size:10px;color:var(--text3);
+  background:var(--surf2);padding:3px 10px;border-radius:20px;}
+.msg{max-width:80%;padding:9px 12px;font-size:12.5px;line-height:1.45;border-radius:14px;}
+.msg.them{align-self:flex-start;background:var(--surf);border:1px solid var(--line3);border-bottom-left-radius:4px;color:var(--text);}
+.msg.me{align-self:flex-end;background:var(--blue);color:#fff;border-bottom-right-radius:4px;}
+.msg .mt{display:block;font-size:9px;opacity:.6;margin-top:3px;}
+.chat-input{
+  flex-shrink:0;height:58px;
+  display:flex;align-items:center;gap:9px;
+  padding:0 14px;
+  background:var(--bg2);border-top:1px solid var(--line);
+}
+.chat-field{
+  flex:1;height:38px;border-radius:20px;
+  background:var(--surf);border:1px solid var(--line3);
+  padding:0 14px;font-family:var(--ff);font-size:13px;
+  color:var(--text);outline:none;
+}
+.chat-field::placeholder{color:var(--text3);}
+.chat-send{
+  width:38px;height:38px;border-radius:50%;
+  background:var(--blue);border:none;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+}
+
+/* ═══ PROFILE SCREEN ═══ */
+.pf-cover{
+  height:90px;flex-shrink:0;
+  background:linear-gradient(135deg,var(--surf2),var(--surf3));
+  position:relative;border-bottom:1px solid var(--line);
+}
+.pf-av{
+  position:absolute;left:16px;bottom:-26px;
+  width:64px;height:64px;border-radius:18px;
+  background:linear-gradient(135deg,#3B82F6,#7C3AED);
+  border:2px solid var(--bg);
+  display:flex;align-items:center;justify-content:center;
+  font-size:22px;font-weight:900;color:#fff;
+  box-shadow:0 4px 16px rgba(59,130,246,.3);
+}
+.pf-body{flex:1;overflow-y:auto;padding:38px 16px 80px;scrollbar-width:none;}
+.pf-body::-webkit-scrollbar{display:none;}
+.pf-name{font-size:18px;font-weight:900;color:var(--text);letter-spacing:-.02em;
+  display:flex;align-items:center;gap:8px;margin-bottom:2px;}
+.pf-badge{font-size:9px;font-weight:900;padding:3px 8px;border-radius:6px;
+  background:var(--blue-d);color:var(--blue2);border:1px solid var(--blue-m);}
+.pf-role{font-size:12.5px;color:var(--text2);margin-bottom:14px;}
+.pf-stats{
+  display:grid;grid-template-columns:repeat(3,1fr);
+  background:var(--surf);border:1px solid var(--line3);
+  border-radius:12px;overflow:hidden;margin-bottom:16px;
+}
+.pf-stat{padding:11px;text-align:center;border-right:1px solid var(--line2);}
+.pf-stat:last-child{border:none;}
+.pf-stat b{display:block;font-size:17px;font-weight:900;color:var(--text);}
+.pf-stat span{font-size:9px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;}
+.pf-sec{font-size:10.5px;font-weight:800;color:var(--text3);
+  text-transform:uppercase;letter-spacing:.07em;margin:14px 0 9px;
+  display:flex;align-items:center;gap:8px;}
+.pf-sec::after{content:'';flex:1;height:1px;background:var(--line);}
+.pf-skills{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:4px;}
+.pf-skill{
+  padding:5px 10px;border-radius:7px;
+  background:var(--surf);border:1px solid var(--line3);
+  font-size:11px;font-weight:600;color:var(--text);
+}
+.pf-row{
+  display:flex;align-items:center;gap:10px;
+  padding:11px 0;border-bottom:1px solid var(--line2);
+  font-size:12.5px;color:var(--text2);
+}
+.pf-row-ico{
+  width:30px;height:30px;border-radius:8px;
+  background:var(--surf);border:1px solid var(--line3);
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;color:var(--blue2);font-size:13px;
+}
+.pf-cta{
+  margin-top:16px;height:46px;border-radius:12px;
+  background:var(--blue);color:#fff;border:none;
+  font-family:var(--ff);font-size:14px;font-weight:800;
+  cursor:pointer;width:100%;
+  box-shadow:0 4px 14px rgba(59,130,246,.25);
+}
+
+/* ═══ BETA BANNER ═══ */
+.beta-banner{
+  flex-shrink:0;height:30px;
+  background:var(--bg2);border-bottom:1px solid var(--line);
+  overflow:hidden;display:flex;align-items:center;
+  position:relative;
+}
+.beta-track{
+  display:flex;align-items:center;gap:24px;
+  white-space:nowrap;animation:betaScroll 30s linear infinite;
+  padding-left:100%;
+}
+@keyframes betaScroll{
+  0%{transform:translateX(0);}
+  100%{transform:translateX(-50%);}
+}
+.beta-item{font-size:11px;color:var(--text3);font-weight:500;}
+.beta-item b{color:var(--text2);}
+.beta-tag{
+  font-size:9px;font-weight:800;padding:1px 6px;border-radius:5px;
+  background:var(--blue-d);color:var(--blue2);border:1px solid var(--blue-m);
+  margin-right:4px;
+}
+</style>
+</head>
+<body>
+
+<!-- ════════════════════════════════ DEVICE ════════════════════════════════ -->
+<div class="device" id="app">
+  <div class="notch">
+    <div class="notch-cam"></div>
+    <div class="notch-id"></div>
+    <div class="notch-cam"></div>
+  </div>
+
+  <!-- STATUS BAR -->
+  <div class="sbar" style="position:absolute;top:0;left:0;right:0;z-index:150;background:var(--bg2);border-bottom:1px solid var(--line);">
+    <span class="sbar-time">9:41</span>
+    <div class="sbar-icons">
+      <svg viewBox="0 0 16 12"><rect x="0" y="4" width="3" height="8" rx="1" opacity=".4"/><rect x="4" y="2.5" width="3" height="9.5" rx="1" opacity=".6"/><rect x="8" y="1" width="3" height="11" rx="1" opacity=".8"/><rect x="12" y="0" width="3" height="12" rx="1"/></svg>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="stroke:var(--text)"><path d="M1.42 9a16 16 0 0121.16 0M5 12.55a11 11 0 0114.08 0M10.54 16.1a6 6 0 012.92 0"/><circle cx="12" cy="20" r="1" fill="var(--text)"/></svg>
+      <svg viewBox="0 0 26 14" fill="var(--text)"><rect x="0" y="1" width="22" height="12" rx="3" fill="none" stroke="var(--text)" stroke-width="1.5"/><rect x="1.5" y="2.5" width="16" height="9" rx="1.5"/><path d="M23 5v4a2 2 0 000-4z"/></svg>
+    </div>
+  </div>
+
+  <!-- ════ SCREEN: LISTA (default) ════ -->
+  <div class="screen active" id="screen-lista" style="padding-top:50px;">
+    <div class="beta-banner">
+      <div class="beta-track">
+        <span class="beta-item"><span class="beta-tag">BETA</span>Trwa testowanie · <b>1 207 fachowców</b> · darmowe konto na zawsze</span>
+        <span class="beta-item">🏙️ Kraków: <b>412 ogłoszeń</b></span>
+        <span class="beta-item">🚀 Nowe: <b>AI import ofert</b></span>
+        <span class="beta-item">📍 <b>Adresy zweryfikowane</b> · zero ghost jobs</span>
+        <span class="beta-item"><span class="beta-tag">BETA</span>Trwa testowanie · <b>1 207 fachowców</b> · darmowe konto na zawsze</span>
+        <span class="beta-item">🏙️ Kraków: <b>412 ogłoszeń</b></span>
+        <span class="beta-item">🚀 Nowe: <b>AI import ofert</b></span>
+        <span class="beta-item">📍 <b>Adresy zweryfikowane</b> · zero ghost jobs</span>
+      </div>
+    </div>
+
+    <div class="tb">
+      <div class="tb-logo">
+        <div class="tb-logo-mark">
+          <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        </div>
+        MapJob
+      </div>
+      <div class="tb-spacer"></div>
+      <div class="tb-btn" style="position:relative;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8a6 6 0 10-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
+        <div class="notif-dot"></div>
+      </div>
+      <div class="tb-btn">
+        <div style="width:24px;height:24px;border-radius:50%;background:linear-gradient(135deg,#3B82F6,#7C3AED);display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:900;color:white;">PZ</div>
+      </div>
+    </div>
+
+    <div class="search-bar">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--text3)" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+      <input type="text" placeholder="Stanowisko, zawód, firma…" value="Frontend Developer">
+      <span class="search-loc">📍 Kraków</span>
+    </div>
+
+    <div class="chips-row">
+      <div class="fchip on">Wszystkie <span class="cnt">127</span></div>
+      <div class="fchip">Zdalna</div>
+      <div class="fchip">IT <span class="cnt">54</span></div>
+      <div class="fchip">Produkcja</div>
+      <div class="fchip">Transport</div>
+      <div class="fchip">Elektryk</div>
+      <div class="fchip">Hydraulik</div>
+      <div class="fchip">+więcej</div>
+    </div>
+
+    <div class="res-bar">
+      <span class="res-count"><b>127</b> ofert w Krakowie</span>
+      <span class="sort-btn">Najtrafniejsze ▾</span>
+    </div>
+
+    <div class="job-list">
+
+      <!-- CARD 1 – Featured -->
+      <div class="jcard featured" onclick="showDetail('A')">
+        <div class="jcard-featured-tag">⭐ Polecane</div>
+        <div class="jcard-top">
+          <div class="jcard-logo" style="background:linear-gradient(135deg,#4F46E5,#6366F1)">CD</div>
+          <div class="jcard-info">
+            <div class="jcard-company">Codewise Sp. z o.o. <span class="vc">✓</span></div>
+            <div class="jcard-title">Senior Frontend Developer</div>
+            <div class="jcard-badges">
+              <span class="badge b-remote">Zdalnie</span>
+              <span class="badge b-new">Nowe</span>
+            </div>
+          </div>
+          <button class="jcard-save on" onclick="event.stopPropagation()">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="var(--gold)" stroke="var(--gold)" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"/></svg>
+          </button>
+        </div>
+        <div class="jcard-loc">
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          Podgórze · ul. Zabłocie 43
+        </div>
+        <div class="jcard-pay">
+          <span class="pay-val">15 000–22 000 zł</span>
+          <span class="pay-meta">netto · B2B / UoP</span>
+        </div>
+        <div class="jcard-commute">
+          <span class="cm-pill cm-car">🚗 12 min</span>
+          <span class="cm-pill cm-bike">🚴 26 min</span>
+          <span class="cm-pill cm-transit">🚌 18 min</span>
+        </div>
+        <div class="jcard-tags">
+          <span class="jtag hot">React</span>
+          <span class="jtag hot">TypeScript</span>
+          <span class="jtag">Next.js</span>
+          <span class="jtag">+3</span>
+        </div>
+        <div class="jcard-foot">
+          <span class="jcard-date">Dzisiaj</span>
+          <button class="jcard-apply" onclick="event.stopPropagation();showDetail('A')">Zobacz →</button>
+        </div>
+      </div>
+
+      <!-- CARD 2 – Urgent -->
+      <div class="jcard urgent" onclick="showDetail('A')">
+        <div class="jcard-top">
+          <div class="jcard-logo" style="background:linear-gradient(135deg,#DC2626,#EF4444)">P</div>
+          <div class="jcard-info">
+            <div class="jcard-company">Pramer Sp. z o.o. <span class="vc">✓</span></div>
+            <div class="jcard-title">Elektryk / Pomocnik</div>
+            <div class="jcard-badges">
+              <span class="badge b-urg">● Pilne</span>
+              <span class="badge b-hybrid">Stacjonarnie</span>
+            </div>
+          </div>
+          <button class="jcard-save" onclick="event.stopPropagation()">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"/></svg>
+          </button>
+        </div>
+        <div class="jcard-loc">
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          Wrocław · ul. Robotnicza 12 · <b style="color:var(--text2)">2,4 km</b>
+        </div>
+        <div class="jcard-pay">
+          <span class="pay-val">6 500–8 200 zł</span>
+          <span class="pay-meta">brutto · UoP</span>
+        </div>
+        <div class="jcard-commute">
+          <span class="cm-pill cm-car">🚗 8 min</span>
+          <span class="cm-pill cm-bike">🚴 18 min</span>
+        </div>
+        <div class="jcard-tags">
+          <span class="jtag">Elektryk</span>
+          <span class="jtag">Instalacje</span>
+          <span class="jtag">Od zaraz</span>
+        </div>
+        <div class="jcard-foot">
+          <span class="jcard-date">2 godz. temu</span>
+          <button class="jcard-apply" onclick="event.stopPropagation();showDetail('A')">Zobacz →</button>
+        </div>
+      </div>
+
+      <!-- CARD 3 -->
+      <div class="jcard" onclick="showDetail('A')">
+        <div class="jcard-top">
+          <div class="jcard-logo" style="background:linear-gradient(135deg,#0891B2,#06B6D4)">Z</div>
+          <div class="jcard-info">
+            <div class="jcard-company">Zetkama S.A. <span class="vc">✓</span></div>
+            <div class="jcard-title">Operator CNC / Tokarz</div>
+            <div class="jcard-badges">
+              <span class="badge b-hybrid">Stacjonarnie</span>
+            </div>
+          </div>
+          <button class="jcard-save" onclick="event.stopPropagation()">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"/></svg>
+          </button>
+        </div>
+        <div class="jcard-loc">
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          Ścinawka Śr. · <b style="color:var(--text2)">5,1 km</b>
+        </div>
+        <div class="jcard-pay">
+          <span class="pay-val">5 800–7 000 zł</span>
+          <span class="pay-meta">brutto · UoP</span>
+        </div>
+        <div class="jcard-commute">
+          <span class="cm-pill cm-car">🚗 11 min</span>
+          <span class="cm-pill cm-transit">🚌 24 min</span>
+        </div>
+        <div class="jcard-tags">
+          <span class="jtag">CNC</span><span class="jtag">Tokarstwo</span><span class="jtag">2 zmiany</span>
+        </div>
+        <div class="jcard-foot">
+          <span class="jcard-date">wczoraj</span>
+          <button class="jcard-apply" onclick="event.stopPropagation();showDetail('A')">Zobacz →</button>
+        </div>
+      </div>
+
+      <!-- CARD 4 -->
+      <div class="jcard" onclick="showDetail('A')">
+        <div class="jcard-top">
+          <div class="jcard-logo" style="background:linear-gradient(135deg,#059669,#10B981)">R</div>
+          <div class="jcard-info">
+            <div class="jcard-company">Randstad Polska</div>
+            <div class="jcard-title">Kierowca kat. C+E – trasy krajowe</div>
+            <div class="jcard-badges">
+              <span class="badge b-hybrid">Stacjonarnie</span>
+              <span class="badge b-new">Nowe</span>
+            </div>
+          </div>
+          <button class="jcard-save" onclick="event.stopPropagation()">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"/></svg>
+          </button>
+        </div>
+        <div class="jcard-loc">
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          Kraków, Nowa Huta · <b style="color:var(--text2)">8,0 km</b>
+        </div>
+        <div class="jcard-pay">
+          <span class="pay-val">7 200–9 500 zł</span>
+          <span class="pay-meta">brutto · UoP</span>
+        </div>
+        <div class="jcard-commute">
+          <span class="cm-pill cm-car">🚗 19 min</span>
+          <span class="cm-pill cm-transit">🚌 38 min</span>
+        </div>
+        <div class="jcard-tags">
+          <span class="jtag">Kat. C+E</span><span class="jtag">ADR</span><span class="jtag">Kraj</span>
+        </div>
+        <div class="jcard-foot">
+          <span class="jcard-date">Dzisiaj</span>
+          <button class="jcard-apply" onclick="event.stopPropagation();showDetail('A')">Zobacz →</button>
+        </div>
+      </div>
+
+      <!-- CARD 5 -->
+      <div class="jcard" onclick="showDetail('A')">
+        <div class="jcard-top">
+          <div class="jcard-logo" style="background:linear-gradient(135deg,#7C3AED,#8B5CF6)">SA</div>
+          <div class="jcard-info">
+            <div class="jcard-company">Sabre Corp. <span class="vc">✓</span></div>
+            <div class="jcard-title">Data Engineer / Analyst</div>
+            <div class="jcard-badges">
+              <span class="badge b-remote">Zdalnie</span>
+            </div>
+          </div>
+          <button class="jcard-save" onclick="event.stopPropagation()">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"/></svg>
+          </button>
+        </div>
+        <div class="jcard-loc">
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          Krowodrza · 3,8 km
+        </div>
+        <div class="jcard-pay">
+          <span class="pay-val">9 000–14 000 zł</span>
+          <span class="pay-meta">netto · B2B</span>
+        </div>
+        <div class="jcard-commute">
+          <span class="cm-pill cm-car">🚗 14 min</span>
+        </div>
+        <div class="jcard-tags"><span class="jtag">Python</span><span class="jtag">SQL</span><span class="jtag">dbt</span><span class="jtag">Airflow</span></div>
+        <div class="jcard-foot">
+          <span class="jcard-date">3 dni temu</span>
+          <button class="jcard-apply" onclick="event.stopPropagation();showDetail('A')">Zobacz →</button>
+        </div>
+      </div>
+
+    </div><!-- /job-list -->
+
+    <!-- Bottom FAB: Pokaż mapę -->
+    <button onclick="switchScreen('mapa')" style="
+      position:absolute;bottom:78px;left:50%;transform:translateX(-50%);
+      background:var(--surf3);border:1px solid var(--line3);color:var(--text);
+      border-radius:24px;padding:9px 18px;
+      font-family:var(--ff);font-size:12.5px;font-weight:700;cursor:pointer;
+      display:flex;align-items:center;gap:7px;
+      box-shadow:0 4px 16px rgba(0,0,0,.4);white-space:nowrap;z-index:30;
+    ">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--blue2)" stroke-width="2.5"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/></svg>
+      Pokaż na mapie
+    </button>
+
+    <!-- NAV -->
+    <div class="bnav">
+      <button class="ni" onclick="switchScreen('lista')">
+        <div class="ni-icon" style="background:var(--blue-d);">
+          <svg viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+        </div>
+        <span class="ni-lbl" style="color:var(--blue);">Oferty</span>
+        <div class="ni-dot"></div>
+      </button>
+      <button class="ni" onclick="switchScreen('mapa')">
+        <div class="ni-icon">
+          <svg viewBox="0 0 24 24"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/></svg>
+        </div>
+        <span class="ni-lbl">Mapa</span>
+      </button>
+      <button class="ni" onclick="switchScreen('czat')">
+        <div class="ni-icon" style="position:relative">
+          <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+          <div style="position:absolute;top:-3px;right:-3px;width:8px;height:8px;border-radius:50%;background:var(--red);border:1.5px solid var(--bg2);"></div>
+        </div>
+        <span class="ni-lbl">Czat</span>
+      </button>
+      <button class="ni" onclick="switchScreen('profil')">
+        <div class="ni-icon">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0116 0"/></svg>
+        </div>
+        <span class="ni-lbl">Profil</span>
+      </button>
+    </div>
+  </div><!-- /screen-lista -->
+
+  <!-- ════ SCREEN: MAPA ════ -->
+  <div class="screen" id="screen-mapa" style="padding-top:50px;">
+
+    <div class="map-wrap">
+
+      <!-- Dark map SVG -->
+      <svg class="map-svg" viewBox="0 0 393 520" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+        <!-- Dark base -->
+        <rect width="393" height="520" fill="#080A0D"/>
+        <!-- Grid -->
+        <defs>
+          <pattern id="grid" width="28" height="28" patternUnits="userSpaceOnUse">
+            <path d="M 28 0 L 0 0 0 28" fill="none" stroke="rgba(255,255,255,.025)" stroke-width="1"/>
+          </pattern>
+        </defs>
+        <rect width="393" height="520" fill="url(#grid)"/>
+        <!-- Major roads (lighter) -->
+        <line x1="0" y1="280" x2="393" y2="280" stroke="#16181e" stroke-width="8"/>
+        <line x1="0" y1="280" x2="393" y2="280" stroke="#1c2028" stroke-width="4"/>
+        <line x1="196" y1="0" x2="196" y2="520" stroke="#16181e" stroke-width="7"/>
+        <line x1="196" y1="0" x2="196" y2="520" stroke="#1c2028" stroke-width="3"/>
+        <!-- Side streets -->
+        <line x1="0" y1="180" x2="393" y2="200" stroke="#141619" stroke-width="5"/>
+        <line x1="0" y1="180" x2="393" y2="200" stroke="#1a1d24" stroke-width="2.5"/>
+        <line x1="80" y1="0" x2="100" y2="520" stroke="#141619" stroke-width="4"/>
+        <line x1="290" y1="0" x2="310" y2="520" stroke="#141619" stroke-width="4"/>
+        <line x1="0" y1="380" x2="393" y2="395" stroke="#141619" stroke-width="4"/>
+        <!-- Diagonal -->
+        <line x1="0" y1="140" x2="250" y2="390" stroke="#121419" stroke-width="3.5"/>
+        <line x1="140" y1="0" x2="393" y2="220" stroke="#121419" stroke-width="3.5"/>
+        <!-- Ring road (gold tint) -->
+        <path d="M60 130 Q196 60 330 130 Q380 170 390 270" fill="none" stroke="#1e1a0e" stroke-width="6"/>
+        <path d="M60 130 Q196 60 330 130 Q380 170 390 270" fill="none" stroke="#2a2408" stroke-width="3"/>
+        <!-- Park areas -->
+        <ellipse cx="80" cy="420" rx="55" ry="40" fill="#0d130b" opacity="0.8"/>
+        <ellipse cx="330" cy="160" rx="45" ry="30" fill="#0d130b" opacity="0.8"/>
+        <!-- River -->
+        <path d="M0 310 Q100 295 196 318 Q270 336 340 320 Q370 313 393 318" fill="none" stroke="#0a1520" stroke-width="22" stroke-linecap="round"/>
+        <path d="M0 310 Q100 295 196 318 Q270 336 340 320 Q370 313 393 318" fill="none" stroke="#0c1a28" stroke-width="12" stroke-linecap="round"/>
+        <!-- District labels -->
+        <text x="100" y="145" font-family="Plus Jakarta Sans,Inter,sans-serif" font-size="9" font-weight="700" fill="rgba(255,255,255,.14)" letter-spacing="1.8" text-anchor="middle">KROWODRZA</text>
+        <text x="196" y="178" font-family="Plus Jakarta Sans,Inter,sans-serif" font-size="9" font-weight="700" fill="rgba(255,255,255,.14)" letter-spacing="1.8" text-anchor="middle">STARE MIASTO</text>
+        <text x="290" y="210" font-family="Plus Jakarta Sans,Inter,sans-serif" font-size="9" font-weight="700" fill="rgba(255,255,255,.14)" letter-spacing="1.8" text-anchor="middle">GRZEGÓRZKI</text>
+        <text x="176" y="265" font-family="Plus Jakarta Sans,Inter,sans-serif" font-size="9" font-weight="700" fill="rgba(255,255,255,.14)" letter-spacing="1.8" text-anchor="middle">KAZIMIERZ</text>
+        <text x="280" y="298" font-family="Plus Jakarta Sans,Inter,sans-serif" font-size="9" font-weight="700" fill="rgba(255,255,255,.14)" letter-spacing="1.8" text-anchor="middle">ZABŁOCIE</text>
+        <text x="196" y="400" font-family="Plus Jakarta Sans,Inter,sans-serif" font-size="9" font-weight="700" fill="rgba(255,255,255,.14)" letter-spacing="1.8" text-anchor="middle">PODGÓRZE</text>
+        <text x="75" y="335" font-family="Plus Jakarta Sans,Inter,sans-serif" font-size="8" font-weight="700" fill="rgba(255,255,255,.10)" letter-spacing="1.5" text-anchor="middle">DĘBNIKI</text>
+        <text x="75" y="100" font-family="Plus Jakarta Sans,Inter,sans-serif" font-size="8" font-weight="700" fill="rgba(255,255,255,.10)" letter-spacing="1.5" text-anchor="middle">BRONOWICE</text>
+        <!-- River label -->
+        <text x="68" y="315" font-family="Plus Jakarta Sans,Inter,sans-serif" font-size="8" font-style="italic" fill="rgba(100,160,220,.3)">Wisła</text>
+        <!-- Commute radius -->
+        <circle cx="196" cy="390" r="88" fill="rgba(59,130,246,.04)" stroke="rgba(59,130,246,.15)" stroke-width="1.5" stroke-dasharray="4,4"/>
+        <!-- Buildings hint -->
+        <rect x="150" y="155" width="32" height="22" rx="3" fill="#0f111a" opacity="0.8"/>
+        <rect x="190" y="148" width="38" height="26" rx="3" fill="#0f111a" opacity="0.8"/>
+        <rect x="236" y="160" width="28" height="20" rx="3" fill="#0f111a" opacity="0.8"/>
+        <rect x="248" y="345" width="44" height="28" rx="3" fill="#0f111a" opacity="0.7"/>
+      </svg>
+
+      <!-- Map search bar -->
+      <div class="map-search">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--text3)" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+        <span>Frontend Developer</span>
+        <span class="map-search-loc">📍 Kraków</span>
+      </div>
+
+      <!-- Transport toggle -->
+      <div class="transport-toggle">
+        <button class="tt-btn on">🚗 Auto</button>
+        <button class="tt-btn">🚴 Rower</button>
+        <button class="tt-btn">🚌 MPK</button>
+        <button class="tt-btn">🚶</button>
+      </div>
+
+      <!-- Map controls -->
+      <div class="map-controls">
+        <button class="mc-btn">+</button>
+        <button class="mc-btn">−</button>
+      </div>
+
+      <!-- Pins -->
+      <div class="mp on" style="left:49.9%;top:75%;" onclick="selectMapCard(0)">
+        <div class="mp-bubble">
+          <div class="mp-dot" style="background:#6366F1;"></div>
+          <span class="mp-pay"><em>15–22k</em></span>
+        </div>
+      </div>
+      <div class="mp" style="left:44%;top:51%;" onclick="selectMapCard(1)">
+        <div class="mp-bubble">
+          <div class="mp-dot" style="background:#EF4444;"></div>
+          <span class="mp-pay"><em>6,5–8,2k</em></span>
+        </div>
+      </div>
+      <div class="mp" style="left:50%;top:36%;" onclick="selectMapCard(2)">
+        <div class="mp-bubble">
+          <div class="mp-dot" style="background:#06B6D4;"></div>
+          <span class="mp-pay"><em>5,8–7k</em></span>
+        </div>
+      </div>
+      <div class="mp" style="left:70%;top:58%;" onclick="selectMapCard(3)">
+        <div class="mp-bubble">
+          <div class="mp-dot" style="background:#10B981;"></div>
+          <span class="mp-pay"><em>7,2–9,5k</em></span>
+        </div>
+      </div>
+      <div class="mp" style="left:26%;top:30%;" onclick="selectMapCard(4)">
+        <div class="mp-bubble">
+          <div class="mp-dot" style="background:#8B5CF6;"></div>
+          <span class="mp-pay"><em>9–14k</em></span>
+        </div>
+      </div>
+
+      <!-- Bottom sheet -->
+      <div class="map-sheet">
+        <div class="sheet-cards" id="mapCards">
+          <div class="scard on" onclick="showDetail('A')">
+            <div class="scard-logo" style="background:linear-gradient(135deg,#4F46E5,#6366F1)">CD</div>
+            <div class="scard-body">
+              <div class="scard-co">Codewise · Podgórze</div>
+              <div class="scard-title">Senior Frontend Dev</div>
+              <div class="scard-pay">15–22 000 zł</div>
+              <div class="scard-meta">🚗 12 min · ul. Zabłocie 43</div>
+            </div>
+          </div>
+          <div class="scard" onclick="showDetail('A')">
+            <div class="scard-logo" style="background:linear-gradient(135deg,#DC2626,#EF4444)">P</div>
+            <div class="scard-body">
+              <div class="scard-co">Pramer · Wrocław</div>
+              <div class="scard-title">Elektryk / Pomocnik</div>
+              <div class="scard-pay">6 500–8 200 zł</div>
+              <div class="scard-meta">🚗 8 min · ul. Robotnicza</div>
+            </div>
+          </div>
+          <div class="scard" onclick="showDetail('A')">
+            <div class="scard-logo" style="background:linear-gradient(135deg,#0891B2,#06B6D4)">Z</div>
+            <div class="scard-body">
+              <div class="scard-co">Zetkama · Ścinawka</div>
+              <div class="scard-title">Operator CNC</div>
+              <div class="scard-pay">5 800–7 000 zł</div>
+              <div class="scard-meta">🚗 11 min · ul. Fabryczna</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /map-wrap -->
+
+    <div class="bnav">
+      <button class="ni" onclick="switchScreen('lista')">
+        <div class="ni-icon"><svg viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg></div>
+        <span class="ni-lbl">Oferty</span>
+      </button>
+      <button class="ni" onclick="switchScreen('mapa')">
+        <div class="ni-icon" style="background:var(--blue-d);"><svg viewBox="0 0 24 24"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/></svg></div>
+        <span class="ni-lbl" style="color:var(--blue);">Mapa</span>
+        <div class="ni-dot"></div>
+      </button>
+      <button class="ni" onclick="switchScreen('czat')">
+        <div class="ni-icon" style="position:relative"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg><div style="position:absolute;top:-3px;right:-3px;width:8px;height:8px;border-radius:50%;background:var(--red);border:1.5px solid var(--bg2);"></div></div>
+        <span class="ni-lbl">Czat</span>
+      </button>
+      <button class="ni" onclick="switchScreen('profil')">
+        <div class="ni-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0116 0"/></svg></div>
+        <span class="ni-lbl">Profil</span>
+      </button>
+    </div>
+  </div><!-- /screen-mapa -->
+
+  <!-- ════ SCREEN: SZCZEGÓŁY ════ -->
+  <div class="screen" id="screen-detail" style="padding-top:50px;">
+    <div class="tb">
+      <div class="tb-back" onclick="goBack()">←</div>
+      <span class="tb-title" style="font-size:14px;">Senior Frontend Developer</span>
+      <div class="tb-btn">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+      </div>
+    </div>
+
+    <div class="detail-scroll">
+      <div class="det-hero">
+        <div class="det-co-row">
+          <div class="det-logo" style="background:linear-gradient(135deg,#4F46E5,#6366F1)">CD</div>
+          <div>
+            <div class="det-co-name">Codewise Sp. z o.o.</div>
+            <div class="det-co-meta">
+              Technologia reklamowa · 200–500 osób
+              <span class="vbdg">✓ ZWERYF.</span>
+            </div>
+            <div style="font-size:11px;color:var(--gold);margin-top:3px;">★★★★☆ 4,3 (42 opinie)</div>
+          </div>
+        </div>
+        <div class="det-title">Senior Frontend Developer</div>
+        <div class="det-pay-row">
+          <span class="det-pay">15 000–22 000 zł</span>
+          <span class="det-pay-meta">netto · B2B / UoP</span>
+        </div>
+        <div class="det-chips">
+          <div class="dchip">🏠 Zdalnie</div>
+          <div class="dchip">📄 B2B lub UoP</div>
+          <div class="dchip">⏰ Pełny etat</div>
+          <div class="dchip">📍 Podgórze</div>
+        </div>
+        <button class="det-apply-btn">Aplikuj teraz →</button>
+        <div class="det-sec-btns">
+          <button class="det-sec-btn">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"/></svg>
+            Zapisz
+          </button>
+          <button class="det-sec-btn">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+            Czat
+          </button>
+          <button class="det-sec-btn">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+            Udostępnij
+          </button>
+        </div>
+      </div>
+
+      <!-- Commute box -->
+      <div class="det-commute">
+        <div class="det-commute-title">Czas dojazdu z Twojej lokalizacji</div>
+        <div class="det-commute-grid">
+          <div class="dcm-item">
+            <span class="dcm-icon">🚗</span>
+            <span class="dcm-mode">Autem</span>
+            <span class="dcm-time dcm-car">12 min</span>
+          </div>
+          <div class="dcm-item">
+            <span class="dcm-icon">🚴</span>
+            <span class="dcm-mode">Rowerem</span>
+            <span class="dcm-time dcm-bike">26 min</span>
+          </div>
+          <div class="dcm-item">
+            <span class="dcm-icon">🚌</span>
+            <span class="dcm-mode">MPK</span>
+            <span class="dcm-time dcm-transit">18 min</span>
+          </div>
+          <div class="dcm-item">
+            <span class="dcm-icon">🚶</span>
+            <span class="dcm-mode">Pieszo</span>
+            <span class="dcm-time dcm-walk">38 min</span>
+          </div>
+        </div>
+        <div class="det-commute-note">📍 ul. Zabłocie 43 · adres zweryfikowany</div>
+      </div>
+
+      <!-- Requirements -->
+      <div class="det-section">
+        <div class="det-sec-title">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+          Wymagania
+        </div>
+        <div class="req-group">
+          <div class="req-label must"><div class="rdot"></div>Must have</div>
+          <ul class="req-list">
+            <li>React.js · min. 4 lata produkcyjnie</li>
+            <li>TypeScript — generics, utility types</li>
+            <li>Next.js (App Router, SSR, ISR)</li>
+            <li>Testy: Jest + Cypress / Playwright</li>
+            <li>Angielski B2+ (daily team comm)</li>
+          </ul>
+        </div>
+        <div class="req-group">
+          <div class="req-label nice"><div class="rdot"></div>Nice to have</div>
+          <ul class="req-list">
+            <li class="ni-req">GraphQL (Apollo Client)</li>
+            <li class="ni-req">Web Performance / Core Web Vitals</li>
+            <li class="ni-req">Open-source kontrybutor</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Benefits -->
+      <div class="det-section">
+        <div class="det-sec-title">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+          Co oferujemy
+        </div>
+        <div class="ben-grid">
+          <div class="ben-item"><div class="ben-icon">💰</div><div class="ben-title">15–22k netto</div><div class="ben-desc">B2B lub UoP, do wyboru</div></div>
+          <div class="ben-item"><div class="ben-icon">🏠</div><div class="ben-title">Pełna zdalność</div><div class="ben-desc">+ biuro w Krakowie</div></div>
+          <div class="ben-item"><div class="ben-icon">📚</div><div class="ben-title">5 000 zł/rok</div><div class="ben-desc">Budżet szkoleniowy</div></div>
+          <div class="ben-item"><div class="ben-icon">🏥</div><div class="ben-title">LuxMed Premium</div><div class="ben-desc">Ty + rodzina</div></div>
+          <div class="ben-item"><div class="ben-icon">🖥️</div><div class="ben-title">MacBook M3</div><div class="ben-desc">Lub Dell XPS 15</div></div>
+          <div class="ben-item"><div class="ben-icon">🌍</div><div class="ben-title">Retreat/rok</div><div class="ben-desc">Wyjazd z globalnym teamem</div></div>
+        </div>
+      </div>
+
+      <!-- Recruitment -->
+      <div class="det-section">
+        <div class="det-sec-title">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81"/></svg>
+          Proces rekrutacji (max 2 tygodnie)
+        </div>
+        <div class="rec-steps">
+          <div class="rec-step"><div class="rec-num">1</div><div><div class="rec-step-title">Rozmowa HR (30 min, online)</div><div class="rec-step-desc">Wzajemne poznanie i oczekiwania</div></div></div>
+          <div class="rec-step"><div class="rec-num">2</div><div><div class="rec-step-title">Zadanie take-home (~4h)</div><div class="rec-step-desc">Małe zadanie React, bez algorytmiki</div></div></div>
+          <div class="rec-step"><div class="rec-num">3</div><div><div class="rec-step-title">Code review + tech (90 min)</div><div class="rec-step-desc">Omówienie kodu z teamem — bez whiteboard</div></div></div>
+          <div class="rec-step"><div class="rec-num">4</div><div><div class="rec-step-title">Oferta w 3 dni robocze</div><div class="rec-step-desc">Koniec procesu</div></div></div>
+        </div>
+      </div>
+
+      <!-- Meta info -->
+      <div style="margin:10px 14px 0;padding:12px 14px;background:var(--surf);border:1px solid var(--line);border-radius:12px;display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+        <div style="font-size:11px;color:var(--text3);">Dodano<br><b style="color:var(--text2);font-size:12px;font-weight:700;">Dzisiaj</b></div>
+        <div style="font-size:11px;color:var(--text3);">Aplikacje<br><b style="color:var(--text2);font-size:12px;font-weight:700;">37 kandydatów</b></div>
+        <div style="font-size:11px;color:var(--text3);">Ważne do<br><b style="color:var(--text2);font-size:12px;font-weight:700;">28 cze 2026</b></div>
+        <div style="font-size:11px;color:var(--text3);">Poziom<br><b style="color:var(--text2);font-size:12px;font-weight:700;">Senior / Expert</b></div>
+      </div>
+
+      <!-- Footer link -->
+      <div style="padding:14px;text-align:center;">
+        <span style="font-size:11px;color:var(--text3);cursor:pointer;text-decoration:underline;">Zgłoś problem z ogłoszeniem</span>
+      </div>
+    </div>
+
+    <div class="bnav">
+      <button class="ni" onclick="switchScreen('lista')"><div class="ni-icon"><svg viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg></div><span class="ni-lbl">Oferty</span></button>
+      <button class="ni" onclick="switchScreen('mapa')"><div class="ni-icon"><svg viewBox="0 0 24 24"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/></svg></div><span class="ni-lbl">Mapa</span></button>
+      <button class="ni" onclick="switchScreen('czat')"><div class="ni-icon"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></div><span class="ni-lbl">Czat</span></button>
+      <button class="ni" onclick="switchScreen('profil')"><div class="ni-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0116 0"/></svg></div><span class="ni-lbl">Profil</span></button>
+    </div>
+  </div><!-- /screen-detail -->
+
+  <!-- ════ SCREEN: CZAT ════ -->
+  <div class="screen" id="screen-czat" style="padding-top:50px;">
+    <div class="tb">
+      <div class="tb-logo"><div class="tb-logo-mark"><svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></div>Wiadomości</div>
+      <div class="tb-spacer"></div>
+      <div class="tb-btn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg></div>
+    </div>
+
+    <!-- Conversation list -->
+    <div class="chat-list">
+      <div class="chat-item" onclick="switchScreen('chat-active')">
+        <div class="chat-av" style="background:linear-gradient(135deg,#4F46E5,#6366F1)">CD<div class="online"></div></div>
+        <div class="chat-body">
+          <div class="chat-name">Codewise Sp. z o.o.</div>
+          <div class="chat-preview">Świetnie. Możemy umówić się na rozmowę...</div>
+        </div>
+        <div class="chat-meta">
+          <div class="chat-time">10:29</div>
+          <div class="chat-unread">2</div>
+        </div>
+      </div>
+      <div class="chat-item" onclick="switchScreen('chat-active')">
+        <div class="chat-av" style="background:linear-gradient(135deg,#DC2626,#EF4444)">P</div>
+        <div class="chat-body">
+          <div class="chat-name">Pramer Sp. z o.o.</div>
+          <div class="chat-preview">Dziękujemy za aplikację. Zapraszamy na...</div>
+        </div>
+        <div class="chat-meta">
+          <div class="chat-time">wczoraj</div>
+        </div>
+      </div>
+      <div class="chat-item">
+        <div class="chat-av" style="background:linear-gradient(135deg,#0891B2,#06B6D4)">Z</div>
+        <div class="chat-body">
+          <div class="chat-name">Zetkama S.A.</div>
+          <div class="chat-preview">Twoje CV jest świetne. Czy jest Pan...</div>
+        </div>
+        <div class="chat-meta">
+          <div class="chat-time">pon.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="bnav">
+      <button class="ni" onclick="switchScreen('lista')"><div class="ni-icon"><svg viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg></div><span class="ni-lbl">Oferty</span></button>
+      <button class="ni" onclick="switchScreen('mapa')"><div class="ni-icon"><svg viewBox="0 0 24 24"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/></svg></div><span class="ni-lbl">Mapa</span></button>
+      <button class="ni"><div class="ni-icon" style="background:var(--blue-d);"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></div><span class="ni-lbl" style="color:var(--blue);">Czat</span><div class="ni-dot"></div></button>
+      <button class="ni" onclick="switchScreen('profil')"><div class="ni-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0116 0"/></svg></div><span class="ni-lbl">Profil</span></button>
+    </div>
+  </div>
+
+  <!-- ════ SCREEN: CHAT ACTIVE ════ -->
+  <div class="screen" id="screen-chat-active" style="padding-top:50px;">
+    <div class="tb">
+      <div class="tb-back" onclick="switchScreen('czat')">←</div>
+      <div class="chat-av" style="background:linear-gradient(135deg,#4F46E5,#6366F1);width:32px;height:32px;border-radius:8px;font-size:11px;font-weight:900;">CD</div>
+      <div style="flex:1;min-width:0;">
+        <div style="font-size:13px;font-weight:700;color:var(--text);">Codewise Sp. z o.o.</div>
+        <div style="font-size:10.5px;color:var(--green);display:flex;align-items:center;gap:4px;"><span style="width:5px;height:5px;border-radius:50%;background:var(--green);display:inline-block;"></span>aktywny teraz</div>
+      </div>
+    </div>
+    <div class="chat-messages">
+      <div class="chat-day">Dzisiaj</div>
+      <div class="msg them">Dzień dobry, widzieliśmy Pana profil na MapJob. Czy jest Pan nadal zainteresowany stanowiskiem Senior Frontend Developera?<span class="mt">10:24</span></div>
+      <div class="msg me">Dzień dobry, tak — jak najbardziej. Bardzo interesująca oferta.<span class="mt">10:26</span></div>
+      <div class="msg them">Świetnie. Możemy umówić się na rozmowę wstępną w tym tygodniu?<span class="mt">10:27</span></div>
+      <div class="msg me">Pasuje mi czwartek po 15:00.<span class="mt">10:29</span></div>
+      <div class="msg them">Idealnie. Wyślę zaproszenie Google Meet na podany mail. Do zobaczenia!<span class="mt">10:31</span></div>
+    </div>
+    <div class="chat-input">
+      <input class="chat-field" placeholder="Napisz wiadomość…">
+      <button class="chat-send"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></button>
+    </div>
+  </div>
+
+  <!-- ════ SCREEN: PROFIL ════ -->
+  <div class="screen" id="screen-profil" style="padding-top:50px;">
+    <div class="pf-cover">
+      <div class="pf-av">PZ</div>
+    </div>
+    <div class="pf-body">
+      <div class="pf-name">Piotr Zając <span class="pf-badge">✓ ZWER.</span></div>
+      <div class="pf-role">Frontend Developer · Kraków</div>
+      <div class="pf-stats">
+        <div class="pf-stat"><b>4,9</b><span>Ocena</span></div>
+        <div class="pf-stat"><b>12</b><span>Aplikacje</span></div>
+        <div class="pf-stat"><b>3 lata</b><span>Staż</span></div>
+      </div>
+      <div class="pf-sec">Umiejętności</div>
+      <div class="pf-skills">
+        <span class="pf-skill">React</span>
+        <span class="pf-skill">TypeScript</span>
+        <span class="pf-skill">Next.js</span>
+        <span class="pf-skill">Node.js</span>
+        <span class="pf-skill">GraphQL</span>
+      </div>
+      <div class="pf-sec">Preferencje</div>
+      <div class="pf-row"><div class="pf-row-ico">📍</div>Kraków i okolice (do 30 km) lub zdalnie</div>
+      <div class="pf-row"><div class="pf-row-ico">💼</div>Pełny etat · B2B lub UoP</div>
+      <div class="pf-row"><div class="pf-row-ico">💰</div>Oczekiwania: 14 000–20 000 zł netto</div>
+      <div class="pf-row"><div class="pf-row-ico">🕑</div>Dostępny od: lipiec 2026</div>
+      <div class="pf-sec">Ustawienia</div>
+      <div class="pf-row" style="cursor:pointer;" onclick=""><div class="pf-row-ico">🔔</div>Alerty o nowych ofertach</div>
+      <div class="pf-row" style="cursor:pointer;"><div class="pf-row-ico">🔒</div>Prywatność i bezpieczeństwo</div>
+      <div class="pf-row" style="cursor:pointer;border-bottom:none;"><div class="pf-row-ico">📋</div>Regulamin i polityka prywatności</div>
+      <button class="pf-cta">Edytuj profil</button>
+    </div>
+    <div class="bnav" style="position:fixed;">
+      <button class="ni" onclick="switchScreen('lista')"><div class="ni-icon"><svg viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg></div><span class="ni-lbl">Oferty</span></button>
+      <button class="ni" onclick="switchScreen('mapa')"><div class="ni-icon"><svg viewBox="0 0 24 24"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/></svg></div><span class="ni-lbl">Mapa</span></button>
+      <button class="ni" onclick="switchScreen('czat')"><div class="ni-icon"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></div><span class="ni-lbl">Czat</span></button>
+      <button class="ni"><div class="ni-icon" style="background:var(--blue-d);"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0116 0"/></svg></div><span class="ni-lbl" style="color:var(--blue);">Profil</span><div class="ni-dot"></div></button>
+    </div>
+  </div>
+
+</div><!-- /device -->
+
+<!-- ════════════════════ UX NOTES PANEL ════════════════════ -->
+<div class="ux-panel">
+  <div class="ux-title">MapJob Mobile v2</div>
+  <div class="ux-subtitle">Makieta 1:1 · kolory z repozytorium · 5 ekranów, wszystkie kliknięcia działają</div>
+
+  <div class="nav-label-row">
+    <b>Nawigacja między ekranami:</b><br>
+    🗒️ Oferty → lista kart<br>
+    🗺️ Mapa → mapa z pinami<br>
+    💬 Czat → lista + aktywny czat<br>
+    👤 Profil → profil kandydata<br>
+    Kliknij kartę → szczegóły oferty
+  </div>
+
+  <div class="ux-card">
+    <div class="ux-card-title">
+      <div class="dot" style="background:#10B981;"></div>
+      Co zostało ulepszone
+    </div>
+    <div class="ux-item">Ciemny motyw <b>1:1 z repo</b> — tokeny, font Plus Jakarta Sans, border-radius 14px</div>
+    <div class="ux-item">Karta oferty: <b>czas dojazdu 3 trybami</b> widoczny od razu — USP nr 1 MapJob</div>
+    <div class="ux-item">Karta oferty: <b>wynagrodzenie zawsze zielone</b> i na pierwszym planie</div>
+    <div class="ux-item">Mapa: <b>ciemny styl</b> spójny z dark theme, siatka, opisy dzielnic</div>
+    <div class="ux-item">Mapa: <b>piny z widełkami</b> + swipowalne karty u dołu (patent Airbnb)</div>
+    <div class="ux-item">Szczegóły: <b>sticky CTA "Aplikuj"</b> nad scrollem, 3 secondary buttons</div>
+    <div class="ux-item">Beta banner: <b>scrolling marquee</b> jak w oryginalnym index.html</div>
+  </div>
+
+  <div class="ux-card">
+    <div class="ux-card-title">
+      <div class="dot" style="background:#F59E0B;"></div>
+      Proponowane zmiany UX
+    </div>
+    <div class="ux-item"><b>Skróć bottom nav do 4 zakładek</b> (Oferty, Mapa, Czat, Profil) — mniej opcji = mniej wahania</div>
+    <div class="ux-item"><b>Odległość km zawsze na karcie</b> obok czasu — kandydaci patrzą na oba</div>
+    <div class="ux-item"><b>„Pilne" — lewa czerwona linia</b> zamiast glow efektu — profesjonalniej (już w makiecie)</div>
+    <div class="ux-item"><b>Commute ≤ 15 min</b> wyróżnij kolorem — to jest kluczowy decyzyjna metryka dla persony A (Anna)</div>
+    <div class="ux-item"><b>Sortuj domyślnie po odległości</b>, nie po datcie — to jest różnica vs Pracuj.pl</div>
+    <div class="ux-item"><b>Chat preview</b> w liście konwersacji — kandydat widzi kontekst bez wchodzenia</div>
+    <div class="ux-item"><b>Pull-to-refresh indykator</b> na liście — brakuje feedback że lista się odświeża</div>
+  </div>
+
+  <div class="ux-card">
+    <div class="ux-card-title">
+      <div class="dot" style="background:#EF4444;"></div>
+      Problemy do naprawienia w UI
+    </div>
+    <div class="ux-item"><b>Shimmer urgency w oryginalnym CSS</b> (#founder-urgency) — design_refresh.css słusznie to killuje, upewnij się że jest załadowany</div>
+    <div class="ux-item"><b>Kwota "znika" gdy widełki puste</b> — preview-ogloszenia.html to dokumentuje. Fallback: "Do uzgodnienia" zawsze musi być</div>
+    <div class="ux-item"><b>Avatar vs inicjały</b> — łańcuch: company_logo → avatar pracodawcy → inicjały. Nigdy puste miejsce</div>
+    <div class="ux-item"><b>Brak "Adres zweryfikowany" badge</b> na karcie — to jest USP, użyj ✓ ikonki jak w szczegółach</div>
+  </div>
+</div>
+
+<script>
+let prevScreen = 'lista';
+
+function switchScreen(name) {
+  const all = document.querySelectorAll('.screen');
+  all.forEach(s => s.classList.remove('active'));
+  const target = document.getElementById('screen-' + name);
+  if (target) {
+    prevScreen = name;
+    target.classList.add('active');
+    target.scrollTop = 0;
+  }
+}
+
+function showDetail(id) {
+  prevScreen = document.querySelector('.screen.active')?.id?.replace('screen-','') || 'lista';
+  switchScreen('detail');
+}
+
+function goBack() {
+  switchScreen(prevScreen === 'detail' ? 'lista' : prevScreen);
+}
+
+function selectMapCard(idx) {
+  document.querySelectorAll('.mp').forEach((p,i) => p.classList.toggle('on', i === idx));
+  const cards = document.querySelectorAll('.scard');
+  cards.forEach((c,i) => c.classList.toggle('on', i === idx));
+  if (cards[idx]) cards[idx].scrollIntoView({behavior:'smooth', block:'nearest', inline:'center'});
+}
+
+// Transport toggle
+document.querySelectorAll('.tt-btn').forEach(btn => {
+  btn.addEventListener('click', function() {
+    this.closest('.transport-toggle').querySelectorAll('.tt-btn').forEach(b => b.classList.remove('on'));
+    this.classList.add('on');
+  });
+});
+
+// Filter chips
+document.querySelectorAll('.fchip').forEach(chip => {
+  chip.addEventListener('click', function() {
+    const row = this.closest('.chips-row');
+    row.querySelectorAll('.fchip').forEach(c => c.classList.remove('on'));
+    this.classList.add('on');
+  });
+});
+</script>
+</body>
+</html>
