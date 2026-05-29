@@ -29,3 +29,31 @@
 ### Gdzie szukać logo przy implementacji
 
 Wszystkie opisane logo są w `.claude/logos/README.md`. Zawsze tam zaglądaj przed implementowaniem logo jakiejkolwiek firmy.
+
+---
+
+## Struktura kodu — gdzie jest co
+
+### Repozytorium z kodem strony
+
+- **GitHub:** `piotrzajac4321-maker/MapJob`
+- **Branch z produkcyjnym kodem:** `vercel-deploy`
+- **Live:** https://map-job.vercel.app
+
+### Kluczowe pliki
+
+| Plik | Co to jest |
+|------|-----------|
+| `index.html` | Strona główna MapJob |
+| `zaufali-nam/index.html` | Podstrona "Zaufali nam" z kartami firm |
+| `styles.css` | Globalne style |
+| `mapjob-dla-firm.html` | Strona dla pracodawców |
+
+### Jak dodawać logo firmy do sekcji "Zaufali nam"
+
+1. Pobierz `zaufali-nam/index.html` z brancha `vercel-deploy`
+2. Dodaj nową kartę `.firm` do `.grid` — przed wpisami z klasą `.demo`
+3. Logo bez pliku graficznego → zrób CSS tak jak Berker Dominis (patrz rejestr)
+4. Zaktualizuj licznik firm w `.stats`
+5. Zaktualizuj meta description
+6. Wypchnij na branch `claude/[nazwa-zadania]`
