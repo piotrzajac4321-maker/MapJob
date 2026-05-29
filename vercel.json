@@ -3,56 +3,120 @@
   "buildCommand": "python3 build_seo_landings.py",
   "outputDirectory": ".",
   "rewrites": [
-    { "source": "/firma/(.*)", "destination": "/index.html" },
-    { "source": "/statystyki", "destination": "/statystyki.html" },
-    { "source": "/panel", "destination": "/statystyki.html" },
-    { "source": "/zaufali-makieta-a-4r8w2k", "destination": "/zaufali-makieta-a-4r8w2k.html" },
-    { "source": "/zaufali-makieta-b-9m3x7p", "destination": "/zaufali-makieta-b-9m3x7p.html" },
-    { "source": "/zaufali-makieta-c-6t1n5q", "destination": "/zaufali-makieta-c-6t1n5q.html" },
-    { "source": "/zaufali-preview-real-7k4p9x", "destination": "/zaufali-preview-real-7k4p9x.html" }
+    {
+      "source": "/firma/(.*)",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/statystyki",
+      "destination": "/statystyki.html"
+    },
+    {
+      "source": "/panel",
+      "destination": "/statystyki.html"
+    },
+    {
+      "source": "/zaufali-makieta-a-4r8w2k",
+      "destination": "/zaufali-makieta-a-4r8w2k.html"
+    },
+    {
+      "source": "/zaufali-makieta-b-9m3x7p",
+      "destination": "/zaufali-makieta-b-9m3x7p.html"
+    },
+    {
+      "source": "/zaufali-makieta-c-6t1n5q",
+      "destination": "/zaufali-makieta-c-6t1n5q.html"
+    },
+    {
+      "source": "/zaufali-preview-real-7k4p9x",
+      "destination": "/zaufali-preview-real-7k4p9x.html"
+    },
+    {
+      "source": "/stats",
+      "destination": "/stats-widget.html"
+    }
   ],
   "headers": [
     {
       "source": "/(.*)",
       "headers": [
-        { "key": "Strict-Transport-Security", "value": "max-age=63072000; includeSubDomains; preload" },
-        { "key": "X-Content-Type-Options",   "value": "nosniff" },
-        { "key": "Referrer-Policy",          "value": "strict-origin-when-cross-origin" },
-        { "key": "X-Frame-Options",          "value": "DENY" },
-        { "key": "Content-Security-Policy",  "value": "frame-ancestors 'none'" },
-        { "key": "Permissions-Policy",       "value": "camera=(), microphone=(), geolocation=(self), payment=(self), interest-cohort=()" },
-        { "key": "Cross-Origin-Opener-Policy", "value": "same-origin" }
+        {
+          "key": "Strict-Transport-Security",
+          "value": "max-age=63072000; includeSubDomains; preload"
+        },
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "strict-origin-when-cross-origin"
+        },
+        {
+          "key": "X-Frame-Options",
+          "value": "DENY"
+        },
+        {
+          "key": "Content-Security-Policy",
+          "value": "frame-ancestors 'none'"
+        },
+        {
+          "key": "Permissions-Policy",
+          "value": "camera=(), microphone=(), geolocation=(self), payment=(self), interest-cohort=()"
+        },
+        {
+          "key": "Cross-Origin-Opener-Policy",
+          "value": "same-origin"
+        }
       ]
     },
     {
       "source": "/sw.js",
       "headers": [
-        { "key": "Cache-Control", "value": "public, max-age=0, must-revalidate" },
-        { "key": "Service-Worker-Allowed", "value": "/" }
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=0, must-revalidate"
+        },
+        {
+          "key": "Service-Worker-Allowed",
+          "value": "/"
+        }
       ]
     },
     {
       "source": "/(statystyki|panel)(.html)?",
       "headers": [
-        { "key": "Cache-Control", "value": "no-cache, no-store, must-revalidate" }
+        {
+          "key": "Cache-Control",
+          "value": "no-cache, no-store, must-revalidate"
+        }
       ]
     },
     {
       "source": "/",
       "headers": [
-        { "key": "Cache-Control", "value": "no-cache, must-revalidate" }
+        {
+          "key": "Cache-Control",
+          "value": "no-cache, must-revalidate"
+        }
       ]
     },
     {
       "source": "/index.html",
       "headers": [
-        { "key": "Cache-Control", "value": "no-cache, must-revalidate" }
+        {
+          "key": "Cache-Control",
+          "value": "no-cache, must-revalidate"
+        }
       ]
     },
     {
       "source": "/manifest.json",
       "headers": [
-        { "key": "Content-Type", "value": "application/manifest+json" }
+        {
+          "key": "Content-Type",
+          "value": "application/manifest+json"
+        }
       ]
     }
   ]
