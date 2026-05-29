@@ -1,75 +1,76 @@
 # Otwarte pytania — MapJob.pl
 
-**Ostatnia aktualizacja:** [2026-05-29 | sesja startowa]
+**Ostatnia aktualizacja:** [2026-05-29 | korekta po analizie GitHub]
 
 ---
 
-Poniższe pytania wymagają odpowiedzi właściciela projektu zanim można podjąć dalsze kroki wdrożeniowe.
+> Aplikacja ISTNIEJE i działa na produkcji. Pytania dotyczą dalszego rozwoju.
 
 ---
 
-## BLOKUJĄCE (wymagane do rozpoczęcia budowy)
+## BLOKUJĄCE — bez tych odpowiedzi nie wiem od czego zacząć
 
-### [Q-01] Co wysłał Twój znajomy?
-**Kontekst:** Wspomniałeś o materiale od znajomego, ale nie udostępniłeś go w wiadomości.
-**Potrzebne:** Link lub treść/plik do sprawdzenia czy jest użyteczny dla projektu.
-
-### [Q-02] Czy aplikacja webowa MapJob jest już gdzieś budowana?
-**Kontekst:** Obecne repo zawiera tylko skille Claude Code (marketing). Nie ma żadnego kodu aplikacji.
+### [Q-01] Jaki jest główny cel na najbliższe 4-8 tygodni?
 **Opcje:**
-- a) To jest nowy projekt i wszystko zaczynamy od zera
-- b) Jest inny repozytory z kodem aplikacji (podaj link/nazwę)
-- c) Kod jest gdzieś lokalnie (trzeba go przenieść)
+- a) Wzrost ruchu (SEO + reklamy)
+- b) Wzrost liczby ofert/firm (partnerzy, self-service)
+- c) Wzrost konwersji (UX, funnel, testy A/B)
+- d) Nowe funkcje (co konkretnie?)
+- e) Naprawienie czegoś co nie działa
 
-### [Q-03] Jaki frontend stack preferujesz?
-**Rekomendacja:** Next.js 15 (React, App Router, SSR/SSG dla SEO)
-**Opcje alternatywne:** Remix, SvelteKit, Vue/Nuxt, plain React (Vite)
+### [Q-02] Jaki jest obecny model monetyzacji Stripe?
+**Kontekst:** Widzę migrację `launch_promo_500` i highlights. Nie wiem co i ile kosztuje.
+**Potrzebne:** Opis pakietów/cen które sprzedajesz pracodawcom.
 
-### [Q-04] Jaki provider map?
-**Rekomendacja:** Mapbox GL JS (pełna kontrola, isochrone API dla czasu dojazdu)
-**Opcje alternatywne:** Google Maps Platform, Leaflet + OpenStreetMap (darmowy)
-**Koszt:** Mapbox ~darmowy do 50k requests/miesiąc, potem $0.50/1000
+### [Q-03] Czy pracodawcy mają self-service panel?
+**Kontekst:** Widzę skrypty `build_inpost.py`, `build_zabka.py` etc. — to ręczna praca.
+**Pytanie:** Czy pracodawca może sam dodać ofertę przez UI? Czy to zawsze manual?
 
-### [Q-05] Czy Supabase ma być backendem?
-**Kontekst:** Supabase MCP jest dostępny w środowisku — wygląda że tak planowane.
-**Do potwierdzenia:** Czy masz już konto/projekt na Supabase? Czy mogę się z nim połączyć?
-
----
-
-## WAŻNE (potrzebne wkrótce)
-
-### [Q-06] Jaki jest cel na MVP i kiedy?
-**Kontekst:** Czy masz konkretny termin? (np. "chcę coś działającego za 2 miesiące")
-**Priorytet MVP:** Czy zgadzasz się z propozycją z planu wdrożenia?
-
-### [Q-07] Czy masz już makiety/design dla aplikacji?
-**Kontekst:** Figma MCP jest dostępny — mogę generować designs, ale jeśli masz coś istniejącego, warto zacząć od tego.
-
-### [Q-08] Jaki model biznesowy / monetyzacja?
-**Kontekst:** Plan wdrożenia zakłada panel pracodawcy.
-**Pytanie:** Czy pracodawcy płacą za ogłoszenia? Freemium? Subskrypcja?
-
-### [Q-09] Czy masz budżet na reklamy?
-**Kontekst:** Skill `ad-copywriter` jest gotowy — możemy zacząć kampanie gdy aplikacja jest online.
-**Pytanie:** Jaki miesięczny budżet reklamowy? (Meta Ads + LinkedIn Ads)
-
-### [Q-10] Czy masz dostęp do ofert pracy na start?
-**Kontekst:** Platforma potrzebuje treści na starcie (chicken-and-egg problem).
-**Pytanie:** Umowy z agregatorami ofert? Scraping? Manualne dodawanie?
+### [Q-04] Jaki jest obecny traffic na stronie?
+**Kontekst:** Masz panel statystyk — ile masz użytkowników dziennie/tygodniowo?
+**Potrzebne:** Rzut oka na liczby (unikalni, sesje, wyświetlenia ofert).
 
 ---
 
-## MNIEJ PILNE (do omówienia w przyszłości)
+## WAŻNE — potrzebne do optymalizacji
 
-### [Q-11] Mobilna aplikacja?
-Czy planujemy aplikację iOS/Android obok webowej?
+### [Q-05] Jaki provider map jest użyty?
+**Kontekst:** Widzę mapę z pinami, ale nie wiem czy to Leaflet, Mapbox, czy Google.
+**Ważne dla:** budżetu (Google Maps płatne!), możliwości (izochrone dla czasu dojazdu).
 
-### [Q-12] Jakie branże na start?
-IT tylko? Czy wszystkie branże?
+### [Q-06] Czy filtr po czasie/promieniu dojazdu już działa?
+**Kontekst:** To jest core feature MapJob ("znajdź pracę blisko domu").
+**Pytanie:** Czy user może ustawić "pokaż oferty do 30 min od domu"?
 
-### [Q-13] Geograficzny zasięg na start?
-Cała Polska? Tylko Warszawa? Kilka miast?
+### [Q-07] Czy są aktywne kampanie reklamowe (Meta/LinkedIn)?
+**Kontekst:** Skill `ad-copywriter` jest gotowy.
+**Pytanie:** Czy wydajemy budżet na reklamy? Ile miesięcznie?
+
+### [Q-08] Jak wygląda pipeline pozyskiwania nowych partnerów?
+**Kontekst:** Masz 10+ firm, ale integracja jest manualna (Python scripts).
+**Pytanie:** Ile czasu zajmuje dodanie nowej firmy?
 
 ---
 
-*Aktualizuj ten plik gdy dostaniesz odpowiedzi. Zaznacz [ODPOWIEDZIANO] przy pytaniach które zostały rozwiązane.*
+## MNIEJ PILNE
+
+### [Q-09] Co to jest `launch_promo_500`?
+500 darmowych ogłoszeń? 500 zł promo? Coś innego?
+
+### [Q-10] Czy cv-parse używa AI?
+Widzę edge function `cv-parse` — czy to parsuje CV przy użyciu modelu językowego?
+
+### [Q-11] Jaki jest plan na mobilną aplikację (iOS/Android)?
+Masz PWA — czy planujesz natywną apkę?
+
+### [Q-12] Czy branch `seo-footer-in-menu` jest do scalenia?
+Widzę nieścalony branch — czy ta zmiana jest gotowa do wdrożenia?
+
+---
+
+## ODPOWIEDZIANO
+
+*(Tu przenoszę pytania gdy dostanę odpowiedź)*
+
+- [ODPOWIEDZIANO] Q-00: Co wysłał znajomy → Instrukcja workflow dla Claude Code
+- [ODPOWIEDZIANO] Q-aplikacja: Czy aplikacja istnieje → TAK, jest na produkcji na Vercelu

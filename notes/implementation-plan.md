@@ -1,7 +1,9 @@
 # Plan Wdrożenia — MapJob.pl
 
 **Utworzony:** [2026-05-29 | sesja startowa]
-**Status:** Wersja robocza — wymaga odpowiedzi na pytania (patrz `questions.md`)
+**Zaktualizowany:** [2026-05-29 | po analizie GitHuba — aplikacja już istnieje!]
+
+> ⚠️ WAŻNA KOREKTA: Aplikacja jest w produkcji. Ten plan dotyczy DALSZEGO ROZWOJU, nie budowania od zera.
 
 ---
 
@@ -14,204 +16,179 @@
 
 ---
 
-## FAZA 0 — Fundamenty i planowanie [bieżąca]
+## Stan obecny (2026-05-29)
 
-### 0.1 Dokumentacja i notatki [2026-05-29]
-- [x] Zapoznanie z projektem (struktura, stack, kontekst marki)
-- [x] Stworzenie systemu notatek (`notes/`)
-- [x] Przygotowanie overview projektu
-- [x] Przygotowanie planu wdrożenia (ten dokument)
-- [ ] Odpowiedzi na pytania otwarte (`questions.md`)
-
-### 0.2 Decyzje technologiczne [!]
-- [!] Czy aplikacja webowa jest już gdzieś budowana? (inny repo? inna chmura?)
-- [!] Jaki jest preferowany frontend stack? (Next.js? React? Vue?)
-- [!] Czy Supabase ma być głównym backendem?
-- [!] Jakie mapy? (Google Maps, Mapbox, OpenStreetMap/Leaflet?)
-- [!] Jaki jest harmonogram / deadline MVP?
-
----
-
-## FAZA 1 — Projektowanie UI/UX [!]
-
-### 1.1 Makiety i design system
-- [!] Stworzenie makiet w Figma (dostępny Figma MCP — można generować automatycznie)
-- [ ] Design system — kolory, typografia, komponenty
-- [ ] Prototyp widoku mapy z ofertami
-- [ ] Prototyp widoku listy ofert (fallback dla mobile)
-- [ ] Prototyp panelu pracodawcy
-
-### 1.2 Główne ekrany do zaprojektowania
-- [ ] Strona główna / landing page
-- [ ] Widok mapy z ofertami (główny UI)
-- [ ] Karta oferty pracy (popup / panel boczny)
-- [ ] Wyniki wyszukiwania
-- [ ] Panel pracodawcy (dodawanie ofert, statystyki)
-- [ ] Profil kandydata / CV
-- [ ] Rejestracja / logowanie
-
-**Notatka [2026-05-29]:** Figma MCP jest dostępny w środowisku — możemy generować designs bezpośrednio z kodu/opisu. Do omówienia z właścicielem czy mamy istniejące makiety.
+### Co jest ukończone [x]
+- [x] Aplikacja webowa (vanilla HTML/CSS/JS) na Vercelu
+- [x] Supabase backend (20 migracji, 7 edge functions)
+- [x] Interaktywna mapa z pinezkami (piny, oferty, zlecenia)
+- [x] System kontaktu bez logowania
+- [x] Panel statystyk admin (`/statystyki`, `/panel`)
+- [x] Liczniki wyświetleń i kliknięć
+- [x] Stripe — płatności
+- [x] System referralowy
+- [x] Push notyfikacje
+- [x] Profile użytkowników + CV + portfolio
+- [x] SEO landing pages (auto-generowane Pythonem)
+- [x] Cookie consent (GDPR)
+- [x] PWA (Service Worker)
+- [x] Analityka: GA4 + Clarity + Meta Pixel
+- [x] 10+ partnerów/firm zintegrowanych
+- [x] Skill `ad-copywriter` (marketing/reklamy)
 
 ---
 
-## FAZA 2 — Backend i baza danych [!]
+## OBSZAR 1 — Jakość i stabilność kodu
 
-### 2.1 Baza danych (Supabase/PostgreSQL)
-- [!] Projekt schematu bazy danych (do zatwierdzenia)
-- [ ] Tabele: `users`, `companies`, `job_offers`, `locations`, `applications`
-- [ ] PostGIS extension dla zapytań geograficznych
-- [ ] Row Level Security (RLS) policies
-- [ ] Indeksy dla wyszukiwania geograficznego
+### 1.1 Refactoring i architektura
+- [!] Ocenić czy vanilla HTML/JS ma sens długoterminowo vs migracja do frameworka
+- [ ] Audit rozmiaru `index.html` (prawdopodobnie bardzo duży plik)
+- [ ] Rozbicie kodu na moduły / osobne pliki JS
+- [ ] Dokumentacja wewnętrzna kluczowych funkcji
 
-### 2.2 Proponowany schemat (draft)
-```
-job_offers:
-  - id, title, description
-  - company_id → companies
-  - location (GEOGRAPHY/POINT) — PostGIS
-  - address, city, district
-  - salary_min, salary_max, currency
-  - employment_type, work_mode (onsite/hybrid/remote)
-  - created_at, expires_at, status
+### 1.2 Testy i błędy
+- [ ] Przegląd logów błędów klienta (`client_errors` w Supabase)
+- [ ] Testy regresji kluczowych flow (kontakt, aplikacja, pin)
+- [ ] Monitoring błędów (czy jest Sentry lub podobne?)
 
-companies:
-  - id, name, logo_url, website
-  - description, size_category
-  - verified (bool)
-
-users:
-  - id (auth.users), email
-  - role (candidate/employer)
-  - profile data
-
-applications:
-  - id, job_id, user_id
-  - status, created_at
-```
-
-### 2.3 API / Edge Functions
-- [ ] Endpoint: wyszukiwanie ofert w promieniu (lat, lng, radius)
-- [ ] Endpoint: dodawanie / edycja oferty
-- [ ] Endpoint: aplikowanie na ofertę
-- [ ] Auth: logowanie, rejestracja, OAuth (Google?)
-- [ ] Webhooks: powiadomienia email
-
-**Notatka [2026-05-29]:** Supabase MCP dostępny — możemy tworzyć tabele i migracje bezpośrednio przez asystenta.
+**Notatka [2026-05-29]:** Brak info o testach automatycznych — prawdopodobnie ich nie ma. Priorytet ocenić.
 
 ---
 
-## FAZA 3 — Frontend / Aplikacja webowa [!]
+## OBSZAR 2 — Monetyzacja [!]
 
-### 3.1 Setup projektu
-- [!] Wybór frameworka (rekomendacja: **Next.js 15** — SEO, SSR, App Router)
-- [ ] Inicjalizacja projektu
-- [ ] Konfiguracja Supabase client
-- [ ] Routing i layout
-- [ ] Komponenty bazowe (Button, Input, Card, Modal)
+### 2.1 Stripe — aktualny model
+- [!] Jaki jest obecny model płatności? (jednorazowe? subskrypcja? credits?)
+- [!] Czy promo "500" jest aktywne? Co oznacza liczba 500?
+- [ ] Audit ścieżki zakupu (checkout → webhook → aktywacja)
+- [ ] Testy webhooków Stripe w środowisku staging
 
-### 3.2 Mapa (core feature)
-- [!] Wybór providera map (rekomendacja: **Mapbox GL JS** — najlepsza kontrola nad stylem)
-- [ ] Integracja mapy
-- [ ] Pinezki ofert pracy na mapie
-- [ ] Clustering (grupowanie pinez przy oddaleniu)
-- [ ] Filtr promienia (slider "pokaż w X minutach / km")
-- [ ] Geolokalizacja użytkownika
-- [ ] Obliczanie czasu dojazdu (Mapbox Isochrone API lub Google)
+### 2.2 Wyróżnienia (highlights)
+- [x] System wyróżnień pinów istnieje w DB
+- [!] Jak wygląda UX zakupu wyróżnienia?
+- [ ] A/B test cen wyróżnień
 
-### 3.3 Wyszukiwarka
-- [ ] Pole wyszukiwania (stanowisko, branża, słowa kluczowe)
-- [ ] Filtry: typ zatrudnienia, tryb pracy, widełki płacowe
-- [ ] Sortowanie: odległość, data, dopasowanie
-- [ ] Autocomplete lokalizacji
+### 2.3 Nowe możliwości monetyzacji
+- [ ] Pakiety dla pracodawców (ilość ogłoszeń/miesiąc)
+- [ ] Raporty heatmap dla pracodawców (premium)
+- [ ] "Zweryfikowana firma" badge (płatne)
 
-### 3.4 Panel pracodawcy
-- [ ] Dodawanie oferty (formularz + wybór lokalizacji na mapie)
-- [ ] Zarządzanie ofertami (lista, edycja, archiwizacja)
-- [ ] Statystyki (wyświetlenia, aplikacje)
-- [ ] Heatmapy popytu/podaży [!]
-
-### 3.5 SEO i performance
-- [ ] Strony SEO dla miast i kategorii (/praca/warszawa/it)
-- [ ] Sitemap XML
-- [ ] Meta tags, Open Graph
-- [ ] Core Web Vitals optymalizacja
+**Notatka [2026-05-29]:** Stripe już działa — trzeba zrozumieć aktualny model zanim się cokolwiek zmieni.
 
 ---
 
-## FAZA 4 — Marketing i treści [w toku]
+## OBSZAR 3 — Wzrost i marketing
 
-### 4.1 Skill reklamowy (ukończony)
-- [x] `ad-copywriter` skill — kompletny system tworzenia reklam
-- [x] Frameworki copywriterskie (8 frameworków)
-- [x] Przykłady reklam B2C i B2B
-- [x] Guidelines platform (Meta + LinkedIn)
-- [x] Prompty do AI image/video generation
+### 3.1 SEO (w toku)
+- [x] Auto-generowane landing pages (Vercel build)
+- [x] Sitemap XML, Schema.org
+- [ ] Więcej miast: Kraków, Wrocław, Gdańsk, Poznań, Łódź
+- [ ] Strony branżowe: /praca-it, /praca-logistyka, /praca-handel
+- [ ] Monitoring pozycji (Google Search Console)
 
-### 4.2 Kampanie reklamowe [!]
-- [!] Czy już mamy budżet reklamowy? (Meta Ads, LinkedIn Ads)
-- [ ] Kampania TOFU (awareness) — B2C
-- [ ] Kampania BOFU (performance) — B2C
-- [ ] Kampania B2B — LinkedIn dla pracodawców
-- [ ] Geo-kampanie (miasto-specific)
-- [ ] A/B testing hooków i kreacji
+### 3.2 Kampanie reklamowe
+- [x] Skill `ad-copywriter` gotowy
+- [!] Czy kampanie Meta/LinkedIn już działają?
+- [!] Jaki jest miesięczny budżet reklamowy?
+- [ ] Kampania TOFU (B2C — szukający pracy)
+- [ ] Kampania B2B (LinkedIn — pracodawcy)
+- [ ] Geo-kampanie dla kluczowych miast
 
-### 4.3 Content marketing
-- [ ] Blog / artykuły SEO (Praca w Warszawie, IT Jobs, ...)
-- [ ] Raport "Geografia Rekrutacji 2026"
-- [ ] Case studies pracodawców
-- [ ] Founder content (LinkedIn)
+### 3.3 Pozyskiwanie ofert
+- [x] Partnerzy: InPost, Otto, Randstad, Żabka, Biedronka, Żetkama, Pramer, Jobwerke
+- [!] Jak wygląda pipeline pozyskiwania nowych partnerów?
+- [ ] Automatyczny import przez API (zamiast manualnych skryptów Python)
+- [ ] Self-service dla pracodawców (dodaj ofertę sam)
 
----
-
-## FAZA 5 — Uruchomienie i monitoring
-
-### 5.1 Deployment
-- [ ] Hosting frontendu (Vercel rekomendowany dla Next.js)
-- [ ] CI/CD pipeline (GitHub Actions)
-- [ ] Domeny i SSL
-- [ ] Environment variables / secrets
-
-### 5.2 Analityka i monitoring
-- [ ] Google Analytics 4 / Plausible Analytics
-- [ ] Error monitoring (Sentry)
-- [ ] Performance monitoring
-- [ ] Supabase dashboard (DB stats)
-
-### 5.3 Testy i bezpieczeństwo
-- [ ] Testy jednostkowe kluczowych komponentów
-- [ ] Testy E2E (Playwright)
-- [ ] Security review (OWASP)
-- [ ] RODO compliance (polityka prywatności, cookies)
+**Notatka [2026-05-29]:** Skrypty build_*.py to manualne generatory — bottleneck przy skalowaniu.
 
 ---
 
-## Priorytety MVP (Minimum Viable Product)
+## OBSZAR 4 — Produkt i UX
 
-Na podstawie analizy projektu proponowane MVP to:
+### 4.1 Mapa i wyszukiwanie
+- [!] Jaki provider map? (Leaflet? Mapbox? Google?)
+- [ ] Filtr promienia / czasu dojazdu (core feature — czy jest?)
+- [ ] Clustering pinez (przy oddaleniu)
+- [ ] Wyszukiwarka po słowach kluczowych + mapa
 
-1. **Mapa z ofertami** — możliwość przeglądania ofert na mapie
-2. **Filtr promienia** — slider "w X km od mojej lokalizacji"
-3. **Karta oferty** — popup z detalami po kliknięciu pina
-4. **Dodawanie oferty** (dla pracodawcy) — prosty formularz z geolokalizacją
-5. **Rejestracja/logowanie** — Supabase Auth
+### 4.2 Oferty pracy
+- [x] Widok oferty z kontaktem
+- [ ] Strony SEO per oferta (`/oferty/[slug]`)
+- [ ] "Podobne oferty w okolicy"
+- [ ] Powiadomienia o nowych ofertach (push już działa!)
 
-Wszystko inne to "nice to have" na v1.
+### 4.3 Panel pracodawcy
+- [x] Statystyki dla admina
+- [!] Czy pracodawcy mają własny panel? (self-service?)
+- [ ] Dashboard pracodawcy: wyświetlenia, kliknięcia, aplikacje
+- [ ] Edycja oferty online
+- [ ] Heatmapa aplikacji na mapie
+
+### 4.4 Profil kandydata
+- [x] Profil + CV + portfolio
+- [ ] Matching ofert do profilu
+- [ ] "Aplikowałem" — historia aplikacji
+
+### 4.5 Mobile
+- [x] PWA (Service Worker)
+- [!] Jak wygląda mobile UX mapy?
+- [ ] App-like doświadczenie (install prompt)
 
 ---
 
-## Harmonogram (do ustalenia)
+## OBSZAR 5 — Analityka i dane
 
-| Faza | Szacowany czas | Status |
-|------|---------------|--------|
-| Faza 0 — Fundamenty | 1 tydzień | [~] w toku |
-| Faza 1 — UI/UX design | 2-3 tygodnie | [!] czeka na decyzje |
-| Faza 2 — Backend | 2-3 tygodnie | [!] czeka na decyzje |
-| Faza 3 — Frontend | 4-6 tygodni | [!] czeka na decyzje |
-| Faza 4 — Marketing | równolegle | [~] skill gotowy |
-| Faza 5 — Launch | 1 tydzień | [ ] |
+### 5.1 Panel statystyk (rozbudowa)
+- [x] Aktywni, unikalni, sesje (admin)
+- [x] Wyświetlenia ofert/pinów
+- [x] Kliknięcia kontaktu i aplikacji
+- [ ] Funnel konwersji: wyświetlenie → kontakt → zatrudnienie
+- [ ] Śledzenie source/medium (skąd przyszedł user)
+- [ ] Eksport danych do CSV/Excel
 
-**Łączny szacunek MVP: 8-12 tygodni** (przy regularnej pracy)
+### 5.2 Raporty dla pracodawców
+- [ ] Miesięczny raport: wyświetlenia, kontakty, aplikacje
+- [ ] Porównanie z rynkiem (benchmark)
+- [ ] "Ile kandydatów w Twojej okolicy" (heatmapa popytu)
 
 ---
 
-*Wróć do tego dokumentu przed każdą sesją pracy — sprawdź status i zacznij od najwyższego priorytetu nieukończonej sekcji.*
+## OBSZAR 6 — Techniczne długi
+
+### 6.1 Edge Functions
+- [x] cv-parse — parser CV
+- [!] Jak działa cv-parse? (AI model? regex?)
+- [ ] Audit bezpieczeństwa edge functions
+- [ ] Rate limiting na wszystkich endpoints
+
+### 6.2 Skalowalność
+- [ ] Czy indeksy DB są zoptymalizowane dla wyszukiwania geograficznego?
+- [ ] CDN dla assetów (logo firm, obrazki)
+- [ ] Cache strategia dla danych ofert
+
+---
+
+## Priorytety na najbliższe sesje
+
+Na podstawie analizy — co prawdopodobnie najlepiej odblokuje wzrost:
+
+1. **Zrozumieć obecny model monetyzacji** (Stripe flow) — [Q-07]
+2. **Audit SEO** — co generuje ruch organiczny teraz
+3. **Uruchomić kampanie reklamowe** — skill gotowy, czeka na budżet
+4. **Self-service dla pracodawców** — bottleneck przy manualnych skryptach Python
+5. **Automatyczny import ofert** przez API zamiast plików JS
+
+---
+
+## Branching strategy
+
+| Branch | Przeznaczenie |
+|--------|--------------|
+| `vercel-deploy` | Produkcja (deployowany na Vercel) |
+| `claude/...` | Feature branches (Claude Code) |
+| `seo-footer-in-menu` | SEO feature (niescalony) |
+
+---
+
+*Wróć do tego dokumentu przed każdą sesją — sprawdź priorytety i zacznij od najważniejszego nieukończonego punktu.*
