@@ -1,0 +1,811 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MapJob — 4 alternatywne kolorystyki</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{
+  background:#111214;
+  min-height:100vh;
+  font-family:'Plus Jakarta Sans','Inter',-apple-system,sans-serif;
+  padding:40px 20px 80px;
+}
+.page-header{
+  text-align:center;margin-bottom:48px;
+}
+.page-header h1{
+  font-size:28px;font-weight:900;color:#F5F7FA;
+  letter-spacing:-.04em;margin-bottom:8px;
+}
+.page-header p{font-size:14px;color:#6B7280;line-height:1.6;}
+.page-header .current-tag{
+  display:inline-block;margin-top:8px;
+  font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;
+  padding:4px 12px;border-radius:20px;
+  background:rgba(59,130,246,.15);border:1px solid rgba(59,130,246,.3);color:#60A5FA;
+}
+
+/* Grid */
+.grid{
+  display:grid;
+  grid-template-columns:repeat(4,393px);
+  gap:40px;
+  justify-content:center;
+  align-items:start;
+}
+@media(max-width:1700px){.grid{grid-template-columns:repeat(2,393px);}}
+@media(max-width:860px){.grid{grid-template-columns:360px;}}
+
+/* Showcase wrapper */
+.showcase{display:flex;flex-direction:column;align-items:center;gap:16px;}
+.showcase-label{text-align:center;}
+.sl-theme{
+  display:inline-block;font-size:9px;font-weight:900;text-transform:uppercase;letter-spacing:.1em;
+  padding:3px 10px;border-radius:20px;margin-bottom:6px;
+}
+.sl-name{font-size:18px;font-weight:900;color:#F5F7FA;margin-bottom:4px;letter-spacing:-.02em;}
+.sl-desc{font-size:12px;color:#6B7280;line-height:1.5;max-width:300px;margin:0 auto;}
+
+/* Device frame */
+.device{
+  width:393px;height:852px;
+  border-radius:52px;overflow:hidden;
+  position:relative;
+  box-shadow:0 0 0 10px #1c1c1e,0 0 0 12px #2a2a2c,0 40px 80px rgba(0,0,0,.7);
+  flex-shrink:0;
+}
+.notch{
+  position:absolute;top:0;left:50%;transform:translateX(-50%);
+  width:126px;height:36px;background:#1c1c1e;
+  border-radius:0 0 22px 22px;z-index:200;
+  display:flex;align-items:center;justify-content:center;gap:8px;padding-bottom:4px;
+}
+.notch-cam{width:11px;height:11px;border-radius:50%;background:#2a2a2d;border:1.5px solid #3a3a3c;}
+.notch-id{width:22px;height:4px;border-radius:2px;background:#2a2a2d;}
+
+/* Shared screen elements */
+.screen{
+  position:absolute;top:0;left:0;right:0;bottom:0;
+  display:flex;flex-direction:column;
+  font-family:inherit;overflow:hidden;
+}
+.sbar{
+  height:50px;display:flex;align-items:flex-end;justify-content:space-between;
+  padding:0 26px 8px;flex-shrink:0;position:relative;z-index:100;
+}
+.sbar-time{font-size:15px;font-weight:700;}
+.sbar-icons{display:flex;align-items:center;gap:6px;}
+
+/* Beta banner */
+.bb{height:28px;display:flex;align-items:center;overflow:hidden;flex-shrink:0;}
+.bt{display:flex;align-items:center;gap:20px;white-space:nowrap;animation:scroll 28s linear infinite;padding-left:100%;}
+@keyframes scroll{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+.bi{font-size:10.5px;font-weight:500;}
+.btag{font-size:8.5px;font-weight:900;padding:1px 6px;border-radius:5px;margin-right:4px;}
+
+/* Topbar */
+.tb{height:54px;display:flex;align-items:center;padding:0 16px;gap:10px;flex-shrink:0;position:relative;z-index:50;}
+.tb-logo{font-size:17px;font-weight:900;letter-spacing:-.03em;display:flex;align-items:center;gap:6px;}
+.tb-mark{width:27px;height:27px;border-radius:8px;display:flex;align-items:center;justify-content:center;}
+.tb-mark svg{width:15px;height:15px;}
+.tb-spacer{flex:1;}
+.btn-sm{height:30px;padding:0 12px;border-radius:8px;font-family:inherit;font-size:11.5px;font-weight:700;cursor:pointer;white-space:nowrap;}
+
+/* Scroll content */
+.scr{flex:1;overflow-y:auto;scrollbar-width:none;padding-bottom:80px;}
+.scr::-webkit-scrollbar{display:none;}
+
+/* Hero block */
+.hero-block{padding:16px 16px 0;}
+.hero-h{font-size:19px;font-weight:900;letter-spacing:-.03em;line-height:1.25;margin-bottom:4px;}
+.hero-sub{font-size:11.5px;margin-bottom:14px;line-height:1.5;}
+.search-row{height:46px;border-radius:13px;display:flex;align-items:center;padding:0 14px;gap:9px;}
+.search-row span{font-size:13px;flex:1;}
+.sloc{font-size:10.5px;font-weight:700;padding:3px 9px;border-radius:16px;}
+
+/* Section title */
+.sec-t{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;padding:14px 16px 9px;display:flex;align-items:center;gap:8px;}
+.sec-t::after{content:'';flex:1;height:1px;}
+
+/* Category grid */
+.cat-grid{padding:0 12px;display:grid;grid-template-columns:repeat(4,1fr);gap:7px;}
+.cat-t{border-radius:12px;padding:10px 6px;display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;border:1px solid transparent;}
+.cat-ico{font-size:18px;}
+.cat-n{font-size:9.5px;font-weight:700;text-align:center;line-height:1.2;}
+.cat-c{font-size:9px;}
+
+/* Job cards */
+.jlist{padding:0 12px;display:flex;flex-direction:column;gap:7px;}
+.jc{border-radius:14px;padding:13px;border:1px solid transparent;cursor:pointer;position:relative;}
+.jc-top{display:flex;gap:10px;align-items:flex-start;margin-bottom:8px;}
+.jc-logo{width:38px;height:38px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:900;color:#fff;flex-shrink:0;}
+.jc-info{flex:1;}
+.jc-co{font-size:10.5px;margin-bottom:1px;}
+.jc-title{font-size:13.5px;font-weight:800;line-height:1.25;margin-bottom:4px;}
+.jc-bgs{display:flex;gap:4px;}
+.badge{padding:2px 7px;border-radius:6px;font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.3px;}
+.jc-loc{font-size:11px;margin-bottom:6px;display:flex;align-items:center;gap:4px;}
+.jc-pay{font-size:15px;font-weight:900;margin-bottom:8px;}
+.jc-foot{display:flex;align-items:center;justify-content:space-between;padding-top:8px;}
+.jc-date{font-size:10px;}
+.btn-apply{height:30px;padding:0 14px;border-radius:8px;border:none;font-family:inherit;font-size:11.5px;font-weight:700;cursor:pointer;color:#fff;}
+
+/* Nudge card */
+.nudge{margin:10px 12px 0;border-radius:14px;padding:14px;}
+.nudge h3{font-size:14px;font-weight:900;margin-bottom:4px;}
+.nudge p{font-size:11.5px;line-height:1.5;margin-bottom:12px;}
+.btn-nudge{width:100%;height:42px;border:none;border-radius:11px;font-family:inherit;font-size:13px;font-weight:800;cursor:pointer;color:#fff;}
+
+/* Bottom nav */
+.bnav{
+  position:absolute;left:0;right:0;bottom:0;height:72px;
+  display:flex;padding-bottom:10px;z-index:100;
+  border-top:1px solid transparent;
+}
+.ni{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;cursor:pointer;padding:6px 2px 0;border:none;background:none;font-family:inherit;}
+.ni-ico{width:24px;height:24px;display:flex;align-items:center;justify-content:center;border-radius:6px;}
+.ni svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;}
+.ni-l{font-size:9.5px;font-weight:700;}
+
+/* ═══════════════════════════════════════════
+   THEME 1: DARK PRO (current – refined)
+   ═══════════════════════════════════════════ */
+.t1{
+  --bg:#0B0D10;--bg2:#101318;--surf:#15181F;--surf2:#1C2029;
+  --border:rgba(255,255,255,.09);--border-accent:rgba(59,130,246,.35);
+  --text:#F5F7FA;--text2:#A1A9B8;--text3:#6B7280;
+  --blue:#3B82F6;--green:#10B981;--gold:#D97706;--red:#EF4444;
+  --acc:rgba(59,130,246,.12);
+  background:var(--bg);
+}
+.t1 .sbar{background:var(--bg2);border-bottom:1px solid var(--border);}
+.t1 .sbar-time,.t1 .sbar-icons svg{color:var(--text);fill:var(--text);}
+.t1 .bb{background:var(--bg2);border-bottom:1px solid var(--border);}
+.t1 .bi{color:var(--text3);}
+.t1 .bi b{color:var(--text2);}
+.t1 .btag{background:rgba(59,130,246,.15);color:#60A5FA;border:1px solid rgba(59,130,246,.25);}
+.t1 .tb{background:var(--bg2);border-bottom:1px solid var(--border);}
+.t1 .tb-logo{color:var(--text);}
+.t1 .tb-mark{background:var(--blue);}
+.t1 .btn-sm:first-of-type{background:none;border:1px solid var(--border);color:var(--text2);}
+.t1 .btn-sm:last-of-type{background:var(--blue);border:none;color:#fff;box-shadow:0 2px 8px rgba(59,130,246,.3);}
+.t1 .scr{background:var(--bg);}
+.t1 .hero-h{color:var(--text);}
+.t1 .hero-h em{font-style:normal;color:var(--blue);}
+.t1 .hero-sub{color:var(--text3);}
+.t1 .search-row{background:var(--surf);border:1px solid var(--border-accent);box-shadow:0 0 0 3px rgba(59,130,246,.07);}
+.t1 .search-row span{color:var(--text3);}
+.t1 .sloc{background:rgba(59,130,246,.12);border:1px solid rgba(59,130,246,.25);color:#60A5FA;}
+.t1 .sec-t{color:var(--text3);}
+.t1 .sec-t::after{background:var(--border);}
+.t1 .cat-t{background:var(--surf);border-color:var(--border);}
+.t1 .cat-t.hot{border-color:rgba(239,68,68,.3);background:rgba(239,68,68,.04);}
+.t1 .cat-n{color:var(--text2);}
+.t1 .cat-c{color:var(--text3);}
+.t1 .jc{background:var(--surf);border-color:var(--border);}
+.t1 .jc.hot-card{border-left:3px solid var(--red);}
+.t1 .jc-co{color:var(--text3);}
+.t1 .jc-title{color:var(--text);}
+.t1 .jc-loc{color:var(--text3);}
+.t1 .jc-pay{color:var(--green);}
+.t1 .jc-date{color:var(--text3);}
+.t1 .badge.urg{background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.3);color:#F87171;}
+.t1 .badge.rem{background:rgba(124,58,237,.14);border:1px solid rgba(124,58,237,.3);color:#A78BFA;}
+.t1 .badge.new{background:rgba(16,185,129,.10);border:1px solid rgba(16,185,129,.25);color:#6EE7B7;}
+.t1 .jc-foot{border-top:1px solid rgba(255,255,255,.05);}
+.t1 .btn-apply{background:var(--blue);}
+.t1 .nudge{background:linear-gradient(135deg,rgba(59,130,246,.1),rgba(99,102,241,.07));border:1px solid rgba(59,130,246,.22);}
+.t1 .nudge h3{color:var(--text);}
+.t1 .nudge p{color:var(--text3);}
+.t1 .btn-nudge{background:var(--blue);box-shadow:0 4px 14px rgba(59,130,246,.35);}
+.t1 .bnav{background:rgba(16,19,24,.96);backdrop-filter:blur(12px);border-top-color:var(--border);}
+.t1 .ni{color:var(--text3);}
+.t1 .ni.on{color:var(--blue);}
+.t1 .ni-ico.on{background:rgba(59,130,246,.12);}
+
+/* ═══════════════════════════════════════════
+   THEME 2: ARCTIC LIGHT
+   ═══════════════════════════════════════════ */
+.t2{
+  --bg:#F0F4F8;--bg2:#FFFFFF;--surf:#FFFFFF;--surf2:#F8FAFC;
+  --border:rgba(0,0,0,.08);--border-accent:rgba(37,99,235,.3);
+  --text:#0F172A;--text2:#334155;--text3:#64748B;
+  --blue:#2563EB;--green:#059669;--gold:#D97706;--red:#DC2626;
+  --sh:0 1px 3px rgba(0,0,0,.08),0 4px 12px rgba(0,0,0,.05);
+  background:var(--bg);
+}
+.t2 .sbar{background:var(--bg2);border-bottom:1px solid var(--border);}
+.t2 .sbar-time,.t2 .sbar-icons svg{color:var(--text);fill:var(--text);}
+.t2 .bb{background:#EFF6FF;border-bottom:1px solid #BFDBFE;}
+.t2 .bi{color:#3B82F6;}
+.t2 .bi b{color:#1D4ED8;}
+.t2 .btag{background:#2563EB;color:#fff;}
+.t2 .tb{background:var(--bg2);border-bottom:1px solid var(--border);}
+.t2 .tb-logo{color:var(--text);}
+.t2 .tb-mark{background:var(--blue);}
+.t2 .btn-sm:first-of-type{background:none;border:1px solid var(--border);color:var(--text2);}
+.t2 .btn-sm:last-of-type{background:var(--blue);border:none;color:#fff;}
+.t2 .scr{background:var(--bg);}
+.t2 .hero-h{color:var(--text);}
+.t2 .hero-h em{font-style:normal;color:var(--blue);}
+.t2 .hero-sub{color:var(--text3);}
+.t2 .search-row{background:var(--bg2);border:1.5px solid var(--border-accent);box-shadow:var(--sh);}
+.t2 .search-row span{color:var(--text3);}
+.t2 .sloc{background:#EFF6FF;border:1px solid #BFDBFE;color:var(--blue);}
+.t2 .sec-t{color:var(--text3);}
+.t2 .sec-t::after{background:var(--border);}
+.t2 .cat-t{background:var(--bg2);border-color:var(--border);box-shadow:var(--sh);}
+.t2 .cat-t.hot{border-color:#FECACA;background:#FFF5F5;}
+.t2 .cat-n{color:var(--text2);}
+.t2 .cat-c{color:var(--text3);}
+.t2 .jc{background:var(--bg2);border-color:var(--border);box-shadow:var(--sh);}
+.t2 .jc.hot-card{border-left:3px solid var(--red);}
+.t2 .jc-co{color:var(--text3);}
+.t2 .jc-title{color:var(--text);}
+.t2 .jc-loc{color:var(--text3);}
+.t2 .jc-pay{color:var(--green);}
+.t2 .jc-date{color:var(--text3);}
+.t2 .badge.urg{background:#FEF2F2;border:1px solid #FECACA;color:#DC2626;}
+.t2 .badge.rem{background:#F5F3FF;border:1px solid #DDD6FE;color:#7C3AED;}
+.t2 .badge.new{background:#F0FDF4;border:1px solid #BBF7D0;color:#059669;}
+.t2 .jc-foot{border-top:1px solid var(--border);}
+.t2 .btn-apply{background:var(--blue);}
+.t2 .nudge{background:#EFF6FF;border:1.5px solid #BFDBFE;}
+.t2 .nudge h3{color:var(--text);}
+.t2 .nudge p{color:var(--text3);}
+.t2 .btn-nudge{background:var(--blue);}
+.t2 .bnav{background:rgba(255,255,255,.96);backdrop-filter:blur(12px);border-top-color:var(--border);}
+.t2 .ni{color:var(--text3);}
+.t2 .ni.on{color:var(--blue);}
+.t2 .ni-ico.on{background:#EFF6FF;}
+
+/* ═══════════════════════════════════════════
+   THEME 3: EMBER (dark warm amber)
+   ═══════════════════════════════════════════ */
+.t3{
+  --bg:#0D0906;--bg2:#151009;--surf:#1D1510;--surf2:#261B12;
+  --border:rgba(255,200,100,.07);--border-accent:rgba(245,158,11,.35);
+  --text:#FFF8F0;--text2:#C4A882;--text3:#7A6044;
+  --blue:#F59E0B;--green:#22C55E;--red:#F87171;
+  --acc:rgba(245,158,11,.12);
+  background:var(--bg);
+}
+.t3 .sbar{background:var(--bg2);border-bottom:1px solid var(--border);}
+.t3 .sbar-time,.t3 .sbar-icons svg{color:var(--text);fill:var(--text);}
+.t3 .bb{background:var(--bg2);border-bottom:1px solid var(--border);}
+.t3 .bi{color:var(--text3);}
+.t3 .bi b{color:var(--text2);}
+.t3 .btag{background:rgba(245,158,11,.2);color:#FCD34D;border:1px solid rgba(245,158,11,.3);}
+.t3 .tb{background:var(--bg2);border-bottom:1px solid var(--border);}
+.t3 .tb-logo{color:var(--text);}
+.t3 .tb-mark{background:var(--blue);}
+.t3 .btn-sm:first-of-type{background:none;border:1px solid var(--border);color:var(--text2);}
+.t3 .btn-sm:last-of-type{background:var(--blue);border:none;color:#0D0906;font-weight:900;box-shadow:0 2px 12px rgba(245,158,11,.4);}
+.t3 .scr{background:var(--bg);}
+.t3 .hero-h{color:var(--text);}
+.t3 .hero-h em{font-style:normal;color:var(--blue);}
+.t3 .hero-sub{color:var(--text3);}
+.t3 .search-row{background:var(--surf);border:1px solid var(--border-accent);box-shadow:0 0 0 3px rgba(245,158,11,.06);}
+.t3 .search-row span{color:var(--text3);}
+.t3 .sloc{background:rgba(245,158,11,.12);border:1px solid rgba(245,158,11,.3);color:#FCD34D;}
+.t3 .sec-t{color:var(--text3);}
+.t3 .sec-t::after{background:var(--border);}
+.t3 .cat-t{background:var(--surf);border-color:var(--border);}
+.t3 .cat-t.hot{border-color:rgba(248,113,113,.3);background:rgba(248,113,113,.05);}
+.t3 .cat-n{color:var(--text2);}
+.t3 .cat-c{color:var(--text3);}
+.t3 .jc{background:var(--surf);border-color:var(--border);}
+.t3 .jc.hot-card{border-left:3px solid var(--red);}
+.t3 .jc-co{color:var(--text3);}
+.t3 .jc-title{color:var(--text);}
+.t3 .jc-loc{color:var(--text3);}
+.t3 .jc-pay{color:var(--green);}
+.t3 .jc-date{color:var(--text3);}
+.t3 .badge.urg{background:rgba(248,113,113,.12);border:1px solid rgba(248,113,113,.3);color:#F87171;}
+.t3 .badge.rem{background:rgba(245,158,11,.12);border:1px solid rgba(245,158,11,.3);color:#FCD34D;}
+.t3 .badge.new{background:rgba(34,197,94,.10);border:1px solid rgba(34,197,94,.25);color:#86EFAC;}
+.t3 .jc-foot{border-top:1px solid rgba(255,200,100,.05);}
+.t3 .btn-apply{background:var(--blue);color:#0D0906;font-weight:900;}
+.t3 .nudge{background:linear-gradient(135deg,rgba(245,158,11,.1),rgba(217,119,6,.07));border:1px solid rgba(245,158,11,.25);}
+.t3 .nudge h3{color:var(--text);}
+.t3 .nudge p{color:var(--text3);}
+.t3 .btn-nudge{background:var(--blue);color:#0D0906;font-weight:900;}
+.t3 .bnav{background:rgba(13,9,6,.96);backdrop-filter:blur(12px);border-top-color:var(--border);}
+.t3 .ni{color:var(--text3);}
+.t3 .ni.on{color:var(--blue);}
+.t3 .ni-ico.on{background:rgba(245,158,11,.12);}
+
+/* ═══════════════════════════════════════════
+   THEME 4: NEON CYBER (electric dark)
+   ═══════════════════════════════════════════ */
+.t4{
+  --bg:#030508;--bg2:#060A10;--surf:#0A0F1A;--surf2:#0F1622;
+  --border:rgba(0,255,200,.06);--border-accent:rgba(6,182,212,.4);
+  --text:#E2F4FF;--text2:#8BB8D4;--text3:#3D6880;
+  --blue:#06B6D4;--green:#39FF14;--red:#FF4D6D;--purple:#B57BEE;
+  background:var(--bg);
+}
+.t4 .sbar{background:var(--bg2);border-bottom:1px solid var(--border);}
+.t4 .sbar-time,.t4 .sbar-icons svg{color:var(--text);fill:var(--text);}
+.t4 .bb{background:var(--bg2);border-bottom:1px solid var(--border);}
+.t4 .bi{color:var(--text3);}
+.t4 .bi b{color:var(--text2);}
+.t4 .btag{background:rgba(6,182,212,.2);color:#67E8F9;border:1px solid rgba(6,182,212,.3);}
+.t4 .tb{background:var(--bg2);border-bottom:1px solid var(--border);}
+.t4 .tb-logo{color:var(--text);}
+.t4 .tb-mark{background:var(--blue);box-shadow:0 0 16px rgba(6,182,212,.5);}
+.t4 .btn-sm:first-of-type{background:none;border:1px solid var(--border-accent);color:var(--blue);}
+.t4 .btn-sm:last-of-type{background:var(--blue);border:none;color:#030508;font-weight:900;box-shadow:0 0 16px rgba(6,182,212,.4);}
+.t4 .scr{background:var(--bg);}
+.t4 .hero-h{color:var(--text);}
+.t4 .hero-h em{font-style:normal;color:var(--blue);text-shadow:0 0 20px rgba(6,182,212,.5);}
+.t4 .hero-sub{color:var(--text3);}
+.t4 .search-row{background:var(--surf);border:1px solid var(--border-accent);box-shadow:0 0 12px rgba(6,182,212,.1);}
+.t4 .search-row span{color:var(--text3);}
+.t4 .sloc{background:rgba(6,182,212,.1);border:1px solid rgba(6,182,212,.3);color:#67E8F9;}
+.t4 .sec-t{color:var(--text3);}
+.t4 .sec-t::after{background:var(--border);}
+.t4 .cat-t{background:var(--surf);border-color:var(--border);}
+.t4 .cat-t.hot{border-color:rgba(255,77,109,.3);background:rgba(255,77,109,.05);}
+.t4 .cat-n{color:var(--text2);}
+.t4 .cat-c{color:var(--text3);}
+.t4 .jc{background:var(--surf);border-color:var(--border);}
+.t4 .jc.hot-card{border-left:3px solid var(--red);}
+.t4 .jc.feat{border-color:rgba(6,182,212,.3);box-shadow:0 0 0 1px rgba(6,182,212,.05),inset 0 0 20px rgba(6,182,212,.02);}
+.t4 .jc-co{color:var(--text3);}
+.t4 .jc-title{color:var(--text);}
+.t4 .jc-loc{color:var(--text3);}
+.t4 .jc-pay{color:var(--green);text-shadow:0 0 10px rgba(57,255,20,.3);}
+.t4 .jc-date{color:var(--text3);}
+.t4 .badge.urg{background:rgba(255,77,109,.12);border:1px solid rgba(255,77,109,.3);color:#FF4D6D;}
+.t4 .badge.rem{background:rgba(181,123,238,.12);border:1px solid rgba(181,123,238,.3);color:var(--purple);}
+.t4 .badge.new{background:rgba(57,255,20,.08);border:1px solid rgba(57,255,20,.2);color:#39FF14;}
+.t4 .jc-foot{border-top:1px solid rgba(0,255,200,.04);}
+.t4 .btn-apply{background:var(--blue);color:#030508;font-weight:900;box-shadow:0 0 10px rgba(6,182,212,.3);}
+.t4 .nudge{background:linear-gradient(135deg,rgba(6,182,212,.08),rgba(181,123,238,.05));border:1px solid rgba(6,182,212,.2);}
+.t4 .nudge h3{color:var(--text);}
+.t4 .nudge p{color:var(--text3);}
+.t4 .btn-nudge{background:var(--blue);color:#030508;font-weight:900;box-shadow:0 0 16px rgba(6,182,212,.4);}
+.t4 .bnav{background:rgba(3,5,8,.97);backdrop-filter:blur(12px);border-top-color:rgba(6,182,212,.12);}
+.t4 .ni{color:var(--text3);}
+.t4 .ni.on{color:var(--blue);}
+.t4 .ni-ico.on{background:rgba(6,182,212,.1);}
+
+/* Theme tag colors */
+.tag-1{background:rgba(59,130,246,.15);border:1px solid rgba(59,130,246,.3);color:#60A5FA;}
+.tag-2{background:rgba(37,99,235,.12);border:1px solid rgba(37,99,235,.25);color:#2563EB;}
+.tag-3{background:rgba(245,158,11,.15);border:1px solid rgba(245,158,11,.3);color:#F59E0B;}
+.tag-4{background:rgba(6,182,212,.15);border:1px solid rgba(6,182,212,.3);color:#06B6D4;}
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <h1>MapJob — Alternatywne kolorystyki</h1>
+  <p>4 niezależne propozycje designu · makiety poglądowe · bez wdrożenia</p>
+  <span class="current-tag">✓ ZALOGOWANY widok gościa (strona główna)</span>
+</div>
+
+<div class="grid">
+
+  <!-- ══════════════════════════════════
+       THEME 1: DARK PRO (obecny, odświeżony)
+       ══════════════════════════════════ -->
+  <div class="showcase">
+    <div class="device">
+      <div class="notch"><div class="notch-cam"></div><div class="notch-id"></div><div class="notch-cam"></div></div>
+      <div class="screen t1" style="padding-top:50px;">
+        <div class="sbar">
+          <span class="sbar-time">9:41</span>
+          <div class="sbar-icons">
+            <svg viewBox="0 0 16 12" width="16" height="12" fill="#F5F7FA"><rect x="0" y="4" width="3" height="8" rx="1" opacity=".4"/><rect x="4" y="2.5" width="3" height="9.5" rx="1" opacity=".6"/><rect x="8" y="1" width="3" height="11" rx="1" opacity=".8"/><rect x="12" y="0" width="3" height="12" rx="1"/></svg>
+            <svg viewBox="0 0 26 14" width="16" height="11" fill="#F5F7FA"><rect x="0" y="1" width="22" height="12" rx="3" fill="none" stroke="#F5F7FA" stroke-width="1.5"/><rect x="1.5" y="2.5" width="16" height="9" rx="1.5"/><path d="M23 5v4a2 2 0 000-4z"/></svg>
+          </div>
+        </div>
+        <div class="bb"><div class="bt">
+          <span class="bi"><span class="btag">BETA</span>1 207 fachowców · gratis</span>
+          <span class="bi">🏙️ Kraków: <b>412 ofert</b></span>
+          <span class="bi">📍 <b>Adresy zweryfikowane</b></span>
+          <span class="bi"><span class="btag">BETA</span>1 207 fachowców · gratis</span>
+          <span class="bi">🏙️ Kraków: <b>412 ofert</b></span>
+          <span class="bi">📍 <b>Adresy zweryfikowane</b></span>
+        </div></div>
+        <div class="tb">
+          <div class="tb-logo">
+            <div class="tb-mark"><svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
+            MapJob
+          </div>
+          <div class="tb-spacer"></div>
+          <button class="btn-sm">Zaloguj się</button>
+          <button class="btn-sm" style="margin-left:6px;">Dołącz</button>
+        </div>
+        <div class="scr">
+          <div class="hero-block">
+            <div class="hero-h">Znajdź pracę<br>blisko <em>Ciebie</em></div>
+            <div class="hero-sub">Zweryfikowane adresy · widełki zawsze jawne</div>
+            <div class="search-row">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#6B7280" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+              <span>Stanowisko, zawód…</span>
+              <span class="sloc">📍 Kraków</span>
+            </div>
+          </div>
+          <div class="sec-t">Branże</div>
+          <div class="cat-grid">
+            <div class="cat-t hot"><div class="cat-ico">💻</div><div class="cat-n">IT</div><div class="cat-c" style="color:#6B7280;">54 oferty</div></div>
+            <div class="cat-t"><div class="cat-ico">⚡</div><div class="cat-n">Elektryk</div><div class="cat-c" style="color:#6B7280;">18</div></div>
+            <div class="cat-t"><div class="cat-ico">🔧</div><div class="cat-n">Produkcja</div><div class="cat-c" style="color:#6B7280;">31</div></div>
+            <div class="cat-t"><div class="cat-ico">🚚</div><div class="cat-n">Transport</div><div class="cat-c" style="color:#6B7280;">22</div></div>
+            <div class="cat-t"><div class="cat-ico">🏗️</div><div class="cat-n">Budowlanka</div><div class="cat-c" style="color:#6B7280;">29</div></div>
+            <div class="cat-t"><div class="cat-ico">🔩</div><div class="cat-n">Hydraulik</div><div class="cat-c" style="color:#6B7280;">11</div></div>
+            <div class="cat-t"><div class="cat-ico">🍽️</div><div class="cat-n">HoReCa</div><div class="cat-c" style="color:#6B7280;">16</div></div>
+            <div class="cat-t"><div class="cat-ico">➕</div><div class="cat-n">Więcej</div><div class="cat-c" style="color:#6B7280;">+24</div></div>
+          </div>
+          <div class="sec-t" style="margin-top:4px;">Najnowsze oferty</div>
+          <div class="jlist">
+            <div class="jc hot-card">
+              <div class="jc-top">
+                <div class="jc-logo" style="background:linear-gradient(135deg,#DC2626,#EF4444);">P</div>
+                <div class="jc-info">
+                  <div class="jc-co">Pramer Sp. z o.o.</div>
+                  <div class="jc-title">Elektryk / Pomocnik</div>
+                  <div class="jc-bgs"><span class="badge urg">● Pilne</span></div>
+                </div>
+              </div>
+              <div class="jc-loc"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>Wrocław · 2,4 km</div>
+              <div class="jc-pay">6 500–8 200 zł <span style="font-size:11px;font-weight:600;color:#6B7280;">brutto · UoP</span></div>
+              <div class="jc-foot"><span class="jc-date">2 godz. temu</span><button class="btn-apply">Zobacz →</button></div>
+            </div>
+            <div class="jc feat">
+              <div class="jc-top">
+                <div class="jc-logo" style="background:linear-gradient(135deg,#4F46E5,#6366F1);">CD</div>
+                <div class="jc-info">
+                  <div class="jc-co">Codewise Sp. z o.o.</div>
+                  <div class="jc-title">Senior Frontend Dev</div>
+                  <div class="jc-bgs"><span class="badge rem">Zdalnie</span><span class="badge new">Nowe</span></div>
+                </div>
+              </div>
+              <div class="jc-loc"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>Podgórze · 0,8 km</div>
+              <div class="jc-pay">15 000–22 000 zł <span style="font-size:11px;font-weight:600;color:#6B7280;">netto · B2B</span></div>
+              <div class="jc-foot"><span class="jc-date">Dzisiaj</span><button class="btn-apply">Zobacz →</button></div>
+            </div>
+          </div>
+          <div class="nudge">
+            <h3>Aplikuj w 1 kliknięciu</h3>
+            <p>Darmowe konto — bez ukrytych opłat.</p>
+            <button class="btn-nudge">Zarejestruj się za darmo →</button>
+          </div>
+        </div>
+        <div class="bnav">
+          <button class="ni"><div class="ni-ico on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div><span class="ni-l" style="color:#3B82F6;">Start</span></button>
+          <button class="ni"><div class="ni-ico"><svg viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg></div><span class="ni-l">Oferty</span></button>
+          <button class="ni"><div class="ni-ico"><svg viewBox="0 0 24 24"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/></svg></div><span class="ni-l">Mapa</span></button>
+          <button class="ni"><div class="ni-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h4a2 2 0 012 2v14a2 2 0 01-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg></div><span class="ni-l">Zaloguj</span></button>
+        </div>
+      </div>
+    </div>
+    <div class="showcase-label">
+      <span class="sl-theme tag-1">Dark Pro</span>
+      <div class="sl-name">Obecny · odświeżony</div>
+      <div class="sl-desc">Minimalistyczny, ciemny, technologiczny. Niebieski akcent. Styl Linear/Stripe.</div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════
+       THEME 2: ARCTIC LIGHT
+       ══════════════════════════════════ -->
+  <div class="showcase">
+    <div class="device">
+      <div class="notch" style="background:#E2E8F0;"><div class="notch-cam" style="background:#CBD5E1;border-color:#B0BEC5;"></div><div class="notch-id" style="background:#CBD5E1;"></div><div class="notch-cam" style="background:#CBD5E1;border-color:#B0BEC5;"></div></div>
+      <div class="screen t2" style="padding-top:50px;">
+        <div class="sbar">
+          <span class="sbar-time">9:41</span>
+          <div class="sbar-icons">
+            <svg viewBox="0 0 16 12" width="16" height="12" fill="#0F172A"><rect x="0" y="4" width="3" height="8" rx="1" opacity=".4"/><rect x="4" y="2.5" width="3" height="9.5" rx="1" opacity=".6"/><rect x="8" y="1" width="3" height="11" rx="1" opacity=".8"/><rect x="12" y="0" width="3" height="12" rx="1"/></svg>
+            <svg viewBox="0 0 26 14" width="16" height="11" fill="#0F172A"><rect x="0" y="1" width="22" height="12" rx="3" fill="none" stroke="#0F172A" stroke-width="1.5"/><rect x="1.5" y="2.5" width="16" height="9" rx="1.5"/><path d="M23 5v4a2 2 0 000-4z"/></svg>
+          </div>
+        </div>
+        <div class="bb"><div class="bt">
+          <span class="bi"><span class="btag">BETA</span>1 207 fachowców · gratis</span>
+          <span class="bi">🏙️ Kraków: <b>412 ofert</b></span>
+          <span class="bi">📍 <b>Adresy zweryfikowane</b></span>
+          <span class="bi"><span class="btag">BETA</span>1 207 fachowców · gratis</span>
+          <span class="bi">🏙️ Kraków: <b>412 ofert</b></span>
+          <span class="bi">📍 <b>Adresy zweryfikowane</b></span>
+        </div></div>
+        <div class="tb">
+          <div class="tb-logo">
+            <div class="tb-mark"><svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
+            MapJob
+          </div>
+          <div class="tb-spacer"></div>
+          <button class="btn-sm">Zaloguj się</button>
+          <button class="btn-sm" style="margin-left:6px;">Dołącz</button>
+        </div>
+        <div class="scr">
+          <div class="hero-block">
+            <div class="hero-h">Znajdź pracę<br>blisko <em>Ciebie</em></div>
+            <div class="hero-sub">Zweryfikowane adresy · widełki zawsze jawne</div>
+            <div class="search-row">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#64748B" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+              <span>Stanowisko, zawód…</span>
+              <span class="sloc">📍 Kraków</span>
+            </div>
+          </div>
+          <div class="sec-t">Branże</div>
+          <div class="cat-grid">
+            <div class="cat-t hot"><div class="cat-ico">💻</div><div class="cat-n">IT</div><div class="cat-c" style="color:#64748B;">54 oferty</div></div>
+            <div class="cat-t"><div class="cat-ico">⚡</div><div class="cat-n">Elektryk</div><div class="cat-c" style="color:#64748B;">18</div></div>
+            <div class="cat-t"><div class="cat-ico">🔧</div><div class="cat-n">Produkcja</div><div class="cat-c" style="color:#64748B;">31</div></div>
+            <div class="cat-t"><div class="cat-ico">🚚</div><div class="cat-n">Transport</div><div class="cat-c" style="color:#64748B;">22</div></div>
+            <div class="cat-t"><div class="cat-ico">🏗️</div><div class="cat-n">Budowlanka</div><div class="cat-c" style="color:#64748B;">29</div></div>
+            <div class="cat-t"><div class="cat-ico">🔩</div><div class="cat-n">Hydraulik</div><div class="cat-c" style="color:#64748B;">11</div></div>
+            <div class="cat-t"><div class="cat-ico">🍽️</div><div class="cat-n">HoReCa</div><div class="cat-c" style="color:#64748B;">16</div></div>
+            <div class="cat-t"><div class="cat-ico">➕</div><div class="cat-n">Więcej</div><div class="cat-c" style="color:#64748B;">+24</div></div>
+          </div>
+          <div class="sec-t" style="margin-top:4px;">Najnowsze oferty</div>
+          <div class="jlist">
+            <div class="jc hot-card">
+              <div class="jc-top">
+                <div class="jc-logo" style="background:linear-gradient(135deg,#DC2626,#EF4444);">P</div>
+                <div class="jc-info">
+                  <div class="jc-co">Pramer Sp. z o.o.</div>
+                  <div class="jc-title">Elektryk / Pomocnik</div>
+                  <div class="jc-bgs"><span class="badge urg">● Pilne</span></div>
+                </div>
+              </div>
+              <div class="jc-loc"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>Wrocław · 2,4 km</div>
+              <div class="jc-pay">6 500–8 200 zł <span style="font-size:11px;font-weight:600;color:#64748B;">brutto · UoP</span></div>
+              <div class="jc-foot"><span class="jc-date">2 godz. temu</span><button class="btn-apply">Zobacz →</button></div>
+            </div>
+            <div class="jc">
+              <div class="jc-top">
+                <div class="jc-logo" style="background:linear-gradient(135deg,#4F46E5,#6366F1);">CD</div>
+                <div class="jc-info">
+                  <div class="jc-co">Codewise Sp. z o.o.</div>
+                  <div class="jc-title">Senior Frontend Dev</div>
+                  <div class="jc-bgs"><span class="badge rem">Zdalnie</span><span class="badge new">Nowe</span></div>
+                </div>
+              </div>
+              <div class="jc-loc"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>Podgórze · 0,8 km</div>
+              <div class="jc-pay">15 000–22 000 zł <span style="font-size:11px;font-weight:600;color:#64748B;">netto · B2B</span></div>
+              <div class="jc-foot"><span class="jc-date">Dzisiaj</span><button class="btn-apply">Zobacz →</button></div>
+            </div>
+          </div>
+          <div class="nudge">
+            <h3>Aplikuj w 1 kliknięciu</h3>
+            <p>Darmowe konto — bez ukrytych opłat.</p>
+            <button class="btn-nudge">Zarejestruj się za darmo →</button>
+          </div>
+        </div>
+        <div class="bnav">
+          <button class="ni" style="color:#2563EB;"><div class="ni-ico on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div><span class="ni-l" style="color:#2563EB;">Start</span></button>
+          <button class="ni" style="color:#64748B;"><div class="ni-ico"><svg viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg></div><span class="ni-l">Oferty</span></button>
+          <button class="ni" style="color:#64748B;"><div class="ni-ico"><svg viewBox="0 0 24 24"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/></svg></div><span class="ni-l">Mapa</span></button>
+          <button class="ni" style="color:#64748B;"><div class="ni-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h4a2 2 0 012 2v14a2 2 0 01-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg></div><span class="ni-l">Zaloguj</span></button>
+        </div>
+      </div>
+    </div>
+    <div class="showcase-label">
+      <span class="sl-theme tag-2">Arctic Light</span>
+      <div class="sl-name">Jasny · korporacyjny</div>
+      <div class="sl-desc">Czyste białe tło, cienie zamiast ciemnych bordów. Styl LinkedIn / Pracuj.pl premium.</div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════
+       THEME 3: EMBER (dark warm)
+       ══════════════════════════════════ -->
+  <div class="showcase">
+    <div class="device">
+      <div class="notch"><div class="notch-cam"></div><div class="notch-id"></div><div class="notch-cam"></div></div>
+      <div class="screen t3" style="padding-top:50px;">
+        <div class="sbar">
+          <span class="sbar-time" style="color:#FFF8F0;">9:41</span>
+          <div class="sbar-icons">
+            <svg viewBox="0 0 16 12" width="16" height="12" fill="#FFF8F0"><rect x="0" y="4" width="3" height="8" rx="1" opacity=".4"/><rect x="4" y="2.5" width="3" height="9.5" rx="1" opacity=".6"/><rect x="8" y="1" width="3" height="11" rx="1" opacity=".8"/><rect x="12" y="0" width="3" height="12" rx="1"/></svg>
+            <svg viewBox="0 0 26 14" width="16" height="11" fill="#FFF8F0"><rect x="0" y="1" width="22" height="12" rx="3" fill="none" stroke="#FFF8F0" stroke-width="1.5"/><rect x="1.5" y="2.5" width="16" height="9" rx="1.5"/><path d="M23 5v4a2 2 0 000-4z"/></svg>
+          </div>
+        </div>
+        <div class="bb"><div class="bt">
+          <span class="bi"><span class="btag">BETA</span>1 207 fachowców · gratis</span>
+          <span class="bi">🏙️ Kraków: <b>412 ofert</b></span>
+          <span class="bi">📍 <b>Adresy zweryfikowane</b></span>
+          <span class="bi"><span class="btag">BETA</span>1 207 fachowców · gratis</span>
+          <span class="bi">🏙️ Kraków: <b>412 ofert</b></span>
+          <span class="bi">📍 <b>Adresy zweryfikowane</b></span>
+        </div></div>
+        <div class="tb">
+          <div class="tb-logo">
+            <div class="tb-mark" style="background:#F59E0B;box-shadow:0 0 14px rgba(245,158,11,.4);"><svg viewBox="0 0 24 24" fill="none" stroke="#0D0906" stroke-width="2.5" stroke-linecap="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
+            MapJob
+          </div>
+          <div class="tb-spacer"></div>
+          <button class="btn-sm">Zaloguj się</button>
+          <button class="btn-sm" style="margin-left:6px;">Dołącz</button>
+        </div>
+        <div class="scr">
+          <div class="hero-block">
+            <div class="hero-h">Znajdź pracę<br>blisko <em>Ciebie</em></div>
+            <div class="hero-sub">Zweryfikowane adresy · widełki zawsze jawne</div>
+            <div class="search-row">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#7A6044" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+              <span>Stanowisko, zawód…</span>
+              <span class="sloc">📍 Kraków</span>
+            </div>
+          </div>
+          <div class="sec-t">Branże</div>
+          <div class="cat-grid">
+            <div class="cat-t hot"><div class="cat-ico">💻</div><div class="cat-n">IT</div><div class="cat-c" style="color:#7A6044;">54 oferty</div></div>
+            <div class="cat-t"><div class="cat-ico">⚡</div><div class="cat-n">Elektryk</div><div class="cat-c" style="color:#7A6044;">18</div></div>
+            <div class="cat-t"><div class="cat-ico">🔧</div><div class="cat-n">Produkcja</div><div class="cat-c" style="color:#7A6044;">31</div></div>
+            <div class="cat-t"><div class="cat-ico">🚚</div><div class="cat-n">Transport</div><div class="cat-c" style="color:#7A6044;">22</div></div>
+            <div class="cat-t"><div class="cat-ico">🏗️</div><div class="cat-n">Budowlanka</div><div class="cat-c" style="color:#7A6044;">29</div></div>
+            <div class="cat-t"><div class="cat-ico">🔩</div><div class="cat-n">Hydraulik</div><div class="cat-c" style="color:#7A6044;">11</div></div>
+            <div class="cat-t"><div class="cat-ico">🍽️</div><div class="cat-n">HoReCa</div><div class="cat-c" style="color:#7A6044;">16</div></div>
+            <div class="cat-t"><div class="cat-ico">➕</div><div class="cat-n">Więcej</div><div class="cat-c" style="color:#7A6044;">+24</div></div>
+          </div>
+          <div class="sec-t" style="margin-top:4px;">Najnowsze oferty</div>
+          <div class="jlist">
+            <div class="jc hot-card">
+              <div class="jc-top">
+                <div class="jc-logo" style="background:linear-gradient(135deg,#92400E,#D97706);">P</div>
+                <div class="jc-info">
+                  <div class="jc-co" style="color:#7A6044;">Pramer Sp. z o.o.</div>
+                  <div class="jc-title">Elektryk / Pomocnik</div>
+                  <div class="jc-bgs"><span class="badge urg">● Pilne</span></div>
+                </div>
+              </div>
+              <div class="jc-loc"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>Wrocław · 2,4 km</div>
+              <div class="jc-pay">6 500–8 200 zł <span style="font-size:11px;font-weight:600;color:#7A6044;">brutto · UoP</span></div>
+              <div class="jc-foot"><span class="jc-date" style="color:#7A6044;">2 godz. temu</span><button class="btn-apply" style="background:#F59E0B;color:#0D0906;font-weight:900;">Zobacz →</button></div>
+            </div>
+            <div class="jc">
+              <div class="jc-top">
+                <div class="jc-logo" style="background:linear-gradient(135deg,#78350F,#B45309);">CD</div>
+                <div class="jc-info">
+                  <div class="jc-co" style="color:#7A6044;">Codewise Sp. z o.o.</div>
+                  <div class="jc-title">Senior Frontend Dev</div>
+                  <div class="jc-bgs"><span class="badge rem">Zdalnie</span><span class="badge new">Nowe</span></div>
+                </div>
+              </div>
+              <div class="jc-loc"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>Podgórze · 0,8 km</div>
+              <div class="jc-pay">15 000–22 000 zł <span style="font-size:11px;font-weight:600;color:#7A6044;">netto · B2B</span></div>
+              <div class="jc-foot"><span class="jc-date" style="color:#7A6044;">Dzisiaj</span><button class="btn-apply" style="background:#F59E0B;color:#0D0906;font-weight:900;">Zobacz →</button></div>
+            </div>
+          </div>
+          <div class="nudge">
+            <h3>Aplikuj w 1 kliknięciu</h3>
+            <p>Darmowe konto — bez ukrytych opłat.</p>
+            <button class="btn-nudge">Zarejestruj się za darmo →</button>
+          </div>
+        </div>
+        <div class="bnav">
+          <button class="ni"><div class="ni-ico" style="background:rgba(245,158,11,.12);"><svg viewBox="0 0 24 24" fill="none" stroke="#F59E0B" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div><span class="ni-l" style="color:#F59E0B;">Start</span></button>
+          <button class="ni" style="color:#7A6044;"><div class="ni-ico"><svg viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg></div><span class="ni-l">Oferty</span></button>
+          <button class="ni" style="color:#7A6044;"><div class="ni-ico"><svg viewBox="0 0 24 24"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/></svg></div><span class="ni-l">Mapa</span></button>
+          <button class="ni" style="color:#7A6044;"><div class="ni-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h4a2 2 0 012 2v14a2 2 0 01-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg></div><span class="ni-l">Zaloguj</span></button>
+        </div>
+      </div>
+    </div>
+    <div class="showcase-label">
+      <span class="sl-theme tag-3">Ember Dark</span>
+      <div class="sl-name">Ciepły · premium</div>
+      <div class="sl-desc">Ciemne brązy i bursztyn zamiast niebieskiego. Efekt luksusowej, rzemieślniczej marki.</div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════
+       THEME 4: NEON CYBER
+       ══════════════════════════════════ -->
+  <div class="showcase">
+    <div class="device">
+      <div class="notch" style="background:#080D14;"><div class="notch-cam" style="background:#0D1520;border-color:#172030;"></div><div class="notch-id" style="background:#0D1520;"></div><div class="notch-cam" style="background:#0D1520;border-color:#172030;"></div></div>
+      <div class="screen t4" style="padding-top:50px;">
+        <div class="sbar">
+          <span class="sbar-time" style="color:#E2F4FF;">9:41</span>
+          <div class="sbar-icons">
+            <svg viewBox="0 0 16 12" width="16" height="12" fill="#E2F4FF"><rect x="0" y="4" width="3" height="8" rx="1" opacity=".4"/><rect x="4" y="2.5" width="3" height="9.5" rx="1" opacity=".6"/><rect x="8" y="1" width="3" height="11" rx="1" opacity=".8"/><rect x="12" y="0" width="3" height="12" rx="1"/></svg>
+            <svg viewBox="0 0 26 14" width="16" height="11" fill="#E2F4FF"><rect x="0" y="1" width="22" height="12" rx="3" fill="none" stroke="#E2F4FF" stroke-width="1.5"/><rect x="1.5" y="2.5" width="16" height="9" rx="1.5"/><path d="M23 5v4a2 2 0 000-4z"/></svg>
+          </div>
+        </div>
+        <div class="bb"><div class="bt">
+          <span class="bi"><span class="btag">BETA</span>1 207 fachowców · gratis</span>
+          <span class="bi">🏙️ Kraków: <b>412 ofert</b></span>
+          <span class="bi">📍 <b>Adresy zweryfikowane</b></span>
+          <span class="bi"><span class="btag">BETA</span>1 207 fachowców · gratis</span>
+          <span class="bi">🏙️ Kraków: <b>412 ofert</b></span>
+          <span class="bi">📍 <b>Adresy zweryfikowane</b></span>
+        </div></div>
+        <div class="tb">
+          <div class="tb-logo">
+            <div class="tb-mark" style="background:#06B6D4;box-shadow:0 0 18px rgba(6,182,212,.55);"><svg viewBox="0 0 24 24" fill="none" stroke="#030508" stroke-width="2.5" stroke-linecap="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
+            MapJob
+          </div>
+          <div class="tb-spacer"></div>
+          <button class="btn-sm">Zaloguj się</button>
+          <button class="btn-sm" style="margin-left:6px;">Dołącz</button>
+        </div>
+        <div class="scr">
+          <div class="hero-block">
+            <div class="hero-h">Znajdź pracę<br>blisko <em>Ciebie</em></div>
+            <div class="hero-sub">Zweryfikowane adresy · widełki zawsze jawne</div>
+            <div class="search-row">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#3D6880" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+              <span>Stanowisko, zawód…</span>
+              <span class="sloc">📍 Kraków</span>
+            </div>
+          </div>
+          <div class="sec-t">Branże</div>
+          <div class="cat-grid">
+            <div class="cat-t hot"><div class="cat-ico">💻</div><div class="cat-n">IT</div><div class="cat-c" style="color:#3D6880;">54 oferty</div></div>
+            <div class="cat-t"><div class="cat-ico">⚡</div><div class="cat-n">Elektryk</div><div class="cat-c" style="color:#3D6880;">18</div></div>
+            <div class="cat-t"><div class="cat-ico">🔧</div><div class="cat-n">Produkcja</div><div class="cat-c" style="color:#3D6880;">31</div></div>
+            <div class="cat-t"><div class="cat-ico">🚚</div><div class="cat-n">Transport</div><div class="cat-c" style="color:#3D6880;">22</div></div>
+            <div class="cat-t"><div class="cat-ico">🏗️</div><div class="cat-n">Budowlanka</div><div class="cat-c" style="color:#3D6880;">29</div></div>
+            <div class="cat-t"><div class="cat-ico">🔩</div><div class="cat-n">Hydraulik</div><div class="cat-c" style="color:#3D6880;">11</div></div>
+            <div class="cat-t"><div class="cat-ico">🍽️</div><div class="cat-n">HoReCa</div><div class="cat-c" style="color:#3D6880;">16</div></div>
+            <div class="cat-t"><div class="cat-ico">➕</div><div class="cat-n">Więcej</div><div class="cat-c" style="color:#3D6880;">+24</div></div>
+          </div>
+          <div class="sec-t" style="margin-top:4px;">Najnowsze oferty</div>
+          <div class="jlist">
+            <div class="jc hot-card">
+              <div class="jc-top">
+                <div class="jc-logo" style="background:linear-gradient(135deg,#7F1D1D,#FF4D6D);">P</div>
+                <div class="jc-info">
+                  <div class="jc-co" style="color:#3D6880;">Pramer Sp. z o.o.</div>
+                  <div class="jc-title">Elektryk / Pomocnik</div>
+                  <div class="jc-bgs"><span class="badge urg">● Pilne</span></div>
+                </div>
+              </div>
+              <div class="jc-loc" style="color:#3D6880;"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>Wrocław · 2,4 km</div>
+              <div class="jc-pay">6 500–8 200 zł <span style="font-size:11px;font-weight:600;color:#3D6880;">brutto · UoP</span></div>
+              <div class="jc-foot"><span class="jc-date" style="color:#3D6880;">2 godz. temu</span><button class="btn-apply">Zobacz →</button></div>
+            </div>
+            <div class="jc feat">
+              <div class="jc-top">
+                <div class="jc-logo" style="background:linear-gradient(135deg,#0E4F5C,#06B6D4);box-shadow:0 0 10px rgba(6,182,212,.3);">CD</div>
+                <div class="jc-info">
+                  <div class="jc-co" style="color:#3D6880;">Codewise Sp. z o.o.</div>
+                  <div class="jc-title">Senior Frontend Dev</div>
+                  <div class="jc-bgs"><span class="badge rem">Zdalnie</span><span class="badge new">Nowe</span></div>
+                </div>
+              </div>
+              <div class="jc-loc" style="color:#3D6880;"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>Podgórze · 0,8 km</div>
+              <div class="jc-pay">15 000–22 000 zł <span style="font-size:11px;font-weight:600;color:#3D6880;">netto · B2B</span></div>
+              <div class="jc-foot"><span class="jc-date" style="color:#3D6880;">Dzisiaj</span><button class="btn-apply">Zobacz →</button></div>
+            </div>
+          </div>
+          <div class="nudge">
+            <h3>Aplikuj w 1 kliknięciu</h3>
+            <p>Darmowe konto — bez ukrytych opłat.</p>
+            <button class="btn-nudge">Zarejestruj się za darmo →</button>
+          </div>
+        </div>
+        <div class="bnav">
+          <button class="ni"><div class="ni-ico" style="background:rgba(6,182,212,.1);"><svg viewBox="0 0 24 24" fill="none" stroke="#06B6D4" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div><span class="ni-l" style="color:#06B6D4;">Start</span></button>
+          <button class="ni" style="color:#3D6880;"><div class="ni-ico"><svg viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg></div><span class="ni-l">Oferty</span></button>
+          <button class="ni" style="color:#3D6880;"><div class="ni-ico"><svg viewBox="0 0 24 24"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/></svg></div><span class="ni-l">Mapa</span></button>
+          <button class="ni" style="color:#3D6880;"><div class="ni-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h4a2 2 0 012 2v14a2 2 0 01-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg></div><span class="ni-l">Zaloguj</span></button>
+        </div>
+      </div>
+    </div>
+    <div class="showcase-label">
+      <span class="sl-theme tag-4">Neon Cyber</span>
+      <div class="sl-name">Elektryczny · odważny</div>
+      <div class="sl-desc">Bardzo ciemne tło, cyjanowy neon, zielone wynagrodzenia z podświetleniem. Tech-forward.</div>
+    </div>
+  </div>
+
+</div><!-- /grid -->
+
+<div style="text-align:center;margin-top:48px;font-size:12px;color:#374151;line-height:1.8;">
+  Makiety poglądowe · MapJob.pl · żadna kolorystyka nie jest wdrożona<br>
+  <span style="color:#4B5563;">Wybierz jedną lub więcej → implementujemy po Twojej decyzji</span>
+</div>
+
+</body>
+</html>
