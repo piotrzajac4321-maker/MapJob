@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="MJ Stats">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#0f1117">
+<link rel="manifest" href="/stats-widget.webmanifest">
+<title>MapJob Stats</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{
+  --bg:#0f1117;--surf:#1a1f2e;--surf2:#232838;--surf3:#2d3347;
+  --blue:#3B82F6;--green:#22c55e;--orange:#f59e0b;--red:#ef4444;--purple:#8b5cf6;
+  --text:#e8eaf0;--text2:#9aa3b8;--text3:#5a6380;
+  --radius:14px;
+}
+html,body{height:100%;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;overflow-x:hidden}
+body{min-height:100dvh;display:flex;flex-direction:column}
+
+/* ── screens ── */
+.screen{display:none;flex-direction:column;flex:1;padding:env(safe-area-inset-top,20px) 16px env(safe-area-inset-bottom,20px)}
+.screen.active{display:flex}
+
+/* ── logo header ── */
+.hd{display:flex;align-items:center;gap:10px;padding:18px 0 24px}
+.hd-icon{width:36px;height:36px;background:var(--blue);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px}
+.hd-title{font-size:18px;font-weight:700;letter-spacing:-.3px}
+.hd-sub{font-size:11px;color:var(--text3);margin-top:2px}
+
+/* ── welcome screen ── */
+#sc-welcome{align-items:center;justify-content:center;gap:0;text-align:center}
+.wl-icon{font-size:72px;margin-bottom:24px;filter:drop-shadow(0 4px 12px rgba(59,130,246,.4))}
+.wl-title{font-size:26px;font-weight:800;letter-spacing:-.5px;margin-bottom:8px}
+.wl-sub{font-size:14px;color:var(--text2);line-height:1.5;margin-bottom:36px}
+.btn-primary{
+  background:var(--blue);color:#fff;border:none;border-radius:var(--radius);
+  padding:16px 32px;font-size:16px;font-weight:700;cursor:pointer;width:100%;max-width:300px;
+  transition:transform .1s,opacity .1s;letter-spacing:-.2px;
+}
+.btn-primary:active{transform:scale(.97);opacity:.9}
+.btn-secondary{
+  background:transparent;color:var(--text2);border:1.5px solid var(--surf3);border-radius:var(--radius);
+  padding:12px 24px;font-size:14px;cursor:pointer;margin-top:12px;width:100%;max-width:300px;
+  transition:border-color .15s,color .15s;
+}
+.btn-secondary:active{border-color:var(--blue);color:var(--text)}
+.err-msg{color:var(--red);font-size:13px;margin-top:12px;min-height:18px;text-align:center}
+.spin{display:none;width:22px;height:22px;border:2.5px solid rgba(255,255,255,.2);border-top-color:#fff;border-radius:50%;animation:spin .8s linear infinite;margin:0 auto}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ── pin screen ── */
+#sc-pin{justify-content:center;align-items:center;gap:0;text-align:center}
+.pin-title{font-size:20px;font-weight:700;margin-bottom:6px}
+.pin-sub{font-size:13px;color:var(--text2);margin-bottom:32px;line-height:1.5}
+.pin-input-wrap{display:flex;gap:8px;margin-bottom:8px}
+.pin-digit{
+  width:44px;height:60px;background:var(--surf2);border:2px solid var(--surf3);border-radius:12px;
+  font-size:28px;font-weight:800;text-align:center;color:var(--text);outline:none;
+  caret-color:var(--blue);transition:border-color .15s;
+}
+.pin-digit:focus{border-color:var(--blue)}
+.pin-hint{font-size:12px;color:var(--text3);margin-bottom:28px}
+.resend-link{background:none;border:none;color:var(--blue);font-size:13px;cursor:pointer;padding:8px;margin-top:8px}
+.resend-link:disabled{color:var(--text3);cursor:default}
+#pin-countdown{font-size:12px;color:var(--text3);margin-top:4px;min-height:16px}
+
+/* ── stats screen ── */
+#sc-stats{padding-top:0}
+.stats-hd{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:env(safe-area-inset-top,16px) 0 16px;
+}
+.stats-hd-left{display:flex;align-items:center;gap:10px}
+.stats-logo{width:32px;height:32px;background:var(--blue);border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:18px}
+.stats-title{font-size:16px;font-weight:700}
+.stats-date{font-size:10px;color:var(--text3);margin-top:1px}
+.btn-icon{
+  background:var(--surf2);border:none;border-radius:10px;width:38px;height:38px;
+  font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;
+  transition:background .15s;
+}
+.btn-icon:active{background:var(--surf3)}
+
+/* ── grid ── */
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+.card{
+  background:var(--surf);border-radius:var(--radius);padding:14px 14px 12px;
+  display:flex;flex-direction:column;gap:4px;
+  border:1px solid rgba(255,255,255,.04);
+}
+.card.full{grid-column:1/-1}
+.card.blue .card-val{color:var(--blue)}
+.card.green .card-val{color:var(--green)}
+.card.orange .card-val{color:var(--orange)}
+.card.purple .card-val{color:var(--purple)}
+.card.red .card-val{color:var(--red)}
+.card-label{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;font-weight:600}
+.card-val{font-size:28px;font-weight:800;letter-spacing:-1px;line-height:1.1}
+.card-val.sm{font-size:22px}
+.card-sub{font-size:11px;color:var(--text2);margin-top:2px}
+
+/* ── refresh bar ── */
+.refresh-bar{
+  display:flex;align-items:center;justify-content:space-between;
+  background:var(--surf);border-radius:10px;padding:10px 14px;margin-bottom:12px;
+  border:1px solid rgba(255,255,255,.04);
+}
+.refresh-time{font-size:12px;color:var(--text3)}
+.btn-refresh{
+  background:var(--blue);color:#fff;border:none;border-radius:8px;
+  padding:7px 14px;font-size:12px;font-weight:700;cursor:pointer;
+  transition:opacity .15s;display:flex;align-items:center;gap:6px;
+}
+.btn-refresh:active{opacity:.8}
+.btn-refresh .spin{width:14px;height:14px;border-width:2px;margin:0}
+
+/* ── logout ── */
+.logout-wrap{margin-top:auto;padding-top:16px;text-align:center}
+.btn-logout{background:none;border:none;color:var(--text3);font-size:13px;cursor:pointer;padding:8px 16px}
+.btn-logout:active{color:var(--red)}
+
+/* ── loading overlay ── */
+.loading-line{
+  height:2px;background:linear-gradient(90deg,transparent,var(--blue),transparent);
+  position:fixed;top:0;left:0;right:0;z-index:99;
+  animation:slide 1.2s ease-in-out infinite;display:none;
+}
+.loading-line.on{display:block}
+@keyframes slide{0%{transform:translateX(-100%)}100%{transform:translateX(100%)}}
+
+/* ── toast ── */
+.toast{
+  position:fixed;bottom:calc(env(safe-area-inset-bottom,16px) + 16px);left:50%;transform:translateX(-50%) translateY(80px);
+  background:#1e2435;border:1px solid var(--surf3);border-radius:10px;
+  padding:10px 18px;font-size:14px;white-space:nowrap;
+  transition:transform .25s cubic-bezier(.34,1.56,.64,1);z-index:999;pointer-events:none;
+}
+.toast.show{transform:translateX(-50%) translateY(0)}
+</style>
+</head>
+<body>
+<div class="loading-line" id="loading-line"></div>
+<div class="toast" id="toast"></div>
+
+<!-- ══ SCREEN: Welcome ══ -->
+<div class="screen active" id="sc-welcome">
+  <div class="wl-icon">📊</div>
+  <div class="wl-title">MapJob Stats</div>
+  <div class="wl-sub">Wyślij PIN na swój telefon,<br>aby zobaczyć statystyki platformy.</div>
+  <button class="btn-primary" id="btn-send-pin" onclick="sendPin()">Wyślij PIN SMS</button>
+  <div class="spin" id="spin-send"></div>
+  <div class="err-msg" id="err-welcome"></div>
+</div>
+
+<!-- ══ SCREEN: PIN ══ -->
+<div class="screen" id="sc-pin">
+  <div style="flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center">
+    <div class="pin-title">Wpisz PIN z SMS</div>
+    <div class="pin-sub">6-cyfrowy kod wysłany na Twój<br>numer telefonu. Ważny 10 minut.</div>
+    <div class="pin-input-wrap" id="pin-wrap">
+      <input class="pin-digit" id="p0" type="tel" inputmode="numeric" maxlength="1" autocomplete="one-time-code" autofocus>
+      <input class="pin-digit" id="p1" type="tel" inputmode="numeric" maxlength="1">
+      <input class="pin-digit" id="p2" type="tel" inputmode="numeric" maxlength="1">
+      <input class="pin-digit" id="p3" type="tel" inputmode="numeric" maxlength="1">
+      <input class="pin-digit" id="p4" type="tel" inputmode="numeric" maxlength="1">
+      <input class="pin-digit" id="p5" type="tel" inputmode="numeric" maxlength="1">
+    </div>
+    <div class="pin-hint">Kod 6-cyfrowy</div>
+    <button class="btn-primary" id="btn-verify" onclick="verifyPin()" style="max-width:260px">Zaloguj</button>
+    <div class="spin" id="spin-verify"></div>
+    <div class="err-msg" id="err-pin"></div>
+    <button class="resend-link" id="btn-resend" onclick="resendPin()">Wyślij ponownie</button>
+    <div id="pin-countdown"></div>
+  </div>
+</div>
+
+<!-- ══ SCREEN: Stats ══ -->
+<div class="screen" id="sc-stats">
+  <div class="stats-hd">
+    <div class="stats-hd-left">
+      <div class="stats-logo">📊</div>
+      <div>
+        <div class="stats-title">MapJob Stats</div>
+        <div class="stats-date" id="s-date">—</div>
+      </div>
+    </div>
+    <button class="btn-icon" title="Wyloguj" onclick="logout()">🚪</button>
+  </div>
+
+  <div class="refresh-bar">
+    <div class="refresh-time" id="s-refresh-time">Aktualizacja: —</div>
+    <button class="btn-refresh" id="btn-refresh" onclick="refreshStats()">
+      <span id="refresh-label">Odśwież</span>
+      <div class="spin" id="spin-refresh"></div>
+    </button>
+  </div>
+
+  <div class="grid">
+    <div class="card blue">
+      <div class="card-label">Użytkownicy</div>
+      <div class="card-val" id="s-users">—</div>
+    </div>
+    <div class="card blue">
+      <div class="card-label">Nowi (7 dni)</div>
+      <div class="card-val" id="s-new7">—</div>
+      <div class="card-sub">nowych kont</div>
+    </div>
+    <div class="card">
+      <div class="card-label">Piny aktywne</div>
+      <div class="card-val" id="s-pins">—</div>
+    </div>
+    <div class="card">
+      <div class="card-label">Przetargi</div>
+      <div class="card-val" id="s-tenders">—</div>
+    </div>
+    <div class="card purple">
+      <div class="card-label">Subskrybenci</div>
+      <div class="card-val" id="s-subs">—</div>
+      <div class="card-sub">plany płatne</div>
+    </div>
+    <div class="card orange">
+      <div class="card-label">Wizyty (7 dni)</div>
+      <div class="card-val" id="s-views">—</div>
+    </div>
+    <div class="card red">
+      <div class="card-label">Wiadomości</div>
+      <div class="card-val" id="s-msgs">—</div>
+      <div class="card-sub">nieprzeczytanych</div>
+    </div>
+    <div class="card green">
+      <div class="card-label">Przychód (mies.)</div>
+      <div class="card-val sm" id="s-rev-month">—</div>
+      <div class="card-sub" id="s-rev-month-label">ten miesiąc</div>
+    </div>
+    <div class="card green full">
+      <div class="card-label">Przychód łączny</div>
+      <div class="card-val" id="s-rev-total">—</div>
+      <div class="card-sub">wszystkie płatności</div>
+    </div>
+  </div>
+
+  <div class="logout-wrap">
+    <button class="btn-logout" onclick="logout()">Wyloguj się</button>
+  </div>
+</div>
+
+<script>
+var API = 'https://ahgzjneegvptudphibdm.supabase.co/functions/v1/quick-stats'
+var KEY_TOKEN = 'mj_qs_token_v1'
+
+/* ── utils ── */
+function $id(id){ return document.getElementById(id) }
+function show(id){ $id(id).classList.add('active') }
+function hide(id){ $id(id).classList.remove('active') }
+function goScreen(name){
+  ['welcome','pin','stats'].forEach(function(s){ hide('sc-' + s) })
+  show('sc-' + name)
+}
+function loading(on){
+  $id('loading-line').classList.toggle('on', on)
+}
+var _toastT
+function toast(msg, dur){
+  var el = $id('toast')
+  el.textContent = msg
+  el.classList.add('show')
+  clearTimeout(_toastT)
+  _toastT = setTimeout(function(){ el.classList.remove('show') }, dur || 2500)
+}
+function fmt(n){ return typeof n === 'number' ? n.toLocaleString('pl') : '—' }
+function fmtPLN(n){ return typeof n === 'number' ? n.toLocaleString('pl') + ' zł' : '—' }
+function fmtTime(iso){
+  if (!iso) return '—'
+  var d = new Date(iso)
+  return d.toLocaleTimeString('pl', { hour:'2-digit', minute:'2-digit' })
+}
+function fmtDate(){
+  return new Date().toLocaleDateString('pl', { weekday:'long', day:'numeric', month:'long' })
+}
+
+/* ── PIN input logic ── */
+var _pinDigits = ['p0','p1','p2','p3','p4','p5']
+_pinDigits.forEach(function(id, i){
+  var el = $id(id)
+  el.addEventListener('input', function(){
+    var v = el.value.replace(/\D/g,'')
+    el.value = v ? v[v.length-1] : ''
+    if (el.value && i < 5) $id(_pinDigits[i+1]).focus()
+    if (getPinValue().length === 6) verifyPin()
+  })
+  el.addEventListener('keydown', function(e){
+    if (e.key === 'Backspace' && !el.value && i > 0){ $id(_pinDigits[i-1]).focus() }
+    if (e.key === 'Enter') verifyPin()
+  })
+  el.addEventListener('paste', function(e){
+    e.preventDefault()
+    var txt = (e.clipboardData || window.clipboardData).getData('text').replace(/\D/g,'').slice(0,6)
+    _pinDigits.forEach(function(did, j){ $id(did).value = txt[j] || '' })
+    if (txt.length === 6) verifyPin()
+    else if (txt.length > 0) $id(_pinDigits[Math.min(txt.length, 5)]).focus()
+  })
+})
+function getPinValue(){ return _pinDigits.map(function(id){ return $id(id).value }).join('') }
+function clearPin(){ _pinDigits.forEach(function(id){ $id(id).value = '' }); $id('p0').focus() }
+
+/* ── API calls ── */
+async function apiCall(body){
+  var r = await fetch(API, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body)
+  })
+  return r.json()
+}
+
+/* ── sendPin ── */
+var _resendCooldown = 0
+async function sendPin(){
+  var btn = $id('btn-send-pin')
+  var spin = $id('spin-send')
+  var err = $id('err-welcome')
+  err.textContent = ''
+  btn.disabled = true
+  btn.style.opacity = '.6'
+  spin.style.display = 'block'
+  loading(true)
+  try {
+    var d = await apiCall({ action: 'send_pin' })
+    if (d.error) { err.textContent = d.error; btn.disabled = false; btn.style.opacity = '1' }
+    else {
+      goScreen('pin')
+      $id('p0').focus()
+      startResendCooldown(60)
+    }
+  } catch(e) {
+    err.textContent = 'Błąd połączenia. Sprawdź internet.'
+    btn.disabled = false; btn.style.opacity = '1'
+  }
+  spin.style.display = 'none'
+  loading(false)
+}
+
+async function resendPin(){
+  var btn = $id('btn-resend')
+  if (btn.disabled) return
+  $id('err-pin').textContent = ''
+  btn.disabled = true
+  loading(true)
+  try {
+    var d = await apiCall({ action: 'send_pin' })
+    if (d.error) { $id('err-pin').textContent = d.error }
+    else { toast('📱 Nowy PIN wysłany!'); clearPin(); startResendCooldown(60) }
+  } catch(e) { $id('err-pin').textContent = 'Błąd połączenia.' }
+  loading(false)
+  if (!$id('err-pin').textContent) btn.disabled = false
+}
+
+var _countdownT
+function startResendCooldown(secs){
+  var btn = $id('btn-resend')
+  btn.disabled = true
+  clearInterval(_countdownT)
+  var s = secs
+  function tick(){
+    $id('pin-countdown').textContent = s > 0 ? 'Możesz wysłać ponownie za ' + s + ' s' : ''
+    if (s <= 0){ clearInterval(_countdownT); btn.disabled = false }
+    s--
+  }
+  tick()
+  _countdownT = setInterval(tick, 1000)
+}
+
+/* ── verifyPin ── */
+async function verifyPin(){
+  var pin = getPinValue()
+  var err = $id('err-pin')
+  err.textContent = ''
+  if (pin.length < 6){ err.textContent = 'Wpisz pełny 6-cyfrowy kod.'; return }
+  var btn = $id('btn-verify')
+  var spin = $id('spin-verify')
+  btn.disabled = true; btn.style.opacity = '.6'
+  spin.style.display = 'block'
+  loading(true)
+  try {
+    var d = await apiCall({ action: 'verify_pin', pin: pin })
+    if (d.error){ err.textContent = d.error; clearPin() }
+    else {
+      localStorage.setItem(KEY_TOKEN, d.token)
+      showStats(d.stats)
+    }
+  } catch(e){ err.textContent = 'Błąd połączenia. Sprawdź internet.' }
+  btn.disabled = false; btn.style.opacity = '1'
+  spin.style.display = 'none'
+  loading(false)
+}
+
+/* ── refreshStats ── */
+async function refreshStats(){
+  var token = localStorage.getItem(KEY_TOKEN)
+  if (!token){ toast('Sesja wygasła — zaloguj się ponownie'); logout(); return }
+  var btn = $id('btn-refresh')
+  var lbl = $id('refresh-label')
+  var spin = $id('spin-refresh')
+  btn.disabled = true
+  lbl.textContent = ''
+  spin.style.display = 'block'
+  loading(true)
+  try {
+    var d = await apiCall({ action: 'get_stats', token: token })
+    if (d.error){
+      toast(d.error)
+      if (d.error.includes('sesja') || d.error.includes('Sesja') || d.error.includes('Nieważna')){
+        localStorage.removeItem(KEY_TOKEN)
+        goScreen('welcome')
+      }
+    } else { showStats(d.stats); toast('✅ Odświeżono') }
+  } catch(e){ toast('Błąd połączenia.') }
+  btn.disabled = false
+  lbl.textContent = 'Odśwież'
+  spin.style.display = 'none'
+  loading(false)
+}
+
+/* ── showStats ── */
+function showStats(s){
+  $id('s-users').textContent   = fmt(s.users)
+  $id('s-new7').textContent    = fmt(s.new_users7)
+  $id('s-pins').textContent    = fmt(s.pins)
+  $id('s-tenders').textContent = fmt(s.tenders)
+  $id('s-subs').textContent    = fmt(s.subscribers)
+  $id('s-views').textContent   = fmt(s.views7)
+  $id('s-msgs').textContent    = fmt(s.unread_msgs)
+  $id('s-rev-month').textContent = fmtPLN(s.revenue_month)
+  $id('s-rev-total').textContent = fmtPLN(s.revenue_total)
+  $id('s-refresh-time').textContent = 'Aktualizacja: ' + fmtTime(s.fetched_at)
+  $id('s-date').textContent = fmtDate()
+  // Highlight unread messages
+  var msgCard = $id('s-msgs').parentElement
+  msgCard.classList.toggle('red', s.unread_msgs > 0)
+  if (s.unread_msgs === 0) msgCard.classList.add('card')
+  goScreen('stats')
+}
+
+/* ── logout ── */
+function logout(){
+  localStorage.removeItem(KEY_TOKEN)
+  goScreen('welcome')
+  var btn = $id('btn-send-pin')
+  btn.disabled = false; btn.style.opacity = '1'
+  $id('err-welcome').textContent = ''
+  clearPin()
+  $id('err-pin').textContent = ''
+}
+
+/* ── auto-login if token exists ── */
+(function init(){
+  var token = localStorage.getItem(KEY_TOKEN)
+  if (!token){ goScreen('welcome'); return }
+  loading(true)
+  apiCall({ action: 'get_stats', token: token }).then(function(d){
+    loading(false)
+    if (d.ok && d.stats) showStats(d.stats)
+    else {
+      localStorage.removeItem(KEY_TOKEN)
+      goScreen('welcome')
+    }
+  }).catch(function(){ loading(false); goScreen('welcome') })
+})()
+</script>
+</body>
+</html>
