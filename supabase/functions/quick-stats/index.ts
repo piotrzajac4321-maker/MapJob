@@ -1,17 +1,17 @@
-// quick-stats Edge Function — PIN-only access to admin stats (no Supabase auth session needed).
+// quick-stats Edge Function — PIN-only access to admin stats.
 //
 // Actions:
-//   send_pin    → generate OTP, send SMS, store hash server-side
-//   verify_pin  → verify OTP, return session token + stats
-//   get_stats   → refresh stats using session token (valid 24 h)
+//   verify_pin  → sprawdź PIN, wydaj podpisany token sesji (24 h)
+//   get_stats   → zweryfikuj token, zwróć statystyki
 
 import 'jsr:@supabase/functions-js/edge-runtime.d.ts'
 import { createClient } from 'jsr:@supabase/supabase-js@2'
 
-const SB_URL      = Deno.env.get('SUPABASE_URL') ?? ''
-const SB_SERVICE  = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
-const ADMIN_PHONE = '721580611'
-const SESSION_H   = 24
+const SB_URL     = Deno.env.get('SUPABASE_URL') ?? ''
+const SB_SERVICE = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+// PIN ustawiany przez zmienną środowiskową; fallback = 9801
+const ADMIN_PIN  = Deno.env.get('STATS_PIN') ?? '9801'
+const SESSION_H  = 24 * 7  // token ważny 7 dni
 
 const sb = createClient(SB_URL, SB_SERVICE)
 
@@ -28,37 +28,34 @@ function resp(data: unknown, status = 200) {
   })
 }
 
-async function hashPin(pin: string): Promise<string> {
-  const raw = new TextEncoder().encode(pin + SB_SERVICE.slice(-12))
-  const buf = await crypto.subtle.digest('SHA-256', raw)
-  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('')
+// Podpisany token sesji — nie wymaga tabeli w DB.
+// Format: base64url(payload) . base64url(hmac-sha256)
+async function signToken(exp: number): Promise<string> {
+  const payload = btoa(JSON.stringify({ exp })).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'')
+  const key = await crypto.subtle.importKey(
+    'raw', new TextEncoder().encode(SB_SERVICE.slice(-32)),
+    { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']
+  )
+  const sig = await crypto.subtle.sign('HMAC', key, new TextEncoder().encode(payload))
+  const sigB64 = btoa(String.fromCharCode(...new Uint8Array(sig))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'')
+  return `${payload}.${sigB64}`
 }
 
-function randomToken(): string {
-  const b = new Uint8Array(32)
-  crypto.getRandomValues(b)
-  return Array.from(b).map(v => v.toString(16).padStart(2, '0')).join('')
-}
-
-async function sendSms(otp: string): Promise<boolean> {
+async function verifyToken(token: string): Promise<boolean> {
+  const parts = token.split('.')
+  if (parts.length !== 2) return false
+  const [payload, sigB64] = parts
+  const key = await crypto.subtle.importKey(
+    'raw', new TextEncoder().encode(SB_SERVICE.slice(-32)),
+    { name: 'HMAC', hash: 'SHA-256' }, false, ['verify']
+  )
+  const sigBytes = Uint8Array.from(atob(sigB64.replace(/-/g,'+').replace(/_/g,'/')), c => c.charCodeAt(0))
+  const ok = await crypto.subtle.verify('HMAC', key, sigBytes, new TextEncoder().encode(payload))
+  if (!ok) return false
   try {
-    const r = await fetch(`${SB_URL}/functions/v1/send-sms`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${SB_SERVICE}`,
-      },
-      body: JSON.stringify({
-        action: 'admin_otp',
-        phone: ADMIN_PHONE,
-        message: `MapJob Stats PIN: ${otp}. Wazny 10 min.`,
-      }),
-    })
-    const d = await r.json()
-    return d.success === true
-  } catch {
-    return false
-  }
+    const { exp } = JSON.parse(atob(payload.replace(/-/g,'+').replace(/_/g,'/')))
+    return Date.now() < exp
+  } catch { return false }
 }
 
 async function fetchStats() {
@@ -67,7 +64,6 @@ async function fetchStats() {
   const m0    = new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString()
 
   const [rU, rP, rT, rV, rN, rFb, rPay, rPM, rS, rM, rU30, rPlans, rRecent] = await Promise.all([
-    // dashboard counters
     sb.from('profiles').select('id', { count: 'exact', head: true }),
     sb.from('pins').select('id', { count: 'exact', head: true }).eq('is_active', true),
     sb.from('tenders').select('id', { count: 'exact', head: true }).eq('status', 'active'),
@@ -76,13 +72,11 @@ async function fetchStats() {
     sb.from('beta_feedback').select('id', { count: 'exact', head: true }).eq('resolved', false),
     sb.from('payments').select('amount').eq('status', 'completed'),
     sb.from('payments').select('amount').eq('status', 'completed').gte('created_at', m0),
-    sb.from('profiles').select('id', { count: 'exact', head: true }).not('plan', 'eq', 'free').not('plan', 'is', null),
+    sb.from('profiles').select('id', { count: 'exact', head: true })
+      .not('plan', 'eq', 'free').not('plan', 'is', null),
     sb.from('conversations').select('unread_a,unread_b'),
-    // chart: new users last 30 days
     sb.from('profiles').select('created_at').gte('created_at', ago30),
-    // plans distribution
     sb.from('profiles').select('plan'),
-    // recent activity
     sb.from('page_views').select('path,created_at').order('created_at', { ascending: false }).limit(6),
   ])
 
@@ -90,7 +84,6 @@ async function fetchStats() {
   const sum = (r: any) => (r.data ?? []).reduce((s: number, p: any) => s + (p.amount ?? 0), 0)
   const unr = (r: any) => (r.data ?? []).reduce((s: number, c: any) => s + (c.unread_a ?? 0) + (c.unread_b ?? 0), 0)
 
-  // Build 30-day new users chart
   const chartMap: Record<string, number> = {}
   for (let i = 29; i >= 0; i--) {
     const d = new Date(Date.now() - i * 86400e3)
@@ -100,9 +93,7 @@ async function fetchStats() {
     const k = u.created_at.slice(0, 10)
     if (k in chartMap) chartMap[k]++
   }
-  const chart30 = Object.entries(chartMap).map(([date, count]) => ({ date, count }))
 
-  // Plans distribution
   const planCounts = { pro: 0, free: 0, supporter: 0, other: 0 }
   for (const u of (rPlans.data ?? [])) {
     const p = (u.plan as string) || 'free'
@@ -123,13 +114,10 @@ async function fetchStats() {
     revenue_month:  sum(rPM),
     subscribers:    cnt(rS),
     unread_msgs:    unr(rM),
-    chart30,
+    chart30:        Object.entries(chartMap).map(([date, count]) => ({ date, count })),
     plans:          planCounts,
-    recent_activity: (rRecent.data ?? []).map((v: any) => ({
-      path: v.path,
-      at: v.created_at,
-    })),
-    fetched_at: new Date().toISOString(),
+    recent_activity: (rRecent.data ?? []).map((v: any) => ({ path: v.path, at: v.created_at })),
+    fetched_at:     new Date().toISOString(),
   }
 }
 
@@ -140,80 +128,24 @@ Deno.serve(async (req) => {
   let body: any
   try { body = await req.json() } catch { body = {} }
 
-  /* ── send_pin ─────────────────────────────── */
-  if (body.action === 'send_pin') {
-    const { data: cur } = await sb.from('quick_stats_otp').select('created_at').eq('id', 1).single()
-    if (cur) {
-      const age = Date.now() - new Date(cur.created_at).getTime()
-      if (age < 60_000) {
-        return resp({ error: `Odczekaj ${Math.ceil((60_000 - age) / 1000)} s przed ponownym wysłaniem.` }, 429)
-      }
-    }
-
-    const otp     = String(Math.floor(100000 + Math.random() * 900000))
-    const hash    = await hashPin(otp)
-    const expires = new Date(Date.now() + 10 * 60_000).toISOString()
-
-    await sb.from('quick_stats_otp').upsert({
-      id: 1,
-      otp_hash: hash,
-      expires_at: expires,
-      attempts: 0,
-      session_token: null,
-      session_expires_at: null,
-      created_at: new Date().toISOString(),
-    })
-
-    const sent = await sendSms(otp)
-    if (!sent) return resp({ error: 'Nie udało się wysłać SMS. Spróbuj ponownie.' }, 500)
-
-    return resp({ sent: true })
-  }
-
-  /* ── verify_pin ───────────────────────────── */
+  /* ── verify_pin ── */
   if (body.action === 'verify_pin') {
     const pin = String(body.pin ?? '').trim()
-    if (!/^\d{6}$/.test(pin)) return resp({ error: 'Wpisz 6-cyfrowy PIN.' }, 400)
-
-    const { data: row } = await sb.from('quick_stats_otp').select('*').eq('id', 1).single()
-    if (!row?.otp_hash)                         return resp({ error: 'Brak aktywnego PIN. Wyślij nowy.' }, 401)
-    if (new Date(row.expires_at) < new Date())  return resp({ error: 'PIN wygasł. Wyślij nowy.' }, 401)
-    if (row.attempts >= 5)                      return resp({ error: 'Zbyt wiele prób. Wyślij nowy PIN.' }, 429)
-
-    await sb.from('quick_stats_otp').update({ attempts: row.attempts + 1 }).eq('id', 1)
-
-    if (await hashPin(pin) !== row.otp_hash) {
-      const left = Math.max(0, 4 - row.attempts)
-      return resp({ error: `Błędny PIN. Pozostało prób: ${left}` }, 401)
+    if (pin !== ADMIN_PIN) {
+      return resp({ error: 'Błędny PIN.' }, 401)
     }
-
-    const token   = randomToken()
-    const expires = new Date(Date.now() + SESSION_H * 3600_000).toISOString()
-
-    await sb.from('quick_stats_otp').update({
-      otp_hash: null,
-      expires_at: null,
-      session_token: token,
-      session_expires_at: expires,
-    }).eq('id', 1)
-
+    const exp   = Date.now() + SESSION_H * 3600_000
+    const token = await signToken(exp)
     const stats = await fetchStats()
     return resp({ ok: true, token, stats })
   }
 
-  /* ── get_stats ───────────────────────────── */
+  /* ── get_stats ── */
   if (body.action === 'get_stats') {
     const token = String(body.token ?? '').trim()
-    if (!token) return resp({ error: 'Brak tokenu sesji.' }, 401)
-
-    const { data: row } = await sb.from('quick_stats_otp')
-      .select('session_token,session_expires_at').eq('id', 1).single()
-
-    if (!row || row.session_token !== token)
-      return resp({ error: 'Nieważna sesja. Zaloguj się ponownie.' }, 401)
-    if (!row.session_expires_at || new Date(row.session_expires_at) < new Date())
+    if (!token || !await verifyToken(token)) {
       return resp({ error: 'Sesja wygasła. Zaloguj się ponownie.' }, 401)
-
+    }
     const stats = await fetchStats()
     return resp({ ok: true, stats })
   }

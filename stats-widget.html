@@ -18,10 +18,10 @@
   --surf:#161b27;--surf2:#1e2535;--surf3:#273045;
   --blue:#1D6FF2;--blue2:#3B82F6;--blue-dim:rgba(29,111,242,.12);
   --green:#16C45E;--green-dim:rgba(22,196,94,.1);
-  --gold:#C8A456;--gold-dim:rgba(200,164,86,.12);
+  --gold:#C8A456;
   --red:#F04040;--red-dim:rgba(240,64,64,.12);
-  --purple:#8B5CF6;--purple-dim:rgba(139,92,246,.12);
-  --cyan:#06B6D4;--cyan-dim:rgba(6,182,212,.12);
+  --purple:#8B5CF6;
+  --cyan:#06B6D4;
   --text:#e2e8f0;--text2:#8899b0;--text3:#4a5568;
   --border:rgba(255,255,255,.06);
   --radius:14px;
@@ -32,521 +32,307 @@
 html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--ff);overflow-x:hidden}
 body{min-height:100dvh}
 
-/* ── screens ── */
 .screen{display:none;min-height:100dvh}
 .screen.active{display:flex;flex-direction:column}
 
-/* ══════════════════════════════════════
-   WELCOME SCREEN
-══════════════════════════════════════ */
-#sc-welcome{
+/* ══ PIN SCREEN ══ */
+#sc-pin{
   align-items:center;justify-content:center;
   padding:calc(var(--sat) + 40px) 28px calc(var(--sab) + 40px);
-  gap:0;text-align:center;
+  text-align:center;
 }
 .logo-ring{
-  width:88px;height:88px;border-radius:26px;
+  width:80px;height:80px;border-radius:24px;
   background:linear-gradient(135deg,var(--blue),#5B21B6);
   display:flex;align-items:center;justify-content:center;
-  font-size:42px;margin-bottom:28px;
-  box-shadow:0 0 0 1px rgba(255,255,255,.08),0 20px 40px rgba(29,111,242,.3);
+  font-size:38px;margin-bottom:24px;
+  box-shadow:0 0 0 1px rgba(255,255,255,.08),0 16px 36px rgba(29,111,242,.3);
 }
-.wl-title{font-size:28px;font-weight:800;letter-spacing:-.6px;margin-bottom:10px}
-.wl-sub{font-size:15px;color:var(--text2);line-height:1.6;margin-bottom:40px}
-.wl-sub b{color:var(--text)}
+.pin-title{font-size:26px;font-weight:800;letter-spacing:-.5px;margin-bottom:8px}
+.pin-sub{font-size:14px;color:var(--text2);line-height:1.5;margin-bottom:36px}
 
-.btn-primary{
-  width:100%;max-width:320px;padding:17px;
+.pin-input-wrap{
+  display:flex;align-items:center;justify-content:center;
+  background:var(--surf2);border:2px solid var(--surf3);border-radius:16px;
+  padding:4px 8px;width:100%;max-width:240px;margin-bottom:28px;
+  transition:border-color .15s;
+}
+.pin-input-wrap:focus-within{border-color:var(--blue2)}
+.pin-input{
+  background:none;border:none;outline:none;
+  font-family:var(--ff);font-size:32px;font-weight:900;
+  letter-spacing:12px;text-align:center;color:var(--text);
+  width:100%;padding:12px 8px;
+  caret-color:var(--blue2);
+}
+
+.btn-unlock{
+  width:100%;max-width:240px;padding:16px;
   background:linear-gradient(135deg,var(--blue),#2563EB);
   color:#fff;border:none;border-radius:16px;
-  font-family:var(--ff);font-size:16px;font-weight:700;
-  cursor:pointer;letter-spacing:-.2px;
+  font-family:var(--ff);font-size:16px;font-weight:700;cursor:pointer;
   box-shadow:0 8px 24px rgba(29,111,242,.35);
   transition:transform .12s,box-shadow .12s;
   display:flex;align-items:center;justify-content:center;gap:10px;
-  position:relative;overflow:hidden;
 }
-.btn-primary:active{transform:scale(.97);box-shadow:0 4px 12px rgba(29,111,242,.2)}
-.btn-primary .btn-spin{
-  width:18px;height:18px;border:2px solid rgba(255,255,255,.3);
-  border-top-color:#fff;border-radius:50%;
-  animation:spin .8s linear infinite;display:none;
-}
-.btn-primary.loading .btn-spin{display:block}
-.btn-primary.loading .btn-txt{opacity:0}
-.err{color:var(--red);font-size:13px;margin-top:16px;min-height:18px;text-align:center;line-height:1.4}
+.btn-unlock:active{transform:scale(.97);box-shadow:0 4px 12px rgba(29,111,242,.2)}
+.btn-unlock .s{width:18px;height:18px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .8s linear infinite;display:none}
+.loading .s{display:block}
+.loading .t{display:none}
+.err{color:var(--red);font-size:13px;margin-top:16px;min-height:18px;line-height:1.4}
 
-/* ══════════════════════════════════════
-   PIN SCREEN
-══════════════════════════════════════ */
-#sc-pin{
-  align-items:center;justify-content:center;
-  padding:calc(var(--sat) + 20px) 24px calc(var(--sab) + 32px);
-}
-.pin-header{margin-bottom:36px;text-align:center}
-.pin-header .ico{font-size:40px;margin-bottom:14px}
-.pin-title{font-size:22px;font-weight:800;letter-spacing:-.4px;margin-bottom:8px}
-.pin-sub{font-size:14px;color:var(--text2);line-height:1.5}
+/* ══ STATS SCREEN ══ */
+#sc-stats{overflow-y:auto;-webkit-overflow-scrolling:touch;flex:1}
+.inner{padding:calc(var(--sat) + 10px) 14px calc(var(--sab) + 24px);display:flex;flex-direction:column;gap:10px}
 
-.pin-row{display:flex;gap:9px;margin-bottom:10px}
-.pin-d{
-  width:46px;height:62px;background:var(--surf2);
-  border:2px solid var(--surf3);border-radius:13px;
-  font-size:30px;font-weight:800;text-align:center;
-  color:var(--text);outline:none;font-family:var(--ff);
-  transition:border-color .15s,background .15s;
-  caret-color:var(--blue2);
-}
-.pin-d:focus{border-color:var(--blue2);background:rgba(29,111,242,.07)}
-.pin-hint{font-size:12px;color:var(--text3);margin-bottom:32px;text-align:center}
-
-.btn-verify{
-  width:100%;max-width:280px;padding:16px;
-  background:var(--surf2);border:1.5px solid var(--surf3);border-radius:14px;
-  color:var(--text);font-family:var(--ff);font-size:15px;font-weight:700;cursor:pointer;
-  transition:background .15s,border-color .15s;
-  display:flex;align-items:center;justify-content:center;gap:10px;
-}
-.btn-verify.ready{background:linear-gradient(135deg,var(--blue),#2563EB);border-color:transparent;color:#fff;box-shadow:0 6px 20px rgba(29,111,242,.3)}
-.btn-verify:active{transform:scale(.97)}
-.btn-verify .btn-spin{width:17px;height:17px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .8s linear infinite;display:none}
-.btn-verify.loading .btn-spin{display:block}
-.btn-verify.loading .btn-txt{opacity:0}
-
-.resend-btn{
-  background:none;border:none;color:var(--blue2);font-family:var(--ff);
-  font-size:14px;cursor:pointer;padding:12px 24px;margin-top:4px;
-}
-.resend-btn:disabled{color:var(--text3);cursor:default}
-#pin-cd{font-size:12px;color:var(--text3);min-height:16px;text-align:center}
-
-/* ══════════════════════════════════════
-   STATS SCREEN
-══════════════════════════════════════ */
-#sc-stats{
-  padding:0;flex:1;
-  overflow-y:auto;-webkit-overflow-scrolling:touch;
-}
-.stats-inner{
-  padding:calc(var(--sat) + 10px) 14px calc(var(--sab) + 20px);
-  display:flex;flex-direction:column;gap:10px;
-}
-
-/* header */
-.stats-hd{
-  display:flex;align-items:center;justify-content:space-between;
-  padding:4px 0 6px;
-}
-.hd-brand{display:flex;align-items:center;gap:10px}
-.hd-icon{
-  width:34px;height:34px;border-radius:10px;
-  background:linear-gradient(135deg,var(--blue),#5B21B6);
-  display:flex;align-items:center;justify-content:center;font-size:18px;
-}
+.hd{display:flex;align-items:center;justify-content:space-between;padding:4px 0 6px}
+.hd-l{display:flex;align-items:center;gap:10px}
+.hd-ico{width:32px;height:32px;border-radius:9px;background:linear-gradient(135deg,var(--blue),#5B21B6);display:flex;align-items:center;justify-content:center;font-size:17px}
 .hd-name{font-size:16px;font-weight:800;letter-spacing:-.3px}
-.hd-time{font-size:10px;color:var(--text3);margin-top:1px}
-.hd-actions{display:flex;gap:6px}
-.ico-btn{
-  width:36px;height:36px;border-radius:10px;
-  background:var(--surf2);border:1px solid var(--border);
-  font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;
-  transition:background .15s;
-}
+.hd-day{font-size:10px;color:var(--text3);margin-top:1px}
+.hd-r{display:flex;gap:6px}
+.ico-btn{width:36px;height:36px;border-radius:10px;background:var(--surf2);border:1px solid var(--border);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .15s}
 .ico-btn:active{background:var(--surf3)}
 
-/* refresh bar */
-.ref-bar{
-  background:var(--surf);border:1px solid var(--border);border-radius:12px;
-  padding:9px 14px;display:flex;align-items:center;justify-content:space-between;
-}
-.ref-time{font-size:11px;color:var(--text3)}
-.btn-ref{
-  background:var(--blue);color:#fff;border:none;border-radius:8px;
-  padding:6px 14px;font-size:12px;font-weight:700;font-family:var(--ff);
-  cursor:pointer;display:flex;align-items:center;gap:6px;
-  transition:opacity .15s;
-}
+.ref-bar{background:var(--surf);border:1px solid var(--border);border-radius:12px;padding:9px 14px;display:flex;align-items:center;justify-content:space-between}
+.ref-t{font-size:11px;color:var(--text3)}
+.btn-ref{background:var(--blue);color:#fff;border:none;border-radius:8px;padding:6px 14px;font-size:12px;font-weight:700;font-family:var(--ff);cursor:pointer;display:flex;align-items:center;gap:6px;transition:opacity .15s}
 .btn-ref:active{opacity:.8}
-.btn-ref .btn-spin{width:13px;height:13px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .8s linear infinite;display:none}
-.btn-ref.loading .btn-spin{display:block}
-.btn-ref.loading .ref-lbl{display:none}
+.btn-ref .s{width:13px;height:13px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .8s linear infinite;display:none}
+.btn-ref.loading .s{display:block}
+.btn-ref.loading .rl{display:none}
 
 /* stat grid */
 .sg{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.st{
-  background:var(--surf);border:1px solid var(--border);border-radius:var(--radius);
-  padding:15px 14px 13px;position:relative;overflow:hidden;
-}
-.st::before{
-  content:'';position:absolute;top:0;right:0;
-  width:56px;height:56px;border-radius:50%;opacity:.09;
-  transform:translate(18px,-18px);
-}
-.st-b::before{background:var(--blue2)} .st-g::before{background:var(--green)}
-.st-o::before{background:var(--gold)}  .st-r::before{background:var(--red)}
-.st-p::before{background:var(--purple)}.st-c::before{background:var(--cyan)}
+.st{background:var(--surf);border:1px solid var(--border);border-radius:var(--radius);padding:15px 14px 13px;position:relative;overflow:hidden}
+.st::before{content:'';position:absolute;top:0;right:0;width:56px;height:56px;border-radius:50%;opacity:.09;transform:translate(18px,-18px)}
+.b::before{background:var(--blue2)} .g::before{background:var(--green)}
+.o::before{background:var(--gold)}  .r::before{background:var(--red)}
+.p::before{background:var(--purple)}.c::before{background:var(--cyan)}
 .sv{font-size:26px;font-weight:900;line-height:1;letter-spacing:-1px}
-.st-b .sv{color:var(--blue2)} .st-g .sv{color:var(--green)} .st-o .sv{color:var(--gold)}
-.st-r .sv{color:var(--red)}   .st-p .sv{color:var(--purple)}.st-c .sv{color:var(--cyan)}
+.b .sv{color:var(--blue2)} .g .sv{color:var(--green)} .o .sv{color:var(--gold)}
+.r .sv{color:var(--red)}   .p .sv{color:var(--purple)}.c .sv{color:var(--cyan)}
 .sv.sm{font-size:20px;letter-spacing:-.5px}
 .sl{font-size:10px;color:var(--text3);margin-top:5px;font-weight:600;text-transform:uppercase;letter-spacing:.3px}
 .sd{font-size:11px;font-weight:700;margin-top:5px}
-.sd.up{color:var(--green)}.sd.dn{color:var(--red)}
+.up{color:var(--green)}.dn{color:var(--red)}
 
-/* section card */
+/* section */
 .sec{background:var(--surf);border:1px solid var(--border);border-radius:var(--radius);padding:14px}
-.sec-hd{font-size:12px;font-weight:700;color:var(--text2);margin-bottom:12px;display:flex;align-items:center;gap:6px}
-.sec-hd span{font-size:14px}
-
-/* chart */
+.sec-h{font-size:12px;font-weight:700;color:var(--text2);margin-bottom:12px;display:flex;align-items:center;gap:6px}
 .chart-wrap{position:relative;height:110px}
 
-/* plans bars */
+/* plan bars */
 .plan-row{display:flex;flex-direction:column;gap:8px}
 .plan-item{display:flex;align-items:center;gap:10px}
-.plan-label{font-size:11px;color:var(--text2);width:62px;font-weight:600}
-.plan-bar-bg{flex:1;height:7px;background:var(--surf3);border-radius:4px;overflow:hidden}
+.plan-lbl{font-size:11px;color:var(--text2);width:62px;font-weight:600}
+.plan-bg{flex:1;height:7px;background:var(--surf3);border-radius:4px;overflow:hidden}
 .plan-bar{height:100%;border-radius:4px;transition:width .6s cubic-bezier(.34,1.56,.64,1)}
-.plan-val{font-size:11px;font-weight:700;color:var(--text);width:36px;text-align:right}
+.plan-n{font-size:11px;font-weight:700;color:var(--text);width:36px;text-align:right}
 
-/* recent activity */
+/* activity */
 .act-list{display:flex;flex-direction:column;gap:1px}
-.act-item{
-  display:flex;align-items:center;gap:10px;padding:8px 0;
-  border-bottom:1px solid var(--border);
-}
+.act-item{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border)}
 .act-item:last-child{border-bottom:none}
 .act-dot{width:7px;height:7px;border-radius:50%;background:var(--blue-dim);border:1px solid var(--blue2);flex-shrink:0}
 .act-path{font-size:12px;color:var(--text2);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .act-time{font-size:10px;color:var(--text3);flex-shrink:0}
 
-/* logout */
-.logout-row{padding:6px 0 2px;text-align:center}
-.btn-logout{background:none;border:none;color:var(--text3);font-size:13px;font-family:var(--ff);cursor:pointer;padding:10px 20px}
-.btn-logout:active{color:var(--red)}
+.logout-row{padding:4px 0 2px;text-align:center}
+.btn-lo{background:none;border:none;color:var(--text3);font-size:13px;font-family:var(--ff);cursor:pointer;padding:10px 20px}
+.btn-lo:active{color:var(--red)}
 
-/* ── global ── */
 @keyframes spin{to{transform:rotate(360deg)}}
-
-/* toast */
-.toast{
-  position:fixed;bottom:calc(var(--sab) + 20px);left:50%;
-  transform:translateX(-50%) translateY(80px);
-  background:#1e2535;border:1px solid var(--surf3);border-radius:10px;
-  padding:10px 20px;font-size:14px;white-space:nowrap;
-  transition:transform .25s cubic-bezier(.34,1.56,.64,1);z-index:999;pointer-events:none;
-}
-.toast.show{transform:translateX(-50%) translateY(0)}
-
-/* loading bar */
-.ld-bar{
-  position:fixed;top:0;left:0;right:0;height:2px;z-index:100;
-  background:linear-gradient(90deg,transparent,var(--blue2),transparent);
-  animation:slide 1.2s ease-in-out infinite;display:none;
-}
-.ld-bar.on{display:block}
+.ld{position:fixed;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--blue2),transparent);animation:slide 1.2s ease-in-out infinite;display:none;z-index:100}
+.ld.on{display:block}
 @keyframes slide{0%{transform:translateX(-100%)}100%{transform:translateX(100%)}}
+.toast{position:fixed;bottom:calc(var(--sab) + 20px);left:50%;transform:translateX(-50%) translateY(80px);background:#1e2535;border:1px solid var(--surf3);border-radius:10px;padding:10px 20px;font-size:14px;white-space:nowrap;transition:transform .25s cubic-bezier(.34,1.56,.64,1);z-index:999;pointer-events:none}
+.toast.show{transform:translateX(-50%) translateY(0)}
 </style>
 </head>
 <body>
 
-<div class="ld-bar" id="ld"></div>
+<div class="ld" id="ld"></div>
 <div class="toast" id="toast"></div>
 
-<!-- ══ WELCOME ══ -->
-<div class="screen active" id="sc-welcome">
-  <div class="logo-ring">📊</div>
-  <div class="wl-title">MapJob Stats</div>
-  <div class="wl-sub">Wyślij PIN na swój numer,<br>aby zobaczyć <b>statystyki platformy</b>.</div>
-  <button class="btn-primary" id="btn-send" onclick="sendPin()">
-    <span class="btn-txt">Wyślij PIN SMS</span>
-    <span class="btn-spin"></span>
-  </button>
-  <div class="err" id="err-wl"></div>
-</div>
-
 <!-- ══ PIN ══ -->
-<div class="screen" id="sc-pin">
-  <div class="pin-header">
-    <div class="ico">📱</div>
-    <div class="pin-title">Wpisz PIN z SMS</div>
-    <div class="pin-sub">6-cyfrowy kod wysłany<br>na Twój numer. Ważny 10 min.</div>
+<div class="screen active" id="sc-pin">
+  <div class="logo-ring">📊</div>
+  <div class="pin-title">MapJob Stats</div>
+  <div class="pin-sub">Wpisz PIN, aby zobaczyć<br>statystyki platformy.</div>
+  <div class="pin-input-wrap">
+    <input class="pin-input" id="pin" type="password" inputmode="numeric"
+           maxlength="8" autocomplete="current-password"
+           placeholder="••••" autofocus>
   </div>
-  <div class="pin-row" id="pin-row">
-    <input class="pin-d" id="p0" type="tel" inputmode="numeric" maxlength="1" autocomplete="one-time-code">
-    <input class="pin-d" id="p1" type="tel" inputmode="numeric" maxlength="1">
-    <input class="pin-d" id="p2" type="tel" inputmode="numeric" maxlength="1">
-    <input class="pin-d" id="p3" type="tel" inputmode="numeric" maxlength="1">
-    <input class="pin-d" id="p4" type="tel" inputmode="numeric" maxlength="1">
-    <input class="pin-d" id="p5" type="tel" inputmode="numeric" maxlength="1">
-  </div>
-  <div class="pin-hint">kod 6-cyfrowy</div>
-  <button class="btn-verify" id="btn-verify" onclick="verifyPin()">
-    <span class="btn-txt">Zaloguj</span>
-    <span class="btn-spin"></span>
+  <button class="btn-unlock" id="btn-unlock" onclick="doVerify()">
+    <span class="t">Odblokuj</span>
+    <span class="s"></span>
   </button>
-  <div class="err" id="err-pin"></div>
-  <button class="resend-btn" id="btn-resend" onclick="resendPin()">Wyślij ponownie</button>
-  <div id="pin-cd"></div>
+  <div class="err" id="err"></div>
 </div>
 
 <!-- ══ STATS ══ -->
 <div class="screen" id="sc-stats">
-  <div class="stats-inner">
+  <div class="inner">
 
-    <!-- header -->
-    <div class="stats-hd">
-      <div class="hd-brand">
-        <div class="hd-icon">📊</div>
+    <div class="hd">
+      <div class="hd-l">
+        <div class="hd-ico">📊</div>
         <div>
           <div class="hd-name">MapJob Stats</div>
-          <div class="hd-time" id="s-day">—</div>
+          <div class="hd-day" id="s-day">—</div>
         </div>
       </div>
-      <div class="hd-actions">
-        <button class="ico-btn" title="Odśwież" onclick="refreshStats()">🔄</button>
-        <button class="ico-btn" title="Wyloguj" onclick="logout()">🚪</button>
+      <div class="hd-r">
+        <button class="ico-btn" onclick="refresh()">🔄</button>
+        <button class="ico-btn" onclick="logout()">🚪</button>
       </div>
     </div>
 
-    <!-- refresh bar -->
     <div class="ref-bar">
-      <div class="ref-time" id="s-ref">Ostatnia aktualizacja: —</div>
-      <button class="btn-ref" id="btn-ref" onclick="refreshStats()">
-        <span class="ref-lbl">Odśwież</span>
-        <span class="btn-spin"></span>
+      <div class="ref-t" id="s-ref">Ostatnia aktualizacja: —</div>
+      <button class="btn-ref" id="btn-ref" onclick="refresh()">
+        <span class="rl">Odśwież</span>
+        <span class="s"></span>
       </button>
     </div>
 
-    <!-- 8 cards — same as admin dashboard -->
+    <!-- 8 kart — identyczne z admin dashboardem -->
     <div class="sg">
-      <div class="st st-b">
+      <div class="st b">
         <div class="sv" id="s-users">—</div>
         <div class="sl">👥 Użytkownicy</div>
         <div class="sd up" id="s-new7"></div>
       </div>
-      <div class="st st-g">
+      <div class="st g">
         <div class="sv" id="s-pins">—</div>
         <div class="sl">📍 Aktywne piny</div>
       </div>
-      <div class="st st-o">
+      <div class="st o">
         <div class="sv" id="s-tenders">—</div>
         <div class="sl">📋 Ogłoszenia</div>
       </div>
-      <div class="st st-p">
+      <div class="st p">
         <div class="sv" id="s-pro">—</div>
         <div class="sl">⚡ Konta Pro</div>
       </div>
-      <div class="st st-g">
+      <div class="st g">
         <div class="sv sm" id="s-rev">—</div>
         <div class="sl">💰 Przychód (PLN)</div>
-        <div class="sd" id="s-rev-month" style="color:var(--text2)"></div>
+        <div class="sd" id="s-rev-m" style="color:var(--text2)"></div>
       </div>
-      <div class="st st-b">
+      <div class="st b">
         <div class="sv" id="s-views">—</div>
         <div class="sl">👁 Odwiedziny (7d)</div>
       </div>
-      <div class="st st-r">
+      <div class="st r" id="card-fb">
         <div class="sv" id="s-fb">—</div>
         <div class="sl">🐛 Otwarty Feedback</div>
       </div>
-      <div class="st st-c">
+      <div class="st c">
         <div class="sv" id="s-msgs">—</div>
         <div class="sl">💬 Nowe wiadomości</div>
       </div>
     </div>
 
-    <!-- new users chart -->
+    <!-- wykres nowych użytkowników -->
     <div class="sec">
-      <div class="sec-hd"><span>📈</span> Nowi użytkownicy — 30 dni</div>
-      <div class="chart-wrap"><canvas id="chart-users"></canvas></div>
+      <div class="sec-h"><span>📈</span> Nowi użytkownicy — 30 dni</div>
+      <div class="chart-wrap"><canvas id="ch-users"></canvas></div>
     </div>
 
-    <!-- plans distribution -->
+    <!-- dystrybucja planów -->
     <div class="sec">
-      <div class="sec-hd"><span>⚡</span> Dystrybucja planów</div>
-      <div class="plan-row" id="plan-row">
+      <div class="sec-h"><span>⚡</span> Dystrybucja planów</div>
+      <div class="plan-row">
         <div class="plan-item">
-          <div class="plan-label" style="color:var(--blue2)">Pro</div>
-          <div class="plan-bar-bg"><div class="plan-bar" id="pb-pro" style="background:var(--blue2);width:0"></div></div>
-          <div class="plan-val" id="pv-pro">—</div>
+          <div class="plan-lbl" style="color:var(--blue2)">Pro</div>
+          <div class="plan-bg"><div class="plan-bar" id="pb-pro" style="background:var(--blue2);width:0"></div></div>
+          <div class="plan-n" id="pn-pro">—</div>
         </div>
         <div class="plan-item">
-          <div class="plan-label" style="color:var(--gold)">Supporter</div>
-          <div class="plan-bar-bg"><div class="plan-bar" id="pb-sup" style="background:var(--gold);width:0"></div></div>
-          <div class="plan-val" id="pv-sup">—</div>
+          <div class="plan-lbl" style="color:var(--gold)">Supporter</div>
+          <div class="plan-bg"><div class="plan-bar" id="pb-sup" style="background:var(--gold);width:0"></div></div>
+          <div class="plan-n" id="pn-sup">—</div>
         </div>
         <div class="plan-item">
-          <div class="plan-label" style="color:var(--text3)">Free</div>
-          <div class="plan-bar-bg"><div class="plan-bar" id="pb-free" style="background:var(--surf3);width:0"></div></div>
-          <div class="plan-val" id="pv-free">—</div>
+          <div class="plan-lbl" style="color:var(--text3)">Free</div>
+          <div class="plan-bg"><div class="plan-bar" id="pb-free" style="background:var(--surf3);width:0"></div></div>
+          <div class="plan-n" id="pn-free">—</div>
         </div>
       </div>
     </div>
 
-    <!-- recent activity -->
+    <!-- ostatnia aktywność -->
     <div class="sec">
-      <div class="sec-hd"><span>🕐</span> Ostatnia aktywność</div>
-      <div class="act-list" id="act-list">
-        <div style="color:var(--text3);font-size:13px">Ładowanie…</div>
-      </div>
+      <div class="sec-h"><span>🕐</span> Ostatnia aktywność</div>
+      <div class="act-list" id="act-list"><div style="color:var(--text3);font-size:13px">Ładowanie…</div></div>
     </div>
 
     <div class="logout-row">
-      <button class="btn-logout" onclick="logout()">Wyloguj się</button>
+      <button class="btn-lo" onclick="logout()">Wyloguj się</button>
     </div>
-
   </div>
 </div>
 
 <script>
 var API = 'https://ahgzjneegvptudphibdm.supabase.co/functions/v1/quick-stats'
-var TOKEN_KEY = 'mj_qs_tok_v1'
+var TOK = 'mj_qs_tok_v2'
 var _chart = null
 
-/* ── utils ── */
 function $$(id){ return document.getElementById(id) }
-function go(name){
-  ['welcome','pin','stats'].forEach(function(n){ $$('sc-'+n).classList.remove('active') })
-  $$('sc-'+name).classList.add('active')
-  if (name === 'stats') window.scrollTo(0,0)
+function go(n){
+  ['pin','stats'].forEach(function(s){ $$('sc-'+s).classList.remove('active') })
+  $$('sc-'+n).classList.add('active')
+  if(n==='stats') window.scrollTo(0,0)
 }
-function loading(on){ $$('ld').classList.toggle('on', on) }
-var _tt; function toast(msg, ms){
-  var el = $$('toast'); el.textContent = msg; el.classList.add('show')
-  clearTimeout(_tt); _tt = setTimeout(function(){ el.classList.remove('show') }, ms||2500)
-}
-function fmt(n){ return typeof n==='number' ? n.toLocaleString('pl') : '—' }
-function fmtPLN(n){ return typeof n==='number' ? n.toLocaleString('pl')+' zł' : '—' }
-function fmtTime(iso){
-  if (!iso) return '—'
-  var d = new Date(iso)
-  return d.toLocaleTimeString('pl', {hour:'2-digit',minute:'2-digit'})
-}
-function relTime(iso){
-  if (!iso) return ''
-  var s = Math.floor((Date.now()-new Date(iso).getTime())/1000)
-  if (s < 60)  return s+'s'
-  if (s < 3600) return Math.floor(s/60)+'min'
-  if (s < 86400) return Math.floor(s/3600)+'h'
-  return Math.floor(s/86400)+'d'
-}
-function fmtDay(){
-  return new Date().toLocaleDateString('pl',{weekday:'long',day:'numeric',month:'long'})
-}
+function ld(on){ $$('ld').classList.toggle('on',on) }
+var _tt; function toast(msg,ms){ var el=$$('toast'); el.textContent=msg; el.classList.add('show'); clearTimeout(_tt); _tt=setTimeout(function(){ el.classList.remove('show') },ms||2500) }
+function fmt(n){ return typeof n==='number'?n.toLocaleString('pl'):'—' }
+function fmtPLN(n){ return typeof n==='number'?n.toLocaleString('pl')+' zł':'—' }
+function fmtTime(iso){ if(!iso)return '—'; var d=new Date(iso); return d.toLocaleTimeString('pl',{hour:'2-digit',minute:'2-digit'}) }
+function relTime(iso){ if(!iso)return ''; var s=Math.floor((Date.now()-new Date(iso).getTime())/1000); if(s<60)return s+'s'; if(s<3600)return Math.floor(s/60)+'min'; if(s<86400)return Math.floor(s/3600)+'h'; return Math.floor(s/86400)+'d' }
 
-/* ── PIN digits ── */
-var DIGITS = ['p0','p1','p2','p3','p4','p5']
-DIGITS.forEach(function(id, i){
-  var el = $$(id)
-  el.addEventListener('input', function(){
-    var v = el.value.replace(/\D/g,'')
-    el.value = v ? v.slice(-1) : ''
-    checkPinReady()
-    if (el.value && i < 5) $$(DIGITS[i+1]).focus()
-    if (pinVal().length === 6) verifyPin()
-  })
-  el.addEventListener('keydown', function(e){
-    if (e.key==='Backspace' && !el.value && i>0){ $$(DIGITS[i-1]).focus() }
-    if (e.key==='Enter') verifyPin()
-  })
-  el.addEventListener('paste', function(e){
-    e.preventDefault()
-    var t = (e.clipboardData||window.clipboardData).getData('text').replace(/\D/g,'').slice(0,6)
-    DIGITS.forEach(function(did,j){ $$(did).value = t[j]||'' })
-    checkPinReady()
-    if (t.length===6) verifyPin()
-    else $$(DIGITS[Math.min(t.length,5)]).focus()
-  })
-})
-function pinVal(){ return DIGITS.map(function(id){ return $$(id).value }).join('') }
-function clearPin(){ DIGITS.forEach(function(id){ $$(id).value='' }); $$(DIGITS[0]).focus() }
-function checkPinReady(){
-  var ok = pinVal().length===6
-  var btn = $$('btn-verify')
-  btn.classList.toggle('ready', ok)
-}
+// Enter = odblokuj
+$$('pin').addEventListener('keydown', function(e){ if(e.key==='Enter') doVerify() })
 
-/* ── API ── */
 async function api(body){
   var r = await fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)})
   return r.json()
 }
 
-/* ── sendPin ── */
-async function sendPin(){
-  var btn = $$('btn-send'); var err = $$('err-wl')
-  err.textContent = ''
-  btn.classList.add('loading'); btn.disabled = true
-  loading(true)
-  try {
-    var d = await api({action:'send_pin'})
-    if (d.error){ err.textContent = d.error; btn.classList.remove('loading'); btn.disabled=false }
-    else { go('pin'); setTimeout(function(){ $$(DIGITS[0]).focus() },150); startCd(60) }
-  } catch(e){ err.textContent='Błąd połączenia. Sprawdź internet.'; btn.classList.remove('loading'); btn.disabled=false }
-  loading(false)
-}
-
-async function resendPin(){
-  var btn=$$('btn-resend'); var err=$$('err-pin')
-  if(btn.disabled) return
-  err.textContent=''; btn.disabled=true
-  loading(true)
-  try {
-    var d = await api({action:'send_pin'})
-    if(d.error){ err.textContent=d.error; btn.disabled=false }
-    else { toast('📱 Nowy PIN wysłany!'); clearPin(); startCd(60) }
-  } catch(e){ err.textContent='Błąd połączenia.'; btn.disabled=false }
-  loading(false)
-}
-
-var _cd; function startCd(s){
-  var btn=$$('btn-resend'); btn.disabled=true; clearInterval(_cd)
-  function tick(){
-    $$('pin-cd').textContent = s>0 ? 'Możesz wysłać ponownie za '+s+' s' : ''
-    if(s<=0){ clearInterval(_cd); btn.disabled=false }
-    s--
-  }
-  tick(); _cd=setInterval(tick,1000)
-}
-
-/* ── verifyPin ── */
-async function verifyPin(){
-  var pin=pinVal(), err=$$('err-pin')
+async function doVerify(){
+  var pin = $$('pin').value.trim()
+  var err = $$('err')
   err.textContent=''
-  if(pin.length<6){ err.textContent='Wpisz pełny 6-cyfrowy kod.'; return }
-  var btn=$$('btn-verify')
-  btn.classList.add('loading'); btn.disabled=true
-  loading(true)
+  if(!pin){ err.textContent='Wpisz PIN.'; return }
+  var btn=$$('btn-unlock'); btn.classList.add('loading'); btn.disabled=true
+  ld(true)
   try {
-    var d = await api({action:'verify_pin',pin:pin})
-    if(d.error){ err.textContent=d.error; clearPin() }
-    else { localStorage.setItem(TOKEN_KEY,d.token); renderStats(d.stats); go('stats') }
-  } catch(e){ err.textContent='Błąd połączenia.' }
+    var d = await api({action:'verify_pin', pin:pin})
+    if(d.error){ err.textContent=d.error; $$('pin').value=''; $$('pin').focus() }
+    else { localStorage.setItem(TOK, d.token); renderStats(d.stats); go('stats') }
+  } catch(e){ err.textContent='Błąd połączenia. Sprawdź internet.' }
   btn.classList.remove('loading'); btn.disabled=false
-  loading(false)
+  ld(false)
 }
 
-/* ── refreshStats ── */
-async function refreshStats(){
-  var tok=localStorage.getItem(TOKEN_KEY)
+async function refresh(){
+  var tok=localStorage.getItem(TOK)
   if(!tok){ toast('Sesja wygasła'); logout(); return }
   var btn=$$('btn-ref'); btn.classList.add('loading'); btn.disabled=true
-  loading(true)
+  ld(true)
   try {
-    var d = await api({action:'get_stats',token:tok})
-    if(d.error){
-      toast(d.error)
-      if(/sesja|Sesja|Nieważna/i.test(d.error)){ localStorage.removeItem(TOKEN_KEY); go('welcome') }
-    } else { renderStats(d.stats); toast('✅ Odświeżono') }
+    var d = await api({action:'get_stats', token:tok})
+    if(d.error){ toast(d.error); if(/sesja|wygasła|Nieważna/i.test(d.error)){ localStorage.removeItem(TOK); go('pin') } }
+    else { renderStats(d.stats); toast('✅ Odświeżono') }
   } catch(e){ toast('Błąd połączenia.') }
   btn.classList.remove('loading'); btn.disabled=false
-  loading(false)
+  ld(false)
 }
 
-/* ── renderStats ── */
 function renderStats(s){
-  // 8 cards
   $$('s-users').textContent   = fmt(s.users)
   $$('s-pins').textContent    = fmt(s.pins)
   $$('s-tenders').textContent = fmt(s.tenders)
@@ -555,98 +341,59 @@ function renderStats(s){
   $$('s-views').textContent   = fmt(s.views7)
   $$('s-fb').textContent      = fmt(s.feedback)
   $$('s-msgs').textContent    = fmt(s.unread_msgs)
-  // subtext
-  var n7 = $$('s-new7')
-  if(typeof s.new_users7==='number' && s.new_users7>0){
-    n7.className='sd up'; n7.textContent='+'+s.new_users7+' w 7 dni'
-  } else { n7.textContent='' }
-  if(typeof s.revenue_month==='number'){
-    $$('s-rev-month').textContent = fmtPLN(s.revenue_month)+' ten mies.'
-  }
-  // feedback badge
-  var fbCard = $$('s-fb').parentElement
-  fbCard.className = 'st ' + (s.feedback>0 ? 'st-r' : 'st-b')
+  // feedback bez koloru gdy 0
+  $$('card-fb').className = 'st ' + (s.feedback>0?'r':'b')
+  // subteksty
+  var n7=$$('s-new7'); if(typeof s.new_users7==='number'&&s.new_users7>0){ n7.className='sd up'; n7.textContent='+'+s.new_users7+' w 7 dni' } else n7.textContent=''
+  if(typeof s.revenue_month==='number') $$('s-rev-m').textContent = fmtPLN(s.revenue_month)+' ten mies.'
   // header
-  $$('s-day').textContent   = fmtDay()
-  $$('s-ref').textContent   = 'Aktualizacja: '+fmtTime(s.fetched_at)
-
+  $$('s-day').textContent = new Date().toLocaleDateString('pl',{weekday:'long',day:'numeric',month:'long'})
+  $$('s-ref').textContent = 'Aktualizacja: '+fmtTime(s.fetched_at)
   // chart
-  if(s.chart30 && s.chart30.length){
-    var labels = s.chart30.map(function(e){ return e.date.slice(5) })
-    var vals   = s.chart30.map(function(e){ return e.count })
-    var ctx = $$('chart-users')
-    if(_chart){ _chart.destroy() }
-    _chart = new Chart(ctx, {
+  if(s.chart30&&s.chart30.length){
+    var labels=s.chart30.map(function(e){ return e.date.slice(5) })
+    var vals=s.chart30.map(function(e){ return e.count })
+    var ctx=$$('ch-users')
+    if(_chart) _chart.destroy()
+    _chart=new Chart(ctx,{
       type:'line',
-      data:{
-        labels:labels,
-        datasets:[{
-          label:'Nowi',data:vals,
-          borderColor:'#3B82F6',
-          backgroundColor:'rgba(59,130,246,.1)',
-          fill:true,tension:.4,
-          pointRadius:0,pointHoverRadius:4,borderWidth:2.5
-        }]
-      },
-      options:{
-        responsive:true,maintainAspectRatio:false,
-        plugins:{legend:{display:false},tooltip:{
-          callbacks:{title:function(i){ return i[0].label }}
-        }},
-        scales:{
-          x:{grid:{display:false},ticks:{maxTicksLimit:6,font:{size:9},color:'#4a5568'}},
-          y:{grid:{color:'rgba(255,255,255,.04)'},beginAtZero:true,
-             ticks:{stepSize:1,precision:0,font:{size:9},color:'#4a5568'}}
-        }
-      }
+      data:{labels:labels,datasets:[{label:'Nowi',data:vals,borderColor:'#3B82F6',backgroundColor:'rgba(59,130,246,.1)',fill:true,tension:.4,pointRadius:0,pointHoverRadius:4,borderWidth:2.5}]},
+      options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{display:false},ticks:{maxTicksLimit:6,font:{size:9},color:'#4a5568'}},y:{grid:{color:'rgba(255,255,255,.04)'},beginAtZero:true,ticks:{stepSize:1,precision:0,font:{size:9},color:'#4a5568'}}}}
     })
   }
-
-  // plans bars
+  // plan bars
   if(s.plans){
-    var total = Math.max(1, s.plans.pro+s.plans.free+s.plans.supporter+s.plans.other)
-    function setPlan(bar,val,count){
-      $$(bar).style.width = Math.round(count/total*100)+'%'
-      $$(val).textContent = count
-    }
-    setPlan('pb-pro','pv-pro',s.plans.pro)
-    setPlan('pb-sup','pv-sup',s.plans.supporter)
-    setPlan('pb-free','pv-free',s.plans.free)
+    var total=Math.max(1,s.plans.pro+s.plans.free+s.plans.supporter+s.plans.other)
+    function pb(barId,valId,n){ $$(barId).style.width=Math.round(n/total*100)+'%'; $$(valId).textContent=n }
+    pb('pb-pro','pn-pro',s.plans.pro); pb('pb-sup','pn-sup',s.plans.supporter); pb('pb-free','pn-free',s.plans.free)
   }
-
-  // recent activity
-  if(s.recent_activity && s.recent_activity.length){
-    $$('act-list').innerHTML = s.recent_activity.map(function(a){
-      return '<div class="act-item">'
-        +'<div class="act-dot"></div>'
-        +'<div class="act-path">'+escH(a.path)+'</div>'
-        +'<div class="act-time">'+relTime(a.at)+'</div>'
-        +'</div>'
+  // activity
+  if(s.recent_activity&&s.recent_activity.length){
+    $$('act-list').innerHTML=s.recent_activity.map(function(a){
+      var d=document.createElement('div'); d.textContent=a.path; var safe=d.innerHTML
+      return '<div class="act-item"><div class="act-dot"></div><div class="act-path">'+safe+'</div><div class="act-time">'+relTime(a.at)+'</div></div>'
     }).join('')
   }
 }
 
-function escH(s){ var d=document.createElement('div'); d.textContent=s||''; return d.innerHTML }
-
-/* ── logout ── */
 function logout(){
-  localStorage.removeItem(TOKEN_KEY)
-  DIGITS.forEach(function(id){ $$(id).value='' })
-  $$('err-wl').textContent=''; $$('err-pin').textContent=''
-  var btn=$$('btn-send'); btn.classList.remove('loading'); btn.disabled=false
-  go('welcome')
+  localStorage.removeItem(TOK)
+  $$('pin').value=''; $$('err').textContent=''
+  var b=$$('btn-unlock'); b.classList.remove('loading'); b.disabled=false
+  go('pin')
+  setTimeout(function(){ $$('pin').focus() },200)
 }
 
-/* ── auto-login ── */
-;(function init(){
-  var tok = localStorage.getItem(TOKEN_KEY)
-  if(!tok){ go('welcome'); return }
-  loading(true)
+// auto-login jeśli token w localStorage
+;(function(){
+  var tok=localStorage.getItem(TOK)
+  if(!tok){ go('pin'); setTimeout(function(){ $$('pin').focus() },100); return }
+  ld(true)
   api({action:'get_stats',token:tok}).then(function(d){
-    loading(false)
-    if(d.ok && d.stats){ renderStats(d.stats); go('stats') }
-    else { localStorage.removeItem(TOKEN_KEY); go('welcome') }
-  }).catch(function(){ loading(false); go('welcome') })
+    ld(false)
+    if(d.ok&&d.stats){ renderStats(d.stats); go('stats') }
+    else { localStorage.removeItem(TOK); go('pin'); setTimeout(function(){ $$('pin').focus() },100) }
+  }).catch(function(){ ld(false); go('pin') })
 })()
 </script>
 </body>
