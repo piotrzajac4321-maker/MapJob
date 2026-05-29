@@ -8,7 +8,8 @@
     { "source": "/panel", "destination": "/statystyki.html" },
     { "source": "/zaufali-makieta-a-4r8w2k", "destination": "/zaufali-makieta-a-4r8w2k.html" },
     { "source": "/zaufali-makieta-b-9m3x7p", "destination": "/zaufali-makieta-b-9m3x7p.html" },
-    { "source": "/zaufali-makieta-c-6t1n5q", "destination": "/zaufali-makieta-c-6t1n5q.html" }
+    { "source": "/zaufali-makieta-c-6t1n5q", "destination": "/zaufali-makieta-c-6t1n5q.html" },
+    { "source": "/zaufali-preview-real-7k4p9x", "destination": "/zaufali-preview-real-7k4p9x.html" }
   ],
   "headers": [
     {
