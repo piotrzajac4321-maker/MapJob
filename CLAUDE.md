@@ -10,6 +10,12 @@
 4. Nigdy nie pytaj "czy mam zapisać" — po prostu zapisuj od razu.
 5. Nigdy nie pomijaj commita i pusha po dodaniu logo.
 
+### ZAKAZ — nigdy nie rób tego
+
+- **NIGDY nie generuj ani nie twórz logo samodzielnie** (ani SVG, ani CSS, ani żadnej wersji "przybliżonej")
+- Jeśli potrzebujesz logo do implementacji a nie masz pliku → zapytaj użytkownika: "Prześlij plik logo lub URL"
+- Zmianę logo robi TYLKO użytkownik — nigdy Claude z własnej inicjatywy
+
 ### Format wpisu w `.claude/logos/README.md`
 
 ```markdown
@@ -53,7 +59,7 @@ Wszystkie opisane logo są w `.claude/logos/README.md`. Zawsze tam zaglądaj prz
 
 1. Pobierz `zaufali-nam/index.html` z brancha `vercel-deploy`
 2. Dodaj nową kartę `.firm` do `.grid` — przed wpisami z klasą `.demo`
-3. Logo bez pliku graficznego → zrób CSS tak jak Berker Dominis (patrz rejestr)
+3. Logo bez pliku graficznego → **ZATRZYMAJ SIĘ i zapytaj użytkownika o plik logo** — nigdy nie generuj własnej wersji
 4. Zaktualizuj licznik firm w `.stats`
 5. Zaktualizuj meta description
 6. Wypchnij na branch `claude/[nazwa-zadania]`
