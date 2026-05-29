@@ -13,6 +13,7 @@
 ### ZAKAZ — nigdy nie rób tego
 
 - **NIGDY nie generuj ani nie twórz logo samodzielnie** (ani SVG, ani CSS, ani żadnej wersji "przybliżonej")
+- **NIGDY nie zmieniaj logo które jest już ustawione na stronie** — chyba że użytkownik WPROST o to prosi
 - Jeśli potrzebujesz logo do implementacji a nie masz pliku → zapytaj użytkownika: "Prześlij plik logo lub URL"
 - Zmianę logo robi TYLKO użytkownik — nigdy Claude z własnej inicjatywy
 
@@ -49,8 +50,8 @@ Obrazki z chatu są dostępne jako base64 w plikach sesji Claude w:
 
 1. Wyciąga bajty obrazka z pliku sesji JSONL
 2. Rozróżnia logo od screenshotów po rozmiarze (logo < 50 000 znaków base64, screenshot > 200 000)
-3. Zapisuje jako `logos/[nazwa-firmy].jpg` w repo na branchu `vercel-deploy`
-4. Wstawia `<img src="/logos/[nazwa].jpg">` do `.trust-strip` w `index.html`
+3. Wstawia logo **inline jako base64** (`data:image/jpeg;base64,...`) w `.trust-strip` w `index.html`
+   - NIE jako zewnętrzny plik `/logos/...` — inne logo też są inline base64
 5. Commituje i pushuje na `vercel-deploy` → live na mapjob.pl
 
 ### Kod do wyciągania logo z sesji
@@ -87,7 +88,10 @@ raw = base64.b64decode(last_logo['data'])
 
 Sekcja: `.trust-strip` w `index.html` (plik 2.5MB — używaj curl + python, nie MCP).
 Wstaw przed: `alt="Platinum Active"></div>\n    </div>` (koniec trust-strip).
-Format: `<div class="trust-logo" title="[Firma]"><img src="/logos/[firma].jpg" alt="[Firma]" style="max-width:230px"/></div>`
+Format (inline base64 — tak jak inne logo):
+`<div class="trust-logo" title="[Firma]"><img src="data:image/jpeg;base64,[BASE64]" alt="[Firma]"/></div>`
+
+⚠️ Nie używaj zewnętrznego `/logos/[firma].jpg` — embed bezpośrednio jako base64.
 
 ---
 
