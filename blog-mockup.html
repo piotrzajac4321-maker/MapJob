@@ -70,7 +70,7 @@
     .tb-space { flex: 1; }
     .desk-search { display: none; align-items: center; gap: 7px; background: var(--surf); border: 1px solid var(--b3); border-radius: 8px; padding: 7px 12px; font-size: 12px; color: var(--tx3); cursor: pointer; width: 180px; }
     .desk-search:hover { border-color: rgba(255,255,255,.14); }
-    .desk-cta { display: none; background: var(--blue); color: #fff; font-size: 13px; font-weight: 600; padding: 8px 16px; border-radius: 8px; margin-left: 8px; transition: background .15s; }
+    .desk-cta { display: none; background: var(--blue); color: #fff; font-size: 13px; font-weight: 600; padding: 8px 16px; border-radius: 8px; margin-left: 8px; transition: background .15s; white-space: nowrap; }
     .desk-cta:hover { background: #2563EB; }
     .mob-ic { width: 36px; height: 36px; border-radius: 9px; background: var(--surf); border: 1px solid var(--b3); display: flex; align-items: center; justify-content: center; color: var(--tx2); }
 
@@ -563,6 +563,24 @@
     /* Calc info note */
     .calc-note { font-size: 10px; color: var(--tx3); line-height: 1.6; margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--b2); }
 
+    /* Dual CTA banner */
+    .dual-cta { display: grid; grid-template-columns: 1fr; gap: 10px; margin: 24px 0; }
+    .dc-card { display: flex; align-items: center; gap: 14px; padding: 18px 20px; border-radius: var(--r); cursor: default; }
+    .dc-card-job { background: linear-gradient(135deg,#0d1a2e,#0f1f35); border: 1px solid rgba(59,130,246,.22); }
+    .dc-card-emp { background: linear-gradient(135deg,#0b1c10,#0d2014); border: 1px solid rgba(16,185,129,.22); }
+    .dc-icon { font-size: 28px; flex-shrink: 0; }
+    .dc-text { flex: 1; min-width: 0; }
+    .dc-title { font-size: 15px; font-weight: 700; color: var(--tx); margin-bottom: 3px; }
+    .dc-sub { font-size: 12px; color: var(--tx2); line-height: 1.5; }
+    .dc-btn { flex-shrink: 0; padding: 9px 18px; border-radius: 8px; font-size: 13px; font-weight: 600; white-space: nowrap; transition: filter .15s; }
+    .dc-btn:hover { filter: brightness(1.12); }
+    .dc-btn-blue { background: var(--blue); color: #fff; }
+    .dc-btn-green { background: var(--green); color: #fff; }
+    @media (max-width: 599px) {
+      .dc-card { flex-wrap: wrap; }
+      .dc-btn { width: 100%; text-align: center; }
+    }
+
     @media (min-width: 600px) {
       .calc-p-row { flex-direction: row; }
       .calc-p-card { flex-direction: column; align-items: flex-start; gap: 10px; }
@@ -628,6 +646,7 @@
       .mob-extras { display: none !important; }
       .salary-section, .cities-section { padding: 0; }
       .cities-grid { grid-template-columns: repeat(3, 1fr); }
+      .dual-cta { grid-template-columns: 1fr 1fr; }
     }
   </style>
 </head>
@@ -642,24 +661,24 @@
 
   <div class="beta">
     <span class="btag">BLOG</span>
-    Porady o pracy, dojazdach i rekrutacji &nbsp;·&nbsp; <a href="#">Oferty na mapie →</a>
+    Porady o pracy, dojazdach i rekrutacji &nbsp;·&nbsp; <a href="https://mapjob.pl/oferty" target="_blank" rel="noopener">Oferty na mapie →</a>
   </div>
 
   <div class="topbar">
     <div class="logo" onclick="showListing()">Map<span>Job</span></div>
     <nav class="desk-nav">
-      <a class="dn" href="#">Mapa ofert</a>
-      <a class="dn" href="#">Dla firm</a>
+      <a class="dn" href="https://mapjob.pl/oferty" target="_blank" rel="noopener">Mapa ofert</a>
+      <a class="dn" href="https://mapjob.pl/pracodawcy" target="_blank" rel="noopener">Dla firm</a>
       <a class="dn on" href="#">Blog</a>
       <a class="dn" onclick="showCalc();return false;" href="#">🧮 Kalkulatory</a>
-      <a class="dn" href="#">Raport 2026</a>
+      <a class="dn" href="https://mapjob.pl/raport-2026" target="_blank" rel="noopener">Raport 2026</a>
     </nav>
     <div class="tb-space"></div>
     <div class="desk-search">
       <svg width="12" height="12" viewBox="0 0 20 20" fill="none"><circle cx="9" cy="9" r="6" stroke="currentColor" stroke-width="1.6"/><path d="M13 13L17 17" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
       Szukaj w blogu…
     </div>
-    <button class="desk-cta">Dodaj ogłoszenie</button>
+    <a class="desk-cta" href="https://mapjob.pl/pracodawcy" target="_blank" rel="noopener">Dodaj ogłoszenie</a>
     <div class="mob-ic search-mob">
       <svg width="16" height="16" viewBox="0 0 20 20" fill="none"><circle cx="9" cy="9" r="6" stroke="currentColor" stroke-width="1.6"/><path d="M13 13L17 17" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
     </div>
@@ -801,10 +820,30 @@
       </div>
     </div>
 
+    <!-- Dual CTA — szukasz pracy / oferujesz pracę -->
+    <div class="dual-cta">
+      <div class="dc-card dc-card-job">
+        <div class="dc-icon">🔍</div>
+        <div class="dc-text">
+          <div class="dc-title">Szukasz pracy?</div>
+          <div class="dc-sub">Ponad 4 200 ofert z mapą dojazdów. Filtruj po czasie dojazdu od swojego adresu.</div>
+        </div>
+        <a href="https://mapjob.pl/oferty" target="_blank" rel="noopener" class="dc-btn dc-btn-blue">Znajdź pracę →</a>
+      </div>
+      <div class="dc-card dc-card-emp">
+        <div class="dc-icon">🏢</div>
+        <div class="dc-text">
+          <div class="dc-title">Oferujesz pracę?</div>
+          <div class="dc-sub">Dodaj ogłoszenie z mapą dojazdów. Kandydaci widzą czas dojazdu zanim klikną „Aplikuj".</div>
+        </div>
+        <a href="https://mapjob.pl/pracodawcy" target="_blank" rel="noopener" class="dc-btn dc-btn-green">Dodaj ogłoszenie →</a>
+      </div>
+    </div>
+
     <div class="listing-layout" style="margin-top:8px;">
       <div>
 
-        <div class="sec-head"><div class="sec-title">Najnowsze artykuły</div><a href="#" class="sec-more">Wszystkie →</a></div>
+        <div class="sec-head"><div class="sec-title">Najnowsze artykuły</div><a href="#" onclick="showListing();return false;" class="sec-more">Wszystkie →</a></div>
         <div class="cards-list">
 
           <article class="acard" onclick="showArticle()">
@@ -843,8 +882,8 @@
               <div class="promo-feat">Ponad 4 200 aktualnych ofert w Polsce</div>
             </div>
             <div class="promo-actions">
-              <a href="#" class="promo-btn-primary">Szukaj pracy blisko domu →</a>
-              <a href="#" class="promo-btn-secondary">Dodaj ogłoszenie</a>
+              <a href="https://mapjob.pl/oferty" target="_blank" rel="noopener" class="promo-btn-primary">Szukaj pracy blisko domu →</a>
+              <a href="https://mapjob.pl/pracodawcy" target="_blank" rel="noopener" class="promo-btn-secondary">Dodaj ogłoszenie</a>
             </div>
           </div>
 
@@ -967,13 +1006,13 @@
             <div class="eb-tag">MapJob dla pracodawców</div>
             <div class="eb-title">Dotrzeć do kandydatów, którzy naprawdę dojadą do biura</div>
             <div class="eb-sub">Ogłoszenia z mapą dostają średnio 3× więcej aplikacji. Twój kandydat zna czas dojazdu zanim kliknie „Aplikuj" — zero rezygnacji na etapie oferty.</div>
-            <a href="#" class="eb-btn">Dodaj ogłoszenie z mapą <svg width="12" height="12" viewBox="0 0 20 20" fill="none"><path d="M4 10h12M11 5l5 5-5 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+            <a href="https://mapjob.pl/pracodawcy" target="_blank" rel="noopener" class="eb-btn">Dodaj ogłoszenie z mapą <svg width="12" height="12" viewBox="0 0 20 20" fill="none"><path d="M4 10h12M11 5l5 5-5 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
           </div>
         </div>
 
         <!-- Salary table -->
         <div class="salary-section">
-          <div class="sec-head" style="padding:0;margin-top:0;"><div class="sec-title">💰 Ile zarabia [zawód] w Polsce? Tabela 2026</div><a href="#" class="sec-more">Pełna lista →</a></div>
+          <div class="sec-head" style="padding:0;margin-top:0;"><div class="sec-title">💰 Ile zarabia [zawód] w Polsce? Tabela 2026</div><a href="#" onclick="showArticle();return false;" class="sec-more">Pełna lista →</a></div>
           <div class="sal-intro">Najczęściej wyszukiwane zarobki według zawodu — dane na podstawie ponad 52 000 ofert z polskich serwisów rekrutacyjnych i platformy MapJob. Kwoty <strong>brutto miesięcznie</strong>.</div>
           <div class="sal-table-wrap">
             <table class="sal-table">
@@ -1004,21 +1043,21 @@
           </div>
           <div class="sal-note">* Dane brutto/miesięcznie, maj 2026. Kwoty netto niższe o 22–35% zależnie od progu podatkowego i składek ZUS. Źródło: MapJob + agregat platform rekrutacyjnych PL.</div>
           <div class="sal-cta">
-            <a href="#" class="sal-cta-btn">Szukaj ofert wg zarobków na mapie →</a>
+            <a href="https://mapjob.pl/oferty" target="_blank" rel="noopener" class="sal-cta-btn">Szukaj ofert wg zarobków na mapie →</a>
             <span class="sal-cta-text">Filtruj po wynagrodzeniu i czasie dojazdu jednocześnie</span>
           </div>
         </div>
 
         <!-- Cities section -->
         <div class="cities-section">
-          <div class="sec-head" style="padding:0;margin-top:0;"><div class="sec-title">📍 Praca w miastach — aktualne oferty</div><a href="#" class="sec-more">Otwórz mapę →</a></div>
+          <div class="sec-head" style="padding:0;margin-top:0;"><div class="sec-title">📍 Praca w miastach — aktualne oferty</div><a href="https://mapjob.pl/oferty" target="_blank" rel="noopener" class="sec-more">Otwórz mapę →</a></div>
           <div class="cities-grid">
-            <a href="#" class="city-card"><div class="city-flag">🏙️</div><div class="city-name">Warszawa</div><div class="city-count">14 230 ofert</div><div class="city-avg">Mediana: 9 800 zł</div></a>
-            <a href="#" class="city-card"><div class="city-flag">🏰</div><div class="city-name">Kraków</div><div class="city-count">8 200 ofert</div><div class="city-avg">Mediana: 8 200 zł</div></a>
-            <a href="#" class="city-card"><div class="city-flag">🌊</div><div class="city-name">Wrocław</div><div class="city-count">7 800 ofert</div><div class="city-avg">Mediana: 8 000 zł</div></a>
-            <a href="#" class="city-card"><div class="city-flag">🏛️</div><div class="city-name">Poznań</div><div class="city-count">5 600 ofert</div><div class="city-avg">Mediana: 7 600 zł</div></a>
-            <a href="#" class="city-card"><div class="city-flag">⚓</div><div class="city-name">Trójmiasto</div><div class="city-count">4 900 ofert</div><div class="city-avg">Mediana: 7 400 zł</div></a>
-            <a href="#" class="city-card"><div class="city-flag">⚙️</div><div class="city-name">Katowice / Śląsk</div><div class="city-count">6 100 ofert</div><div class="city-avg">Mediana: 7 200 zł</div></a>
+            <a href="https://mapjob.pl/oferty?miasto=warszawa" target="_blank" rel="noopener" class="city-card"><div class="city-flag">🏙️</div><div class="city-name">Warszawa</div><div class="city-count">14 230 ofert</div><div class="city-avg">Mediana: 9 800 zł</div></a>
+            <a href="https://mapjob.pl/oferty?miasto=krakow" target="_blank" rel="noopener" class="city-card"><div class="city-flag">🏰</div><div class="city-name">Kraków</div><div class="city-count">8 200 ofert</div><div class="city-avg">Mediana: 8 200 zł</div></a>
+            <a href="https://mapjob.pl/oferty?miasto=wroclaw" target="_blank" rel="noopener" class="city-card"><div class="city-flag">🌊</div><div class="city-name">Wrocław</div><div class="city-count">7 800 ofert</div><div class="city-avg">Mediana: 8 000 zł</div></a>
+            <a href="https://mapjob.pl/oferty?miasto=poznan" target="_blank" rel="noopener" class="city-card"><div class="city-flag">🏛️</div><div class="city-name">Poznań</div><div class="city-count">5 600 ofert</div><div class="city-avg">Mediana: 7 600 zł</div></a>
+            <a href="https://mapjob.pl/oferty?miasto=trojmiasto" target="_blank" rel="noopener" class="city-card"><div class="city-flag">⚓</div><div class="city-name">Trójmiasto</div><div class="city-count">4 900 ofert</div><div class="city-avg">Mediana: 7 400 zł</div></a>
+            <a href="https://mapjob.pl/oferty?miasto=katowice" target="_blank" rel="noopener" class="city-card"><div class="city-flag">⚙️</div><div class="city-name">Katowice / Śląsk</div><div class="city-count">6 100 ofert</div><div class="city-avg">Mediana: 7 200 zł</div></a>
           </div>
         </div>
 
@@ -1026,12 +1065,12 @@
         <div class="faq-wrap">
           <div class="sec-head" style="padding:0;margin-top:0;"><div class="sec-title">Najczęściej zadawane pytania</div><span style="font-size:10px;color:var(--tx3)">Google PAA</span></div>
           <div class="faq-list">
-            <div class="faq-item"><div class="faq-q">Jak znaleźć pracę blisko domu?</div><div class="faq-a">Na <a href="#">MapJob.pl</a> ustawiasz swój adres zamieszkania i filtrujesz oferty po odległości lub czasie dojazdu — autem, rowerem lub MPK. Każda oferta na mapie pokazuje rzeczywisty czas dojazdu, zanim złożysz aplikację.</div></div>
+            <div class="faq-item"><div class="faq-q">Jak znaleźć pracę blisko domu?</div><div class="faq-a">Na <a href="https://mapjob.pl/oferty" target="_blank" rel="noopener">MapJob.pl</a> ustawiasz swój adres zamieszkania i filtrujesz oferty po odległości lub czasie dojazdu — autem, rowerem lub MPK. Każda oferta na mapie pokazuje rzeczywisty czas dojazdu, zanim złożysz aplikację.</div></div>
             <div class="faq-item"><div class="faq-q">Ile czasu Polacy tracą dziennie na dojazdy do pracy?</div><div class="faq-a">Według GUS 2025 średni czas dojazdu w dużych miastach to 68 minut dziennie (tam i z powrotem). W Warszawie — aż 74 minuty, w Krakowie 62, we Wrocławiu 58. Rocznie to ponad 240 godzin — prawie 7 tygodni roboczych.</div></div>
             <div class="faq-item"><div class="faq-q">Jak negocjować wynagrodzenie po otrzymaniu oferty pracy?</div><div class="faq-a">Zbadaj widełki rynkowe (raporty płacowe, LinkedIn Salary), przygotuj konkretną kwotę z uzasadnieniem (doświadczenie, wartość dla firmy). Nie akceptuj pierwszej oferty bez rozmowy — 80% firm ma margines na negocjacje. Czekaj spokojnie na odpowiedź po zaproponowaniu kwoty.</div></div>
             <div class="faq-item"><div class="faq-q">Ile wynosi płaca minimalna w Polsce w 2026 roku?</div><div class="faq-a">Od 1 stycznia 2026 roku płaca minimalna wynosi <strong>4 666 zł brutto miesięcznie</strong> (ok. 3 411 zł netto na etacie). Minimalna stawka godzinowa to 30,50 zł brutto. To wzrost o ok. 5% względem 2025 roku.</div></div>
             <div class="faq-item"><div class="faq-q">Czy praca zdalna jest nadal popularna w Polsce w 2026?</div><div class="faq-a">Większość firm przeszła na model hybrydowy (2–3 dni w biurze tygodniowo). Pełna praca zdalna stanowi ok. 22% ofert w IT i ok. 8% ogółem. Praca hybrydowa to najczęstsza forma zatrudnienia pracowników umysłowych w Polsce.</div></div>
-            <div class="faq-item"><div class="faq-q">Ile kosztuje miesięcznie dojazd autem do pracy w Warszawie?</div><div class="faq-a">Przy 20 km w jedną stronę to <strong>1 200–2 000 zł/mies.</strong> (paliwo + amortyzacja + parking). Rocznie nawet 20 000 zł. Na <a href="#">MapJob.pl</a> możesz przeliczyć ile zaoszczędzisz pracując bliżej domu.</div></div>
+            <div class="faq-item"><div class="faq-q">Ile kosztuje miesięcznie dojazd autem do pracy w Warszawie?</div><div class="faq-a">Przy 20 km w jedną stronę to <strong>1 200–2 000 zł/mies.</strong> (paliwo + amortyzacja + parking). Rocznie nawet 20 000 zł. Na <a href="https://mapjob.pl/oferty" target="_blank" rel="noopener">MapJob.pl</a> możesz przeliczyć ile zaoszczędzisz pracując bliżej domu.</div></div>
             <div class="faq-item"><div class="faq-q">Jak napisać CV, żeby przeszło przez system ATS?</div><div class="faq-a">Używaj standardowego formatu bez tabel, ramek i grafik. Umieść słowa kluczowe z ogłoszenia w naturalny sposób. Daty w formacie MM/RRRR. Nazwa pliku: Imie-Nazwisko-CV.pdf. Czcionka bezszeryfowa (Arial, Inter). Długość: 1 strona poniżej 5 lat doświadczenia, 2 strony dla bardziej doświadczonych.</div></div>
             <div class="faq-item"><div class="faq-q">Czym różni się umowa B2B od umowy o pracę?</div><div class="faq-a">Umowa o pracę (UoP) gwarantuje: urlop, L4, ochronę przed zwolnieniem, składki ZUS opłacane przez pracodawcę. Umowa B2B daje wyższy zysk netto przy wyższych zarobkach, ale wymaga samodzielnego opłacania ZUS i podatków. B2B opłaca się zwykle od ok. 8 000 zł brutto ekwiwalentu.</div></div>
             <div class="faq-item"><div class="faq-q">Ile dni urlopu wypoczynkowego przysługuje pracownikowi?</div><div class="faq-a"><strong>20 dni</strong> przy stażu pracy poniżej 10 lat lub <strong>26 dni</strong> przy 10 i więcej latach stażu. Do stażu wlicza się okresy nauki (np. studia licencjackie + 8 lat). Niewykorzystany urlop nie przepada od razu — przenosi się na kolejny rok, ale traci się go 1 października następnego roku.</div></div>
@@ -1051,7 +1090,7 @@
             <div class="nl-eyebrow">Newsletter MapJob</div>
             <div class="nl-title">Rynek pracy prosto na maila</div>
             <div class="nl-sub">Najlepsze artykuły, nowe oferty blisko Ciebie — co tydzień, bez spamu.</div>
-            <div class="nl-row"><input class="nl-inp" type="email" placeholder="twoj@email.pl"/><button class="nl-btn">Zapisz →</button></div>
+            <div class="nl-row"><input class="nl-inp" type="email" placeholder="twoj@email.pl"/><button class="nl-btn" onclick="subscribeNewsletter(this)">Zapisz →</button></div>
             <div class="nl-note">Wypis jednym kliknięciem.</div>
           </div>
         </div>
@@ -1079,13 +1118,13 @@
           <div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--blue2);margin-bottom:6px;">MapJob.pl</div>
           <div style="font-size:13px;font-weight:700;color:var(--tx);margin-bottom:5px;">Sprawdź oferty pracy blisko Ciebie</div>
           <div style="font-size:11px;color:var(--tx2);line-height:1.55;margin-bottom:12px;">Ponad 4 200 aktualnych ofert z mapą dojazdów. Ustaw swój adres i znajdź pracę w zasięgu 30 minut.</div>
-          <a href="#" style="display:block;text-align:center;background:var(--blue);color:#fff;font-size:12px;font-weight:600;padding:9px;border-radius:8px;">Szukaj pracy na mapie →</a>
+          <a href="https://mapjob.pl/oferty" target="_blank" rel="noopener" style="display:block;text-align:center;background:var(--blue);color:#fff;font-size:12px;font-weight:600;padding:9px;border-radius:8px;">Szukaj pracy na mapie →</a>
         </div>
         <div style="background:linear-gradient(135deg,#0f1c10,#141f15);border:1px solid rgba(16,185,129,.2);border-radius:var(--r);padding:16px;">
           <div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--green);margin-bottom:6px;">Dla pracodawców</div>
           <div style="font-size:13px;font-weight:700;color:var(--tx);margin-bottom:5px;">Ogłoszenie z mapą → 3× więcej aplikacji</div>
           <div style="font-size:11px;color:var(--tx2);line-height:1.55;margin-bottom:12px;">Kandydaci widzą czas dojazdu zanim klikną „Aplikuj". Zero rezygnacji na etapie oferty.</div>
-          <a href="#" style="display:block;text-align:center;background:var(--green);color:#fff;font-size:12px;font-weight:600;padding:9px;border-radius:8px;">Dodaj ogłoszenie →</a>
+          <a href="https://mapjob.pl/pracodawcy" target="_blank" rel="noopener" style="display:block;text-align:center;background:var(--green);color:#fff;font-size:12px;font-weight:600;padding:9px;border-radius:8px;">Dodaj ogłoszenie →</a>
         </div>
       </aside>
 
@@ -1094,7 +1133,7 @@
 
   <!-- Mobile extras -->
   <div id="mob-extras">
-    <div class="nl-wrap"><div class="nl-card"><div class="nl-eyebrow">Newsletter</div><div class="nl-title">Rynek pracy na maila</div><div class="nl-sub">Najlepsze artykuły i nowe oferty co tydzień, bez spamu.</div><div class="nl-row"><input class="nl-inp" type="email" placeholder="twoj@email.pl"/><button class="nl-btn">Zapisz →</button></div><div class="nl-note">Wypis jednym kliknięciem.</div></div></div>
+    <div class="nl-wrap"><div class="nl-card"><div class="nl-eyebrow">Newsletter</div><div class="nl-title">Rynek pracy na maila</div><div class="nl-sub">Najlepsze artykuły i nowe oferty co tydzień, bez spamu.</div><div class="nl-row"><input class="nl-inp" type="email" placeholder="twoj@email.pl"/><button class="nl-btn" onclick="subscribeNewsletter(this)">Zapisz →</button></div><div class="nl-note">Wypis jednym kliknięciem.</div></div></div>
     <div class="pop-wrap"><div class="pop-card"><div class="pop-head">🔥 Najpopularniejsze</div><div class="pop-item"><div class="pop-num">01</div><div><div class="pop-t">Jak napisać CV w 2026?</div><div class="pop-v">48 200 wyświetleń</div></div></div><div class="pop-item"><div class="pop-num">02</div><div><div class="pop-t">Ile zarabia programista w Polsce 2026?</div><div class="pop-v">39 800 wyświetleń</div></div></div><div class="pop-item"><div class="pop-num">03</div><div><div class="pop-t">Pytania na rozmowie kwalifikacyjnej</div><div class="pop-v">31 500 wyświetleń</div></div></div></div></div>
     <div class="tags-wrap"><div class="tags-card"><div class="tags-head">Tematy</div><div class="tags-cloud"><span class="tag">praca zdalna</span><span class="tag">wynagrodzenie</span><span class="tag">CV 2026</span><span class="tag">dojazdy</span><span class="tag">Warszawa</span><span class="tag">B2B vs UoP</span><span class="tag">praca hybrydowa</span></div></div></div>
   </div>
@@ -1108,54 +1147,54 @@
         <div>
           <div class="f-col-title">Kategorie bloga</div>
           <ul class="f-links">
-            <li><a href="#">🗺️ Dojazdy i lokalizacja</a></li>
-            <li><a href="#">💼 Szukanie pracy</a></li>
-            <li><a href="#">💰 Wynagrodzenia i zarobki</a></li>
-            <li><a href="#">📄 CV i rekrutacja</a></li>
-            <li><a href="#">⚖️ Prawo pracy</a></li>
-            <li><a href="#">🏢 Dla pracodawców</a></li>
-            <li><a href="#">📊 Raporty i dane</a></li>
+            <li><a href="#" onclick="showListing();return false;">🗺️ Dojazdy i lokalizacja</a></li>
+            <li><a href="#" onclick="showListing();return false;">💼 Szukanie pracy</a></li>
+            <li><a href="#" onclick="showListing();return false;">💰 Wynagrodzenia i zarobki</a></li>
+            <li><a href="#" onclick="showListing();return false;">📄 CV i rekrutacja</a></li>
+            <li><a href="#" onclick="showListing();return false;">⚖️ Prawo pracy</a></li>
+            <li><a href="#" onclick="showListing();return false;">🏢 Dla pracodawców</a></li>
+            <li><a href="#" onclick="showListing();return false;">📊 Raporty i dane</a></li>
           </ul>
         </div>
         <div>
           <div class="f-col-title">MapJob</div>
           <ul class="f-links">
-            <li><a href="#">Mapa ofert pracy</a></li>
-            <li><a href="#">Dodaj ogłoszenie</a></li>
-            <li><a href="#">Dla rekruterów</a></li>
-            <li><a href="#">Raport rynku 2026</a></li>
-            <li><a href="#">Kalkulator dojazdów</a></li>
-            <li><a href="#">O nas</a></li>
-            <li><a href="#">Kontakt</a></li>
+            <li><a href="https://mapjob.pl/oferty" target="_blank" rel="noopener">Mapa ofert pracy</a></li>
+            <li><a href="https://mapjob.pl/pracodawcy" target="_blank" rel="noopener">Dodaj ogłoszenie</a></li>
+            <li><a href="https://mapjob.pl/pracodawcy" target="_blank" rel="noopener">Dla rekruterów</a></li>
+            <li><a href="https://mapjob.pl/raport-2026" target="_blank" rel="noopener">Raport rynku 2026</a></li>
+            <li><a href="#" onclick="showCalcWithTab('doj');return false;">Kalkulator dojazdów</a></li>
+            <li><a href="https://mapjob.pl/o-nas" target="_blank" rel="noopener">O nas</a></li>
+            <li><a href="https://mapjob.pl/kontakt" target="_blank" rel="noopener">Kontakt</a></li>
           </ul>
         </div>
         <div>
           <div class="f-col-title">Praca w miastach</div>
           <ul class="f-links">
-            <li><a href="#">Praca Warszawa</a></li>
-            <li><a href="#">Praca Kraków</a></li>
-            <li><a href="#">Praca Wrocław</a></li>
-            <li><a href="#">Praca Poznań</a></li>
-            <li><a href="#">Praca Trójmiasto</a></li>
-            <li><a href="#">Praca Katowice</a></li>
-            <li><a href="#">Praca Łódź</a></li>
+            <li><a href="https://mapjob.pl/oferty?miasto=warszawa" target="_blank" rel="noopener">Praca Warszawa</a></li>
+            <li><a href="https://mapjob.pl/oferty?miasto=krakow" target="_blank" rel="noopener">Praca Kraków</a></li>
+            <li><a href="https://mapjob.pl/oferty?miasto=wroclaw" target="_blank" rel="noopener">Praca Wrocław</a></li>
+            <li><a href="https://mapjob.pl/oferty?miasto=poznan" target="_blank" rel="noopener">Praca Poznań</a></li>
+            <li><a href="https://mapjob.pl/oferty?miasto=trojmiasto" target="_blank" rel="noopener">Praca Trójmiasto</a></li>
+            <li><a href="https://mapjob.pl/oferty?miasto=katowice" target="_blank" rel="noopener">Praca Katowice</a></li>
+            <li><a href="https://mapjob.pl/oferty?miasto=lodz" target="_blank" rel="noopener">Praca Łódź</a></li>
           </ul>
         </div>
         <div>
           <div class="f-col-title">Popularne artykuły</div>
           <ul class="f-links">
-            <li><a href="#">Jak napisać CV 2026</a></li>
-            <li><a href="#">Ile zarabia programista</a></li>
-            <li><a href="#">Płaca minimalna 2026</a></li>
-            <li><a href="#">Pytania na rozmowie</a></li>
-            <li><a href="#">Praca zdalna oferty</a></li>
-            <li><a href="#">B2B vs umowa o pracę</a></li>
-            <li><a href="#">Ile dni urlopu przysługuje</a></li>
+            <li><a href="#" onclick="showArticle();return false;">Jak napisać CV 2026</a></li>
+            <li><a href="#" onclick="showArticle();return false;">Ile zarabia programista</a></li>
+            <li><a href="#" onclick="showArticle();return false;">Płaca minimalna 2026</a></li>
+            <li><a href="#" onclick="showArticle();return false;">Pytania na rozmowie</a></li>
+            <li><a href="#" onclick="showArticle();return false;">Praca zdalna oferty</a></li>
+            <li><a href="#" onclick="showCalcWithTab('b2b');return false;">B2B vs umowa o pracę</a></li>
+            <li><a href="#" onclick="showArticle();return false;">Ile dni urlopu przysługuje</a></li>
           </ul>
         </div>
       </div>
       <div class="f-seo" style="margin-top:16px;margin-bottom:12px;">Blog MapJob — porady o rynku pracy, wynagrodzeniach, dojazdach i rekrutacji w Polsce. Tabele zarobków 2026, kalkulator kosztów dojazdu, wzory CV i listu motywacyjnego. Eksperckie artykuły tworzone przez Redakcję MapJob.pl na podstawie danych z ponad 52 000 ofert pracy.</div>
-      <div class="f-bottom">© 2026 MapJob Sp. z o.o. &nbsp;·&nbsp; <a href="#" style="color:inherit">Polityka prywatności</a> &nbsp;·&nbsp; <a href="#" style="color:inherit">Regulamin</a> &nbsp;·&nbsp; <a href="#" style="color:inherit">RODO / GDPR</a> &nbsp;·&nbsp; <a href="#" style="color:inherit">Mapa strony</a></div>
+      <div class="f-bottom">© 2026 MapJob Sp. z o.o. &nbsp;·&nbsp; <a href="https://mapjob.pl/polityka-prywatnosci" target="_blank" rel="noopener" style="color:inherit">Polityka prywatności</a> &nbsp;·&nbsp; <a href="https://mapjob.pl/regulamin" target="_blank" rel="noopener" style="color:inherit">Regulamin</a> &nbsp;·&nbsp; <a href="https://mapjob.pl/rodo" target="_blank" rel="noopener" style="color:inherit">RODO / GDPR</a> &nbsp;·&nbsp; <a href="https://mapjob.pl/sitemap" target="_blank" rel="noopener" style="color:inherit">Mapa strony</a></div>
     </div>
   </footer>
 
@@ -1170,15 +1209,15 @@
   <div class="topbar">
     <div class="logo" onclick="showListing()" style="cursor:pointer;">Map<span>Job</span></div>
     <nav class="desk-nav">
-      <a class="dn" href="#">Mapa ofert</a>
-      <a class="dn" href="#">Dla firm</a>
+      <a class="dn" href="https://mapjob.pl/oferty" target="_blank" rel="noopener">Mapa ofert</a>
+      <a class="dn" href="https://mapjob.pl/pracodawcy" target="_blank" rel="noopener">Dla firm</a>
       <a class="dn on" onclick="showListing();return false;" href="#">Blog</a>
       <a class="dn" onclick="showCalc();return false;" href="#">🧮 Kalkulatory</a>
-      <a class="dn" href="#">Raport 2026</a>
+      <a class="dn" href="https://mapjob.pl/raport-2026" target="_blank" rel="noopener">Raport 2026</a>
     </nav>
     <div class="tb-space"></div>
     <div class="desk-search"><svg width="12" height="12" viewBox="0 0 20 20" fill="none"><circle cx="9" cy="9" r="6" stroke="currentColor" stroke-width="1.6"/><path d="M13 13L17 17" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg> Szukaj…</div>
-    <button class="desk-cta">Dodaj ogłoszenie</button>
+    <a class="desk-cta" href="https://mapjob.pl/pracodawcy" target="_blank" rel="noopener">Dodaj ogłoszenie</a>
     <div class="mob-ic search-mob"><svg width="16" height="16" viewBox="0 0 20 20" fill="none"><circle cx="9" cy="9" r="6" stroke="currentColor" stroke-width="1.6"/><path d="M13 13L17 17" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></div>
   </div>
 
@@ -1186,7 +1225,7 @@
     <nav class="breadcrumb">
       <a href="#" onclick="showListing();return false;">Blog</a>
       <span class="bc-sep">›</span>
-      <a href="#">Dojazdy</a>
+      <a href="#" onclick="showListing();return false;">Dojazdy</a>
       <span class="bc-sep">›</span>
       <span class="bc-cur">Ile kosztuje Cię dojazd do pracy?</span>
     </nav>
@@ -1210,7 +1249,7 @@
         <div class="art-body">
           <p class="art-lead">Kalkulujesz zmianę pracy patrząc wyłącznie na wynagrodzenie brutto? To jeden z najczęstszych błędów na rynku pracy. Dojazdy to <strong>ukryty koszt</strong>, który w Warszawie pochłania nawet <strong>20 000 zł rocznie</strong> — i setki godzin Twojego życia, których nie odzyskasz. Ten artykuł rozkłada na czynniki pierwsze wszystkie koszty dojazdu: finansowe, czasowe i zdrowotne. Znajdziesz tu kalkulator, tabele porównawcze dla największych polskich miast i konkretny przewodnik jak znaleźć pracę bliżej domu.</p>
 
-          <h2>Ile naprawdę płacisz za dojazd autem?</h2>
+          <h2 id="s-auto">Ile naprawdę płacisz za dojazd autem?</h2>
           <p>Weźmy przykład bazowy: <strong>20 km w jedną stronę</strong> (typowy dystans z Bemowa, Ursynowa lub Białołęki do centrum Warszawy), 22 dni robocze miesięcznie.</p>
           <p><strong>Paliwo:</strong> Silnik benzynowy 1.6 l spala średnio 8 l/100 km. Na trasie 40 km dziennie (tam i z powrotem) to 3,2 l × 7,10 zł = 22,72 zł/dzień. W miesiącu: <strong>~500 zł</strong>.</p>
           <p><strong>Amortyzacja pojazdu:</strong> Stawka ZUS wynosi 0,8358 zł/km. Przy 880 km miesięcznie (40 km/dzień × 22 dni): <strong>736 zł</strong>. To koszt zużycia i deprecjacji samochodu — realny, choć nie wychodzi z konta co miesiąc.</p>
@@ -1221,7 +1260,7 @@
 
           <div class="highlight"><p>Dla porównania: komunikacja miejska (bilet miesięczny w Warszawie) to <strong>210 zł/mies.</strong> — niemal 8× taniej. Rower elektryczny to <strong>40–60 zł/mies.</strong> na energię i serwis.</p></div>
 
-          <h2>Kalkulator kosztów dojazdu — policz swój koszt</h2>
+          <h2 id="s-kalkulator">Kalkulator kosztów dojazdu — policz swój koszt</h2>
           <p>Sprawdź, ile miesięcznie i rocznie pochłaniają Twoje dojazdy. Wpisz dystans w km (od domu do pracy, w jedną stronę):</p>
 
           <div class="calc-card">
@@ -1240,7 +1279,7 @@
             </div>
           </div>
 
-          <h2>Porównanie trybów dojazdu — auto vs. MPK vs. rower</h2>
+          <h2 id="s-porownanie">Porównanie trybów dojazdu — auto vs. MPK vs. rower</h2>
           <p>Nie każdy tryb jest dostępny dla każdej trasy — ale tam gdzie masz wybór, różnice finansowe są ogromne:</p>
 
           <div class="comp-wrap">
@@ -1257,7 +1296,7 @@
           </div>
           <p>Rower to bezkonkurencyjna opcja finansowa i zdrowotna — przy zasięgu do 15 km eliminuje koszty niemal zupełnie, a przy okazji zastępuje karnet na siłownię (oszczędność 80–150 zł/mies.).</p>
 
-          <h2>Czas — ukryty kapitał Twojego życia</h2>
+          <h2 id="s-czas">Czas — ukryty kapitał Twojego życia</h2>
           <p>Pieniądze możesz zarobić więcej. Czasu nie odzyskasz. Dlatego koszt czasowy dojazdów jest ważniejszy niż finansowy — i tu większość pracowników przestaje liczyć.</p>
 
           <div class="stat-block"><div class="sb-val">242</div><div class="sb-txt"><strong>godziny rocznie</strong> traci pracownik z 55-minutowym dojazdem dziennie (220 dni roboczych × 55 min ÷ 60).<br/><span style="color:var(--tx3);font-size:11px">To 30 pełnych dni roboczych — ponad 6 tygodni urlopu. Rocznie.</span></div></div>
@@ -1273,7 +1312,7 @@
 
           <div class="highlight"><p>Badania Uniwersytetu Sussex wykazały, że każde <strong>10 minut skrócenia dojazdu</strong> przekłada się na wzrost poczucia szczęścia odpowiadający <strong>19%-owemu wzrostowi wynagrodzenia</strong>. Krótszy dojazd jest niemal tak cenny jak dobra podwyżka.</p></div>
 
-          <h2>Jak długi dojazd wpływa na Twoje zdrowie i wydajność?</h2>
+          <h2 id="s-zdrowie">Jak długi dojazd wpływa na Twoje zdrowie i wydajność?</h2>
           <p>Długi dojazd to nie tylko koszt finansowy i czasowy. Badania pokazują poważne konsekwencje zdrowotne:</p>
           <ul>
             <li>Dojazd powyżej 45 minut <strong>zwiększa ryzyko depresji o 33%</strong> (Journal of Epidemiology, 2023)</li>
@@ -1284,7 +1323,7 @@
           </ul>
           <p>Chronicznie podwyższony kortyzol to immunosupresja, problemy z wagą, zaburzenia snu i pogorszona koncentracja. Krótki dojazd = lepsza praca. To nie sloganek — to neurofizjologia.</p>
 
-          <h2>Podatek a koszty dojazdu — co możesz legalnie odliczyć?</h2>
+          <h2 id="s-podatek">Podatek a koszty dojazdu — co możesz legalnie odliczyć?</h2>
           <p>Masz umowę o pracę i chcesz odliczyć koszty dojazdu? Niestety, możliwości są bardzo ograniczone.</p>
           <p><strong>Na umowie o pracę (UoP):</strong> Kodeks podatkowy przewiduje ryczałtowe koszty uzyskania przychodu (KUP): <strong>300 zł/mies.</strong> (jeśli miejsce pracy i zamieszkania są w tej samej miejscowości) lub <strong>350 zł/mies.</strong> (inna miejscowość). Łącznie rocznie 3 600–4 200 zł — przy realnych kosztach 15 000+ zł to symboliczna ulga.</p>
           <p><strong>Na B2B (działalność gospodarcza):</strong> Tu możliwości są znacznie większe. Jeśli dojazd do klienta/siedziby pracodawcy jest uzasadnionym kosztem firmowym:</p>
@@ -1296,7 +1335,7 @@
           </ul>
           <p>Sprawdź kalkulator B2B vs UoP w naszym artykule — może zmiana formy zatrudnienia znacząco poprawi Twoje finanse.</p>
 
-          <h2>Koszty dojazdu w polskich miastach — ranking 2026</h2>
+          <h2 id="s-ranking">Koszty dojazdu w polskich miastach — ranking 2026</h2>
           <p>Nie tylko Warszawa jest droga. Porównujemy siedem największych miast pod kątem kosztów dojazdu przy dystansie 25 km:</p>
 
           <div class="comp-wrap">
@@ -1315,7 +1354,7 @@
           </div>
           <p>Łódź i Katowice to zdecydowanie najtańsze miasta pod kątem kosztów i czasu dojazdów. Jeśli szukasz pracy i masz możliwość wyboru miasta — warto to uwzględnić w kalkulacji.</p>
 
-          <h2>Kiedy zmiana pracy bliżej domu naprawdę się opłaca?</h2>
+          <h2 id="s-oplacalnosc">Kiedy zmiana pracy bliżej domu naprawdę się opłaca?</h2>
           <p>Prosty rachunek: jeśli nowa praca oferuje wynagrodzenie <strong>10% niższe</strong>, ale dojazd skraca się z 60 do 15 minut i rezygnujesz z auta — możesz zyskać więcej niż tracisz.</p>
           <p>Przykład dla zarobków 7 000 zł brutto (ok. 5 100 zł netto):</p>
           <ul>
@@ -1326,7 +1365,7 @@
 
           <div class="highlight gr"><p><strong>Zmiana pracy bliżej domu opłaca się, gdy:</strong><br/>☑ Dojazd przekracza 45 min dziennie w jedną stronę<br/>☑ Dojeżdżasz samochodem ponad 15 km<br/>☑ Nowa oferta daje co najmniej 85–90% poprzedniego wynagrodzenia<br/>☑ Masz małe dzieci lub opiekujesz się bliską osobą<br/>☑ Czujesz się permanentnie zmęczony i wypalony zawodowo</p></div>
 
-          <h2>Jak szukać pracy bliżej domu — 6 kroków</h2>
+          <h2 id="s-6krokow">Jak szukać pracy bliżej domu — 6 kroków</h2>
           <p>Odwróć metodę szukania pracy: nie zaczynaj od stanowiska, zacznij od mapy.</p>
           <ol>
             <li><strong>Oblicz obecny koszt i czas dojazdu</strong> — użyj kalkulatora wyżej. Poznaj swoją realną liczbę.</li>
@@ -1342,7 +1381,7 @@
 
         <!-- In-article FAQ accordion (People Also Ask) -->
         <div class="art-faq-sec">
-          <h2>Najczęściej zadawane pytania o koszty dojazdu</h2>
+          <h2 id="s-faq">Najczęściej zadawane pytania o koszty dojazdu</h2>
 
           <div class="art-faq-item open">
             <div class="art-faq-q">Ile kosztuje miesięcznie dojazd autem 20 km do pracy?<span class="art-faq-icon">−</span></div>
@@ -1386,7 +1425,7 @@
         </div>
 
         <!-- Podsumowanie -->
-        <h2>Podsumowanie — kluczowe wnioski</h2>
+        <h2 id="s-podsumowanie">Podsumowanie — kluczowe wnioski</h2>
         <p>Dojazd to nie tylko koszt pieniężny — to czas życia, zdrowie, relacje i energia. Przy typowym dojeździe autem 20 km dziennie w Warszawie <strong>tracisz rocznie ponad 18 000 zł i 240 godzin</strong>.</p>
         <ol>
           <li>Oblicz swój aktualny koszt dojazdu (kalkulator wyżej) — poznaj realną liczbę</li>
@@ -1396,6 +1435,26 @@
           <li>Negocjuj home office — każdy dzień WFH to koszt dojazdu zaoszczędzony</li>
         </ol>
 
+        <!-- Dual CTA mid-article -->
+        <div class="dual-cta" style="margin: 28px 0 0;">
+          <div class="dc-card dc-card-job">
+            <div class="dc-icon">🔍</div>
+            <div class="dc-text">
+              <div class="dc-title">Szukasz pracy bliżej domu?</div>
+              <div class="dc-sub">Ustaw swój adres i znajdź oferty w 30 min dojazdu — autem lub MPK.</div>
+            </div>
+            <a href="https://mapjob.pl/oferty" target="_blank" rel="noopener" class="dc-btn dc-btn-blue">Szukaj →</a>
+          </div>
+          <div class="dc-card dc-card-emp">
+            <div class="dc-icon">🏢</div>
+            <div class="dc-text">
+              <div class="dc-title">Rekrutujesz pracowników?</div>
+              <div class="dc-sub">Ogłoszenie z mapą dojazdów — 3× więcej trafnych aplikacji.</div>
+            </div>
+            <a href="https://mapjob.pl/pracodawcy" target="_blank" rel="noopener" class="dc-btn dc-btn-green">Dodaj ogłoszenie →</a>
+          </div>
+        </div>
+
         <!-- In-article MapJob promo -->
         <div class="art-promo">
           <div class="ap-icon">📍</div>
@@ -1404,15 +1463,15 @@
             <div class="ap-title">Znajdź pracę bliżej domu jeszcze dziś</div>
             <div class="ap-sub">Ponad 4 200 ofert z mapą dojazdów. Ustaw swój adres i filtruj po czasie dojazdu.</div>
           </div>
-          <a href="#" class="ap-btn">Szukaj →</a>
+          <a href="https://mapjob.pl/oferty" target="_blank" rel="noopener" class="ap-btn">Szukaj na mapie →</a>
         </div>
 
         <div class="share-bar">
           <span class="share-lbl">Udostępnij</span>
-          <button class="share-btn">Facebook</button>
-          <button class="share-btn">LinkedIn</button>
-          <button class="share-btn">X</button>
-          <button class="share-btn">📋 Kopiuj link</button>
+          <a class="share-btn" href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fmapjob.pl%2Fblog%2Fkoszty-dojazdu%2F" target="_blank" rel="noopener">Facebook</a>
+          <a class="share-btn" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fmapjob.pl%2Fblog%2Fkoszty-dojazdu%2F" target="_blank" rel="noopener">LinkedIn</a>
+          <a class="share-btn" href="https://twitter.com/intent/tweet?url=https%3A%2F%2Fmapjob.pl%2Fblog%2Fkoszty-dojazdu%2F&text=Ile+naprawd%C4%99+kosztuje+Ci%C4%99+dojazd+do+pracy%3F+Sprawdzi%C5%82em%21" target="_blank" rel="noopener">X / Twitter</a>
+          <button class="share-btn" onclick="copyLink()">📋 Kopiuj link</button>
         </div>
 
         <div class="author-card">
@@ -1430,35 +1489,35 @@
         <div class="toc">
           <div class="toc-title">Spis treści</div>
           <ul class="toc-list">
-            <li class="toc-item on">Ile płacisz za dojazd autem?</li>
-            <li class="toc-item">Kalkulator kosztów</li>
-            <li class="toc-item">Auto vs. MPK vs. rower</li>
-            <li class="toc-item">Czas — ukryty kapitał</li>
-            <li class="toc-item">Dojazdy a zdrowie</li>
-            <li class="toc-item">Podatek a koszty dojazdu</li>
-            <li class="toc-item">Ranking miast</li>
-            <li class="toc-item">Kiedy zmiana opłaca się?</li>
-            <li class="toc-item">6 kroków — jak szukać</li>
-            <li class="toc-item">FAQ — pytania i odpowiedzi</li>
-            <li class="toc-item">Podsumowanie</li>
+            <li class="toc-item on" onclick="scrollSection('s-auto')">Ile płacisz za dojazd autem?</li>
+            <li class="toc-item" onclick="scrollSection('s-kalkulator')">Kalkulator kosztów</li>
+            <li class="toc-item" onclick="scrollSection('s-porownanie')">Auto vs. MPK vs. rower</li>
+            <li class="toc-item" onclick="scrollSection('s-czas')">Czas — ukryty kapitał</li>
+            <li class="toc-item" onclick="scrollSection('s-zdrowie')">Dojazdy a zdrowie</li>
+            <li class="toc-item" onclick="scrollSection('s-podatek')">Podatek a koszty dojazdu</li>
+            <li class="toc-item" onclick="scrollSection('s-ranking')">Ranking miast</li>
+            <li class="toc-item" onclick="scrollSection('s-oplacalnosc')">Kiedy zmiana opłaca się?</li>
+            <li class="toc-item" onclick="scrollSection('s-6krokow')">6 kroków — jak szukać</li>
+            <li class="toc-item" onclick="scrollSection('s-faq')">FAQ — pytania i odpowiedzi</li>
+            <li class="toc-item" onclick="scrollSection('s-podsumowanie')">Podsumowanie</li>
           </ul>
           <div class="toc-related">
             <div class="toc-rel-title">Powiązane artykuły</div>
-            <a href="#" class="toc-rel-link">→ Praca zdalna vs biuro – co się opłaca?</a>
-            <a href="#" class="toc-rel-link">→ Ranking miast pod kątem dojazdów 2026</a>
-            <a href="#" class="toc-rel-link">→ Jak negocjować wynagrodzenie w 2026?</a>
+            <a href="#" onclick="showArticle();return false;" class="toc-rel-link">→ Praca zdalna vs biuro – co się opłaca?</a>
+            <a href="#" onclick="showArticle();return false;" class="toc-rel-link">→ Ranking miast pod kątem dojazdów 2026</a>
+            <a href="#" onclick="showArticle();return false;" class="toc-rel-link">→ Jak negocjować wynagrodzenie w 2026?</a>
           </div>
           <div class="toc-cta">
             <div class="toc-cta-tag">MapJob.pl — darmowe dla kandydatów</div>
             <div class="toc-cta-title">Praca blisko Ciebie</div>
             <div class="toc-cta-sub">Filtruj oferty po czasie dojazdu od Twojego adresu. Ponad 4 200 aktualnych ofert.</div>
-            <a href="#" class="toc-cta-btn">Sprawdź mapę ofert →</a>
+            <a href="https://mapjob.pl/oferty" target="_blank" rel="noopener" class="toc-cta-btn">Sprawdź mapę ofert →</a>
           </div>
           <div class="toc-cta toc-cta-emp" style="margin-top:10px;">
             <div class="toc-cta-tag">Dla pracodawców</div>
             <div class="toc-cta-title">Ogłoszenie z mapą</div>
             <div class="toc-cta-sub">3× więcej aplikacji od kandydatów, którzy naprawdę dojadą.</div>
-            <a href="#" class="toc-cta-btn">Dodaj ogłoszenie →</a>
+            <a href="https://mapjob.pl/pracodawcy" target="_blank" rel="noopener" class="toc-cta-btn">Dodaj ogłoszenie →</a>
           </div>
         </div>
       </aside>
@@ -1469,9 +1528,9 @@
       <div class="sec-head" style="padding:0;"><div class="sec-title">Czytaj dalej</div><a href="#" class="sec-more" onclick="showListing();return false;">Wróć do bloga →</a></div>
     </div>
     <div class="cards-list" style="margin-bottom:32px;">
-      <article class="acard"><div class="thumb th-teal">🏠</div><div class="acard-body"><div class="acard-cat"><span class="badge b-blue">Dojazdy</span></div><div class="acard-title">Praca zdalna vs hybrydowa vs biuro – co naprawdę się opłaca?</div><div class="acard-meta"><div class="av" style="width:16px;height:16px;font-size:7px;">MJ</div><span>Redakcja MapJob</span><div class="dot"></div><span>21 maj</span><div class="dot"></div><span>9 min</span></div></div></article>
-      <article class="acard"><div class="thumb th-blue">📍</div><div class="acard-body"><div class="acard-cat"><span class="badge b-blue">Dojazdy · Raport</span></div><div class="acard-title">Mapa dojazdów: ranking 20 polskich miast 2026</div><div class="acard-meta"><div class="av" style="width:16px;height:16px;font-size:7px;">MJ</div><span>Redakcja MapJob</span><div class="dot"></div><span>15 maj</span><div class="dot"></div><span>12 min</span></div></div></article>
-      <article class="acard"><div class="thumb th-green">💰</div><div class="acard-body"><div class="acard-cat"><span class="badge b-green">Wynagrodzenia</span></div><div class="acard-title">Jak negocjować wynagrodzenie w 2026? Skrypt krok po kroku</div><div class="acard-meta"><div class="av" style="width:16px;height:16px;font-size:7px;">MJ</div><span>Administrator</span><div class="dot"></div><span>27 maj</span><div class="dot"></div><span>8 min</span></div></div></article>
+      <article class="acard" onclick="showArticle()" style="cursor:pointer;"><div class="thumb th-teal">🏠</div><div class="acard-body"><div class="acard-cat"><span class="badge b-blue">Dojazdy</span></div><div class="acard-title">Praca zdalna vs hybrydowa vs biuro – co naprawdę się opłaca?</div><div class="acard-meta"><div class="av" style="width:16px;height:16px;font-size:7px;">MJ</div><span>Redakcja MapJob</span><div class="dot"></div><span>21 maj</span><div class="dot"></div><span>9 min</span></div></div></article>
+      <article class="acard" onclick="showArticle()" style="cursor:pointer;"><div class="thumb th-blue">📍</div><div class="acard-body"><div class="acard-cat"><span class="badge b-blue">Dojazdy · Raport</span></div><div class="acard-title">Mapa dojazdów: ranking 20 polskich miast 2026</div><div class="acard-meta"><div class="av" style="width:16px;height:16px;font-size:7px;">MJ</div><span>Redakcja MapJob</span><div class="dot"></div><span>15 maj</span><div class="dot"></div><span>12 min</span></div></div></article>
+      <article class="acard" onclick="showArticle()" style="cursor:pointer;"><div class="thumb th-green">💰</div><div class="acard-body"><div class="acard-cat"><span class="badge b-green">Wynagrodzenia</span></div><div class="acard-title">Jak negocjować wynagrodzenie w 2026? Skrypt krok po kroku</div><div class="acard-meta"><div class="av" style="width:16px;height:16px;font-size:7px;">MJ</div><span>Redakcja MapJob</span><div class="dot"></div><span>27 maj</span><div class="dot"></div><span>8 min</span></div></div></article>
     </div>
   </div><!-- /wrap -->
 
@@ -1481,7 +1540,7 @@
       <div class="as-title">Szukasz pracy blisko domu?</div>
       <div class="as-sub">MapJob.pl — oferty z mapą dojazdów</div>
     </div>
-    <a href="#" class="as-btn">Sprawdź mapę →</a>
+    <a href="https://mapjob.pl/oferty" target="_blank" rel="noopener" class="as-btn">Sprawdź mapę →</a>
   </div>
 
   <footer>
@@ -1489,8 +1548,8 @@
       <div class="f-logo">Map<span>Job</span></div>
       <div class="f-tag">Znajdź pracę blisko domu. Jedyna polska platforma z mapą dojazdów i filtrem czasu dojazdu.</div>
       <div class="f-cols">
-        <div><div class="f-col-title">Blog</div><ul class="f-links"><li><a href="#">Dojazdy</a></li><li><a href="#">Wynagrodzenia</a></li><li><a href="#">CV i rekrutacja</a></li></ul></div>
-        <div><div class="f-col-title">MapJob</div><ul class="f-links"><li><a href="#">Mapa ofert</a></li><li><a href="#">Dodaj ogłoszenie</a></li><li><a href="#">O nas</a></li></ul></div>
+        <div><div class="f-col-title">Blog</div><ul class="f-links"><li><a href="#" onclick="showListing();return false;">Dojazdy</a></li><li><a href="#" onclick="showListing();return false;">Wynagrodzenia</a></li><li><a href="#" onclick="showListing();return false;">CV i rekrutacja</a></li></ul></div>
+        <div><div class="f-col-title">MapJob</div><ul class="f-links"><li><a href="https://mapjob.pl/oferty" target="_blank" rel="noopener">Mapa ofert</a></li><li><a href="https://mapjob.pl/pracodawcy" target="_blank" rel="noopener">Dodaj ogłoszenie</a></li><li><a href="https://mapjob.pl/o-nas" target="_blank" rel="noopener">O nas</a></li></ul></div>
       </div>
       <div class="f-bottom">© 2026 MapJob Sp. z o.o. &nbsp;·&nbsp; Polityka prywatności &nbsp;·&nbsp; Regulamin &nbsp;·&nbsp; RODO</div>
     </div>
@@ -1506,15 +1565,15 @@
   <div class="topbar">
     <div class="logo" onclick="showListing()" style="cursor:pointer;">Map<span>Job</span></div>
     <nav class="desk-nav">
-      <a class="dn" href="#">Mapa ofert</a>
-      <a class="dn" href="#">Dla firm</a>
+      <a class="dn" href="https://mapjob.pl/oferty" target="_blank" rel="noopener">Mapa ofert</a>
+      <a class="dn" href="https://mapjob.pl/pracodawcy" target="_blank" rel="noopener">Dla firm</a>
       <a class="dn" onclick="showListing();return false;" href="#">Blog</a>
       <a class="dn on" href="#">🧮 Kalkulatory</a>
-      <a class="dn" href="#">Raport 2026</a>
+      <a class="dn" href="https://mapjob.pl/raport-2026" target="_blank" rel="noopener">Raport 2026</a>
     </nav>
     <div class="tb-space"></div>
     <div class="desk-search"><svg width="12" height="12" viewBox="0 0 20 20" fill="none"><circle cx="9" cy="9" r="6" stroke="currentColor" stroke-width="1.6"/><path d="M13 13L17 17" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg> Szukaj…</div>
-    <button class="desk-cta">Dodaj ogłoszenie</button>
+    <a class="desk-cta" href="https://mapjob.pl/pracodawcy" target="_blank" rel="noopener">Dodaj ogłoszenie</a>
     <div class="mob-ic search-mob"><svg width="16" height="16" viewBox="0 0 20 20" fill="none"><circle cx="9" cy="9" r="6" stroke="currentColor" stroke-width="1.6"/><path d="M13 13L17 17" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></div>
   </div>
 
@@ -1594,6 +1653,26 @@
             Przy 8 000 zł brutto na UoP w 2026 roku otrzymujesz ok. <strong style="color:var(--tx)">5 756 zł netto</strong> — co oznacza efektywną stawkę podatku ~28%.<br>
             Pracodawca ponosi dodatkowy koszt ZUS w wysokości ok. 20,74% Twojego wynagrodzenia brutto — łącznie płaci za Ciebie ok. <strong style="color:var(--tx)">9 660 zł</strong>.
           </div>
+        </div>
+      </div>
+
+      <!-- Dual CTA after calc -->
+      <div class="dual-cta">
+        <div class="dc-card dc-card-job">
+          <div class="dc-icon">🔍</div>
+          <div class="dc-text">
+            <div class="dc-title">Szukasz pracy?</div>
+            <div class="dc-sub">Porównaj oferty z widełkami płacowymi na mapie MapJob.pl.</div>
+          </div>
+          <a href="https://mapjob.pl/oferty" target="_blank" rel="noopener" class="dc-btn dc-btn-blue">Znajdź pracę →</a>
+        </div>
+        <div class="dc-card dc-card-emp">
+          <div class="dc-icon">🏢</div>
+          <div class="dc-text">
+            <div class="dc-title">Oferujesz pracę?</div>
+            <div class="dc-sub">Ogłoszenie z mapą dojazdów — kandydaci widzą czas dojazdu przed aplikacją.</div>
+          </div>
+          <a href="https://mapjob.pl/pracodawcy" target="_blank" rel="noopener" class="dc-btn dc-btn-green">Dodaj ogłoszenie →</a>
         </div>
       </div>
 
@@ -1766,10 +1845,10 @@
       <div class="f-logo">Map<span>Job</span></div>
       <div class="f-tag">Darmowe kalkulatory dla pracowników i pracodawców. Wynagrodzenia 2026, B2B vs UoP, okres wypowiedzenia — wszystko na MapJob.pl</div>
       <div class="f-cols">
-        <div><div class="f-col-title">Kalkulatory</div><ul class="f-links"><li><a href="#">Brutto → Netto 2026</a></li><li><a href="#">B2B vs Umowa o pracę</a></li><li><a href="#">Okres wypowiedzenia</a></li><li><a href="#">Koszty dojazdu</a></li></ul></div>
-        <div><div class="f-col-title">MapJob</div><ul class="f-links"><li><a href="#">Mapa ofert pracy</a></li><li><a href="#">Blog</a></li><li><a href="#">Dodaj ogłoszenie</a></li></ul></div>
+        <div><div class="f-col-title">Kalkulatory</div><ul class="f-links"><li><a href="#" onclick="showCalcTab('bn');return false;">Brutto → Netto 2026</a></li><li><a href="#" onclick="showCalcTab('b2b');return false;">B2B vs Umowa o pracę</a></li><li><a href="#" onclick="showCalcTab('wyp');return false;">Okres wypowiedzenia</a></li><li><a href="#" onclick="showCalcTab('doj');return false;">Koszty dojazdu</a></li></ul></div>
+        <div><div class="f-col-title">MapJob</div><ul class="f-links"><li><a href="https://mapjob.pl/oferty" target="_blank" rel="noopener">Mapa ofert pracy</a></li><li><a href="#" onclick="showListing();return false;">Blog</a></li><li><a href="https://mapjob.pl/pracodawcy" target="_blank" rel="noopener">Dodaj ogłoszenie</a></li></ul></div>
       </div>
-      <div class="f-bottom">© 2026 MapJob Sp. z o.o. &nbsp;·&nbsp; Polityka prywatności &nbsp;·&nbsp; Regulamin &nbsp;·&nbsp; RODO</div>
+      <div class="f-bottom">© 2026 MapJob Sp. z o.o. &nbsp;·&nbsp; <a href="https://mapjob.pl/polityka-prywatnosci" target="_blank" rel="noopener" style="color:inherit">Polityka prywatności</a> &nbsp;·&nbsp; <a href="https://mapjob.pl/regulamin" target="_blank" rel="noopener" style="color:inherit">Regulamin</a> &nbsp;·&nbsp; <a href="https://mapjob.pl/rodo" target="_blank" rel="noopener" style="color:inherit">RODO / GDPR</a></div>
     </div>
   </footer>
 </div><!-- /#pg-calc -->
@@ -1864,11 +1943,40 @@
     el.classList.add('on');
   }
 
-  /* ── TOC ─────────────────────────────────────────────────────── */
+  /* ── TOC scroll ─────────────────────────────────────────────── */
+  function scrollSection(id) {
+    const el = document.getElementById(id);
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
   document.querySelectorAll('.toc-item').forEach(t => t.addEventListener('click', () => {
     document.querySelectorAll('.toc-item').forEach(x => x.classList.remove('on'));
     t.classList.add('on');
   }));
+
+  /* ── Share / copy link ──────────────────────────────────────── */
+  function copyLink() {
+    const url = 'https://mapjob.pl/blog/koszty-dojazdu/';
+    navigator.clipboard.writeText(url).then(() => {
+      const btn = document.querySelector('.share-btn[onclick="copyLink()"]');
+      if (btn) { btn.textContent = '✓ Skopiowano!'; setTimeout(() => btn.textContent = '📋 Kopiuj link', 2500); }
+    }).catch(() => {
+      prompt('Skopiuj link:', url);
+    });
+  }
+
+  /* ── Newsletter ──────────────────────────────────────────────── */
+  function subscribeNewsletter(btn) {
+    const wrap = btn.closest('.nl-card') || btn.closest('[class*="nl"]');
+    const inp = (wrap || document).querySelector('.nl-inp');
+    const email = inp ? inp.value.trim() : '';
+    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!re.test(email)) { inp && (inp.style.borderColor = 'var(--red)'); inp.focus(); return; }
+    if (inp) inp.style.borderColor = '';
+    btn.textContent = '✓ Zapisano!';
+    btn.style.background = 'var(--green)';
+    btn.disabled = true;
+    if (inp) { inp.disabled = true; inp.value = email; }
+  }
 
   /* ── Calc tab switcher ───────────────────────────────────────── */
   function showCalcTab(id) {
