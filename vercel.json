@@ -1,6 +1,6 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "buildCommand": "python3 build_seo_landings.py",
+  "buildCommand": "python3 build_seo_landings.py && python3 build_dlafirm.py",
   "outputDirectory": ".",
   "rewrites": [
     {

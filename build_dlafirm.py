@@ -1,11 +1,34 @@
 # -*- coding: utf-8 -*-
-"""Generator minimalistycznej, premium strony marketingowej dla firm (MapJob)."""
+"""Generator minimalistycznej, premium strony marketingowej dla firm (MapJob).
+Czyta loga z logos/ (committed) i oferty z oferty-snapshot.json.
+Uruchamiany jako część buildCommand na Vercel.
+"""
 import json
+import os
 
-pramer = open('/tmp/pramer_b64.txt').read().strip()
-jobwerke = open('/tmp/jobwerke_logo.svg').read().strip()
+ROOT = os.path.dirname(os.path.abspath(__file__))
+
+def read(path):
+    with open(os.path.join(ROOT, path), encoding='utf-8') as f:
+        return f.read().strip()
+
+pramer = read('logos/pramer.b64')
+jobwerke = read('logos/jobwerke.svg')
 platinum = "https://ahgzjneegvptudphibdm.supabase.co/storage/v1/object/public/avatars/profile-avatars/c01e3144-f760-40dd-8a56-c2c34efd57b5-platinum-active-1779805480669.jpeg"
-pins = json.load(open('/tmp/pins.json'))
+
+snap = json.load(open(os.path.join(ROOT, 'oferty-snapshot.json'), encoding='utf-8'))
+offers = snap['offers']
+pins = []
+for o in offers:
+    la, ln = o.get('location_lat'), o.get('location_lng')
+    if la and ln:
+        pins.append({
+            'lat': round(float(la), 4),
+            'lng': round(float(ln), 4),
+            'c': o.get('company_name', ''),
+            't': (o.get('title') or '')[:60],
+            'loc': o.get('location', '')
+        })
 pins_js = json.dumps(pins, ensure_ascii=False)
 
 HTML = r'''<!DOCTYPE html>
@@ -37,13 +60,11 @@ body{font-family:var(--ff);background:var(--bg);color:var(--text);line-height:1.
 a{color:inherit;text-decoration:none}
 .wrap{max-width:1080px;margin:0 auto;padding:0 24px}
 
-/* ambient glow */
 body::before{content:"";position:fixed;top:-30%;left:50%;transform:translateX(-50%);
   width:120vw;height:80vh;pointer-events:none;z-index:0;
   background:radial-gradient(ellipse at center,rgba(59,130,246,.16),transparent 60%);
   filter:blur(20px)}
 
-/* NAV */
 nav{position:sticky;top:0;z-index:50;backdrop-filter:blur(16px);
   background:rgba(7,9,15,.72);border-bottom:1px solid var(--border)}
 .nav-in{max-width:1080px;margin:0 auto;padding:14px 24px;display:flex;align-items:center;justify-content:space-between}
@@ -56,7 +77,6 @@ nav{position:sticky;top:0;z-index:50;backdrop-filter:blur(16px);
   background:var(--text);color:#0a0a0a;transition:transform .2s,box-shadow .2s}
 .nav-cta:hover{transform:translateY(-1px);box-shadow:0 8px 24px rgba(255,255,255,.12)}
 
-/* HERO */
 .hero{position:relative;z-index:1;text-align:center;padding:80px 0 56px}
 .badge{display:inline-flex;align-items:center;gap:8px;font-size:13px;font-weight:600;
   padding:7px 16px;border-radius:999px;background:rgba(16,185,129,.1);
@@ -78,13 +98,10 @@ h1 .grad{background:linear-gradient(110deg,var(--blue2) 10%,var(--green2) 90%);
 .btn-ghost{background:transparent;color:var(--text2);border:1px solid var(--border2)}
 .btn-ghost:hover{color:var(--text);border-color:var(--text3)}
 .micro{font-size:13.5px;color:var(--text3);font-weight:500}
-.micro b{color:var(--text2);font-weight:600}
 
-/* MAP showcase */
 .show{position:relative;z-index:1;margin-top:54px}
 .map-frame{position:relative;border-radius:24px;overflow:hidden;border:1px solid var(--border2);
-  box-shadow:0 40px 90px rgba(0,0,0,.6),0 0 0 1px rgba(59,130,246,.08);
-  background:var(--surf)}
+  box-shadow:0 40px 90px rgba(0,0,0,.6),0 0 0 1px rgba(59,130,246,.08);background:var(--surf)}
 #map{height:540px;width:100%;background:#0b0e14}
 .map-chip{position:absolute;top:18px;left:18px;z-index:600;display:flex;align-items:center;gap:9px;
   font-size:13px;font-weight:600;padding:9px 15px;border-radius:999px;
@@ -92,17 +109,15 @@ h1 .grad{background:linear-gradient(110deg,var(--blue2) 10%,var(--green2) 90%);
 .map-chip .dot{width:8px;height:8px;border-radius:50%;background:var(--green2);animation:pulse 2s infinite}
 .map-cap{text-align:center;color:var(--text3);font-size:13px;margin-top:16px}
 
-/* TRUST */
 .trust{position:relative;z-index:1;padding:74px 0 12px;text-align:center}
 .trust-label{font-size:12.5px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--text3);margin-bottom:28px}
 .logos{display:flex;align-items:center;justify-content:center;gap:46px;flex-wrap:wrap}
-.logos .lg{height:38px;display:flex;align-items:center;opacity:.9;transition:opacity .25s,filter .25s}
+.logos .lg{height:38px;display:flex;align-items:center;opacity:.9;transition:opacity .25s}
 .logos .lg:hover{opacity:1}
 .logos img{max-height:38px;max-width:150px;object-fit:contain}
 .logos .lg.pf img{height:44px;border-radius:10px}
 .logos .lg svg{height:30px;width:auto}
 
-/* VALUE */
 .value{position:relative;z-index:1;padding:84px 0}
 .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
 .vcard{background:var(--surf);border:1px solid var(--border);border-radius:20px;padding:32px 28px;transition:transform .25s,border-color .25s}
@@ -113,7 +128,6 @@ h1 .grad{background:linear-gradient(110deg,var(--blue2) 10%,var(--green2) 90%);
 .vcard h3{font-size:19px;font-weight:700;letter-spacing:-.02em;margin-bottom:9px}
 .vcard p{font-size:15px;color:var(--text2);line-height:1.55}
 
-/* FINAL CTA */
 .final{position:relative;z-index:1;padding:30px 0 96px}
 .final-box{position:relative;overflow:hidden;border-radius:28px;padding:64px 40px;text-align:center;
   background:linear-gradient(135deg,rgba(59,130,246,.16),rgba(16,185,129,.12));
@@ -124,14 +138,11 @@ h1 .grad{background:linear-gradient(110deg,var(--blue2) 10%,var(--green2) 90%);
 .final-box p{position:relative;color:var(--text2);font-size:17px;margin-bottom:32px}
 .final-box .btn{position:relative}
 
-/* FOOTER */
 footer{position:relative;z-index:1;border-top:1px solid var(--border);padding:30px 0;text-align:center;color:var(--text3);font-size:13px}
 
-/* reveal */
 .rv{opacity:0;transform:translateY(22px);transition:opacity .7s cubic-bezier(.2,.7,.2,1),transform .7s cubic-bezier(.2,.7,.2,1)}
 .rv.in{opacity:1;transform:none}
 
-/* leaflet dark cluster tweak */
 .leaflet-control-attribution{font-size:9px;opacity:.5}
 .marker-cluster{background:rgba(59,130,246,.35)!important}
 .marker-cluster div{background:rgba(59,130,246,.85)!important;color:#fff!important;font-weight:700!important;font-family:var(--ff)!important}
@@ -172,7 +183,7 @@ footer{position:relative;z-index:1;border-top:1px solid var(--border);padding:30
 
   <div class="wrap show rv" id="mapa">
     <div class="map-frame">
-      <div class="map-chip"><span class="dot"></span><span id="liveCount">70 aktywnych ofert na żywo</span></div>
+      <div class="map-chip"><span class="dot"></span><span id="liveCount"></span></div>
       <div id="map"></div>
     </div>
     <div class="map-cap">Prawdziwe ogłoszenia firm, które już są na MapJob. Każdy znacznik to realna oferta pracy.</div>
@@ -183,9 +194,9 @@ footer{position:relative;z-index:1;border-top:1px solid var(--border);padding:30
   <div class="wrap">
     <div class="trust-label rv">Już zatrudniają z MapJob</div>
     <div class="logos rv">
-      <span class="lg"><img src="__PRAMER__" alt="Pramer"></span>
-      <span class="lg">__JOBWERKE__</span>
-      <span class="lg pf"><img src="__PLATINUM__" alt="Platinum Active"></span>
+      <span class="lg"><img src="PRAMER_PLACEHOLDER" alt="Pramer"></span>
+      <span class="lg">JOBWERKE_PLACEHOLDER</span>
+      <span class="lg pf"><img src="PLATINUM_PLACEHOLDER" alt="Platinum Active"></span>
     </div>
   </div>
 </section>
@@ -227,20 +238,15 @@ footer{position:relative;z-index:1;border-top:1px solid var(--border);padding:30
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
 <script>
-var PINS = __PINS__;
-
-// reveal on scroll
+var PINS = PINS_PLACEHOLDER;
 var io = new IntersectionObserver(function(es){
   es.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target);} });
 },{threshold:.12});
 document.querySelectorAll('.rv').forEach(function(el){io.observe(el);});
-
-// map
 var map = L.map('map',{scrollWheelZoom:false,attributionControl:true,zoomControl:true}).setView([51.6,11.5],5);
 L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',{
   attribution:'© OpenStreetMap, © CARTO',subdomains:'abcd',maxZoom:19
 }).addTo(map);
-
 var cluster = L.markerClusterGroup({maxClusterRadius:44,showCoverageOnHover:false});
 var icon = L.divIcon({className:'',iconSize:[18,18],
   html:'<div style="width:16px;height:16px;border-radius:50%;background:#3B82F6;border:2.5px solid #0b0e14;box-shadow:0 0 0 3px rgba(59,130,246,.35),0 2px 8px rgba(0,0,0,.5)"></div>'});
@@ -256,10 +262,12 @@ document.getElementById('liveCount').textContent = PINS.length + ' aktywnych ofe
 </body>
 </html>'''
 
-HTML = HTML.replace('__PRAMER__', pramer)
-HTML = HTML.replace('__JOBWERKE__', jobwerke)
-HTML = HTML.replace('__PLATINUM__', platinum)
-HTML = HTML.replace('__PINS__', pins_js)
+HTML = HTML.replace('PRAMER_PLACEHOLDER', pramer)
+HTML = HTML.replace('JOBWERKE_PLACEHOLDER', jobwerke)
+HTML = HTML.replace('PLATINUM_PLACEHOLDER', platinum)
+HTML = HTML.replace('PINS_PLACEHOLDER', pins_js)
 
-open('dla-firm-9k3x7m.html', 'w', encoding='utf-8').write(HTML)
-print('written', len(HTML), 'bytes ->', 'dla-firm-9k3x7m.html')
+out = os.path.join(ROOT, 'dla-firm-9k3x7m.html')
+with open(out, 'w', encoding='utf-8') as f:
+    f.write(HTML)
+print(f'[build_dlafirm] written {len(HTML):,} bytes -> dla-firm-9k3x7m.html')
