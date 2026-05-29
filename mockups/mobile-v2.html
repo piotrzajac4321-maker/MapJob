@@ -1324,8 +1324,188 @@ body{
     </div>
   </div><!-- /screen-register -->
 
-  <!-- ════ SCREEN: HOME (default) ════ -->
-  <div class="screen active" id="screen-home" style="padding-top:50px;">
+  <!-- ════ SCREEN: HOME GUEST (niezalogowany – główna) ════ -->
+  <div class="screen active" id="screen-home-guest" style="padding-top:50px;">
+    <div class="beta-banner">
+      <div class="beta-track">
+        <span class="beta-item"><span class="beta-tag">BETA</span>Trwa testowanie · <b>1 207 fachowców</b> · darmowe konto na zawsze</span>
+        <span class="beta-item">🏙️ Kraków: <b>412 ogłoszeń</b></span>
+        <span class="beta-item">🚀 Nowe: <b>AI import ofert</b></span>
+        <span class="beta-item">📍 <b>Adresy zweryfikowane</b> · zero ghost jobs</span>
+        <span class="beta-item"><span class="beta-tag">BETA</span>Trwa testowanie · <b>1 207 fachowców</b> · darmowe konto na zawsze</span>
+        <span class="beta-item">🏙️ Kraków: <b>412 ogłoszeń</b></span>
+        <span class="beta-item">🚀 Nowe: <b>AI import ofert</b></span>
+        <span class="beta-item">📍 <b>Adresy zweryfikowane</b> · zero ghost jobs</span>
+      </div>
+    </div>
+
+    <!-- Guest topbar -->
+    <div class="tb">
+      <div class="tb-logo">
+        <div class="tb-logo-mark">
+          <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        </div>
+        MapJob
+      </div>
+      <div class="tb-spacer"></div>
+      <button onclick="switchScreen('login')" style="height:32px;padding:0 14px;border-radius:8px;background:none;border:1px solid var(--line3);color:var(--text2);font-family:var(--ff);font-size:12px;font-weight:700;cursor:pointer;transition:all .15s;white-space:nowrap;">Zaloguj się</button>
+      <button onclick="switchScreen('register')" style="height:32px;padding:0 14px;border-radius:8px;background:var(--blue);border:none;color:#fff;font-family:var(--ff);font-size:12px;font-weight:700;cursor:pointer;margin-left:6px;white-space:nowrap;box-shadow:0 2px 8px rgba(59,130,246,.3);">Dołącz</button>
+    </div>
+
+    <div class="home-scroll">
+      <!-- Hero search block -->
+      <div style="padding:18px 16px 0;">
+        <div style="font-size:18px;font-weight:900;color:var(--text);letter-spacing:-.03em;line-height:1.3;margin-bottom:4px;">
+          Znajdź pracę<br>blisko <span style="color:var(--blue);">Ciebie</span>
+        </div>
+        <div style="font-size:12px;color:var(--text3);margin-bottom:14px;">Zweryfikowane adresy · widełki zawsze jawne · Kraków</div>
+        <div class="search-bar" style="height:48px;border-radius:13px;border-color:rgba(59,130,246,.3);box-shadow:0 0 0 3px rgba(59,130,246,.07);">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--text3)" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+          <input type="text" placeholder="Stanowisko, zawód, firma…">
+          <span class="search-loc">📍 Kraków</span>
+        </div>
+      </div>
+
+      <!-- Category grid -->
+      <div class="home-sec">Przeglądaj branże</div>
+      <div class="cat-grid">
+        <div class="cat-tile hot" onclick="switchScreen('lista')">
+          <div class="cat-icon">💻</div>
+          <div class="cat-name">IT</div>
+          <div class="cat-cnt">54 oferty</div>
+        </div>
+        <div class="cat-tile" onclick="switchScreen('lista')">
+          <div class="cat-icon">⚡</div>
+          <div class="cat-name">Elektryk</div>
+          <div class="cat-cnt">18 ofert</div>
+        </div>
+        <div class="cat-tile" onclick="switchScreen('lista')">
+          <div class="cat-icon">🔧</div>
+          <div class="cat-name">Produkcja</div>
+          <div class="cat-cnt">31 ofert</div>
+        </div>
+        <div class="cat-tile" onclick="switchScreen('lista')">
+          <div class="cat-icon">🚚</div>
+          <div class="cat-name">Transport</div>
+          <div class="cat-cnt">22 oferty</div>
+        </div>
+        <div class="cat-tile" onclick="switchScreen('lista')">
+          <div class="cat-icon">🏗️</div>
+          <div class="cat-name">Budowlanka</div>
+          <div class="cat-cnt">29 ofert</div>
+        </div>
+        <div class="cat-tile" onclick="switchScreen('lista')">
+          <div class="cat-icon">🔩</div>
+          <div class="cat-name">Hydraulik</div>
+          <div class="cat-cnt">11 ofert</div>
+        </div>
+        <div class="cat-tile" onclick="switchScreen('lista')">
+          <div class="cat-icon">🍽️</div>
+          <div class="cat-name">HoReCa</div>
+          <div class="cat-cnt">16 ofert</div>
+        </div>
+        <div class="cat-tile" onclick="switchScreen('lista')">
+          <div class="cat-icon">➕</div>
+          <div class="cat-name">Więcej</div>
+          <div class="cat-cnt">+24 kat.</div>
+        </div>
+      </div>
+
+      <!-- Featured jobs (browsable without login) -->
+      <div class="home-sec">Najnowsze oferty</div>
+      <div class="feat-scroll">
+        <div class="feat-card hot" onclick="showDetail('A')">
+          <div class="feat-card-badge">● Pilne</div>
+          <div class="feat-card-logo" style="background:linear-gradient(135deg,#DC2626,#EF4444);">P</div>
+          <div class="feat-card-title">Elektryk / Pomocnik</div>
+          <div class="feat-card-co">Pramer · ul. Robotnicza</div>
+          <div class="feat-card-pay">6 500–8 200 zł</div>
+          <div style="font-size:10px;color:var(--text3);margin-top:4px;">📍 2,4 km · brutto · UoP</div>
+        </div>
+        <div class="feat-card" onclick="showDetail('A')">
+          <div class="feat-card-logo" style="background:linear-gradient(135deg,#4F46E5,#6366F1);">CD</div>
+          <div class="feat-card-title">Senior Frontend Dev</div>
+          <div class="feat-card-co">Codewise · Zabłocie</div>
+          <div class="feat-card-pay">15–22 000 zł</div>
+          <div style="font-size:10px;color:var(--text3);margin-top:4px;">📍 0,8 km · netto · B2B</div>
+        </div>
+        <div class="feat-card" onclick="showDetail('A')">
+          <div class="feat-card-logo" style="background:linear-gradient(135deg,#0891B2,#06B6D4);">Z</div>
+          <div class="feat-card-title">Operator CNC</div>
+          <div class="feat-card-co">Zetkama · Ścinawka</div>
+          <div class="feat-card-pay">5 800–7 000 zł</div>
+          <div style="font-size:10px;color:var(--text3);margin-top:4px;">📍 5,1 km · brutto · UoP</div>
+        </div>
+        <div class="feat-card" onclick="switchScreen('lista')" style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;border-style:dashed;">
+          <div style="font-size:22px;">→</div>
+          <div style="font-size:11.5px;font-weight:700;color:var(--text2);text-align:center;">Zobacz wszystkie 127</div>
+        </div>
+      </div>
+
+      <!-- Soft register nudge -->
+      <div style="padding:12px 0 0;">
+        <div style="margin:0 16px;background:linear-gradient(135deg,rgba(59,130,246,.1),rgba(99,102,241,.07));border:1px solid rgba(59,130,246,.22);border-radius:14px;padding:16px;">
+          <div style="font-size:15px;font-weight:900;color:var(--text);margin-bottom:4px;">Aplikuj w 1 kliknięciu</div>
+          <div style="font-size:12px;color:var(--text3);margin-bottom:12px;line-height:1.5;">Utwórz darmowe konto, żeby aplikować na oferty, zapisywać je i otrzymywać alerty.</div>
+          <button onclick="switchScreen('register')" style="width:100%;height:44px;background:var(--blue);border:none;border-radius:11px;color:#fff;font-family:var(--ff);font-size:13.5px;font-weight:800;cursor:pointer;box-shadow:0 4px 14px rgba(59,130,246,.35);">Zarejestruj się za darmo →</button>
+          <div style="text-align:center;margin-top:10px;font-size:11.5px;color:var(--text3);">Mam konto · <span style="color:var(--blue2);cursor:pointer;font-weight:700;" onclick="event.stopPropagation();switchScreen('login')">Zaloguj się</span></div>
+        </div>
+      </div>
+
+      <!-- Map teaser -->
+      <div style="padding:12px 0 20px;">
+        <div style="margin:0 16px;background:var(--surf);border:1px solid var(--line3);border-radius:12px;overflow:hidden;cursor:pointer;" onclick="switchScreen('mapa')">
+          <div style="height:80px;background:#080A0D;position:relative;overflow:hidden;">
+            <svg width="100%" height="100%" viewBox="0 0 361 80" preserveAspectRatio="xMidYMid slice">
+              <rect width="361" height="80" fill="#080A0D"/>
+              <defs><pattern id="g3" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M 20 0 L 0 0 0 20" fill="none" stroke="rgba(255,255,255,.025)" stroke-width="1"/></pattern></defs>
+              <rect width="361" height="80" fill="url(#g3)"/>
+              <line x1="0" y1="40" x2="361" y2="40" stroke="#1c2028" stroke-width="5"/>
+              <line x1="180" y1="0" x2="180" y2="80" stroke="#16181e" stroke-width="5"/>
+              <path d="M0 50 Q90 44 180 52 Q260 58 361 50" fill="none" stroke="#0c1a28" stroke-width="14" stroke-linecap="round"/>
+              <circle cx="180" cy="42" r="20" fill="rgba(59,130,246,.07)" stroke="rgba(59,130,246,.2)" stroke-width="1.5"/>
+              <circle cx="180" cy="42" r="5" fill="#3B82F6"/><circle cx="180" cy="42" r="7.5" fill="none" stroke="white" stroke-width="1.8"/>
+              <g><rect x="100" y="20" width="44" height="18" rx="9" fill="#13172090" stroke="rgba(99,102,241,.4)" stroke-width="1"/><text x="122" y="32" text-anchor="middle" font-size="8.5" font-weight="800" fill="#10B981" font-family="Plus Jakarta Sans,sans-serif">15–22k</text></g>
+              <g><rect x="230" y="46" width="42" height="18" rx="9" fill="#13172090" stroke="rgba(239,68,68,.4)" stroke-width="1"/><text x="251" y="58" text-anchor="middle" font-size="8.5" font-weight="800" fill="#10B981" font-family="Plus Jakarta Sans,sans-serif">6,5–8k</text></g>
+              <g><rect x="280" y="22" width="40" height="18" rx="9" fill="#13172090" stroke="rgba(16,185,129,.35)" stroke-width="1"/><text x="300" y="34" text-anchor="middle" font-size="8.5" font-weight="800" fill="#10B981" font-family="Plus Jakarta Sans,sans-serif">9–14k</text></g>
+            </svg>
+            <div style="position:absolute;bottom:8px;right:10px;background:rgba(59,130,246,.15);border:1px solid rgba(59,130,246,.4);border-radius:7px;padding:3px 9px;font-size:9.5px;font-weight:700;color:var(--blue2);">Otwórz mapę →</div>
+          </div>
+          <div style="padding:9px 13px;font-size:11.5px;font-weight:700;color:var(--text2);">
+            🗺️ 127 ofert w okolicy Krakowa na mapie
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Guest bottom nav -->
+    <div class="bnav">
+      <button class="ni">
+        <div class="ni-icon" style="background:var(--blue-d);">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        </div>
+        <span class="ni-lbl" style="color:var(--blue);">Start</span>
+        <div class="ni-dot"></div>
+      </button>
+      <button class="ni" onclick="switchScreen('lista')">
+        <div class="ni-icon"><svg viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg></div>
+        <span class="ni-lbl">Oferty</span>
+      </button>
+      <button class="ni" onclick="switchScreen('mapa')">
+        <div class="ni-icon"><svg viewBox="0 0 24 24"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/></svg></div>
+        <span class="ni-lbl">Mapa</span>
+      </button>
+      <button class="ni" onclick="switchScreen('login')">
+        <div class="ni-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h4a2 2 0 012 2v14a2 2 0 01-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+        </div>
+        <span class="ni-lbl">Zaloguj</span>
+      </button>
+    </div>
+  </div><!-- /screen-home-guest -->
+
+  <!-- ════ SCREEN: HOME (zalogowany) ════ -->
+  <div class="screen" id="screen-home" style="padding-top:50px;">
     <div class="beta-banner">
       <div class="beta-track">
         <span class="beta-item"><span class="beta-tag">BETA</span>Trwa testowanie · <b>1 207 fachowców</b> · darmowe konto na zawsze</span>
@@ -2321,16 +2501,15 @@ body{
   <div class="ux-subtitle">Makieta 1:1 · 7 ekranów · wszystkie kliknięcia działają</div>
 
   <div class="nav-label-row">
-    <b>Widok niezalogowany (kliknij):</b><br>
-    <span onclick="document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById('screen-landing').classList.add('active');" style="color:#60A5FA;cursor:pointer;font-weight:700;text-decoration:underline;">→ Pokaż Landing page</span><br>
-    <span onclick="document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById('screen-login').classList.add('active');" style="color:#60A5FA;cursor:pointer;font-weight:700;text-decoration:underline;">→ Pokaż Logowanie</span><br>
-    <span onclick="document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById('screen-register').classList.add('active');" style="color:#60A5FA;cursor:pointer;font-weight:700;text-decoration:underline;">→ Pokaż Rejestrację</span><br><br>
-    <b>Widok zalogowany (app):</b><br>
-    🏠 Start → strona główna<br>
-    🗒️ Oferty → pełna lista kart<br>
-    🗺️ Mapa → mapa z pinami<br>
-    👤 Profil → profil kandydata<br>
-    Kliknij kartę → szczegóły → Firma → profil pracodawcy
+    <b>🔓 Niezalogowany (kliknij):</b><br>
+    <span onclick="switchScreen('home-guest')" style="color:#60A5FA;cursor:pointer;font-weight:700;text-decoration:underline;">→ Strona główna (gość)</span><br>
+    <span onclick="switchScreen('landing')" style="color:#60A5FA;cursor:pointer;font-weight:700;text-decoration:underline;">→ Landing / onboarding</span><br>
+    <span onclick="switchScreen('login')" style="color:#60A5FA;cursor:pointer;font-weight:700;text-decoration:underline;">→ Logowanie</span><br>
+    <span onclick="switchScreen('register')" style="color:#60A5FA;cursor:pointer;font-weight:700;text-decoration:underline;">→ Rejestracja</span><br><br>
+    <b>🔐 Zalogowany (app):</b><br>
+    <span onclick="switchScreen('home')" style="color:#60A5FA;cursor:pointer;font-weight:700;text-decoration:underline;">→ Start (personalizacja)</span><br>
+    🗒️ Oferty · 🗺️ Mapa · 👤 Profil<br>
+    Karta → szczegóły → Firma → profil pracodawcy
   </div>
 
   <div class="ux-card">
