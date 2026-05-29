@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MapJob — Zaufali Nam (Wariant B)</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: #080D18;
+      color: #F0F4FF;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 24px 0 48px;
+    }
+
+    .phone-frame {
+      width: 100%;
+      max-width: 430px;
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    /* Dev label */
+    .note {
+      background: #00B8D9;
+      color: #fff;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: .1em;
+      text-align: center;
+      padding: 6px 12px;
+      border-radius: 6px;
+      margin: 0 16px 20px;
+      text-transform: uppercase;
+    }
+
+    /* ── FAKE MAP ────────────────────────────────────────── */
+    .map-section {
+      position: relative;
+      height: 220px;
+      background: #0e1a2e;
+      border-radius: 20px;
+      margin: 0 16px;
+      overflow: hidden;
+    }
+
+    .map-section::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(255,255,255,.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.04) 1px, transparent 1px);
+      background-size: 40px 40px;
+    }
+
+    .map-section::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(120deg, transparent 30%, rgba(255,255,255,.06) 30%, rgba(255,255,255,.06) 31%, transparent 31%),
+        linear-gradient(60deg, transparent 45%, rgba(255,255,255,.05) 45%, rgba(255,255,255,.05) 46%, transparent 46%),
+        linear-gradient(90deg, transparent 55%, rgba(255,255,255,.04) 55%, rgba(255,255,255,.04) 57%, transparent 57%);
+    }
+
+    .cluster {
+      position: absolute;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      color: #fff;
+      font-size: 13px;
+      box-shadow: 0 0 0 3px rgba(29,111,242,.35), 0 4px 16px rgba(0,0,0,.5);
+      z-index: 2;
+    }
+    .cluster-lg {
+      width: 52px; height: 52px;
+      background: #1D6FF2;
+      font-size: 16px;
+    }
+    .cluster-md {
+      width: 40px; height: 40px;
+      background: #0fa0c8;
+    }
+    .cluster-sm {
+      width: 32px; height: 32px;
+      background: #00B8D9;
+      font-size: 11px;
+    }
+    .c1 { top: 50px;  left: 60px; }
+    .c2 { top: 30px;  right: 70px; }
+    .c3 { top: 110px; right: 100px; }
+    .c4 { top: 130px; left: 130px; }
+
+    .c1::before {
+      content: '';
+      position: absolute;
+      width: 70px; height: 70px;
+      border-radius: 50%;
+      border: 2px solid rgba(29,111,242,.4);
+      animation: pulse 2s ease-out infinite;
+    }
+    @keyframes pulse {
+      0%   { transform: scale(.7); opacity: 1; }
+      100% { transform: scale(1.4); opacity: 0; }
+    }
+
+    .map-btn {
+      position: absolute;
+      bottom: 16px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(255,255,255,.12);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(255,255,255,.18);
+      color: #F0F4FF;
+      font-size: 13px;
+      font-weight: 600;
+      padding: 9px 20px;
+      border-radius: 999px;
+      white-space: nowrap;
+      cursor: pointer;
+      letter-spacing: .02em;
+    }
+
+    /* ── ZAUFALI NAM SECTION ─────────────────────────────── */
+    .trusted-section {
+      padding: 32px 16px 24px;
+    }
+
+    .section-eyebrow {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+    .section-eyebrow span {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: .14em;
+      color: #00B8D9;
+      text-transform: uppercase;
+    }
+    .eyebrow-line {
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(90deg, rgba(0,184,217,.4), transparent);
+    }
+
+    .section-headline {
+      font-size: 21px;
+      font-weight: 600;
+      color: #F0F4FF;
+      line-height: 1.3;
+      margin-bottom: 24px;
+      letter-spacing: -.01em;
+    }
+
+    /* ── LOGO GRID ──────────────────────────────────────── */
+    .logo-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 28px;
+    }
+
+    .logo-card {
+      background: #ffffff;
+      border-radius: 16px;
+      box-shadow: 0 2px 14px rgba(0,0,0,.2);
+      padding: 14px 18px;
+      height: 68px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .logo-card svg {
+      display: block;
+      height: 30px;
+      width: auto;
+      max-width: 100%;
+    }
+
+    /* ── MICRO STATS ─────────────────────────────────────── */
+    .stats-row {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 24px;
+    }
+
+    .stat-item {
+      flex: 1;
+      background: rgba(255,255,255,.04);
+      border: 1px solid rgba(255,255,255,.07);
+      border-radius: 14px;
+      padding: 14px 10px;
+      text-align: center;
+    }
+
+    .stat-value {
+      font-size: 26px;
+      font-weight: 800;
+      color: #1D6FF2;
+      letter-spacing: -.03em;
+      line-height: 1;
+      margin-bottom: 5px;
+    }
+
+    .stat-label {
+      font-size: 10.5px;
+      color: #8A94A8;
+      line-height: 1.35;
+      font-weight: 500;
+    }
+
+    /* ── BOTTOM CTA ROW ─────────────────────────────────── */
+    .cta-row {
+      margin: 0 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 20px;
+      background: linear-gradient(135deg, rgba(29,111,242,.12), rgba(0,184,217,.08));
+      border: 1px solid rgba(29,111,242,.22);
+      border-radius: 16px;
+    }
+
+    .cta-row-text {
+      font-size: 13px;
+      color: #CBD5E1;
+      font-weight: 500;
+      line-height: 1.4;
+    }
+    .cta-row-text strong {
+      display: block;
+      color: #F0F4FF;
+      font-size: 14px;
+      font-weight: 700;
+      margin-bottom: 2px;
+    }
+
+    .cta-btn {
+      flex-shrink: 0;
+      background: #1D6FF2;
+      color: #fff;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 9px 16px;
+      border-radius: 999px;
+      border: none;
+      cursor: pointer;
+      letter-spacing: .03em;
+      white-space: nowrap;
+    }
+  </style>
+</head>
+<body>
+  <div class="phone-frame">
+
+    <div class="note">MAKIETA B — wariant Grid + Social proof stats</div>
+
+    <!-- FAKE MAP -->
+    <div class="map-section">
+      <div class="cluster cluster-lg c1">44</div>
+      <div class="cluster cluster-md c2">9</div>
+      <div class="cluster cluster-sm c3">3</div>
+      <div class="cluster cluster-sm c4">6</div>
+      <button class="map-btn">Otwórz pełną mapę</button>
+    </div>
+
+    <!-- ZAUFALI NAM -->
+    <section class="trusted-section">
+
+      <div class="section-eyebrow">
+        <span>Zaufali nam</span>
+        <div class="eyebrow-line"></div>
+      </div>
+
+      <h2 class="section-headline">Zaufały nam firmy z całej Polski</h2>
+
+      <!-- 2-COLUMN LOGO GRID -->
+      <div class="logo-grid">
+
+        <!-- JobWerke -->
+        <div class="logo-card">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 40" role="img" aria-label="JobWerke">
+            <rect x="0" y="10" width="6" height="20" rx="3" fill="#1D6FF2"/>
+            <text x="14" y="28" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="20" font-weight="800" fill="#111827">Job</text>
+            <text x="56" y="28" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="20" font-weight="300" fill="#1D6FF2">Werke</text>
+          </svg>
+        </div>
+
+        <!-- Pramer -->
+        <div class="logo-card">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 140 40" role="img" aria-label="Pramer">
+            <circle cx="10" cy="20" r="7" fill="#00B8D9" opacity=".9"/>
+            <text x="24" y="27" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="19" font-weight="700" fill="#111827">pramer</text>
+          </svg>
+        </div>
+
+        <!-- Żabka -->
+        <div class="logo-card">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 140 40" role="img" aria-label="Żabka">
+            <text x="70" y="28" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="21" font-weight="900" fill="#2D8B3E" text-anchor="middle" letter-spacing="-1">Żabka</text>
+          </svg>
+        </div>
+
+        <!-- Nordic HR -->
+        <div class="logo-card">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 40" role="img" aria-label="Nordic HR">
+            <text x="8" y="27" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="17" font-weight="800" fill="#111827">NORDIC</text>
+            <text x="90" y="27" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="17" font-weight="300" fill="#1D6FF2">HR</text>
+            <line x1="8" y1="31" x2="108" y2="31" stroke="#e5e7eb" stroke-width="1"/>
+          </svg>
+        </div>
+
+        <!-- ProWork -->
+        <div class="logo-card">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 150 40" role="img" aria-label="ProWork">
+            <text x="75" y="27" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="19" font-weight="700" fill="#111827" text-anchor="middle">Pro<tspan fill="#00B8D9">Work</tspan></text>
+          </svg>
+        </div>
+
+        <!-- EuroRecruit -->
+        <div class="logo-card">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 190 40" role="img" aria-label="EuroRecruit">
+            <text x="8" y="27" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="17" font-weight="800" fill="#1D6FF2">Euro</text>
+            <text x="62" y="27" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="17" font-weight="400" fill="#111827">Recruit</text>
+          </svg>
+        </div>
+
+      </div><!-- /.logo-grid -->
+
+      <!-- MICRO STATS -->
+      <div class="stats-row">
+        <div class="stat-item">
+          <div class="stat-value">87</div>
+          <div class="stat-label">aktywnych<br>firm</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value">2 400+</div>
+          <div class="stat-label">aplikacji<br>/ mies.</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value">14</div>
+          <div class="stat-label">branż<br>na mapie</div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- BOTTOM CTA -->
+    <div class="cta-row">
+      <div class="cta-row-text">
+        <strong>Rekrutuj z MapJob</strong>
+        Zacznij bezpłatnie już dziś
+      </div>
+      <button class="cta-btn">Dołącz →</button>
+    </div>
+
+  </div><!-- /.phone-frame -->
+</body>
+</html>
