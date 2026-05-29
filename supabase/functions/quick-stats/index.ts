@@ -47,20 +47,24 @@ async function fetchStats() {
          rUJob, rUTen, rUPin,
          rPJob, rPTen, rPPin,
          rU30] = await Promise.all([
-    sb.rpc('admin_get_view_kpis'),
-    sb.rpc('admin_get_visitor_countries'),
-    sb.rpc('admin_get_contact_funnel'),
+    sb.rpc('edge_get_kpis'),
+    sb.rpc('edge_get_visitor_countries'),
+    sb.rpc('edge_get_contact_funnel'),
     sb.from('job_offers').select('id,title,company_name,location,views_count,contact_clicks_count,apply_clicks_count,applications_count').order('views_count',{ascending:false,nullsFirst:false}).limit(200),
     sb.from('tenders').select('id,title,city,poster_name,views_count,contact_clicks_count').order('views_count',{ascending:false,nullsFirst:false}).limit(200),
     sb.from('pins').select('id,name,role,city,is_demo,views_count,contact_clicks_count').eq('is_active',true).order('views_count',{ascending:false,nullsFirst:false}).limit(200),
-    sb.rpc('admin_get_listing_unique_viewers', {p_page_type:'job'}),
-    sb.rpc('admin_get_listing_unique_viewers', {p_page_type:'tender'}),
-    sb.rpc('admin_get_listing_unique_viewers', {p_page_type:'pin'}),
-    sb.rpc('admin_get_listing_period_views',   {p_page_type:'job'}),
-    sb.rpc('admin_get_listing_period_views',   {p_page_type:'tender'}),
-    sb.rpc('admin_get_listing_period_views',   {p_page_type:'pin'}),
+    sb.rpc('edge_get_listing_unique_viewers', {p_page_type:'job'}),
+    sb.rpc('edge_get_listing_unique_viewers', {p_page_type:'tender'}),
+    sb.rpc('edge_get_listing_unique_viewers', {p_page_type:'pin'}),
+    sb.rpc('edge_get_listing_period_views',   {p_page_type:'job'}),
+    sb.rpc('edge_get_listing_period_views',   {p_page_type:'tender'}),
+    sb.rpc('edge_get_listing_period_views',   {p_page_type:'pin'}),
     sb.from('profiles').select('created_at').gte('created_at', ago30),
   ])
+
+  if (rKpi.error)      console.error('edge_get_kpis:', rKpi.error.message)
+  if (rCountries.error) console.error('edge_get_visitor_countries:', rCountries.error.message)
+  if (rFunnel.error)   console.error('edge_get_contact_funnel:', rFunnel.error.message)
 
   const kpi = rKpi.data ?? {}
   const uJob = byId(rUJob.data), uTen = byId(rUTen.data), uPin = byId(rUPin.data)
@@ -81,7 +85,6 @@ async function fetchStats() {
   const pins    = (rPins.data    ?? []).map(mkPin)
   const ogl     = [...jobs, ...tenders].sort((a,b) => b.views - a.views)
 
-  // 30-day chart
   const cm: Record<string,number> = {}
   for (let i=29; i>=0; i--) { const d=new Date(Date.now()-i*86400e3); cm[d.toISOString().slice(0,10)]=0 }
   for (const u of (rU30.data??[])) { const k=u.created_at.slice(0,10); if(k in cm) cm[k]++ }

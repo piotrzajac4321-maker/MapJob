@@ -3,12 +3,13 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#080D18">
+<meta name="theme-color" content="#0f1117">
 <meta name="robots" content="noindex,nofollow">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="MJ Stats">
 <link rel="manifest" href="/stats-widget.webmanifest">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
 <title>Statystyki — MapJob</title>
 <style>
 :root{--bg:#080D18;--surf:#131C2D;--surf2:#1A2438;--border:rgba(255,255,255,.10);--text:#F0F4FF;--text2:#94A3B8;--text3:#5A6678;--blue:#60A5FA;--purple:#A78BFA;--green:#22C55E;--gold:#F59E0B;}
@@ -45,9 +46,7 @@ h1{font-size:18px;font-weight:900;margin-bottom:2px}
 .err{color:#F87171;font-size:12px;margin-top:6px;min-height:16px}
 .summary{background:linear-gradient(135deg,rgba(96,165,250,.08),rgba(96,165,250,.02));border:1px solid rgba(96,165,250,.2);border-radius:12px;padding:12px 14px;margin-bottom:14px;font-size:12px;line-height:1.7;color:var(--text2)}
 .pinrow{font-size:30px;letter-spacing:8px;text-align:center}
-/* PIN screen */
 #pin-screen{padding-top:60px}
-/* modal aktywni użytkownicy */
 .modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:200;display:flex;flex-direction:column;justify-content:flex-end}
 .modal-sheet{background:var(--surf);border-radius:16px 16px 0 0;padding:16px 16px calc(env(safe-area-inset-bottom,0px) + 24px);max-height:80dvh;overflow-y:auto}
 .modal-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
@@ -57,19 +56,26 @@ h1{font-size:18px;font-weight:900;margin-bottom:2px}
 .usr-dot{width:9px;height:9px;border-radius:50%;background:#22C55E;box-shadow:0 0 6px #22C55E;flex-shrink:0;margin-top:4px}
 .usr-name{font-size:13px;font-weight:800}
 .usr-meta{font-size:11px;color:var(--text3);margin-top:2px;overflow-wrap:anywhere}
-/* loading bar */
 #ld{position:fixed;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--blue),transparent);animation:slide 1.2s ease-in-out infinite;display:none;z-index:300}
 #ld.on{display:block}
 @keyframes slide{0%{transform:translateX(-100%)}100%{transform:translateX(100%)}}
+#install-hint{display:none;background:linear-gradient(135deg,rgba(96,165,250,.1),rgba(96,165,250,.03));border:1px solid rgba(96,165,250,.22);border-radius:12px;padding:10px 38px 10px 14px;margin-bottom:12px;font-size:12px;line-height:1.7;color:var(--text2);position:relative}
+#install-hint .x{position:absolute;top:6px;right:10px;background:none;border:none;color:var(--text3);font-size:20px;cursor:pointer;padding:2px;line-height:1}
 </style>
 </head>
 <body>
+
+<div id="install-hint">
+  📲 <b style="color:var(--text)">Dodaj do ekranu głównego</b><br>
+  Safari → <b>Udostępnij ↑</b> → <b>„Dodaj na ekran główny"</b><br>
+  <span style="color:var(--text3)">Działa offline po dodaniu.</span>
+  <button class="x" onclick="dismissInstallHint()">×</button>
+</div>
 
 <div id="ld"></div>
 
 <div id="app"><div class="loader">Ładowanie…</div></div>
 
-<!-- Modal aktywni użytkownicy -->
 <div id="online-modal" style="display:none" class="modal-bg" onclick="if(event.target===this)closeOnlineModal()">
   <div class="modal-sheet">
     <div class="modal-hdr">
@@ -95,6 +101,22 @@ function esc(s){ var d=document.createElement('div'); d.textContent=String(s==nu
 async function api(body){
   var r = await fetch(API, {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(body)})
   return r.json()
+}
+
+/* ══ PWA ══ */
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/stats-sw.js').catch(function(){})
+}
+
+function dismissInstallHint() {
+  localStorage.setItem('mj_no_hint','1')
+  var h=$$('install-hint'); if(h) h.style.display='none'
+}
+function checkInstallHint() {
+  if (localStorage.getItem('mj_no_hint')) return
+  var isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent)
+  var isSA  = window.matchMedia('(display-mode: standalone)').matches || navigator.standalone
+  if (isIOS && !isSA) { var h=$$('install-hint'); if(h) h.style.display='block' }
 }
 
 /* ══ INIT ══ */
@@ -179,7 +201,7 @@ function funnelHtml(rows){
   var left=Math.max(0,prompts-reveals)
   var pR=prompts?Math.round(reveals*100/prompts):0
   var pL=prompts?Math.round(left*100/prompts):0
-  return '📞 <b>Lejek kontaktu</b> <span style="color:var(--text3)">(prośba „wspomń o MapJob")</span><br>'
+  return '📞 <b>Lejek kontaktu</b> <span style="color:var(--text3)">(prośba „wspomij o MapJob")</span><br>'
     +'👀 Zobaczyło notatkę: <b>'+prompts+'</b><br>'
     +'✅ Odsłoniło numer: <b style="color:var(--green)">'+reveals+'</b> ('+pR+'%)<br>'
     +'🚪 Odeszło na notatce: <b style="color:#F87171">'+left+'</b> ('+pL+'%)'
@@ -216,10 +238,8 @@ function renderDashboard(){
     +  kpiOnlineCard(k.online)
     +  kpiCard('🧑 Unikalni (24h)',  k.visitors_real_24h, 'var(--blue)')
     +  kpiCard('🧑 Unikalni (7 dni)',k.visitors_real_7d,  'var(--blue)')
-    +  kpiCard('🏁 Sesje (24h)',     k.visits_real_24h,   'var(--purple)')
-    +'</div>'
-    +'<div class="kpis" style="grid-template-columns:1fr;margin-top:-8px">'
-    +  kpiCard('🏁 Sesje (7 dni)',   k.visits_real_7d,    'var(--purple)')
+    +  kpiCard('📊 Sesje (24h)',     k.visits_real_24h,   'var(--purple)')
+    +  kpiCard('📊 Sesje (7 dni)',   k.visits_real_7d,    'var(--purple)')
     +'</div>'
     +'<div class="summary" id="gen-sum">'+genSumHtml(k)+'</div>'
     +'<div class="summary" id="countries">'+countriesHtml(s.countries)+'</div>'
@@ -246,6 +266,7 @@ function renderDashboard(){
   $$('q').addEventListener('input', applyFilter)
 
   renderLists()
+  checkInstallHint()
 
   if (!window._statTimer) {
     window._statTimer = setInterval(doRefreshSilent, 30000)
@@ -323,12 +344,20 @@ async function doRefresh(){
 async function doRefreshSilent(){
   try {
     var d = await api({action:'get_stats', token:_token})
-    if (d.ok && d.stats){
-      var k=d.stats.kpi||{}
-      var vs=document.querySelectorAll('.kpi .v')
-      if (vs.length>=4){ vs[0].textContent=k.online; vs[1].textContent=k.visitors_real_24h; vs[2].textContent=k.visitors_real_7d; vs[3].textContent=k.visits_real_24h }
-      var gs=$$('gen-sum'); if(gs) gs.innerHTML=genSumHtml(k)
+    if (!d.ok || !d.stats) return
+    _data = d.stats
+    var k = d.stats.kpi || {}
+    var vs = document.querySelectorAll('.kpi .v')
+    if (vs.length >= 5) {
+      vs[0].textContent = k.online          != null ? k.online          : '—'
+      vs[1].textContent = k.visitors_real_24h != null ? k.visitors_real_24h : '—'
+      vs[2].textContent = k.visitors_real_7d  != null ? k.visitors_real_7d  : '—'
+      vs[3].textContent = k.visits_real_24h   != null ? k.visits_real_24h   : '—'
+      vs[4].textContent = k.visits_real_7d    != null ? k.visits_real_7d    : '—'
     }
+    var gs = $$('gen-sum');   if (gs) gs.innerHTML = genSumHtml(k)
+    var co = $$('countries'); if (co) co.innerHTML = countriesHtml(d.stats.countries)
+    var fu = $$('funnel');    if (fu) fu.innerHTML = funnelHtml(d.stats.funnel)
   } catch(e){}
 }
 
