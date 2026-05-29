@@ -3,1003 +3,931 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Blog MapJob – Porady o pracy, rekrutacji i dojazdach</title>
-  <meta name="description" content="Praktyczne porady dla szukających pracy i rekruterów. Dowiedz się jak znaleźć pracę blisko domu, negocjować wynagrodzenie i optymalizować dojazdy." />
+  <title>Blog – MapJob</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Lora:ital,wght@0,600;1,400&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <style>
-    /* ─── Reset & Base ─────────────────────────────────────────────── */
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    /* ── Design tokens (1:1 z MapJob) ───────────────────────────────── */
     :root {
-      --blue:       #1B6CF2;
-      --blue-dark:  #1455C4;
-      --blue-light: #EBF2FF;
-      --green:      #12B76A;
-      --orange:     #F97316;
-      --gray-50:    #F9FAFB;
-      --gray-100:   #F3F4F6;
-      --gray-200:   #E5E7EB;
-      --gray-400:   #9CA3AF;
-      --gray-500:   #6B7280;
-      --gray-700:   #374151;
-      --gray-900:   #111827;
-      --radius:     12px;
-      --shadow-sm:  0 1px 3px rgba(0,0,0,.08), 0 1px 2px rgba(0,0,0,.06);
-      --shadow-md:  0 4px 16px rgba(0,0,0,.10);
-      --shadow-lg:  0 12px 40px rgba(0,0,0,.12);
+      --bg:         #0B0D10;
+      --bg2:        #101318;
+      --surf:       #15181F;
+      --surf2:      #1C2029;
+      --surf3:      #252A35;
+      --border:     rgba(255,255,255,.06);
+      --border2:    rgba(255,255,255,.04);
+      --border3:    rgba(255,255,255,.09);
+      --text:       #F5F7FA;
+      --text2:      #A1A9B8;
+      --text3:      #6B7280;
+      --blue:       #3B82F6;
+      --blue2:      #60A5FA;
+      --blue-dim:   rgba(59,130,246,.10);
+      --blue-mid:   rgba(59,130,246,.22);
+      --green:      #10B981;
+      --green-dim:  rgba(16,185,129,.10);
+      --gold:       #D97706;
+      --gold-dim:   rgba(217,119,6,.10);
+      --red:        #DC2626;
+      --red-dim:    rgba(220,38,38,.10);
+      --purple:     #7C3AED;
+      --purple-dim: rgba(124,58,237,.10);
+      --ff: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      --r: 12px;
+      --nav-h: 56px;
     }
+
+    /* ── Reset ───────────────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html { scroll-behavior: smooth; }
     body {
-      font-family: 'Inter', sans-serif;
-      color: var(--gray-900);
-      background: #fff;
+      font-family: var(--ff);
+      background: var(--bg);
+      color: var(--text);
+      -webkit-font-smoothing: antialiased;
       line-height: 1.6;
-      font-size: 16px;
+      font-size: 15px;
     }
     a { color: inherit; text-decoration: none; }
-    img { display: block; max-width: 100%; }
+    button { font-family: var(--ff); cursor: pointer; border: none; background: none; }
 
-    /* ─── Utility ───────────────────────────────────────────────────── */
-    .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
-    .badge {
-      display: inline-flex; align-items: center; gap: 5px;
-      font-size: 11px; font-weight: 600; letter-spacing: .05em;
-      text-transform: uppercase; padding: 4px 10px; border-radius: 100px;
+    /* ── Reading progress ────────────────────────────────────────────── */
+    #rbar {
+      position: fixed; top: 0; left: 0; height: 2px;
+      background: var(--blue); width: 0%; z-index: 9999;
+      display: none;
     }
-    .badge-blue   { background: var(--blue-light); color: var(--blue); }
-    .badge-green  { background: #ECFDF5; color: #059669; }
-    .badge-orange { background: #FFF7ED; color: var(--orange); }
-    .badge-purple { background: #F5F3FF; color: #7C3AED; }
+    #rbar.on { display: block; }
 
-    /* ─── Top Banner ────────────────────────────────────────────────── */
-    .top-banner {
-      background: var(--blue);
-      color: #fff;
-      text-align: center;
-      font-size: 13px;
-      padding: 9px 24px;
-      font-weight: 500;
-    }
-    .top-banner a { color: #BFD8FF; font-weight: 600; text-decoration: underline; }
-
-    /* ─── Navbar ────────────────────────────────────────────────────── */
-    .navbar {
-      position: sticky; top: 0; z-index: 100;
-      background: rgba(255,255,255,.96);
-      backdrop-filter: blur(8px);
-      border-bottom: 1px solid var(--gray-200);
-    }
-    .navbar-inner {
-      display: flex; align-items: center; gap: 32px;
-      height: 64px;
+    /* ── Topbar ──────────────────────────────────────────────────────── */
+    #topbar {
+      position: sticky; top: 0; z-index: 400;
+      height: var(--nav-h);
+      background: var(--bg2);
+      border-bottom: 1px solid var(--border);
+      backdrop-filter: blur(12px);
+      display: flex; align-items: center;
+      padding: 0 20px; gap: 0;
     }
     .logo {
+      display: flex; align-items: center; gap: 2px;
+      font-size: 18px; font-weight: 700; letter-spacing: -.4px;
+      color: var(--text); cursor: pointer;
+    }
+    .logo-dot { color: var(--blue2); }
+    .topbar-nav {
+      display: flex; align-items: center; gap: 2px;
+      margin-left: 24px;
+    }
+    .tnav-link {
+      padding: 6px 12px; border-radius: 8px;
+      font-size: 13px; font-weight: 500; color: var(--text2);
+      transition: color .15s, background .15s;
+    }
+    .tnav-link:hover { color: var(--text); background: rgba(255,255,255,.04); }
+    .tnav-link.on { color: var(--blue2); background: var(--blue-dim); font-weight: 600; }
+    .topbar-spacer { flex: 1; }
+    .topbar-search {
       display: flex; align-items: center; gap: 8px;
-      font-weight: 800; font-size: 20px; color: var(--blue);
-      flex-shrink: 0;
+      background: var(--surf); border: 1px solid var(--border3);
+      border-radius: 10px; padding: 8px 14px;
+      font-size: 13px; color: var(--text3); cursor: pointer;
+      width: 200px; transition: border-color .15s;
     }
-    .logo-pin {
-      width: 28px; height: 28px; background: var(--blue);
-      border-radius: 50% 50% 50% 0; transform: rotate(-45deg);
-      display: flex; align-items: center; justify-content: center;
+    .topbar-search:hover { border-color: rgba(255,255,255,.15); color: var(--text2); }
+    .topbar-search svg { flex-shrink: 0; }
+    .btn-p {
+      background: var(--blue);
+      color: #fff; font-weight: 600; font-size: 13px;
+      padding: 9px 18px; border-radius: 10px;
+      margin-left: 10px;
+      transition: background .15s;
     }
-    .logo-pin::after {
-      content: ''; width: 10px; height: 10px;
-      background: #fff; border-radius: 50%;
-    }
-    .logo span { transform: none; }
-    nav { display: flex; gap: 4px; margin-left: 8px; }
-    nav a {
-      padding: 6px 14px; border-radius: 8px; font-size: 14px;
-      font-weight: 500; color: var(--gray-700); transition: all .15s;
-    }
-    nav a:hover { background: var(--gray-100); color: var(--gray-900); }
-    nav a.active { background: var(--blue-light); color: var(--blue); }
-    .nav-spacer { flex: 1; }
-    .nav-search {
-      display: flex; align-items: center; gap: 8px;
-      background: var(--gray-100); border-radius: 10px;
-      padding: 8px 14px; font-size: 14px; color: var(--gray-500);
-      width: 240px; cursor: pointer; transition: all .15s;
-      border: 1px solid transparent;
-    }
-    .nav-search:hover { background: #fff; border-color: var(--blue); color: var(--gray-700); }
-    .nav-cta {
-      background: var(--blue); color: #fff;
-      padding: 8px 20px; border-radius: 10px;
-      font-size: 14px; font-weight: 600; transition: all .15s;
-      white-space: nowrap;
-    }
-    .nav-cta:hover { background: var(--blue-dark); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(27,108,242,.35); }
+    .btn-p:hover { background: #2563EB; }
+    .btn-p:active { background: #1D4ED8; transform: scale(.98); }
 
-    /* ─── Hero / Featured Article ───────────────────────────────────── */
-    .hero {
-      background: linear-gradient(135deg, #EBF2FF 0%, #F5F0FF 100%);
-      padding: 64px 0 56px;
+    /* ── Beta banner ─────────────────────────────────────────────────── */
+    #beta-banner {
+      background: var(--bg2); border-bottom: 1px solid var(--border2);
+      padding: 8px 20px; font-size: 11px; color: var(--text2);
+      display: flex; align-items: center; justify-content: center; gap: 12px;
     }
-    .hero-inner {
-      display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: center;
+    .beta-tag {
+      background: var(--blue-dim); border: 1px solid var(--blue-mid);
+      color: var(--blue2); font-size: 10px; font-weight: 700;
+      padding: 2px 7px; border-radius: 6px; letter-spacing: .04em;
     }
-    .hero-label { margin-bottom: 16px; }
-    .hero h1 {
-      font-family: 'Lora', serif; font-size: 42px; font-weight: 600;
-      line-height: 1.22; color: var(--gray-900); margin-bottom: 20px;
-    }
-    .hero h1 em { font-style: italic; color: var(--blue); }
-    .hero-meta {
-      display: flex; align-items: center; gap: 16px;
-      font-size: 13px; color: var(--gray-500); margin-bottom: 24px;
-    }
-    .hero-meta-sep { width: 3px; height: 3px; background: var(--gray-400); border-radius: 50%; }
-    .hero-excerpt { font-size: 16px; line-height: 1.7; color: var(--gray-700); margin-bottom: 28px; }
-    .hero-cta {
-      display: inline-flex; align-items: center; gap: 8px;
-      background: var(--blue); color: #fff;
-      padding: 13px 26px; border-radius: 12px; font-weight: 600; font-size: 15px;
-      transition: all .2s;
-    }
-    .hero-cta:hover { background: var(--blue-dark); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(27,108,242,.35); }
-    .hero-image-wrap {
-      border-radius: var(--radius); overflow: hidden;
-      box-shadow: var(--shadow-lg);
-    }
-    .hero-image {
-      width: 100%; aspect-ratio: 4/3;
-      background: linear-gradient(135deg, #1B6CF2 0%, #7C3AED 100%);
-      position: relative; display: flex; align-items: center; justify-content: center;
-    }
-    .hero-image-map {
-      width: 85%; height: 85%;
-      background: rgba(255,255,255,.12);
-      border-radius: 10px; position: relative; overflow: hidden;
-    }
-    .map-grid {
-      position: absolute; inset: 0;
-      background-image: linear-gradient(rgba(255,255,255,.08) 1px, transparent 1px),
-                        linear-gradient(90deg, rgba(255,255,255,.08) 1px, transparent 1px);
-      background-size: 32px 32px;
-    }
-    .map-pin { position: absolute; }
-    .map-pin-dot {
-      width: 14px; height: 14px; border-radius: 50%;
-      border: 3px solid #fff; background: #F97316;
-      box-shadow: 0 0 0 4px rgba(249,115,22,.3);
-    }
-    .map-pin-dot.alt { background: var(--green); box-shadow: 0 0 0 4px rgba(18,183,106,.3); }
-    .map-pin-dot.alt2 { background: #8B5CF6; box-shadow: 0 0 0 4px rgba(139,92,246,.3); }
-    .map-label {
-      position: absolute; left: 18px; top: -2px;
-      background: rgba(255,255,255,.95); color: var(--gray-900);
-      font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 6px;
-      white-space: nowrap; box-shadow: var(--shadow-sm);
-    }
-    .commute-card {
-      position: absolute; bottom: -16px; right: -16px;
-      background: #fff; border-radius: 12px; padding: 14px 18px;
-      box-shadow: var(--shadow-lg); min-width: 180px;
-    }
-    .commute-card-title { font-size: 11px; font-weight: 600; color: var(--gray-500); text-transform: uppercase; letter-spacing: .05em; margin-bottom: 6px; }
-    .commute-modes { display: flex; gap: 8px; }
-    .commute-mode { display: flex; flex-direction: column; align-items: center; gap: 2px; }
-    .commute-mode-icon { font-size: 18px; }
-    .commute-mode-time { font-size: 11px; font-weight: 700; color: var(--gray-900); }
-    .commute-mode-label { font-size: 9px; color: var(--gray-400); font-weight: 500; }
+    #beta-banner a { color: var(--blue2); }
 
-    /* ─── Category Tabs ─────────────────────────────────────────────── */
-    .category-section { padding: 48px 0 0; }
-    .section-header {
+    /* ── Layout ──────────────────────────────────────────────────────── */
+    .container { max-width: 1160px; margin: 0 auto; padding: 0 20px; }
+
+    /* ── Category pills ──────────────────────────────────────────────── */
+    .cat-bar {
+      display: flex; gap: 6px; flex-wrap: wrap;
+      padding: 20px 0 4px;
+    }
+    .chip {
+      padding: 7px 14px; border-radius: 8px; font-size: 12px; font-weight: 600;
+      background: var(--surf); border: 1px solid var(--border3);
+      color: var(--text2); cursor: pointer; transition: all .15s;
+    }
+    .chip:hover { border-color: rgba(255,255,255,.15); color: var(--text); }
+    .chip.on { background: var(--blue); border-color: var(--blue); color: #fff; }
+
+    /* ── Section heading ─────────────────────────────────────────────── */
+    .sec-head {
       display: flex; align-items: center; justify-content: space-between;
+      margin: 32px 0 16px;
+    }
+    .sec-title { font-size: 16px; font-weight: 700; letter-spacing: -.02em; }
+    .sec-link { font-size: 12px; color: var(--text2); font-weight: 500; transition: color .15s; }
+    .sec-link:hover { color: var(--blue2); }
+
+    /* ── Badge ───────────────────────────────────────────────────────── */
+    .badge {
+      display: inline-flex; align-items: center; gap: 4px;
+      font-size: 10px; font-weight: 700; letter-spacing: .05em;
+      text-transform: uppercase; padding: 3px 8px; border-radius: 6px;
+    }
+    .badge-blue   { background: var(--blue-dim);   color: var(--blue2);  border: 1px solid var(--blue-mid); }
+    .badge-green  { background: var(--green-dim);  color: var(--green);  border: 1px solid rgba(16,185,129,.2); }
+    .badge-gold   { background: var(--gold-dim);   color: var(--gold);   border: 1px solid rgba(217,119,6,.2); }
+    .badge-purple { background: var(--purple-dim); color: var(--purple); border: 1px solid rgba(124,58,237,.2); }
+    .badge-red    { background: var(--red-dim);    color: var(--red);    border: 1px solid rgba(220,38,38,.2); }
+
+    /* ── Hero featured ───────────────────────────────────────────────── */
+    .hero-card {
+      display: grid; grid-template-columns: 1fr 400px; gap: 0;
+      background: var(--surf); border: 1px solid var(--border3);
+      border-radius: var(--r); overflow: hidden; cursor: pointer;
+      margin-top: 20px;
+      transition: border-color .15s;
+    }
+    .hero-card:hover { border-color: rgba(255,255,255,.15); }
+    .hero-card:hover .hero-title { color: var(--blue2); }
+    .hero-body { padding: 32px 36px; display: flex; flex-direction: column; justify-content: center; }
+    .hero-eyebrow {
+      font-size: 10px; font-weight: 700; text-transform: uppercase;
+      letter-spacing: .1em; color: var(--text3); margin-bottom: 14px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .hero-title {
+      font-size: 26px; font-weight: 700; line-height: 1.28;
+      letter-spacing: -.03em; color: var(--text); margin-bottom: 14px;
+      transition: color .15s;
+    }
+    .hero-excerpt {
+      font-size: 14px; color: var(--text2); line-height: 1.65;
       margin-bottom: 24px;
     }
-    .section-title { font-size: 22px; font-weight: 700; color: var(--gray-900); }
-    .see-all { font-size: 14px; color: var(--blue); font-weight: 600; display: flex; align-items: center; gap: 4px; }
-    .category-tabs {
-      display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 40px;
+    .hero-meta {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 12px; color: var(--text3);
     }
-    .tab {
-      padding: 9px 18px; border-radius: 100px; font-size: 14px; font-weight: 500;
-      border: 1.5px solid var(--gray-200); color: var(--gray-700);
-      cursor: pointer; transition: all .15s;
-    }
-    .tab:hover { border-color: var(--blue); color: var(--blue); background: var(--blue-light); }
-    .tab.active { background: var(--blue); color: #fff; border-color: var(--blue); }
-
-    /* ─── Article Cards Grid ────────────────────────────────────────── */
-    .articles-grid {
-      display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px;
-    }
-    .article-card {
-      border-radius: var(--radius); overflow: hidden;
-      border: 1px solid var(--gray-200); background: #fff;
-      transition: all .2s; cursor: pointer;
-    }
-    .article-card:hover {
-      transform: translateY(-4px); box-shadow: var(--shadow-lg);
-      border-color: transparent;
-    }
-    .card-thumb {
-      aspect-ratio: 16/9;
-      position: relative; overflow: hidden;
-    }
-    .card-thumb-bg {
-      width: 100%; height: 100%;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 48px;
-    }
-    .thumb-blue   { background: linear-gradient(135deg, #EBF2FF, #DBEAFE); }
-    .thumb-green  { background: linear-gradient(135deg, #ECFDF5, #D1FAE5); }
-    .thumb-purple { background: linear-gradient(135deg, #F5F3FF, #EDE9FE); }
-    .thumb-orange { background: linear-gradient(135deg, #FFF7ED, #FFEDD5); }
-    .thumb-teal   { background: linear-gradient(135deg, #F0FDFA, #CCFBF1); }
-    .thumb-pink   { background: linear-gradient(135deg, #FDF2F8, #FCE7F3); }
-    .card-body { padding: 20px 22px 22px; }
-    .card-category { margin-bottom: 10px; }
-    .card-title {
-      font-size: 17px; font-weight: 700; line-height: 1.35;
-      color: var(--gray-900); margin-bottom: 10px;
-    }
-    .article-card:hover .card-title { color: var(--blue); }
-    .card-excerpt {
-      font-size: 14px; color: var(--gray-500); line-height: 1.6;
-      margin-bottom: 16px; display: -webkit-box;
-      -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
-    }
-    .card-meta {
-      display: flex; align-items: center; gap: 10px;
-      font-size: 12px; color: var(--gray-400);
-    }
-    .card-author-avatar {
+    .avatar {
       width: 24px; height: 24px; border-radius: 50%;
-      background: linear-gradient(135deg, var(--blue), #7C3AED);
+      background: linear-gradient(135deg, var(--blue), var(--purple));
       display: flex; align-items: center; justify-content: center;
-      font-size: 10px; font-weight: 700; color: #fff; flex-shrink: 0;
+      font-size: 9px; font-weight: 800; color: #fff; flex-shrink: 0;
     }
-    .card-meta-sep { width: 3px; height: 3px; background: var(--gray-300); border-radius: 50%; }
+    .avatar.green  { background: linear-gradient(135deg, var(--green), #059669); }
+    .avatar.gold   { background: linear-gradient(135deg, var(--gold), #B45309); }
+    .avatar.purple { background: linear-gradient(135deg, var(--purple), #6D28D9); }
+    .avatar.red    { background: linear-gradient(135deg, #F87171, var(--red)); }
+    .avatar.teal   { background: linear-gradient(135deg, #14B8A6, #0891B2); }
+    .dot { width: 3px; height: 3px; border-radius: 50%; background: var(--text3); }
+    .hero-image {
+      background: linear-gradient(135deg, #101828 0%, #1a2340 100%);
+      display: flex; align-items: center; justify-content: center;
+      min-height: 260px; position: relative; overflow: hidden;
+    }
+    .map-wrap {
+      width: 85%; height: 75%;
+      border: 1px solid var(--border3); border-radius: 10px;
+      background: rgba(255,255,255,.02); position: relative; overflow: hidden;
+    }
+    .map-grid-lines {
+      position: absolute; inset: 0;
+      background-image:
+        linear-gradient(rgba(59,130,246,.06) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(59,130,246,.06) 1px, transparent 1px);
+      background-size: 28px 28px;
+    }
+    .mpin { position: absolute; }
+    .mpin-dot {
+      width: 12px; height: 12px; border-radius: 50%;
+      border: 2px solid rgba(255,255,255,.8);
+    }
+    .mpin-dot.b { background: var(--blue); box-shadow: 0 0 8px rgba(59,130,246,.5); }
+    .mpin-dot.g { background: var(--green); box-shadow: 0 0 8px rgba(16,185,129,.5); }
+    .mpin-dot.p { background: var(--purple); box-shadow: 0 0 8px rgba(124,58,237,.5); }
+    .mpin-label {
+      position: absolute; left: 16px; top: -3px;
+      background: var(--surf); border: 1px solid var(--border3);
+      color: var(--text2); font-size: 10px; font-weight: 600;
+      padding: 2px 7px; border-radius: 5px; white-space: nowrap;
+    }
+    .commute-chip {
+      position: absolute; bottom: 16px; right: 16px;
+      background: var(--surf); border: 1px solid var(--border3);
+      border-radius: 10px; padding: 10px 14px;
+      display: flex; gap: 14px;
+    }
+    .cm { display: flex; flex-direction: column; align-items: center; gap: 1px; }
+    .cm-icon { font-size: 16px; }
+    .cm-time { font-size: 11px; font-weight: 700; color: var(--text); }
+    .cm-mode { font-size: 9px; color: var(--text3); }
+    .read-btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: var(--blue); color: #fff;
+      font-size: 13px; font-weight: 600;
+      padding: 10px 20px; border-radius: 10px;
+      align-self: flex-start;
+      transition: background .15s;
+    }
+    .read-btn:hover { background: #2563EB; }
 
-    /* ─── Featured Big Card ─────────────────────────────────────────── */
-    .featured-grid {
-      display: grid; grid-template-columns: 3fr 2fr; gap: 28px;
-    }
-    .card-big .card-thumb { aspect-ratio: 16/8; }
-    .card-big .card-title { font-size: 22px; font-family: 'Lora', serif; }
-    .card-big .card-excerpt { -webkit-line-clamp: 3; font-size: 15px; }
+    /* ── Article cards grid ──────────────────────────────────────────── */
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+    .grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
 
-    /* ─── Stats Bar ─────────────────────────────────────────────────── */
-    .stats-bar {
-      background: var(--gray-900); color: #fff;
-      padding: 48px 0; margin: 64px 0;
+    .acard {
+      background: var(--surf); border: 1px solid var(--border3);
+      border-radius: var(--r); overflow: hidden; cursor: pointer;
+      transition: border-color .15s;
     }
-    .stats-inner {
+    .acard:hover { border-color: rgba(255,255,255,.14); }
+    .acard:hover .acard-title { color: var(--blue2); }
+
+    .acard-thumb {
+      aspect-ratio: 16/9; display: flex; align-items: center;
+      justify-content: center; font-size: 40px;
+    }
+    .t-blue   { background: linear-gradient(135deg, #0c1a3a, #132147); }
+    .t-green  { background: linear-gradient(135deg, #081c15, #0e2c1f); }
+    .t-purple { background: linear-gradient(135deg, #150e28, #1e1238); }
+    .t-gold   { background: linear-gradient(135deg, #1c1305, #271b07); }
+    .t-teal   { background: linear-gradient(135deg, #081c1f, #0c2830); }
+    .t-red    { background: linear-gradient(135deg, #1c0808, #270d0d); }
+
+    .acard-body { padding: 16px 18px; }
+    .acard-cat { margin-bottom: 8px; }
+    .acard-title {
+      font-size: 14px; font-weight: 700; line-height: 1.38;
+      letter-spacing: -.01em; color: var(--text); margin-bottom: 8px;
+      transition: color .15s;
+    }
+    .acard-excerpt {
+      font-size: 12px; color: var(--text2); line-height: 1.6;
+      margin-bottom: 12px;
+      display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+    }
+    .acard-meta {
+      display: flex; align-items: center; gap: 6px;
+      font-size: 11px; color: var(--text3);
+    }
+
+    /* ── Big card (featured grid) ────────────────────────────────────── */
+    .acard-big .acard-thumb { aspect-ratio: 16/8; font-size: 64px; }
+    .acard-big .acard-title { font-size: 17px; }
+    .acard-big .acard-excerpt { -webkit-line-clamp: 3; }
+
+    /* ── Stats strip ─────────────────────────────────────────────────── */
+    .stats-strip {
+      background: var(--surf); border: 1px solid var(--border3);
+      border-radius: var(--r); margin: 32px 0;
       display: grid; grid-template-columns: repeat(4, 1fr);
-      gap: 0; text-align: center;
     }
-    .stat-item { padding: 0 24px; }
-    .stat-item + .stat-item { border-left: 1px solid rgba(255,255,255,.12); }
-    .stat-value { font-size: 42px; font-weight: 800; color: #fff; line-height: 1; margin-bottom: 8px; }
-    .stat-value span { color: var(--blue); }
-    .stat-label { font-size: 14px; color: rgba(255,255,255,.6); font-weight: 500; }
-    .stat-sub { font-size: 12px; color: rgba(255,255,255,.35); margin-top: 4px; }
+    .stat-cell {
+      padding: 24px 20px; text-align: center; position: relative;
+    }
+    .stat-cell + .stat-cell::before {
+      content: ''; position: absolute; left: 0; top: 20%; bottom: 20%;
+      width: 1px; background: var(--border3);
+    }
+    .stat-val {
+      font-size: 30px; font-weight: 800; letter-spacing: -.04em;
+      color: var(--text); margin-bottom: 4px; line-height: 1;
+    }
+    .stat-val .accent { color: var(--blue2); }
+    .stat-lbl { font-size: 12px; color: var(--text2); font-weight: 500; }
+    .stat-sub { font-size: 10px; color: var(--text3); margin-top: 2px; }
 
-    /* ─── Topics Sidebar Layout ─────────────────────────────────────── */
-    .main-layout {
-      display: grid; grid-template-columns: 1fr 320px; gap: 56px;
-      padding: 64px 0;
+    /* ── Main + Sidebar layout ───────────────────────────────────────── */
+    .main-wrap {
+      display: grid; grid-template-columns: 1fr 280px; gap: 28px;
+      padding-bottom: 64px;
     }
 
-    /* ─── Sidebar ───────────────────────────────────────────────────── */
-    .sidebar { display: flex; flex-direction: column; gap: 32px; }
-    .sidebar-card {
-      background: var(--gray-50); border-radius: var(--radius);
-      padding: 24px; border: 1px solid var(--gray-200);
-    }
-    .sidebar-title {
-      font-size: 14px; font-weight: 700; text-transform: uppercase;
-      letter-spacing: .06em; color: var(--gray-500); margin-bottom: 16px;
-    }
-    .popular-list { display: flex; flex-direction: column; gap: 0; }
-    .popular-item {
-      display: flex; align-items: flex-start; gap: 12px;
-      padding: 12px 0; border-bottom: 1px solid var(--gray-200); cursor: pointer;
-    }
-    .popular-item:last-child { border-bottom: none; padding-bottom: 0; }
-    .popular-num {
-      font-size: 20px; font-weight: 800; color: var(--gray-200);
-      line-height: 1; flex-shrink: 0; width: 28px;
-    }
-    .popular-item:hover .popular-num { color: var(--blue); }
-    .popular-item-title {
-      font-size: 14px; font-weight: 600; line-height: 1.4; color: var(--gray-700);
-    }
-    .popular-item:hover .popular-item-title { color: var(--blue); }
-    .popular-item-views { font-size: 11px; color: var(--gray-400); margin-top: 3px; }
+    /* ── Sidebar ─────────────────────────────────────────────────────── */
+    .sidebar { display: flex; flex-direction: column; gap: 16px; }
 
-    .tag-cloud { display: flex; flex-wrap: wrap; gap: 8px; }
+    .scard {
+      background: var(--surf); border: 1px solid var(--border3);
+      border-radius: var(--r); padding: 18px;
+    }
+    .scard-title {
+      font-size: 10px; font-weight: 700; text-transform: uppercase;
+      letter-spacing: .08em; color: var(--text3); margin-bottom: 14px;
+    }
+
+    /* Newsletter */
+    .nl-card {
+      background: linear-gradient(160deg, #0e1a35 0%, #131c32 100%);
+      border: 1px solid rgba(59,130,246,.2);
+      border-radius: var(--r); padding: 20px;
+    }
+    .nl-card .scard-title { color: rgba(96,165,250,.6); }
+    .nl-title { font-size: 15px; font-weight: 700; color: var(--text); margin-bottom: 6px; letter-spacing: -.02em; }
+    .nl-sub { font-size: 12px; color: var(--text2); margin-bottom: 16px; line-height: 1.55; }
+    .nl-input {
+      width: 100%; background: rgba(255,255,255,.05);
+      border: 1px solid var(--border3); border-radius: 8px;
+      padding: 9px 12px; font-size: 13px; color: var(--text);
+      margin-bottom: 8px; outline: none; font-family: var(--ff);
+      transition: border-color .15s;
+    }
+    .nl-input::placeholder { color: var(--text3); }
+    .nl-input:focus { border-color: var(--blue); box-shadow: 0 0 0 3px var(--blue-dim); }
+    .nl-btn {
+      width: 100%; background: var(--blue); color: #fff;
+      font-size: 13px; font-weight: 600; padding: 9px;
+      border-radius: 8px; transition: background .15s;
+    }
+    .nl-btn:hover { background: #2563EB; }
+    .nl-note { font-size: 10px; color: var(--text3); text-align: center; margin-top: 8px; }
+
+    /* Popular list */
+    .pop-list { display: flex; flex-direction: column; }
+    .pop-item {
+      display: flex; align-items: flex-start; gap: 10px;
+      padding: 10px 0; border-bottom: 1px solid var(--border2);
+      cursor: pointer;
+    }
+    .pop-item:last-child { border-bottom: none; padding-bottom: 0; }
+    .pop-num { font-size: 18px; font-weight: 800; color: var(--border3); line-height: 1; width: 24px; flex-shrink: 0; }
+    .pop-item:hover .pop-num { color: var(--blue2); }
+    .pop-item-text { }
+    .pop-item-title { font-size: 12px; font-weight: 600; color: var(--text2); line-height: 1.4; }
+    .pop-item:hover .pop-item-title { color: var(--text); }
+    .pop-item-views { font-size: 10px; color: var(--text3); margin-top: 2px; }
+
+    /* Tags */
+    .tag-cloud { display: flex; flex-wrap: wrap; gap: 6px; }
     .tag {
-      padding: 5px 12px; border-radius: 100px; font-size: 12px; font-weight: 500;
-      background: #fff; border: 1.5px solid var(--gray-200); color: var(--gray-600);
-      cursor: pointer; transition: all .15s;
+      padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 500;
+      background: var(--surf2); border: 1px solid var(--border3);
+      color: var(--text2); cursor: pointer; transition: all .15s;
     }
-    .tag:hover { border-color: var(--blue); color: var(--blue); background: var(--blue-light); }
+    .tag:hover { border-color: rgba(255,255,255,.15); color: var(--text); }
 
-    .newsletter-card {
-      background: linear-gradient(135deg, var(--blue) 0%, #7C3AED 100%);
-      color: #fff; border-radius: var(--radius); padding: 28px 24px;
+    /* CTA widget */
+    .cta-widget {
+      background: linear-gradient(160deg, #0e1a35 0%, #131c32 100%);
+      border: 1px solid rgba(59,130,246,.2);
+      border-radius: var(--r); padding: 18px;
     }
-    .newsletter-card .sidebar-title { color: rgba(255,255,255,.7); }
-    .newsletter-title { font-size: 18px; font-weight: 700; margin-bottom: 8px; }
-    .newsletter-sub { font-size: 13px; color: rgba(255,255,255,.75); margin-bottom: 20px; line-height: 1.5; }
-    .newsletter-input {
-      width: 100%; padding: 11px 14px; border-radius: 8px;
-      border: none; font-size: 14px; margin-bottom: 10px;
-      outline: none; font-family: 'Inter', sans-serif;
+    .cta-widget-title { font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px; }
+    .cta-widget-sub { font-size: 12px; color: var(--text2); line-height: 1.5; margin-bottom: 14px; }
+    .cta-widget-btn {
+      display: block; width: 100%; text-align: center;
+      background: var(--blue); color: #fff; font-size: 12px; font-weight: 600;
+      padding: 9px; border-radius: 8px; transition: background .15s;
     }
-    .newsletter-btn {
-      width: 100%; padding: 11px; border-radius: 8px; border: none;
-      background: rgba(255,255,255,.2); color: #fff; font-size: 14px;
-      font-weight: 600; cursor: pointer; transition: all .15s;
-      font-family: 'Inter', sans-serif;
-    }
-    .newsletter-btn:hover { background: rgba(255,255,255,.3); }
-    .newsletter-note { font-size: 11px; color: rgba(255,255,255,.5); margin-top: 8px; text-align: center; }
+    .cta-widget-btn:hover { background: #2563EB; }
 
-    /* ─── Article Page Mock ─────────────────────────────────────────── */
-    .article-page { display: none; }
-    .article-page.visible { display: block; }
-    .blog-listing.hidden { display: none; }
-
-    .article-breadcrumb {
-      padding: 20px 0; font-size: 13px; color: var(--gray-400);
-      display: flex; align-items: center; gap: 6px; border-bottom: 1px solid var(--gray-100);
-    }
-    .article-breadcrumb a { color: var(--gray-400); }
-    .article-breadcrumb a:hover { color: var(--blue); }
-    .article-breadcrumb span { color: var(--gray-900); font-weight: 500; }
-
-    .article-header { padding: 48px 0 0; text-align: center; max-width: 760px; margin: 0 auto; }
-    .article-header .badge { margin-bottom: 16px; }
-    .article-header h1 {
-      font-family: 'Lora', serif; font-size: 42px; font-weight: 600;
-      line-height: 1.22; color: var(--gray-900); margin-bottom: 20px;
-    }
-    .article-header-meta {
-      display: flex; align-items: center; justify-content: center;
-      gap: 16px; font-size: 13px; color: var(--gray-500); margin-bottom: 32px;
-    }
-    .article-header-meta .card-author-avatar { width: 32px; height: 32px; font-size: 12px; }
-    .article-author-name { font-weight: 600; color: var(--gray-700); }
-
-    .article-hero-image {
-      width: 100%; aspect-ratio: 21/9; border-radius: var(--radius); overflow: hidden;
-      background: linear-gradient(135deg, #1B6CF2 0%, #7C3AED 100%);
-      margin-bottom: 56px; display: flex; align-items: center; justify-content: center;
-      font-size: 80px;
-    }
-
-    .article-layout {
-      display: grid; grid-template-columns: 1fr 280px; gap: 64px;
-      padding-bottom: 80px;
-    }
-
-    .article-toc {
-      position: sticky; top: 80px; align-self: start;
-    }
-    .toc-title {
-      font-size: 11px; font-weight: 700; text-transform: uppercase;
-      letter-spacing: .08em; color: var(--gray-400); margin-bottom: 12px;
-    }
-    .toc-list { list-style: none; }
-    .toc-item {
-      padding: 6px 0 6px 12px; border-left: 2px solid var(--gray-200);
-      font-size: 13px; color: var(--gray-500); cursor: pointer; transition: all .15s;
-    }
-    .toc-item:hover, .toc-item.active { border-color: var(--blue); color: var(--blue); font-weight: 600; }
-    .toc-sub { padding-left: 24px; border-left: 2px solid var(--gray-200); font-size: 12px; }
-
-    .article-body { max-width: 680px; }
-    .article-body h2 {
-      font-size: 26px; font-weight: 700; margin: 40px 0 16px;
-      color: var(--gray-900); line-height: 1.3;
-    }
-    .article-body h3 {
-      font-size: 20px; font-weight: 700; margin: 28px 0 12px; color: var(--gray-900);
-    }
-    .article-body p {
-      font-size: 16px; line-height: 1.8; color: var(--gray-700);
-      margin-bottom: 20px;
-    }
-    .article-body strong { color: var(--gray-900); }
-    .article-body .lead {
-      font-size: 18px; line-height: 1.75; color: var(--gray-600);
-      margin-bottom: 32px; padding-bottom: 32px; border-bottom: 1px solid var(--gray-200);
-    }
-
-    .highlight-box {
-      background: var(--blue-light); border-left: 4px solid var(--blue);
-      border-radius: 0 var(--radius) var(--radius) 0;
-      padding: 20px 24px; margin: 28px 0;
-    }
-    .highlight-box p { margin: 0; font-size: 15px; color: var(--gray-800); }
-    .highlight-box strong { color: var(--blue); }
-
-    .stat-inline-box {
-      background: var(--gray-900); color: #fff; border-radius: var(--radius);
-      padding: 24px 28px; margin: 28px 0; display: flex; align-items: center; gap: 20px;
-    }
-    .stat-inline-value { font-size: 48px; font-weight: 800; color: var(--blue); line-height: 1; flex-shrink: 0; }
-    .stat-inline-text { font-size: 15px; line-height: 1.6; color: rgba(255,255,255,.8); }
-
-    .article-body ul, .article-body ol {
-      padding-left: 24px; margin-bottom: 20px;
-    }
-    .article-body li { font-size: 16px; line-height: 1.8; color: var(--gray-700); margin-bottom: 6px; }
-
-    .calculator-embed {
-      background: linear-gradient(135deg, #F5F3FF 0%, #EBF2FF 100%);
-      border-radius: var(--radius); padding: 28px 32px; margin: 32px 0;
-      border: 1px solid var(--gray-200);
-    }
-    .calc-title { font-size: 16px; font-weight: 700; color: var(--gray-900); margin-bottom: 4px; }
-    .calc-sub { font-size: 13px; color: var(--gray-500); margin-bottom: 20px; }
-    .calc-row { display: flex; gap: 12px; align-items: flex-end; margin-bottom: 12px; }
-    .calc-field { flex: 1; }
-    .calc-label { font-size: 12px; font-weight: 600; color: var(--gray-600); margin-bottom: 6px; }
-    .calc-input {
-      width: 100%; padding: 10px 14px; border: 1.5px solid var(--gray-200);
-      border-radius: 8px; font-size: 14px; font-family: 'Inter', sans-serif;
-      color: var(--gray-900); outline: none; transition: border-color .15s;
-    }
-    .calc-input:focus { border-color: var(--blue); }
-    .calc-btn {
-      padding: 10px 20px; background: var(--blue); color: #fff;
-      border: none; border-radius: 8px; font-size: 14px; font-weight: 600;
-      cursor: pointer; font-family: 'Inter', sans-serif; white-space: nowrap;
-    }
-    .calc-result {
-      background: #fff; border-radius: 8px; padding: 16px 20px;
-      border: 1.5px solid var(--blue); display: flex; align-items: center; gap: 16px;
-    }
-    .calc-result-label { font-size: 12px; color: var(--gray-500); font-weight: 600; }
-    .calc-result-value { font-size: 24px; font-weight: 800; color: var(--blue); }
-    .calc-result-sub { font-size: 11px; color: var(--gray-400); }
-
-    .author-card {
-      background: var(--gray-50); border-radius: var(--radius);
-      padding: 24px; margin: 48px 0 0; border: 1px solid var(--gray-200);
-      display: flex; gap: 20px; align-items: flex-start;
-    }
-    .author-avatar-lg {
-      width: 64px; height: 64px; border-radius: 50%; flex-shrink: 0;
-      background: linear-gradient(135deg, var(--blue), #7C3AED);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 22px; font-weight: 800; color: #fff;
-    }
-    .author-info-name { font-size: 16px; font-weight: 700; color: var(--gray-900); margin-bottom: 4px; }
-    .author-info-role { font-size: 13px; color: var(--blue); font-weight: 600; margin-bottom: 8px; }
-    .author-info-bio { font-size: 14px; color: var(--gray-500); line-height: 1.6; }
-
-    .share-bar {
-      display: flex; align-items: center; gap: 10px; padding: 20px 0;
-      border-top: 1px solid var(--gray-200); border-bottom: 1px solid var(--gray-200);
-      margin: 32px 0;
-    }
-    .share-label { font-size: 13px; font-weight: 600; color: var(--gray-500); margin-right: 4px; }
-    .share-btn {
-      padding: 7px 16px; border-radius: 8px; font-size: 13px; font-weight: 600;
-      border: 1.5px solid var(--gray-200); cursor: pointer; background: #fff;
-      transition: all .15s; font-family: 'Inter', sans-serif;
-    }
-    .share-btn.fb  { color: #1877F2; } .share-btn.fb:hover  { border-color: #1877F2; background: #EEF4FF; }
-    .share-btn.li  { color: #0A66C2; } .share-btn.li:hover  { border-color: #0A66C2; background: #E8F2FC; }
-    .share-btn.tw  { color: #000;    } .share-btn.tw:hover  { border-color: #000;    background: #F5F5F5; }
-    .share-btn.cp  { color: var(--gray-500); } .share-btn.cp:hover { border-color: var(--gray-400); }
-
-    /* ─── Related Articles ───────────────────────────────────────────── */
-    .related-section {
-      padding: 48px 0 80px; border-top: 1px solid var(--gray-200);
-    }
-
-    /* ─── FAQ Section ───────────────────────────────────────────────── */
-    .faq-section { padding: 64px 0; background: var(--gray-50); }
-    .faq-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 32px; }
+    /* ── FAQ ─────────────────────────────────────────────────────────── */
+    .faq-section { padding: 40px 0; }
+    .faq-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 16px; }
     .faq-item {
-      background: #fff; border-radius: var(--radius); padding: 20px 24px;
-      border: 1px solid var(--gray-200);
+      background: var(--surf); border: 1px solid var(--border3);
+      border-radius: var(--r); padding: 16px 18px;
     }
-    .faq-q { font-size: 15px; font-weight: 700; color: var(--gray-900); margin-bottom: 8px; }
-    .faq-a { font-size: 14px; color: var(--gray-500); line-height: 1.6; }
+    .faq-q { font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px; line-height: 1.4; }
+    .faq-a { font-size: 12px; color: var(--text2); line-height: 1.6; }
 
-    /* ─── Footer ────────────────────────────────────────────────────── */
+    /* ── Footer ──────────────────────────────────────────────────────── */
     footer {
-      background: var(--gray-900); color: rgba(255,255,255,.6);
-      padding: 56px 0 32px;
+      background: var(--bg2); border-top: 1px solid var(--border);
+      padding: 40px 0 28px;
     }
     .footer-grid {
       display: grid; grid-template-columns: 2fr 1fr 1fr 1fr;
-      gap: 48px; margin-bottom: 48px;
+      gap: 40px; margin-bottom: 32px;
     }
-    .footer-brand { }
-    .footer-logo { font-size: 20px; font-weight: 800; color: #fff; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
-    .footer-tagline { font-size: 14px; line-height: 1.6; margin-bottom: 20px; }
-    .footer-seo-note {
-      background: rgba(27,108,242,.15); border-radius: 8px; padding: 12px 16px;
-      font-size: 12px; color: rgba(255,255,255,.5); line-height: 1.5;
+    .f-logo { font-size: 17px; font-weight: 700; color: var(--text); margin-bottom: 10px; }
+    .f-tag { font-size: 12px; color: var(--text2); line-height: 1.6; margin-bottom: 14px; }
+    .f-seo {
+      background: var(--surf); border: 1px solid var(--border2);
+      border-radius: 8px; padding: 10px 12px;
+      font-size: 11px; color: var(--text3); line-height: 1.5;
     }
-    .footer-col-title { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .07em; color: rgba(255,255,255,.4); margin-bottom: 16px; }
-    .footer-links { list-style: none; display: flex; flex-direction: column; gap: 8px; }
-    .footer-links li a { font-size: 14px; color: rgba(255,255,255,.6); transition: color .15s; }
-    .footer-links li a:hover { color: #fff; }
+    .f-col-title {
+      font-size: 10px; font-weight: 700; text-transform: uppercase;
+      letter-spacing: .08em; color: var(--text3); margin-bottom: 12px;
+    }
+    .f-links { list-style: none; display: flex; flex-direction: column; gap: 7px; }
+    .f-links li a { font-size: 13px; color: var(--text2); transition: color .15s; }
+    .f-links li a:hover { color: var(--text); }
     .footer-bottom {
-      padding-top: 24px; border-top: 1px solid rgba(255,255,255,.08);
+      padding-top: 20px; border-top: 1px solid var(--border);
       display: flex; align-items: center; justify-content: space-between;
-      font-size: 12px;
+      font-size: 11px; color: var(--text3);
     }
 
-    /* ─── View Toggle Button (demo only) ────────────────────────────── */
-    .demo-toggle {
-      position: fixed; bottom: 24px; right: 24px; z-index: 999;
-      background: var(--gray-900); color: #fff;
-      padding: 12px 20px; border-radius: 100px; font-size: 13px; font-weight: 700;
-      box-shadow: 0 8px 32px rgba(0,0,0,.25); cursor: pointer;
-      font-family: 'Inter', sans-serif; border: none; display: flex; align-items: center; gap: 8px;
-      transition: all .2s;
-    }
-    .demo-toggle:hover { background: var(--blue); transform: translateY(-2px); }
+    /* ══════════════════════════════════════════════════════════════════
+       ARTICLE PAGE
+    ══════════════════════════════════════════════════════════════════ */
+    .page { display: none; }
+    .page.on { display: block; }
 
-    /* ─── Progress Bar ──────────────────────────────────────────────── */
-    .reading-progress {
-      position: fixed; top: 0; left: 0; height: 3px;
-      background: var(--blue); width: 0%; z-index: 9999;
-      transition: width .1s; display: none;
+    .breadcrumb {
+      display: flex; align-items: center; gap: 5px;
+      padding: 14px 0; font-size: 11px; color: var(--text3);
+      border-bottom: 1px solid var(--border2);
     }
-    .reading-progress.visible { display: block; }
+    .breadcrumb a { color: var(--text3); transition: color .15s; }
+    .breadcrumb a:hover { color: var(--text2); }
+    .breadcrumb .cur { color: var(--text2); font-weight: 500; }
+    .breadcrumb svg { opacity: .4; flex-shrink: 0; }
+
+    .art-header { padding: 36px 0 0; max-width: 680px; margin: 0 auto; }
+    .art-header-badge { margin-bottom: 12px; }
+    .art-h1 {
+      font-size: 32px; font-weight: 800; line-height: 1.22;
+      letter-spacing: -.04em; color: var(--text); margin-bottom: 16px;
+    }
+    .art-meta {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 12px; color: var(--text3); margin-bottom: 28px;
+      flex-wrap: wrap;
+    }
+    .art-meta .avatar { width: 28px; height: 28px; font-size: 10px; }
+    .art-author-name { font-weight: 600; color: var(--text2); font-size: 12px; }
+
+    .art-hero {
+      width: 100%; aspect-ratio: 21/8; border-radius: var(--r); overflow: hidden;
+      background: linear-gradient(135deg, #0e1828 0%, #16243a 100%);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 72px; margin-bottom: 48px;
+    }
+
+    .art-layout {
+      display: grid; grid-template-columns: 1fr 256px; gap: 52px;
+      padding-bottom: 64px; align-items: start;
+    }
+
+    /* TOC */
+    .toc { position: sticky; top: calc(var(--nav-h) + 16px); }
+    .toc-title {
+      font-size: 10px; font-weight: 700; text-transform: uppercase;
+      letter-spacing: .08em; color: var(--text3); margin-bottom: 10px;
+    }
+    .toc-list { list-style: none; }
+    .toc-item {
+      padding: 5px 0 5px 12px;
+      border-left: 2px solid var(--border3);
+      font-size: 12px; color: var(--text2); cursor: pointer;
+      transition: all .15s; line-height: 1.4;
+    }
+    .toc-item:hover { border-color: var(--text3); color: var(--text); }
+    .toc-item.on { border-color: var(--blue2); color: var(--blue2); font-weight: 600; }
+
+    /* Article body */
+    .art-body { max-width: 680px; }
+    .art-lead {
+      font-size: 16px; line-height: 1.75; color: var(--text2);
+      padding-bottom: 24px; margin-bottom: 24px;
+      border-bottom: 1px solid var(--border2);
+    }
+    .art-body h2 {
+      font-size: 22px; font-weight: 700; letter-spacing: -.03em;
+      margin: 36px 0 14px; color: var(--text);
+    }
+    .art-body h3 {
+      font-size: 17px; font-weight: 700; margin: 24px 0 10px; color: var(--text);
+    }
+    .art-body p { font-size: 14px; line-height: 1.8; color: var(--text2); margin-bottom: 16px; }
+    .art-body strong { color: var(--text); font-weight: 600; }
+    .art-body ul, .art-body ol { padding-left: 20px; margin-bottom: 16px; }
+    .art-body li { font-size: 14px; line-height: 1.8; color: var(--text2); margin-bottom: 4px; }
+
+    .highlight {
+      background: var(--surf); border: 1px solid var(--border3);
+      border-left: 3px solid var(--blue); border-radius: 0 10px 10px 0;
+      padding: 16px 20px; margin: 20px 0;
+    }
+    .highlight p { margin: 0; font-size: 13px; color: var(--text2); }
+    .highlight strong { color: var(--blue2); }
+
+    .highlight.green { border-left-color: var(--green); }
+    .highlight.green strong { color: var(--green); }
+
+    .stat-block {
+      background: var(--surf2); border: 1px solid var(--border3);
+      border-radius: var(--r); padding: 20px 24px;
+      margin: 20px 0; display: flex; align-items: center; gap: 20px;
+    }
+    .sb-val { font-size: 44px; font-weight: 800; color: var(--blue2); line-height: 1; flex-shrink: 0; letter-spacing: -.04em; }
+    .sb-text { font-size: 13px; line-height: 1.6; color: var(--text2); }
+
+    /* Calculator */
+    .calc-wrap {
+      background: var(--surf); border: 1px solid var(--border3);
+      border-radius: var(--r); padding: 24px; margin: 24px 0;
+    }
+    .calc-title { font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+    .calc-sub { font-size: 12px; color: var(--text3); margin-bottom: 18px; }
+    .calc-row { display: flex; gap: 10px; align-items: flex-end; margin-bottom: 12px; }
+    .calc-field { flex: 1; }
+    .calc-lbl { font-size: 11px; font-weight: 600; color: var(--text3); margin-bottom: 5px; }
+    .calc-inp {
+      width: 100%; background: var(--surf2); border: 1px solid var(--border3);
+      border-radius: 8px; padding: 9px 12px; font-size: 13px; color: var(--text);
+      outline: none; font-family: var(--ff); transition: border-color .15s;
+    }
+    .calc-inp:focus { border-color: var(--blue); box-shadow: 0 0 0 3px var(--blue-dim); }
+    .calc-btn {
+      background: var(--blue); color: #fff; font-size: 12px; font-weight: 600;
+      padding: 9px 16px; border-radius: 8px; white-space: nowrap; transition: background .15s;
+    }
+    .calc-btn:hover { background: #2563EB; }
+    .calc-result {
+      background: var(--surf2); border: 1px solid rgba(59,130,246,.3);
+      border-radius: 10px; padding: 16px; display: flex; gap: 20px; align-items: center;
+    }
+    .cr-col { flex: 1; }
+    .cr-lbl { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--text3); margin-bottom: 4px; }
+    .cr-val { font-size: 22px; font-weight: 800; color: var(--blue2); letter-spacing: -.03em; }
+    .cr-div { width: 1px; background: var(--border3); align-self: stretch; }
+
+    /* Share bar */
+    .share-bar {
+      display: flex; align-items: center; gap: 8px;
+      padding: 16px 0; border-top: 1px solid var(--border2);
+      border-bottom: 1px solid var(--border2); margin: 28px 0;
+    }
+    .share-lbl { font-size: 11px; font-weight: 700; color: var(--text3); text-transform: uppercase; letter-spacing: .06em; margin-right: 4px; }
+    .share-btn {
+      padding: 6px 14px; border-radius: 7px; font-size: 12px; font-weight: 600;
+      background: var(--surf2); border: 1px solid var(--border3); color: var(--text2);
+      transition: all .15s;
+    }
+    .share-btn:hover { border-color: rgba(255,255,255,.15); color: var(--text); }
+
+    /* Author card */
+    .author-card {
+      background: var(--surf); border: 1px solid var(--border3);
+      border-radius: var(--r); padding: 20px;
+      display: flex; gap: 16px; align-items: flex-start; margin-top: 28px;
+    }
+    .author-avatar-lg {
+      width: 52px; height: 52px; border-radius: 50%; flex-shrink: 0;
+      background: linear-gradient(135deg, var(--blue), var(--purple));
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px; font-weight: 800; color: #fff;
+    }
+    .au-name { font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 2px; }
+    .au-role { font-size: 11px; color: var(--blue2); font-weight: 600; margin-bottom: 6px; }
+    .au-bio { font-size: 12px; color: var(--text2); line-height: 1.6; }
+
+    /* Related */
+    .related-section { padding: 32px 0 64px; border-top: 1px solid var(--border); }
+
+    /* ── Demo toggle ─────────────────────────────────────────────────── */
+    #toggle-btn {
+      position: fixed; bottom: 20px; right: 20px; z-index: 9998;
+      background: var(--surf); border: 1px solid var(--border3);
+      color: var(--text2); font-size: 12px; font-weight: 600;
+      padding: 10px 18px; border-radius: 100px;
+      box-shadow: 0 4px 24px rgba(0,0,0,.5);
+      display: flex; align-items: center; gap: 7px;
+      transition: all .15s;
+    }
+    #toggle-btn:hover { background: var(--surf2); color: var(--text); border-color: rgba(255,255,255,.14); }
   </style>
 </head>
 <body>
 
-<div class="reading-progress" id="readingProgress"></div>
+<div id="rbar"></div>
 
-<!-- ═══════════════════════════════════════════════════════════════════
-     WIDOK 1: LISTA ARTYKUŁÓW (BLOG HOMEPAGE)
-═══════════════════════════════════════════════════════════════════ -->
-<div class="blog-listing" id="blogListing">
+<!-- ═══════════════════════════════════════════════════════
+     PAGE 1 — BLOG LISTING
+═══════════════════════════════════════════════════════ -->
+<div class="page on" id="pg-listing">
 
-  <!-- Top Banner -->
-  <div class="top-banner">
-    🗺️ Nowy na MapJob? <a href="#">Znajdź pracę blisko domu w 60 sekund →</a>
+  <!-- Beta banner -->
+  <div id="beta-banner">
+    <span class="beta-tag">BLOG</span>
+    Porady o pracy, dojazdach i rekrutacji · <a href="#">Sprawdź nowe oferty na mapie →</a>
   </div>
 
-  <!-- Navbar -->
-  <header class="navbar">
-    <div class="container navbar-inner">
-      <div class="logo">
-        <div class="logo-pin"></div>
-        Map<span style="color:var(--gray-900)">Job</span>
-      </div>
-      <nav>
-        <a href="#">Znajdź pracę</a>
-        <a href="#">Dla pracodawców</a>
-        <a href="#" class="active">Blog</a>
-        <a href="#">Raport 2026</a>
-      </nav>
-      <div class="nav-spacer"></div>
-      <div class="nav-search">
-        <svg width="14" height="14" viewBox="0 0 20 20" fill="none"><circle cx="9" cy="9" r="6.5" stroke="currentColor" stroke-width="1.8"/><path d="M14.5 14.5L18 18" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
-        Szukaj w blogu…
-      </div>
-      <a href="#" class="nav-cta">Dodaj ogłoszenie</a>
+  <!-- Topbar -->
+  <div id="topbar">
+    <div class="logo">Map<span class="logo-dot">Job</span></div>
+    <nav class="topbar-nav">
+      <a class="tnav-link" href="#">Mapa ofert</a>
+      <a class="tnav-link" href="#">Dla firm</a>
+      <a class="tnav-link on" href="#">Blog</a>
+      <a class="tnav-link" href="#">Raport 2026</a>
+    </nav>
+    <div class="topbar-spacer"></div>
+    <div class="topbar-search">
+      <svg width="13" height="13" viewBox="0 0 20 20" fill="none"><circle cx="9" cy="9" r="6" stroke="currentColor" stroke-width="1.6"/><path d="M13.5 13.5L17 17" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+      Szukaj w blogu…
     </div>
-  </header>
+    <button class="btn-p">Dodaj ogłoszenie</button>
+  </div>
 
-  <!-- Hero / Featured -->
-  <section class="hero">
-    <div class="container hero-inner">
-      <div>
-        <div class="hero-label">
+  <div class="container">
+
+    <!-- Category chips -->
+    <div class="cat-bar">
+      <button class="chip on">Wszystkie</button>
+      <button class="chip">🗺️ Dojazdy</button>
+      <button class="chip">💼 Szukanie pracy</button>
+      <button class="chip">💰 Wynagrodzenia</button>
+      <button class="chip">📄 CV i rekrutacja</button>
+      <button class="chip">🏢 Dla pracodawców</button>
+      <button class="chip">📊 Dane i raporty</button>
+    </div>
+
+    <!-- Hero featured article -->
+    <div class="hero-card" onclick="showArticle()">
+      <div class="hero-body">
+        <div class="hero-eyebrow">
           <span class="badge badge-blue">⭐ Artykuł tygodnia</span>
+          6 min czytania
         </div>
-        <h1>Ile naprawdę kosztuje Cię <em>dojazd do pracy</em> każdego miesiąca?</h1>
-        <div class="hero-meta">
-          <div class="card-author-avatar">MK</div>
-          <span>Marta Kowalczyk</span>
-          <div class="hero-meta-sep"></div>
+        <div class="hero-title">Ile naprawdę kosztuje Cię dojazd do pracy każdego miesiąca?</div>
+        <div class="hero-excerpt">Paliwo, parking, amortyzacja — i setki godzin rocznie. Liczymy pełny koszt dojazdów w Warszawie i pokazujemy, jak praca bliżej domu może zwrócić Ci ponad 14 000 zł rocznie.</div>
+        <div class="hero-meta" style="margin-bottom:20px;">
+          <div class="avatar">MK</div>
+          <span style="color:var(--text2);font-weight:500;">Marta Kowalczyk</span>
+          <div class="dot"></div>
           <span>29 maja 2026</span>
-          <div class="hero-meta-sep"></div>
-          <span>6 min czytania</span>
+          <div class="dot"></div>
+          <span>👁 12 400 wyświetleń</span>
         </div>
-        <p class="hero-excerpt">
-          Koszty biletu, paliwa, parkingu i – co ważniejsze – straconego czasu. Liczymy ile rocznie traci przeciętny pracownik w Warszawie na dojazdy i jak zmienić pracę bliżej domu może oszczędzić Ci ponad 14 000 zł rocznie.
-        </p>
-        <a href="#" class="hero-cta" onclick="showArticle(); return false;">
+        <span class="read-btn">
           Czytaj artykuł
-          <svg width="16" height="16" viewBox="0 0 20 20" fill="none"><path d="M4 10h12M11 5l5 5-5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </a>
+          <svg width="14" height="14" viewBox="0 0 20 20" fill="none"><path d="M4 10h12M11 5l5 5-5 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </span>
       </div>
-      <div style="position:relative;">
-        <div class="hero-image-wrap">
-          <div class="hero-image">
-            <div class="hero-image-map">
-              <div class="map-grid"></div>
-              <!-- Pins -->
-              <div class="map-pin" style="top:30%;left:25%">
-                <div class="map-pin-dot alt"></div>
-                <div class="map-label" style="top:auto;bottom:20px;left:-10px">🏠 Dom</div>
-              </div>
-              <div class="map-pin" style="top:55%;left:65%">
-                <div class="map-pin-dot"></div>
-                <div class="map-label">🏢 Biuro</div>
-              </div>
-              <div class="map-pin" style="top:45%;left:45%">
-                <div class="map-pin-dot alt2"></div>
-                <div class="map-label">💼 Nowa praca</div>
-              </div>
-              <!-- Dashed route line (SVG) -->
-              <svg style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none" viewBox="0 0 300 200">
-                <path d="M75 60 Q120 40 135 90" stroke="rgba(255,255,255,.5)" stroke-width="2" stroke-dasharray="5 4" fill="none"/>
-                <path d="M135 90 Q200 110 195 110" stroke="rgba(249,115,22,.7)" stroke-width="2" stroke-dasharray="5 4" fill="none"/>
-              </svg>
-            </div>
+      <div class="hero-image">
+        <div class="map-wrap">
+          <div class="map-grid-lines"></div>
+          <div class="mpin" style="top:28%;left:22%">
+            <div class="mpin-dot g"></div>
+            <div class="mpin-label">🏠 Dom</div>
           </div>
+          <div class="mpin" style="top:58%;left:68%">
+            <div class="mpin-dot b"></div>
+            <div class="mpin-label">🏢 Praca</div>
+          </div>
+          <div class="mpin" style="top:44%;left:46%">
+            <div class="mpin-dot p"></div>
+            <div class="mpin-label">💼 Nowa oferta</div>
+          </div>
+          <svg style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none" viewBox="0 0 300 180">
+            <path d="M66 50 Q100 35 138 79" stroke="rgba(59,130,246,.35)" stroke-width="1.5" stroke-dasharray="4 3" fill="none"/>
+            <path d="M138 79 Q200 100 204 104" stroke="rgba(16,185,129,.35)" stroke-width="1.5" stroke-dasharray="4 3" fill="none"/>
+          </svg>
         </div>
-        <div class="commute-card">
-          <div class="commute-card-title">Dojazd do biura</div>
-          <div class="commute-modes">
-            <div class="commute-mode">
-              <div class="commute-mode-icon">🚌</div>
-              <div class="commute-mode-time">42 min</div>
-              <div class="commute-mode-label">Komunikacja</div>
-            </div>
-            <div class="commute-mode">
-              <div class="commute-mode-icon">🚗</div>
-              <div class="commute-mode-time">28 min</div>
-              <div class="commute-mode-label">Auto</div>
-            </div>
-            <div class="commute-mode">
-              <div class="commute-mode-icon">🚲</div>
-              <div class="commute-mode-time">19 min</div>
-              <div class="commute-mode-label">Rower</div>
-            </div>
-          </div>
+        <div class="commute-chip">
+          <div class="cm"><div class="cm-icon">🚌</div><div class="cm-time">42min</div><div class="cm-mode">MPK</div></div>
+          <div class="cm"><div class="cm-icon">🚗</div><div class="cm-time">27min</div><div class="cm-mode">Auto</div></div>
+          <div class="cm"><div class="cm-icon">🚲</div><div class="cm-time">18min</div><div class="cm-mode">Rower</div></div>
         </div>
       </div>
     </div>
-  </section>
 
-  <!-- Category Tabs -->
-  <section class="category-section">
-    <div class="container">
-      <div class="category-tabs">
-        <button class="tab active">Wszystkie</button>
-        <button class="tab">🗺️ Dojazdy i lokalizacja</button>
-        <button class="tab">💼 Szukanie pracy</button>
-        <button class="tab">💰 Wynagrodzenia</button>
-        <button class="tab">📄 CV i rekrutacja</button>
-        <button class="tab">🏢 Dla pracodawców</button>
-        <button class="tab">📊 Raporty i dane</button>
-      </div>
-
-      <!-- Latest Articles Grid -->
-      <div class="section-header">
-        <h2 class="section-title">Najnowsze artykuły</h2>
-        <a href="#" class="see-all">Zobacz wszystkie →</a>
-      </div>
-      <div class="articles-grid">
-
-        <article class="article-card" onclick="showArticle()">
-          <div class="card-thumb"><div class="card-thumb-bg thumb-blue">🗺️</div></div>
-          <div class="card-body">
-            <div class="card-category"><span class="badge badge-blue">Dojazdy</span></div>
-            <h3 class="card-title">Praca w Warszawie – jak wybrać dzielnicę żeby nie tracić 2h dziennie na dojazd?</h3>
-            <p class="card-excerpt">Analiza 16 dzielnic Warszawy pod kątem czasu dojazdu komunikacją miejską i autem. Gdzie warto szukać pracy jeśli mieszkasz na Bielanach, Ursynowie lub Pradze?</p>
-            <div class="card-meta">
-              <div class="card-author-avatar">AW</div>
-              <span>Aleksandra Wiśniewska</span>
-              <div class="card-meta-sep"></div>
-              <span>28 maj</span>
-              <div class="card-meta-sep"></div>
-              <span>5 min</span>
-            </div>
-          </div>
-        </article>
-
-        <article class="article-card">
-          <div class="card-thumb"><div class="card-thumb-bg thumb-green">💰</div></div>
-          <div class="card-body">
-            <div class="card-category"><span class="badge badge-green">Wynagrodzenia</span></div>
-            <h3 class="card-title">Jak negocjować wynagrodzenie w 2026? Skrypt rozmowy krok po kroku</h3>
-            <p class="card-excerpt">Konkretne zdania, których możesz użyć. Od momentu otrzymania oferty do podpisania umowy — pełny scenariusz negocjacji z przykładami dla IT, finansów i sprzedaży.</p>
-            <div class="card-meta">
-              <div class="card-author-avatar" style="background:linear-gradient(135deg,#12B76A,#059669)">PJ</div>
-              <span>Paweł Jabłoński</span>
-              <div class="card-meta-sep"></div>
-              <span>27 maj</span>
-              <div class="card-meta-sep"></div>
-              <span>8 min</span>
-            </div>
-          </div>
-        </article>
-
-        <article class="article-card">
-          <div class="card-thumb"><div class="card-thumb-bg thumb-purple">📄</div></div>
-          <div class="card-body">
-            <div class="card-category"><span class="badge badge-purple">CV i rekrutacja</span></div>
-            <h3 class="card-title">CV 2026 – co zmienił ChatGPT i jak wyróżnić się spośród 500 aplikacji?</h3>
-            <p class="card-excerpt">Rekruterzy widzą teraz tysiące identycznych CV napisanych przez AI. Oto co naprawdę działa: formaty, słowa klucze i błędy, które dyskwalifikują w 6 sekund.</p>
-            <div class="card-meta">
-              <div class="card-author-avatar" style="background:linear-gradient(135deg,#7C3AED,#A855F7)">KN</div>
-              <span>Katarzyna Nowak</span>
-              <div class="card-meta-sep"></div>
-              <span>25 maj</span>
-              <div class="card-meta-sep"></div>
-              <span>7 min</span>
-            </div>
-          </div>
-        </article>
-
-        <article class="article-card">
-          <div class="card-thumb"><div class="card-thumb-bg thumb-orange">🏢</div></div>
-          <div class="card-body">
-            <div class="card-category"><span class="badge badge-orange">Dla pracodawców</span></div>
-            <h3 class="card-title">Dlaczego kandydaci odrzucają oferty po pierwszej rozmowie? Raport 2026</h3>
-            <p class="card-excerpt">Badanie na 1 200 kandydatach: 34% rezygnuje gdy nie zna dokładnej lokalizacji biura. Jak lokalizacja oferty wpływa na czas rekrutacji i koszty zatrudnienia?</p>
-            <div class="card-meta">
-              <div class="card-author-avatar" style="background:linear-gradient(135deg,#F97316,#EF4444)">TM</div>
-              <span>Tomasz Malinowski</span>
-              <div class="card-meta-sep"></div>
-              <span>23 maj</span>
-              <div class="card-meta-sep"></div>
-              <span>6 min</span>
-            </div>
-          </div>
-        </article>
-
-        <article class="article-card">
-          <div class="card-thumb"><div class="card-thumb-bg thumb-teal">🏠</div></div>
-          <div class="card-body">
-            <div class="card-category"><span class="badge badge-blue">Dojazdy</span></div>
-            <h3 class="card-title">Praca zdalna vs hybrydowa vs biuro – co naprawdę się opłaca w 2026?</h3>
-            <p class="card-excerpt">Liczymy realny koszt każdego modelu pracy: dojazdy, mieszkanie, internet, benefity. Zaskakujące wyniki dla Warszawy, Krakowa i mniejszych miast.</p>
-            <div class="card-meta">
-              <div class="card-author-avatar" style="background:linear-gradient(135deg,#14B8A6,#06B6D4)">MS</div>
-              <span>Marta Szymańska</span>
-              <div class="card-meta-sep"></div>
-              <span>21 maj</span>
-              <div class="card-meta-sep"></div>
-              <span>9 min</span>
-            </div>
-          </div>
-        </article>
-
-        <article class="article-card">
-          <div class="card-thumb"><div class="card-thumb-bg thumb-pink">❓</div></div>
-          <div class="card-body">
-            <div class="card-category"><span class="badge badge-purple">CV i rekrutacja</span></div>
-            <h3 class="card-title">30 najtrudniejszych pytań na rozmowie kwalifikacyjnej (z gotowymi odpowiedziami)</h3>
-            <p class="card-excerpt">"Gdzie widzisz siebie za 5 lat?", "Jaką masz wadę?" — rozbieramy te pytania na czynniki pierwsze i pokazujemy co rekruter naprawdę chce usłyszeć.</p>
-            <div class="card-meta">
-              <div class="card-author-avatar" style="background:linear-gradient(135deg,#EC4899,#A855F7)">EK</div>
-              <span>Ewa Krawczyk</span>
-              <div class="card-meta-sep"></div>
-              <span>19 maj</span>
-              <div class="card-meta-sep"></div>
-              <span>11 min</span>
-            </div>
-          </div>
-        </article>
-
-      </div>
-
-      <!-- Stats Bar -->
-      <div class="stats-bar" style="margin: 64px -24px; padding: 48px 24px;">
-        <div class="stats-inner">
-          <div class="stat-item">
-            <div class="stat-value">73<span>%</span></div>
-            <div class="stat-label">pracowników twierdzi, że czas dojazdu</div>
-            <div class="stat-sub">wpływa na decyzję o przyjęciu oferty</div>
-          </div>
-          <div class="stat-item">
-            <div class="stat-value">1<span>h</span> 14<span>min</span></div>
-            <div class="stat-label">średni dzienny czas dojazdów</div>
-            <div class="stat-sub">w Warszawie w 2025 roku</div>
-          </div>
-          <div class="stat-item">
-            <div class="stat-value">14<span>k</span></div>
-            <div class="stat-label">zł rocznie traci przeciętny pracownik</div>
-            <div class="stat-sub">na dojazdy autem w Warszawie</div>
-          </div>
-          <div class="stat-item">
-            <div class="stat-value">2<span>×</span></div>
-            <div class="stat-label">szybsza rekrutacja gdy podana</div>
-            <div class="stat-sub">dokładna lokalizacja biura w ogłoszeniu</div>
+    <!-- Latest articles -->
+    <div class="sec-head"><div class="sec-title">Najnowsze artykuły</div><a href="#" class="sec-link">Wszystkie →</a></div>
+    <div class="grid-3">
+      <article class="acard" onclick="showArticle()">
+        <div class="acard-thumb t-blue">🗺️</div>
+        <div class="acard-body">
+          <div class="acard-cat"><span class="badge badge-blue">Dojazdy</span></div>
+          <div class="acard-title">Praca w Warszawie – jak wybrać dzielnicę, żeby nie tracić 2h dziennie?</div>
+          <div class="acard-excerpt">Analiza 16 dzielnic pod kątem czasu dojazdu MPK i autem. Bielany, Ursynów, Praga — gdzie szukać?</div>
+          <div class="acard-meta">
+            <div class="avatar" style="width:18px;height:18px;font-size:8px;">AW</div>
+            <span>28 maj</span><div class="dot"></div><span>5 min</span>
           </div>
         </div>
-      </div>
+      </article>
 
-      <!-- Main Layout with Sidebar -->
-      <div class="main-layout" style="padding-top:0;">
-        <!-- Main: Featured big article + more -->
-        <div>
-          <div class="section-header">
-            <h2 class="section-title">Polecane przez redakcję</h2>
+      <article class="acard">
+        <div class="acard-thumb t-green">💰</div>
+        <div class="acard-body">
+          <div class="acard-cat"><span class="badge badge-green">Wynagrodzenia</span></div>
+          <div class="acard-title">Jak negocjować wynagrodzenie w 2026? Skrypt rozmowy krok po kroku</div>
+          <div class="acard-excerpt">Konkretne zdania od oferty do podpisania umowy — dla IT, finansów i sprzedaży.</div>
+          <div class="acard-meta">
+            <div class="avatar green" style="width:18px;height:18px;font-size:8px;">PJ</div>
+            <span>27 maj</span><div class="dot"></div><span>8 min</span>
           </div>
-          <div class="featured-grid" style="margin-bottom:28px;">
-            <article class="article-card card-big">
-              <div class="card-thumb"><div class="card-thumb-bg thumb-blue" style="font-size:72px;aspect-ratio:16/8;">📍</div></div>
-              <div class="card-body">
-                <div class="card-category"><span class="badge badge-blue">Dojazdy</span></div>
-                <h3 class="card-title">Mapa dojazdów do pracy: które miasta w Polsce mają najgorszy ruch? [Ranking 2026]</h3>
-                <p class="card-excerpt">Analizujemy dane TomTom Traffic Index i GUS dla 20 polskich miast. Kraków wyprzedza Warszawę, Wrocław zaskakuje wynikami. Gdzie naprawdę warto szukać pracy blisko domu?</p>
-                <div class="card-meta">
-                  <div class="card-author-avatar">RZ</div>
-                  <span>Redakcja MapJob</span>
-                  <div class="card-meta-sep"></div>
-                  <span>15 maj 2026</span>
-                  <div class="card-meta-sep"></div>
-                  <span>📊 Dane + ranking</span>
-                  <div class="card-meta-sep"></div>
-                  <span>12 min czytania</span>
-                </div>
+        </div>
+      </article>
+
+      <article class="acard">
+        <div class="acard-thumb t-purple">📄</div>
+        <div class="acard-body">
+          <div class="acard-cat"><span class="badge badge-purple">CV i rekrutacja</span></div>
+          <div class="acard-title">CV 2026 – co zmienił ChatGPT i jak wyróżnić się spośród 500 aplikacji?</div>
+          <div class="acard-excerpt">Rekruterzy widzą tysiące identycznych CV pisanych przez AI. Oto co naprawdę działa.</div>
+          <div class="acard-meta">
+            <div class="avatar purple" style="width:18px;height:18px;font-size:8px;">KN</div>
+            <span>25 maj</span><div class="dot"></div><span>7 min</span>
+          </div>
+        </div>
+      </article>
+
+      <article class="acard">
+        <div class="acard-thumb t-gold">🏢</div>
+        <div class="acard-body">
+          <div class="acard-cat"><span class="badge badge-gold">Dla pracodawców</span></div>
+          <div class="acard-title">Dlaczego kandydaci odrzucają oferty po pierwszej rozmowie? Raport 2026</div>
+          <div class="acard-excerpt">34% rezygnuje, gdy nie zna dokładnej lokalizacji biura. Jak to zmienić?</div>
+          <div class="acard-meta">
+            <div class="avatar gold" style="width:18px;height:18px;font-size:8px;">TM</div>
+            <span>23 maj</span><div class="dot"></div><span>6 min</span>
+          </div>
+        </div>
+      </article>
+
+      <article class="acard">
+        <div class="acard-thumb t-teal">🏠</div>
+        <div class="acard-body">
+          <div class="acard-cat"><span class="badge badge-blue">Dojazdy</span></div>
+          <div class="acard-title">Praca zdalna vs hybrydowa vs biuro – co naprawdę się opłaca w 2026?</div>
+          <div class="acard-excerpt">Liczymy realny koszt każdego modelu: dojazdy, internet, mieszkanie, benefity.</div>
+          <div class="acard-meta">
+            <div class="avatar teal" style="width:18px;height:18px;font-size:8px;">MS</div>
+            <span>21 maj</span><div class="dot"></div><span>9 min</span>
+          </div>
+        </div>
+      </article>
+
+      <article class="acard">
+        <div class="acard-thumb t-red">❓</div>
+        <div class="acard-body">
+          <div class="acard-cat"><span class="badge badge-purple">CV i rekrutacja</span></div>
+          <div class="acard-title">30 najtrudniejszych pytań na rozmowie kwalifikacyjnej (z gotowymi odpowiedziami)</div>
+          <div class="acard-excerpt">"Gdzie się widzisz za 5 lat?" — rozbieramy pytania i pokazujemy co rekruter chce usłyszeć.</div>
+          <div class="acard-meta">
+            <div class="avatar red" style="width:18px;height:18px;font-size:8px;">EK</div>
+            <span>19 maj</span><div class="dot"></div><span>11 min</span>
+          </div>
+        </div>
+      </article>
+    </div>
+
+    <!-- Stats strip -->
+    <div class="stats-strip">
+      <div class="stat-cell">
+        <div class="stat-val">73<span class="accent">%</span></div>
+        <div class="stat-lbl">kandydatów bierze dojazd pod uwagę</div>
+        <div class="stat-sub">przy wyborze oferty pracy</div>
+      </div>
+      <div class="stat-cell">
+        <div class="stat-val">1h <span class="accent" style="font-size:22px;">14min</span></div>
+        <div class="stat-lbl">średni czas dojazdu dziennie</div>
+        <div class="stat-sub">w Warszawie w 2025 roku (GUS)</div>
+      </div>
+      <div class="stat-cell">
+        <div class="stat-val">14<span class="accent">k</span></div>
+        <div class="stat-lbl">zł rocznie kosztuje dojazd autem</div>
+        <div class="stat-sub">20 km w jedną stronę, Warszawa</div>
+      </div>
+      <div class="stat-cell">
+        <div class="stat-val">2<span class="accent">×</span></div>
+        <div class="stat-lbl">szybsza rekrutacja z mapą lokalizacji</div>
+        <div class="stat-sub">dane wewnętrzne MapJob 2025</div>
+      </div>
+    </div>
+
+    <!-- Featured + Sidebar layout -->
+    <div class="main-wrap" style="padding-top:0;">
+      <div>
+        <div class="sec-head" style="margin-top:0;"><div class="sec-title">Polecane przez redakcję</div></div>
+        <div style="display:grid;grid-template-columns:3fr 2fr;gap:12px;margin-bottom:12px;">
+          <article class="acard acard-big">
+            <div class="acard-thumb t-blue" style="aspect-ratio:16/8;">📍</div>
+            <div class="acard-body">
+              <div class="acard-cat"><span class="badge badge-blue">Dojazdy · Raport</span></div>
+              <div class="acard-title">Mapa dojazdów do pracy: które polskie miasta mają najgorszy ruch? [Ranking 2026]</div>
+              <div class="acard-excerpt">Kraków wyprzedza Warszawę, Wrocław zaskakuje. Analizujemy dane TomTom i GUS dla 20 miast. Gdzie naprawdę warto szukać pracy blisko domu?</div>
+              <div class="acard-meta">
+                <div class="avatar" style="width:18px;height:18px;font-size:8px;">RZ</div>
+                <span>Redakcja MapJob</span><div class="dot"></div><span>12 min</span><div class="dot"></div><span>📊 Dane + ranking</span>
+              </div>
+            </div>
+          </article>
+          <div style="display:flex;flex-direction:column;gap:12px;">
+            <article class="acard" style="flex:1;">
+              <div class="acard-body" style="padding:14px 16px;">
+                <div class="acard-cat"><span class="badge badge-green">Wynagrodzenia</span></div>
+                <div class="acard-title" style="font-size:13px;">Ile zarabia się na B2B vs UoP w 2026? Kalkulator netto</div>
+                <div class="acard-meta" style="margin-top:8px;"><span>20 maj</span><div class="dot"></div><span>5 min</span></div>
               </div>
             </article>
-            <div style="display:flex;flex-direction:column;gap:16px;">
-              <article class="article-card" style="flex:1;">
-                <div class="card-body" style="padding:18px 20px;">
-                  <div class="card-category"><span class="badge badge-green">Wynagrodzenia</span></div>
-                  <h3 class="card-title" style="font-size:15px;">Ile zarabia się na umowie B2B vs UoP w 2026? Kalkulator</h3>
-                  <div class="card-meta" style="margin-top:10px;">
-                    <span>20 maj</span><div class="card-meta-sep"></div><span>5 min</span>
-                  </div>
-                </div>
-              </article>
-              <article class="article-card" style="flex:1;">
-                <div class="card-body" style="padding:18px 20px;">
-                  <div class="card-category"><span class="badge badge-purple">Rekrutacja</span></div>
-                  <h3 class="card-title" style="font-size:15px;">List motywacyjny 2026 – czy nadal jest wymagany i jak go napisać?</h3>
-                  <div class="card-meta" style="margin-top:10px;">
-                    <span>18 maj</span><div class="card-meta-sep"></div><span>4 min</span>
-                  </div>
-                </div>
-              </article>
-              <article class="article-card" style="flex:1;">
-                <div class="card-body" style="padding:18px 20px;">
-                  <div class="card-category"><span class="badge badge-orange">Pracodawcy</span></div>
-                  <h3 class="card-title" style="font-size:15px;">Ogłoszenie o pracę z mapą – dlaczego dostaje 3× więcej aplikacji?</h3>
-                  <div class="card-meta" style="margin-top:10px;">
-                    <span>16 maj</span><div class="card-meta-sep"></div><span>3 min</span>
-                  </div>
-                </div>
-              </article>
-            </div>
+            <article class="acard" style="flex:1;">
+              <div class="acard-body" style="padding:14px 16px;">
+                <div class="acard-cat"><span class="badge badge-purple">Rekrutacja</span></div>
+                <div class="acard-title" style="font-size:13px;">List motywacyjny 2026 – czy nadal wymagany i jak go napisać?</div>
+                <div class="acard-meta" style="margin-top:8px;"><span>18 maj</span><div class="dot"></div><span>4 min</span></div>
+              </div>
+            </article>
+            <article class="acard" style="flex:1;">
+              <div class="acard-body" style="padding:14px 16px;">
+                <div class="acard-cat"><span class="badge badge-gold">Dla pracodawców</span></div>
+                <div class="acard-title" style="font-size:13px;">Ogłoszenie z mapą dostaje 3× więcej aplikacji. Dlaczego?</div>
+                <div class="acard-meta" style="margin-top:8px;"><span>16 maj</span><div class="dot"></div><span>3 min</span></div>
+              </div>
+            </article>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sidebar -->
+      <aside class="sidebar">
+        <!-- Newsletter -->
+        <div class="nl-card">
+          <div class="scard-title">Newsletter</div>
+          <div class="nl-title">Rynek pracy na maila</div>
+          <div class="nl-sub">Najlepsze artykuły, dane o rynku pracy i nowe oferty — co tydzień.</div>
+          <input class="nl-input" type="email" placeholder="twoj@email.pl" />
+          <button class="nl-btn">Zapisz się →</button>
+          <div class="nl-note">Bez spamu. Wypis w 1 kliknięciu.</div>
+        </div>
+
+        <!-- Popular -->
+        <div class="scard">
+          <div class="scard-title">🔥 Najpopularniejsze</div>
+          <div class="pop-list">
+            <div class="pop-item"><div class="pop-num">01</div><div class="pop-item-text"><div class="pop-item-title">Jak napisać CV w 2026? Kompletny przewodnik</div><div class="pop-item-views">48 200 wyświetleń</div></div></div>
+            <div class="pop-item"><div class="pop-num">02</div><div class="pop-item-text"><div class="pop-item-title">Ile zarabia programista w Polsce 2026?</div><div class="pop-item-views">39 800 wyświetleń</div></div></div>
+            <div class="pop-item"><div class="pop-num">03</div><div class="pop-item-text"><div class="pop-item-title">Pytania na rozmowie kwalifikacyjnej</div><div class="pop-item-views">31 500 wyświetleń</div></div></div>
+            <div class="pop-item"><div class="pop-num">04</div><div class="pop-item-text"><div class="pop-item-title">B2B vs UoP – co się bardziej opłaca?</div><div class="pop-item-views">28 100 wyświetleń</div></div></div>
+            <div class="pop-item"><div class="pop-num">05</div><div class="pop-item-text"><div class="pop-item-title">Praca zdalna — najlepsze stanowiska 2026</div><div class="pop-item-views">22 700 wyświetleń</div></div></div>
           </div>
         </div>
 
-        <!-- Sidebar -->
-        <aside class="sidebar">
-          <!-- Newsletter -->
-          <div class="newsletter-card">
-            <div class="sidebar-title">Newsletter</div>
-            <div class="newsletter-title">Rynek pracy prosto na maila</div>
-            <div class="newsletter-sub">Co tydzień: najlepsze artykuły, dane o rynku pracy i nowe oferty blisko Ciebie.</div>
-            <input class="newsletter-input" type="email" placeholder="Twój adres e-mail" />
-            <button class="newsletter-btn">Zapisz mnie →</button>
-            <div class="newsletter-note">Bez spamu. Wypis w 1 kliknięciu.</div>
+        <!-- Tags -->
+        <div class="scard">
+          <div class="scard-title">Tematy</div>
+          <div class="tag-cloud">
+            <span class="tag">praca zdalna</span><span class="tag">wynagrodzenie</span>
+            <span class="tag">CV 2026</span><span class="tag">dojazdy</span>
+            <span class="tag">Warszawa</span><span class="tag">B2B vs UoP</span>
+            <span class="tag">rekrutacja</span><span class="tag">rozmowa kwalifikacyjna</span>
+            <span class="tag">IT praca</span><span class="tag">negocjacje</span>
+            <span class="tag">Kraków</span><span class="tag">praca hybrydowa</span>
           </div>
+        </div>
 
-          <!-- Popular -->
-          <div class="sidebar-card">
-            <div class="sidebar-title">🔥 Najpopularniejsze</div>
-            <div class="popular-list">
-              <div class="popular-item">
-                <div class="popular-num">01</div>
-                <div>
-                  <div class="popular-item-title">Jak napisać CV w 2026? Kompletny przewodnik</div>
-                  <div class="popular-item-views">48 200 wyświetleń</div>
-                </div>
-              </div>
-              <div class="popular-item">
-                <div class="popular-num">02</div>
-                <div>
-                  <div class="popular-item-title">Ile zarabia programista w Polsce 2026?</div>
-                  <div class="popular-item-views">39 800 wyświetleń</div>
-                </div>
-              </div>
-              <div class="popular-item">
-                <div class="popular-num">03</div>
-                <div>
-                  <div class="popular-item-title">Rozmowa kwalifikacyjna – pytania i odpowiedzi</div>
-                  <div class="popular-item-views">31 500 wyświetleń</div>
-                </div>
-              </div>
-              <div class="popular-item">
-                <div class="popular-num">04</div>
-                <div>
-                  <div class="popular-item-title">B2B vs UoP – co się bardziej opłaca?</div>
-                  <div class="popular-item-views">28 100 wyświetleń</div>
-                </div>
-              </div>
-              <div class="popular-item">
-                <div class="popular-num">05</div>
-                <div>
-                  <div class="popular-item-title">Praca zdalna – najlepsze stanowiska w Polsce</div>
-                  <div class="popular-item-views">22 700 wyświetleń</div>
-                </div>
-              </div>
-            </div>
-          </div>
+        <!-- CTA -->
+        <div class="cta-widget">
+          <div class="cta-widget-title">Szukasz pracy blisko domu?</div>
+          <div class="cta-widget-sub">MapJob pokaże Ci czas dojazdu każdej oferty zanim wyślesz CV.</div>
+          <a href="#" class="cta-widget-btn">Sprawdź oferty na mapie →</a>
+        </div>
+      </aside>
+    </div>
 
-          <!-- Tags -->
-          <div class="sidebar-card">
-            <div class="sidebar-title">Tematy</div>
-            <div class="tag-cloud">
-              <span class="tag">praca zdalna</span>
-              <span class="tag">wynagrodzenie</span>
-              <span class="tag">CV 2026</span>
-              <span class="tag">dojazdy</span>
-              <span class="tag">Warszawa</span>
-              <span class="tag">rekrutacja</span>
-              <span class="tag">B2B</span>
-              <span class="tag">rozmowa kwalifikacyjna</span>
-              <span class="tag">UoP</span>
-              <span class="tag">IT praca</span>
-              <span class="tag">negocjacje</span>
-              <span class="tag">Kraków</span>
-              <span class="tag">praca hybrydowa</span>
-              <span class="tag">list motywacyjny</span>
-            </div>
-          </div>
-        </aside>
-      </div>
-
-    </div><!-- /.container -->
-  </section>
-
-  <!-- FAQ Section (SEO – "People Also Ask") -->
-  <section class="faq-section">
-    <div class="container">
-      <div class="section-header">
-        <h2 class="section-title">Najczęściej zadawane pytania</h2>
-        <span style="font-size:13px;color:var(--gray-400);">Odpowiadamy na pytania z Google</span>
+    <!-- FAQ section (Google PAA) -->
+    <div class="faq-section">
+      <div class="sec-head" style="margin-top:0;">
+        <div class="sec-title">Najczęściej zadawane pytania</div>
+        <span style="font-size:11px;color:var(--text3);">Odpowiadamy na pytania z Google</span>
       </div>
       <div class="faq-grid">
-        <div class="faq-item">
-          <div class="faq-q">Jak znaleźć pracę blisko domu?</div>
-          <div class="faq-a">Na MapJob.pl możesz ustawić swój adres zamieszkania i filtrować oferty po odległości lub czasie dojazdu — autem, rowerem lub komunikacją miejską.</div>
-        </div>
-        <div class="faq-item">
-          <div class="faq-q">Ile czasu Polacy spędzają dziennie na dojazdach do pracy?</div>
-          <div class="faq-a">Według danych GUS z 2025 roku średni czas dojazdów w dużych miastach wynosi 68 minut dziennie (tam i z powrotem). W Warszawie to nawet 74 minuty.</div>
-        </div>
-        <div class="faq-item">
-          <div class="faq-q">Jak negocjować wynagrodzenie po otrzymaniu oferty?</div>
-          <div class="faq-a">Kluczowe kroki to: zbadanie widełek rynkowych, przygotowanie uzasadnienia (doświadczenie, umiejętności), zaproponowanie konkretnej kwoty i cierpliwe czekanie na odpowiedź pracodawcy.</div>
-        </div>
-        <div class="faq-item">
-          <div class="faq-q">Czy praca zdalna nadal jest popularna w Polsce w 2026?</div>
-          <div class="faq-a">Tak, ale wiele firm wróciło do modelu hybrydowego (2–3 dni w biurze). Pełna praca zdalna stanowi ok. 22% wszystkich ofert w branży IT, 8% ogółem.</div>
-        </div>
-        <div class="faq-item">
-          <div class="faq-q">Co wpisać w CV w 2026 żeby przejść przez ATS?</div>
-          <div class="faq-a">Używaj słów kluczowych wprost z ogłoszenia, unikaj tabel i grafik, zapisuj plik jako .docx lub czysty PDF. Sekcja "Umiejętności" powinna zawierać konkretne technologie i narzędzia.</div>
-        </div>
-        <div class="faq-item">
-          <div class="faq-q">Ile kosztuje miesięcznie dojazd do pracy samochodem w Warszawie?</div>
-          <div class="faq-a">Przy 20 km trasy w jedną stronę i obecnych cenach paliwa to ok. 600–900 zł/miesiąc za samo paliwo, plus ok. 200–400 zł parkingu. Łącznie nawet 1 300 zł miesięcznie.</div>
-        </div>
+        <div class="faq-item"><div class="faq-q">Jak znaleźć pracę blisko domu?</div><div class="faq-a">Na MapJob.pl ustawiasz adres zamieszkania i filtrujesz oferty po odległości lub czasie dojazdu — autem, rowerem lub komunikacją miejską.</div></div>
+        <div class="faq-item"><div class="faq-q">Ile czasu Polacy tracą dziennie na dojazdy?</div><div class="faq-a">Według GUS 2025 średni czas dojazdu w dużych miastach to 68 minut dziennie (tam i z powrotem). W Warszawie — 74 minuty.</div></div>
+        <div class="faq-item"><div class="faq-q">Jak negocjować wynagrodzenie po otrzymaniu oferty?</div><div class="faq-a">Zbadaj widełki rynkowe, uzasadnij kwotą wynikającą z doświadczenia, zaproponuj konkretną liczbę i cierpliwie poczekaj na odpowiedź.</div></div>
+        <div class="faq-item"><div class="faq-q">Czy praca zdalna jest nadal popularna w Polsce?</div><div class="faq-a">Wiele firm wróciło do modelu hybrydowego (2–3 dni w biurze). Pełna praca zdalna to ok. 22% ofert w IT i ok. 8% ogółem w 2026.</div></div>
+        <div class="faq-item"><div class="faq-q">Ile kosztuje miesięcznie dojazd autem w Warszawie?</div><div class="faq-a">Przy 20 km w jedną stronę to ok. 900–1 400 zł/miesiąc za paliwo, amortyzację i parking. Rocznie nawet 14 000 zł.</div></div>
+        <div class="faq-item"><div class="faq-q">Co wpisać w CV w 2026 żeby przejść przez ATS?</div><div class="faq-a">Słowa kluczowe wprost z ogłoszenia, unikaj tabel i grafik, zapisuj jako .docx lub czysty PDF. Sekcja „Umiejętności" z konkretnymi narzędziami.</div></div>
       </div>
     </div>
-  </section>
+
+  </div><!-- /.container -->
 
   <!-- Footer -->
   <footer>
     <div class="container">
       <div class="footer-grid">
-        <div class="footer-brand">
-          <div class="footer-logo">📍 MapJob</div>
-          <div class="footer-tagline">Znajdź pracę blisko domu. Platforma pracy z mapą dojazdów — jedyna w Polsce, która pokaże Ci czas dojazdu przed aplikacją.</div>
-          <div class="footer-seo-note">Blog MapJob to poradniki o szukaniu pracy, wynagrodzeniach, rekrutacji i dojazdach dla Polaków.</div>
+        <div>
+          <div class="f-logo">Map<span style="color:var(--blue2)">Job</span></div>
+          <div class="f-tag">Znajdź pracę blisko domu. Jedyna polska platforma z mapą dojazdów i filtrem czasu dojazdu.</div>
+          <div class="f-seo">Blog MapJob to porady o szukaniu pracy, wynagrodzeniach, CV i dojazdach dla Polaków.</div>
         </div>
         <div>
-          <div class="footer-col-title">Blog</div>
-          <ul class="footer-links">
+          <div class="f-col-title">Blog</div>
+          <ul class="f-links">
             <li><a href="#">Dojazdy do pracy</a></li>
             <li><a href="#">Szukanie pracy</a></li>
             <li><a href="#">Wynagrodzenia</a></li>
@@ -1009,9 +937,9 @@
           </ul>
         </div>
         <div>
-          <div class="footer-col-title">MapJob</div>
-          <ul class="footer-links">
-            <li><a href="#">Znajdź pracę</a></li>
+          <div class="f-col-title">MapJob</div>
+          <ul class="f-links">
+            <li><a href="#">Mapa ofert pracy</a></li>
             <li><a href="#">Dodaj ogłoszenie</a></li>
             <li><a href="#">Dla rekruterów</a></li>
             <li><a href="#">Raport 2026</a></li>
@@ -1019,230 +947,214 @@
           </ul>
         </div>
         <div>
-          <div class="footer-col-title">Popularne wyszukiwania</div>
-          <ul class="footer-links">
+          <div class="f-col-title">Popularne wyszukiwania</div>
+          <ul class="f-links">
             <li><a href="#">Praca Warszawa</a></li>
             <li><a href="#">Praca Kraków</a></li>
             <li><a href="#">Praca zdalna IT</a></li>
             <li><a href="#">Praca blisko domu</a></li>
-            <li><a href="#">Praca magazyn</a></li>
+            <li><a href="#">Praca magazynier</a></li>
           </ul>
         </div>
       </div>
       <div class="footer-bottom">
-        <span>© 2026 MapJob Sp. z o.o. · All rights reserved</span>
-        <span>Polityka prywatności · Cookies · RODO</span>
+        <span>© 2026 MapJob Sp. z o.o.</span>
+        <span>Polityka prywatności · Regulamin · RODO</span>
       </div>
     </div>
   </footer>
 
-</div><!-- /#blogListing -->
+</div><!-- /#pg-listing -->
 
 
-<!-- ═══════════════════════════════════════════════════════════════════
-     WIDOK 2: ARTYKUŁ (ARTICLE PAGE)
-═══════════════════════════════════════════════════════════════════ -->
-<div class="article-page" id="articlePage">
+<!-- ═══════════════════════════════════════════════════════
+     PAGE 2 — ARTICLE
+═══════════════════════════════════════════════════════ -->
+<div class="page" id="pg-article">
 
-  <!-- Top Banner -->
-  <div class="top-banner">
-    🗺️ Szukasz pracy blisko domu? <a href="#">Sprawdź oferty na mapie →</a>
+  <!-- Topbar -->
+  <div id="topbar" style="position:sticky;top:0;z-index:400;height:var(--nav-h);background:var(--bg2);border-bottom:1px solid var(--border);backdrop-filter:blur(12px);display:flex;align-items:center;padding:0 20px;gap:0;">
+    <div class="logo" onclick="showListing()" style="cursor:pointer;">Map<span class="logo-dot">Job</span></div>
+    <nav class="topbar-nav">
+      <a class="tnav-link" href="#">Mapa ofert</a>
+      <a class="tnav-link" href="#">Dla firm</a>
+      <a class="tnav-link on" onclick="showListing();return false;" href="#">Blog</a>
+      <a class="tnav-link" href="#">Raport 2026</a>
+    </nav>
+    <div class="topbar-spacer"></div>
+    <div class="topbar-search">
+      <svg width="13" height="13" viewBox="0 0 20 20" fill="none"><circle cx="9" cy="9" r="6" stroke="currentColor" stroke-width="1.6"/><path d="M13.5 13.5L17 17" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+      Szukaj w blogu…
+    </div>
+    <button class="btn-p">Dodaj ogłoszenie</button>
   </div>
 
-  <!-- Navbar (identical) -->
-  <header class="navbar">
-    <div class="container navbar-inner">
-      <div class="logo" style="cursor:pointer" onclick="showListing()">
-        <div class="logo-pin"></div>
-        Map<span style="color:var(--gray-900)">Job</span>
-      </div>
-      <nav>
-        <a href="#">Znajdź pracę</a>
-        <a href="#">Dla pracodawców</a>
-        <a href="#" class="active" onclick="showListing(); return false;">Blog</a>
-        <a href="#">Raport 2026</a>
-      </nav>
-      <div class="nav-spacer"></div>
-      <div class="nav-search">
-        <svg width="14" height="14" viewBox="0 0 20 20" fill="none"><circle cx="9" cy="9" r="6.5" stroke="currentColor" stroke-width="1.8"/><path d="M14.5 14.5L18 18" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
-        Szukaj w blogu…
-      </div>
-      <a href="#" class="nav-cta">Dodaj ogłoszenie</a>
-    </div>
-  </header>
-
   <div class="container">
+
     <!-- Breadcrumb -->
-    <nav class="article-breadcrumb">
-      <a href="#" onclick="showListing(); return false;">Blog</a>
-      <svg width="12" height="12" viewBox="0 0 20 20" fill="none"><path d="M7 5l6 5-6 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+    <nav class="breadcrumb">
+      <a href="#" onclick="showListing();return false;">Blog</a>
+      <svg width="10" height="10" viewBox="0 0 20 20" fill="none"><path d="M7 5l6 5-6 5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
       <a href="#">Dojazdy i lokalizacja</a>
-      <svg width="12" height="12" viewBox="0 0 20 20" fill="none"><path d="M7 5l6 5-6 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
-      <span>Ile kosztuje Cię dojazd do pracy?</span>
+      <svg width="10" height="10" viewBox="0 0 20 20" fill="none"><path d="M7 5l6 5-6 5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+      <span class="cur">Ile kosztuje Cię dojazd do pracy?</span>
     </nav>
 
-    <!-- Article Header -->
-    <header class="article-header">
-      <span class="badge badge-blue">🗺️ Dojazdy i lokalizacja</span>
-      <h1>Ile naprawdę kosztuje Cię dojazd do pracy każdego miesiąca?</h1>
-      <div class="article-header-meta">
-        <div class="card-author-avatar" style="width:32px;height:32px;font-size:12px;">MK</div>
-        <div>
-          <div class="author-info-name" style="font-size:14px;margin-bottom:0;">Marta Kowalczyk</div>
-          <div style="font-size:12px;color:var(--gray-400);">Redaktor, ekspert rynku pracy</div>
-        </div>
-        <div class="hero-meta-sep" style="width:4px;height:4px;"></div>
+    <!-- Article header -->
+    <header class="art-header">
+      <div class="art-header-badge"><span class="badge badge-blue">🗺️ Dojazdy i lokalizacja</span></div>
+      <h1 class="art-h1">Ile naprawdę kosztuje Cię dojazd do pracy każdego miesiąca?</h1>
+      <div class="art-meta">
+        <div class="avatar" style="width:28px;height:28px;font-size:11px;">MK</div>
+        <span class="art-author-name">Marta Kowalczyk</span>
+        <span style="color:var(--text3);font-size:11px;">Ekspert rynku pracy</span>
+        <div class="dot"></div>
         <span>29 maja 2026</span>
-        <div class="hero-meta-sep" style="width:4px;height:4px;"></div>
+        <div class="dot"></div>
         <span>🕐 6 min czytania</span>
-        <div class="hero-meta-sep" style="width:4px;height:4px;"></div>
+        <div class="dot"></div>
         <span>👁 12 400 wyświetleń</span>
       </div>
     </header>
 
-    <!-- Hero Image -->
-    <div class="article-hero-image">🚌💰🗺️</div>
+    <!-- Hero image -->
+    <div class="art-hero">🚌 💰 🗺️</div>
 
-    <!-- Article Layout -->
-    <div class="article-layout">
+    <!-- Article layout -->
+    <div class="art-layout">
 
-      <!-- Article Body -->
-      <article class="article-body">
-        <p class="lead">
-          Kalkulujesz zmianę pracy, ale patrzysz tylko na wynagrodzenie? Błąd. Dojazdy do pracy to <strong>ukryty koszt</strong>, który w Warszawie może pochłonąć nawet <strong>14 000 zł rocznie</strong> — i kilkaset godzin Twojego życia.
+      <!-- Body -->
+      <article class="art-body">
+        <p class="art-lead">
+          Kalkulujesz zmianę pracy patrząc tylko na wynagrodzenie? To błąd. Dojazdy to <strong>ukryty koszt</strong>, który w Warszawie pochłania nawet <strong>14 000 zł rocznie</strong> — i kilkaset godzin Twojego życia. Sprawdzamy liczby.
         </p>
 
-        <h2>Ile naprawdę płacisz za dojazd autem?</h2>
-        <p>Weźmy konkretny przykład: 20 km w jedną stronę (typowy dystans z Bemowa lub Ursynowa do centrum Warszawy), 22 dni robocze w miesiącu.</p>
+        <h2>Ile płacisz za dojazd autem?</h2>
+        <p>Przykład: 20 km w jedną stronę (typowy dystans z Bemowa lub Ursynowa do centrum Warszawy), 22 dni robocze w miesiącu.</p>
 
-        <div class="stat-inline-box">
-          <div class="stat-inline-value">876</div>
-          <div class="stat-inline-text">
-            zł miesięcznie — tyle kosztuje paliwo przy cenie 7 zł/l i spalaniu 8l/100km na trasie 20 km w jedną stronę.<br/>
-            <span style="color:rgba(255,255,255,.5);font-size:13px;">+ parking: do 500 zł/mies. w centrum Warszawy</span>
-          </div>
+        <div class="stat-block">
+          <div class="sb-val">876</div>
+          <div class="sb-text"><strong>zł miesięcznie</strong> — tyle kosztuje samo paliwo przy cenie 7 zł/l i spalaniu 8l/100km na trasie 20 km.<br/><span style="color:var(--text3);font-size:12px;">+ parking: do 500 zł/mies. w centrum Warszawy</span></div>
         </div>
 
-        <p>Do tego dochodzą: <strong>amortyzacja samochodu</strong> (~0,70 zł/km wg stawek ZUS), ubezpieczenie, serwis. Razem — dobrze ponad <strong>1 200 zł miesięcznie</strong> tylko na samą logistykę dojazdu.</p>
+        <p>Do tego dochodzą: <strong>amortyzacja samochodu</strong> (~0,70 zł/km wg stawek ZUS), ubezpieczenie, serwis. Razem — dobrze ponad <strong>1 200 zł miesięcznie</strong> tylko na logistykę dojazdu.</p>
 
-        <!-- Interactive Calculator -->
-        <div class="calculator-embed">
+        <!-- Calculator -->
+        <div class="calc-wrap">
           <div class="calc-title">🧮 Kalkulator kosztów dojazdu</div>
-          <div class="calc-sub">Sprawdź ile miesięcznie wydajesz na dojazd do swojej obecnej pracy</div>
+          <div class="calc-sub">Oblicz ile miesięcznie wydajesz na dojazd do pracy</div>
           <div class="calc-row">
             <div class="calc-field">
-              <div class="calc-label">Odległość (km, w jedną stronę)</div>
-              <input class="calc-input" type="number" id="calcDist" value="20" oninput="calcCommute()" />
+              <div class="calc-lbl">Odległość (km, w jedną stronę)</div>
+              <input class="calc-inp" type="number" id="cDist" value="20" oninput="calc()" />
             </div>
             <div class="calc-field">
-              <div class="calc-label">Tryb dojazdu</div>
-              <select class="calc-input" id="calcMode" onchange="calcCommute()">
+              <div class="calc-lbl">Sposób dojazdu</div>
+              <select class="calc-inp" id="cMode" onchange="calc()">
                 <option value="car">🚗 Samochód</option>
                 <option value="transit">🚌 Komunikacja miejska</option>
-                <option value="both">🔀 Auto + komunikacja</option>
               </select>
             </div>
           </div>
-          <div class="calc-result" id="calcResult">
-            <div>
-              <div class="calc-result-label">MIESIĘCZNY KOSZT</div>
-              <div class="calc-result-value" id="calcValue">1 232 zł</div>
+          <div class="calc-result">
+            <div class="cr-col">
+              <div class="cr-lbl">Miesięcznie</div>
+              <div class="cr-val" id="cMonth">1 232 zł</div>
             </div>
-            <div style="width:1px;background:var(--gray-200);align-self:stretch;"></div>
-            <div>
-              <div class="calc-result-label">ROCZNIE</div>
-              <div class="calc-result-value" id="calcYearly" style="color:var(--gray-500);font-size:18px;">14 784 zł</div>
+            <div class="cr-div"></div>
+            <div class="cr-col">
+              <div class="cr-lbl">Rocznie</div>
+              <div class="cr-val" id="cYear" style="color:var(--text2);font-size:18px;">14 784 zł</div>
             </div>
-            <div style="width:1px;background:var(--gray-200);align-self:stretch;"></div>
-            <div>
-              <div class="calc-result-label">GODZIN ROCZNIE</div>
-              <div class="calc-result-value" id="calcHours" style="color:var(--gray-500);font-size:18px;">264h</div>
+            <div class="cr-div"></div>
+            <div class="cr-col">
+              <div class="cr-lbl">Godzin rocznie</div>
+              <div class="cr-val" id="cHours" style="color:var(--text2);font-size:18px;">264 h</div>
             </div>
           </div>
         </div>
 
         <h2>Czas — koszt, którego nie widać na koncie</h2>
-        <p>Pieniądze to jedno. Ale <strong>czas jest jeszcze ważniejszy</strong> — i tu większość pracowników przestaje liczyć.</p>
+        <p>Pieniądze to jedno. Ale czas jest ważniejszy — i tu większość pracowników przestaje liczyć.</p>
 
-        <div class="highlight-box">
-          <p>Przy 60 minutach dziennie (dojazd i powrót) i 220 dniach roboczych rocznie tracisz <strong>220 godzin</strong> = <strong>27,5 pełnych dni roboczych</strong> wyłącznie na siedzenie w aucie lub komunikacji miejskiej. To niemal 6 tygodni urlopu.</p>
+        <div class="highlight">
+          <p>Przy 60 minutach dziennie i 220 dniach roboczych rocznie tracisz <strong>220 godzin = 27,5 pełnych dni roboczych</strong> wyłącznie na siedzenie w aucie. Prawie 6 tygodni urlopu.</p>
         </div>
 
-        <p>Co więcej, chroniczny długi dojazd koreluje z <strong>wyższym poziomem stresu, gorszym snem i niższą satysfakcją z życia</strong> — wynika z badań Wellbeing Institute for Work (2025). Nie warto tego bagatelizować przy wyborze pracy.</p>
+        <p>Chroniczny długi dojazd koreluje z wyższym poziomem stresu, gorszym snem i niższą satysfakcją z życia — wynika z badań Wellbeing Institute for Work (2025).</p>
 
-        <h2>Komunikacja miejska: czy to naprawdę tańsze?</h2>
-        <p>Tak, ale nie zawsze. W Warszawie miesięczny bilet na strefę 1+2 kosztuje <strong>149 zł</strong>. To ogromna różnica vs auto. Ale przy złej siatce połączeń czas dojazdu może być 2× dłuższy — co oznacza, że oszczędzasz pieniądze, ale płacisz czasem.</p>
-
+        <h2>Komunikacja miejska: czy jest tańsza?</h2>
+        <p>Tak, ale nie zawsze się opłaca. Miesięczny bilet na 2 strefy w Warszawie to <strong>149 zł</strong>. Przy złej siatce połączeń czas dojazdu bywa 2× dłuższy niż autem.</p>
         <ul>
           <li>Bilet miesięczny Warszawa (2 strefy): <strong>149 zł</strong></li>
-          <li>Bilet miesięczny Kraków (sieć miejska): <strong>114 zł</strong></li>
+          <li>Bilet miesięczny Kraków: <strong>114 zł</strong></li>
           <li>Bilet miesięczny Wrocław: <strong>110 zł</strong></li>
           <li>Prywatny samochód (20 km/dzień): <strong>900–1 400 zł</strong></li>
         </ul>
 
         <h2>Jak znaleźć pracę bliżej domu?</h2>
-        <p>Najskuteczniejszy sposób to odwrócić sposób szukania: zamiast filtrować po stanowisku i brać co popadnie, <strong>zacznij od mapy</strong>. Ustaw swój adres zamieszkania, określ maksymalny czas lub dystans i dopiero wtedy przeglądaj oferty.</p>
+        <p>Odwróć sposób szukania: zamiast filtrować po stanowisku — <strong>zacznij od mapy</strong>. Ustaw adres zamieszkania, określ maksymalny czas dojazdu i dopiero przeglądaj oferty.</p>
 
-        <div class="highlight-box" style="background:#ECFDF5;border-color:var(--green);">
-          <p>Na <strong>MapJob.pl</strong> każda oferta ma podany <strong>dokładny adres</strong> i kalkulowany czas dojazdu w 4 trybach. Możesz filtrować "maksymalnie 30 minut komunikacją miejską" i zobaczyć tylko realne opcje — bez niespodzianek na rozmowie kwalifikacyjnej.</p>
+        <div class="highlight green">
+          <p>Na <strong>MapJob.pl</strong> każda oferta ma podany dokładny adres i kalkulowany czas dojazdu w 4 trybach. Możesz filtrować "max 30 min komunikacją miejską" i zobaczyć tylko realne opcje — bez niespodzianek.</p>
         </div>
 
-        <h2>Podsumowanie: co to oznacza dla Ciebie?</h2>
-        <p>Przy zmianie pracy warto uwzględnić pełny obraz finansowy:</p>
+        <h2>Podsumowanie: jak to policzyć dla siebie</h2>
         <ol>
-          <li>Oblicz aktualny koszt dojazdu (skorzystaj z kalkulatora powyżej)</li>
-          <li>Porównaj go z ofertą, gdzie dojazd jest o 50% krótszy</li>
-          <li>Dodaj wartość odzyskanego czasu (np. 2h dziennie = dodatkowy wieczór z rodziną)</li>
-          <li>Sprawdź MapJob.pl, żeby zobaczyć oferty posortowane po czasie dojazdu od Twojego domu</li>
+          <li>Oblicz aktualny koszt dojazdu (kalkulator powyżej)</li>
+          <li>Porównaj z ofertą o 50% krótszym dojazdem</li>
+          <li>Dodaj wartość odzyskanego czasu (~2h dziennie = dodatkowy wieczór)</li>
+          <li>Sprawdź MapJob.pl — oferty posortowane po czasie dojazdu od Twojego adresu</li>
         </ol>
 
-        <!-- Share Bar -->
+        <!-- Share -->
         <div class="share-bar">
-          <span class="share-label">Udostępnij:</span>
-          <button class="share-btn fb">Facebook</button>
-          <button class="share-btn li">LinkedIn</button>
-          <button class="share-btn tw">X (Twitter)</button>
-          <button class="share-btn cp">📋 Kopiuj link</button>
+          <span class="share-lbl">Udostępnij</span>
+          <button class="share-btn">Facebook</button>
+          <button class="share-btn">LinkedIn</button>
+          <button class="share-btn">X (Twitter)</button>
+          <button class="share-btn">📋 Kopiuj link</button>
         </div>
 
-        <!-- Author Card -->
+        <!-- Author -->
         <div class="author-card">
           <div class="author-avatar-lg">MK</div>
           <div>
-            <div class="author-info-name">Marta Kowalczyk</div>
-            <div class="author-info-role">Redaktor i ekspert rynku pracy @ MapJob</div>
-            <div class="author-info-bio">Specjalistka z 8-letnim doświadczeniem w HR i employer brandingu. Pisze o rynku pracy, wynagrodzeniach i trendach rekrutacji w Polsce. Wcześniej w Pracuj.pl i Deloitte Human Capital.</div>
+            <div class="au-name">Marta Kowalczyk</div>
+            <div class="au-role">Redaktor i ekspert rynku pracy @ MapJob</div>
+            <div class="au-bio">8 lat doświadczenia w HR i employer brandingu. Pisze o rynku pracy, wynagrodzeniach i trendach rekrutacji. Wcześniej Pracuj.pl i Deloitte Human Capital.</div>
           </div>
         </div>
       </article>
 
-      <!-- Article Sidebar: TOC + Related -->
+      <!-- Sidebar / TOC -->
       <aside>
-        <div class="article-toc">
+        <div class="toc">
           <div class="toc-title">Spis treści</div>
           <ul class="toc-list">
-            <li class="toc-item active">Ile płacisz za dojazd autem?</li>
-            <li class="toc-item">Kalkulator kosztów dojazdu</li>
-            <li class="toc-item">Czas — koszt, którego nie widać</li>
-            <li class="toc-item">Komunikacja miejska: czy się opłaca?</li>
-            <li class="toc-item">Jak znaleźć pracę bliżej domu?</li>
+            <li class="toc-item on">Ile płacisz za dojazd autem?</li>
+            <li class="toc-item">Kalkulator kosztów</li>
+            <li class="toc-item">Czas — koszt ukryty</li>
+            <li class="toc-item">Komunikacja miejska</li>
+            <li class="toc-item">Jak znaleźć pracę bliżej?</li>
             <li class="toc-item">Podsumowanie</li>
           </ul>
 
-          <div style="margin-top:24px;padding-top:24px;border-top:1px solid var(--gray-200);">
+          <div style="margin-top:20px;padding-top:20px;border-top:1px solid var(--border2);">
             <div class="toc-title">Powiązane artykuły</div>
-            <div style="display:flex;flex-direction:column;gap:12px;margin-top:12px;">
-              <a href="#" style="font-size:13px;color:var(--gray-700);font-weight:500;line-height:1.4;">→ Praca zdalna vs biuro – co się opłaca w 2026?</a>
-              <a href="#" style="font-size:13px;color:var(--gray-700);font-weight:500;line-height:1.4;">→ Mapa dojazdów: ranking miast 2026</a>
-              <a href="#" style="font-size:13px;color:var(--gray-700);font-weight:500;line-height:1.4;">→ Jak negocjować wynagrodzenie biorąc pod uwagę koszty dojazdu?</a>
+            <div style="display:flex;flex-direction:column;gap:10px;margin-top:10px;">
+              <a href="#" style="font-size:12px;color:var(--text2);line-height:1.4;">→ Praca zdalna vs biuro – co się opłaca w 2026?</a>
+              <a href="#" style="font-size:12px;color:var(--text2);line-height:1.4;">→ Mapa dojazdów: ranking polskich miast</a>
+              <a href="#" style="font-size:12px;color:var(--text2);line-height:1.4;">→ Jak negocjować wynagrodzenie biorąc pod uwagę koszty dojazdu?</a>
             </div>
           </div>
 
-          <!-- CTA Widget -->
-          <div style="margin-top:24px;background:var(--blue);border-radius:var(--radius);padding:20px;color:#fff;">
-            <div style="font-size:13px;font-weight:700;margin-bottom:8px;">Szukasz pracy blisko domu?</div>
-            <div style="font-size:12px;color:rgba(255,255,255,.75);margin-bottom:14px;line-height:1.5;">Sprawdź oferty z mapą dojazdów i znajdź pracę w maksymalnie 30 minutach od Twojego domu.</div>
-            <a href="#" style="display:block;background:rgba(255,255,255,.2);color:#fff;text-align:center;padding:9px;border-radius:8px;font-size:13px;font-weight:600;transition:background .15s;" onmouseover="this.style.background='rgba(255,255,255,.3)'" onmouseout="this.style.background='rgba(255,255,255,.2)'">Sprawdź oferty →</a>
+          <div style="margin-top:20px;">
+            <div class="cta-widget">
+              <div class="cta-widget-title">Praca blisko Ciebie</div>
+              <div class="cta-widget-sub">Filtruj oferty po czasie dojazdu od Twojego domu.</div>
+              <a href="#" class="cta-widget-btn">Sprawdź mapę ofert →</a>
+            </div>
           </div>
         </div>
       </aside>
@@ -1250,77 +1162,72 @@
     </div>
   </div>
 
-  <!-- Related Articles -->
-  <section class="related-section">
+  <!-- Related articles -->
+  <div class="related-section">
     <div class="container">
-      <div class="section-header">
-        <h2 class="section-title">Czytaj dalej</h2>
-        <a href="#" class="see-all" onclick="showListing(); return false;">Wróć do bloga →</a>
+      <div class="sec-head">
+        <div class="sec-title">Czytaj dalej</div>
+        <a href="#" class="sec-link" onclick="showListing();return false;">Wróć do bloga →</a>
       </div>
-      <div class="articles-grid">
-        <article class="article-card">
-          <div class="card-thumb"><div class="card-thumb-bg thumb-teal">🏠</div></div>
-          <div class="card-body">
-            <div class="card-category"><span class="badge badge-blue">Dojazdy</span></div>
-            <h3 class="card-title">Praca zdalna vs hybrydowa vs biuro – co naprawdę się opłaca w 2026?</h3>
-            <p class="card-excerpt">Liczymy realny koszt każdego modelu pracy: dojazdy, mieszkanie, internet, benefity.</p>
-            <div class="card-meta"><span>21 maj</span><div class="card-meta-sep"></div><span>9 min</span></div>
+      <div class="grid-3">
+        <article class="acard">
+          <div class="acard-thumb t-teal">🏠</div>
+          <div class="acard-body">
+            <div class="acard-cat"><span class="badge badge-blue">Dojazdy</span></div>
+            <div class="acard-title">Praca zdalna vs hybrydowa vs biuro – co naprawdę się opłaca?</div>
+            <div class="acard-meta"><span>21 maj</span><div class="dot"></div><span>9 min</span></div>
           </div>
         </article>
-        <article class="article-card">
-          <div class="card-thumb"><div class="card-thumb-bg thumb-blue">📍</div></div>
-          <div class="card-body">
-            <div class="card-category"><span class="badge badge-blue">Dojazdy</span></div>
-            <h3 class="card-title">Mapa dojazdów: które polskie miasta mają najgorszy ruch? [Ranking 2026]</h3>
-            <p class="card-excerpt">Kraków wyprzedza Warszawę, Wrocław zaskakuje wynikami.</p>
-            <div class="card-meta"><span>15 maj</span><div class="card-meta-sep"></div><span>12 min</span></div>
+        <article class="acard">
+          <div class="acard-thumb t-blue">📍</div>
+          <div class="acard-body">
+            <div class="acard-cat"><span class="badge badge-blue">Dojazdy · Raport</span></div>
+            <div class="acard-title">Mapa dojazdów: ranking 20 miast w Polsce [2026]</div>
+            <div class="acard-meta"><span>15 maj</span><div class="dot"></div><span>12 min</span></div>
           </div>
         </article>
-        <article class="article-card">
-          <div class="card-thumb"><div class="card-thumb-bg thumb-green">💰</div></div>
-          <div class="card-body">
-            <div class="card-category"><span class="badge badge-green">Wynagrodzenia</span></div>
-            <h3 class="card-title">Jak negocjować wynagrodzenie w 2026? Skrypt rozmowy krok po kroku</h3>
-            <p class="card-excerpt">Konkretne zdania, których możesz użyć — od oferty do podpisania umowy.</p>
-            <div class="card-meta"><span>27 maj</span><div class="card-meta-sep"></div><span>8 min</span></div>
+        <article class="acard">
+          <div class="acard-thumb t-green">💰</div>
+          <div class="acard-body">
+            <div class="acard-cat"><span class="badge badge-green">Wynagrodzenia</span></div>
+            <div class="acard-title">Jak negocjować wynagrodzenie w 2026? Skrypt krok po kroku</div>
+            <div class="acard-meta"><span>27 maj</span><div class="dot"></div><span>8 min</span></div>
           </div>
         </article>
       </div>
     </div>
-  </section>
+  </div>
 
-  <!-- Footer (identical) -->
+  <!-- Footer -->
   <footer>
     <div class="container">
       <div class="footer-grid">
-        <div class="footer-brand">
-          <div class="footer-logo">📍 MapJob</div>
-          <div class="footer-tagline">Znajdź pracę blisko domu. Jedyna polska platforma pracy z mapą dojazdów i filtrem czasu dojazdu.</div>
-          <div class="footer-seo-note">Blog MapJob: porady o szukaniu pracy, wynagrodzeniach, CV i dojazdach dla Polaków.</div>
+        <div>
+          <div class="f-logo">Map<span style="color:var(--blue2)">Job</span></div>
+          <div class="f-tag">Znajdź pracę blisko domu. Jedyna polska platforma z mapą dojazdów i filtrem czasu dojazdu.</div>
+          <div class="f-seo">Blog MapJob: porady o szukaniu pracy, wynagrodzeniach, CV i dojazdach dla Polaków.</div>
         </div>
         <div>
-          <div class="footer-col-title">Blog</div>
-          <ul class="footer-links">
+          <div class="f-col-title">Blog</div>
+          <ul class="f-links">
             <li><a href="#">Dojazdy do pracy</a></li>
             <li><a href="#">Szukanie pracy</a></li>
             <li><a href="#">Wynagrodzenia</a></li>
             <li><a href="#">CV i rekrutacja</a></li>
-            <li><a href="#">Dla pracodawców</a></li>
           </ul>
         </div>
         <div>
-          <div class="footer-col-title">MapJob</div>
-          <ul class="footer-links">
-            <li><a href="#">Znajdź pracę</a></li>
+          <div class="f-col-title">MapJob</div>
+          <ul class="f-links">
+            <li><a href="#">Mapa ofert pracy</a></li>
             <li><a href="#">Dodaj ogłoszenie</a></li>
             <li><a href="#">Dla rekruterów</a></li>
-            <li><a href="#">Raport 2026</a></li>
             <li><a href="#">O nas</a></li>
           </ul>
         </div>
         <div>
-          <div class="footer-col-title">Popularne</div>
-          <ul class="footer-links">
+          <div class="f-col-title">Popularne</div>
+          <ul class="f-links">
             <li><a href="#">Praca Warszawa</a></li>
             <li><a href="#">Praca Kraków</a></li>
             <li><a href="#">Praca zdalna IT</a></li>
@@ -1329,91 +1236,84 @@
         </div>
       </div>
       <div class="footer-bottom">
-        <span>© 2026 MapJob Sp. z o.o. · All rights reserved</span>
-        <span>Polityka prywatności · Cookies · RODO</span>
+        <span>© 2026 MapJob Sp. z o.o.</span>
+        <span>Polityka prywatności · Regulamin · RODO</span>
       </div>
     </div>
   </footer>
 
-</div><!-- /#articlePage -->
+</div><!-- /#pg-article -->
 
-
-<!-- Demo Toggle Button -->
-<button class="demo-toggle" id="demoToggle" onclick="toggleView()">
-  <svg width="14" height="14" viewBox="0 0 20 20" fill="none"><path d="M4 6h12M4 10h12M4 14h12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-  Przełącz widok: Artykuł →
+<!-- Demo toggle -->
+<button id="toggle-btn" onclick="toggle()">
+  <svg width="12" height="12" viewBox="0 0 20 20" fill="none"><rect x="2" y="3" width="16" height="3" rx="1.5" fill="currentColor"/><rect x="2" y="8.5" width="16" height="3" rx="1.5" fill="currentColor"/><rect x="2" y="14" width="10" height="3" rx="1.5" fill="currentColor"/></svg>
+  Widok: Artykuł →
 </button>
 
-
 <script>
-  let isArticleView = false;
+  let isArticle = false;
 
   function showArticle() {
-    isArticleView = true;
-    document.getElementById('blogListing').classList.add('hidden');
-    document.getElementById('articlePage').classList.add('visible');
-    document.getElementById('demoToggle').innerHTML = '<svg width="14" height="14" viewBox="0 0 20 20" fill="none"><path d="M4 6h12M4 10h12M4 14h12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg> Przełącz widok: Lista →';
-    document.getElementById('readingProgress').classList.add('visible');
+    isArticle = true;
+    document.getElementById('pg-listing').classList.remove('on');
+    document.getElementById('pg-article').classList.add('on');
+    document.getElementById('rbar').classList.add('on');
+    document.getElementById('toggle-btn').textContent = '← Widok: Lista';
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
   function showListing() {
-    isArticleView = false;
-    document.getElementById('blogListing').classList.remove('hidden');
-    document.getElementById('articlePage').classList.remove('visible');
-    document.getElementById('demoToggle').innerHTML = '<svg width="14" height="14" viewBox="0 0 20 20" fill="none"><path d="M4 6h12M4 10h12M4 14h12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg> Przełącz widok: Artykuł →';
-    document.getElementById('readingProgress').classList.remove('visible');
+    isArticle = false;
+    document.getElementById('pg-article').classList.remove('on');
+    document.getElementById('pg-listing').classList.add('on');
+    document.getElementById('rbar').classList.remove('on');
+    document.getElementById('toggle-btn').innerHTML = '<svg width="12" height="12" viewBox="0 0 20 20" fill="none"><rect x="2" y="3" width="16" height="3" rx="1.5" fill="currentColor"/><rect x="2" y="8.5" width="16" height="3" rx="1.5" fill="currentColor"/><rect x="2" y="14" width="10" height="3" rx="1.5" fill="currentColor"/></svg> Widok: Artykuł →';
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
-  function toggleView() {
-    if (isArticleView) showListing(); else showArticle();
-  }
+  function toggle() { isArticle ? showListing() : showArticle(); }
 
-  // Reading progress bar
   window.addEventListener('scroll', () => {
-    if (!isArticleView) return;
-    const doc = document.documentElement;
-    const scrollTop = doc.scrollTop || document.body.scrollTop;
-    const scrollHeight = doc.scrollHeight - doc.clientHeight;
-    const progress = scrollHeight > 0 ? (scrollTop / scrollHeight) * 100 : 0;
-    document.getElementById('readingProgress').style.width = progress + '%';
+    if (!isArticle) return;
+    const el = document.documentElement;
+    const pct = (el.scrollTop / (el.scrollHeight - el.clientHeight)) * 100;
+    document.getElementById('rbar').style.width = pct + '%';
   });
 
-  // Commute calculator
-  function calcCommute() {
-    const dist = parseFloat(document.getElementById('calcDist').value) || 0;
-    const mode = document.getElementById('calcMode').value;
-    const days = 22;
-    let monthly = 0, hours = 0;
-
-    if (mode === 'car') {
-      const fuel = dist * 2 * days * (7 * 0.08);
-      const wear = dist * 2 * days * 0.40;
-      monthly = Math.round(fuel + wear);
-      hours = Math.round(dist * 2 / 40 * days * 12);
-    } else if (mode === 'transit') {
-      monthly = 149;
-      hours = Math.round(dist * 2 / 20 * days * 12);
-    } else {
-      const fuel = dist * 2 * days * (7 * 0.08) * 0.5;
-      monthly = Math.round(fuel + 149 * 0.5);
-      hours = Math.round(dist * 2 / 30 * days * 12);
-    }
-
-    const fmt = n => n.toLocaleString('pl-PL');
-    document.getElementById('calcValue').textContent = fmt(monthly) + ' zł';
-    document.getElementById('calcYearly').textContent = fmt(monthly * 12) + ' zł';
-    document.getElementById('calcHours').textContent = hours + 'h';
-  }
-
-  // Tab switching (visual only)
-  document.querySelectorAll('.tab').forEach(t => {
-    t.addEventListener('click', () => {
-      document.querySelectorAll('.tab').forEach(x => x.classList.remove('active'));
-      t.classList.add('active');
+  // Category chip toggle
+  document.querySelectorAll('.chip').forEach(c => {
+    c.addEventListener('click', () => {
+      document.querySelectorAll('.chip').forEach(x => x.classList.remove('on'));
+      c.classList.add('on');
     });
   });
+
+  // TOC active
+  document.querySelectorAll('.toc-item').forEach(t => {
+    t.addEventListener('click', () => {
+      document.querySelectorAll('.toc-item').forEach(x => x.classList.remove('on'));
+      t.classList.add('on');
+    });
+  });
+
+  // Calculator
+  function calc() {
+    const d = parseFloat(document.getElementById('cDist').value) || 0;
+    const mode = document.getElementById('cMode').value;
+    const days = 22;
+    let monthly, hours;
+    if (mode === 'car') {
+      monthly = Math.round(d * 2 * days * (7 * 0.08) + d * 2 * days * 0.40);
+      hours = Math.round(d * 2 / 40 * days * 12);
+    } else {
+      monthly = 149;
+      hours = Math.round(d * 2 / 20 * days * 12);
+    }
+    const f = n => n.toLocaleString('pl-PL');
+    document.getElementById('cMonth').textContent = f(monthly) + ' zł';
+    document.getElementById('cYear').textContent = f(monthly * 12) + ' zł';
+    document.getElementById('cHours').textContent = hours + ' h';
+  }
 </script>
 
 </body>
