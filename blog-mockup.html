@@ -3,306 +3,235 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Blog – MapJob</title>
+  <title>Blog – MapJob | Porady o pracy, dojazdach i rekrutacji</title>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
   <style>
-    /* ─── Tokens (1:1 MapJob) ────────────────────────────────────────── */
+    /* ── Design tokens (MapJob 1:1) ─────────────────────────────────── */
     :root {
-      --bg:     #0B0D10;
-      --bg2:    #101318;
-      --surf:   #15181F;
-      --surf2:  #1C2029;
-      --surf3:  #252A35;
-      --b:      rgba(255,255,255,.06);
-      --b2:     rgba(255,255,255,.04);
-      --b3:     rgba(255,255,255,.09);
-      --tx:     #F5F7FA;
-      --tx2:    #A1A9B8;
-      --tx3:    #6B7280;
-      --blue:   #3B82F6;
-      --blue2:  #60A5FA;
-      --bdim:   rgba(59,130,246,.10);
-      --bmid:   rgba(59,130,246,.22);
-      --green:  #10B981;
-      --gdim:   rgba(16,185,129,.10);
-      --gold:   #D97706;
-      --goldim: rgba(217,119,6,.10);
-      --red:    #DC2626;
-      --rdim:   rgba(220,38,38,.10);
-      --pur:    #7C3AED;
-      --pudim:  rgba(124,58,237,.10);
+      --bg:    #0B0D10; --bg2:   #101318;
+      --surf:  #15181F; --surf2: #1C2029; --surf3: #252A35;
+      --b:  rgba(255,255,255,.06); --b2: rgba(255,255,255,.04); --b3: rgba(255,255,255,.09);
+      --tx: #F5F7FA; --tx2: #A1A9B8; --tx3: #6B7280;
+      --blue: #3B82F6; --blue2: #60A5FA;
+      --bdim: rgba(59,130,246,.10); --bmid: rgba(59,130,246,.22);
+      --green: #10B981; --gdim: rgba(16,185,129,.10);
+      --gold: #D97706;  --goldim: rgba(217,119,6,.10);
+      --red: #DC2626;   --rdim: rgba(220,38,38,.10);
+      --pur: #7C3AED;   --pudim: rgba(124,58,237,.10);
       --ff: 'Inter', -apple-system, sans-serif;
-      --r: 12px;
-      --nav: 52px;
+      --r: 12px; --nav: 52px;
     }
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html { scroll-behavior: smooth; }
-    body {
-      font-family: var(--ff); background: var(--bg); color: var(--tx);
-      -webkit-font-smoothing: antialiased; min-height: 100dvh;
-    }
+    body { font-family: var(--ff); background: var(--bg); color: var(--tx); -webkit-font-smoothing: antialiased; min-height: 100dvh; }
     a { color: inherit; text-decoration: none; }
     button { font-family: var(--ff); cursor: pointer; border: none; background: none; }
-    img { display: block; max-width: 100%; }
 
-    /* ─── Progress bar ───────────────────────────────────────────────── */
+    /* ── Progress bar ───────────────────────────────────────────────── */
     #rbar { position: fixed; top: 0; left: 0; height: 2px; background: var(--blue); width: 0; z-index: 9999; display: none; }
     #rbar.on { display: block; }
 
-    /* ─── Topbar ─────────────────────────────────────────────────────── */
+    /* ── Topbar ─────────────────────────────────────────────────────── */
     .topbar {
-      position: sticky; top: 0; z-index: 400;
-      height: var(--nav); background: var(--bg2);
-      border-bottom: 1px solid var(--b);
+      position: sticky; top: 0; z-index: 400; height: var(--nav);
+      background: var(--bg2); border-bottom: 1px solid var(--b);
       backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
       display: flex; align-items: center; padding: 0 16px; gap: 8px;
     }
-    .logo {
-      font-size: 17px; font-weight: 800; letter-spacing: -.4px;
-      color: var(--tx); display: flex; align-items: center; cursor: pointer;
-    }
-    .logo-dot { color: var(--blue2); }
-    /* Desktop nav — hidden on mobile */
+    .logo { font-size: 17px; font-weight: 800; letter-spacing: -.4px; color: var(--tx); cursor: pointer; }
+    .logo span { color: var(--blue2); }
     .desk-nav { display: none; flex: 1; align-items: center; gap: 2px; margin-left: 16px; }
-    .dn-link {
-      padding: 5px 11px; border-radius: 7px; font-size: 13px; font-weight: 500;
-      color: var(--tx2); transition: all .15s; white-space: nowrap;
-    }
-    .dn-link:hover { background: rgba(255,255,255,.04); color: var(--tx); }
-    .dn-link.on { background: var(--bdim); color: var(--blue2); font-weight: 600; }
-    .topbar-spacer { flex: 1; }
-    /* Mobile icons */
-    .mob-icon {
-      width: 36px; height: 36px; border-radius: 9px;
-      background: var(--surf); border: 1px solid var(--b3);
-      display: flex; align-items: center; justify-content: center;
-      color: var(--tx2); flex-shrink: 0;
-    }
-    /* Desktop search + CTA */
-    .desk-search { display: none; }
-    .desk-cta { display: none; }
+    .dn { padding: 5px 11px; border-radius: 7px; font-size: 13px; font-weight: 500; color: var(--tx2); transition: all .15s; white-space: nowrap; }
+    .dn:hover { background: rgba(255,255,255,.04); color: var(--tx); }
+    .dn.on { background: var(--bdim); color: var(--blue2); font-weight: 600; }
+    .tb-space { flex: 1; }
+    .desk-search { display: none; align-items: center; gap: 7px; background: var(--surf); border: 1px solid var(--b3); border-radius: 8px; padding: 7px 12px; font-size: 12px; color: var(--tx3); cursor: pointer; width: 180px; }
+    .desk-search:hover { border-color: rgba(255,255,255,.14); }
+    .desk-cta { display: none; background: var(--blue); color: #fff; font-size: 13px; font-weight: 600; padding: 8px 16px; border-radius: 8px; margin-left: 8px; transition: background .15s; }
+    .desk-cta:hover { background: #2563EB; }
+    .mob-ic { width: 36px; height: 36px; border-radius: 9px; background: var(--surf); border: 1px solid var(--b3); display: flex; align-items: center; justify-content: center; color: var(--tx2); }
 
-    /* ─── Page containers ────────────────────────────────────────────── */
+    /* ── Page toggle ────────────────────────────────────────────────── */
     .page { display: none; }
     .page.on { display: block; }
     .wrap { max-width: 1100px; margin: 0 auto; padding: 0 16px; }
 
-    /* ─── Beta strip ─────────────────────────────────────────────────── */
-    .beta-strip {
-      background: var(--bg2); border-bottom: 1px solid var(--b2);
-      padding: 7px 16px; font-size: 11px; color: var(--tx3);
-      display: flex; align-items: center; justify-content: center; gap: 8px;
-      overflow: hidden;
-    }
-    .btag {
-      background: var(--bdim); border: 1px solid var(--bmid);
-      color: var(--blue2); font-size: 9px; font-weight: 700;
-      padding: 1px 6px; border-radius: 5px; letter-spacing: .05em;
-      flex-shrink: 0;
-    }
-    .beta-strip a { color: var(--blue2); }
+    /* ── Beta strip ─────────────────────────────────────────────────── */
+    .beta { background: var(--bg2); border-bottom: 1px solid var(--b2); padding: 7px 16px; font-size: 11px; color: var(--tx3); display: flex; align-items: center; justify-content: center; gap: 8px; }
+    .btag { background: var(--bdim); border: 1px solid var(--bmid); color: var(--blue2); font-size: 9px; font-weight: 700; padding: 2px 6px; border-radius: 5px; letter-spacing: .05em; }
+    .beta a { color: var(--blue2); }
 
-    /* ─── Category chips (horizontal scroll) ─────────────────────────── */
-    .chips-row {
-      display: flex; gap: 6px; padding: 14px 16px;
-      overflow-x: auto; -webkit-overflow-scrolling: touch;
-      scrollbar-width: none;
-    }
-    .chips-row::-webkit-scrollbar { display: none; }
-    .chip {
-      padding: 6px 13px; border-radius: 7px; font-size: 12px; font-weight: 600;
-      background: var(--surf); border: 1px solid var(--b3); color: var(--tx2);
-      cursor: pointer; white-space: nowrap; transition: all .15s; flex-shrink: 0;
-    }
-    .chip:hover { border-color: rgba(255,255,255,.15); color: var(--tx); }
-    .chip.on { background: var(--blue); border-color: var(--blue); color: #fff; }
-
-    /* ─── Badges ─────────────────────────────────────────────────────── */
-    .badge {
-      display: inline-flex; align-items: center;
-      font-size: 9px; font-weight: 700; letter-spacing: .05em;
-      text-transform: uppercase; padding: 2px 7px; border-radius: 5px;
-      white-space: nowrap;
-    }
+    /* ── Badges ─────────────────────────────────────────────────────── */
+    .badge { display: inline-flex; align-items: center; font-size: 9px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; padding: 2px 7px; border-radius: 5px; white-space: nowrap; }
     .b-blue   { background: var(--bdim);   color: var(--blue2); border: 1px solid var(--bmid); }
     .b-green  { background: var(--gdim);   color: var(--green); border: 1px solid rgba(16,185,129,.2); }
     .b-gold   { background: var(--goldim); color: var(--gold);  border: 1px solid rgba(217,119,6,.2); }
     .b-purple { background: var(--pudim);  color: var(--pur);   border: 1px solid rgba(124,58,237,.2); }
     .b-red    { background: var(--rdim);   color: var(--red);   border: 1px solid rgba(220,38,38,.2); }
 
-    /* ─── Hero featured card ─────────────────────────────────────────── */
-    .hero-wrap { padding: 0 16px 4px; }
-    .hero-card {
-      background: var(--surf); border: 1px solid var(--b3);
-      border-radius: var(--r); overflow: hidden; cursor: pointer;
-      transition: border-color .15s;
-    }
-    .hero-card:hover { border-color: rgba(255,255,255,.15); }
-    /* image on top for mobile, side on desktop */
-    .hero-img {
-      height: 160px; background: linear-gradient(135deg, #0d1628 0%, #162038 100%);
-      display: flex; align-items: center; justify-content: center;
-      position: relative; overflow: hidden;
-    }
-    .hero-map {
-      width: 82%; height: 78%; border: 1px solid rgba(255,255,255,.06);
-      border-radius: 8px; background: rgba(255,255,255,.02);
-      position: relative; overflow: hidden;
-    }
-    .map-grid {
-      position: absolute; inset: 0;
-      background-image: linear-gradient(rgba(59,130,246,.05) 1px, transparent 1px),
-                        linear-gradient(90deg, rgba(59,130,246,.05) 1px, transparent 1px);
-      background-size: 24px 24px;
-    }
-    .mpin { position: absolute; }
-    .mpin-d {
-      width: 10px; height: 10px; border-radius: 50%;
-      border: 2px solid rgba(255,255,255,.75);
-    }
-    .mpin-d.b { background: var(--blue); }
-    .mpin-d.g { background: var(--green); }
-    .mpin-d.p { background: var(--pur); }
-    .mpin-lbl {
-      position: absolute; left: 14px; top: -2px;
-      background: var(--surf); border: 1px solid var(--b3);
-      color: var(--tx2); font-size: 9px; font-weight: 700;
-      padding: 2px 6px; border-radius: 4px; white-space: nowrap;
-    }
-    .commute-float {
-      position: absolute; bottom: 10px; right: 10px;
-      background: var(--surf); border: 1px solid var(--b3);
-      border-radius: 8px; padding: 8px 11px;
-      display: flex; gap: 12px;
-    }
-    .cm { display: flex; flex-direction: column; align-items: center; gap: 1px; }
-    .cm-i { font-size: 13px; }
-    .cm-t { font-size: 10px; font-weight: 700; color: var(--tx); }
-    .cm-l { font-size: 8px; color: var(--tx3); }
-    .hero-body { padding: 16px; }
-    .hero-eyebrow {
-      display: flex; align-items: center; gap: 6px;
-      font-size: 10px; color: var(--tx3); margin-bottom: 8px;
-    }
-    .hero-title {
-      font-size: 17px; font-weight: 700; line-height: 1.3;
-      letter-spacing: -.025em; color: var(--tx); margin-bottom: 8px;
-    }
-    .hero-card:hover .hero-title { color: var(--blue2); }
-    .hero-excerpt { font-size: 13px; color: var(--tx2); line-height: 1.6; margin-bottom: 14px; }
-    .hero-meta {
-      display: flex; align-items: center; gap: 6px;
-      font-size: 11px; color: var(--tx3); margin-bottom: 14px;
-    }
-    .av {
-      width: 20px; height: 20px; border-radius: 50%; flex-shrink: 0;
-      background: linear-gradient(135deg, var(--blue), var(--pur));
-      display: flex; align-items: center; justify-content: center;
-      font-size: 8px; font-weight: 800; color: #fff;
-    }
-    .av.g { background: linear-gradient(135deg, var(--green), #059669); }
-    .av.gold { background: linear-gradient(135deg, var(--gold), #B45309); }
-    .av.p { background: linear-gradient(135deg, var(--pur), #6D28D9); }
-    .av.r { background: linear-gradient(135deg, #F87171, var(--red)); }
-    .av.t { background: linear-gradient(135deg, #14B8A6, #0891B2); }
+    /* ── Avatars ────────────────────────────────────────────────────── */
+    .av { width: 20px; height: 20px; border-radius: 50%; background: linear-gradient(135deg, var(--blue), var(--pur)); display: flex; align-items: center; justify-content: center; font-size: 8px; font-weight: 800; color: #fff; flex-shrink: 0; }
     .dot { width: 2px; height: 2px; border-radius: 50%; background: var(--tx3); flex-shrink: 0; }
-    .read-btn {
-      display: inline-flex; align-items: center; gap: 6px;
-      background: var(--blue); color: #fff; font-size: 13px; font-weight: 600;
-      padding: 9px 18px; border-radius: 8px; transition: background .15s;
+
+    /* ════════════════════════════════════════════════════════════════
+       KATEGORIE — dropdown menu
+    ════════════════════════════════════════════════════════════════ */
+    .cat-bar { padding: 14px 16px 4px; display: flex; align-items: center; gap: 10px; }
+    .cat-label { font-size: 12px; font-weight: 600; color: var(--tx3); white-space: nowrap; }
+
+    /* Dropdown trigger */
+    .cat-dropdown { position: relative; }
+    .cat-trigger {
+      display: flex; align-items: center; gap: 8px;
+      background: var(--surf); border: 1px solid var(--b3);
+      border-radius: 9px; padding: 8px 14px;
+      font-size: 13px; font-weight: 600; color: var(--tx);
+      cursor: pointer; transition: all .15s; white-space: nowrap;
     }
+    .cat-trigger:hover { border-color: rgba(255,255,255,.15); }
+    .cat-trigger.open { border-color: var(--blue); color: var(--blue2); }
+    .cat-trigger-icon { font-size: 14px; }
+    .cat-trigger-arrow { margin-left: auto; color: var(--tx3); transition: transform .2s; }
+    .cat-trigger.open .cat-trigger-arrow { transform: rotate(180deg); color: var(--blue2); }
+
+    /* Dropdown panel */
+    .cat-panel {
+      position: absolute; top: calc(100% + 8px); left: 0; z-index: 300;
+      background: var(--bg2); border: 1px solid var(--b3);
+      border-radius: var(--r); min-width: 260px;
+      box-shadow: 0 8px 32px rgba(0,0,0,.5);
+      opacity: 0; transform: translateY(-6px); pointer-events: none;
+      transition: opacity .18s ease, transform .18s ease;
+    }
+    .cat-panel.open { opacity: 1; transform: translateY(0); pointer-events: auto; }
+    .cat-panel-head { padding: 12px 16px 8px; font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: var(--tx3); border-bottom: 1px solid var(--b2); }
+    .cat-option {
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px 16px; cursor: pointer; transition: background .12s;
+      border-bottom: 1px solid var(--b2);
+    }
+    .cat-option:last-child { border-bottom: none; }
+    .cat-option:hover { background: rgba(255,255,255,.03); }
+    .cat-option.active { background: var(--bdim); }
+    .cat-option-icon { font-size: 15px; width: 22px; text-align: center; flex-shrink: 0; }
+    .cat-option-name { font-size: 13px; font-weight: 600; color: var(--tx2); flex: 1; }
+    .cat-option:hover .cat-option-name, .cat-option.active .cat-option-name { color: var(--tx); }
+    .cat-option.active .cat-option-name { color: var(--blue2); }
+    .cat-option-count { font-size: 10px; color: var(--tx3); font-weight: 500; }
+
+    /* Active category pills row (desktop) */
+    .cat-pills-row { display: none; align-items: center; gap: 6px; flex-wrap: wrap; padding: 4px 0 0; flex: 1; }
+    .cat-pill {
+      display: flex; align-items: center; gap: 5px;
+      padding: 6px 12px; border-radius: 8px; font-size: 12px; font-weight: 600;
+      background: var(--surf); border: 1px solid var(--b3); color: var(--tx2);
+      cursor: pointer; transition: all .15s; white-space: nowrap;
+    }
+    .cat-pill:hover { border-color: rgba(255,255,255,.15); color: var(--tx); }
+    .cat-pill.on { background: var(--blue); border-color: var(--blue); color: #fff; }
+    .cat-pill-icon { font-size: 12px; }
+
+    /* ── Hero ───────────────────────────────────────────────────────── */
+    .hero-wrap { padding: 0 16px 4px; }
+    .hero-card { background: var(--surf); border: 1px solid var(--b3); border-radius: var(--r); overflow: hidden; cursor: pointer; transition: border-color .15s; }
+    .hero-card:hover { border-color: rgba(255,255,255,.15); }
+    .hero-card:hover .hero-title { color: var(--blue2); }
+    .hero-img { height: 160px; background: linear-gradient(135deg, #0d1628, #162038); display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; }
+    .hero-map { width: 82%; height: 78%; border: 1px solid rgba(255,255,255,.06); border-radius: 8px; background: rgba(255,255,255,.02); position: relative; overflow: hidden; }
+    .map-grid { position: absolute; inset: 0; background-image: linear-gradient(rgba(59,130,246,.05) 1px, transparent 1px), linear-gradient(90deg, rgba(59,130,246,.05) 1px, transparent 1px); background-size: 24px 24px; }
+    .mpin { position: absolute; }
+    .mpin-d { width: 10px; height: 10px; border-radius: 50%; border: 2px solid rgba(255,255,255,.75); }
+    .mpin-d.b { background: var(--blue); } .mpin-d.g { background: var(--green); } .mpin-d.p { background: var(--pur); }
+    .mpin-lbl { position: absolute; left: 14px; top: -2px; background: var(--surf); border: 1px solid var(--b3); color: var(--tx2); font-size: 9px; font-weight: 700; padding: 2px 6px; border-radius: 4px; white-space: nowrap; }
+    .commute-float { position: absolute; bottom: 10px; right: 10px; background: var(--surf); border: 1px solid var(--b3); border-radius: 8px; padding: 8px 11px; display: flex; gap: 12px; }
+    .cm { display: flex; flex-direction: column; align-items: center; gap: 1px; }
+    .cm-i { font-size: 13px; } .cm-t { font-size: 10px; font-weight: 700; color: var(--tx); } .cm-l { font-size: 8px; color: var(--tx3); }
+    .hero-body { padding: 16px; }
+    .hero-eyebrow { display: flex; align-items: center; gap: 6px; font-size: 10px; color: var(--tx3); margin-bottom: 8px; }
+    .hero-title { font-size: 17px; font-weight: 700; line-height: 1.3; letter-spacing: -.025em; color: var(--tx); margin-bottom: 8px; transition: color .15s; }
+    .hero-excerpt { font-size: 13px; color: var(--tx2); line-height: 1.6; margin-bottom: 12px; }
+    .hero-meta { display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--tx3); margin-bottom: 14px; }
+    .read-btn { display: inline-flex; align-items: center; gap: 6px; background: var(--blue); color: #fff; font-size: 13px; font-weight: 600; padding: 9px 18px; border-radius: 8px; transition: background .15s; }
     .read-btn:hover { background: #2563EB; }
 
-    /* ─── Section header ─────────────────────────────────────────────── */
-    .sec-head {
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 0 16px; margin: 20px 0 12px;
-    }
+    /* ── Section header ─────────────────────────────────────────────── */
+    .sec-head { display: flex; align-items: center; justify-content: space-between; padding: 0 16px; margin: 20px 0 12px; }
     .sec-title { font-size: 15px; font-weight: 700; letter-spacing: -.02em; }
     .sec-more { font-size: 12px; color: var(--tx3); font-weight: 500; }
     .sec-more:hover { color: var(--blue2); }
 
-    /* ─── Article card ───────────────────────────────────────────────── */
-    .acard {
-      background: var(--surf); border: 1px solid var(--b3);
-      border-radius: var(--r); overflow: hidden; cursor: pointer;
-      transition: border-color .15s; display: flex; flex-direction: column;
-    }
+    /* ── Article cards ──────────────────────────────────────────────── */
+    .acard { background: var(--surf); border: 1px solid var(--b3); border-radius: var(--r); overflow: hidden; cursor: pointer; transition: border-color .15s; display: flex; flex-direction: column; }
     .acard:hover { border-color: rgba(255,255,255,.14); }
     .acard:hover .acard-title { color: var(--blue2); }
-
-    /* Thumbnail — colored strip + centered icon */
-    .thumb {
-      display: flex; align-items: center; justify-content: center;
-      aspect-ratio: 16/8; font-size: 32px; flex-shrink: 0;
-    }
-    .th-blue   { background: linear-gradient(135deg, #0c1a3a, #12213f); }
-    .th-green  { background: linear-gradient(135deg, #071912, #0c2318); }
+    .thumb { display: flex; align-items: center; justify-content: center; aspect-ratio: 16/8; font-size: 32px; flex-shrink: 0; }
+    .th-blue { background: linear-gradient(135deg, #0c1a3a, #12213f); }
+    .th-green { background: linear-gradient(135deg, #071912, #0c2318); }
     .th-purple { background: linear-gradient(135deg, #150e28, #1c1235); }
-    .th-gold   { background: linear-gradient(135deg, #1a1003, #231604); }
-    .th-teal   { background: linear-gradient(135deg, #071b1e, #0a2530); }
-    .th-red    { background: linear-gradient(135deg, #1c0808, #250c0c); }
-
+    .th-gold { background: linear-gradient(135deg, #1a1003, #231604); }
+    .th-teal { background: linear-gradient(135deg, #071b1e, #0a2530); }
+    .th-red { background: linear-gradient(135deg, #1c0808, #250c0c); }
     .acard-body { padding: 13px 14px 14px; flex: 1; display: flex; flex-direction: column; }
     .acard-cat { margin-bottom: 7px; }
-    .acard-title {
-      font-size: 13px; font-weight: 700; line-height: 1.38;
-      letter-spacing: -.01em; color: var(--tx); margin-bottom: 6px;
-      transition: color .15s;
-    }
-    .acard-excerpt {
-      font-size: 11px; color: var(--tx2); line-height: 1.6; flex: 1;
-      display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
-      margin-bottom: 10px;
-    }
-    .acard-meta {
-      display: flex; align-items: center; gap: 5px;
-      font-size: 10px; color: var(--tx3); margin-top: auto;
-    }
+    .acard-title { font-size: 13px; font-weight: 700; line-height: 1.38; letter-spacing: -.01em; color: var(--tx); margin-bottom: 6px; transition: color .15s; }
+    .acard-excerpt { font-size: 11px; color: var(--tx2); line-height: 1.6; flex: 1; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; margin-bottom: 10px; }
+    .acard-meta { display: flex; align-items: center; gap: 5px; font-size: 10px; color: var(--tx3); margin-top: auto; }
 
-    /* Mobile: vertical list. Tablet+: grid */
     .cards-list { display: flex; flex-direction: column; gap: 10px; padding: 0 16px; }
 
-    /* ─── Stats strip ────────────────────────────────────────────────── */
+    /* ── Inline MapJob promo card ───────────────────────────────────── */
+    .promo-card {
+      background: linear-gradient(135deg, #0e1b36 0%, #131e33 100%);
+      border: 1px solid rgba(59,130,246,.25); border-radius: var(--r);
+      padding: 18px 16px; display: flex; flex-direction: column; gap: 12px;
+    }
+    .promo-top { display: flex; align-items: flex-start; gap: 12px; }
+    .promo-icon { font-size: 28px; flex-shrink: 0; }
+    .promo-text { flex: 1; }
+    .promo-tag { font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: .07em; color: var(--blue2); margin-bottom: 4px; }
+    .promo-title { font-size: 14px; font-weight: 700; color: var(--tx); line-height: 1.35; }
+    .promo-sub { font-size: 12px; color: var(--tx2); line-height: 1.55; margin-top: 3px; }
+    .promo-features { display: flex; flex-direction: column; gap: 5px; }
+    .promo-feat { font-size: 11px; color: var(--tx2); display: flex; align-items: center; gap: 6px; }
+    .promo-feat::before { content: '✓'; color: var(--green); font-weight: 800; font-size: 10px; }
+    .promo-actions { display: flex; gap: 8px; }
+    .promo-btn-primary { flex: 1; text-align: center; background: var(--blue); color: #fff; font-size: 13px; font-weight: 600; padding: 10px; border-radius: 8px; transition: background .15s; }
+    .promo-btn-primary:hover { background: #2563EB; }
+    .promo-btn-secondary { flex: 1; text-align: center; background: rgba(255,255,255,.05); border: 1px solid var(--b3); color: var(--tx2); font-size: 13px; font-weight: 600; padding: 10px; border-radius: 8px; transition: all .15s; }
+    .promo-btn-secondary:hover { background: rgba(255,255,255,.08); color: var(--tx); }
+
+    /* ── Stats strip ────────────────────────────────────────────────── */
     .stats-wrap { padding: 0 16px; margin: 20px 0; }
-    .stats-strip {
-      background: var(--surf); border: 1px solid var(--b3);
-      border-radius: var(--r);
-      display: grid; grid-template-columns: 1fr 1fr; gap: 0;
-    }
-    .stat-cell {
-      padding: 16px 14px; text-align: center; position: relative;
-    }
-    .stat-cell:nth-child(2)::before,
-    .stat-cell:nth-child(4)::before {
-      content: ''; position: absolute; left: 0; top: 18%; bottom: 18%;
-      width: 1px; background: var(--b3);
-    }
-    .stat-cell:nth-child(3),
-    .stat-cell:nth-child(4) { border-top: 1px solid var(--b3); }
-    .stat-val {
-      font-size: 24px; font-weight: 800; letter-spacing: -.04em;
-      color: var(--tx); line-height: 1; margin-bottom: 4px;
-    }
+    .stats-strip { background: var(--surf); border: 1px solid var(--b3); border-radius: var(--r); display: grid; grid-template-columns: 1fr 1fr; }
+    .stat-cell { padding: 16px 14px; text-align: center; position: relative; }
+    .stat-cell:nth-child(2)::before, .stat-cell:nth-child(4)::before { content: ''; position: absolute; left: 0; top: 18%; bottom: 18%; width: 1px; background: var(--b3); }
+    .stat-cell:nth-child(3), .stat-cell:nth-child(4) { border-top: 1px solid var(--b3); }
+    .stat-val { font-size: 24px; font-weight: 800; letter-spacing: -.04em; color: var(--tx); line-height: 1; margin-bottom: 4px; }
     .stat-val .ac { color: var(--blue2); }
     .stat-lbl { font-size: 10px; color: var(--tx2); font-weight: 500; line-height: 1.4; }
     .stat-sub { font-size: 9px; color: var(--tx3); margin-top: 2px; }
 
-    /* ─── Popular list ───────────────────────────────────────────────── */
+    /* ── MapJob for employers banner ────────────────────────────────── */
+    .employers-banner {
+      margin: 0 16px 20px; padding: 20px 18px;
+      background: linear-gradient(135deg, #0f1c10 0%, #141f15 100%);
+      border: 1px solid rgba(16,185,129,.2); border-radius: var(--r);
+      display: flex; gap: 14px; align-items: flex-start;
+    }
+    .eb-icon { font-size: 30px; flex-shrink: 0; }
+    .eb-body { flex: 1; }
+    .eb-tag { font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: .07em; color: var(--green); margin-bottom: 4px; }
+    .eb-title { font-size: 14px; font-weight: 700; color: var(--tx); margin-bottom: 5px; }
+    .eb-sub { font-size: 12px; color: var(--tx2); line-height: 1.55; margin-bottom: 12px; }
+    .eb-btn { display: inline-flex; align-items: center; gap: 5px; background: var(--green); color: #fff; font-size: 12px; font-weight: 700; padding: 8px 16px; border-radius: 8px; transition: background .15s; }
+    .eb-btn:hover { background: #059669; }
+
+    /* ── Popular / Sidebar ──────────────────────────────────────────── */
     .pop-wrap { padding: 0 16px; margin-bottom: 20px; }
-    .pop-card {
-      background: var(--surf); border: 1px solid var(--b3); border-radius: var(--r);
-    }
-    .pop-head {
-      padding: 14px 16px 10px; font-size: 10px; font-weight: 700;
-      text-transform: uppercase; letter-spacing: .07em; color: var(--tx3);
-      border-bottom: 1px solid var(--b2);
-    }
-    .pop-item {
-      display: flex; align-items: flex-start; gap: 10px;
-      padding: 11px 16px; border-bottom: 1px solid var(--b2); cursor: pointer;
-    }
+    .pop-card { background: var(--surf); border: 1px solid var(--b3); border-radius: var(--r); }
+    .pop-head { padding: 14px 16px 10px; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .07em; color: var(--tx3); border-bottom: 1px solid var(--b2); }
+    .pop-item { display: flex; align-items: flex-start; gap: 10px; padding: 11px 16px; border-bottom: 1px solid var(--b2); cursor: pointer; }
     .pop-item:last-child { border-bottom: none; }
     .pop-num { font-size: 16px; font-weight: 800; color: var(--b3); width: 22px; flex-shrink: 0; line-height: 1.2; }
     .pop-item:hover .pop-num { color: var(--blue2); }
@@ -310,386 +239,307 @@
     .pop-item:hover .pop-t { color: var(--tx); }
     .pop-v { font-size: 10px; color: var(--tx3); margin-top: 2px; }
 
-    /* ─── Newsletter ─────────────────────────────────────────────────── */
+    /* ── Newsletter ─────────────────────────────────────────────────── */
     .nl-wrap { padding: 0 16px; margin-bottom: 20px; }
-    .nl-card {
-      background: linear-gradient(160deg, #0e1b36, #131e33);
-      border: 1px solid rgba(59,130,246,.2); border-radius: var(--r);
-      padding: 18px 16px;
-    }
-    .nl-eyebrow {
-      font-size: 9px; font-weight: 700; text-transform: uppercase;
-      letter-spacing: .08em; color: rgba(96,165,250,.6); margin-bottom: 8px;
-    }
+    .nl-card { background: linear-gradient(160deg, #0e1b36, #131e33); border: 1px solid rgba(59,130,246,.2); border-radius: var(--r); padding: 18px 16px; }
+    .nl-eyebrow { font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: rgba(96,165,250,.6); margin-bottom: 8px; }
     .nl-title { font-size: 15px; font-weight: 700; color: var(--tx); margin-bottom: 6px; letter-spacing: -.02em; }
     .nl-sub { font-size: 12px; color: var(--tx2); line-height: 1.55; margin-bottom: 14px; }
     .nl-row { display: flex; gap: 8px; }
-    .nl-inp {
-      flex: 1; background: rgba(255,255,255,.05);
-      border: 1px solid var(--b3); border-radius: 8px;
-      padding: 9px 12px; font-size: 13px; color: var(--tx);
-      outline: none; font-family: var(--ff); min-width: 0;
-      transition: border-color .15s;
-    }
+    .nl-inp { flex: 1; background: rgba(255,255,255,.05); border: 1px solid var(--b3); border-radius: 8px; padding: 9px 12px; font-size: 13px; color: var(--tx); outline: none; font-family: var(--ff); min-width: 0; transition: border-color .15s; }
     .nl-inp::placeholder { color: var(--tx3); }
     .nl-inp:focus { border-color: var(--blue); }
-    .nl-btn {
-      background: var(--blue); color: #fff; font-size: 13px; font-weight: 600;
-      padding: 9px 16px; border-radius: 8px; white-space: nowrap; transition: background .15s;
-    }
+    .nl-btn { background: var(--blue); color: #fff; font-size: 13px; font-weight: 600; padding: 9px 16px; border-radius: 8px; white-space: nowrap; transition: background .15s; }
     .nl-btn:hover { background: #2563EB; }
     .nl-note { font-size: 10px; color: var(--tx3); text-align: center; margin-top: 8px; }
 
-    /* ─── Tags cloud ─────────────────────────────────────────────────── */
+    /* ── Tags ───────────────────────────────────────────────────────── */
     .tags-wrap { padding: 0 16px; margin-bottom: 20px; }
-    .tags-card {
-      background: var(--surf); border: 1px solid var(--b3); border-radius: var(--r);
-    }
-    .tags-head {
-      padding: 14px 16px 10px; font-size: 10px; font-weight: 700;
-      text-transform: uppercase; letter-spacing: .07em; color: var(--tx3);
-      border-bottom: 1px solid var(--b2);
-    }
+    .tags-card { background: var(--surf); border: 1px solid var(--b3); border-radius: var(--r); }
+    .tags-head { padding: 14px 16px 10px; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .07em; color: var(--tx3); border-bottom: 1px solid var(--b2); }
     .tags-cloud { padding: 12px 14px; display: flex; flex-wrap: wrap; gap: 6px; }
-    .tag {
-      padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 500;
-      background: var(--surf2); border: 1px solid var(--b3); color: var(--tx2);
-      cursor: pointer; transition: all .15s;
-    }
+    .tag { padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 500; background: var(--surf2); border: 1px solid var(--b3); color: var(--tx2); cursor: pointer; transition: all .15s; }
     .tag:hover { border-color: rgba(255,255,255,.14); color: var(--tx); }
 
-    /* ─── FAQ ────────────────────────────────────────────────────────── */
+    /* ── FAQ ────────────────────────────────────────────────────────── */
     .faq-wrap { padding: 0 16px; margin-bottom: 28px; }
     .faq-list { display: flex; flex-direction: column; gap: 8px; margin-top: 12px; }
-    .faq-item {
-      background: var(--surf); border: 1px solid var(--b3);
-      border-radius: var(--r); padding: 14px 16px;
-    }
+    .faq-item { background: var(--surf); border: 1px solid var(--b3); border-radius: var(--r); padding: 14px 16px; }
     .faq-q { font-size: 13px; font-weight: 700; color: var(--tx); margin-bottom: 5px; line-height: 1.35; }
     .faq-a { font-size: 12px; color: var(--tx2); line-height: 1.6; }
+    .faq-a a { color: var(--blue2); }
 
-    /* ─── CTA banner ─────────────────────────────────────────────────── */
-    .cta-wrap { padding: 0 16px; margin-bottom: 28px; }
-    .cta-card {
-      background: linear-gradient(135deg, #0e1b36, #131e33);
-      border: 1px solid rgba(59,130,246,.2); border-radius: var(--r);
-      padding: 20px 18px; display: flex; align-items: center; gap: 16px;
-    }
-    .cta-icon { font-size: 32px; flex-shrink: 0; }
-    .cta-text { flex: 1; }
-    .cta-title { font-size: 14px; font-weight: 700; color: var(--tx); margin-bottom: 4px; }
-    .cta-sub { font-size: 12px; color: var(--tx2); line-height: 1.5; }
-    .cta-btn {
-      background: var(--blue); color: #fff; font-size: 12px; font-weight: 600;
-      padding: 9px 14px; border-radius: 8px; white-space: nowrap;
-      flex-shrink: 0; transition: background .15s;
-    }
-    .cta-btn:hover { background: #2563EB; }
-
-    /* ─── Footer ─────────────────────────────────────────────────────── */
-    footer {
-      background: var(--bg2); border-top: 1px solid var(--b);
-      padding: 28px 16px 36px;
-    }
+    /* ── Footer ─────────────────────────────────────────────────────── */
+    footer { background: var(--bg2); border-top: 1px solid var(--b); padding: 28px 16px 40px; }
     .f-logo { font-size: 16px; font-weight: 800; color: var(--tx); margin-bottom: 8px; }
-    .f-tag { font-size: 12px; color: var(--tx2); line-height: 1.6; margin-bottom: 16px; }
+    .f-logo span { color: var(--blue2); }
+    .f-tag { font-size: 12px; color: var(--tx2); line-height: 1.6; margin-bottom: 14px; }
+    .f-seo { background: var(--surf); border: 1px solid var(--b2); border-radius: 8px; padding: 10px 12px; font-size: 10px; color: var(--tx3); line-height: 1.5; margin-bottom: 20px; }
     .f-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px; }
     .f-col-title { font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: var(--tx3); margin-bottom: 10px; }
     .f-links { list-style: none; display: flex; flex-direction: column; gap: 7px; }
     .f-links a { font-size: 12px; color: var(--tx2); transition: color .15s; }
     .f-links a:hover { color: var(--tx); }
-    .f-bottom {
-      padding-top: 16px; border-top: 1px solid var(--b2);
-      font-size: 10px; color: var(--tx3); text-align: center; line-height: 1.7;
-    }
+    .f-bottom { padding-top: 16px; border-top: 1px solid var(--b2); font-size: 10px; color: var(--tx3); text-align: center; line-height: 1.7; }
 
-    /* ════════════════════════════════════════════════════════
+    /* ════════════════════════════════════════════════════════════════
        ARTICLE PAGE
-    ════════════════════════════════════════════════════════ */
-    .breadcrumb {
-      display: flex; align-items: center; gap: 4px; flex-wrap: nowrap;
-      overflow: hidden; padding: 10px 16px; font-size: 11px; color: var(--tx3);
-      border-bottom: 1px solid var(--b2); white-space: nowrap;
-    }
-    .breadcrumb a { color: var(--tx3); overflow: hidden; text-overflow: ellipsis; }
-    .breadcrumb a:hover { color: var(--tx2); }
-    .bc-cur { color: var(--tx2); font-weight: 500; overflow: hidden; text-overflow: ellipsis; }
-    .bc-sep { opacity: .4; flex-shrink: 0; font-size: 9px; }
+    ════════════════════════════════════════════════════════════════ */
+    .breadcrumb { display: flex; align-items: center; gap: 4px; padding: 10px 16px; font-size: 11px; color: var(--tx3); border-bottom: 1px solid var(--b2); overflow: hidden; }
+    .breadcrumb a { color: var(--tx3); } .breadcrumb a:hover { color: var(--tx2); }
+    .bc-cur { color: var(--tx2); font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .bc-sep { opacity: .4; flex-shrink: 0; }
 
     .art-header { padding: 20px 16px 0; }
-    .art-h1 {
-      font-size: 22px; font-weight: 800; line-height: 1.24;
-      letter-spacing: -.035em; color: var(--tx); margin: 10px 0 12px;
-    }
-    .art-meta {
-      display: flex; align-items: center; gap: 6px; flex-wrap: wrap;
-      font-size: 11px; color: var(--tx3); margin-bottom: 20px;
-    }
+    .art-h1 { font-size: 22px; font-weight: 800; line-height: 1.24; letter-spacing: -.035em; color: var(--tx); margin: 10px 0 12px; }
+    .art-meta { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; font-size: 11px; color: var(--tx3); margin-bottom: 20px; }
     .art-meta .av { width: 22px; height: 22px; font-size: 9px; }
     .art-author { font-weight: 600; color: var(--tx2); }
-    .art-hero {
-      margin: 0 16px 24px; border-radius: var(--r); overflow: hidden;
-      aspect-ratio: 16/7; background: linear-gradient(135deg, #0d1628, #162240);
-      display: flex; align-items: center; justify-content: center; font-size: 56px;
-    }
+    .art-hero { margin: 0 16px 24px; border-radius: var(--r); overflow: hidden; aspect-ratio: 16/7; background: linear-gradient(135deg, #0d1628, #162240); display: flex; align-items: center; justify-content: center; font-size: 56px; }
 
     .art-body { padding: 0 16px; max-width: 680px; }
-    .art-lead {
-      font-size: 14px; line-height: 1.75; color: var(--tx2);
-      padding-bottom: 20px; margin-bottom: 20px;
-      border-bottom: 1px solid var(--b2);
-    }
-    .art-body h2 {
-      font-size: 18px; font-weight: 700; letter-spacing: -.03em;
-      margin: 28px 0 10px; color: var(--tx);
-    }
+    .art-lead { font-size: 14px; line-height: 1.75; color: var(--tx2); padding-bottom: 20px; margin-bottom: 20px; border-bottom: 1px solid var(--b2); }
+    .art-body h2 { font-size: 18px; font-weight: 700; letter-spacing: -.03em; margin: 28px 0 10px; color: var(--tx); }
     .art-body p { font-size: 13px; line-height: 1.8; color: var(--tx2); margin-bottom: 14px; }
     .art-body strong { color: var(--tx); font-weight: 600; }
     .art-body ul, .art-body ol { padding-left: 18px; margin-bottom: 14px; }
     .art-body li { font-size: 13px; line-height: 1.8; color: var(--tx2); margin-bottom: 3px; }
 
-    .highlight {
-      background: var(--surf); border: 1px solid var(--b3);
-      border-left: 3px solid var(--blue); border-radius: 0 8px 8px 0;
-      padding: 12px 16px; margin: 16px 0;
-    }
+    .highlight { background: var(--surf); border: 1px solid var(--b3); border-left: 3px solid var(--blue); border-radius: 0 8px 8px 0; padding: 12px 16px; margin: 16px 0; }
     .highlight p { margin: 0; font-size: 13px; }
     .highlight strong { color: var(--blue2); }
     .highlight.gr { border-left-color: var(--green); }
     .highlight.gr strong { color: var(--green); }
 
-    .stat-block {
-      background: var(--surf2); border: 1px solid var(--b3);
-      border-radius: var(--r); padding: 16px; margin: 16px 0;
-      display: flex; align-items: center; gap: 14px;
-    }
+    .stat-block { background: var(--surf2); border: 1px solid var(--b3); border-radius: var(--r); padding: 16px; margin: 16px 0; display: flex; align-items: center; gap: 14px; }
     .sb-val { font-size: 36px; font-weight: 800; color: var(--blue2); line-height: 1; flex-shrink: 0; letter-spacing: -.04em; }
     .sb-txt { font-size: 12px; line-height: 1.65; color: var(--tx2); }
 
     /* Calculator */
-    .calc-card {
-      background: var(--surf); border: 1px solid var(--b3);
-      border-radius: var(--r); padding: 16px; margin: 16px 0;
-    }
+    .calc-card { background: var(--surf); border: 1px solid var(--b3); border-radius: var(--r); padding: 16px; margin: 16px 0; }
     .calc-title { font-size: 13px; font-weight: 700; color: var(--tx); margin-bottom: 3px; }
     .calc-sub { font-size: 11px; color: var(--tx3); margin-bottom: 14px; }
     .calc-row { display: flex; gap: 8px; margin-bottom: 10px; }
     .calc-f { flex: 1; }
     .calc-lbl { font-size: 10px; font-weight: 600; color: var(--tx3); margin-bottom: 4px; }
-    .calc-inp {
-      width: 100%; background: var(--surf2); border: 1px solid var(--b3);
-      border-radius: 7px; padding: 8px 10px; font-size: 13px; color: var(--tx);
-      outline: none; font-family: var(--ff); transition: border-color .15s;
-    }
+    .calc-inp { width: 100%; background: var(--surf2); border: 1px solid var(--b3); border-radius: 7px; padding: 8px 10px; font-size: 13px; color: var(--tx); outline: none; font-family: var(--ff); transition: border-color .15s; }
     .calc-inp:focus { border-color: var(--blue); }
-    .calc-result {
-      background: var(--surf2); border: 1px solid rgba(59,130,246,.25);
-      border-radius: 8px; padding: 12px;
-      display: grid; grid-template-columns: 1fr 1px 1fr 1px 1fr; gap: 0; align-items: center;
-    }
+    .calc-result { background: var(--surf2); border: 1px solid rgba(59,130,246,.25); border-radius: 8px; padding: 12px; display: grid; grid-template-columns: 1fr 1px 1fr 1px 1fr; align-items: center; }
     .cr-d { background: var(--b3); height: 32px; }
     .cr-col { text-align: center; padding: 0 6px; }
     .cr-lbl { font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--tx3); margin-bottom: 3px; }
     .cr-val { font-size: 16px; font-weight: 800; color: var(--blue2); letter-spacing: -.03em; }
     .cr-val.sec { color: var(--tx2); font-size: 14px; }
 
+    /* In-article promo */
+    .art-promo {
+      margin: 24px 16px; padding: 18px;
+      background: linear-gradient(135deg, #0e1b36, #131e33);
+      border: 1px solid rgba(59,130,246,.25); border-radius: var(--r);
+      display: flex; gap: 14px; align-items: center;
+    }
+    .ap-icon { font-size: 28px; flex-shrink: 0; }
+    .ap-text { flex: 1; }
+    .ap-tag { font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: .07em; color: var(--blue2); margin-bottom: 3px; }
+    .ap-title { font-size: 13px; font-weight: 700; color: var(--tx); margin-bottom: 3px; }
+    .ap-sub { font-size: 11px; color: var(--tx2); line-height: 1.5; }
+    .ap-btn { background: var(--blue); color: #fff; font-size: 12px; font-weight: 700; padding: 9px 14px; border-radius: 8px; flex-shrink: 0; transition: background .15s; white-space: nowrap; }
+    .ap-btn:hover { background: #2563EB; }
+
+    /* Sticky article CTA (mobile bottom) */
+    .art-sticky {
+      position: fixed; bottom: 0; left: 0; right: 0; z-index: 300;
+      background: var(--bg2); border-top: 1px solid var(--b3);
+      padding: 12px 16px; display: flex; align-items: center; gap: 12px;
+    }
+    .as-text { flex: 1; }
+    .as-title { font-size: 12px; font-weight: 700; color: var(--tx); }
+    .as-sub { font-size: 11px; color: var(--tx3); }
+    .as-btn { background: var(--blue); color: #fff; font-size: 12px; font-weight: 700; padding: 9px 16px; border-radius: 8px; flex-shrink: 0; transition: background .15s; }
+    .as-btn:hover { background: #2563EB; }
+
     /* Share */
-    .share-bar {
-      display: flex; align-items: center; gap: 6px; flex-wrap: wrap;
-      padding: 14px 16px; border-top: 1px solid var(--b2); border-bottom: 1px solid var(--b2);
-      margin: 20px 0;
-    }
+    .share-bar { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; padding: 14px 16px; border-top: 1px solid var(--b2); border-bottom: 1px solid var(--b2); margin: 20px 0; }
     .share-lbl { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--tx3); margin-right: 2px; }
-    .share-btn {
-      padding: 5px 12px; border-radius: 6px; font-size: 11px; font-weight: 600;
-      background: var(--surf2); border: 1px solid var(--b3); color: var(--tx2);
-      transition: all .15s;
-    }
+    .share-btn { padding: 5px 12px; border-radius: 6px; font-size: 11px; font-weight: 600; background: var(--surf2); border: 1px solid var(--b3); color: var(--tx2); transition: all .15s; }
     .share-btn:hover { border-color: rgba(255,255,255,.14); color: var(--tx); }
 
     /* Author */
-    .author-card {
-      background: var(--surf); border: 1px solid var(--b3);
-      border-radius: var(--r); padding: 16px; margin: 0 16px 24px;
-      display: flex; gap: 12px; align-items: flex-start;
-    }
-    .au-av {
-      width: 44px; height: 44px; border-radius: 50%; flex-shrink: 0;
-      background: linear-gradient(135deg, var(--blue), var(--pur));
-      display: flex; align-items: center; justify-content: center;
-      font-size: 15px; font-weight: 800; color: #fff;
-    }
+    .author-card { background: var(--surf); border: 1px solid var(--b3); border-radius: var(--r); padding: 16px; margin: 0 16px 24px; display: flex; gap: 12px; align-items: flex-start; }
+    .au-av { width: 44px; height: 44px; border-radius: 50%; flex-shrink: 0; background: linear-gradient(135deg, var(--blue), var(--pur)); display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 800; color: #fff; }
     .au-name { font-size: 13px; font-weight: 700; color: var(--tx); margin-bottom: 2px; }
     .au-role { font-size: 11px; color: var(--blue2); font-weight: 600; margin-bottom: 5px; }
     .au-bio { font-size: 11px; color: var(--tx2); line-height: 1.6; }
 
     .related-head { padding: 20px 16px 12px; border-top: 1px solid var(--b); }
+    .pb-art { padding-bottom: 80px; } /* space for sticky bar */
 
-    /* ─── Demo toggle ─────────────────────────────────────────────────── */
-    #toggle-btn {
-      position: fixed; bottom: 16px; right: 16px; z-index: 9998;
-      background: var(--surf2); border: 1px solid var(--b3);
-      color: var(--tx2); font-size: 12px; font-weight: 600;
-      padding: 9px 16px; border-radius: 100px;
-      box-shadow: 0 4px 20px rgba(0,0,0,.5);
-      display: flex; align-items: center; gap: 6px;
-      transition: all .15s;
-    }
-    #toggle-btn:hover { background: var(--surf3); color: var(--tx); }
-
-    /* ─── Responsive ─────────────────────────────────────────────────── */
-    @media (min-width: 640px) {
-      .wrap { padding: 0 24px; }
-      .chips-row { padding: 14px 24px; }
-      .hero-wrap { padding: 0 24px 4px; }
-      .hero-img { height: 220px; }
-      .hero-title { font-size: 20px; }
-      .sec-head { padding: 0 24px; }
-      .cards-list { padding: 0 24px; display: grid; grid-template-columns: 1fr 1fr; }
-      .stats-wrap { padding: 0 24px; }
-      .stats-strip { grid-template-columns: repeat(4, 1fr); }
-      .stat-cell:nth-child(3), .stat-cell:nth-child(4) { border-top: none; }
-      .stat-cell:nth-child(2)::before,
-      .stat-cell:nth-child(3)::before,
-      .stat-cell:nth-child(4)::before { content: ''; }
-      .pop-wrap, .nl-wrap, .tags-wrap, .faq-wrap, .cta-wrap { padding: 0 24px; }
-      footer { padding: 32px 24px 40px; }
-      .art-header { padding: 24px 24px 0; }
-      .art-hero { margin: 0 24px 28px; }
-      .art-body { padding: 0 24px; }
-      .share-bar { padding: 14px 24px; }
-      .author-card { margin: 0 24px 28px; }
-      .related-head { padding: 24px 24px 12px; }
-    }
-
-    @media (min-width: 900px) {
-      .topbar { padding: 0 24px; }
-      .desk-nav { display: flex; }
-      .desk-search {
-        display: flex; align-items: center; gap: 7px;
-        background: var(--surf); border: 1px solid var(--b3);
-        border-radius: 8px; padding: 7px 12px;
-        font-size: 12px; color: var(--tx3); cursor: pointer;
-        width: 180px; transition: border-color .15s;
-      }
-      .desk-search:hover { border-color: rgba(255,255,255,.14); }
-      .desk-cta {
-        display: block; background: var(--blue); color: #fff;
-        font-size: 13px; font-weight: 600; padding: 8px 16px;
-        border-radius: 8px; margin-left: 8px; transition: background .15s;
-      }
-      .desk-cta:hover { background: #2563EB; }
-      .mob-icon.search { display: none; }
-
-      .hero-wrap { padding: 0 0 0; }
-      .hero-card { display: grid; grid-template-columns: 1fr 360px; }
-      .hero-img { height: auto; min-height: 240px; }
-      .sec-head { padding: 0; }
-      .chips-row { padding: 14px 0; }
-
-      /* Main layout: content + sidebar */
-      .listing-layout {
-        display: grid; grid-template-columns: 1fr 280px; gap: 28px; align-items: start;
-      }
-      .cards-list { padding: 0; grid-template-columns: 1fr 1fr; }
-      .stats-wrap { padding: 0; }
-      .faq-wrap { padding: 0; }
-      .cta-wrap { padding: 0; }
-      .pop-wrap, .nl-wrap, .tags-wrap { padding: 0; }
-      footer { padding: 40px 0 32px; }
-      .footer-inner { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
-      .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 40px; margin-bottom: 24px; }
-      .f-cols { grid-template-columns: 1fr 1fr 1fr 1fr; }
-
-      /* Article */
-      .art-layout { display: grid; grid-template-columns: 1fr 240px; gap: 48px; align-items: start; }
-      .art-aside { display: block; }
-      .art-header { padding: 28px 0 0; max-width: none; }
-      .art-hero { margin: 0 0 32px; }
-      .art-body { padding: 0; }
-      .art-h1 { font-size: 28px; }
-      .share-bar { padding: 14px 0; }
-      .author-card { margin: 0 0 32px; }
-      .related-head { padding: 28px 0 14px; }
-    }
-
-    /* TOC (desktop only) */
+    /* ── Desktop sidebar ─────────────────────────────────────────────── */
     .art-aside { display: none; }
     .toc { position: sticky; top: calc(var(--nav) + 16px); }
     .toc-title { font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: var(--tx3); margin-bottom: 8px; }
     .toc-list { list-style: none; }
-    .toc-item {
-      padding: 5px 0 5px 10px; border-left: 2px solid var(--b3);
-      font-size: 12px; color: var(--tx2); cursor: pointer; transition: all .15s;
-    }
+    .toc-item { padding: 5px 0 5px 10px; border-left: 2px solid var(--b3); font-size: 12px; color: var(--tx2); cursor: pointer; transition: all .15s; }
     .toc-item:hover { border-color: var(--tx3); color: var(--tx); }
     .toc-item.on { border-color: var(--blue2); color: var(--blue2); font-weight: 600; }
     .toc-related { margin-top: 18px; padding-top: 18px; border-top: 1px solid var(--b2); }
     .toc-rel-title { font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: var(--tx3); margin-bottom: 10px; }
     .toc-rel-link { display: block; font-size: 11px; color: var(--tx2); line-height: 1.45; margin-bottom: 9px; }
     .toc-rel-link:hover { color: var(--blue2); }
-    .toc-cta-widget {
-      margin-top: 18px;
-      background: linear-gradient(160deg, #0e1b36, #131e33);
-      border: 1px solid rgba(59,130,246,.2); border-radius: var(--r); padding: 16px;
+    .toc-cta { margin-top: 16px; background: linear-gradient(160deg, #0e1b36, #131e33); border: 1px solid rgba(59,130,246,.2); border-radius: var(--r); padding: 16px; }
+    .toc-cta-tag { font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: .07em; color: var(--blue2); margin-bottom: 6px; }
+    .toc-cta-title { font-size: 13px; font-weight: 700; color: var(--tx); margin-bottom: 5px; }
+    .toc-cta-sub { font-size: 11px; color: var(--tx2); line-height: 1.55; margin-bottom: 12px; }
+    .toc-cta-btn { display: block; text-align: center; background: var(--blue); color: #fff; font-size: 12px; font-weight: 600; padding: 8px; border-radius: 7px; transition: background .15s; }
+    .toc-cta-btn:hover { background: #2563EB; }
+    .toc-cta-emp { margin-top: 10px; background: linear-gradient(160deg, #0f1c10, #141f15); border: 1px solid rgba(16,185,129,.2); border-radius: var(--r); padding: 16px; }
+    .toc-cta-emp .toc-cta-tag { color: var(--green); }
+    .toc-cta-emp .toc-cta-btn { background: var(--green); }
+    .toc-cta-emp .toc-cta-btn:hover { background: #059669; }
+
+    /* ── Demo button ─────────────────────────────────────────────────── */
+    #toggle-btn { position: fixed; bottom: 20px; right: 16px; z-index: 9997; background: var(--surf2); border: 1px solid var(--b3); color: var(--tx2); font-size: 12px; font-weight: 600; padding: 9px 16px; border-radius: 100px; box-shadow: 0 4px 20px rgba(0,0,0,.5); display: flex; align-items: center; gap: 6px; transition: all .15s; }
+    #toggle-btn:hover { background: var(--surf3); color: var(--tx); }
+
+    /* ── Listing + sidebar layout ────────────────────────────────────── */
+    .listing-layout { display: block; }
+
+    /* ── Responsive ─────────────────────────────────────────────────── */
+    @media (min-width: 600px) {
+      .cards-list { display: grid; grid-template-columns: 1fr 1fr; padding: 0 16px; }
+      .stats-strip { grid-template-columns: repeat(4, 1fr); }
+      .stat-cell:nth-child(3), .stat-cell:nth-child(4) { border-top: none; }
+      .stat-cell:nth-child(2)::before, .stat-cell:nth-child(3)::before, .stat-cell:nth-child(4)::before { content: ''; }
     }
-    .tcw-title { font-size: 13px; font-weight: 700; color: var(--tx); margin-bottom: 5px; }
-    .tcw-sub { font-size: 11px; color: var(--tx2); line-height: 1.55; margin-bottom: 12px; }
-    .tcw-btn {
-      display: block; text-align: center; background: var(--blue); color: #fff;
-      font-size: 12px; font-weight: 600; padding: 8px; border-radius: 7px;
-      transition: background .15s;
+    @media (min-width: 900px) {
+      .topbar { padding: 0 24px; }
+      .desk-nav { display: flex; }
+      .desk-search { display: flex; }
+      .desk-cta { display: block; }
+      .mob-ic.search-mob { display: none; }
+      .wrap { padding: 0 24px; }
+      .cat-bar { padding: 14px 0 4px; }
+      .cat-pills-row { display: flex; }
+      .cat-dropdown { display: none; }
+      .hero-wrap { padding: 0; }
+      .hero-card { display: grid; grid-template-columns: 1fr 360px; }
+      .hero-img { height: auto; min-height: 240px; }
+      .hero-title { font-size: 20px; }
+      .sec-head { padding: 0; }
+      .listing-layout { display: grid; grid-template-columns: 1fr 280px; gap: 28px; align-items: start; }
+      .cards-list { padding: 0; }
+      .stats-wrap { padding: 0; }
+      .pop-wrap, .nl-wrap, .tags-wrap, .faq-wrap { padding: 0; }
+      .faq-wrap { margin-bottom: 0; }
+      .employers-banner { margin: 0 0 20px; }
+      .art-sticky { display: none; }
+      .art-aside { display: block; }
+      .art-layout { display: grid; grid-template-columns: 1fr 240px; gap: 48px; align-items: start; }
+      .art-header { padding: 28px 0 0; }
+      .art-hero { margin: 0 0 32px; }
+      .art-body { padding: 0; }
+      .art-promo { margin: 24px 0; }
+      .share-bar { padding: 14px 0; }
+      .author-card { margin: 0 0 32px; }
+      .related-head { padding: 28px 0 14px; }
+      .pb-art { padding-bottom: 0; }
+      footer { padding: 40px 0 32px; }
+      .footer-inner { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
+      .f-cols { grid-template-columns: 2fr 1fr 1fr 1fr; }
+      .mob-extras { display: none !important; }
     }
-    .tcw-btn:hover { background: #2563EB; }
   </style>
 </head>
 <body>
 
 <div id="rbar"></div>
 
-<!-- ═══════════════════════════════════════════════════════
-     PAGE 1 — LISTING
-═══════════════════════════════════════════════════════ -->
+<!-- ═══════════════════════════════════════════════
+     PAGE 1 — BLOG LISTING
+═══════════════════════════════════════════════ -->
 <div class="page on" id="pg-list">
 
-  <div class="beta-strip">
+  <div class="beta">
     <span class="btag">BLOG</span>
-    Porady o pracy i dojazdach ·&nbsp;<a href="#">Oferty na mapie →</a>
+    Porady o pracy, dojazdach i rekrutacji &nbsp;·&nbsp; <a href="#">Oferty na mapie →</a>
   </div>
 
   <div class="topbar">
-    <div class="logo" onclick="showListing()">Map<span class="logo-dot">Job</span></div>
+    <div class="logo" onclick="showListing()">Map<span>Job</span></div>
     <nav class="desk-nav">
-      <a class="dn-link" href="#">Mapa ofert</a>
-      <a class="dn-link" href="#">Dla firm</a>
-      <a class="dn-link on" href="#">Blog</a>
-      <a class="dn-link" href="#">Raport 2026</a>
+      <a class="dn" href="#">Mapa ofert</a>
+      <a class="dn" href="#">Dla firm</a>
+      <a class="dn on" href="#">Blog</a>
+      <a class="dn" href="#">Raport 2026</a>
     </nav>
-    <div class="topbar-spacer"></div>
+    <div class="tb-space"></div>
     <div class="desk-search">
       <svg width="12" height="12" viewBox="0 0 20 20" fill="none"><circle cx="9" cy="9" r="6" stroke="currentColor" stroke-width="1.6"/><path d="M13 13L17 17" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
       Szukaj w blogu…
     </div>
     <button class="desk-cta">Dodaj ogłoszenie</button>
-    <div class="mob-icon search">
+    <div class="mob-ic search-mob">
       <svg width="16" height="16" viewBox="0 0 20 20" fill="none"><circle cx="9" cy="9" r="6" stroke="currentColor" stroke-width="1.6"/><path d="M13 13L17 17" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
-    </div>
-    <div class="mob-icon" style="margin-left:4px;">
-      <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor"><path d="M10 3a1 1 0 100 2 1 1 0 000-2zm0 6a1 1 0 100 2 1 1 0 000-2zm0 6a1 1 0 100 2 1 1 0 000-2z"/></svg>
     </div>
   </div>
 
   <div class="wrap">
 
-    <!-- Chips -->
-    <div class="chips-row">
-      <button class="chip on">Wszystkie</button>
-      <button class="chip">🗺️ Dojazdy</button>
-      <button class="chip">💼 Szukanie pracy</button>
-      <button class="chip">💰 Wynagrodzenia</button>
-      <button class="chip">📄 CV i rekrutacja</button>
-      <button class="chip">🏢 Dla pracodawców</button>
-      <button class="chip">📊 Dane</button>
+    <!-- Category bar -->
+    <div class="cat-bar">
+      <span class="cat-label">Kategoria:</span>
+
+      <!-- Mobile: dropdown -->
+      <div class="cat-dropdown" id="catDropdown">
+        <button class="cat-trigger" id="catTrigger" onclick="toggleCat()">
+          <span class="cat-trigger-icon" id="catIcon">📰</span>
+          <span id="catName">Wszystkie artykuły</span>
+          <svg class="cat-trigger-arrow" width="14" height="14" viewBox="0 0 20 20" fill="none"><path d="M5 7l5 5 5-5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+        </button>
+        <div class="cat-panel" id="catPanel">
+          <div class="cat-panel-head">Wybierz kategorię</div>
+          <div class="cat-option active" onclick="selectCat(this,'📰','Wszystkie artykuły')">
+            <span class="cat-option-icon">📰</span>
+            <span class="cat-option-name">Wszystkie artykuły</span>
+            <span class="cat-option-count">42 artykuły</span>
+          </div>
+          <div class="cat-option" onclick="selectCat(this,'🗺️','Dojazdy i lokalizacja')">
+            <span class="cat-option-icon">🗺️</span>
+            <span class="cat-option-name">Dojazdy i lokalizacja</span>
+            <span class="cat-option-count">12 artykułów</span>
+          </div>
+          <div class="cat-option" onclick="selectCat(this,'💼','Szukanie pracy')">
+            <span class="cat-option-icon">💼</span>
+            <span class="cat-option-name">Szukanie pracy</span>
+            <span class="cat-option-count">9 artykułów</span>
+          </div>
+          <div class="cat-option" onclick="selectCat(this,'💰','Wynagrodzenia')">
+            <span class="cat-option-icon">💰</span>
+            <span class="cat-option-name">Wynagrodzenia</span>
+            <span class="cat-option-count">8 artykułów</span>
+          </div>
+          <div class="cat-option" onclick="selectCat(this,'📄','CV i rekrutacja')">
+            <span class="cat-option-icon">📄</span>
+            <span class="cat-option-name">CV i rekrutacja</span>
+            <span class="cat-option-count">7 artykułów</span>
+          </div>
+          <div class="cat-option" onclick="selectCat(this,'🏢','Dla pracodawców')">
+            <span class="cat-option-icon">🏢</span>
+            <span class="cat-option-name">Dla pracodawców</span>
+            <span class="cat-option-count">6 artykułów</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Desktop: pills -->
+      <div class="cat-pills-row">
+        <button class="cat-pill on" onclick="setPill(this)"><span class="cat-pill-icon">📰</span> Wszystkie</button>
+        <button class="cat-pill" onclick="setPill(this)"><span class="cat-pill-icon">🗺️</span> Dojazdy</button>
+        <button class="cat-pill" onclick="setPill(this)"><span class="cat-pill-icon">💼</span> Szukanie pracy</button>
+        <button class="cat-pill" onclick="setPill(this)"><span class="cat-pill-icon">💰</span> Wynagrodzenia</button>
+        <button class="cat-pill" onclick="setPill(this)"><span class="cat-pill-icon">📄</span> CV i rekrutacja</button>
+        <button class="cat-pill" onclick="setPill(this)"><span class="cat-pill-icon">🏢</span> Dla pracodawców</button>
+      </div>
     </div>
 
     <!-- Hero -->
@@ -713,26 +563,22 @@
           </div>
         </div>
         <div class="hero-body">
-          <div class="hero-eyebrow">
-            <span class="badge b-blue">Artykuł tygodnia</span>
-            <span>6 min czytania</span>
-          </div>
+          <div class="hero-eyebrow"><span class="badge b-blue">Artykuł tygodnia</span> · 6 min czytania</div>
           <div class="hero-title">Ile naprawdę kosztuje Cię dojazd do pracy każdego miesiąca?</div>
-          <div class="hero-excerpt">Paliwo, parking, amortyzacja — i setki godzin życia. Liczymy pełny koszt dojazdów w Warszawie i pokazujemy, jak praca bliżej domu może zwrócić Ci ponad 14 000 zł rocznie.</div>
+          <div class="hero-excerpt">Paliwo, parking, amortyzacja — i setki godzin Twojego życia. Liczymy pełny koszt dojazdów w Warszawie i pokazujemy, jak praca bliżej domu może zwrócić Ci ponad 14 000 zł rocznie.</div>
           <div class="hero-meta">
-            <div class="av">MK</div>
-            <span style="color:var(--tx2);font-weight:500;">Marta Kowalczyk</span>
-            <div class="dot"></div><span>29 maja 2026</span>
-            <div class="dot"></div><span>👁 12,4k</span>
+            <div class="av">MJ</div>
+            <span style="color:var(--tx2);font-weight:500;">Redakcja MapJob</span>
+            <div class="dot"></div><span>29 maja 2026</span><div class="dot"></div><span>👁 12,4k</span>
           </div>
           <span class="read-btn">Czytaj artykuł <svg width="13" height="13" viewBox="0 0 20 20" fill="none"><path d="M4 10h12M11 5l5 5-5 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
         </div>
       </div>
     </div>
 
-    <!-- Listing layout (single col mobile, 2-col desktop) -->
     <div class="listing-layout" style="margin-top:8px;">
       <div>
+
         <div class="sec-head"><div class="sec-title">Najnowsze artykuły</div><a href="#" class="sec-more">Wszystkie →</a></div>
         <div class="cards-list">
 
@@ -742,7 +588,7 @@
               <div class="acard-cat"><span class="badge b-blue">Dojazdy</span></div>
               <div class="acard-title">Praca w Warszawie – jak wybrać dzielnicę, żeby nie tracić 2h dziennie?</div>
               <div class="acard-excerpt">Analiza 16 dzielnic pod kątem czasu dojazdu MPK i autem dla mieszkańców Bielan, Ursynowa i Pragi.</div>
-              <div class="acard-meta"><div class="av" style="width:16px;height:16px;font-size:7px;">AW</div><span>28 maj</span><div class="dot"></div><span>5 min</span></div>
+              <div class="acard-meta"><div class="av" style="width:16px;height:16px;font-size:7px;">MJ</div><span>Redakcja MapJob</span><div class="dot"></div><span>28 maj</span><div class="dot"></div><span>5 min</span></div>
             </div>
           </article>
 
@@ -751,10 +597,31 @@
             <div class="acard-body">
               <div class="acard-cat"><span class="badge b-green">Wynagrodzenia</span></div>
               <div class="acard-title">Jak negocjować wynagrodzenie w 2026? Skrypt rozmowy krok po kroku</div>
-              <div class="acard-excerpt">Konkretne zdania od momentu otrzymania oferty do podpisania umowy — dla IT, finansów i sprzedaży.</div>
-              <div class="acard-meta"><div class="av g" style="width:16px;height:16px;font-size:7px;">PJ</div><span>27 maj</span><div class="dot"></div><span>8 min</span></div>
+              <div class="acard-excerpt">Konkretne zdania od momentu otrzymania oferty do podpisania umowy — IT, finanse, sprzedaż.</div>
+              <div class="acard-meta"><div class="av" style="width:16px;height:16px;font-size:7px;">MJ</div><span>Administrator</span><div class="dot"></div><span>27 maj</span><div class="dot"></div><span>8 min</span></div>
             </div>
           </article>
+
+          <!-- Inline MapJob promo -->
+          <div class="promo-card">
+            <div class="promo-top">
+              <div class="promo-icon">📍</div>
+              <div class="promo-text">
+                <div class="promo-tag">MapJob.pl — Praca z mapą dojazdów</div>
+                <div class="promo-title">Znajdź pracę blisko domu w 60 sekund</div>
+                <div class="promo-sub">Jedyna platforma w Polsce, która przed aplikacją pokaże Ci czas dojazdu autem, MPK i rowerem.</div>
+              </div>
+            </div>
+            <div class="promo-features">
+              <div class="promo-feat">Filtruj oferty po maksymalnym czasie dojazdu</div>
+              <div class="promo-feat">Każda oferta ma podany dokładny adres biura</div>
+              <div class="promo-feat">Ponad 4 200 aktualnych ofert w Polsce</div>
+            </div>
+            <div class="promo-actions">
+              <a href="#" class="promo-btn-primary">Szukaj pracy blisko domu →</a>
+              <a href="#" class="promo-btn-secondary">Dodaj ogłoszenie</a>
+            </div>
+          </div>
 
           <article class="acard">
             <div class="thumb th-purple">📄</div>
@@ -762,7 +629,7 @@
               <div class="acard-cat"><span class="badge b-purple">CV i rekrutacja</span></div>
               <div class="acard-title">CV 2026 – co zmienił ChatGPT i jak wyróżnić się spośród 500 aplikacji?</div>
               <div class="acard-excerpt">Rekruterzy widzą tysiące identycznych CV pisanych przez AI. Oto co naprawdę działa.</div>
-              <div class="acard-meta"><div class="av p" style="width:16px;height:16px;font-size:7px;">KN</div><span>25 maj</span><div class="dot"></div><span>7 min</span></div>
+              <div class="acard-meta"><div class="av" style="width:16px;height:16px;font-size:7px;">MJ</div><span>Redakcja MapJob</span><div class="dot"></div><span>25 maj</span><div class="dot"></div><span>7 min</span></div>
             </div>
           </article>
 
@@ -771,8 +638,8 @@
             <div class="acard-body">
               <div class="acard-cat"><span class="badge b-gold">Dla pracodawców</span></div>
               <div class="acard-title">Dlaczego kandydaci odrzucają oferty po pierwszej rozmowie? Raport 2026</div>
-              <div class="acard-excerpt">34% rezygnuje, gdy nie zna dokładnej lokalizacji biura. Jak to zmienić i przyspieszyć rekrutację?</div>
-              <div class="acard-meta"><div class="av gold" style="width:16px;height:16px;font-size:7px;">TM</div><span>23 maj</span><div class="dot"></div><span>6 min</span></div>
+              <div class="acard-excerpt">34% rezygnuje, gdy nie zna dokładnej lokalizacji biura. Jak to zmienić?</div>
+              <div class="acard-meta"><div class="av" style="width:16px;height:16px;font-size:7px;">MJ</div><span>Administrator</span><div class="dot"></div><span>23 maj</span><div class="dot"></div><span>6 min</span></div>
             </div>
           </article>
 
@@ -782,7 +649,7 @@
               <div class="acard-cat"><span class="badge b-blue">Dojazdy</span></div>
               <div class="acard-title">Praca zdalna vs hybrydowa vs biuro – co naprawdę się opłaca w 2026?</div>
               <div class="acard-excerpt">Liczymy realny koszt każdego modelu pracy: dojazdy, internet, mieszkanie, benefity.</div>
-              <div class="acard-meta"><div class="av t" style="width:16px;height:16px;font-size:7px;">MS</div><span>21 maj</span><div class="dot"></div><span>9 min</span></div>
+              <div class="acard-meta"><div class="av" style="width:16px;height:16px;font-size:7px;">MJ</div><span>Redakcja MapJob</span><div class="dot"></div><span>21 maj</span><div class="dot"></div><span>9 min</span></div>
             </div>
           </article>
 
@@ -791,139 +658,109 @@
             <div class="acard-body">
               <div class="acard-cat"><span class="badge b-purple">CV i rekrutacja</span></div>
               <div class="acard-title">30 najtrudniejszych pytań na rozmowie kwalifikacyjnej z gotowymi odpowiedziami</div>
-              <div class="acard-excerpt">„Gdzie się widzisz za 5 lat?" — rozbieramy pytania i pokazujemy co rekruter chce usłyszeć.</div>
-              <div class="acard-meta"><div class="av r" style="width:16px;height:16px;font-size:7px;">EK</div><span>19 maj</span><div class="dot"></div><span>11 min</span></div>
+              <div class="acard-excerpt">„Gdzie się widzisz za 5 lat?" — co rekruter naprawdę chce usłyszeć.</div>
+              <div class="acard-meta"><div class="av" style="width:16px;height:16px;font-size:7px;">MJ</div><span>Redakcja MapJob</span><div class="dot"></div><span>19 maj</span><div class="dot"></div><span>11 min</span></div>
             </div>
           </article>
 
-        </div>
+        </div><!-- /cards-list -->
 
         <!-- Stats -->
         <div class="stats-wrap">
           <div class="stats-strip">
             <div class="stat-cell"><div class="stat-val">73<span class="ac">%</span></div><div class="stat-lbl">kandydatów bierze dojazd pod uwagę przy wyborze oferty</div></div>
-            <div class="stat-cell"><div class="stat-val">74<span class="ac" style="font-size:16px;">min</span></div><div class="stat-lbl">średni czas dojazdu dziennie w Warszawie (GUS 2025)</div></div>
+            <div class="stat-cell"><div class="stat-val">74<span class="ac" style="font-size:16px">min</span></div><div class="stat-lbl">średni czas dojazdu dziennie w Warszawie (GUS 2025)</div></div>
             <div class="stat-cell"><div class="stat-val">14<span class="ac">k</span></div><div class="stat-lbl">zł rocznie kosztuje dojazd autem 20 km w jedną stronę</div></div>
             <div class="stat-cell"><div class="stat-val">2<span class="ac">×</span></div><div class="stat-lbl">szybsza rekrutacja gdy ogłoszenie zawiera mapę lokalizacji</div></div>
           </div>
         </div>
 
-        <!-- FAQ -->
-        <div class="faq-wrap">
-          <div class="sec-head" style="padding:0;margin-top:0;"><div class="sec-title">Najczęściej zadawane pytania</div><span style="font-size:10px;color:var(--tx3);">Google PAA</span></div>
-          <div class="faq-list">
-            <div class="faq-item"><div class="faq-q">Jak znaleźć pracę blisko domu?</div><div class="faq-a">Na MapJob.pl ustawiasz adres zamieszkania i filtrujesz oferty po odległości lub czasie dojazdu — autem, rowerem lub MPK.</div></div>
-            <div class="faq-item"><div class="faq-q">Ile czasu Polacy tracą dziennie na dojazdy do pracy?</div><div class="faq-a">Według GUS 2025 średni czas dojazdu w dużych miastach to 68 minut dziennie (tam i z powrotem). W Warszawie — 74 minuty.</div></div>
-            <div class="faq-item"><div class="faq-q">Jak negocjować wynagrodzenie po otrzymaniu oferty?</div><div class="faq-a">Zbadaj widełki rynkowe, uzasadnij konkretną kwotą wynikającą z doświadczenia i cierpliwie poczekaj na odpowiedź pracodawcy.</div></div>
-            <div class="faq-item"><div class="faq-q">Czy praca zdalna jest nadal popularna w Polsce w 2026?</div><div class="faq-a">Wiele firm wróciło do modelu hybrydowego (2–3 dni w biurze). Pełna praca zdalna to ok. 22% ofert w IT i 8% ogółem.</div></div>
-            <div class="faq-item"><div class="faq-q">Ile kosztuje miesięcznie dojazd autem do pracy w Warszawie?</div><div class="faq-a">Przy 20 km w jedną stronę to ok. 900–1 400 zł/mies. za paliwo, amortyzację i parking. Rocznie nawet 14 000 zł.</div></div>
-            <div class="faq-item"><div class="faq-q">Co wpisać w CV w 2026 żeby przejść przez system ATS?</div><div class="faq-a">Słowa kluczowe wprost z ogłoszenia, unikaj tabel i grafik, zapisuj plik jako .docx lub czysty PDF bez designerskich ozdobników.</div></div>
+        <!-- Employer banner -->
+        <div class="employers-banner">
+          <div class="eb-icon">🏢</div>
+          <div class="eb-body">
+            <div class="eb-tag">MapJob dla pracodawców</div>
+            <div class="eb-title">Dotrzeć do kandydatów, którzy naprawdę dojadą do biura</div>
+            <div class="eb-sub">Ogłoszenia z mapą dostają średnio 3× więcej aplikacji. Twój kandydat zna czas dojazdu zanim kliknie „Aplikuj" — zero rezygnacji na etapie oferty.</div>
+            <a href="#" class="eb-btn">Dodaj ogłoszenie z mapą <svg width="12" height="12" viewBox="0 0 20 20" fill="none"><path d="M4 10h12M11 5l5 5-5 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
           </div>
         </div>
 
-        <!-- CTA banner -->
-        <div class="cta-wrap">
-          <div class="cta-card">
-            <div class="cta-icon">📍</div>
-            <div class="cta-text">
-              <div class="cta-title">Szukasz pracy blisko domu?</div>
-              <div class="cta-sub">MapJob pokaże Ci czas dojazdu zanim wyślesz CV.</div>
-            </div>
-            <button class="cta-btn">Sprawdź mapę</button>
+        <!-- FAQ -->
+        <div class="faq-wrap">
+          <div class="sec-head" style="padding:0;margin-top:0;"><div class="sec-title">Najczęściej zadawane pytania</div><span style="font-size:10px;color:var(--tx3)">Google PAA</span></div>
+          <div class="faq-list">
+            <div class="faq-item"><div class="faq-q">Jak znaleźć pracę blisko domu?</div><div class="faq-a">Na <a href="#">MapJob.pl</a> ustawiasz swój adres zamieszkania i filtrujesz oferty po odległości lub czasie dojazdu — autem, rowerem lub MPK.</div></div>
+            <div class="faq-item"><div class="faq-q">Ile czasu Polacy tracą dziennie na dojazdy do pracy?</div><div class="faq-a">Według GUS 2025 średni czas dojazdu w dużych miastach to 68 minut dziennie (tam i z powrotem). W Warszawie — aż 74 minuty.</div></div>
+            <div class="faq-item"><div class="faq-q">Jak negocjować wynagrodzenie po otrzymaniu oferty?</div><div class="faq-a">Zbadaj widełki rynkowe, przygotuj uzasadnienie kwotą wynikającą z doświadczenia i cierpliwie poczekaj na odpowiedź pracodawcy.</div></div>
+            <div class="faq-item"><div class="faq-q">Czy praca zdalna jest nadal popularna w Polsce w 2026?</div><div class="faq-a">Wiele firm wróciło do modelu hybrydowego (2–3 dni w biurze). Pełna praca zdalna to ok. 22% ofert w IT i 8% ogółem.</div></div>
+            <div class="faq-item"><div class="faq-q">Ile kosztuje miesięcznie dojazd autem do pracy w Warszawie?</div><div class="faq-a">Przy 20 km w jedną stronę to ok. 900–1 400 zł/mies. Rocznie nawet 14 000 zł. Sprawdź na <a href="#">MapJob.pl</a> ile zaoszczędzisz pracując bliżej domu.</div></div>
           </div>
         </div>
 
       </div><!-- /main col -->
 
       <!-- Desktop sidebar -->
-      <aside>
-        <div class="nl-wrap" style="margin-top:0;">
+      <aside id="desk-sidebar">
+        <div class="nl-wrap" style="margin-top:0;padding:0;margin-bottom:16px;">
           <div class="nl-card">
-            <div class="nl-eyebrow">Newsletter</div>
-            <div class="nl-title">Rynek pracy na maila</div>
-            <div class="nl-sub">Najlepsze artykuły i nowe oferty — co tydzień, bez spamu.</div>
-            <div class="nl-row">
-              <input class="nl-inp" type="email" placeholder="twoj@email.pl"/>
-              <button class="nl-btn">Zapisz →</button>
-            </div>
+            <div class="nl-eyebrow">Newsletter MapJob</div>
+            <div class="nl-title">Rynek pracy prosto na maila</div>
+            <div class="nl-sub">Najlepsze artykuły, nowe oferty blisko Ciebie — co tydzień, bez spamu.</div>
+            <div class="nl-row"><input class="nl-inp" type="email" placeholder="twoj@email.pl"/><button class="nl-btn">Zapisz →</button></div>
             <div class="nl-note">Wypis jednym kliknięciem.</div>
           </div>
         </div>
-
-        <div class="pop-wrap">
+        <div class="pop-wrap" style="padding:0;margin-bottom:16px;">
           <div class="pop-card">
             <div class="pop-head">🔥 Najpopularniejsze</div>
             <div class="pop-item"><div class="pop-num">01</div><div><div class="pop-t">Jak napisać CV w 2026? Kompletny przewodnik</div><div class="pop-v">48 200 wyświetleń</div></div></div>
             <div class="pop-item"><div class="pop-num">02</div><div><div class="pop-t">Ile zarabia programista w Polsce 2026?</div><div class="pop-v">39 800 wyświetleń</div></div></div>
-            <div class="pop-item"><div class="pop-num">03</div><div><div class="pop-t">Pytania na rozmowie kwalifikacyjnej – przykłady</div><div class="pop-v">31 500 wyświetleń</div></div></div>
+            <div class="pop-item"><div class="pop-num">03</div><div><div class="pop-t">Pytania na rozmowie kwalifikacyjnej</div><div class="pop-v">31 500 wyświetleń</div></div></div>
             <div class="pop-item"><div class="pop-num">04</div><div><div class="pop-t">B2B vs UoP – co się bardziej opłaca?</div><div class="pop-v">28 100 wyświetleń</div></div></div>
-            <div class="pop-item"><div class="pop-num">05</div><div><div class="pop-t">Praca zdalna – najlepsze stanowiska 2026</div><div class="pop-v">22 700 wyświetleń</div></div></div>
+            <div class="pop-item"><div class="pop-num">05</div><div><div class="pop-t">Praca zdalna — najlepsze stanowiska 2026</div><div class="pop-v">22 700 wyświetleń</div></div></div>
           </div>
         </div>
-
-        <div class="tags-wrap">
+        <div class="tags-wrap" style="padding:0;margin-bottom:16px;">
           <div class="tags-card">
             <div class="tags-head">Tematy</div>
-            <div class="tags-cloud">
-              <span class="tag">praca zdalna</span><span class="tag">wynagrodzenie</span>
-              <span class="tag">CV 2026</span><span class="tag">dojazdy</span>
-              <span class="tag">Warszawa</span><span class="tag">B2B vs UoP</span>
-              <span class="tag">rekrutacja</span><span class="tag">IT praca</span>
-              <span class="tag">negocjacje</span><span class="tag">Kraków</span>
-              <span class="tag">praca hybrydowa</span>
-            </div>
+            <div class="tags-cloud"><span class="tag">praca zdalna</span><span class="tag">wynagrodzenie</span><span class="tag">CV 2026</span><span class="tag">dojazdy</span><span class="tag">Warszawa</span><span class="tag">B2B vs UoP</span><span class="tag">rekrutacja</span><span class="tag">IT praca</span><span class="tag">negocjacje</span><span class="tag">Kraków</span><span class="tag">praca hybrydowa</span></div>
           </div>
+        </div>
+        <!-- Extra CTA in sidebar -->
+        <div style="background:linear-gradient(135deg,#0e1b36,#131e33);border:1px solid rgba(59,130,246,.2);border-radius:var(--r);padding:16px;margin-bottom:16px;">
+          <div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--blue2);margin-bottom:6px;">MapJob.pl</div>
+          <div style="font-size:13px;font-weight:700;color:var(--tx);margin-bottom:5px;">Sprawdź oferty pracy blisko Ciebie</div>
+          <div style="font-size:11px;color:var(--tx2);line-height:1.55;margin-bottom:12px;">Ponad 4 200 aktualnych ofert z mapą dojazdów. Ustaw swój adres i znajdź pracę w zasięgu 30 minut.</div>
+          <a href="#" style="display:block;text-align:center;background:var(--blue);color:#fff;font-size:12px;font-weight:600;padding:9px;border-radius:8px;">Szukaj pracy na mapie →</a>
+        </div>
+        <div style="background:linear-gradient(135deg,#0f1c10,#141f15);border:1px solid rgba(16,185,129,.2);border-radius:var(--r);padding:16px;">
+          <div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--green);margin-bottom:6px;">Dla pracodawców</div>
+          <div style="font-size:13px;font-weight:700;color:var(--tx);margin-bottom:5px;">Ogłoszenie z mapą → 3× więcej aplikacji</div>
+          <div style="font-size:11px;color:var(--tx2);line-height:1.55;margin-bottom:12px;">Kandydaci widzą czas dojazdu zanim klikną „Aplikuj". Zero rezygnacji na etapie oferty.</div>
+          <a href="#" style="display:block;text-align:center;background:var(--green);color:#fff;font-size:12px;font-weight:600;padding:9px;border-radius:8px;">Dodaj ogłoszenie →</a>
         </div>
       </aside>
 
     </div><!-- /listing-layout -->
-
   </div><!-- /wrap -->
 
-  <!-- Mobile only: newsletter + popular (below content) -->
-  <div style="display:block;" class="mob-extras">
-    <div class="nl-wrap">
-      <div class="nl-card">
-        <div class="nl-eyebrow">Newsletter</div>
-        <div class="nl-title">Rynek pracy na maila</div>
-        <div class="nl-sub">Najlepsze artykuły i nowe oferty — co tydzień, bez spamu.</div>
-        <div class="nl-row">
-          <input class="nl-inp" type="email" placeholder="twoj@email.pl"/>
-          <button class="nl-btn">Zapisz →</button>
-        </div>
-        <div class="nl-note">Wypis jednym kliknięciem.</div>
-      </div>
-    </div>
-    <div class="pop-wrap">
-      <div class="pop-card">
-        <div class="pop-head">🔥 Najpopularniejsze</div>
-        <div class="pop-item"><div class="pop-num">01</div><div><div class="pop-t">Jak napisać CV w 2026?</div><div class="pop-v">48 200 wyświetleń</div></div></div>
-        <div class="pop-item"><div class="pop-num">02</div><div><div class="pop-t">Ile zarabia programista w Polsce 2026?</div><div class="pop-v">39 800 wyświetleń</div></div></div>
-        <div class="pop-item"><div class="pop-num">03</div><div><div class="pop-t">Pytania na rozmowie kwalifikacyjnej</div><div class="pop-v">31 500 wyświetleń</div></div></div>
-        <div class="pop-item"><div class="pop-num">04</div><div><div class="pop-t">B2B vs UoP – co się opłaca?</div><div class="pop-v">28 100 wyświetleń</div></div></div>
-      </div>
-    </div>
-    <div class="tags-wrap">
-      <div class="tags-card">
-        <div class="tags-head">Tematy</div>
-        <div class="tags-cloud">
-          <span class="tag">praca zdalna</span><span class="tag">wynagrodzenie</span>
-          <span class="tag">CV 2026</span><span class="tag">dojazdy</span>
-          <span class="tag">Warszawa</span><span class="tag">B2B vs UoP</span>
-          <span class="tag">rekrutacja</span><span class="tag">praca hybrydowa</span>
-        </div>
-      </div>
-    </div>
+  <!-- Mobile extras -->
+  <div id="mob-extras">
+    <div class="nl-wrap"><div class="nl-card"><div class="nl-eyebrow">Newsletter</div><div class="nl-title">Rynek pracy na maila</div><div class="nl-sub">Najlepsze artykuły i nowe oferty co tydzień, bez spamu.</div><div class="nl-row"><input class="nl-inp" type="email" placeholder="twoj@email.pl"/><button class="nl-btn">Zapisz →</button></div><div class="nl-note">Wypis jednym kliknięciem.</div></div></div>
+    <div class="pop-wrap"><div class="pop-card"><div class="pop-head">🔥 Najpopularniejsze</div><div class="pop-item"><div class="pop-num">01</div><div><div class="pop-t">Jak napisać CV w 2026?</div><div class="pop-v">48 200 wyświetleń</div></div></div><div class="pop-item"><div class="pop-num">02</div><div><div class="pop-t">Ile zarabia programista w Polsce 2026?</div><div class="pop-v">39 800 wyświetleń</div></div></div><div class="pop-item"><div class="pop-num">03</div><div><div class="pop-t">Pytania na rozmowie kwalifikacyjnej</div><div class="pop-v">31 500 wyświetleń</div></div></div></div></div>
+    <div class="tags-wrap"><div class="tags-card"><div class="tags-head">Tematy</div><div class="tags-cloud"><span class="tag">praca zdalna</span><span class="tag">wynagrodzenie</span><span class="tag">CV 2026</span><span class="tag">dojazdy</span><span class="tag">Warszawa</span><span class="tag">B2B vs UoP</span><span class="tag">praca hybrydowa</span></div></div></div>
   </div>
 
   <footer>
     <div class="footer-inner">
-      <div class="f-logo">Map<span style="color:var(--blue2)">Job</span></div>
+      <div class="f-logo">Map<span>Job</span></div>
       <div class="f-tag">Znajdź pracę blisko domu. Jedyna polska platforma z mapą dojazdów i filtrem czasu dojazdu.</div>
+      <div class="f-seo">Blog MapJob: porady o szukaniu pracy, wynagrodzeniach, CV i dojazdach dla Polaków. Publikowane przez redakcję MapJob.pl.</div>
       <div class="f-cols">
-        <div><div class="f-col-title">Blog</div><ul class="f-links"><li><a href="#">Dojazdy</a></li><li><a href="#">Wynagrodzenia</a></li><li><a href="#">CV i rekrutacja</a></li><li><a href="#">Dla pracodawców</a></li></ul></div>
-        <div><div class="f-col-title">MapJob</div><ul class="f-links"><li><a href="#">Mapa ofert</a></li><li><a href="#">Dodaj ogłoszenie</a></li><li><a href="#">Dla rekruterów</a></li><li><a href="#">O nas</a></li></ul></div>
-        <div><div class="f-col-title">Popularne</div><ul class="f-links"><li><a href="#">Praca Warszawa</a></li><li><a href="#">Praca Kraków</a></li><li><a href="#">Praca zdalna IT</a></li><li><a href="#">Praca blisko domu</a></li></ul></div>
+        <div><div class="f-col-title">Blog</div><ul class="f-links"><li><a href="#">Dojazdy i lokalizacja</a></li><li><a href="#">Szukanie pracy</a></li><li><a href="#">Wynagrodzenia</a></li><li><a href="#">CV i rekrutacja</a></li><li><a href="#">Dla pracodawców</a></li></ul></div>
+        <div><div class="f-col-title">MapJob</div><ul class="f-links"><li><a href="#">Mapa ofert pracy</a></li><li><a href="#">Dodaj ogłoszenie</a></li><li><a href="#">Dla rekruterów</a></li><li><a href="#">Raport 2026</a></li><li><a href="#">O nas</a></li></ul></div>
+        <div><div class="f-col-title">Popularne wyszukiwania</div><ul class="f-links"><li><a href="#">Praca Warszawa</a></li><li><a href="#">Praca Kraków</a></li><li><a href="#">Praca zdalna IT</a></li><li><a href="#">Praca blisko domu</a></li><li><a href="#">Praca magazynier</a></li></ul></div>
       </div>
       <div class="f-bottom">© 2026 MapJob Sp. z o.o. &nbsp;·&nbsp; Polityka prywatności &nbsp;·&nbsp; Regulamin &nbsp;·&nbsp; RODO</div>
     </div>
@@ -932,31 +769,26 @@
 </div><!-- /#pg-list -->
 
 
-<!-- ═══════════════════════════════════════════════════════
+<!-- ═══════════════════════════════════════════════
      PAGE 2 — ARTICLE
-═══════════════════════════════════════════════════════ -->
+═══════════════════════════════════════════════ -->
 <div class="page" id="pg-art">
 
   <div class="topbar">
-    <div class="logo" onclick="showListing()" style="cursor:pointer;">Map<span class="logo-dot">Job</span></div>
+    <div class="logo" onclick="showListing()" style="cursor:pointer;">Map<span>Job</span></div>
     <nav class="desk-nav">
-      <a class="dn-link" href="#">Mapa ofert</a>
-      <a class="dn-link" href="#">Dla firm</a>
-      <a class="dn-link on" onclick="showListing();return false;" href="#">Blog</a>
-      <a class="dn-link" href="#">Raport 2026</a>
+      <a class="dn" href="#">Mapa ofert</a>
+      <a class="dn" href="#">Dla firm</a>
+      <a class="dn on" onclick="showListing();return false;" href="#">Blog</a>
+      <a class="dn" href="#">Raport 2026</a>
     </nav>
-    <div class="topbar-spacer"></div>
-    <div class="desk-search">
-      <svg width="12" height="12" viewBox="0 0 20 20" fill="none"><circle cx="9" cy="9" r="6" stroke="currentColor" stroke-width="1.6"/><path d="M13 13L17 17" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
-      Szukaj…
-    </div>
+    <div class="tb-space"></div>
+    <div class="desk-search"><svg width="12" height="12" viewBox="0 0 20 20" fill="none"><circle cx="9" cy="9" r="6" stroke="currentColor" stroke-width="1.6"/><path d="M13 13L17 17" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg> Szukaj…</div>
     <button class="desk-cta">Dodaj ogłoszenie</button>
-    <div class="mob-icon search">
-      <svg width="16" height="16" viewBox="0 0 20 20" fill="none"><circle cx="9" cy="9" r="6" stroke="currentColor" stroke-width="1.6"/><path d="M13 13L17 17" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
-    </div>
+    <div class="mob-ic search-mob"><svg width="16" height="16" viewBox="0 0 20 20" fill="none"><circle cx="9" cy="9" r="6" stroke="currentColor" stroke-width="1.6"/><path d="M13 13L17 17" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></div>
   </div>
 
-  <div class="wrap">
+  <div class="wrap pb-art">
     <nav class="breadcrumb">
       <a href="#" onclick="showListing();return false;">Blog</a>
       <span class="bc-sep">›</span>
@@ -969,15 +801,15 @@
       <span class="badge b-blue">🗺️ Dojazdy i lokalizacja</span>
       <h1 class="art-h1">Ile naprawdę kosztuje Cię dojazd do pracy każdego miesiąca?</h1>
       <div class="art-meta">
-        <div class="av" style="width:22px;height:22px;font-size:9px;">MK</div>
-        <span class="art-author">Marta Kowalczyk</span>
+        <div class="av" style="width:22px;height:22px;font-size:9px;">MJ</div>
+        <span class="art-author">Redakcja MapJob</span>
         <div class="dot"></div><span>29 maja 2026</span>
         <div class="dot"></div><span>🕐 6 min</span>
         <div class="dot"></div><span>👁 12,4k</span>
       </div>
     </div>
 
-    <div class="art-hero">🚌💰🗺️</div>
+    <div class="art-hero">🚌 💰 🗺️</div>
 
     <div class="art-layout">
       <article>
@@ -986,17 +818,12 @@
 
           <h2>Ile płacisz za dojazd autem?</h2>
           <p>Przykład: 20 km w jedną stronę (typowy dystans z Bemowa lub Ursynowa do centrum Warszawy), 22 dni robocze w miesiącu.</p>
-
-          <div class="stat-block">
-            <div class="sb-val">876</div>
-            <div class="sb-txt"><strong>zł miesięcznie</strong> — tyle kosztuje samo paliwo przy 7 zł/l i spalaniu 8l/100km na trasie 20 km.<br/><span style="color:var(--tx3);font-size:11px;">+ parking w centrum Warszawy: do 500 zł/mies.</span></div>
-          </div>
-
+          <div class="stat-block"><div class="sb-val">876</div><div class="sb-txt"><strong>zł miesięcznie</strong> — tyle kosztuje samo paliwo przy 7 zł/l i spalaniu 8l/100km na trasie 20 km.<br/><span style="color:var(--tx3);font-size:11px">+ parking w centrum Warszawy: do 500 zł/mies.</span></div></div>
           <p>Do tego dochodzi <strong>amortyzacja</strong> (~0,70 zł/km wg stawek ZUS), ubezpieczenie, serwis. Razem — dobrze ponad <strong>1 200 zł miesięcznie</strong>.</p>
 
           <div class="calc-card">
             <div class="calc-title">🧮 Kalkulator kosztów dojazdu</div>
-            <div class="calc-sub">Oblicz ile miesięcznie wydajesz na dojazd</div>
+            <div class="calc-sub">Oblicz ile miesięcznie wydajesz na dojazd do pracy</div>
             <div class="calc-row">
               <div class="calc-f"><div class="calc-lbl">Odległość (km, w jedną stronę)</div><input class="calc-inp" type="number" id="cDist" value="20" oninput="calc()"/></div>
               <div class="calc-f"><div class="calc-lbl">Sposób dojazdu</div><select class="calc-inp" id="cMode" onchange="calc()"><option value="car">🚗 Samochód</option><option value="transit">🚌 Komunikacja</option></select></div>
@@ -1012,32 +839,25 @@
 
           <h2>Czas — koszt, którego nie widać na koncie</h2>
           <p>Pieniądze to jedno. Ale czas jest ważniejszy — i tu większość pracowników przestaje liczyć.</p>
-          <div class="highlight">
-            <p>Przy 60 minutach dziennie i 220 dniach roboczych rocznie tracisz <strong>220 godzin = 27,5 dni roboczych</strong> wyłącznie w transporcie. Prawie 6 tygodni urlopu.</p>
-          </div>
-          <p>Chroniczny długi dojazd koreluje z wyższym stresem, gorszym snem i niższą satysfakcją z życia — Wellbeing Institute for Work (2025).</p>
-
-          <h2>Komunikacja miejska: czy jest tańsza?</h2>
-          <p>Tak, ale nie zawsze się opłaca. Przy złej siatce połączeń czas dojazdu bywa 2× dłuższy niż autem.</p>
-          <ul>
-            <li>Bilet miesięczny Warszawa (2 strefy): <strong>149 zł</strong></li>
-            <li>Bilet miesięczny Kraków: <strong>114 zł</strong></li>
-            <li>Samochód (20 km/dzień): <strong>900–1 400 zł</strong></li>
-          </ul>
+          <div class="highlight"><p>Przy 60 minutach dziennie i 220 dniach roboczych rocznie tracisz <strong>220 godzin = 27,5 dni roboczych</strong> wyłącznie w transporcie. Prawie 6 tygodni urlopu.</p></div>
 
           <h2>Jak znaleźć pracę bliżej domu?</h2>
           <p>Odwróć sposób szukania: zamiast filtrować po stanowisku — <strong>zacznij od mapy</strong>. Ustaw adres zamieszkania, wybierz maksymalny czas dojazdu i dopiero przeglądaj oferty.</p>
-          <div class="highlight gr">
-            <p>Na <strong>MapJob.pl</strong> każda oferta ma dokładny adres i kalkulowany czas dojazdu w 4 trybach. Możesz filtrować „max 30 min MPK" — <strong>bez niespodzianek na rozmowie</strong>.</p>
-          </div>
+          <div class="highlight gr"><p>Na <strong>MapJob.pl</strong> każda oferta ma dokładny adres i kalkulowany czas dojazdu w 4 trybach. Możesz filtrować „max 30 min MPK" — <strong>bez niespodzianek na rozmowie</strong>.</p></div>
 
           <h2>Podsumowanie</h2>
-          <ol>
-            <li>Oblicz aktualny koszt dojazdu (kalkulator wyżej)</li>
-            <li>Porównaj z ofertą o 50% krótszym dojazdem</li>
-            <li>Dodaj wartość odzyskanego czasu — 2h dziennie = dodatkowy wieczór z rodziną</li>
-            <li>Sprawdź MapJob.pl — oferty posortowane po czasie dojazdu od Twojego adresu</li>
-          </ol>
+          <ol><li>Oblicz aktualny koszt dojazdu (kalkulator wyżej)</li><li>Porównaj z ofertą o 50% krótszym dojazdem</li><li>Dodaj wartość odzyskanego czasu — 2h dziennie = dodatkowy wieczór</li><li>Sprawdź MapJob.pl — oferty posortowane po czasie dojazdu od Twojego adresu</li></ol>
+        </div>
+
+        <!-- In-article MapJob promo -->
+        <div class="art-promo">
+          <div class="ap-icon">📍</div>
+          <div class="ap-text">
+            <div class="ap-tag">MapJob.pl — bezpłatne dla kandydatów</div>
+            <div class="ap-title">Znajdź pracę bliżej domu jeszcze dziś</div>
+            <div class="ap-sub">Ponad 4 200 ofert z mapą dojazdów. Ustaw swój adres i filtruj po czasie dojazdu.</div>
+          </div>
+          <a href="#" class="ap-btn">Szukaj →</a>
         </div>
 
         <div class="share-bar">
@@ -1049,16 +869,16 @@
         </div>
 
         <div class="author-card">
-          <div class="au-av">MK</div>
+          <div class="au-av">MJ</div>
           <div>
-            <div class="au-name">Marta Kowalczyk</div>
-            <div class="au-role">Ekspert rynku pracy @ MapJob</div>
-            <div class="au-bio">8 lat w HR i employer brandingu. Wcześniej Pracuj.pl i Deloitte Human Capital. Pisze o rynku pracy, wynagrodzeniach i trendach rekrutacji.</div>
+            <div class="au-name">Redakcja MapJob</div>
+            <div class="au-role">Zespół redakcyjny MapJob.pl</div>
+            <div class="au-bio">Piszemy o rynku pracy w Polsce, wynagrodzeniach, dojazdach i rekrutacji. Nasze artykuły opierają się na danych z platformy MapJob, badaniach GUS i wywiadach z ekspertami HR.</div>
           </div>
         </div>
       </article>
 
-      <!-- Desktop TOC / aside -->
+      <!-- Desktop TOC -->
       <aside class="art-aside">
         <div class="toc">
           <div class="toc-title">Spis treści</div>
@@ -1066,41 +886,54 @@
             <li class="toc-item on">Ile płacisz za dojazd autem?</li>
             <li class="toc-item">Kalkulator kosztów</li>
             <li class="toc-item">Czas — koszt ukryty</li>
-            <li class="toc-item">Komunikacja miejska</li>
             <li class="toc-item">Jak znaleźć pracę bliżej?</li>
             <li class="toc-item">Podsumowanie</li>
           </ul>
           <div class="toc-related">
-            <div class="toc-rel-title">Powiązane</div>
+            <div class="toc-rel-title">Powiązane artykuły</div>
             <a href="#" class="toc-rel-link">→ Praca zdalna vs biuro – co się opłaca?</a>
             <a href="#" class="toc-rel-link">→ Ranking miast pod kątem dojazdów 2026</a>
-            <a href="#" class="toc-rel-link">→ Jak negocjować z uwzględnieniem kosztów dojazdu?</a>
+            <a href="#" class="toc-rel-link">→ Jak negocjować wynagrodzenie w 2026?</a>
           </div>
-          <div class="toc-cta-widget">
-            <div class="tcw-title">Praca blisko Ciebie</div>
-            <div class="tcw-sub">Filtruj oferty po czasie dojazdu od Twojego adresu.</div>
-            <a href="#" class="tcw-btn">Sprawdź mapę ofert →</a>
+          <div class="toc-cta">
+            <div class="toc-cta-tag">MapJob.pl — darmowe dla kandydatów</div>
+            <div class="toc-cta-title">Praca blisko Ciebie</div>
+            <div class="toc-cta-sub">Filtruj oferty po czasie dojazdu od Twojego adresu. Ponad 4 200 aktualnych ofert.</div>
+            <a href="#" class="toc-cta-btn">Sprawdź mapę ofert →</a>
+          </div>
+          <div class="toc-cta toc-cta-emp" style="margin-top:10px;">
+            <div class="toc-cta-tag">Dla pracodawców</div>
+            <div class="toc-cta-title">Ogłoszenie z mapą</div>
+            <div class="toc-cta-sub">3× więcej aplikacji od kandydatów, którzy naprawdę dojadą.</div>
+            <a href="#" class="toc-cta-btn">Dodaj ogłoszenie →</a>
           </div>
         </div>
       </aside>
     </div>
-  </div>
 
-  <!-- Related -->
-  <div class="wrap">
+    <!-- Related -->
     <div class="related-head">
       <div class="sec-head" style="padding:0;"><div class="sec-title">Czytaj dalej</div><a href="#" class="sec-more" onclick="showListing();return false;">Wróć do bloga →</a></div>
     </div>
     <div class="cards-list" style="margin-bottom:32px;">
-      <article class="acard"><div class="thumb th-teal">🏠</div><div class="acard-body"><div class="acard-cat"><span class="badge b-blue">Dojazdy</span></div><div class="acard-title">Praca zdalna vs hybrydowa vs biuro – co naprawdę się opłaca?</div><div class="acard-meta"><span>21 maj</span><div class="dot"></div><span>9 min</span></div></div></article>
-      <article class="acard"><div class="thumb th-blue">📍</div><div class="acard-body"><div class="acard-cat"><span class="badge b-blue">Dojazdy · Raport</span></div><div class="acard-title">Mapa dojazdów: ranking 20 miast w Polsce 2026</div><div class="acard-meta"><span>15 maj</span><div class="dot"></div><span>12 min</span></div></div></article>
-      <article class="acard"><div class="thumb th-green">💰</div><div class="acard-body"><div class="acard-cat"><span class="badge b-green">Wynagrodzenia</span></div><div class="acard-title">Jak negocjować wynagrodzenie w 2026? Skrypt krok po kroku</div><div class="acard-meta"><span>27 maj</span><div class="dot"></div><span>8 min</span></div></div></article>
+      <article class="acard"><div class="thumb th-teal">🏠</div><div class="acard-body"><div class="acard-cat"><span class="badge b-blue">Dojazdy</span></div><div class="acard-title">Praca zdalna vs hybrydowa vs biuro – co naprawdę się opłaca?</div><div class="acard-meta"><div class="av" style="width:16px;height:16px;font-size:7px;">MJ</div><span>Redakcja MapJob</span><div class="dot"></div><span>21 maj</span><div class="dot"></div><span>9 min</span></div></div></article>
+      <article class="acard"><div class="thumb th-blue">📍</div><div class="acard-body"><div class="acard-cat"><span class="badge b-blue">Dojazdy · Raport</span></div><div class="acard-title">Mapa dojazdów: ranking 20 polskich miast 2026</div><div class="acard-meta"><div class="av" style="width:16px;height:16px;font-size:7px;">MJ</div><span>Redakcja MapJob</span><div class="dot"></div><span>15 maj</span><div class="dot"></div><span>12 min</span></div></div></article>
+      <article class="acard"><div class="thumb th-green">💰</div><div class="acard-body"><div class="acard-cat"><span class="badge b-green">Wynagrodzenia</span></div><div class="acard-title">Jak negocjować wynagrodzenie w 2026? Skrypt krok po kroku</div><div class="acard-meta"><div class="av" style="width:16px;height:16px;font-size:7px;">MJ</div><span>Administrator</span><div class="dot"></div><span>27 maj</span><div class="dot"></div><span>8 min</span></div></div></article>
     </div>
+  </div><!-- /wrap -->
+
+  <!-- Sticky bottom CTA (mobile) -->
+  <div class="art-sticky">
+    <div class="as-text">
+      <div class="as-title">Szukasz pracy blisko domu?</div>
+      <div class="as-sub">MapJob.pl — oferty z mapą dojazdów</div>
+    </div>
+    <a href="#" class="as-btn">Sprawdź mapę →</a>
   </div>
 
   <footer>
     <div class="footer-inner">
-      <div class="f-logo">Map<span style="color:var(--blue2)">Job</span></div>
+      <div class="f-logo">Map<span>Job</span></div>
       <div class="f-tag">Znajdź pracę blisko domu. Jedyna polska platforma z mapą dojazdów i filtrem czasu dojazdu.</div>
       <div class="f-cols">
         <div><div class="f-col-title">Blog</div><ul class="f-links"><li><a href="#">Dojazdy</a></li><li><a href="#">Wynagrodzenia</a></li><li><a href="#">CV i rekrutacja</a></li></ul></div>
@@ -1119,14 +952,14 @@
 </button>
 
 <script>
+  /* ── View toggle ─────────────────────────────────────────────── */
   let isArt = false;
-
   function showArticle() {
     isArt = true;
     document.getElementById('pg-list').classList.remove('on');
     document.getElementById('pg-art').classList.add('on');
     document.getElementById('rbar').classList.add('on');
-    document.getElementById('toggle-btn').innerHTML = '← Lista';
+    document.getElementById('toggle-btn').textContent = '← Lista';
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
   function showListing() {
@@ -1139,47 +972,65 @@
   }
   function toggle() { isArt ? showListing() : showArticle(); }
 
-  // Hide desktop-only sidebar on mobile (it's duplicated for mobile)
+  /* ── Sidebar show/hide ───────────────────────────────────────── */
   function applyLayout() {
-    const isDesk = window.innerWidth >= 900;
-    document.querySelectorAll('.listing-layout > aside').forEach(el => el.style.display = isDesk ? 'block' : 'none');
-    document.querySelector('.mob-extras').style.display = isDesk ? 'none' : 'block';
+    const desk = window.innerWidth >= 900;
+    const s = document.getElementById('desk-sidebar');
+    if (s) s.style.display = desk ? 'block' : 'none';
+    const m = document.getElementById('mob-extras');
+    if (m) m.style.display = desk ? 'none' : 'block';
   }
   applyLayout();
   window.addEventListener('resize', applyLayout);
 
-  // Reading progress
+  /* ── Reading progress ────────────────────────────────────────── */
   window.addEventListener('scroll', () => {
     if (!isArt) return;
     const d = document.documentElement;
     document.getElementById('rbar').style.width = (d.scrollTop / (d.scrollHeight - d.clientHeight) * 100) + '%';
   });
 
-  // Chips
-  document.querySelectorAll('.chip').forEach(c => c.addEventListener('click', () => {
-    document.querySelectorAll('.chip').forEach(x => x.classList.remove('on'));
-    c.classList.add('on');
-  }));
+  /* ── Category dropdown (mobile) ─────────────────────────────── */
+  function toggleCat() {
+    const t = document.getElementById('catTrigger');
+    const p = document.getElementById('catPanel');
+    t.classList.toggle('open');
+    p.classList.toggle('open');
+  }
+  function selectCat(el, icon, name) {
+    document.querySelectorAll('.cat-option').forEach(o => o.classList.remove('active'));
+    el.classList.add('active');
+    document.getElementById('catIcon').textContent = icon;
+    document.getElementById('catName').textContent = name;
+    toggleCat();
+  }
+  document.addEventListener('click', e => {
+    if (!document.getElementById('catDropdown').contains(e.target)) {
+      document.getElementById('catTrigger').classList.remove('open');
+      document.getElementById('catPanel').classList.remove('open');
+    }
+  });
 
-  // TOC
+  /* ── Category pills (desktop) ────────────────────────────────── */
+  function setPill(el) {
+    document.querySelectorAll('.cat-pill').forEach(p => p.classList.remove('on'));
+    el.classList.add('on');
+  }
+
+  /* ── TOC ─────────────────────────────────────────────────────── */
   document.querySelectorAll('.toc-item').forEach(t => t.addEventListener('click', () => {
     document.querySelectorAll('.toc-item').forEach(x => x.classList.remove('on'));
     t.classList.add('on');
   }));
 
-  // Calculator
+  /* ── Calculator ──────────────────────────────────────────────── */
   function calc() {
     const d = parseFloat(document.getElementById('cDist').value) || 0;
     const m = document.getElementById('cMode').value;
     const days = 22;
     let mon, hrs;
-    if (m === 'car') {
-      mon = Math.round(d * 2 * days * (7 * 0.08) + d * 2 * days * 0.40);
-      hrs = Math.round(d * 2 / 40 * days * 12);
-    } else {
-      mon = 149;
-      hrs = Math.round(d * 2 / 20 * days * 12);
-    }
+    if (m === 'car') { mon = Math.round(d * 2 * days * (7 * 0.08) + d * 2 * days * 0.40); hrs = Math.round(d * 2 / 40 * days * 12); }
+    else { mon = 149; hrs = Math.round(d * 2 / 20 * days * 12); }
     const f = n => n.toLocaleString('pl-PL');
     document.getElementById('cM').textContent = f(mon) + ' zł';
     document.getElementById('cY').textContent = f(mon * 12) + ' zł';
