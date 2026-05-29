@@ -38,6 +38,37 @@ Wszystkie opisane logo są w `.claude/logos/README.md`. Zawsze tam zaglądaj prz
 
 ---
 
+## Automatyczny proces dodawania logo do strony
+
+### Jak to działa
+
+Obrazek z chatu → Claude **nie ma** dostępu do bajtów pliku, więc nie może sam uploadować.
+
+**Workflow (minimalny wysiłek po stronie użytkownika):**
+
+1. Użytkownik wysyła logo w chacie → Claude opisuje + zapisuje do rejestru
+2. Użytkownik wrzuca plik do folderu `logos/` w repo na GitHubie (drag & drop na GitHub.com)
+   - Nazwa pliku: `[nazwa-firmy].png` (np. `berker-dominis.png`)
+3. Claude **automatycznie**:
+   - Pobiera plik z `logos/[nazwa-firmy].png` (URL: `https://raw.githubusercontent.com/piotrzajac4321-maker/MapJob/vercel-deploy/logos/[nazwa].png`)
+   - Wstawia `.trust-logo` do `index.html` (sekcja ZAUFALI NAM na stronie głównej)
+   - Wstawia kartę `.firm` do `zaufali-nam/index.html`
+   - Aktualizuje licznik firm i meta description
+   - Commituje i pushuje bezpośrednio na `vercel-deploy` → strona live
+
+### Gdzie wrzucać pliki logo
+
+- **Folder w repo:** `logos/` (branch `vercel-deploy`)
+- **GitHub UI:** https://github.com/piotrzajac4321-maker/MapJob/upload/vercel-deploy/logos
+- **Format nazwy:** `[nazwa-firmy-lowercase-z-myslnikami].png`
+
+### Supabase storage (backup)
+
+- **Bucket:** `logos` (publiczny)
+- **URL pliku:** `https://ahgzjneegvptudphibdm.supabase.co/storage/v1/object/public/logos/[nazwa].png`
+
+---
+
 ## Struktura kodu — gdzie jest co
 
 ### Repozytorium z kodem strony
@@ -57,9 +88,8 @@ Wszystkie opisane logo są w `.claude/logos/README.md`. Zawsze tam zaglądaj prz
 
 ### Jak dodawać logo firmy do sekcji "Zaufali nam"
 
-1. Pobierz `zaufali-nam/index.html` z brancha `vercel-deploy`
-2. Dodaj nową kartę `.firm` do `.grid` — przed wpisami z klasą `.demo`
-3. Logo bez pliku graficznego → **ZATRZYMAJ SIĘ i zapytaj użytkownika o plik logo** — nigdy nie generuj własnej wersji
-4. Zaktualizuj licznik firm w `.stats`
-5. Zaktualizuj meta description
-6. Wypchnij na branch `claude/[nazwa-zadania]`
+1. Pobierz `index.html` z brancha `vercel-deploy` (2.5MB — użyj curl + grep/python, nie MCP)
+2. Wstaw `.trust-logo` z `<img src="/logos/[nazwa].png">` przed zamknięciem `.trust-strip`
+3. Pobierz `zaufali-nam/index.html` i dodaj kartę `.firm` przed wpisami `.demo`
+4. Zaktualizuj licznik firm w `.stats` i meta description
+5. Pushuj bezpośrednio na `vercel-deploy`
