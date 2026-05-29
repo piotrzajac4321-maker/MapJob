@@ -1,5 +1,5 @@
 // ═══════════════════════════════════════════════════════════════
-//  📊 MapJob Stats — Widżet Scriptable (premium design)
+//  📊 MapJob Stats — Widżet Scriptable (Design B)
 //
 //  INSTALACJA:
 //  1. Pobierz "Scriptable" z App Store (darmowa)
@@ -7,7 +7,7 @@
 //  3. Naciśnij ▷ Run — jeśli zapyta o PIN, wpisz 9801
 //  4. Ekran główny → przytrzymaj → "+" → Scriptable → MapJob Stats
 //
-//  Rozmiary: Mały (2×2 karty)  Średni (2×3 karty)  Duży (3×3 karty)
+//  Rozmiary: Mały · Średni · Duży
 // ═══════════════════════════════════════════════════════════════
 
 const API         = 'https://ahgzjneegvptudphibdm.supabase.co/functions/v1/quick-stats'
@@ -15,12 +15,8 @@ const TOKEN_KEY   = 'mj_stats_token'
 const PIN_KEY     = 'mj_stats_pin'
 const DEFAULT_PIN = '9801'
 
-// ─── Kolory ────────────────────────────────────────────────────
 const C = {
   bg:      new Color('#080D18'),
-  card:    new Color('#111827'),
-  card2:   new Color('#1A2438'),
-  border:  new Color('#FFFFFF', 0.07),
   text:    new Color('#F0F4FF'),
   text2:   new Color('#94A3B8'),
   text3:   new Color('#3D5060'),
@@ -29,10 +25,6 @@ const C = {
   green:   new Color('#22C55E'),
   gold:    new Color('#F59E0B'),
   red:     new Color('#F87171'),
-  gBlue:   new Color('#1E40AF', 0.25),  // karta-tło blue
-  gGreen:  new Color('#14532D', 0.30),  // karta-tło green
-  gPurple: new Color('#4C1D95', 0.25),  // karta-tło purple
-  gGold:   new Color('#78350F', 0.25),  // karta-tło gold
 }
 
 // ─── API / Autoryzacja ──────────────────────────────────────────
@@ -99,6 +91,10 @@ function timeAgo(iso) {
   return Math.floor(m / 60) + 'h'
 }
 
+function totalPhoneClicks(funnel) {
+  return (funnel || []).reduce((s, r) => s + (r.reveals || 0), 0)
+}
+
 function makeBg() {
   const g = new LinearGradient()
   g.locations = [0, 1]
@@ -106,148 +102,218 @@ function makeBg() {
   return g
 }
 
-// ─── Karta metryki (duża liczba + etykieta) ────────────────────
-//   value  – liczba do wyświetlenia
-//   label  – podpis (małe litery), np. 'online'
-//   color  – kolor liczby
-//   bgColor – kolor tła karty (subtelny)
-//   numSize – rozmiar czcionki liczby
-function addCard(parent, value, label, color, bgColor, numSize) {
-  const card = parent.addStack()
-  card.layoutVertically()
-  card.backgroundColor = bgColor || C.card2
-  card.cornerRadius    = 11
-  card.setPadding(9, 11, 8, 11)
-
-  const num = card.addText(fmt(value))
-  num.font  = Font.boldMonospacedSystemFont(numSize || 22)
-  num.textColor = color
-  num.minimumScaleFactor = 0.6
-  num.lineLimit = 1
-
-  card.addSpacer(3)
-
-  const lbl = card.addText(label)
-  lbl.font      = Font.mediumSystemFont(8.5)
-  lbl.textColor = C.text3
-  lbl.lineLimit = 1
-  lbl.minimumScaleFactor = 0.8
-
-  return card
-}
-
-// ─── Budowanie widżetu ─────────────────────────────────────────
-function buildWidget(stats) {
-  const k      = stats.kpi || {}
-  const family = config.widgetFamily
-  const small  = !family || family === 'small'
-  const large  = family === 'large'
-  const GAP    = 6
-
-  const w = new ListWidget()
-  w.backgroundGradient = makeBg()
-  w.setPadding(small ? 12 : 13, 12, small ? 11 : 12, 12)
-  w.url = 'https://mapjob.pl/stats'
-  w.refreshAfterDate = new Date(Date.now() + 15 * 60 * 1000)
-
-  // ── Nagłówek ──────────────────────────────────────────────────
-  const hdr = w.addStack()
+// ─── Nagłówek ──────────────────────────────────────────────────
+function addHeader(parent, fetchedAt) {
+  const hdr = parent.addStack()
   hdr.layoutHorizontally()
   hdr.centerAlignContent()
 
-  // SF Symbol ikona wykresu
   const sym = SFSymbol.named('chart.bar.fill')
   sym.applyFont(Font.systemFont(11))
   const ico = hdr.addImage(sym.image)
-  ico.imageSize  = new Size(13, 13)
-  ico.tintColor  = C.blue
-  ico.resizable  = false
-  hdr.addSpacer(5)
+  ico.imageSize = new Size(12, 12)
+  ico.tintColor = C.blue
+  ico.resizable = false
+  hdr.addSpacer(4)
 
   const ttl = hdr.addText('MapJob')
-  ttl.font = Font.boldSystemFont(12)
+  ttl.font      = Font.boldSystemFont(12)
   ttl.textColor = C.text
 
   hdr.addSpacer()
 
-  // Czas odświeżenia
-  const badge = hdr.addStack()
-  badge.backgroundColor = new Color('#FFFFFF', 0.06)
-  badge.cornerRadius = 5
-  badge.setPadding(2, 6, 2, 6)
-  const upd = badge.addText('◷ ' + timeAgo(stats.fetched_at))
-  upd.font = Font.mediumSystemFont(9)
+  const upd = hdr.addText('◷ ' + timeAgo(fetchedAt))
+  upd.font      = Font.systemFont(9)
   upd.textColor = C.text3
+}
 
-  w.addSpacer(small ? 9 : 10)
+// ─── Linia oddzielająca ─────────────────────────────────────────
+function addDivider(parent) {
+  const line = parent.addStack()
+  line.backgroundColor = new Color('#FFFFFF', 0.09)
+  line.size = new Size(0, 1)
+}
 
-  // ── Karty ─────────────────────────────────────────────────────
+// ─── Hero: duża liczba wyśrodkowana ────────────────────────────
+//  value    – liczba
+//  sublabel – tekst pod liczbą (np. "🟢 online teraz")
+//  color    – kolor liczby
+//  size     – rozmiar czcionki
+function addHero(parent, value, sublabel, color, size) {
+  const numRow = parent.addStack()
+  numRow.layoutHorizontally()
+  numRow.addSpacer()
+  const n = numRow.addText(fmt(value))
+  n.font = Font.boldMonospacedSystemFont(size || 44)
+  n.textColor = color
+  n.minimumScaleFactor = 0.5
+  numRow.addSpacer()
+
+  parent.addSpacer(2)
+
+  const lblRow = parent.addStack()
+  lblRow.layoutHorizontally()
+  lblRow.addSpacer()
+  const l = lblRow.addText(sublabel)
+  l.font      = Font.mediumSystemFont(10)
+  l.textColor = C.text3
+  lblRow.addSpacer()
+}
+
+// ─── Wiersz statystyki: emoji label . . . val1 · val2 ───────────
+//  val2 jest opcjonalne — jeśli podane, pojawia się "val1 · val2"
+function addRow(parent, emoji, label, val1, color, val2) {
+  const row = parent.addStack()
+  row.layoutHorizontally()
+  row.centerAlignContent()
+
+  const left = row.addText(emoji + '  ' + label)
+  left.font      = Font.systemFont(10)
+  left.textColor = C.text2
+  left.lineLimit = 1
+
+  row.addSpacer()
+
+  const v1 = row.addText(fmt(val1))
+  v1.font      = Font.boldSystemFont(12)
+  v1.textColor = color
+  v1.lineLimit = 1
+
+  if (val2 !== undefined) {
+    const sep = row.addText('  ·  ')
+    sep.font      = Font.systemFont(10)
+    sep.textColor = C.text3
+
+    const v2 = row.addText(fmt(val2))
+    v2.font      = Font.boldSystemFont(12)
+    v2.textColor = color
+    v2.lineLimit = 1
+  }
+}
+
+// ─── Wiersz z dwoma osobnymi statystykami obok siebie ───────────
+//  np. "👁 wyśw. 1.2k     📞 tel. 28"
+function addDualRow(parent, e1, l1, v1, c1, e2, l2, v2, c2) {
+  const row = parent.addStack()
+  row.layoutHorizontally()
+  row.centerAlignContent()
+
+  const a1 = row.addText(e1 + '  ' + l1 + ' ')
+  a1.font      = Font.systemFont(10)
+  a1.textColor = C.text2
+
+  const b1 = row.addText(fmt(v1))
+  b1.font      = Font.boldSystemFont(12)
+  b1.textColor = c1
+
+  row.addSpacer()
+
+  const a2 = row.addText(e2 + '  ' + l2 + ' ')
+  a2.font      = Font.systemFont(10)
+  a2.textColor = C.text2
+
+  const b2 = row.addText(fmt(v2))
+  b2.font      = Font.boldSystemFont(12)
+  b2.textColor = c2
+}
+
+// ─── Blok mini-statystyk (wspólny dla małego i prawej kolumny) ──
+function addMiniStats(parent, k, phones, showSessions7d) {
+  const G = 4
+
+  // 24h · 7d label
+  const hint = parent.addStack()
+  hint.layoutHorizontally()
+  hint.addSpacer()
+  const hl = hint.addText('24h  ·  7d')
+  hl.font      = Font.systemFont(8)
+  hl.textColor = C.text3
+  parent.addSpacer(3)
+
+  addRow(parent, '👤', 'unikalni', k.visitors_real_24h, C.blue, k.visitors_real_7d)
+  parent.addSpacer(G)
+  addRow(parent, '📊', 'sesje',    k.visits_real_24h,   C.purple, showSessions7d ? k.visits_real_7d : undefined)
+  parent.addSpacer(G)
+  addDualRow(parent, '👁', 'wyśw.', k.views_30d, C.gold, '📞', 'tel.', phones, C.blue)
+}
+
+// ═══ BUDOWANIE WIDŻETU ════════════════════════════════════════════
+function buildWidget(stats) {
+  const k      = stats.kpi    || {}
+  const phones = totalPhoneClicks(stats.funnel)
+  const family = config.widgetFamily
+  const small  = !family || family === 'small'
+  const large  = family === 'large'
+
+  const w = new ListWidget()
+  w.backgroundGradient = makeBg()
+  w.url = 'https://mapjob.pl/stats'
+  w.refreshAfterDate = new Date(Date.now() + 15 * 60 * 1000)
+  w.setPadding(12, 14, 12, 14)
+
+  addHeader(w, stats.fetched_at)
+
   if (small) {
-    // 2 × 2 siatka
-    const r1 = w.addStack()
-    r1.layoutHorizontally()
-    addCard(r1, k.online,            'online',    C.green,  C.gGreen,  20)
-    r1.addSpacer(GAP)
-    addCard(r1, k.visitors_real_24h, 'uniq 24h',  C.blue,   C.gBlue,   20)
-
-    w.addSpacer(GAP)
-
-    const r2 = w.addStack()
-    r2.layoutHorizontally()
-    addCard(r2, k.visitors_real_7d,  'uniq 7d',   C.blue,   C.gBlue,   20)
-    r2.addSpacer(GAP)
-    addCard(r2, k.visits_real_24h,   'sesje 24h', C.purple, C.gPurple, 20)
+    // ─ Mały: hero na górze, lista na dole ───────────────────────
+    w.addSpacer(6)
+    addHero(w, k.online, '🟢 online teraz', C.green, 44)
+    w.addSpacer(7)
+    addDivider(w)
+    w.addSpacer(7)
+    addMiniStats(w, k, phones, false)
+    w.addSpacer()
 
   } else if (!large) {
-    // Średni — 2 × 3 siatka
-    const r1 = w.addStack()
-    r1.layoutHorizontally()
-    addCard(r1, k.online,            'online',    C.green,  C.gGreen,  24)
-    r1.addSpacer(GAP)
-    addCard(r1, k.visitors_real_24h, 'uniq 24h',  C.blue,   C.gBlue,   24)
-    r1.addSpacer(GAP)
-    addCard(r1, k.visitors_real_7d,  'uniq 7d',   C.blue,   C.gBlue,   24)
+    // ─ Średni: hero po lewej, lista po prawej ───────────────────
+    w.addSpacer(8)
 
-    w.addSpacer(GAP)
+    const cols = w.addStack()
+    cols.layoutHorizontally()
+    cols.centerAlignContent()
 
-    const r2 = w.addStack()
-    r2.layoutHorizontally()
-    addCard(r2, k.visits_real_24h,   'sesje 24h', C.purple, C.gPurple, 24)
-    r2.addSpacer(GAP)
-    addCard(r2, k.visits_real_7d,    'sesje 7d',  C.purple, C.gPurple, 24)
-    r2.addSpacer(GAP)
-    addCard(r2, k.views_30d,         'wyśw. 30d', C.gold,   C.gGold,   24)
+    // Lewa kolumna: hero
+    const left = cols.addStack()
+    left.layoutVertically()
+    left.centerAlignContent()
+    addHero(left, k.online, '🟢 online', C.green, 40)
+
+    // Pionowy separator
+    cols.addSpacer(14)
+    const vline = cols.addStack()
+    vline.backgroundColor = new Color('#FFFFFF', 0.09)
+    vline.size = new Size(1, 0)
+    cols.addSpacer(14)
+
+    // Prawa kolumna: mini-lista
+    const right = cols.addStack()
+    right.layoutVertically()
+    addMiniStats(right, k, phones, true)
+
+    w.addSpacer()
 
   } else {
-    // Duży — 3 × 3 siatka
-    const rows = [
-      [
-        [k.online,            'online',        C.green,  C.gGreen ],
-        [k.visitors_real_24h, 'uniq 24h',      C.blue,   C.gBlue  ],
-        [k.visitors_real_7d,  'uniq 7d',       C.blue,   C.gBlue  ],
-      ],[
-        [k.visits_real_24h,   'sesje 24h',     C.purple, C.gPurple],
-        [k.visits_real_7d,    'sesje 7d',      C.purple, C.gPurple],
-        [k.views_30d,         'wyśw. 30d',     C.gold,   C.gGold  ],
-      ],[
-        [k.visitors_real_30d, 'uniq 30d',      C.blue,   C.gBlue  ],
-        [k.visitors_total,    'uniq łącznie',  C.text2,  C.card2  ],
-        [k.views_total,       'wyśw. łącznie', C.gold,   C.gGold  ],
-      ],
-    ]
+    // ─ Duży: hero na górze (pełna szerokość), lista poniżej ─────
+    w.addSpacer(10)
+    addHero(w, k.online, '🟢 online teraz', C.green, 52)
+    w.addSpacer(10)
+    addDivider(w)
+    w.addSpacer(10)
 
-    for (const [ri, row] of rows.entries()) {
-      if (ri > 0) w.addSpacer(GAP)
-      const rs = w.addStack()
-      rs.layoutHorizontally()
-      for (const [ci, [val, lbl, col, bg]] of row.entries()) {
-        if (ci > 0) rs.addSpacer(GAP)
-        addCard(rs, val, lbl, col, bg, 22)
-      }
-    }
+    const G = 7
+    addRow(w, '👤', 'unikalni',     k.visitors_real_24h, C.blue,   k.visitors_real_7d)
+    w.addSpacer(G)
+    addRow(w, '📊', 'sesje',        k.visits_real_24h,   C.purple, k.visits_real_7d)
+    w.addSpacer(G)
+    addRow(w, '👁', 'wyśw. 30d',    k.views_30d,         C.gold)
+    w.addSpacer(G)
+    addRow(w, '📞', 'tel. kliknięcia', phones,           C.blue)
+    w.addSpacer(G)
+    addRow(w, '👤', 'unikalni łącznie', k.visitors_total, C.text2)
+    w.addSpacer(G)
+    addRow(w, '👁', 'wyśw. łącznie',    k.views_total,   C.gold)
+    w.addSpacer()
   }
 
-  w.addSpacer()
   return w
 }
 
@@ -267,20 +333,16 @@ function fallback(msg, accent) {
   ico.centerAlignImage()
 
   w.addSpacer(8)
-
   const t1 = w.addText('MapJob Stats')
   t1.font = Font.boldSystemFont(13)
   t1.textColor = C.text
   t1.centerAlignText()
-
   w.addSpacer(6)
-
   const t2 = w.addText(msg)
   t2.font = Font.systemFont(11)
   t2.textColor = accent || C.text2
   t2.centerAlignText()
   t2.minimumScaleFactor = 0.75
-
   w.addSpacer()
   return w
 }
@@ -294,7 +356,6 @@ try {
   } else {
     widget = buildWidget(stats)
     if (!config.runsInWidget) {
-      // Podgląd w aplikacji — wybierz rozmiar parametrem skryptu
       const size = args.widgetParameter || 'small'
       if      (size === 'medium') await widget.presentMedium()
       else if (size === 'large')  await widget.presentLarge()
