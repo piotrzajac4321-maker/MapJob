@@ -38,34 +38,56 @@ Wszystkie opisane logo są w `.claude/logos/README.md`. Zawsze tam zaglądaj prz
 
 ---
 
-## Automatyczny proces dodawania logo do strony
+## Automatyczny proces dodawania logo — W PEŁNI AUTOMATYCZNY
 
-### Jak to działa
+### Jak to działa (zero wysiłku od użytkownika)
 
-Obrazek z chatu → Claude **nie ma** dostępu do bajtów pliku, więc nie może sam uploadować.
+Obrazki z chatu są dostępne jako base64 w plikach sesji Claude w:
+`/root/.claude/projects/-home-user-MapJob/*.jsonl`
 
-**Workflow (minimalny wysiłek po stronie użytkownika):**
+**Użytkownik wysyła logo w chacie → Claude robi wszystko sam:**
 
-1. Użytkownik wysyła logo w chacie → Claude opisuje + zapisuje do rejestru
-2. Użytkownik wrzuca plik do folderu `logos/` w repo na GitHubie (drag & drop na GitHub.com)
-   - Nazwa pliku: `[nazwa-firmy].png` (np. `berker-dominis.png`)
-3. Claude **automatycznie**:
-   - Pobiera plik z `logos/[nazwa-firmy].png` (URL: `https://raw.githubusercontent.com/piotrzajac4321-maker/MapJob/vercel-deploy/logos/[nazwa].png`)
-   - Wstawia `.trust-logo` do `index.html` (sekcja ZAUFALI NAM na stronie głównej)
-   - Wstawia kartę `.firm` do `zaufali-nam/index.html`
-   - Aktualizuje licznik firm i meta description
-   - Commituje i pushuje bezpośrednio na `vercel-deploy` → strona live
+1. Wyciąga bajty obrazka z pliku sesji JSONL
+2. Rozróżnia logo od screenshotów po rozmiarze (logo < 50 000 znaków base64, screenshot > 200 000)
+3. Zapisuje jako `logos/[nazwa-firmy].jpg` w repo na branchu `vercel-deploy`
+4. Wstawia `<img src="/logos/[nazwa].jpg">` do `.trust-strip` w `index.html`
+5. Commituje i pushuje na `vercel-deploy` → live na mapjob.pl
 
-### Gdzie wrzucać pliki logo
+### Kod do wyciągania logo z sesji
 
-- **Folder w repo:** `logos/` (branch `vercel-deploy`)
-- **GitHub UI:** https://github.com/piotrzajac4321-maker/MapJob/upload/vercel-deploy/logos
-- **Format nazwy:** `[nazwa-firmy-lowercase-z-myslnikami].png`
+```python
+import json, base64, os
 
-### Supabase storage (backup)
+project_dir = '/root/.claude/projects/-home-user-MapJob/'
+images = []
+for fname in sorted(os.listdir(project_dir)):
+    if fname.endswith('.jsonl'):
+        with open(os.path.join(project_dir, fname)) as f:
+            for line in f:
+                try:
+                    d = json.loads(line)
+                    content = d.get('message', {}).get('content', [])
+                    if isinstance(content, list):
+                        for block in content:
+                            if isinstance(block, dict) and block.get('type') == 'image':
+                                src = block.get('source', {})
+                                if src.get('type') == 'base64':
+                                    images.append({'media_type': src['media_type'], 'data': src['data']})
+                except:
+                    pass
 
-- **Bucket:** `logos` (publiczny)
-- **URL pliku:** `https://ahgzjneegvptudphibdm.supabase.co/storage/v1/object/public/logos/[nazwa].png`
+# Logo = mały obraz (< 50000 znaków base64); screenshot > 200000
+logos = [img for img in images if len(img['data']) < 50000]
+last_logo = logos[-1]
+raw = base64.b64decode(last_logo['data'])
+# Zapisz: with open('/tmp/[firma].jpg','wb') as f: f.write(raw)
+```
+
+### Wstawianie do index.html (homepage)
+
+Sekcja: `.trust-strip` w `index.html` (plik 2.5MB — używaj curl + python, nie MCP).
+Wstaw przed: `alt="Platinum Active"></div>\n    </div>` (koniec trust-strip).
+Format: `<div class="trust-logo" title="[Firma]"><img src="/logos/[firma].jpg" alt="[Firma]" style="max-width:230px"/></div>`
 
 ---
 
@@ -85,11 +107,12 @@ Obrazek z chatu → Claude **nie ma** dostępu do bajtów pliku, więc nie może
 | `zaufali-nam/index.html` | Podstrona "Zaufali nam" z kartami firm |
 | `styles.css` | Globalne style |
 | `mapjob-dla-firm.html` | Strona dla pracodawców |
+| `logos/` | Folder z plikami logo firm |
 
 ### Jak dodawać logo firmy do sekcji "Zaufali nam"
 
-1. Pobierz `index.html` z brancha `vercel-deploy` (2.5MB — użyj curl + grep/python, nie MCP)
-2. Wstaw `.trust-logo` z `<img src="/logos/[nazwa].png">` przed zamknięciem `.trust-strip`
-3. Pobierz `zaufali-nam/index.html` i dodaj kartę `.firm` przed wpisami `.demo`
-4. Zaktualizuj licznik firm w `.stats` i meta description
+1. Wyciągnij obraz z sesji (kod wyżej) → zapisz do `logos/[nazwa].jpg`
+2. Pobierz `index.html` przez curl (nie MCP — plik 2.5MB)
+3. Wstaw `.trust-logo` przed końcem `.trust-strip`
+4. Opcjonalnie: dodaj kartę `.firm` w `zaufali-nam/index.html`
 5. Pushuj bezpośrednio na `vercel-deploy`
