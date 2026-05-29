@@ -475,6 +475,104 @@
     .art-faq-a strong { color: var(--tx); font-weight: 600; }
     .art-faq-item.open .art-faq-a { display: block; }
 
+    /* ── Calculator preview cards (listing page) ────────────────────── */
+    .calc-prev { padding: 0 16px; margin-bottom: 8px; }
+    .calc-p-row { display: flex; flex-direction: column; gap: 8px; margin-top: 12px; }
+    .calc-p-card { background: var(--surf); border: 1px solid var(--b3); border-radius: var(--r); padding: 14px 16px; display: flex; align-items: center; gap: 14px; cursor: pointer; transition: border-color .15s; }
+    .calc-p-card:hover { border-color: rgba(255,255,255,.15); }
+    .calc-p-icon { width: 44px; height: 44px; background: var(--surf2); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0; }
+    .calc-p-text { flex: 1; min-width: 0; }
+    .calc-p-tag { font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: .07em; color: var(--blue2); margin-bottom: 2px; }
+    .calc-p-title { font-size: 13px; font-weight: 700; color: var(--tx); margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .calc-p-sub { font-size: 11px; color: var(--tx2); }
+    .calc-p-btn { background: var(--bdim); border: 1px solid var(--bmid); color: var(--blue2); font-size: 11px; font-weight: 700; padding: 6px 12px; border-radius: 7px; flex-shrink: 0; white-space: nowrap; transition: all .15s; }
+    .calc-p-card:hover .calc-p-btn { background: var(--blue); color: #fff; border-color: var(--blue); }
+
+    /* ── Calculator page ─────────────────────────────────────────────── */
+    .calc-page { padding: 0 16px 80px; }
+    .calc-page-tabs { display: flex; gap: 2px; border-bottom: 1px solid var(--b2); margin-bottom: 20px; overflow-x: auto; -webkit-overflow-scrolling: touch; padding-bottom: 0; }
+    .cp-tab { padding: 10px 14px; font-size: 12px; font-weight: 600; color: var(--tx3); cursor: pointer; border-bottom: 2px solid transparent; white-space: nowrap; transition: all .15s; background: none; border-top: none; border-left: none; border-right: none; font-family: var(--ff); flex-shrink: 0; }
+    .cp-tab.on { color: var(--blue2); border-bottom-color: var(--blue2); }
+    .cp-tab:hover { color: var(--tx); }
+
+    /* Big calculator card */
+    .big-calc { background: var(--surf); border: 1px solid var(--b3); border-radius: var(--r); overflow: hidden; margin-bottom: 20px; }
+    .bc-head { background: var(--surf2); border-bottom: 1px solid var(--b3); padding: 16px 20px; display: flex; align-items: flex-start; gap: 12px; }
+    .bc-icon { font-size: 22px; flex-shrink: 0; margin-top: 1px; }
+    .bc-title { font-size: 15px; font-weight: 700; color: var(--tx); }
+    .bc-sub { font-size: 11px; color: var(--tx3); margin-top: 2px; }
+    .bc-body { padding: 18px 20px; }
+
+    /* Tabs inside calculator */
+    .calc-tabs2 { display: flex; gap: 3px; background: var(--bg); border-radius: 9px; padding: 3px; margin-bottom: 18px; }
+    .ct2 { flex: 1; padding: 7px 8px; border-radius: 7px; font-size: 11px; font-weight: 600; color: var(--tx3); cursor: pointer; text-align: center; transition: all .15s; border: none; font-family: var(--ff); }
+    .ct2.on { background: var(--surf2); color: var(--tx); box-shadow: 0 1px 3px rgba(0,0,0,.3); }
+
+    /* Slider */
+    .range-row { display: flex; align-items: center; gap: 10px; margin-bottom: 4px; }
+    .range-lbl { font-size: 11px; font-weight: 600; color: var(--tx3); white-space: nowrap; min-width: 80px; }
+    .range-slider { flex: 1; -webkit-appearance: none; height: 4px; border-radius: 2px; background: var(--surf3); outline: none; cursor: pointer; }
+    .range-slider::-webkit-slider-thumb { -webkit-appearance: none; width: 18px; height: 18px; border-radius: 50%; background: var(--blue); cursor: pointer; box-shadow: 0 0 0 3px rgba(59,130,246,.2); }
+    .range-inp { width: 100px; background: var(--surf2); border: 1px solid var(--b3); border-radius: 7px; padding: 7px 10px; font-size: 13px; font-weight: 700; color: var(--tx); outline: none; font-family: var(--ff); text-align: center; flex-shrink: 0; transition: border-color .15s; }
+    .range-inp:focus { border-color: var(--blue); }
+    .range-lbrow { display: flex; justify-content: space-between; font-size: 9px; color: var(--tx3); margin-bottom: 16px; }
+
+    /* Netto big display */
+    .netto-display { background: linear-gradient(135deg, #0e1b36, #131e33); border: 1px solid rgba(59,130,246,.2); border-radius: var(--r); padding: 18px; text-align: center; margin-bottom: 16px; }
+    .nd-label { font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: rgba(96,165,250,.7); margin-bottom: 6px; }
+    .nd-val { font-size: 38px; font-weight: 800; color: var(--blue2); letter-spacing: -.04em; line-height: 1; }
+    .nd-sub { font-size: 11px; color: var(--tx3); margin-top: 5px; }
+
+    /* Breakdown bars */
+    .rb-row { display: flex; align-items: center; gap: 10px; margin-bottom: 9px; }
+    .rb-lbl { font-size: 11px; color: var(--tx2); width: 130px; flex-shrink: 0; }
+    .rb-bw { flex: 1; background: var(--surf3); border-radius: 4px; height: 8px; overflow: hidden; }
+    .rb-b { height: 100%; border-radius: 4px; transition: width .35s ease; }
+    .rb-b.green { background: var(--green); }
+    .rb-b.blue  { background: var(--blue); }
+    .rb-b.pur   { background: var(--pur); }
+    .rb-b.red   { background: var(--red); }
+    .rb-v { font-size: 11px; font-weight: 700; width: 80px; text-align: right; flex-shrink: 0; }
+
+    /* Extra info row */
+    .bc-extra { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--b2); }
+    .bei { background: var(--surf2); border-radius: 8px; padding: 10px 12px; }
+    .bei-l { font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--tx3); margin-bottom: 3px; }
+    .bei-v { font-size: 15px; font-weight: 800; color: var(--tx); }
+    .bei-v.good { color: var(--green); }
+
+    /* B2B comparison */
+    .b2b-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 16px; }
+    .b2b-col { border: 1px solid var(--b3); border-radius: var(--r); padding: 14px; transition: all .3s; }
+    .b2b-col.winner { border-color: var(--green); background: rgba(16,185,129,.05); }
+    .b2b-col-title { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--tx3); margin-bottom: 4px; }
+    .b2b-col.winner .b2b-col-title { color: var(--green); }
+    .b2b-netto { font-size: 22px; font-weight: 800; color: var(--tx); letter-spacing: -.03em; margin-bottom: 4px; }
+    .b2b-col.winner .b2b-netto { color: var(--green); }
+    .b2b-detail { font-size: 10px; color: var(--tx3); line-height: 1.65; }
+    .b2b-diff { text-align: center; margin-top: 10px; font-size: 13px; font-weight: 700; padding: 10px; border-radius: 8px; background: var(--surf2); transition: color .3s; }
+
+    /* Wypowiedzenie result */
+    .wyp-result { background: var(--surf2); border: 1px solid var(--b3); border-radius: var(--r); padding: 14px; margin-top: 14px; }
+    .wyp-item { display: flex; justify-content: space-between; align-items: flex-start; padding: 9px 0; border-bottom: 1px solid var(--b2); }
+    .wyp-item:last-child { border-bottom: none; }
+    .wyp-item-l { font-size: 12px; color: var(--tx2); }
+    .wyp-item-v { font-size: 13px; font-weight: 700; color: var(--blue2); text-align: right; }
+    .wyp-note { font-size: 10px; color: var(--tx3); font-style: italic; margin-top: 10px; line-height: 1.6; }
+
+    /* Calc info note */
+    .calc-note { font-size: 10px; color: var(--tx3); line-height: 1.6; margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--b2); }
+
+    @media (min-width: 600px) {
+      .calc-p-row { flex-direction: row; }
+      .calc-p-card { flex-direction: column; align-items: flex-start; gap: 10px; }
+      .calc-p-card .calc-p-btn { align-self: flex-start; }
+      .bc-extra { grid-template-columns: repeat(4, 1fr); }
+    }
+    @media (min-width: 900px) {
+      .calc-prev { padding: 0; }
+    }
+
     /* ── Demo button ─────────────────────────────────────────────────── */
     #toggle-btn { position: fixed; bottom: 20px; right: 16px; z-index: 9997; background: var(--surf2); border: 1px solid var(--b3); color: var(--tx2); font-size: 12px; font-weight: 600; padding: 9px 16px; border-radius: 100px; box-shadow: 0 4px 20px rgba(0,0,0,.5); display: flex; align-items: center; gap: 6px; transition: all .15s; }
     #toggle-btn:hover { background: var(--surf3); color: var(--tx); }
@@ -553,6 +651,7 @@
       <a class="dn" href="#">Mapa ofert</a>
       <a class="dn" href="#">Dla firm</a>
       <a class="dn on" href="#">Blog</a>
+      <a class="dn" onclick="showCalc();return false;" href="#">🧮 Kalkulatory</a>
       <a class="dn" href="#">Raport 2026</a>
     </nav>
     <div class="tb-space"></div>
@@ -661,6 +760,43 @@
             <div class="dot"></div><span>29 maja 2026</span><div class="dot"></div><span>👁 12,4k</span>
           </div>
           <span class="read-btn">Czytaj artykuł <svg width="13" height="13" viewBox="0 0 20 20" fill="none"><path d="M4 10h12M11 5l5 5-5 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Calculator preview section -->
+    <div class="calc-prev" style="margin-top:16px;">
+      <div class="sec-head" style="padding:0;margin:0 0 12px;">
+        <div class="sec-title">🧮 Kalkulatory 2026 — oblicz, porównaj, zdecyduj</div>
+        <a href="#" onclick="showCalc();return false;" class="sec-more">Wszystkie →</a>
+      </div>
+      <div class="calc-p-row">
+        <div class="calc-p-card" onclick="showCalcWithTab('bn')">
+          <div class="calc-p-icon">💵</div>
+          <div class="calc-p-text">
+            <div class="calc-p-tag">90 000 wyszukiwań/mies.</div>
+            <div class="calc-p-title">Brutto → Netto 2026</div>
+            <div class="calc-p-sub">UoP, zlecenie i B2B — z ZUS i PIT</div>
+          </div>
+          <span class="calc-p-btn">Oblicz →</span>
+        </div>
+        <div class="calc-p-card" onclick="showCalcWithTab('b2b')">
+          <div class="calc-p-icon">⚖️</div>
+          <div class="calc-p-text">
+            <div class="calc-p-tag">IT i specjaliści</div>
+            <div class="calc-p-title">B2B vs Umowa o Pracę</div>
+            <div class="calc-p-sub">Porównaj co Ci zostaje netto</div>
+          </div>
+          <span class="calc-p-btn">Porównaj →</span>
+        </div>
+        <div class="calc-p-card" onclick="showCalcWithTab('wyp')">
+          <div class="calc-p-icon">📅</div>
+          <div class="calc-p-text">
+            <div class="calc-p-tag">Prawo pracy</div>
+            <div class="calc-p-title">Okres Wypowiedzenia</div>
+            <div class="calc-p-sub">Sprawdź kiedy jest Twój ostatni dzień</div>
+          </div>
+          <span class="calc-p-btn">Sprawdź →</span>
         </div>
       </div>
     </div>
@@ -1037,6 +1173,7 @@
       <a class="dn" href="#">Mapa ofert</a>
       <a class="dn" href="#">Dla firm</a>
       <a class="dn on" onclick="showListing();return false;" href="#">Blog</a>
+      <a class="dn" onclick="showCalc();return false;" href="#">🧮 Kalkulatory</a>
       <a class="dn" href="#">Raport 2026</a>
     </nav>
     <div class="tb-space"></div>
@@ -1361,6 +1498,283 @@
 
 </div><!-- /#pg-art -->
 
+<!-- ═══════════════════════════════════════════════
+     PAGE 3 — CALCULATOR HUB
+═══════════════════════════════════════════════ -->
+<div class="page" id="pg-calc">
+
+  <div class="topbar">
+    <div class="logo" onclick="showListing()" style="cursor:pointer;">Map<span>Job</span></div>
+    <nav class="desk-nav">
+      <a class="dn" href="#">Mapa ofert</a>
+      <a class="dn" href="#">Dla firm</a>
+      <a class="dn" onclick="showListing();return false;" href="#">Blog</a>
+      <a class="dn on" href="#">🧮 Kalkulatory</a>
+      <a class="dn" href="#">Raport 2026</a>
+    </nav>
+    <div class="tb-space"></div>
+    <div class="desk-search"><svg width="12" height="12" viewBox="0 0 20 20" fill="none"><circle cx="9" cy="9" r="6" stroke="currentColor" stroke-width="1.6"/><path d="M13 13L17 17" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg> Szukaj…</div>
+    <button class="desk-cta">Dodaj ogłoszenie</button>
+    <div class="mob-ic search-mob"><svg width="16" height="16" viewBox="0 0 20 20" fill="none"><circle cx="9" cy="9" r="6" stroke="currentColor" stroke-width="1.6"/><path d="M13 13L17 17" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></div>
+  </div>
+
+  <div class="wrap">
+    <div class="calc-page">
+      <!-- Hero -->
+      <div style="padding:24px 0 4px;">
+        <span class="badge b-blue">🧮 Kalkulatory 2026</span>
+        <h1 class="art-h1" style="margin:10px 0 8px;font-size:22px;">Darmowe kalkulatory dla pracowników i pracodawców</h1>
+        <p style="font-size:13px;color:var(--tx2);line-height:1.7;max-width:600px;">Oblicz wynagrodzenie netto, porównaj B2B z etatem, sprawdź okres wypowiedzenia i koszty dojazdu. Wszystkie narzędzia oparte na aktualnych stawkach ZUS i PIT obowiązujących od 1 stycznia 2026 r.</p>
+      </div>
+
+      <!-- Tab nav -->
+      <div class="calc-page-tabs">
+        <button class="cp-tab on" onclick="showCalcTab('bn')">💵 Brutto → Netto</button>
+        <button class="cp-tab" onclick="showCalcTab('b2b')">⚖️ B2B vs Etat</button>
+        <button class="cp-tab" onclick="showCalcTab('wyp')">📅 Wypowiedzenie</button>
+        <button class="cp-tab" onclick="showCalcTab('doj')">🚗 Koszty dojazdu</button>
+      </div>
+
+      <!-- ── PANEL 1: Brutto → Netto ── -->
+      <div id="cp-bn" class="cp-panel">
+        <div class="big-calc">
+          <div class="bc-head">
+            <div class="bc-icon">💵</div>
+            <div>
+              <div class="bc-title">Kalkulator Wynagrodzenia Brutto → Netto 2026</div>
+              <div class="bc-sub">UoP · Zlecenie · B2B (liniowy) · Aktualne stawki ZUS i PIT · Bezpłatny</div>
+            </div>
+          </div>
+          <div class="bc-body">
+
+            <div class="calc-tabs2">
+              <button class="ct2 on" data-type="uop" onclick="setBnTab(this)">Umowa o pracę</button>
+              <button class="ct2" data-type="zlecenie" onclick="setBnTab(this)">Zlecenie / dzieło</button>
+              <button class="ct2" data-type="b2b" onclick="setBnTab(this)">B2B liniowy 19%</button>
+            </div>
+
+            <div class="range-row">
+              <span class="range-lbl">Brutto:</span>
+              <input type="range" class="range-slider" id="bn-slider" min="4000" max="30000" step="100" value="8000" oninput="onSliderBn(this.value)"/>
+              <input type="text" class="range-inp" id="bn-inp" value="8 000 zł" onchange="onInpBn(this.value)"/>
+            </div>
+            <div class="range-lbrow"><span>4 000 zł (min.)</span><span>10 000 zł</span><span>20 000 zł</span><span>30 000 zł</span></div>
+
+            <div class="netto-display">
+              <div class="nd-label">Do domu (netto)</div>
+              <div class="nd-val" id="bn-netto">5 756 zł</div>
+              <div class="nd-sub">Efektywna stawka podatku: <strong id="bn-rate" style="color:var(--blue2);">28%</strong> &nbsp;·&nbsp; Stawka godzinowa: <strong id="bn-hrly" style="color:var(--blue2);">33 zł/h</strong></div>
+            </div>
+
+            <div class="rb-row"><span class="rb-lbl">💚 Do ręki (netto)</span><div class="rb-bw"><div class="rb-b green" id="bn-net-bar" style="width:72%"></div></div><span class="rb-v" id="bn-net-val">5 756 zł</span></div>
+            <div class="rb-row"><span class="rb-lbl">🔵 ZUS pracownika</span><div class="rb-bw"><div class="rb-b blue" id="bn-zus-bar" style="width:14%"></div></div><span class="rb-v" id="bn-zus-val">1 097 zł</span></div>
+            <div class="rb-row"><span class="rb-lbl">🟣 NFZ (zdrowotna)</span><div class="rb-bw"><div class="rb-b pur" id="bn-nfz-bar" style="width:6%"></div></div><span class="rb-v" id="bn-nfz-val">619 zł</span></div>
+            <div class="rb-row"><span class="rb-lbl">🔴 PIT (podatek)</span><div class="rb-bw"><div class="rb-b red" id="bn-pit-bar" style="width:8%"></div></div><span class="rb-v" id="bn-pit-val">528 zł</span></div>
+
+            <div class="bc-extra">
+              <div class="bei"><div class="bei-l">Koszt pracodawcy</div><div class="bei-v" id="bn-emp-cost">9 660 zł</div></div>
+              <div class="bei"><div class="bei-l">ZUS pracodawcy</div><div class="bei-v" id="bn-emp-zus">1 660 zł</div></div>
+              <div class="bei"><div class="bei-l">Netto roczne</div><div class="bei-v good" id="bn-annual">69 072 zł</div></div>
+              <div class="bei"><div class="bei-l">Stawka/h (160h mies.)</div><div class="bei-v" id="bn-hrly2">33 zł/h</div></div>
+            </div>
+
+            <div class="calc-note">
+              Obliczenia zgodne ze stawkami obowiązującymi od 1.01.2026 r.<br>
+              <strong>UoP:</strong> ZUS pracownika 13,71% (emerytalne 9,76% + rentowe 1,5% + chorobowe 2,45%), NFZ 9%, PIT 12% (próg 120 000 zł/rok), ulga podatkowa 300 zł/mies., KUP 300 zł/mies.<br>
+              <strong>B2B:</strong> ryczałtowy ZUS społeczny ~1 720 zł/mies. (pełny), podatek liniowy 19%, NFZ 9% podstawy min. 520 zł. Kalkulator ma charakter orientacyjny — skonsultuj się z księgowym.
+            </div>
+          </div>
+        </div>
+
+        <!-- SEO content under calculator -->
+        <div style="background:var(--surf);border:1px solid var(--b3);border-radius:var(--r);padding:16px 20px;margin-bottom:20px;">
+          <div style="font-size:13px;font-weight:700;color:var(--tx);margin-bottom:10px;">Jak obliczyć wynagrodzenie netto z brutto w Polsce 2026?</div>
+          <div style="font-size:12px;color:var(--tx2);line-height:1.75;">
+            Wynagrodzenie netto = brutto − ZUS pracownika (13,71%) − NFZ (9% podstawy) − zaliczka PIT.<br>
+            Przy 8 000 zł brutto na UoP w 2026 roku otrzymujesz ok. <strong style="color:var(--tx)">5 756 zł netto</strong> — co oznacza efektywną stawkę podatku ~28%.<br>
+            Pracodawca ponosi dodatkowy koszt ZUS w wysokości ok. 20,74% Twojego wynagrodzenia brutto — łącznie płaci za Ciebie ok. <strong style="color:var(--tx)">9 660 zł</strong>.
+          </div>
+        </div>
+      </div>
+
+      <!-- ── PANEL 2: B2B vs UoP ── -->
+      <div id="cp-b2b" class="cp-panel" style="display:none">
+        <div class="big-calc">
+          <div class="bc-head">
+            <div class="bc-icon">⚖️</div>
+            <div>
+              <div class="bc-title">Kalkulator B2B vs Umowa o Pracę 2026</div>
+              <div class="bc-sub">Sprawdź co się bardziej opłaca — podaj obie kwoty i porównaj netto</div>
+            </div>
+          </div>
+          <div class="bc-body">
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:18px;">
+              <div>
+                <div class="calc-lbl" style="margin-bottom:5px;">💼 Wynagrodzenie brutto (UoP)</div>
+                <input class="calc-inp" type="number" id="b2b-uop-inp" value="10000" oninput="updateB2B()" style="width:100%;"/>
+                <div style="font-size:10px;color:var(--tx3);margin-top:4px;">Kwota z umowy o pracę</div>
+              </div>
+              <div>
+                <div class="calc-lbl" style="margin-bottom:5px;">🏢 Przychód miesięczny (B2B)</div>
+                <input class="calc-inp" type="number" id="b2b-b2b-inp" value="12000" oninput="updateB2B()" style="width:100%;"/>
+                <div style="font-size:10px;color:var(--tx3);margin-top:4px;">Kwota na fakturze/miesiąc</div>
+              </div>
+            </div>
+
+            <div class="b2b-grid">
+              <div class="b2b-col" id="b2b-uop-col">
+                <div class="b2b-col-title">Umowa o pracę</div>
+                <div class="b2b-netto" id="b2b-uop-net">7 244 zł</div>
+                <div class="b2b-detail" id="b2b-uop-detail">ZUS: 1 371 zł<br>NFZ: 619 zł<br>PIT: 766 zł</div>
+              </div>
+              <div class="b2b-col winner" id="b2b-b2b-col">
+                <div class="b2b-col-title">B2B (liniowy 19%)</div>
+                <div class="b2b-netto" id="b2b-b2b-net">8 538 zł</div>
+                <div class="b2b-detail" id="b2b-b2b-detail">ZUS: 1 720 zł<br>NFZ: 520 zł<br>Podatek: 1 222 zł</div>
+              </div>
+            </div>
+            <div class="b2b-diff" id="b2b-diff" style="color:var(--green);">B2B daje +1 294 zł miesięcznie więcej netto</div>
+
+            <div style="background:var(--surf2);border-radius:var(--r);padding:14px;margin-top:14px;">
+              <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--tx3);margin-bottom:8px;">⚠️ Czego B2B nie zawiera (dolicz do porównania):</div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;">
+                <div style="font-size:11px;color:var(--tx2);">❌ Płatny urlop (26 dni ≈ 2 pensje)</div>
+                <div style="font-size:11px;color:var(--tx2);">❌ L4 / zwolnienie chorobowe</div>
+                <div style="font-size:11px;color:var(--tx2);">❌ Ochrona przed zwolnieniem</div>
+                <div style="font-size:11px;color:var(--tx2);">❌ PPK (pracodawca 1,5% pensji)</div>
+                <div style="font-size:11px;color:var(--tx2);">❌ Benefity (medical, sport)</div>
+                <div style="font-size:11px;color:var(--tx2);">✅ IP Box 5% dla deweloperów</div>
+              </div>
+            </div>
+
+            <div style="margin-top:14px;background:linear-gradient(135deg,#0e1b36,#131e33);border:1px solid rgba(59,130,246,.2);border-radius:var(--r);padding:14px;display:flex;gap:12px;align-items:center;">
+              <div style="flex:1;font-size:12px;color:var(--tx2);line-height:1.6;">Szukasz ofert pracy — etat lub kontrakt? Na MapJob.pl widełki widoczne w ogłoszeniu.</div>
+              <a href="#" onclick="showListing();return false;" style="background:var(--blue);color:#fff;font-size:12px;font-weight:700;padding:9px 14px;border-radius:8px;flex-shrink:0;">Sprawdź oferty →</a>
+            </div>
+
+            <div class="calc-note">ZUS B2B zakładamy jako pełny (po 2 latach działalności: ~1 720 zł/mies.). Przez pierwsze 6 mies. działa Ulga na Start (~250 zł/mies.), przez kolejne 24 mies. — preferencyjny ZUS (~900 zł/mies.). Wyniki orientacyjne.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── PANEL 3: Wypowiedzenie ── -->
+      <div id="cp-wyp" class="cp-panel" style="display:none">
+        <div class="big-calc">
+          <div class="bc-head">
+            <div class="bc-icon">📅</div>
+            <div>
+              <div class="bc-title">Kalkulator Okresu Wypowiedzenia 2026</div>
+              <div class="bc-sub">Kiedy jest Twój ostatni dzień pracy? Oblicz na podstawie stażu i rodzaju umowy</div>
+            </div>
+          </div>
+          <div class="bc-body">
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:6px;">
+              <div>
+                <div class="calc-lbl" style="margin-bottom:5px;">Staż u obecnego pracodawcy</div>
+                <select class="calc-inp" id="wyp-years" onchange="updateWypow()" style="width:100%;">
+                  <option value="0.25">Poniżej 6 miesięcy</option>
+                  <option value="1" selected>6 miesięcy – 3 lata</option>
+                  <option value="5">Powyżej 3 lat</option>
+                </select>
+              </div>
+              <div>
+                <div class="calc-lbl" style="margin-bottom:5px;">Rodzaj umowy</div>
+                <select class="calc-inp" id="wyp-type" onchange="updateWypow()" style="width:100%;">
+                  <option value="uop_bezterminowa">UoP — czas nieokreślony</option>
+                  <option value="uop_terminowa">UoP — czas określony</option>
+                </select>
+              </div>
+            </div>
+            <div style="margin-bottom:16px;font-size:11px;color:var(--tx3);">Zakładamy złożenie wypowiedzenia dzisiaj — <span id="wyp-today-label">29 maja 2026</span></div>
+
+            <div class="wyp-result">
+              <div class="wyp-item"><span class="wyp-item-l">Okres wypowiedzenia</span><span class="wyp-item-v" id="wyp-period">1 miesiąc</span></div>
+              <div class="wyp-item"><span class="wyp-item-l">Ostatni dzień pracy</span><span class="wyp-item-v" id="wyp-last-day">30 czerwca 2026</span></div>
+              <div class="wyp-item"><span class="wyp-item-l">Pozostało dni roboczych (szac.)</span><span class="wyp-item-v" id="wyp-days">24 dni</span></div>
+              <div class="wyp-item"><span class="wyp-item-l">Ekwiwalent za urlop (26 dni)</span><span class="wyp-item-v" id="wyp-equiv" style="color:var(--green);">Oblicz →</span></div>
+            </div>
+            <div class="wyp-note" id="wyp-note">Okres wypowiedzenia dla umów miesięcznych liczy się od ostatniego dnia miesiąca, w którym złożono pismo.</div>
+
+            <div style="background:var(--surf2);border-radius:var(--r);padding:14px;margin-top:14px;">
+              <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--tx3);margin-bottom:10px;">Kiedy przysługuje odprawa?</div>
+              <div style="font-size:12px;color:var(--tx2);line-height:1.75;">
+                Odprawa z tytułu zwolnień (art. 8 ustawy o zwolnieniach grupowych) gdy:<br/>
+                ✓ Firma zatrudnia <strong style="color:var(--tx)">powyżej 20 pracowników</strong><br/>
+                ✓ Rozwiązanie umowy z przyczyn <strong style="color:var(--tx)">niedotyczących pracownika</strong><br/>
+                ✓ Wysokość: <strong style="color:var(--tx)">1 pensja</strong> (do 2 lat) · <strong style="color:var(--tx)">2 pensje</strong> (2–8 lat) · <strong style="color:var(--tx)">3 pensje</strong> (8+ lat)
+              </div>
+            </div>
+
+            <div style="margin-top:14px;background:linear-gradient(135deg,#0e1b36,#131e33);border:1px solid rgba(59,130,246,.2);border-radius:var(--r);padding:14px;display:flex;gap:12px;align-items:center;">
+              <div style="flex:1;font-size:12px;color:var(--tx2);line-height:1.6;">Szukasz nowej pracy? Przejrzyj oferty na mapie — sprawdź czas dojazdu zanim złożysz aplikację.</div>
+              <a href="#" onclick="showListing();return false;" style="background:var(--blue);color:#fff;font-size:12px;font-weight:700;padding:9px 14px;border-radius:8px;flex-shrink:0;">Szukaj pracy →</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── PANEL 4: Dojazd ── -->
+      <div id="cp-doj" class="cp-panel" style="display:none">
+        <div class="big-calc">
+          <div class="bc-head">
+            <div class="bc-icon">🚗</div>
+            <div>
+              <div class="bc-title">Kalkulator Kosztów Dojazdu do Pracy 2026</div>
+              <div class="bc-sub">Auto vs. MPK — miesięczny koszt i roczna suma</div>
+            </div>
+          </div>
+          <div class="bc-body">
+            <div class="calc-row">
+              <div class="calc-f"><div class="calc-lbl">Odległość (km, w jedną stronę)</div><input class="calc-inp" type="number" id="cDist2" value="20" oninput="calc2()"/></div>
+              <div class="calc-f"><div class="calc-lbl">Sposób dojazdu</div><select class="calc-inp" id="cMode2" onchange="calc2()"><option value="car">🚗 Samochód</option><option value="transit">🚌 Komunikacja</option></select></div>
+            </div>
+            <div class="calc-result" style="margin-top:14px;">
+              <div class="cr-col"><div class="cr-lbl">Miesięcznie</div><div class="cr-val" id="cM2">1 232 zł</div></div>
+              <div class="cr-d"></div>
+              <div class="cr-col"><div class="cr-lbl">Rocznie</div><div class="cr-val sec" id="cY2">14 784 zł</div></div>
+              <div class="cr-d"></div>
+              <div class="cr-col"><div class="cr-lbl">Godzin/rok</div><div class="cr-val sec" id="cH2">264 h</div></div>
+            </div>
+
+            <div style="margin-top:16px;background:linear-gradient(135deg,#0e1b36,#131e33);border:1px solid rgba(59,130,246,.2);border-radius:var(--r);padding:14px;display:flex;gap:12px;align-items:center;">
+              <div style="font-size:28px;flex-shrink:0;">📍</div>
+              <div style="flex:1;">
+                <div style="font-size:12px;font-weight:700;color:var(--tx);margin-bottom:3px;">Znajdź pracę bliżej domu na MapJob.pl</div>
+                <div style="font-size:11px;color:var(--tx2);line-height:1.55;">Filtruj oferty po czasie dojazdu. Sprawdź koszt dojazdu zanim złożysz aplikację.</div>
+              </div>
+              <a href="#" onclick="showListing();return false;" style="background:var(--blue);color:#fff;font-size:12px;font-weight:700;padding:9px 14px;border-radius:8px;flex-shrink:0;white-space:nowrap;">Mapa ofert →</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SEO links -->
+      <div style="background:var(--surf);border:1px solid var(--b3);border-radius:var(--r);padding:16px 20px;margin-bottom:24px;">
+        <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--tx3);margin-bottom:12px;">Popularne artykuły powiązane</div>
+        <div style="display:flex;flex-direction:column;gap:8px;">
+          <a href="#" onclick="showListing();return false;" style="font-size:13px;color:var(--tx2);display:flex;align-items:center;gap:8px;"><span style="color:var(--blue2);">→</span> Ile zarabia [zawód] w Polsce 2026? Tabela płac</a>
+          <a href="#" onclick="showListing();return false;" style="font-size:13px;color:var(--tx2);display:flex;align-items:center;gap:8px;"><span style="color:var(--blue2);">→</span> B2B czy umowa o pracę — kalkulator i porównanie</a>
+          <a href="#" onclick="showListing();return false;" style="font-size:13px;color:var(--tx2);display:flex;align-items:center;gap:8px;"><span style="color:var(--blue2);">→</span> Jak negocjować wynagrodzenie — skrypt krok po kroku</a>
+          <a href="#" onclick="showListing();return false;" style="font-size:13px;color:var(--tx2);display:flex;align-items:center;gap:8px;"><span style="color:var(--blue2);">→</span> Ile dni urlopu przysługuje w 2026?</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <div class="footer-inner">
+      <div class="f-logo">Map<span>Job</span></div>
+      <div class="f-tag">Darmowe kalkulatory dla pracowników i pracodawców. Wynagrodzenia 2026, B2B vs UoP, okres wypowiedzenia — wszystko na MapJob.pl</div>
+      <div class="f-cols">
+        <div><div class="f-col-title">Kalkulatory</div><ul class="f-links"><li><a href="#">Brutto → Netto 2026</a></li><li><a href="#">B2B vs Umowa o pracę</a></li><li><a href="#">Okres wypowiedzenia</a></li><li><a href="#">Koszty dojazdu</a></li></ul></div>
+        <div><div class="f-col-title">MapJob</div><ul class="f-links"><li><a href="#">Mapa ofert pracy</a></li><li><a href="#">Blog</a></li><li><a href="#">Dodaj ogłoszenie</a></li></ul></div>
+      </div>
+      <div class="f-bottom">© 2026 MapJob Sp. z o.o. &nbsp;·&nbsp; Polityka prywatności &nbsp;·&nbsp; Regulamin &nbsp;·&nbsp; RODO</div>
+    </div>
+  </footer>
+</div><!-- /#pg-calc -->
+
+
 <!-- Demo toggle -->
 <button id="toggle-btn" onclick="toggle()">
   <svg width="11" height="11" viewBox="0 0 20 20" fill="currentColor"><rect x="2" y="3" width="16" height="2.5" rx="1.25"/><rect x="2" y="8.75" width="16" height="2.5" rx="1.25"/><rect x="2" y="14.5" width="10" height="2.5" rx="1.25"/></svg>
@@ -1369,24 +1783,41 @@
 
 <script>
   /* ── View toggle ─────────────────────────────────────────────── */
-  let isArt = false;
+  let curPage = 'list'; // 'list' | 'art' | 'calc'
   function showArticle() {
-    isArt = true;
+    curPage = 'art';
     document.getElementById('pg-list').classList.remove('on');
+    document.getElementById('pg-calc').classList.remove('on');
     document.getElementById('pg-art').classList.add('on');
     document.getElementById('rbar').classList.add('on');
-    document.getElementById('toggle-btn').textContent = '← Lista';
+    document.getElementById('toggle-btn').innerHTML = '🧮 Kalkulatory →';
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
   function showListing() {
-    isArt = false;
+    curPage = 'list';
     document.getElementById('pg-art').classList.remove('on');
+    document.getElementById('pg-calc').classList.remove('on');
     document.getElementById('pg-list').classList.add('on');
     document.getElementById('rbar').classList.remove('on');
     document.getElementById('toggle-btn').innerHTML = '<svg width="11" height="11" viewBox="0 0 20 20" fill="currentColor"><rect x="2" y="3" width="16" height="2.5" rx="1.25"/><rect x="2" y="8.75" width="16" height="2.5" rx="1.25"/><rect x="2" y="14.5" width="10" height="2.5" rx="1.25"/></svg> Artykuł →';
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
-  function toggle() { isArt ? showListing() : showArticle(); }
+  function showCalc(tab) {
+    curPage = 'calc';
+    document.getElementById('pg-art').classList.remove('on');
+    document.getElementById('pg-list').classList.remove('on');
+    document.getElementById('pg-calc').classList.add('on');
+    document.getElementById('rbar').classList.remove('on');
+    document.getElementById('toggle-btn').innerHTML = '← Blog';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    if (tab) showCalcTab(tab);
+  }
+  function showCalcWithTab(tab) { showCalc(tab); }
+  function toggle() {
+    if (curPage === 'list') showArticle();
+    else if (curPage === 'art') showCalc();
+    else showListing();
+  }
 
   /* ── Sidebar show/hide ───────────────────────────────────────── */
   function applyLayout() {
@@ -1438,6 +1869,207 @@
     document.querySelectorAll('.toc-item').forEach(x => x.classList.remove('on'));
     t.classList.add('on');
   }));
+
+  /* ── Calc tab switcher ───────────────────────────────────────── */
+  function showCalcTab(id) {
+    document.querySelectorAll('.cp-panel').forEach(p => p.style.display = 'none');
+    document.querySelectorAll('.cp-tab').forEach(t => t.classList.remove('on'));
+    const panel = document.getElementById('cp-' + id);
+    if (panel) panel.style.display = '';
+    document.querySelectorAll('.cp-tab').forEach(t => {
+      if (t.getAttribute('onclick') && t.getAttribute('onclick').includes("'" + id + "'")) t.classList.add('on');
+    });
+    if (id === 'doj') calc2();
+    if (id === 'wyp') updateWypow();
+    if (id === 'b2b') updateB2B();
+    if (id === 'bn') updateBruttoNetto();
+  }
+  /* ── 2026 Tax constants ─────────────────────────────────────── */
+  const T26 = {
+    pit1: 0.12, pit2: 0.32, thresh: 120000/12,
+    freeAmt: 300,        // monthly tax credit (ulga podatkowa)
+    kup: 300,            // standard costs (UoP/zlecenie)
+    kupZlec: 0.20,       // 20% of gross for zlecenie
+    nfzRate: 0.09,
+    zusE: 0.0976, zusR: 0.015, zusC: 0.0245,
+    zusT: 0.1371,        // total ZUS worker
+    zusEmpT: 0.2074,     // employer ZUS approx
+    b2bZUS: 1720,        // full B2B ZUS social 2026
+    b2bNFZmin: 520,      // min NFZ for B2B
+    hrs: 160             // working hours/month
+  };
+
+  function fzl(n) { return Math.round(n).toLocaleString('pl-PL') + ' zł'; }
+  function pct(v, tot) { return Math.min(100, Math.max(1, Math.round(v/tot*100))); }
+
+  function calcUoP(g) {
+    const zus = Math.round(g * T26.zusT);
+    const nfzBase = g - zus;
+    const nfz = Math.round(nfzBase * T26.nfzRate);
+    const base = Math.max(0, g - zus - T26.kup);
+    const pit = g <= T26.thresh
+      ? Math.max(0, Math.round(base * T26.pit1 - T26.freeAmt))
+      : Math.max(0, Math.round((T26.thresh * T26.pit1 + Math.max(0, base - T26.thresh) * T26.pit2) - T26.freeAmt));
+    const net = Math.round(g - zus - nfz - pit);
+    const empZUS = Math.round(g * T26.zusEmpT);
+    return { g, zus, nfz, pit, net, empZUS };
+  }
+
+  function calcZlecenie(g) {
+    const zus = Math.round(g * T26.zusT);
+    const nfz = Math.round((g - zus) * T26.nfzRate);
+    const kupA = Math.round(g * T26.kupZlec);
+    const base = Math.max(0, g - zus - kupA);
+    const pit = Math.max(0, Math.round(base * T26.pit1 - T26.freeAmt));
+    const net = Math.round(g - zus - nfz - pit);
+    return { g, zus, nfz, pit, net, empZUS: 0 };
+  }
+
+  function calcB2B(g) {
+    const zus = T26.b2bZUS;
+    const taxBase = Math.max(0, g - zus);
+    const tax = Math.round(taxBase * 0.19);
+    const nfz = Math.max(T26.b2bNFZmin, Math.round(taxBase * 0.09));
+    const net = Math.max(0, Math.round(g - zus - nfz - tax));
+    return { g, zus, nfz, pit: tax, net, empZUS: 0 };
+  }
+
+  /* ── Brutto-Netto calculator ─────────────────────────────────── */
+  function getBnGross() {
+    const raw = (document.getElementById('bn-inp').value || '').replace(/\s|zł/g, '').replace(',', '.');
+    return Math.max(4000, Math.min(30000, parseFloat(raw) || 8000));
+  }
+  function onSliderBn(v) {
+    document.getElementById('bn-inp').value = parseFloat(v).toLocaleString('pl-PL') + ' zł';
+    updateBruttoNetto();
+  }
+  function onInpBn(v) {
+    const n = parseFloat(v.replace(/\s|zł/g, '').replace(',', '.')) || 8000;
+    const clamped = Math.max(4000, Math.min(30000, n));
+    document.getElementById('bn-slider').value = clamped;
+    document.getElementById('bn-inp').value = clamped.toLocaleString('pl-PL') + ' zł';
+    updateBruttoNetto();
+  }
+  function setBnTab(el) {
+    document.querySelectorAll('.ct2').forEach(t => t.classList.remove('on'));
+    el.classList.add('on');
+    updateBruttoNetto();
+  }
+  function updateBruttoNetto() {
+    const g = getBnGross();
+    const type = document.querySelector('.ct2.on')?.dataset.type || 'uop';
+    const r = type === 'b2b' ? calcB2B(g) : type === 'zlecenie' ? calcZlecenie(g) : calcUoP(g);
+
+    document.getElementById('bn-netto').textContent = fzl(r.net);
+    const effRate = Math.round((1 - r.net / g) * 100);
+    document.getElementById('bn-rate').textContent = effRate + '%';
+    const hrly = Math.round(r.net / T26.hrs);
+    document.getElementById('bn-hrly').textContent = hrly + ' zł/h';
+    document.getElementById('bn-hrly2').textContent = hrly + ' zł/h';
+
+    // Bars
+    const setBar = (id, val) => {
+      const b = document.getElementById('bn-' + id + '-bar');
+      const v = document.getElementById('bn-' + id + '-val');
+      if (b) b.style.width = pct(val, g) + '%';
+      if (v) v.textContent = fzl(val);
+    };
+    setBar('net', r.net); setBar('zus', r.zus); setBar('nfz', r.nfz); setBar('pit', r.pit);
+
+    // Extras
+    const empCost = type === 'uop' ? fzl(g + r.empZUS) : '—';
+    const empZUS  = type === 'uop' ? fzl(r.empZUS) : '—';
+    document.getElementById('bn-emp-cost').textContent = empCost;
+    document.getElementById('bn-emp-zus').textContent  = empZUS;
+    document.getElementById('bn-annual').textContent   = fzl(r.net * 12);
+  }
+
+  /* ── B2B vs UoP ─────────────────────────────────────────────── */
+  function updateB2B() {
+    const uopG = parseFloat(document.getElementById('b2b-uop-inp').value) || 10000;
+    const b2bG = parseFloat(document.getElementById('b2b-b2b-inp').value) || 12000;
+    const uop = calcUoP(uopG);
+    const b2b = calcB2B(b2bG);
+
+    document.getElementById('b2b-uop-net').textContent = fzl(uop.net);
+    document.getElementById('b2b-b2b-net').textContent = fzl(b2b.net);
+    document.getElementById('b2b-uop-detail').innerHTML =
+      `ZUS: ${fzl(uop.zus)}<br>NFZ: ${fzl(uop.nfz)}<br>PIT: ${fzl(uop.pit)}`;
+    document.getElementById('b2b-b2b-detail').innerHTML =
+      `ZUS: ${fzl(b2b.zus)}<br>NFZ: ${fzl(b2b.nfz)}<br>Podatek: ${fzl(b2b.pit)}`;
+
+    const uopCol = document.getElementById('b2b-uop-col');
+    const b2bCol = document.getElementById('b2b-b2b-col');
+    const diffEl = document.getElementById('b2b-diff');
+    const diff = b2b.net - uop.net;
+    const uopWins = uop.net > b2b.net;
+    uopCol.classList.toggle('winner', uopWins);
+    b2bCol.classList.toggle('winner', !uopWins);
+
+    if (diff > 0) {
+      diffEl.textContent = `B2B daje +${fzl(diff)} miesięcznie więcej netto`;
+      diffEl.style.color = 'var(--green)';
+    } else if (diff < 0) {
+      diffEl.textContent = `Etat (UoP) daje +${fzl(-diff)} miesięcznie więcej netto`;
+      diffEl.style.color = 'var(--blue2)';
+    } else {
+      diffEl.textContent = 'Oba wychodzą identycznie';
+      diffEl.style.color = 'var(--tx3)';
+    }
+  }
+
+  /* ── Wypowiedzenie ───────────────────────────────────────────── */
+  function updateWypow() {
+    const years = parseFloat(document.getElementById('wyp-years').value) || 0;
+    const today = new Date();
+    const todayFmt = today.toLocaleDateString('pl-PL', { day:'numeric', month:'long', year:'numeric' });
+    const el = document.getElementById('wyp-today-label');
+    if (el) el.textContent = todayFmt;
+
+    let period, lastDay;
+    if (years < 0.5) {
+      period = '2 tygodnie';
+      lastDay = new Date(today);
+      lastDay.setDate(today.getDate() + 14);
+    } else if (years < 3) {
+      period = '1 miesiąc';
+      // Ends at last day of next full calendar month
+      lastDay = new Date(today.getFullYear(), today.getMonth() + 2, 0);
+    } else {
+      period = '3 miesiące';
+      lastDay = new Date(today.getFullYear(), today.getMonth() + 4, 0);
+    }
+
+    const diffMs = lastDay - today;
+    const diffDays = Math.round(diffMs / (1000*60*60*24));
+    const workDays = Math.round(diffDays * 5/7);
+
+    document.getElementById('wyp-period').textContent = period;
+    document.getElementById('wyp-last-day').textContent = lastDay.toLocaleDateString('pl-PL', { day:'numeric', month:'long', year:'numeric' });
+    document.getElementById('wyp-days').textContent = workDays + ' dni';
+
+    const noteEl = document.getElementById('wyp-note');
+    if (noteEl) noteEl.textContent = years < 0.5
+      ? 'Okres 2-tygodniowy liczony od dnia złożenia wypowiedzenia.'
+      : 'Miesięczny okres wypowiedzenia liczy się od końca miesiąca, w którym złożono pismo.';
+  }
+
+  /* ── Commute calc (duplicate for calc page) ──────────────────── */
+  function calc2() {
+    const d = parseFloat(document.getElementById('cDist2').value) || 0;
+    const m = document.getElementById('cMode2').value;
+    const days = 22;
+    let mon, hrs;
+    if (m === 'car') { mon = Math.round(d*2*days*(7.1*0.08) + d*2*days*0.40); hrs = Math.round(d*2/40*days*12); }
+    else { mon = 149; hrs = Math.round(d*2/20*days*12); }
+    const f = n => n.toLocaleString('pl-PL');
+    document.getElementById('cM2').textContent = f(mon) + ' zł';
+    document.getElementById('cY2').textContent = f(mon*12) + ' zł';
+    document.getElementById('cH2').textContent = hrs + ' h';
+  }
+
+  // Init calculators on load
+  window.addEventListener('DOMContentLoaded', () => { updateBruttoNetto(); updateB2B(); updateWypow(); });
 
   /* ── In-article FAQ accordion ───────────────────────────────── */
   document.querySelectorAll('.art-faq-q').forEach(q => {
