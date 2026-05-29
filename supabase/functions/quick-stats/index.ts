@@ -11,7 +11,7 @@ import { createClient } from 'jsr:@supabase/supabase-js@2'
 const SB_URL      = Deno.env.get('SUPABASE_URL') ?? ''
 const SB_SERVICE  = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
 const ADMIN_PHONE = '721580611'
-const SESSION_H   = 24  // session token valid for 24 hours
+const SESSION_H   = 24
 
 const sb = createClient(SB_URL, SB_SERVICE)
 
@@ -29,7 +29,6 @@ function resp(data: unknown, status = 200) {
 }
 
 async function hashPin(pin: string): Promise<string> {
-  // Use last 12 chars of service key as pepper so the hash is server-only knowledge.
   const raw = new TextEncoder().encode(pin + SB_SERVICE.slice(-12))
   const buf = await crypto.subtle.digest('SHA-256', raw)
   return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('')
@@ -63,25 +62,55 @@ async function sendSms(otp: string): Promise<boolean> {
 }
 
 async function fetchStats() {
-  const ago7 = new Date(Date.now() - 7 * 86400e3).toISOString()
-  const m0   = new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString()
+  const ago7  = new Date(Date.now() - 7 * 86400e3).toISOString()
+  const ago30 = new Date(Date.now() - 30 * 86400e3).toISOString()
+  const m0    = new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString()
 
-  const [rU, rP, rT, rV, rN, rPay, rPM, rS, rM] = await Promise.all([
+  const [rU, rP, rT, rV, rN, rFb, rPay, rPM, rS, rM, rU30, rPlans, rRecent] = await Promise.all([
+    // dashboard counters
     sb.from('profiles').select('id', { count: 'exact', head: true }),
     sb.from('pins').select('id', { count: 'exact', head: true }).eq('is_active', true),
     sb.from('tenders').select('id', { count: 'exact', head: true }).eq('status', 'active'),
     sb.from('page_views').select('id', { count: 'exact', head: true }).gte('created_at', ago7),
     sb.from('profiles').select('id', { count: 'exact', head: true }).gte('created_at', ago7),
+    sb.from('beta_feedback').select('id', { count: 'exact', head: true }).eq('resolved', false),
     sb.from('payments').select('amount').eq('status', 'completed'),
     sb.from('payments').select('amount').eq('status', 'completed').gte('created_at', m0),
-    sb.from('profiles').select('id', { count: 'exact', head: true })
-      .not('plan', 'eq', 'free').not('plan', 'is', null),
+    sb.from('profiles').select('id', { count: 'exact', head: true }).not('plan', 'eq', 'free').not('plan', 'is', null),
     sb.from('conversations').select('unread_a,unread_b'),
+    // chart: new users last 30 days
+    sb.from('profiles').select('created_at').gte('created_at', ago30),
+    // plans distribution
+    sb.from('profiles').select('plan'),
+    // recent activity
+    sb.from('page_views').select('path,created_at').order('created_at', { ascending: false }).limit(6),
   ])
 
   const cnt = (r: any) => (!r.error ? (r.count ?? 0) : 0)
   const sum = (r: any) => (r.data ?? []).reduce((s: number, p: any) => s + (p.amount ?? 0), 0)
   const unr = (r: any) => (r.data ?? []).reduce((s: number, c: any) => s + (c.unread_a ?? 0) + (c.unread_b ?? 0), 0)
+
+  // Build 30-day new users chart
+  const chartMap: Record<string, number> = {}
+  for (let i = 29; i >= 0; i--) {
+    const d = new Date(Date.now() - i * 86400e3)
+    chartMap[d.toISOString().slice(0, 10)] = 0
+  }
+  for (const u of (rU30.data ?? [])) {
+    const k = u.created_at.slice(0, 10)
+    if (k in chartMap) chartMap[k]++
+  }
+  const chart30 = Object.entries(chartMap).map(([date, count]) => ({ date, count }))
+
+  // Plans distribution
+  const planCounts = { pro: 0, free: 0, supporter: 0, other: 0 }
+  for (const u of (rPlans.data ?? [])) {
+    const p = (u.plan as string) || 'free'
+    if (p === 'pro') planCounts.pro++
+    else if (p === 'free') planCounts.free++
+    else if (p === 'supporter') planCounts.supporter++
+    else planCounts.other++
+  }
 
   return {
     users:          cnt(rU),
@@ -89,11 +118,18 @@ async function fetchStats() {
     tenders:        cnt(rT),
     views7:         cnt(rV),
     new_users7:     cnt(rN),
+    feedback:       cnt(rFb),
     revenue_total:  sum(rPay),
     revenue_month:  sum(rPM),
     subscribers:    cnt(rS),
     unread_msgs:    unr(rM),
-    fetched_at:     new Date().toISOString(),
+    chart30,
+    plans:          planCounts,
+    recent_activity: (rRecent.data ?? []).map((v: any) => ({
+      path: v.path,
+      at: v.created_at,
+    })),
+    fetched_at: new Date().toISOString(),
   }
 }
 
@@ -140,11 +176,10 @@ Deno.serve(async (req) => {
     if (!/^\d{6}$/.test(pin)) return resp({ error: 'Wpisz 6-cyfrowy PIN.' }, 400)
 
     const { data: row } = await sb.from('quick_stats_otp').select('*').eq('id', 1).single()
-    if (!row?.otp_hash)                            return resp({ error: 'Brak aktywnego PIN. Wyślij nowy.' }, 401)
-    if (new Date(row.expires_at) < new Date())     return resp({ error: 'PIN wygasł. Wyślij nowy.' }, 401)
-    if (row.attempts >= 5)                         return resp({ error: 'Zbyt wiele prób. Wyślij nowy PIN.' }, 429)
+    if (!row?.otp_hash)                         return resp({ error: 'Brak aktywnego PIN. Wyślij nowy.' }, 401)
+    if (new Date(row.expires_at) < new Date())  return resp({ error: 'PIN wygasł. Wyślij nowy.' }, 401)
+    if (row.attempts >= 5)                      return resp({ error: 'Zbyt wiele prób. Wyślij nowy PIN.' }, 429)
 
-    // Increment first (fail-safe against brute-force)
     await sb.from('quick_stats_otp').update({ attempts: row.attempts + 1 }).eq('id', 1)
 
     if (await hashPin(pin) !== row.otp_hash) {
@@ -152,7 +187,6 @@ Deno.serve(async (req) => {
       return resp({ error: `Błędny PIN. Pozostało prób: ${left}` }, 401)
     }
 
-    // Issue session token
     const token   = randomToken()
     const expires = new Date(Date.now() + SESSION_H * 3600_000).toISOString()
 
@@ -167,16 +201,18 @@ Deno.serve(async (req) => {
     return resp({ ok: true, token, stats })
   }
 
-  /* ── get_stats (session token refresh) ───── */
+  /* ── get_stats ───────────────────────────── */
   if (body.action === 'get_stats') {
     const token = String(body.token ?? '').trim()
     if (!token) return resp({ error: 'Brak tokenu sesji.' }, 401)
 
-    const { data: row } = await sb.from('quick_stats_otp').select('session_token,session_expires_at').eq('id', 1).single()
-    if (!row || row.session_token !== token)                    return resp({ error: 'Nieważna sesja. Zaloguj się ponownie.' }, 401)
-    if (!row.session_expires_at || new Date(row.session_expires_at) < new Date()) {
+    const { data: row } = await sb.from('quick_stats_otp')
+      .select('session_token,session_expires_at').eq('id', 1).single()
+
+    if (!row || row.session_token !== token)
+      return resp({ error: 'Nieważna sesja. Zaloguj się ponownie.' }, 401)
+    if (!row.session_expires_at || new Date(row.session_expires_at) < new Date())
       return resp({ error: 'Sesja wygasła. Zaloguj się ponownie.' }, 401)
-    }
 
     const stats = await fetchStats()
     return resp({ ok: true, stats })
