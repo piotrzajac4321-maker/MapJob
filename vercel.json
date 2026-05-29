@@ -34,7 +34,11 @@
     {
       "source": "/stats",
       "destination": "/stats-widget.html"
-    }
+    },
+    { "source": "/wariant-blue-8n2p4k",   "destination": "/wariant-blue-8n2p4k.html" },
+    { "source": "/wariant-green-5m7r1w",  "destination": "/wariant-green-5m7r1w.html" },
+    { "source": "/wariant-gold-3x6q9v",   "destination": "/wariant-gold-3x6q9v.html" },
+    { "source": "/wariant-purple-2h8t5j", "destination": "/wariant-purple-2h8t5j.html" }
   ],
   "headers": [
     {
