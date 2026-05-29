@@ -169,6 +169,7 @@ function renderDashboard(k){
     + '</div>'
     + '<div class="summary" id="gen-sum">'+genSumHtml(k)+'</div>'
     + '<div class="summary" id="countries">🌍 Skąd są odwiedzający: <span style="color:var(--text3)">ładowanie…</span></div>'
+    + '<div class="summary" id="funnel">📞 Lejek kontaktu: <span style="color:var(--text3)">ładowanie…</span></div>'
     + '<button class="more" id="ogl-toggle">📢 Zobacz statystyki ogłoszeń ▾</button>'
     + '<div id="ogl-wrap" style="display:none">'
     +   '<input class="fi" id="q" placeholder="🔎 filtruj po nazwie / tytule / mieście">'
@@ -189,6 +190,7 @@ function renderDashboard(k){
   $('ogl-toggle').onclick=toggleOgl;
   loadAll();
   loadCountries();
+  loadFunnel();
   if(!window._statTimer){ window._statTimer=setInterval(refreshKpis, 30000); }
 }
 
@@ -220,6 +222,23 @@ async function loadCountries(){
     }).join(' · ');
     el.innerHTML='🌍 <b>Skąd są odwiedzający</b> <span style="color:var(--text3)">(wg sesji, bez adminów)</span><br>'+html;
   }catch(e){ el.innerHTML='🌍 Skąd są odwiedzający: <span style="color:#F87171">błąd ładowania</span>'; }
+}
+async function loadFunnel(){
+  var el=$('funnel'); if(!el) return;
+  try{
+    var r=await sb.rpc('admin_get_contact_funnel');
+    var rows=(r&&r.data)||[];
+    var prompts=0, reveals=0;
+    rows.forEach(function(x){ prompts+=(x.prompts||0); reveals+=(x.reveals||0); });
+    if(!prompts && !reveals){ el.innerHTML='📞 <b>Lejek kontaktu</b><br><span style="color:var(--text3)">Brak danych — nikt jeszcze nie odsłaniał numeru (Twoje wejścia jako admin nie są liczone).</span>'; return; }
+    var left=Math.max(0,prompts-reveals);
+    var pctReveal=prompts?Math.round(reveals*100/prompts):0;
+    var pctLeft=prompts?Math.round(left*100/prompts):0;
+    el.innerHTML='📞 <b>Lejek kontaktu</b> <span style="color:var(--text3)">(prośba „wspomnij o MapJob")</span><br>'
+      + '👀 Zobaczyło notatkę: <b>'+prompts+'</b><br>'
+      + '✅ Odsłoniło numer: <b style="color:var(--green)">'+reveals+'</b> ('+pctReveal+'%)<br>'
+      + '🚪 Odeszło na notatce: <b style="color:#F87171">'+left+'</b> ('+pctLeft+'%)';
+  }catch(e){ el.innerHTML='📞 Lejek kontaktu: <span style="color:#F87171">błąd ładowania</span>'; }
 }
 function toggleOgl(){ var w=$('ogl-wrap'); var open=w.style.display==='none'; w.style.display=open?'':'none'; $('ogl-toggle').textContent = open ? '📢 Ukryj statystyki ogłoszeń ▴' : '📢 Zobacz statystyki ogłoszeń ▾'; }
 
