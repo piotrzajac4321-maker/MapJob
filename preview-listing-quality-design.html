@@ -1,0 +1,1144 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MapJob — jakość ogłoszeń · kierunki projektowe</title>
+<style>
+:root {
+  --bg:    #070B14;
+  --bg2:   #0B1018;
+  --surf:  #111620;
+  --surf2: #161D2A;
+  --surf3: #1C2535;
+  --brd:   rgba(255,255,255,.07);
+  --brd2:  rgba(255,255,255,.12);
+  --text:  #EBEDF1;
+  --t2:    #9AA1AD;
+  --t3:    #626A78;
+  --t4:    #3E4653;
+  --acc:   #2D7FF9;
+  --acc2:  #5B9EFF;
+  --acc-s: rgba(45,127,249,.12);
+  --green: #3DD68C;
+  --grn-s: rgba(61,214,140,.12);
+  --gold:  #F5C451;
+  --gld-s: rgba(245,196,81,.12);
+  --red:   #F87171;
+  --red-s: rgba(248,113,113,.12);
+  --ff: 'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+}
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:var(--ff);-webkit-font-smoothing:antialiased;padding:40px 20px 100px}
+
+/* ── PAGE HEADER ── */
+.ph{max-width:1200px;margin:0 auto 52px}
+.ph-eyebrow{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--acc2);margin-bottom:10px}
+.ph-h1{font-size:28px;font-weight:900;letter-spacing:-.03em;line-height:1.2;margin-bottom:8px}
+.ph-sub{font-size:14px;color:var(--t2);line-height:1.65;max-width:680px}
+.toc{display:flex;gap:8px;flex-wrap:wrap;margin-top:18px}
+.toc-i{padding:5px 13px;border-radius:20px;border:1px solid var(--brd2);font-size:12px;font-weight:600;color:var(--t2)}
+
+/* ── SECTION ── */
+.sec{max-width:1200px;margin:0 auto 64px}
+.sec-hd{margin-bottom:24px}
+.sec-num{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--acc2);margin-bottom:6px}
+.sec-h2{font-size:20px;font-weight:900;letter-spacing:-.02em;margin-bottom:4px}
+.sec-d{font-size:13px;color:var(--t2);line-height:1.6;max-width:700px}
+hr.divider{border:none;border-top:1px solid var(--brd);margin:64px auto;max-width:1200px}
+
+/* ── GRIDS ── */
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+@media(max-width:900px){.grid2,.grid3,.grid4{grid-template-columns:1fr 1fr}}
+@media(max-width:600px){.grid2,.grid3,.grid4{grid-template-columns:1fr}}
+
+/* ── TIER LABEL ── */
+.tier-wrap{display:flex;flex-direction:column;gap:10px}
+.tier-label{display:flex;align-items:center;gap:8px;font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--t3)}
+.tier-dot{width:8px;height:8px;border-radius:50%}
+.tier-dot.bare  {background:#3E4653}
+.tier-dot.std   {background:var(--acc)}
+.tier-dot.rich  {background:var(--green)}
+.tier-dot.feat  {background:var(--gold)}
+
+/* ══════════════════════════════════════
+   SECTION 1 — QUALITY TIERS
+══════════════════════════════════════ */
+
+/* Base card reset */
+.card{background:var(--surf);border:1px solid var(--brd);border-radius:16px;overflow:hidden;position:relative;transition:border-color .15s}
+
+/* TIER: BARE (minimalny) */
+.card.bare .card-body{padding:14px 15px 15px}
+.card.bare .job-title{font-size:14px;font-weight:700;color:var(--t2);margin-bottom:4px}
+.card.bare .job-co{font-size:12px;color:var(--t3)}
+.card.bare .job-foot{margin-top:12px;display:flex;align-items:center;justify-content:space-between}
+.card.bare .no-sal{font-size:12px;color:var(--t4);font-style:italic}
+.card.bare .see-btn{font-size:12px;font-weight:600;color:var(--t3)}
+
+/* TIER: STANDARD */
+.card.std .card-body{padding:15px 15px 15px}
+.card.std .job-title{font-size:15px;font-weight:800;letter-spacing:-.01em;margin-bottom:3px}
+.card.std .job-co{font-size:12px;color:var(--t2);margin-bottom:10px;display:flex;align-items:center;gap:5px}
+.card.std .tags{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:11px}
+.card.std .tag{font-size:11px;padding:3px 9px;border-radius:7px;background:var(--surf2);border:1px solid var(--brd);color:var(--t2);font-weight:600}
+.card.std .tag.loc{background:var(--acc-s);color:var(--acc2);border-color:rgba(45,127,249,.22)}
+.card.std .job-foot{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.card.std .salary{font-size:16px;font-weight:900;letter-spacing:-.02em}
+.card.std .salary-sub{font-size:10.5px;color:var(--t3);margin-top:1px;font-weight:600}
+.card.std .apply-btn{padding:9px 16px;border-radius:10px;background:var(--acc);border:none;color:#fff;font-family:inherit;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap}
+
+/* TIER: RICH */
+.card.rich{border-color:rgba(61,214,140,.18)}
+.card.rich .card-body{padding:15px 15px 15px}
+.card.rich .logo-area{display:flex;align-items:flex-start;gap:12px;margin-bottom:12px}
+.card.rich .logo{width:48px;height:48px;border-radius:12px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:900;color:#fff;overflow:hidden}
+.card.rich .logo.ini{background:linear-gradient(135deg,#1b4fd8,#4f46e5)}
+.card.rich .logo img{width:100%;height:100%;object-fit:cover}
+.card.rich .job-title{font-size:15px;font-weight:800;letter-spacing:-.01em;margin-bottom:2px}
+.card.rich .job-co{font-size:12px;color:var(--t2);display:flex;align-items:center;gap:5px;margin-bottom:2px}
+.card.rich .job-addr{font-size:11px;color:var(--t3)}
+.card.rich .tags{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:11px}
+.card.rich .tag{font-size:11px;padding:3px 9px;border-radius:7px;background:var(--surf2);border:1px solid var(--brd);color:var(--t2);font-weight:600}
+.card.rich .tag.loc{background:var(--acc-s);color:var(--acc2);border-color:rgba(45,127,249,.22)}
+.card.rich .tag.spots{background:var(--grn-s);color:var(--green);border-color:rgba(61,214,140,.28);font-weight:700}
+.card.rich .tag.type{background:var(--gld-s);color:var(--gold);border-color:rgba(245,196,81,.25)}
+.card.rich .snippet{font-size:12px;color:var(--t3);line-height:1.55;margin-bottom:11px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.card.rich .perks{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:13px}
+.card.rich .perk{font-size:11px;padding:3px 9px;border-radius:20px;background:var(--grn-s);border:1px solid rgba(61,214,140,.22);color:var(--green);font-weight:600;display:flex;align-items:center;gap:4px}
+.card.rich .job-foot{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.card.rich .salary{font-size:17px;font-weight:900;letter-spacing:-.02em;color:var(--text)}
+.card.rich .salary-sub{font-size:10.5px;color:var(--t3);margin-top:1px}
+.card.rich .apply-btn{padding:10px 18px;border-radius:10px;background:var(--acc);border:none;color:#fff;font-family:inherit;font-size:12px;font-weight:700;cursor:pointer}
+
+/* TIER: FEATURED */
+.card.feat{border-color:rgba(245,196,81,.25);background:linear-gradient(160deg,#0f1520,#111520)}
+.card.feat::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:linear-gradient(to bottom,#f5c451,#e8a020)}
+.card.feat .feat-bar{display:flex;align-items:center;gap:6px;padding:7px 15px 7px 18px;background:rgba(245,196,81,.07);border-bottom:1px solid rgba(245,196,81,.14);font-size:10px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--gold)}
+.card.feat .feat-bar svg{width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2.5}
+.card.feat .feat-bar .ago{margin-left:auto;color:var(--t3);font-weight:600;text-transform:none;letter-spacing:0;font-size:10px}
+.card.feat .card-body{padding:14px 15px 16px 18px}
+.card.feat .logo-area{display:flex;align-items:flex-start;gap:12px;margin-bottom:12px}
+.card.feat .logo{width:50px;height:50px;border-radius:12px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:900;color:#fff;overflow:hidden;border:1px solid rgba(245,196,81,.15)}
+.card.feat .logo.ini{background:linear-gradient(135deg,#b45309,#92400e)}
+.card.feat .logo img{width:100%;height:100%;object-fit:cover}
+.card.feat .vbadge{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:700;color:var(--acc2);background:var(--acc-s);border:1px solid rgba(45,127,249,.2);padding:2px 7px;border-radius:20px;margin-bottom:8px}
+.card.feat .vbadge svg{width:9px;height:9px;stroke:currentColor;fill:none;stroke-width:3}
+.card.feat .job-title{font-size:16px;font-weight:900;letter-spacing:-.02em;margin-bottom:3px}
+.card.feat .job-co{font-size:12.5px;color:var(--t2);display:flex;align-items:center;gap:5px;margin-bottom:10px}
+.card.feat .tags{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:10px}
+.card.feat .tag{font-size:11px;padding:3px 9px;border-radius:7px;background:var(--surf2);border:1px solid var(--brd);color:var(--t2);font-weight:600}
+.card.feat .tag.loc{background:var(--acc-s);color:var(--acc2);border-color:rgba(45,127,249,.22)}
+.card.feat .tag.spots{background:var(--grn-s);color:var(--green);border-color:rgba(61,214,140,.28)}
+.card.feat .snippet{font-size:12px;color:var(--t3);line-height:1.55;margin-bottom:10px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.card.feat .req-row{display:flex;flex-direction:column;gap:4px;margin-bottom:12px}
+.card.feat .req-item{display:flex;align-items:center;gap:7px;font-size:12px;color:var(--t2)}
+.card.feat .req-item svg{width:14px;height:14px;stroke:var(--acc2);fill:none;stroke-width:2.5;flex-shrink:0}
+.card.feat .perks{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:13px}
+.card.feat .perk{font-size:11px;padding:3px 9px;border-radius:20px;background:var(--gld-s);border:1px solid rgba(245,196,81,.18);color:var(--gold);font-weight:600}
+.card.feat .job-foot{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.card.feat .salary{font-size:18px;font-weight:900;letter-spacing:-.02em}
+.card.feat .salary-sub{font-size:10.5px;color:var(--t3);margin-top:1px}
+.card.feat .btns{display:flex;gap:7px}
+.card.feat .save-btn{width:40px;height:40px;border-radius:10px;background:var(--surf2);border:1px solid var(--brd2);color:var(--t2);display:flex;align-items:center;justify-content:center;cursor:pointer}
+.card.feat .save-btn svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2}
+.card.feat .apply-btn{padding:10px 20px;border-radius:10px;background:var(--gold);border:none;color:#0B1018;font-family:inherit;font-size:12.5px;font-weight:800;cursor:pointer}
+
+/* ══════════════════════════════════════
+   SECTION 2 — COMPLETENESS PROMPT
+══════════════════════════════════════ */
+
+.comp-card{background:var(--surf);border:1px solid var(--brd);border-radius:18px;overflow:hidden}
+.comp-head{padding:18px 20px;border-bottom:1px solid var(--brd)}
+.comp-head-row{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}
+.comp-title{font-size:15px;font-weight:800}
+.comp-pct{font-size:26px;font-weight:900;letter-spacing:-.04em}
+.comp-pct.low{color:var(--red)}
+.comp-pct.mid{color:var(--gold)}
+.comp-pct.high{color:var(--green)}
+.comp-bar-bg{height:6px;border-radius:6px;background:var(--surf3);overflow:hidden}
+.comp-bar-fill{height:100%;border-radius:6px;transition:width .4s}
+.comp-bar-fill.low{background:var(--red)}
+.comp-bar-fill.mid{background:var(--gold)}
+.comp-bar-fill.high{background:var(--green)}
+.comp-body{padding:16px 20px}
+.comp-items{display:flex;flex-direction:column;gap:8px}
+.comp-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;background:var(--surf2);border:1px solid var(--brd)}
+.comp-item.done{border-color:rgba(61,214,140,.2)}
+.comp-item.miss{border-color:rgba(248,113,113,.18);background:rgba(248,113,113,.04)}
+.comp-item.warn{border-color:rgba(245,196,81,.18);background:rgba(245,196,81,.04)}
+.comp-icon{width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:13px}
+.comp-icon.done{background:var(--grn-s)}
+.comp-icon.miss{background:var(--red-s)}
+.comp-icon.warn{background:var(--gld-s)}
+.comp-item-t{font-size:13px;font-weight:700;flex:1}
+.comp-item-s{font-size:11px;color:var(--t3);margin-top:1px}
+.comp-item.done .comp-item-t{color:var(--text)}
+.comp-item.miss .comp-item-t{color:var(--red)}
+.comp-item.warn .comp-item-t{color:var(--gold)}
+.comp-item-pts{font-size:11px;font-weight:800;padding:3px 8px;border-radius:20px;white-space:nowrap}
+.comp-item.done .comp-item-pts{background:var(--grn-s);color:var(--green)}
+.comp-item.miss .comp-item-pts{background:var(--red-s);color:var(--red)}
+.comp-item.warn .comp-item-pts{background:var(--gld-s);color:var(--gold)}
+.comp-cta{margin-top:14px;width:100%;padding:12px;border-radius:12px;background:var(--acc);border:none;color:#fff;font-family:inherit;font-size:13px;font-weight:700;cursor:pointer}
+.comp-impact{display:flex;gap:10px;margin-top:14px}
+.comp-stat{flex:1;padding:11px 13px;border-radius:12px;background:var(--surf2);border:1px solid var(--brd);text-align:center}
+.comp-stat-v{font-size:20px;font-weight:900;letter-spacing:-.02em}
+.comp-stat-v.green{color:var(--green)}
+.comp-stat-v.blue{color:var(--acc2)}
+.comp-stat-l{font-size:10px;color:var(--t3);margin-top:2px;font-weight:600;line-height:1.3}
+
+/* ══════════════════════════════════════
+   SECTION 3 — TRUST SIGNALS (CANDIDATE VIEW)
+══════════════════════════════════════ */
+
+.ts-card{background:var(--surf);border:1px solid var(--brd);border-radius:16px;overflow:hidden}
+.ts-body{padding:15px}
+.ts-logo-row{display:flex;align-items:center;gap:11px;margin-bottom:12px}
+.ts-logo{width:48px;height:48px;border-radius:12px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:900;color:#fff}
+.ts-logo.b1{background:linear-gradient(135deg,#1b4fd8,#4f46e5)}
+.ts-logo.b2{background:linear-gradient(135deg,#0d6e46,#15803d)}
+.ts-logo.b3{background:linear-gradient(135deg,#9a3412,#c2410c)}
+.ts-title{font-size:15px;font-weight:800;margin-bottom:2px}
+.ts-co{font-size:12px;color:var(--t2)}
+.ts-signals{display:flex;flex-direction:column;gap:6px;margin-bottom:12px}
+.ts-sig{display:flex;align-items:center;gap:8px;font-size:12px;padding:7px 10px;border-radius:9px}
+.ts-sig svg{width:14px;height:14px;flex-shrink:0;stroke:currentColor;fill:none;stroke-width:2.2}
+/* fresh */
+.ts-sig.fresh{background:var(--grn-s);color:var(--green)}
+/* response */
+.ts-sig.resp{background:var(--acc-s);color:var(--acc2)}
+/* comp */
+.ts-sig.comp{background:rgba(61,214,140,.07);color:var(--t2)}
+.ts-sig.comp span{color:var(--green);font-weight:700}
+/* views */
+.ts-sig.view{background:var(--surf2);color:var(--t3)}
+/* quality bar */
+.ts-q-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px}
+.ts-q-lbl{font-size:11px;color:var(--t3);font-weight:600}
+.ts-q-val{font-size:11px;font-weight:700}
+.ts-q-val.high{color:var(--green)}
+.ts-q-val.mid{color:var(--gold)}
+.ts-q-bar{height:4px;border-radius:4px;background:var(--surf3);overflow:hidden;margin-bottom:12px}
+.ts-q-fill{height:100%;border-radius:4px}
+.ts-q-fill.high{background:var(--green)}
+.ts-q-fill.mid{background:var(--gold)}
+.ts-apply{width:100%;padding:11px;border-radius:10px;background:var(--acc);border:none;color:#fff;font-family:inherit;font-size:13px;font-weight:700;cursor:pointer}
+
+/* ══════════════════════════════════════
+   SECTION 4 — POPUP / MAP CARD
+══════════════════════════════════════ */
+
+.popups-grid{display:flex;gap:20px;flex-wrap:wrap;justify-content:flex-start}
+.pop{width:288px;background:rgba(17,22,32,.95);backdrop-filter:blur(14px);border:1px solid var(--brd2);border-radius:16px;overflow:hidden}
+.pop.v-blue::before{content:'';display:block;height:3px;background:var(--acc)}
+.pop.v-green::before{content:'';display:block;height:3px;background:var(--green)}
+.pop.v-gold::before{content:'';display:block;height:3px;background:var(--gold)}
+.pop-in{padding:14px}
+.pop-top{display:flex;align-items:flex-start;gap:10px;margin-bottom:9px}
+.pop-logo{width:44px;height:44px;border-radius:11px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:900;color:#fff}
+.pop-logo.b1{background:linear-gradient(135deg,#1b4fd8,#4f46e5)}
+.pop-logo.b2{background:linear-gradient(135deg,#0d6e46,#15803d)}
+.pop-logo.b3{background:linear-gradient(135deg,#9a3412,#c2410c)}
+.pop-title{font-size:14px;font-weight:800;line-height:1.25;margin-bottom:2px}
+.pop-co{font-size:11.5px;color:var(--t2);display:flex;align-items:center;gap:4px}
+.pop-co svg{width:11px;height:11px;stroke:var(--acc2);fill:none;stroke-width:3}
+.pop-badges{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:9px}
+.pbg{font-size:9.5px;font-weight:700;padding:3px 8px;border-radius:7px;border:1px solid}
+.pbg.ver{background:var(--acc-s);color:var(--acc2);border-color:rgba(45,127,249,.3)}
+.pbg.urg{background:var(--red-s);color:var(--red);border-color:rgba(248,113,113,.3)}
+.pbg.cat{background:var(--surf2);color:var(--t2);border-color:var(--brd)}
+.pbg.spots{background:var(--grn-s);color:var(--green);border-color:rgba(61,214,140,.3)}
+.pop-mid{display:flex;align-items:flex-end;justify-content:space-between;gap:8px;margin-bottom:10px}
+.pop-loc{font-size:11px;color:var(--t3);line-height:1.4}
+.pop-loc strong{display:block;color:var(--t2);font-weight:600;font-size:12px}
+.pop-sal{text-align:right}
+.pop-sal-v{font-size:15px;font-weight:900;letter-spacing:-.02em}
+.pop-sal-v.blue{color:var(--acc2)}
+.pop-sal-v.green{color:var(--green)}
+.pop-sal-v.soft{font-size:13px;color:var(--t2)}
+.pop-sal-l{font-size:9px;font-weight:600;color:var(--t3);text-transform:uppercase;letter-spacing:.4px;margin-top:2px}
+.pop-qual{margin-bottom:10px}
+.pop-qual-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:3px}
+.pop-qual-l{font-size:10px;color:var(--t3)}
+.pop-qual-v{font-size:10px;font-weight:700;color:var(--green)}
+.pop-qual-bar{height:3px;border-radius:3px;background:var(--surf3);overflow:hidden}
+.pop-qual-fill{height:100%;border-radius:3px;background:var(--green)}
+.pop-btns{display:flex;gap:6px}
+.pop-btn-main{flex:1;padding:10px;border-radius:9px;background:var(--acc);border:none;color:#fff;font-family:inherit;font-size:12px;font-weight:700;cursor:pointer}
+.pop-btn-save{width:38px;border-radius:9px;background:var(--surf2);border:1px solid var(--brd2);color:var(--t2);display:flex;align-items:center;justify-content:center;cursor:pointer}
+.pop-btn-save svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2}
+
+/* ══════════════════════════════════════
+   SECTION 5 — DETAIL PAGE HEADER
+══════════════════════════════════════ */
+
+.dt{width:100%;max-width:480px;background:var(--bg);border:1px solid var(--brd2);border-radius:20px;overflow:hidden}
+.dt-bar{display:flex;align-items:center;gap:9px;padding:11px 14px;background:var(--bg2);border-bottom:1px solid var(--brd)}
+.dt-back{width:34px;height:34px;border-radius:9px;background:var(--surf);border:1px solid var(--brd2);color:var(--t2);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.dt-back svg{width:17px;height:17px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.dt-bar-t{flex:1;font-size:14px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dt-actions{display:flex;gap:6px}
+.dt-ic{width:34px;height:34px;border-radius:9px;background:var(--surf);border:1px solid var(--brd2);color:var(--t2);display:flex;align-items:center;justify-content:center}
+.dt-ic svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2}
+.dt-cover{height:88px;position:relative;overflow:hidden;background:linear-gradient(135deg,#1b4fd8,#4f46e5)}
+.dt-cover::after{content:'';position:absolute;inset:0;background:radial-gradient(circle at 70% 30%,rgba(255,255,255,.15),transparent 60%)}
+.dt-cover-text{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:900;color:rgba(255,255,255,.85);letter-spacing:2px;z-index:1}
+.dt-body{padding:16px}
+.dt-logo-wrap{display:flex;align-items:flex-end;gap:12px;margin-top:-42px;margin-bottom:14px}
+.dt-logo{width:64px;height:64px;border-radius:16px;background:linear-gradient(135deg,#1b4fd8,#4f46e5);border:3px solid var(--bg);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:900;color:#fff;position:relative;z-index:1}
+.dt-vbadge{display:inline-flex;align-items:center;gap:5px;padding:5px 11px;border-radius:20px;background:var(--acc-s);border:1px solid rgba(45,127,249,.25);color:var(--acc2);font-size:11px;font-weight:700;margin-bottom:2px}
+.dt-vbadge svg{width:11px;height:11px;stroke:currentColor;fill:none;stroke-width:3}
+.dt-h1{font-size:22px;font-weight:900;letter-spacing:-.03em;margin-bottom:4px}
+.dt-co{font-size:13px;color:var(--t2);font-weight:600;margin-bottom:12px}
+.dt-facts{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--brd);border:1px solid var(--brd);border-radius:13px;overflow:hidden;margin-bottom:14px}
+.dt-fact{background:var(--surf);padding:11px 13px}
+.dt-fact-l{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--t3);margin-bottom:3px}
+.dt-fact-v{font-size:13px;font-weight:800}
+.dt-sal{display:flex;align-items:center;justify-content:space-between;gap:12px;background:var(--acc-s);border:1px solid rgba(45,127,249,.22);border-radius:14px;padding:14px 16px;margin-bottom:14px}
+.dt-sal-l{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:var(--t3);margin-bottom:4px}
+.dt-sal-v{font-size:24px;font-weight:900;letter-spacing:-.03em}
+.dt-sal-sub{font-size:11px;color:var(--t3);margin-top:2px;font-weight:600}
+.dt-sal-ic{font-size:26px;opacity:.8}
+.dt-trust{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
+.dt-trust-pill{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600;padding:5px 10px;border-radius:20px;background:var(--surf2);border:1px solid var(--brd);color:var(--t2)}
+.dt-trust-pill svg{width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2.5;flex-shrink:0}
+.dt-trust-pill.green{background:var(--grn-s);border-color:rgba(61,214,140,.25);color:var(--green)}
+.dt-trust-pill.blue{background:var(--acc-s);border-color:rgba(45,127,249,.25);color:var(--acc2)}
+.dt-cta-row{display:flex;gap:8px}
+.dt-save{width:44px;border-radius:11px;background:var(--surf);border:1px solid var(--brd2);color:var(--t2);display:flex;align-items:center;justify-content:center;cursor:pointer}
+.dt-save svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2}
+.dt-apply{flex:1;padding:14px;border-radius:11px;background:var(--acc);border:none;color:#fff;font-family:inherit;font-size:14px;font-weight:800;cursor:pointer}
+
+/* ══════════════════════════════════════
+   SECTION 6 — VISUAL COMPARISON (DARK vs LIGHT)
+══════════════════════════════════════ */
+
+.compare-cols{display:grid;grid-template-columns:1fr 1fr;gap:32px;align-items:start}
+@media(max-width:700px){.compare-cols{grid-template-columns:1fr}}
+
+.vc-label{display:inline-flex;align-items:center;gap:7px;margin-bottom:14px;font-size:12px;font-weight:700;letter-spacing:.04em;text-transform:uppercase}
+.vc-badge{font-size:10px;padding:2px 9px;border-radius:20px;font-weight:800}
+.vc-badge.current{background:rgba(248,113,113,.14);color:var(--red);border:1px solid rgba(248,113,113,.3)}
+.vc-badge.prop{background:rgba(61,214,140,.12);color:var(--green);border:1px solid rgba(61,214,140,.28)}
+
+/* dark card (current) */
+.dc{background:linear-gradient(145deg,#131C2D,#0d1626);border:1px solid rgba(255,255,255,.09);border-radius:16px;padding:14px;position:relative;overflow:hidden}
+.dc::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.35),transparent)}
+.dc .av{width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,#2563EB,#7C3AED);display:flex;align-items:center;justify-content:center;font-weight:900;font-size:18px;color:#fff;box-shadow:0 0 16px rgba(37,99,235,.5)}
+.dc .ttl{font-size:15px;font-weight:800;background:linear-gradient(90deg,#f0f4ff,#c7d7ff);-webkit-background-clip:text;background-clip:text;color:transparent}
+.dc .co{font-size:12px;color:#94A3B8}
+.dc .pay{font-size:17px;font-weight:900;background:linear-gradient(90deg,#22C55E,#4ade80);-webkit-background-clip:text;background-clip:text;color:transparent;text-shadow:0 0 20px rgba(34,197,94,.4)}
+.dc .chip{background:rgba(37,99,235,.18);border:1px solid rgba(37,99,235,.3);color:#93c5fd;font-size:11px;padding:3px 9px;border-radius:20px}
+.dc .btn{width:100%;margin-top:12px;padding:12px;border-radius:12px;background:linear-gradient(135deg,#2563EB,#60A5FA);border:none;color:#fff;font-family:inherit;font-size:13px;font-weight:800;cursor:pointer;box-shadow:0 4px 16px rgba(37,99,235,.45)}
+.dc .row{display:flex;align-items:center;gap:11px;margin-bottom:11px}
+.dc .chips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:11px}
+
+/* light (proposed — clean dark) */
+.lc{background:var(--surf);border:1px solid var(--brd2);border-radius:16px;overflow:hidden}
+.lc .lc-body{padding:14px}
+.lc .av{width:44px;height:44px;border-radius:11px;background:var(--acc-s);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:16px;color:var(--acc2);border:1px solid rgba(45,127,249,.2)}
+.lc .ttl{font-size:15px;font-weight:800;letter-spacing:-.01em}
+.lc .co{font-size:12px;color:var(--t2);display:flex;align-items:center;gap:4px}
+.lc .co-v{color:var(--acc2);font-size:11px}
+.lc .pay{font-size:18px;font-weight:900;letter-spacing:-.02em}
+.lc .chip{background:var(--surf2);border:1px solid var(--brd);color:var(--t2);font-size:11px;padding:3px 9px;border-radius:7px;font-weight:600}
+.lc .btn{width:100%;margin-top:12px;padding:12px;border-radius:11px;background:var(--acc);border:none;color:#fff;font-family:inherit;font-size:13px;font-weight:700;cursor:pointer}
+.lc .row{display:flex;align-items:center;gap:11px;margin-bottom:11px}
+.lc .chips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:11px}
+.lc .dist-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;font-size:11.5px;color:var(--t3)}
+.lc .dist-row span{font-weight:600;color:var(--t2)}
+
+/* PRO cards - cleaner labels */
+.issues-list{list-style:none;display:flex;flex-direction:column;gap:6px;margin-top:12px}
+.issues-list li{display:flex;align-items:flex-start;gap:8px;font-size:12.5px;color:var(--t2);padding:8px 11px;background:var(--surf2);border-radius:9px}
+.issues-list li::before{content:'×';color:var(--red);font-weight:900;font-size:13px;flex-shrink:0;margin-top:1px}
+.fixes-list{list-style:none;display:flex;flex-direction:column;gap:6px;margin-top:12px}
+.fixes-list li{display:flex;align-items:flex-start;gap:8px;font-size:12.5px;color:var(--t2);padding:8px 11px;background:var(--surf2);border-radius:9px}
+.fixes-list li::before{content:'✓';color:var(--green);font-weight:900;font-size:12px;flex-shrink:0;margin-top:1px}
+
+/* ── NOTE BOX ── */
+.note-box{padding:14px 17px;background:var(--surf2);border:1px solid var(--brd2);border-radius:13px;font-size:12.5px;color:var(--t2);line-height:1.6;margin-top:16px}
+.note-box b{color:var(--text)}
+.note-box.blue{border-color:rgba(45,127,249,.25);background:var(--acc-s);color:#cce0ff}
+.note-box.green{border-color:rgba(61,214,140,.22);background:var(--grn-s);color:#b0f0d0}
+</style>
+</head>
+<body>
+
+<!-- PAGE HEADER -->
+<div class="ph">
+  <div class="ph-eyebrow">MapJob · Projekt</div>
+  <div class="ph-h1">Jakość ogłoszeń — kierunki projektowe</div>
+  <div class="ph-sub">Poglądowe makiety skupione na czterech obszarach: <b>poziomy jakości karty</b>, <b>wskaźnik kompletności dla pracodawcy</b>, <b>sygnały zaufania dla kandydata</b> oraz <b>kierunek wizualny kart</b>. Wszystkie przykłady na realnych danych z segmentu blue-collar.</div>
+  <div class="toc">
+    <div class="toc-i">1 · Poziomy jakości karty</div>
+    <div class="toc-i">2 · Completeness Score</div>
+    <div class="toc-i">3 · Sygnały zaufania</div>
+    <div class="toc-i">4 · Popup na mapie</div>
+    <div class="toc-i">5 · Pełna oferta (nagłówek)</div>
+    <div class="toc-i">6 · Porównanie wizualne</div>
+  </div>
+</div>
+
+
+<!-- ══════════════════ 1 · QUALITY TIERS ══════════════════ -->
+<div class="sec">
+  <div class="sec-hd">
+    <div class="sec-num">1 · Poziomy jakości karty</div>
+    <div class="sec-h2">Od "gołego" wpisu do oferty premium</div>
+    <div class="sec-d">Ta sama praca (Elektryk B2B) — cztery stany wypełnienia ogłoszenia. Pokazuje kandydatom i pracodawcy co robi różnicę w klikalności i aplikacjach.</div>
+  </div>
+
+  <div class="grid4">
+
+    <!-- BARE -->
+    <div class="tier-wrap">
+      <div class="tier-label"><span class="tier-dot bare"></span>BARE · brak danych</div>
+      <div class="card bare">
+        <div class="card-body">
+          <div class="job-title">Elektryk</div>
+          <div class="job-co">Firma XYZ</div>
+          <div class="job-foot">
+            <div class="no-sal">Brak wynagrodzenia</div>
+            <div class="see-btn">Zobacz →</div>
+          </div>
+        </div>
+      </div>
+      <div class="note-box" style="font-size:11.5px">
+        Brak: loga, kwoty, lokalizacji, formy zatrudnienia, opisu.<br>
+        <b>Efekt:</b> niemal zerowa klikalność, odrzucana przez kandydatów jako niewiarygodna.
+      </div>
+    </div>
+
+    <!-- STANDARD -->
+    <div class="tier-wrap">
+      <div class="tier-label"><span class="tier-dot std"></span>STANDARD · podstawowe pola</div>
+      <div class="card std">
+        <div class="card-body">
+          <div class="job-title">Elektryk B2B — instalacje</div>
+          <div class="job-co">Volt Industrial</div>
+          <div class="tags">
+            <span class="tag loc">📍 Warszawa</span>
+            <span class="tag">B2B</span>
+            <span class="tag">Stacjonarnie</span>
+          </div>
+          <div class="job-foot">
+            <div>
+              <div class="salary">120–180 zł/h</div>
+              <div class="salary-sub">B2B netto</div>
+            </div>
+            <button class="apply-btn">Aplikuj →</button>
+          </div>
+        </div>
+      </div>
+      <div class="note-box" style="font-size:11.5px">
+        Tytuł, firma, miasto, forma, kwota.<br>
+        <b>Efekt:</b> podstawowa klikalność — kandydat wie <i>co</i>, <i>gdzie</i> i <i>za ile</i>.
+      </div>
+    </div>
+
+    <!-- RICH -->
+    <div class="tier-wrap">
+      <div class="tier-label"><span class="tier-dot rich"></span>RICH · pełne dane</div>
+      <div class="card rich">
+        <div class="card-body">
+          <div class="logo-area">
+            <div class="logo ini">VI</div>
+            <div style="flex:1;min-width:0">
+              <div class="job-title">Elektryk B2B — instalacje SEP</div>
+              <div class="job-co">Volt Industrial <span style="font-size:10px;color:var(--acc2)">✓ zweryfik.</span></div>
+              <div class="job-addr">📍 Warszawa, Mokotów</div>
+            </div>
+          </div>
+          <div class="tags">
+            <span class="tag loc">📍 2,4 km</span>
+            <span class="tag">B2B</span>
+            <span class="tag type">Stacj. / hybryda</span>
+            <span class="tag spots">3 miejsca</span>
+          </div>
+          <div class="snippet">Szukamy elektryka z uprawnieniami SEP do projektów instalacyjnych w środowiskach przemysłowych. Mile widziane doświadczenie z PLC.</div>
+          <div class="perks">
+            <span class="perk">🚗 Auto służbowe</span>
+            <span class="perk">💻 Sprzęt</span>
+            <span class="perk">📈 Projekty B+R</span>
+          </div>
+          <div class="job-foot">
+            <div>
+              <div class="salary">120–180 zł/h</div>
+              <div class="salary-sub">B2B netto · faktura VAT</div>
+            </div>
+            <button class="apply-btn">Aplikuj →</button>
+          </div>
+        </div>
+      </div>
+      <div class="note-box" style="font-size:11.5px">
+        Logo, odległość, snippet, benefity, wolne miejsca.<br>
+        <b>Efekt:</b> 3–5× więcej aplikacji vs. Standard.
+      </div>
+    </div>
+
+    <!-- FEATURED -->
+    <div class="tier-wrap">
+      <div class="tier-label"><span class="tier-dot feat"></span>FEATURED · wyróżniona</div>
+      <div class="card feat">
+        <div class="feat-bar">
+          <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          Oferta wyróżniona
+          <span class="ago">Dodano 14 min temu</span>
+        </div>
+        <div class="card-body">
+          <div class="vbadge">
+            <svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>
+            Zweryfikowany pracodawca · NIP · KRS
+          </div>
+          <div class="logo-area">
+            <div class="logo" style="background:linear-gradient(135deg,#1b4fd8,#4f46e5)">VI</div>
+            <div style="flex:1;min-width:0">
+              <div class="job-title">Elektryk B2B — instalacje SEP D1/E1</div>
+              <div class="job-co">Volt Industrial Sp. z o.o.</div>
+            </div>
+          </div>
+          <div class="tags">
+            <span class="tag loc">📍 Warszawa · 2,4 km</span>
+            <span class="tag">B2B</span>
+            <span class="tag spots">3 wolne miejsca</span>
+          </div>
+          <div class="snippet">Projekty instalacyjne w halach produkcyjnych i centrach logistycznych. Praca w parach, jasny zakres — nie ma nadgodzin bez zgody.</div>
+          <div class="req-row">
+            <div class="req-item">
+              <svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>
+              Uprawnienia SEP do 1 kV (D lub E)
+            </div>
+            <div class="req-item">
+              <svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>
+              Min. 2 lata doświadczenia
+            </div>
+          </div>
+          <div class="perks">
+            <span class="perk">🚗 Służbowe auto</span>
+            <span class="perk">💻 Laptop + narzędzia</span>
+            <span class="perk">📈 Projekty B+R</span>
+          </div>
+          <div class="job-foot">
+            <div>
+              <div class="salary">120–180 zł/h</div>
+              <div class="salary-sub">B2B netto · faktura VAT</div>
+            </div>
+            <div class="btns">
+              <button class="save-btn"><svg viewBox="0 0 24 24"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg></button>
+              <button class="apply-btn">Aplikuj →</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="note-box" style="font-size:11.5px">
+        Złoty pasek boczny, badge weryfikacji, wymagania, data dodania.<br>
+        <b>Efekt:</b> najwyższa pozycja na liście + wyróżnienie wizualne.
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<hr class="divider">
+
+
+<!-- ══════════════════ 2 · COMPLETENESS SCORE ══════════════════ -->
+<div class="sec">
+  <div class="sec-hd">
+    <div class="sec-num">2 · Completeness Score — widok pracodawcy</div>
+    <div class="sec-h2">Pokaż pracodawcy co traci przez niekompletne ogłoszenie</div>
+    <div class="sec-d">Panel w edytorze ogłoszenia lub profilu firmy. Trzy stany: krytyczny (brakuje fundamentów), dobry (drobne braki), kompletny. Każdy punkt ma wagę — wpływ na liczbę wyświetleń i aplikacji.</div>
+  </div>
+
+  <div class="grid3">
+
+    <!-- CRITICAL (40%) -->
+    <div>
+      <div class="tier-label" style="margin-bottom:10px"><span class="tier-dot" style="background:var(--red)"></span>Stan krytyczny · 40%</div>
+      <div class="comp-card">
+        <div class="comp-head">
+          <div class="comp-head-row">
+            <div>
+              <div style="font-size:11px;color:var(--t3);font-weight:600;margin-bottom:2px">Jakość ogłoszenia</div>
+              <div style="font-size:14px;font-weight:800">Stolarz — meble kuchenne</div>
+            </div>
+            <div class="comp-pct low">40%</div>
+          </div>
+          <div class="comp-bar-bg"><div class="comp-bar-fill low" style="width:40%"></div></div>
+        </div>
+        <div class="comp-body">
+          <div style="font-size:11px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px">Co wymaga uzupełnienia</div>
+          <div class="comp-items">
+            <div class="comp-item done">
+              <div class="comp-icon done">✓</div>
+              <div style="flex:1;min-width:0">
+                <div class="comp-item-t">Tytuł stanowiska</div>
+              </div>
+              <div class="comp-item-pts">+10 pkt</div>
+            </div>
+            <div class="comp-item done">
+              <div class="comp-icon done">✓</div>
+              <div style="flex:1;min-width:0">
+                <div class="comp-item-t">Lokalizacja</div>
+              </div>
+              <div class="comp-item-pts">+10 pkt</div>
+            </div>
+            <div class="comp-item miss">
+              <div class="comp-icon miss">!</div>
+              <div style="flex:1;min-width:0">
+                <div class="comp-item-t">Wynagrodzenie</div>
+                <div class="comp-item-s">Ogłoszenia bez kwoty mają 61% mniej kliknięć</div>
+              </div>
+              <div class="comp-item-pts">+25 pkt</div>
+            </div>
+            <div class="comp-item miss">
+              <div class="comp-icon miss">!</div>
+              <div style="flex:1;min-width:0">
+                <div class="comp-item-t">Logo firmy</div>
+                <div class="comp-item-s">Wgraj logo — budujesz rozpoznawalność</div>
+              </div>
+              <div class="comp-item-pts">+15 pkt</div>
+            </div>
+            <div class="comp-item miss">
+              <div class="comp-icon miss">!</div>
+              <div style="flex:1;min-width:0">
+                <div class="comp-item-t">Opis stanowiska</div>
+                <div class="comp-item-s">Min. 150 znaków z zakresem obowiązków</div>
+              </div>
+              <div class="comp-item-pts">+20 pkt</div>
+            </div>
+            <div class="comp-item miss">
+              <div class="comp-icon miss">!</div>
+              <div style="flex:1;min-width:0">
+                <div class="comp-item-t">Forma zatrudnienia</div>
+                <div class="comp-item-s">UoP / B2B / zlecenie</div>
+              </div>
+              <div class="comp-item-pts">+10 pkt</div>
+            </div>
+            <div class="comp-item miss">
+              <div class="comp-icon miss">!</div>
+              <div style="flex:1;min-width:0">
+                <div class="comp-item-t">Benefity / co oferujesz</div>
+                <div class="comp-item-s">Nawet 2–3 punkty robią różnicę</div>
+              </div>
+              <div class="comp-item-pts">+10 pkt</div>
+            </div>
+          </div>
+          <div class="comp-impact">
+            <div class="comp-stat"><div class="comp-stat-v">−61%</div><div class="comp-stat-l">kliknięć bez kwoty</div></div>
+            <div class="comp-stat"><div class="comp-stat-v green">+3×</div><div class="comp-stat-l">więcej aplikacji po uzupełnieniu</div></div>
+          </div>
+          <button class="comp-cta">Uzupełnij ogłoszenie →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- MEDIUM (72%) -->
+    <div>
+      <div class="tier-label" style="margin-bottom:10px"><span class="tier-dot" style="background:var(--gold)"></span>Dobry start · 72%</div>
+      <div class="comp-card">
+        <div class="comp-head">
+          <div class="comp-head-row">
+            <div>
+              <div style="font-size:11px;color:var(--t3);font-weight:600;margin-bottom:2px">Jakość ogłoszenia</div>
+              <div style="font-size:14px;font-weight:800">Hydraulik — pompy ciepła</div>
+            </div>
+            <div class="comp-pct mid">72%</div>
+          </div>
+          <div class="comp-bar-bg"><div class="comp-bar-fill mid" style="width:72%"></div></div>
+        </div>
+        <div class="comp-body">
+          <div style="font-size:11px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px">Uzupełnione / do zrobienia</div>
+          <div class="comp-items">
+            <div class="comp-item done">
+              <div class="comp-icon done">✓</div>
+              <div style="flex:1;min-width:0"><div class="comp-item-t">Tytuł, lokalizacja, forma</div></div>
+              <div class="comp-item-pts">+30 pkt</div>
+            </div>
+            <div class="comp-item done">
+              <div class="comp-icon done">✓</div>
+              <div style="flex:1;min-width:0"><div class="comp-item-t">Opis stanowiska</div></div>
+              <div class="comp-item-pts">+20 pkt</div>
+            </div>
+            <div class="comp-item done">
+              <div class="comp-icon done">✓</div>
+              <div style="flex:1;min-width:0"><div class="comp-item-t">Wynagrodzenie (widełki)</div></div>
+              <div class="comp-item-pts">+25 pkt</div>
+            </div>
+            <div class="comp-item warn">
+              <div class="comp-icon warn">~</div>
+              <div style="flex:1;min-width:0">
+                <div class="comp-item-t">Logo firmy — brak</div>
+                <div class="comp-item-s">Avatar pracodawcy widoczny, ale logo daje +15 pkt</div>
+              </div>
+              <div class="comp-item-pts">+15 pkt</div>
+            </div>
+            <div class="comp-item warn">
+              <div class="comp-icon warn">~</div>
+              <div style="flex:1;min-width:0">
+                <div class="comp-item-t">Benefity — 0 z min. 2</div>
+                <div class="comp-item-s">Dodaj przynajmniej auto służbowe / narzędzia</div>
+              </div>
+              <div class="comp-item-pts">+10 pkt</div>
+            </div>
+          </div>
+          <div class="comp-impact">
+            <div class="comp-stat"><div class="comp-stat-v blue">72%</div><div class="comp-stat-l">aktualny wynik jakości</div></div>
+            <div class="comp-stat"><div class="comp-stat-v green">97%</div><div class="comp-stat-l">możliwy po zmianach</div></div>
+          </div>
+          <button class="comp-cta">Dodaj logo i benefity →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- COMPLETE (97%) -->
+    <div>
+      <div class="tier-label" style="margin-bottom:10px"><span class="tier-dot rich"></span>Kompletne · 97%</div>
+      <div class="comp-card">
+        <div class="comp-head">
+          <div class="comp-head-row">
+            <div>
+              <div style="font-size:11px;color:var(--t3);font-weight:600;margin-bottom:2px">Jakość ogłoszenia</div>
+              <div style="font-size:14px;font-weight:800">Elektryk B2B — instalacje SEP</div>
+            </div>
+            <div class="comp-pct high">97%</div>
+          </div>
+          <div class="comp-bar-bg"><div class="comp-bar-fill high" style="width:97%"></div></div>
+        </div>
+        <div class="comp-body">
+          <div style="font-size:11px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px">Wszystko uzupełnione</div>
+          <div class="comp-items">
+            <div class="comp-item done"><div class="comp-icon done">✓</div><div style="flex:1"><div class="comp-item-t">Tytuł, lokalizacja, forma</div></div><div class="comp-item-pts">+30 pkt</div></div>
+            <div class="comp-item done"><div class="comp-icon done">✓</div><div style="flex:1"><div class="comp-item-t">Opis i zakres obowiązków</div></div><div class="comp-item-pts">+20 pkt</div></div>
+            <div class="comp-item done"><div class="comp-icon done">✓</div><div style="flex:1"><div class="comp-item-t">Wynagrodzenie (widełki B2B)</div></div><div class="comp-item-pts">+25 pkt</div></div>
+            <div class="comp-item done"><div class="comp-icon done">✓</div><div style="flex:1"><div class="comp-item-t">Logo firmy</div></div><div class="comp-item-pts">+15 pkt</div></div>
+            <div class="comp-item done"><div class="comp-icon done">✓</div><div style="flex:1"><div class="comp-item-t">Benefity (3+)</div></div><div class="comp-item-pts">+10 pkt</div></div>
+            <div class="comp-item done"><div class="comp-icon done">✓</div><div style="flex:1"><div class="comp-item-t">Wymagania i co kandydat zyska</div></div><div class="comp-item-pts">+10 pkt</div></div>
+          </div>
+          <div class="comp-impact">
+            <div class="comp-stat"><div class="comp-stat-v green">97%</div><div class="comp-stat-l">najwyższy możliwy wynik</div></div>
+            <div class="comp-stat"><div class="comp-stat-v green">TOP 5%</div><div class="comp-stat-l">wśród ogłoszeń w kategorii</div></div>
+          </div>
+          <div class="note-box green" style="margin-top:14px;font-size:11.5px">
+            Ogłoszenie wyświetlane wyżej w wynikach. Kandydaci oceniają jako wiarygodne.
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<hr class="divider">
+
+
+<!-- ══════════════════ 3 · TRUST SIGNALS ══════════════════ -->
+<div class="sec">
+  <div class="sec-hd">
+    <div class="sec-num">3 · Sygnały zaufania — widok kandydata</div>
+    <div class="sec-h2">Co sprawia, że kandydat klika i aplikuje</div>
+    <div class="sec-d">Trzy karty — różne poziomy sygnałów zaufania: brak sygnałów, częściowe, pełne. Widoczne bezpośrednio na karcie listy, nie dopiero w szczegółach.</div>
+  </div>
+
+  <div class="grid3">
+
+    <!-- no signals -->
+    <div>
+      <div class="tier-label" style="margin-bottom:10px"><span class="tier-dot bare"></span>Brak sygnałów</div>
+      <div class="ts-card">
+        <div class="ts-body">
+          <div class="ts-logo-row">
+            <div class="ts-logo b3" style="background:var(--surf3);color:var(--t4)">MB</div>
+            <div>
+              <div class="ts-title" style="color:var(--t2)">Pomocnik na budowę</div>
+              <div class="ts-co" style="color:var(--t4)">M. Budownictwo</div>
+            </div>
+          </div>
+          <div style="height:80px;display:flex;align-items:center;justify-content:center">
+            <div style="font-size:12px;color:var(--t4);text-align:center;line-height:1.6">Brak informacji o pracodawcy,<br>brak kwoty, brak opisu.</div>
+          </div>
+          <button class="ts-apply" style="background:var(--surf2);color:var(--t3);border:1px solid var(--brd)">Zobacz →</button>
+        </div>
+      </div>
+      <div class="note-box" style="font-size:11.5px;margin-top:10px">
+        Brak jakichkolwiek sygnałów. Kandydaci omijają takie oferty — ryzyko marnowania czasu.
+      </div>
+    </div>
+
+    <!-- some signals -->
+    <div>
+      <div class="tier-label" style="margin-bottom:10px"><span class="tier-dot std"></span>Częściowe sygnały</div>
+      <div class="ts-card">
+        <div class="ts-body">
+          <div class="ts-logo-row">
+            <div class="ts-logo b2">TI</div>
+            <div>
+              <div class="ts-title">Hydraulik — pompy ciepła</div>
+              <div class="ts-co">Termofix Instalacje</div>
+            </div>
+          </div>
+          <div class="ts-signals">
+            <div class="ts-sig fresh">
+              <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+              Dodano 3 godziny temu
+            </div>
+            <div class="ts-sig resp">
+              <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+              Pracodawca odpowiada zwykle w 48h
+            </div>
+          </div>
+          <div class="ts-q-row"><span class="ts-q-lbl">Jakość ogłoszenia</span><span class="ts-q-val mid">Średnia</span></div>
+          <div class="ts-q-bar"><div class="ts-q-fill mid" style="width:62%"></div></div>
+          <button class="ts-apply">Sprawdź ofertę →</button>
+        </div>
+      </div>
+      <div class="note-box" style="font-size:11.5px;margin-top:10px">
+        Podstawowe sygnały: czas odpowiedzi, świeżość. Kandydat widzi, że oferta jest aktywna.
+      </div>
+    </div>
+
+    <!-- full signals -->
+    <div>
+      <div class="tier-label" style="margin-bottom:10px"><span class="tier-dot feat"></span>Pełne sygnały zaufania</div>
+      <div class="ts-card">
+        <div class="ts-body">
+          <div class="ts-logo-row">
+            <div class="ts-logo b1">VI</div>
+            <div>
+              <div class="ts-title">Elektryk B2B — instalacje SEP</div>
+              <div class="ts-co">Volt Industrial <span style="color:var(--acc2);font-size:11px">✓ zweryfik.</span></div>
+            </div>
+          </div>
+          <div class="ts-signals">
+            <div class="ts-sig fresh">
+              <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+              Dodano 14 minut temu
+            </div>
+            <div class="ts-sig resp">
+              <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+              Odpowiada zwykle w ciągu 4h
+            </div>
+            <div class="ts-sig comp">
+              <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+              <span>12 kandydatów</span> złożyło aplikację
+            </div>
+            <div class="ts-sig view">
+              <svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+              247 wyświetleń w ciągu 24h
+            </div>
+          </div>
+          <div class="ts-q-row"><span class="ts-q-lbl">Jakość ogłoszenia</span><span class="ts-q-val high">Wysoka</span></div>
+          <div class="ts-q-bar"><div class="ts-q-fill high" style="width:94%"></div></div>
+          <button class="ts-apply">Aplikuj teraz →</button>
+        </div>
+      </div>
+      <div class="note-box green" style="font-size:11.5px;margin-top:10px">
+        Pełne sygnały: weryfikacja, czas odpowiedzi &lt;4h, widoczność oferty, konkurencja wśród kandydatów — buduje poczucie pilności.
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<hr class="divider">
+
+
+<!-- ══════════════════ 4 · MAP POPUPS ══════════════════ -->
+<div class="sec">
+  <div class="sec-hd">
+    <div class="sec-num">4 · Popup na mapie</div>
+    <div class="sec-h2">Trzy warianty informacji widocznych po kliknięciu pina</div>
+    <div class="sec-d">Popup jest pierwszym kontaktem kandydata z ofertą na mapie. Każdy wariant testuje inny priorytet informacji: niski (bez danych), standardowy, rozszerzony z jakością.</div>
+  </div>
+
+  <div class="popups-grid">
+
+    <!-- popup 1: basic -->
+    <div class="pop v-blue">
+      <div class="pop-in">
+        <div class="pop-top">
+          <div class="pop-logo b1">VI</div>
+          <div style="flex:1;min-width:0">
+            <div class="pop-title">Elektryk B2B — instalacje SEP</div>
+            <div class="pop-co">Volt Industrial
+              <svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>
+            </div>
+          </div>
+        </div>
+        <div class="pop-badges">
+          <span class="pbg ver">✓ Zweryfikowany</span>
+          <span class="pbg cat">B2B</span>
+          <span class="pbg urg">● PILNE</span>
+        </div>
+        <div class="pop-mid">
+          <div class="pop-loc">
+            <strong>📍 Warszawa, Mokotów</strong>
+            2,4 km od Ciebie
+          </div>
+          <div class="pop-sal">
+            <div class="pop-sal-v blue">120–180 zł/h</div>
+            <div class="pop-sal-l">B2B netto</div>
+          </div>
+        </div>
+        <div class="pop-btns">
+          <button class="pop-btn-main">Zobacz ofertę →</button>
+          <button class="pop-btn-save"><svg viewBox="0 0 24 24"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg></button>
+        </div>
+      </div>
+    </div>
+
+    <!-- popup 2: with quality bar -->
+    <div class="pop v-green">
+      <div class="pop-in">
+        <div class="pop-top">
+          <div class="pop-logo b2">TI</div>
+          <div style="flex:1;min-width:0">
+            <div class="pop-title">Hydraulik — pompy ciepła</div>
+            <div class="pop-co">Termofix Instalacje
+              <svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>
+            </div>
+          </div>
+        </div>
+        <div class="pop-badges">
+          <span class="pbg ver">✓ Zweryfikowany</span>
+          <span class="pbg cat">Etat UoP</span>
+          <span class="pbg spots">2 miejsca</span>
+        </div>
+        <div class="pop-mid">
+          <div class="pop-loc">
+            <strong>📍 Kraków, Podgórze</strong>
+            Odpowiada w 4h · Dodano 2h temu
+          </div>
+          <div class="pop-sal">
+            <div class="pop-sal-v green">6 500 zł</div>
+            <div class="pop-sal-l">brutto / mies.</div>
+          </div>
+        </div>
+        <div class="pop-qual">
+          <div class="pop-qual-row">
+            <span class="pop-qual-l">Jakość ogłoszenia</span>
+            <span class="pop-qual-v">Wysoka · 94%</span>
+          </div>
+          <div class="pop-qual-bar"><div class="pop-qual-fill" style="width:94%"></div></div>
+        </div>
+        <div class="pop-btns">
+          <button class="pop-btn-main" style="background:var(--green)">Zobacz ofertę →</button>
+          <button class="pop-btn-save"><svg viewBox="0 0 24 24"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg></button>
+        </div>
+      </div>
+    </div>
+
+    <!-- popup 3: no salary fallback -->
+    <div class="pop" style="border-color:var(--brd)">
+      <div class="pop-in">
+        <div class="pop-top">
+          <div class="pop-logo" style="width:44px;height:44px;border-radius:11px;background:var(--surf2);color:var(--t3);display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:800">MB</div>
+          <div style="flex:1;min-width:0">
+            <div class="pop-title" style="color:var(--t2)">Pomocnik na budowę</div>
+            <div class="pop-co" style="color:var(--t4)">M. Budownictwo</div>
+          </div>
+        </div>
+        <div class="pop-badges">
+          <span class="pbg cat">Dorywczo</span>
+        </div>
+        <div class="pop-mid">
+          <div class="pop-loc">
+            <strong>📍 Wrocław</strong>
+            Brak dodatkowych info
+          </div>
+          <div class="pop-sal">
+            <div class="pop-sal-v soft">Do uzgodnienia</div>
+            <div class="pop-sal-l">wynagrodzenie</div>
+          </div>
+        </div>
+        <div class="pop-btns">
+          <button class="pop-btn-main" style="background:var(--surf3);color:var(--t2);border:1px solid var(--brd)">Sprawdź →</button>
+          <button class="pop-btn-save"><svg viewBox="0 0 24 24"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg></button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+  <div class="note-box blue" style="max-width:900px;margin-top:16px">
+    <b>Kluczowy fallback:</b> Popup zawsze pokazuje <i>coś</i> w polu wynagrodzenia — widełki z pola → wyłuskane z opisu → „Do uzgodnienia". Pasek jakości w wersji #2 pomaga kandydatowi ocenić ofertę bez klikania w szczegóły.
+  </div>
+</div>
+
+<hr class="divider">
+
+
+<!-- ══════════════════ 5 · DETAIL HEADER ══════════════════ -->
+<div class="sec">
+  <div class="sec-hd">
+    <div class="sec-num">5 · Nagłówek strony szczegółów oferty</div>
+    <div class="sec-h2">Pierwsze wrażenie na stronie oferty — kompaktowe i kompletne</div>
+    <div class="sec-d">Cover bar z kolorem marki, logo z obramowaniem, badge weryfikacji, pełna siatka faktów (typ, wymiar, tryb, zmiany), czytelny box wynagrodzenia, "trust pills" i wyraźny CTA.</div>
+  </div>
+
+  <div class="compare-cols">
+    <div>
+      <div class="vc-label"><span class="vc-badge prop">Propozycja</span></div>
+      <div class="dt">
+        <div class="dt-bar">
+          <div class="dt-back"><svg viewBox="0 0 24 24"><path d="M19 12H5M12 5l-7 7 7 7"/></svg></div>
+          <div class="dt-bar-t">Elektryk B2B — instalacje SEP D1/E1</div>
+          <div class="dt-actions">
+            <div class="dt-ic"><svg viewBox="0 0 24 24"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg></div>
+            <div class="dt-ic"><svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.59 13.51 6.83 3.98M15.41 6.51 8.59 10.49"/></svg></div>
+          </div>
+        </div>
+        <div class="dt-cover">
+          <div class="dt-cover-text">Volt Industrial</div>
+        </div>
+        <div class="dt-body">
+          <div class="dt-logo-wrap">
+            <div class="dt-logo">VI</div>
+            <div>
+              <div class="dt-vbadge"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg> Zweryfikowany pracodawca · NIP · KRS</div>
+            </div>
+          </div>
+          <div class="dt-h1">Elektryk B2B — instalacje SEP D1/E1</div>
+          <div class="dt-co">Volt Industrial Sp. z o.o. · Warszawa</div>
+          <div class="dt-facts">
+            <div class="dt-fact"><div class="dt-fact-l">Typ umowy</div><div class="dt-fact-v">B2B (faktura VAT)</div></div>
+            <div class="dt-fact"><div class="dt-fact-l">Wymiar</div><div class="dt-fact-v">Pełny etat</div></div>
+            <div class="dt-fact"><div class="dt-fact-l">Tryb pracy</div><div class="dt-fact-v">Stacjonarnie</div></div>
+            <div class="dt-fact"><div class="dt-fact-l">Wolne miejsca</div><div class="dt-fact-v" style="color:var(--green)">3 miejsca</div></div>
+          </div>
+          <div class="dt-sal">
+            <div>
+              <div class="dt-sal-l">Wynagrodzenie</div>
+              <div class="dt-sal-v">120–180 zł/h</div>
+              <div class="dt-sal-sub">B2B netto · faktura VAT</div>
+            </div>
+            <div class="dt-sal-ic">💰</div>
+          </div>
+          <div class="dt-trust">
+            <span class="dt-trust-pill green"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg> Dodano 14 min temu</span>
+            <span class="dt-trust-pill blue"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg> Odpowiada w 4h</span>
+            <span class="dt-trust-pill"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg> 12 kandydatów</span>
+          </div>
+          <div class="dt-cta-row">
+            <div class="dt-save"><svg viewBox="0 0 24 24"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg></div>
+            <button class="dt-apply">Aplikuj na to stanowisko →</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div style="margin-bottom:24px">
+        <div style="font-size:13px;font-weight:700;color:var(--t2);margin-bottom:12px">Co się zmieniło:</div>
+        <ul class="fixes-list">
+          <li>Cover bar z kolorem marki pracodawcy (lub akcentem MapJob gdy brak brandu)</li>
+          <li>Logo "przebija" przez cover — efekt nakładki jak na profilach LinkedIn</li>
+          <li>Badge weryfikacji bezpośrednio pod logo (widoczny od razu)</li>
+          <li>Siatka faktów 2×2 — typ, wymiar, tryb, miejsca — w jednym wierszu zamiast chipów</li>
+          <li>Box wynagrodzenia zawsze widoczny — z kwotą lub "Do uzgodnienia" (nigdy pusty)</li>
+          <li>Trust pills: świeżość, czas odpowiedzi, liczba kandydatów</li>
+          <li>CTA: duży "Aplikuj" + osobny przycisk Zapisz — wyraźna hierarchia akcji</li>
+        </ul>
+      </div>
+      <div style="font-size:13px;font-weight:700;color:var(--t2);margin-bottom:12px">Co było problemem:</div>
+      <ul class="issues-list">
+        <li>Inicjały zamiast loga gdy firma ma zdjęcie profilowe</li>
+        <li>Brak box wynagrodzenia gdy widełki były puste (mimo kwoty w opisie)</li>
+        <li>Brak wskazania weryfikacji w nagłówku oferty</li>
+        <li>Brak liczby wolnych miejsc w nagłówku</li>
+        <li>Brak informacji o czasie odpowiedzi i świeżości</li>
+        <li>Dwa przyciski o podobnym rozmiarze (Aplikuj i Zapisz) — trudna decyzja</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<hr class="divider">
+
+
+<!-- ══════════════════ 6 · VISUAL COMPARISON ══════════════════ -->
+<div class="sec">
+  <div class="sec-hd">
+    <div class="sec-num">6 · Porównanie wizualne — kierunek kart</div>
+    <div class="sec-h2">Obecny styl (gradient/glow) vs. propozycja (flat/czytelny dark)</div>
+    <div class="sec-d">Ta sama karta, dwa podejścia wizualne. Kwestia wyboru strategicznego — nie tylko estetyki.</div>
+  </div>
+
+  <div class="compare-cols">
+
+    <!-- current: dark gradient glow -->
+    <div>
+      <div class="vc-label"><span class="vc-badge current">Obecny styl</span></div>
+      <div class="dc">
+        <div class="dc row">
+          <div class="dc av">P</div>
+          <div>
+            <div class="dc ttl">Elektryk / Pomocnik budowlany</div>
+            <div class="dc co">Pramer Sp. z o.o. · Wrocław</div>
+          </div>
+        </div>
+        <div class="dc chips">
+          <span class="dc chip">Pełny etat</span>
+          <span class="dc chip">Od zaraz</span>
+          <span class="dc chip">Wrocław</span>
+        </div>
+        <div class="dc pay">6 500 – 8 200 zł</div>
+        <button class="dc btn">⚡ Aplikuj szybko</button>
+      </div>
+      <ul class="issues-list" style="margin-top:12px">
+        <li>Gradientowy tytuł — wizualnie atrakcyjny, ale obniża czytelność</li>
+        <li>Glow na avatarze i kwocie — "growy" klimat zamiast profesjonalnego</li>
+        <li>Błyszczący pasek u góry karty — efekt plastiku, nie szkła</li>
+        <li>Emoji ⚡ w przycisku CTA — informal tone</li>
+        <li>Wielokolorowe gradienty — nie budują spójnej hierarchii</li>
+        <li>Zbyt wysoki kontrast akcji — oko nie wie od czego zacząć</li>
+      </ul>
+    </div>
+
+    <!-- proposed: clean dark flat -->
+    <div>
+      <div class="vc-label"><span class="vc-badge prop">Propozycja — flat dark</span></div>
+      <div class="lc">
+        <div class="lc-body">
+          <div class="lc row">
+            <div class="lc av">P</div>
+            <div style="flex:1;min-width:0">
+              <div class="lc ttl">Elektryk / Pomocnik budowlany</div>
+              <div class="lc co">Pramer Sp. z o.o. <span class="lc co-v">✓ zweryfik.</span></div>
+            </div>
+          </div>
+          <div class="lc chips">
+            <span class="lc chip">Pełny etat</span>
+            <span class="lc chip">Od zaraz</span>
+            <span class="lc chip" style="background:var(--acc-s);color:var(--acc2);border-color:rgba(45,127,249,.22)">📍 Wrocław</span>
+          </div>
+          <div class="lc dist-row"><span>2,1 km od Ciebie</span><span>Dodano dziś</span></div>
+          <div class="lc pay">6 500 – 8 200 zł</div>
+          <div style="font-size:10.5px;color:var(--t3);margin-top:2px;margin-bottom:13px">brutto / mies. · UoP</div>
+          <button class="lc btn">Aplikuj →</button>
+        </div>
+      </div>
+      <ul class="fixes-list" style="margin-top:12px">
+        <li>Jeden kolor akcentu (#2D7FF9) — reszta neutralna szarość</li>
+        <li>Płaskie powierzchnie: cień tylko 1px border, bez glow</li>
+        <li>Wynagrodzenie w neutralnym kolorze tekstu — czytelne, nie "krzyczy"</li>
+        <li>Badge weryfikacji jako inline tekst — nie dekoracja, informacja</li>
+        <li>Odległość i data dodania — w jednej linii, mało miejsca, dużo wartości</li>
+        <li>CTA: prosty "Aplikuj →" — konwertuje lepiej niż flashy warianty</li>
+      </ul>
+    </div>
+
+  </div>
+
+  <div class="note-box blue" style="max-width:900px;margin-top:24px;font-size:13px">
+    <b>Rekomendacja:</b> Kierunek flat dark (prawa kolumna) — spójna z tym jak wyglądają Pracuj.pl, OLX Praca, LinkedIn w dark mode. Glow i gradienty budują klimat "gry", a nie "poważnej platformy pracy". Jeśli chcesz wyróżnić się wśród konkurencji, clean dark z jednym akcentem zadziała lepiej długoterminowo.<br><br>
+    <b>Krok po kroku bez ryzyka:</b> Najpierw zmień karty na liście (sekcja 1), potem popupy na mapie (sekcja 4), na końcu pełny widok oferty (sekcja 5). Każdy etap testowalny niezależnie.
+  </div>
+</div>
+
+</body>
+</html>
