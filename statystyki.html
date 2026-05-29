@@ -168,6 +168,7 @@ function renderDashboard(k){
     +   kpiCard('📊 Sesje (7 dni)', k.visits_real_7d, 'var(--purple)')
     + '</div>'
     + '<div class="summary" id="gen-sum">'+genSumHtml(k)+'</div>'
+    + '<div class="summary" id="countries">🌍 Skąd są odwiedzający: <span style="color:var(--text3)">ładowanie…</span></div>'
     + '<button class="more" id="ogl-toggle">📢 Zobacz statystyki ogłoszeń ▾</button>'
     + '<div id="ogl-wrap" style="display:none">'
     +   '<input class="fi" id="q" placeholder="🔎 filtruj po nazwie / tytule / mieście">'
@@ -187,6 +188,7 @@ function renderDashboard(k){
   $('more-btn').onclick=toggleMore;
   $('ogl-toggle').onclick=toggleOgl;
   loadAll();
+  loadCountries();
   if(!window._statTimer){ window._statTimer=setInterval(refreshKpis, 30000); }
 }
 
@@ -199,6 +201,25 @@ function genSumHtml(k){
     + '📊 Sesje (30 dni): <b style="color:var(--purple)">'+T(k.visits_real_30d)+'</b><br>'
     + '🤖 Wszystkie wejścia (z botami i adminem): 24h <b>'+T(k.visits_24h)+'</b> · 7 dni <b>'+T(k.visits_7d)+'</b> · 30 dni <b>'+T(k.visits_30d)+'</b><br>'
     + '👁 Wyświetlenia ogłoszeń (30 dni): <b style="color:var(--blue)">'+T(k.views_30d)+'</b> · łącznie: <b>'+T(k.views_total)+'</b>';
+}
+var COUNTRY_NAMES={PL:'Polska',DE:'Niemcy',NL:'Holandia',BE:'Belgia',GB:'Wielka Brytania',IE:'Irlandia',FR:'Francja',CZ:'Czechy',SK:'Słowacja',NO:'Norwegia',SE:'Szwecja',DK:'Dania',AT:'Austria',CH:'Szwajcaria',IT:'Włochy',ES:'Hiszpania',UA:'Ukraina',US:'USA'};
+function flagEmoji(cc){ if(!cc||cc.length!==2||!/^[A-Za-z]{2}$/.test(cc)) return '🌐'; return String.fromCodePoint.apply(null, cc.toUpperCase().split('').map(function(c){return 127397+c.charCodeAt(0);})); }
+async function loadCountries(){
+  var el=$('countries'); if(!el) return;
+  try{
+    var r=await sb.rpc('admin_get_visitor_countries');
+    var rows=(r&&r.data)||[];
+    if(!rows.length){ el.innerHTML='🌍 <b>Skąd są odwiedzający</b><br><span style="color:var(--text3)">Brak danych o kraju (odwiedzający anonimowi lub bez zgody na analitykę).</span>'; return; }
+    var total=rows.reduce(function(s,x){return s+(x.sessions||0);},0);
+    var top=rows.slice(0,8);
+    var html=top.map(function(x){
+      var cc=(x.country||'').toUpperCase();
+      var name=COUNTRY_NAMES[cc]||cc;
+      var pct=total?Math.round((x.sessions||0)*100/total):0;
+      return flagEmoji(cc)+' '+esc(name)+': <b style="color:var(--blue)">'+(x.sessions||0)+'</b> <span style="color:var(--text3)">('+pct+'%)</span>';
+    }).join(' · ');
+    el.innerHTML='🌍 <b>Skąd są odwiedzający</b> <span style="color:var(--text3)">(wg sesji, bez adminów)</span><br>'+html;
+  }catch(e){ el.innerHTML='🌍 Skąd są odwiedzający: <span style="color:#F87171">błąd ładowania</span>'; }
 }
 function toggleOgl(){ var w=$('ogl-wrap'); var open=w.style.display==='none'; w.style.display=open?'':'none'; $('ogl-toggle').textContent = open ? '📢 Ukryj statystyki ogłoszeń ▴' : '📢 Zobacz statystyki ogłoszeń ▾'; }
 
