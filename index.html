@@ -3353,8 +3353,17 @@ body.light-mode .mj-theme-btn:hover{ background: var(--surf2) }
     window._jobCountry=code||'';
     document.querySelectorAll('#jobs-country-row .fchip').forEach(function(b){b.classList.remove('on');});
     if(btn)btn.classList.add('on');
-    if(typeof loadJobOffers==='function')loadJobOffers();
-    else if(typeof _applyJobFilters==='function')_applyJobFilters();
+    var _allJobs=window._jobsData||[];
+    var _filtered=(window._jobCountry&&typeof window._mjJobCountry==='function')
+      ?_allJobs.filter(function(o){return window._mjJobCountry(o.location_lat,o.location_lng,(o.location||'')+' '+(o.title||''))===window._jobCountry;})
+      :_allJobs;
+    if(typeof window._mjRenderJobsList==='function'){
+      window._mjRenderJobsList(_filtered);
+    } else if(typeof window.loadJobOffers==='function'){
+      window.loadJobOffers();
+    } else if(typeof _applyJobFilters==='function'){
+      _applyJobFilters();
+    }
   };
 
   window._jobMaxDist=0;
@@ -12608,6 +12617,8 @@ window.jaiAnalyze = async function(){
       };
     }
   } catch(_e){}
+
+  window._mjRenderJobsList=renderJobsList;
 
 })();
 </script>
