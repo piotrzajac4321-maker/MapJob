@@ -14124,21 +14124,13 @@ async function _actRenderExitAnalysis(){
   try{
     var since = new Date(Date.now()-30*86400*1000).toISOString();
     /* Top exit paths aggregated */
-    var r = await _sb.rpc('execute_sql', {sql: `
-      SELECT exit_path, exit_event,
-             pre_exit_event, pre2_exit_event,
-             COUNT(*) as exits
-      FROM v_exit_analysis
-      WHERE session_started_at >= '${since}'
-      GROUP BY exit_path, exit_event, pre_exit_event, pre2_exit_event
-      ORDER BY exits DESC
-      LIMIT 30
-    `}).catch(function(){ return {data:null,error:{message:'rpc unavailable'}}; });
+    var r = {data:null,error:{message:'skipped'}};
+    try{ r = await _sb.rpc('execute_sql', {sql: 'SELECT exit_path,exit_event,pre_exit_event,pre2_exit_event,COUNT(*) as exits FROM v_exit_analysis WHERE session_started_at >= \''+since+'\' GROUP BY exit_path,exit_event,pre_exit_event,pre2_exit_event ORDER BY exits DESC LIMIT 30'}); }catch(e2){}
     /* Fallback: direct query on user_sessions */
     var rows = [];
     if(!r.data || r.error){
       var sr = await _sb.from('user_sessions')
-        .select('last_path,last_event,events_count,duration_s')
+        .select('last_path,last_event,events_count')
         .gte('started_at', since)
         .not('last_path','is',null)
         .order('started_at',{ascending:false})
@@ -14360,8 +14352,22 @@ async function _actRenderTrafficSources(){
   var box = document.getElementById('act-traffic-sources'); if(!box) return;
   try{
     var since = new Date(Date.now()-30*86400*1000).toISOString();
-    var r = await _sb.from('user_sessions')
-      .select('referrer,utm_source,utm_medium,utm_campaign,events_count,duration_s')
+    /* Try to get referrer from visit events metadata */
+    var refMap = {};
+    try{
+      var evRef = await _sb.from('user_events')
+        .select('session_id,metadata')
+        .eq('event_type','visit')
+        .gte('created_at', since)
+        .limit(5000);
+      (evRef.data||[]).forEach(function(ev){
+        if(ev.session_id && ev.metadata && ev.metadata.referrer)
+          refMap[ev.session_id] = ev.metadata.referrer;
+      });
+    }catch(e2){}
+
+    var r = await _sb.from('user_sessions_admin')
+      .select('id,events_count,duration_s')
       .gte('started_at', since)
       .limit(5000);
     if(r.error) throw r.error;
@@ -14369,8 +14375,7 @@ async function _actRenderTrafficSources(){
 
     /* Classify each session into a source */
     function classify(s){
-      if(s.utm_source) return {source: s.utm_source.toLowerCase(), medium: s.utm_medium||'utm', campaign: s.utm_campaign||''};
-      var ref = (s.referrer||'').toLowerCase();
+      var ref = (refMap[s.id]||'').toLowerCase();
       if(!ref || ref.includes('mapjob.pl')) return {source:'direct',medium:'none',campaign:''};
       if(ref.includes('google')) return {source:'google',medium:'organic',campaign:''};
       if(ref.includes('facebook') || ref.includes('fb.com')) return {source:'facebook',medium:'social',campaign:''};
@@ -14379,7 +14384,7 @@ async function _actRenderTrafficSources(){
       if(ref.includes('t.co') || ref.includes('twitter')) return {source:'twitter',medium:'social',campaign:''};
       if(ref.includes('linkedin')) return {source:'linkedin',medium:'social',campaign:''};
       if(ref.includes('bing')) return {source:'bing',medium:'organic',campaign:''};
-      try{ var host = new URL(s.referrer).hostname.replace('www.',''); return {source:host,medium:'referral',campaign:''}; }catch(e){}
+      try{ var host = new URL(refMap[s.id]).hostname.replace('www.',''); return {source:host,medium:'referral',campaign:''}; }catch(e){}
       return {source:'other',medium:'referral',campaign:''};
     }
 
@@ -14673,7 +14678,7 @@ async function _actRenderDeviceBreakdown(){
     var devRows=r.data||[];
 
     /* Fallback: parse user_agent from sessions */
-    var sr=await _sb.from('user_sessions')
+    var sr=await _sb.from('user_sessions_admin')
       .select('id,user_agent,events_count,duration_s')
       .gte('started_at',since)
       .not('user_agent','is',null)
