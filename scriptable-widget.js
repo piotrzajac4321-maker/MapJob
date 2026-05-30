@@ -357,74 +357,89 @@ function fallback(msg, accent) {
 }
 
 // ─── Live-view (otwiera się po tapnięciu widżetu) ──────────────
+function sleep(s) {
+  return new Promise(r => Timer.schedule(s, false, r))
+}
+
+function buildLiveHTML(s, loading) {
+  const k      = s.kpi || {}
+  const phones = totalPhoneClicks(s.funnel)
+  const ago    = timeAgo(s.fetched_at)
+  const f      = v => fmt(v)
+  const dot    = '<span style="color:#3D5060"> · </span>'
+
+  return `<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#080D18;font-family:-apple-system,sans-serif;color:#F0F4FF;min-height:100vh}
+.hdr{background:linear-gradient(160deg,#0D1424,#060B14);padding:56px 20px 18px;border-bottom:1px solid rgba(255,255,255,.09)}
+.hdr h1{font-size:20px;font-weight:700;display:flex;align-items:center;gap:8px}
+.hdr .ago{font-size:12px;color:#3D5060;margin-top:5px}
+.hero{text-align:center;padding:28px 20px 22px;border-bottom:1px solid rgba(255,255,255,.09)}
+.hero .n{font-size:76px;font-weight:800;color:#22C55E;line-height:1;font-variant-numeric:tabular-nums}
+.hero .sub{font-size:13px;color:#3D5060;margin-top:5px}
+.rows{padding:4px 0}
+.row{display:flex;align-items:center;justify-content:space-between;padding:15px 20px;border-bottom:1px solid rgba(255,255,255,.06)}
+.row .lbl{font-size:15px;color:#94A3B8}
+.row .val{font-size:17px;font-weight:700}
+.blue{color:#60A5FA}.purple{color:#A78BFA}.gold{color:#F59E0B}.dim{color:#94A3B8}
+.footer{padding:22px 20px 48px}
+.btn{width:100%;padding:15px;background:linear-gradient(135deg,#1a2d4a,#0f1c30);border:1px solid rgba(96,165,250,.35);border-radius:14px;color:#60A5FA;font-size:17px;font-weight:600;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:opacity .15s}
+.btn:active{opacity:.6}
+body.loading .btn{opacity:.45;pointer-events:none}
+body.loading .ago::before{content:'⟳ '}
+</style>
+</head>
+<body class="${loading ? 'loading' : ''}">
+<div class="hdr">
+  <h1>📊 MapJob Stats</h1>
+  <div class="ago">${loading ? 'odświeżam…' : '◷ ' + ago}</div>
+</div>
+<div class="hero">
+  <div class="n">${k.online ?? '—'}</div>
+  <div class="sub">🟢 online teraz</div>
+</div>
+<div class="rows">
+  <div class="row"><span class="lbl">👤 Unikalni 24h · 7d</span><span class="val blue">${f(k.visitors_real_24h)}${dot}${f(k.visitors_real_7d)}</span></div>
+  <div class="row"><span class="lbl">📊 Sesje 24h · 7d</span><span class="val purple">${f(k.visits_real_24h)}${dot}${f(k.visits_real_7d)}</span></div>
+  <div class="row"><span class="lbl">👁 Wyświetlenia 30d</span><span class="val gold">${f(k.views_30d)}</span></div>
+  <div class="row"><span class="lbl">📞 Kliknięcia tel.</span><span class="val blue">${f(phones)}</span></div>
+  <div class="row"><span class="lbl">👤 Unikalni łącznie</span><span class="val dim">${f(k.visitors_total)}</span></div>
+  <div class="row"><span class="lbl">👁 Wyśw. łącznie</span><span class="val gold">${f(k.views_total)}</span></div>
+</div>
+<div class="footer">
+  <button class="btn" onclick="window._r=true;document.body.classList.add('loading');this.textContent='⟳  Odświeżam…'">🔄  Odśwież</button>
+</div>
+<script>window._r=false</script>
+</body></html>`
+}
+
 async function showLiveView(initialStats) {
-  const table = new UITable()
-  table.showSeparators = true
   let _s = initialStats
-  let next = 30
-  let busy = false
+  const wv = new WebView()
+  await wv.loadHTML(buildLiveHTML(_s, false))
 
-  function render() {
-    table.removeAllRows()
-    const k      = _s.kpi  || {}
-    const phones = totalPhoneClicks(_s.funnel)
-    const ago    = timeAgo(_s.fetched_at)
+  let closed = false
+  wv.present(true).then(() => { closed = true })
 
-    // Nagłówek
-    const hdr = new UITableRow()
-    hdr.height = 60
-    hdr.backgroundColor = new Color('#0D1424')
-    const hc = UITableCell.text(
-      '📊  MapJob Stats',
-      busy ? '⟳  odświeżam…' : `↻ za ${next}s  ·  ${ago}`
-    )
-    hc.leftAligned()
-    hdr.addCell(hc)
-    table.addRow(hdr)
-
-    // Wiersze danych
-    const rows = [
-      ['🟢  Online teraz',        String(k.online ?? '—')],
-      ['👤  Unikalni  24h · 7d',  fmt(k.visitors_real_24h) + '  ·  ' + fmt(k.visitors_real_7d)],
-      ['📊  Sesje  24h · 7d',     fmt(k.visits_real_24h)   + '  ·  ' + fmt(k.visits_real_7d)],
-      ['👁  Wyświetlenia 30d',    fmt(k.views_30d)],
-      ['📞  Kliknięcia tel.',      fmt(phones)],
-      ['👤  Unikalni łącznie',     fmt(k.visitors_total)],
-      ['👁  Wyśw. łącznie',        fmt(k.views_total)],
-    ]
-
-    for (const [label, value] of rows) {
-      const row = new UITableRow()
-      row.height = 54
-      row.addCell(UITableCell.text(label, value))
-      table.addRow(row)
-    }
-
-    table.reload()
-  }
-
-  render()
-
-  // Odliczanie + auto-odświeżanie co 30 s
-  Timer.schedule(1, true, async () => {
-    if (busy) return
-    next--
-    if (next <= 0) {
-      busy = true
-      next = 30
-      render()
+  while (!closed) {
+    await sleep(0.4)
+    if (closed) break
+    const requested = await wv.evaluateJavaScript('window._r')
+    if (requested) {
+      await wv.loadHTML(buildLiveHTML(_s, true))
       try {
         if (Keychain.contains(TOKEN_KEY)) {
           const d = await apiPost({ action: 'get_stats', token: Keychain.get(TOKEN_KEY) })
           if (d.ok && d.stats) _s = d.stats
         }
       } catch(e) {}
-      busy = false
+      await wv.loadHTML(buildLiveHTML(_s, false))
     }
-    render()
-  })
-
-  await table.present(true)
+  }
 }
 
 // ═══ MAIN ══════════════════════════════════════════════════════
