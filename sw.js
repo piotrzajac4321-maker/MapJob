@@ -5,7 +5,7 @@
 //   - Supabase / Stripe / OSM tiles / Nominatim: zawsze network (bez cache)
 //   - push + notificationclick: standardowe
 
-const VERSION = 'v2026-05-30-cat-filter-fix';
+const VERSION = 'v2026-05-30-remove-demo-data';
 const CACHE_STATIC = 'mapjob-static-' + VERSION;
 const CACHE_RUNTIME = 'mapjob-runtime-' + VERSION;
 
