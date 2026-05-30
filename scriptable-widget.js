@@ -356,19 +356,94 @@ function fallback(msg, accent) {
   return w
 }
 
+// ─── Live-view (otwiera się po tapnięciu widżetu) ──────────────
+async function showLiveView(initialStats) {
+  const table = new UITable()
+  table.showSeparators = true
+  let _s = initialStats
+  let next = 30
+  let busy = false
+
+  function render() {
+    table.removeAllRows()
+    const k      = _s.kpi  || {}
+    const phones = totalPhoneClicks(_s.funnel)
+    const ago    = timeAgo(_s.fetched_at)
+
+    // Nagłówek
+    const hdr = new UITableRow()
+    hdr.height = 60
+    hdr.backgroundColor = new Color('#0D1424')
+    const hc = UITableCell.text(
+      '📊  MapJob Stats',
+      busy ? '⟳  odświeżam…' : `↻ za ${next}s  ·  ${ago}`
+    )
+    hc.leftAligned()
+    hdr.addCell(hc)
+    table.addRow(hdr)
+
+    // Wiersze danych
+    const rows = [
+      ['🟢  Online teraz',        String(k.online ?? '—')],
+      ['👤  Unikalni  24h · 7d',  fmt(k.visitors_real_24h) + '  ·  ' + fmt(k.visitors_real_7d)],
+      ['📊  Sesje  24h · 7d',     fmt(k.visits_real_24h)   + '  ·  ' + fmt(k.visits_real_7d)],
+      ['👁  Wyświetlenia 30d',    fmt(k.views_30d)],
+      ['📞  Kliknięcia tel.',      fmt(phones)],
+      ['👤  Unikalni łącznie',     fmt(k.visitors_total)],
+      ['👁  Wyśw. łącznie',        fmt(k.views_total)],
+    ]
+
+    for (const [label, value] of rows) {
+      const row = new UITableRow()
+      row.height = 54
+      row.addCell(UITableCell.text(label, value))
+      table.addRow(row)
+    }
+
+    table.reload()
+  }
+
+  render()
+
+  // Odliczanie + auto-odświeżanie co 30 s
+  Timer.schedule(1, true, async () => {
+    if (busy) return
+    next--
+    if (next <= 0) {
+      busy = true
+      next = 30
+      render()
+      try {
+        if (Keychain.contains(TOKEN_KEY)) {
+          const d = await apiPost({ action: 'get_stats', token: Keychain.get(TOKEN_KEY) })
+          if (d.ok && d.stats) _s = d.stats
+        }
+      } catch(e) {}
+      busy = false
+    }
+    render()
+  })
+
+  await table.present(true)
+}
+
 // ═══ MAIN ══════════════════════════════════════════════════════
 let widget
 try {
   const stats = await getStats()
   if (!stats) {
     widget = fallback('Dotknij, aby się zalogować', C.blue)
+    if (!config.runsInWidget) {
+      const a = new Alert()
+      a.title   = 'MapJob Stats'
+      a.message = 'Nie udało się zalogować. Sprawdź PIN.'
+      a.addAction('OK')
+      await a.present()
+    }
   } else {
     widget = buildWidget(stats)
     if (!config.runsInWidget) {
-      const size = args.widgetParameter || 'small'
-      if      (size === 'medium') await widget.presentMedium()
-      else if (size === 'large')  await widget.presentLarge()
-      else                        await widget.presentSmall()
+      await showLiveView(stats)
     }
   }
 } catch(e) {
