@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<title>Makieta – Kategorie ogłoszeń</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+  :root{
+    --bg:#080D18;--surf:#131C2D;--surf2:#1A2540;--border:#1E2D47;--border3:#243352;
+    --blue:#2563EB;--blue2:#60A5FA;--green:#22C55E;--text:#F0F4FF;--text2:#9DB4CC;--text3:#566D8A;
+    --ff:'Plus Jakarta Sans',system-ui,sans-serif;--red:#EF4444;
+  }
+  body{background:var(--bg);color:var(--text);font-family:var(--ff);min-height:100dvh;max-width:430px;margin:0 auto;position:relative}
+
+  /* Top nav bar */
+  .topbar{
+    display:flex;align-items:center;gap:10px;
+    padding:14px 16px;
+    background:var(--surf);border-bottom:1px solid var(--border3);
+    position:sticky;top:0;z-index:10;
+  }
+  .topbar-title{flex:1;font-size:17px;font-weight:800}
+
+  /* Search bar */
+  .search-bar{
+    margin:14px 16px 0;
+    display:flex;align-items:center;gap:10px;
+    background:var(--surf);border:1px solid var(--border3);border-radius:14px;
+    padding:11px 14px;
+    font-size:14px;color:var(--text3);
+  }
+  .search-bar svg{flex-shrink:0;opacity:.5}
+
+  /* Sort / filter chips */
+  .filter-row{
+    display:flex;align-items:center;gap:8px;
+    padding:12px 16px;
+    overflow-x:auto;scrollbar-width:none;
+  }
+  .filter-row::-webkit-scrollbar{display:none}
+  .fchip{
+    flex-shrink:0;padding:6px 14px;border-radius:20px;
+    background:var(--surf);border:1px solid var(--border3);
+    font-size:12px;font-weight:700;color:var(--text2);cursor:pointer;
+    white-space:nowrap;
+  }
+  .fchip.active{background:var(--blue);border-color:var(--blue);color:#fff}
+
+  /* All-offers banner */
+  .all-banner{
+    margin:0 16px 12px;
+    display:flex;align-items:center;gap:12px;
+    background:linear-gradient(135deg,rgba(37,99,235,.2),rgba(37,99,235,.08));
+    border:1px solid rgba(37,99,235,.35);
+    border-radius:16px;padding:14px 16px;cursor:pointer;
+  }
+  .all-banner-icon{
+    width:42px;height:42px;border-radius:12px;
+    background:rgba(37,99,235,.2);border:1px solid rgba(37,99,235,.4);
+    display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;
+  }
+  .all-banner-text{flex:1}
+  .all-banner-label{font-size:14px;font-weight:800;color:var(--text)}
+  .all-banner-count{font-size:12px;color:var(--blue2);margin-top:2px;font-weight:600}
+  .all-banner-arrow{font-size:18px;color:var(--blue2)}
+
+  /* Section label */
+  .section-label{
+    padding:0 16px 10px;
+    font-size:11px;font-weight:800;color:var(--text3);
+    text-transform:uppercase;letter-spacing:1px;
+  }
+
+  /* Category row */
+  .cat-row{
+    display:flex;align-items:center;gap:12px;
+    padding:13px 16px;
+    border-bottom:1px solid var(--border3);
+    cursor:pointer;
+    transition:background .12s;
+  }
+  .cat-row:active{background:var(--surf2)}
+  .cat-icon{
+    width:42px;height:42px;border-radius:12px;
+    display:flex;align-items:center;justify-content:center;
+    font-size:20px;flex-shrink:0;
+  }
+  .cat-info{flex:1;min-width:0}
+  .cat-name{font-size:14px;font-weight:700;color:var(--text)}
+  .cat-count{font-size:12px;color:var(--text3);margin-top:1px;font-weight:500}
+  .cat-count strong{color:var(--text2)}
+  .cat-arrow{font-size:14px;color:var(--text3);flex-shrink:0}
+  .cat-bar-wrap{
+    margin-top:5px;height:3px;background:var(--border3);border-radius:2px;overflow:hidden;
+  }
+  .cat-bar{height:3px;border-radius:2px}
+
+  /* Bottom nav */
+  .bottom-nav{
+    position:fixed;bottom:0;left:50%;transform:translateX(-50%);
+    width:100%;max-width:430px;
+    display:flex;background:var(--surf);border-top:1px solid var(--border3);
+    padding-bottom:env(safe-area-inset-bottom,0);
+  }
+  .nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:10px 4px;font-size:10px;font-weight:700;color:var(--text3);cursor:pointer;border:none;background:none;font-family:var(--ff)}
+  .nav-btn.active{color:var(--blue2)}
+  .nav-btn svg{opacity:.6}
+  .nav-btn.active svg{opacity:1}
+
+  .content{padding-bottom:80px}
+</style>
+</head>
+<body>
+
+<!-- Top bar -->
+<div class="topbar">
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--text2)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+  <div class="topbar-title">Praca</div>
+  <div style="width:32px;height:32px;border-radius:10px;background:var(--surf2);border:1px solid var(--border3);display:flex;align-items:center;justify-content:center;cursor:pointer">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--text2)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
+  </div>
+</div>
+
+<div class="content">
+
+  <!-- Search -->
+  <div class="search-bar">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+    Szukaj stanowiska lub firmy…
+  </div>
+
+  <!-- Filter chips -->
+  <div class="filter-row">
+    <div class="fchip active">Wszystkie</div>
+    <div class="fchip">Zdalnie</div>
+    <div class="fchip">Pilne</div>
+    <div class="fchip">Etat / UoP</div>
+    <div class="fchip">B2B</div>
+  </div>
+
+  <!-- All offers banner -->
+  <div class="all-banner">
+    <div class="all-banner-icon">📋</div>
+    <div class="all-banner-text">
+      <div class="all-banner-label">Wszystkie ogłoszenia</div>
+      <div class="all-banner-count">119 aktywnych ofert pracy</div>
+    </div>
+    <div class="all-banner-arrow">→</div>
+  </div>
+
+  <!-- Section label -->
+  <div class="section-label">Wybierz kategorię</div>
+
+  <!-- Category rows ordered by count descending -->
+
+  <div class="cat-row">
+    <div class="cat-icon" style="background:rgba(100,116,139,.15);border:1px solid rgba(100,116,139,.3)">🏭</div>
+    <div class="cat-info">
+      <div class="cat-name">Produkcja</div>
+      <div class="cat-count"><strong>42</strong> ogłoszenia</div>
+      <div class="cat-bar-wrap"><div class="cat-bar" style="width:100%;background:#64748B"></div></div>
+    </div>
+    <div class="cat-arrow">›</div>
+  </div>
+
+  <div class="cat-row">
+    <div class="cat-icon" style="background:rgba(59,130,246,.15);border:1px solid rgba(59,130,246,.3)">🚚</div>
+    <div class="cat-info">
+      <div class="cat-name">Kierowca</div>
+      <div class="cat-count"><strong>18</strong> ogłoszeń</div>
+      <div class="cat-bar-wrap"><div class="cat-bar" style="width:43%;background:#3B82F6"></div></div>
+    </div>
+    <div class="cat-arrow">›</div>
+  </div>
+
+  <div class="cat-row">
+    <div class="cat-icon" style="background:rgba(245,158,11,.15);border:1px solid rgba(245,158,11,.3)">⚡</div>
+    <div class="cat-info">
+      <div class="cat-name">Elektryk</div>
+      <div class="cat-count"><strong>12</strong> ogłoszeń</div>
+      <div class="cat-bar-wrap"><div class="cat-bar" style="width:29%;background:#F59E0B"></div></div>
+    </div>
+    <div class="cat-arrow">›</div>
+  </div>
+
+  <div class="cat-row">
+    <div class="cat-icon" style="background:rgba(239,68,68,.15);border:1px solid rgba(239,68,68,.3)">🔥</div>
+    <div class="cat-info">
+      <div class="cat-name">Spawacz</div>
+      <div class="cat-count"><strong>9</strong> ogłoszeń</div>
+      <div class="cat-bar-wrap"><div class="cat-bar" style="width:21%;background:#EF4444"></div></div>
+    </div>
+    <div class="cat-arrow">›</div>
+  </div>
+
+  <div class="cat-row">
+    <div class="cat-icon" style="background:rgba(249,115,22,.15);border:1px solid rgba(249,115,22,.3)">🏗</div>
+    <div class="cat-info">
+      <div class="cat-name">Budowlanka</div>
+      <div class="cat-count"><strong>8</strong> ogłoszeń</div>
+      <div class="cat-bar-wrap"><div class="cat-bar" style="width:19%;background:#F97316"></div></div>
+    </div>
+    <div class="cat-arrow">›</div>
+  </div>
+
+  <div class="cat-row">
+    <div class="cat-icon" style="background:rgba(249,115,22,.15);border:1px solid rgba(249,115,22,.3)">🍳</div>
+    <div class="cat-info">
+      <div class="cat-name">Gastronomia</div>
+      <div class="cat-count"><strong>7</strong> ogłoszeń</div>
+      <div class="cat-bar-wrap"><div class="cat-bar" style="width:17%;background:#F97316"></div></div>
+    </div>
+    <div class="cat-arrow">›</div>
+  </div>
+
+  <div class="cat-row">
+    <div class="cat-icon" style="background:rgba(34,197,94,.15);border:1px solid rgba(34,197,94,.3)">💻</div>
+    <div class="cat-info">
+      <div class="cat-name">IT / Dev</div>
+      <div class="cat-count"><strong>6</strong> ogłoszeń</div>
+      <div class="cat-bar-wrap"><div class="cat-bar" style="width:14%;background:#22C55E"></div></div>
+    </div>
+    <div class="cat-arrow">›</div>
+  </div>
+
+  <div class="cat-row">
+    <div class="cat-icon" style="background:rgba(59,130,246,.15);border:1px solid rgba(59,130,246,.3)">🔧</div>
+    <div class="cat-info">
+      <div class="cat-name">Hydraulik</div>
+      <div class="cat-count"><strong>5</strong> ogłoszeń</div>
+      <div class="cat-bar-wrap"><div class="cat-bar" style="width:12%;background:#3B82F6"></div></div>
+    </div>
+    <div class="cat-arrow">›</div>
+  </div>
+
+  <div class="cat-row">
+    <div class="cat-icon" style="background:rgba(236,72,153,.15);border:1px solid rgba(236,72,153,.3)">🧹</div>
+    <div class="cat-info">
+      <div class="cat-name">Sprzątanie</div>
+      <div class="cat-count"><strong>5</strong> ogłoszeń</div>
+      <div class="cat-bar-wrap"><div class="cat-bar" style="width:12%;background:#EC4899"></div></div>
+    </div>
+    <div class="cat-arrow">›</div>
+  </div>
+
+  <div class="cat-row">
+    <div class="cat-icon" style="background:rgba(139,92,246,.15);border:1px solid rgba(139,92,246,.3)">🖌</div>
+    <div class="cat-info">
+      <div class="cat-name">Malarz</div>
+      <div class="cat-count"><strong>4</strong> ogłoszenia</div>
+      <div class="cat-bar-wrap"><div class="cat-bar" style="width:10%;background:#8B5CF6"></div></div>
+    </div>
+    <div class="cat-arrow">›</div>
+  </div>
+
+  <div class="cat-row">
+    <div class="cat-icon" style="background:rgba(6,182,212,.15);border:1px solid rgba(6,182,212,.3)">🌬</div>
+    <div class="cat-info">
+      <div class="cat-name">HVAC / Klimatyzacja</div>
+      <div class="cat-count"><strong>3</strong> ogłoszenia</div>
+      <div class="cat-bar-wrap"><div class="cat-bar" style="width:7%;background:#06B6D4"></div></div>
+    </div>
+    <div class="cat-arrow">›</div>
+  </div>
+
+  <div class="cat-row" style="border-bottom:none">
+    <div class="cat-icon" style="background:rgba(100,116,139,.15);border:1px solid rgba(100,116,139,.3)">🔨</div>
+    <div class="cat-info">
+      <div class="cat-name">Inne</div>
+      <div class="cat-count"><strong>2</strong> ogłoszenia</div>
+      <div class="cat-bar-wrap"><div class="cat-bar" style="width:5%;background:#64748B"></div></div>
+    </div>
+    <div class="cat-arrow">›</div>
+  </div>
+
+</div>
+
+<!-- Bottom nav -->
+<div class="bottom-nav">
+  <button class="nav-btn">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+    Start
+  </button>
+  <button class="nav-btn">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+    Mapa
+  </button>
+  <button class="nav-btn active">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+    Praca
+  </button>
+  <button class="nav-btn">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+    Profil
+  </button>
+</div>
+
+</body>
+</html>
