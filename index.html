@@ -3201,6 +3201,21 @@ body.light-mode .mj-theme-btn:hover{ background: var(--surf2) }
 
     <div id="jobs-cat-bar" style="padding:0 12px 8px;display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;white-space:nowrap">
       <button class="fchip on" id="jcat-all" data-cat="" onclick="filterJobsCat(null,this)">Wszystkie</button>
+      <button class="fchip" data-cat="industry" onclick="filterJobsCat('industry',this)">Produkcja</button>
+      <button class="fchip" data-cat="driver" onclick="filterJobsCat('driver',this)">Kierowca</button>
+      <button class="fchip" data-cat="electric" onclick="filterJobsCat('electric',this)">Elektryk</button>
+      <button class="fchip" data-cat="welder" onclick="filterJobsCat('welder',this)">Spawacz</button>
+      <button class="fchip" data-cat="construction" onclick="filterJobsCat('construction',this)">Budowlanka</button>
+      <button class="fchip" data-cat="cook" onclick="filterJobsCat('cook',this)">Gastronomia</button>
+      <button class="fchip" data-cat="it" onclick="filterJobsCat('it',this)">IT/Dev</button>
+      <button class="fchip" data-cat="plumber" onclick="filterJobsCat('plumber',this)">Hydraulik</button>
+      <button class="fchip" data-cat="clean" onclick="filterJobsCat('clean',this)">Sprzątanie</button>
+      <button class="fchip" data-cat="wykonczenia" onclick="filterJobsCat('wykonczenia',this)">Wykończenia</button>
+      <button class="fchip" data-cat="painter" onclick="filterJobsCat('painter',this)">Malarz</button>
+      <button class="fchip" data-cat="hvac" onclick="filterJobsCat('hvac',this)">HVAC</button>
+      <button class="fchip" data-cat="logistics" onclick="filterJobsCat('logistics',this)">Logistyka</button>
+      <button class="fchip" data-cat="security" onclick="filterJobsCat('security',this)">Ochrona</button>
+      <button class="fchip" data-cat="other" onclick="filterJobsCat('other',this)">Inne</button>
     </div>
 
     <div style="padding:0 12px 8px;display:flex;justify-content:flex-end">
@@ -12864,8 +12879,7 @@ finally{_edgeLoadPromise=null;}})();return _edgeLoadPromise;}
 var _jobSearchQuery='';var _jobModeFilter=null;var _jobWorkFilter=null;var _jobUrgentOnly=false;var _jobSortMode='newest';var _jobMinSalary=0;function filterJobsSearch(q){_jobSearchQuery=(q||'').toLowerCase().trim();_applyJobFilters();}
 var _jobCatCounts={};var _jobCatLabels={industry:'Produkcja',driver:'Kierowca',electric:'Elektryk',welder:'Spawacz',construction:'Budowlanka',gastro:'Gastronomia',cook:'Gastronomia',it:'IT/Dev',plumber:'Hydraulik',clean:'Sprzątanie',wykonczenia:'Wykończenia',painter:'Malarz',hvac:'HVAC',carpenter:'Stolarz',accountant:'Finanse',logistics:'Logistyka',security:'Ochrona',nurse:'Medycyna',hair:'Fryzjer',tailor:'Krawiec',beauty:'Uroda',florist:'Ogrodnik',teacher:'Edukacja',reception:'Recepcja',garden:'Ogród',other:'Inne'};
 function filterJobsCat(cat,btn){_jobsFilter=cat||null;document.querySelectorAll('#jobs-cat-bar .fchip').forEach(function(b){b.classList.remove('on');});if(btn)btn.classList.add('on');document.querySelectorAll('#jobs-filters-row .fchip').forEach(function(b){b.classList.remove('on');});var fr=document.querySelector('#jobs-filters-row [data-cat="'+(cat||'')+'"]');if(fr)fr.classList.add('on');loadJobOffers();}
-function _buildCatBar(offers){var bar=document.getElementById('jobs-cat-bar');if(!bar)return;var noFilter=!_jobsFilter;if(noFilter){var counts={};var total=0;(offers||[]).forEach(function(o){var c=o.category||'other';counts[c]=(counts[c]||0)+1;total++;});_jobCatCounts=counts;_jobCatCounts._total=total;}var cats=Object.keys(_jobCatCounts).filter(function(k){return k!=='_total'&&(_jobCatCounts[k]||0)>0;});cats.sort(function(a,b){return(_jobCatCounts[b]||0)-(_jobCatCounts[a]||0);});var seen={};var html='<button class="fchip'+(noFilter?' on':'')+'" id="jcat-all" data-cat="" onclick="filterJobsCat(null,this)">Wszystkie<span style="font-size:11px;opacity:.55;margin-left:4px">'+(_jobCatCounts._total||'')+'</span></button>';cats.forEach(function(cat){var lbl=_jobCatLabels[cat]||cat;if(seen[lbl])return;seen[lbl]=true;var cnt=_jobCatCounts[cat]||0;var on=(_jobsFilter===cat);html+='<button class="fchip'+(on?' on':'')+'" data-cat="'+cat+'" onclick="filterJobsCat(\''+cat+'\',this)">'+lbl+'<span style="font-size:11px;opacity:.55;margin-left:4px">'+cnt+'</span></button>';});bar.innerHTML=html;}
-(function(){function _tryBuild(){var d=window._jobsData;if(d&&d.length)_buildCatBar(d);}var _jl=document.getElementById('jobs-list');if(_jl){var _obs=new MutationObserver(_tryBuild);_obs.observe(_jl,{childList:true});}})();
+function _buildCatBar(offers){var bar=document.getElementById('jobs-cat-bar');if(!bar)return;if(!_jobsFilter){var counts={};var total=0;(offers||[]).forEach(function(o){var c=o.category||'other';counts[c]=(counts[c]||0)+1;total++;});_jobCatCounts=counts;_jobCatCounts._total=total;var allBtn=document.getElementById('jcat-all');if(allBtn&&total){var sp=allBtn.querySelector('span');if(!sp){sp=document.createElement('span');sp.style.cssText='font-size:11px;opacity:.55;margin-left:4px';allBtn.appendChild(sp);}sp.textContent=total;}bar.querySelectorAll('[data-cat]').forEach(function(btn){var c=btn.getAttribute('data-cat');if(!c)return;var cnt=counts[c]||0;var sp=btn.querySelector('span');if(cnt>0){if(!sp){sp=document.createElement('span');sp.style.cssText='font-size:11px;opacity:.55;margin-left:4px';btn.appendChild(sp);}sp.textContent=cnt;}else if(sp){sp.remove();}});}}
 window.filterJobsSalary=function(min,btn){_jobMinSalary=(_jobMinSalary===min)?0:min;document.querySelectorAll('[id^="jsal-"]').forEach(function(b){b.classList.toggle('on',parseInt(b.getAttribute('data-min'))===_jobMinSalary&&_jobMinSalary>0);});_applyJobFilters();};
 function filterJobsMode(mode,btn){_jobModeFilter=mode;_jobWorkFilter=null;document.querySelectorAll('[id^="jmode-"]').forEach(function(b){b.classList.remove('on');});if(btn)btn.classList.add('on');_applyJobFilters();}
 function filterJobsModeWork(mode,btn){_jobWorkFilter=mode;_jobModeFilter=null;document.querySelectorAll('[id^="jmode-"]').forEach(function(b){b.classList.remove('on');});if(btn)btn.classList.add('on');_applyJobFilters();}
