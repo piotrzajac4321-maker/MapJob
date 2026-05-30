@@ -5597,7 +5597,7 @@ if(session&&session.user){var uid=session.user.id;if(_lastAuthUserId===uid&&_isL
     for(var i=0;i<evs.length;i+=CHUNK){
       rows.push({session_id:window._mjSessionId,chunk_index:Math.floor(i/CHUNK),events:evs.slice(i,i+CHUNK),trigger:trigger||'exit',total_events:evs.length});
     }
-    try{await _sb.from('session_replays').insert(rows);}catch(e){}
+    try{await _sb.from('session_replays').insert(rows);}catch(e){_rrFlushed=false;console.warn('[rrweb] replay save failed:',e&&e.message||e);}
   }
   /* Lazy-load after paint — don't block TTI */
   if(typeof window!=='undefined'){
@@ -5607,8 +5607,6 @@ if(session&&session.user){var uid=session.user.id;if(_lastAuthUserId===uid&&_isL
       },3000);
     });
   }
-  /* Flush hooks — piggyback on existing exit/rage detection */
-  var _origEndSession=null;
 
   /* RODO: behavioral events są gated przez cookie-consent (mj_cookie_consent_v2.analytics).
      Essential events (login, logout, visit) zostają — są techniczne nie behavioralne. */
@@ -5662,7 +5660,7 @@ if(session&&session.user){var uid=session.user.id;if(_lastAuthUserId===uid&&_isL
     try{
       var body={ ended_at:new Date().toISOString(), last_seen_at:new Date().toISOString(), last_path:_path(), last_event:reason||'leave' };
       _sb.from('user_sessions').update(body).eq('id',window._mjSessionId);
-      _insertEvent('page_exit',null,null,{time_on_page_ms:Date.now()-(_mjPageEntry||Date.now()),max_scroll_pct:_mjMaxScroll||0,last_action:reason||'leave'});_rrFlush(reason||'page_exit');
+      _insertEvent('page_exit',null,null,{time_on_page_ms:Date.now()-(_mjPageEntry||Date.now()),max_scroll_pct:_mjMaxScroll||0,last_action:reason||'leave'});
     }catch(e){}
   }
   /* Session boot handled by auth listener below (INITIAL_SESSION event) + timer fallback. */
@@ -5753,6 +5751,21 @@ if(session&&session.user){var uid=session.user.id;if(_lastAuthUserId===uid&&_isL
       if(pct>=m&&!_mjScrollHit[m]){_mjScrollHit[m]=true;_insertEvent('scroll_depth',null,null,{depth_pct:m,max_depth_pct:_mjMaxScroll,time_ms:Date.now()-_mjPageEntry});}
     });
   },{passive:true});
+
+  /* Rage click detection — ≥3 clicks in 700ms → frustration signal. */
+  var _rageTs=[];
+  document.addEventListener('click',function(e){
+    var now=Date.now();
+    _rageTs=_rageTs.filter(function(t){return now-t<700;});
+    _rageTs.push(now);
+    if(_rageTs.length>=3){
+      var el=e.target,tag='?';
+      try{tag=el.getAttribute&&(el.getAttribute('data-track')||el.id||el.className.split(' ')[0])||el.tagName||'?';}catch(_){}
+      _insertEvent('rage_click',null,String(tag).slice(0,60),{click_count:_rageTs.length,x:Math.round(e.clientX),y:Math.round(e.clientY)});
+      _rrFlush('rage_click');
+      _rageTs=[];
+    }
+  },true);
 
   /* Exit intent: mysz wychodzi poza górę viewportu. */
   document.addEventListener('mouseleave',function(e){
@@ -12989,7 +13002,7 @@ try{if(_sb){var _jUids2=Array.from(new Set(jobs.map(function(j){return j.user_id
 var _photoDbgC=0,_photoDbgN=0;jobs.forEach(function(j){if(!j.location_lat||!j.location_lng)return;var sal='';if(j.salary_min||j.salary_max){var _u=(window._mjSalaryUnit?window._mjSalaryUnit(j.salary_type,j.salary_currency):'zł');var _fm=(window._mjFmtMoney||function(n){return Number(n).toLocaleString('pl');});sal=(j.salary_min?_fm(j.salary_min):'')+((j.salary_min&&j.salary_max)?' - ':'')+((j.salary_max?_fm(j.salary_max):'')+' '+_u).trim();}if(!sal&&j.description&&typeof jobSalaryFallback==='function'){try{var _jfb2=jobSalaryFallback(j);if(_jfb2)sal=_jfb2;}catch(_e){}}
 var _pp2=_jPosterMap2[j.user_id]||{};var _posterPhoto2=j.company_logo||_pp2.avatar_url||_jPinPhoto[j.user_id]||null;var _posterName2=_pp2.name||'';if(_posterPhoto2)_photoDbgC++;else _photoDbgN++;PINS.push({t:'job',supaId:j.id,lat:j.location_lat,lng:j.location_lng,n:j.title,company:j.company_name||_posterName2||'',city:j.location,category:j.category,rate:sal,salMin:j.salary_min,salMax:j.salary_max,salType:j.salary_type,salCur:j.salary_currency||'PLN',isUrgent:j.is_urgent,empType:j.employment_type,workMode:j.work_mode,e:'💼',c:'#7C3AED',userId:j.user_id,allowMessages:j.allow_messages!==false,photo:_posterPhoto2,posterName:_posterName2,employerVerified:!!_pp2.is_verified});});console.log('[Edge jobs photo] withPhoto:'+_photoDbgC+' withoutPhoto:'+_photoDbgN);console.log('[Edge] pins:'+pins.length+' jobs:'+jobs.length+' PINS_total:'+PINS.length);console.log('[Mapa łącznie] PINS:'+PINS.length);(async function(){try{if(!_sb||!PINS.length)return;var _avIds=PINS.filter(function(p){return p.supaId&&p.t!=='job';}).map(function(p){return p.supaId;});if(!_avIds.length)return;var r=await _sb.from('pins').select('id,availability_status,promo_text,promo_until,accent_color').in('id',_avIds);if(!r||!r.data)return;var byId={};r.data.forEach(function(rr){byId[rr.id]=rr;});PINS.forEach(function(p){if(p.supaId&&byId[p.supaId]){p.availStatus=byId[p.supaId].availability_status||null;p.promoText=byId[p.supaId].promo_text||null;p.promoUntil=byId[p.supaId].promo_until||null;p.accentColor=byId[p.supaId].accent_color||null;}});console.log('[avEnrich] enriched',r.data.length,'pins');if(typeof _renderAllMaps==='function')_renderAllMaps();}catch(e){console.warn('[avEnrich]',e);}})();if(typeof window.updateMapTotal==='function')window.updateMapTotal();if(mapF||mapP){_renderAllMaps();}else{setTimeout(function(){if(mapF||mapP)_renderAllMaps();},1500);}}catch(e){console.warn('[Edge]',e);}
 finally{_edgeLoadPromise=null;}})();return _edgeLoadPromise;}
-var _jobSearchQuery='';var _jobModeFilter=null;var _jobWorkFilter=null;var _jobUrgentOnly=false;var _jobSortMode='newest';var _jobMinSalary=0;function filterJobsSearch(q){_jobSearchQuery=(q||'').toLowerCase().trim();_applyJobFilters();clearTimeout(window._mjSearchT);if(_jobSearchQuery.length>=2){window._mjSearchT=setTimeout(function(){var visible=document.querySelectorAll('.job-card-item:not([style*="display: none"]):not([style*="display:none"])').length;_insertEvent('search',null,_jobSearchQuery,{query:_jobSearchQuery,results_count:visible,zero_results:visible===0,filters:{category:_jobsFilter||null,country:_jobCountry||null,mode:_jobModeFilter||null,work:_jobWorkFilter||null,min_salary:_jobMinSalary||0,urgent:_jobUrgentOnly||false}});},800);}}
+var _jobSearchQuery='';var _jobModeFilter=null;var _jobWorkFilter=null;var _jobUrgentOnly=false;var _jobSortMode='newest';var _jobMinSalary=0;function filterJobsSearch(q){_jobSearchQuery=(q||'').toLowerCase().trim();_applyJobFilters();clearTimeout(window._mjSearchT);var _q=_jobSearchQuery;if(_q.length>=2){window._mjSearchT=setTimeout(function(){var visible=document.querySelectorAll('.job-card-item:not([style*="display: none"]):not([style*="display:none"])').length;_insertEvent('search',null,_q,{query:_q,results_count:visible,zero_results:visible===0,filters:{category:_jobsFilter||null,country:_jobCountry||null,mode:_jobModeFilter||null,work:_jobWorkFilter||null,min_salary:_jobMinSalary||0,urgent:_jobUrgentOnly||false}});},800);}}
 var _jobCatCounts={};var _jobCatLabels={industry:'Produkcja',driver:'Kierowca',electric:'Elektryk',welder:'Spawacz',construction:'Budowlanka',gastro:'Gastronomia',cook:'Gastronomia',it:'IT/Dev',plumber:'Hydraulik',clean:'Sprzątanie',wykonczenia:'Wykończenia',painter:'Malarz',hvac:'HVAC',carpenter:'Stolarz',accountant:'Finanse',logistics:'Logistyka',security:'Ochrona',nurse:'Medycyna',hair:'Fryzjer',tailor:'Krawiec',beauty:'Uroda',florist:'Ogrodnik',teacher:'Edukacja',reception:'Recepcja',garden:'Ogród',other:'Inne'};
 function filterJobsCat(cat,btn){_jobsFilter=cat||null;document.querySelectorAll('#jobs-cat-bar .fchip').forEach(function(b){b.classList.remove('on');});if(btn)btn.classList.add('on');document.querySelectorAll('#jobs-filters-row .fchip').forEach(function(b){b.classList.remove('on');});var fr=document.querySelector('#jobs-filters-row [data-cat="'+(cat||'')+'"]');if(fr)fr.classList.add('on');loadJobOffers();}
 function _buildCatBar(offers){var bar=document.getElementById('jobs-cat-bar');if(!bar)return;if(!_jobsFilter){var counts={};var total=0;(offers||[]).forEach(function(o){var c=o.category||'other';counts[c]=(counts[c]||0)+1;total++;});_jobCatCounts=counts;_jobCatCounts._total=total;var allBtn=document.getElementById('jcat-all');if(allBtn&&total){var sp=allBtn.querySelector('span');if(!sp){sp=document.createElement('span');sp.style.cssText='font-size:11px;opacity:.55;margin-left:4px';allBtn.appendChild(sp);}sp.textContent=total;}bar.querySelectorAll('[data-cat]').forEach(function(btn){var c=btn.getAttribute('data-cat');if(!c)return;var cnt=counts[c]||0;var sp=btn.querySelector('span');if(cnt>0){if(!sp){sp=document.createElement('span');sp.style.cssText='font-size:11px;opacity:.55;margin-left:4px';btn.appendChild(sp);}sp.textContent=cnt;}else if(sp){sp.remove();}});}}
