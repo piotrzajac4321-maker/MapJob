@@ -11885,7 +11885,7 @@ function showJobsEmptyState(cat){var empty=document.getElementById('jobs-empty')
 +'<p>'+m[2]+'</p>'
 +'<button onclick="filterJobs(null,document.querySelector(\'#jobs-filters-row.fchip\'))" style="margin-top:8px;padding:10px 20px;border-radius:20px;background:var(--blue);border:none;font-family:var(--ff);font-size:13px;font-weight:700;color:#fff;cursor:pointer">Zobacz wszystkie</button>'
 +'</div>';empty.style.display='block';}
-window.quickApplyJob=async function quickApplyJob(jobId,btn,_proceed){if(!_supaUser){openM('m-register');return;}
+window.quickApplyJob=async function quickApplyJob(jobId,btn,_proceed){if(!_supaUser){applyToJob(String(jobId));return;}
 var _qo=(window._jobsData||[]).find(function(j){return String(j.id)===String(jobId);});if(_qo&&_qo.user_id&&_qo.user_id===_supaUser.id){toast('To Twoja oferta');return;}
 if(btn.getAttribute('data-applied')==='true'){toast('Już aplikowałeś na tę ofertę ✅');return;}
 if(!_proceed){try{window._mjTrackApplyClick&&window._mjTrackApplyClick(jobId);}catch(_e){}window._mjApplyConsent(function(){window.quickApplyJob(jobId,btn,true);});return;}
