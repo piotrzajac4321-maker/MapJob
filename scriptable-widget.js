@@ -125,6 +125,15 @@ function addHeader(parent, fetchedAt) {
   const upd = hdr.addText('◷ ' + timeAgo(fetchedAt))
   upd.font      = Font.systemFont(9)
   upd.textColor = C.text3
+
+  hdr.addSpacer(5)
+
+  const rsym = SFSymbol.named('arrow.clockwise')
+  rsym.applyFont(Font.systemFont(9))
+  const rico = hdr.addImage(rsym.image)
+  rico.imageSize = new Size(10, 10)
+  rico.tintColor = C.text3
+  rico.resizable = false
 }
 
 // ─── Linia oddzielająca ─────────────────────────────────────────
@@ -247,8 +256,8 @@ function buildWidget(stats) {
 
   const w = new ListWidget()
   w.backgroundGradient = makeBg()
-  w.url = 'https://mapjob.pl/stats'
-  w.refreshAfterDate = new Date(Date.now() + 15 * 60 * 1000)
+  w.url = 'scriptable:///run/MapJob%20Stats'
+  w.refreshAfterDate = new Date(Date.now() + 10 * 60 * 1000)
   w.setPadding(12, 14, 12, 14)
 
   addHeader(w, stats.fetched_at)
@@ -322,7 +331,7 @@ function fallback(msg, accent) {
   const w = new ListWidget()
   w.backgroundGradient = makeBg()
   w.setPadding(14, 14, 14, 14)
-  w.url = 'https://mapjob.pl/stats'
+  w.url = 'scriptable:///run/MapJob%20Stats'
   w.refreshAfterDate = new Date(Date.now() + 5 * 60 * 1000)
 
   const sym = SFSymbol.named('chart.bar.fill')
