@@ -318,6 +318,7 @@ header{position:sticky;top:0;z-index:20;background:rgba(6,8,14,.94);backdrop-fil
     <button class="mnav-btn" onclick="go('users',this);mobileNavActive(this)">👥 Użytkownicy</button>
     <button class="mnav-btn" onclick="go('contacts',this);mobileNavActive(this)" style="background:linear-gradient(135deg,rgba(34,197,94,.22),rgba(34,197,94,.08));border-color:rgba(34,197,94,.4);color:#22C55E;font-weight:900">📇 Kontakty</button>
     <button class="mnav-btn" onclick="go('activity',this);mobileNavActive(this)">📡 Aktywność</button>
+    <button class="mnav-btn" onclick="go('tracking',this);loadTracking();mobileNavActive(this)" style="background:linear-gradient(135deg,rgba(99,102,241,.22),rgba(99,102,241,.08));border-color:rgba(99,102,241,.4);color:#6366F1;font-weight:900">🔍 Śledzenie</button>
     <button class="mnav-btn" onclick="go('packages',this);mobileNavActive(this)">🎁 Pakiety</button>
     <button class="mnav-btn" onclick="go('companies',this);mobileNavActive(this)" style="background:linear-gradient(135deg,rgba(212,168,83,.25),rgba(212,168,83,.1));border-color:rgba(212,168,83,.4);color:#D4A853;font-weight:900">🏢 Firmy & Praca</button>
     <button class="mnav-btn" onclick="go('tenders',this);loadTenderFakeOwners();mobileNavActive(this)">📋 Ogłoszenia</button>
@@ -2141,137 +2142,153 @@ header{position:sticky;top:0;z-index:20;background:rgba(6,8,14,.94);backdrop-fil
           </div>
         </div>
 
-        <!-- ═══ EXIT ANALYSIS — ostatnie 3 akcje przed wyjściem ═══ -->
-        <div class="section" style="border:1.5px solid rgba(239,68,68,.25);background:linear-gradient(180deg,rgba(239,68,68,.04),transparent)">
-          <div class="sec-hdr">
-            <div class="sec-title" style="color:#EF4444">🚪 Exit Analysis — co robili tuż przed wyjściem</div>
-            <div class="sec-actions">
-              <span style="font-size:10px;color:var(--text3)">Ostatnie 30 dni · top strony wyjścia + 3 ostatnie akcje</span>
-            </div>
-          </div>
-          <div style="font-size:11px;color:var(--text2);margin-bottom:10px;line-height:1.6">
-            Pokazuje <b>dokładnie które kliknięcie było ostatnim</b> przed zamknięciem karty. Kolumna „pre2→pre1→exit" to ścieżka ostatnich 3 akcji — wzorzec tej ścieżki = punkt tarcia który trzeba naprawić.
-          </div>
-          <div id="act-exit-analysis"><div class="loader">Ładowanie…</div></div>
-        </div>
-
-        <!-- ═══ SCROLL DEPTH BREAKDOWN ═══ -->
-        <div class="section" style="border:1.5px solid rgba(168,85,247,.25);background:linear-gradient(180deg,rgba(168,85,247,.04),transparent)">
-          <div class="sec-hdr">
-            <div class="sec-title" style="color:#A855F7">📜 Scroll Depth — jak głęboko scrollują</div>
-            <div class="sec-actions">
-              <span style="font-size:10px;color:var(--text3)">Ostatnie 30 dni · % sesji które dotarły do danej głębokości</span>
-            </div>
-          </div>
-          <div style="font-size:11px;color:var(--text2);margin-bottom:10px;line-height:1.6">
-            Ile procent sesji scrolluje do 25%, 50%, 75%, 90%, 100% strony. Duży spad między 25% a 50% = content above-the-fold nie wciąga wystarczająco.
-          </div>
-          <div id="act-scroll-depth"><div class="loader">Ładowanie…</div></div>
-        </div>
-
-        <!-- ═══ CLICK POSITION HEATMAP ═══ -->
-        <div class="section" style="border:1.5px solid rgba(236,72,153,.25);background:linear-gradient(180deg,rgba(236,72,153,.04),transparent)">
-          <div class="sec-hdr">
-            <div class="sec-title" style="color:#EC4899">🖱 Click Heatmap — gdzie klikają (pozycje X/Y)</div>
-            <div class="sec-actions">
-              <select id="act-heatmap2-path" onchange="_actRenderClickHeatmap()" style="padding:4px 8px;background:var(--surf);border:1px solid var(--border3);border-radius:7px;font-size:10px;color:var(--text)">
-                <option value="/">/  (strona główna)</option>
-                <option value="/map">/map</option>
-                <option value="/admin">/admin</option>
-              </select>
-              <span style="font-size:10px;color:var(--text3)">Ostatnie 30 dni · agregat x/y w siatkę 5% okna</span>
-            </div>
-          </div>
-          <div style="font-size:11px;color:var(--text2);margin-bottom:10px;line-height:1.6">
-            Pokazuje <b>gdzie na ekranie użytkownicy klikają</b>. Ciepłe miejsca = CTA które działają. Zimne miejsca = marnowana przestrzeń. Osie: X = szerokość ekranu (0–100%), Y = wysokość (0–100%).
-          </div>
-          <div id="act-click-heatmap"><div class="loader">Ładowanie…</div></div>
-        </div>
-
-        <!-- ═══ TRAFFIC SOURCES ═══ -->
-        <div class="section" style="border:1.5px solid rgba(16,185,129,.25);background:linear-gradient(180deg,rgba(16,185,129,.04),transparent)">
-          <div class="sec-hdr">
-            <div class="sec-title" style="color:#10B981">🌐 Źródła Ruchu — skąd przychodzą użytkownicy</div>
-            <div class="sec-actions">
-              <span style="font-size:10px;color:var(--text3)">Na podstawie UTM + Referer · ostatnie 30 dni</span>
-            </div>
-          </div>
-          <div style="font-size:11px;color:var(--text2);margin-bottom:10px;line-height:1.6">
-            Kanały: direct, google, facebook, instagram itd. Dane z UTM params i referera. <b>Bounce%</b> per źródło — za wysoki z Google = SEO landing page nie konwertuje.
-          </div>
-          <div id="act-traffic-sources"><div class="loader">Ładowanie…</div></div>
-        </div>
-
-        <!-- ═══ RAGE CLICKS ═══ -->
-        <div class="section" style="border:1.5px solid rgba(245,158,11,.25);background:linear-gradient(180deg,rgba(245,158,11,.04),transparent)">
-          <div class="sec-hdr">
-            <div class="sec-title" style="color:#F59E0B">😤 Rage Clicks — gdzie użytkownicy się frustrują</div>
-            <div class="sec-actions">
-              <span style="font-size:10px;color:var(--text3)">≥3 kliknięcia w 700ms w to samo miejsce · ostatnie 30 dni</span>
-            </div>
-          </div>
-          <div style="font-size:11px;color:var(--text2);margin-bottom:10px;line-height:1.6">
-            Rage click = user kliknął wielokrotnie w krótkim czasie bo element nie zareagował. Top miejsca frustacji = broken UX. Napraw te elementy → wyraźny spadek bounce rate.
-          </div>
-          <div id="act-rage-clicks"><div class="loader">Ładowanie…</div></div>
-        </div>
+      </div>
 
 
-        <!-- ═══ SEARCH ANALYTICS ═══ -->
-        <div class="section" style="border:1.5px solid rgba(99,102,241,.25);background:linear-gradient(180deg,rgba(99,102,241,.04),transparent)">
-          <div class="sec-hdr">
-            <div class="sec-title" style="color:#6366F1">🔍 Search Analytics — co wyszukują użytkownicy</div>
-            <div class="sec-actions">
-              <span style="font-size:10px;color:var(--text3)">Ostatnie 30 dni · top queries + 0-wynikowe</span>
-            </div>
+
+      <!-- ═══ PANEL: ŚLEDZENIE ═══ -->
+      <div id="panel-tracking" class="panel">
+        <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:18px">
+          <div>
+            <div style="font-size:20px;font-weight:900;color:#6366F1;margin-bottom:4px">🔍 Śledzenie użytkowników</div>
+            <div style="font-size:12px;color:var(--text3)">Search analytics · Core Web Vitals · Urządzenia · Heatmapy · Rage clicks · Exit analysis · Session replay</div>
           </div>
-          <div style="font-size:11px;color:var(--text2);margin-bottom:10px;line-height:1.6">
-            Top wyszukiwania, % z zerowymi wynikami (supply gap!), i jakie filtry towarzyszą danej frazie. Zero-result queries = ogłoszenia których nie ma, a są poszukiwane.
-          </div>
-          <div id="act-search-analytics"><div class="loader">Ładowanie…</div></div>
+          <button class="btn-s" onclick="loadTracking()" style="font-size:11px">🔄 Odśwież</button>
         </div>
 
-        <!-- ═══ CORE WEB VITALS ═══ -->
-        <div class="section" style="border:1.5px solid rgba(16,185,129,.25);background:linear-gradient(180deg,rgba(16,185,129,.04),transparent)">
-          <div class="sec-hdr">
-            <div class="sec-title" style="color:#10B981">⚡ Core Web Vitals — wydajność strony</div>
-            <div class="sec-actions">
-              <span style="font-size:10px;color:var(--text3)">LCP · CLS · FID · INP · FCP · TTFB — mediana ostatnich 30 dni</span>
-            </div>
-          </div>
-          <div style="font-size:11px;color:var(--text2);margin-bottom:10px;line-height:1.6">
-            Performance <b>bezpośrednio powoduje bounce</b>. LCP &gt;2.5s → Google penalizuje SEO i user wychodzi zanim strona się załaduje. Dane z realnych wizyt (nie Lighthouse).
-          </div>
-          <div id="act-web-vitals"><div class="loader">Ładowanie…</div></div>
-        </div>
+                <!-- ═══ EXIT ANALYSIS — ostatnie 3 akcje przed wyjściem ═══ -->
+                <div class="section" style="border:1.5px solid rgba(239,68,68,.25);background:linear-gradient(180deg,rgba(239,68,68,.04),transparent)">
+                  <div class="sec-hdr">
+                    <div class="sec-title" style="color:#EF4444">🚪 Exit Analysis — co robili tuż przed wyjściem</div>
+                    <div class="sec-actions">
+                      <span style="font-size:10px;color:var(--text3)">Ostatnie 30 dni · top strony wyjścia + 3 ostatnie akcje</span>
+                    </div>
+                  </div>
+                  <div style="font-size:11px;color:var(--text2);margin-bottom:10px;line-height:1.6">
+                    Pokazuje <b>dokładnie które kliknięcie było ostatnim</b> przed zamknięciem karty. Kolumna „pre2→pre1→exit" to ścieżka ostatnich 3 akcji — wzorzec tej ścieżki = punkt tarcia który trzeba naprawić.
+                  </div>
+                  <div id="act-exit-analysis"><div class="loader">Ładowanie…</div></div>
+                </div>
 
-        <!-- ═══ DEVICE BREAKDOWN ═══ -->
-        <div class="section" style="border:1.5px solid rgba(245,158,11,.25);background:linear-gradient(180deg,rgba(245,158,11,.04),transparent)">
-          <div class="sec-hdr">
-            <div class="sec-title" style="color:#F59E0B">📱 Device Breakdown — mobile vs desktop</div>
-            <div class="sec-actions">
-              <span style="font-size:10px;color:var(--text3)">Ostatnie 30 dni · sesje per urządzenie + bounce% + czas</span>
-            </div>
-          </div>
-          <div style="font-size:11px;color:var(--text2);margin-bottom:10px;line-height:1.6">
-            Porównuje zachowanie mobile vs. desktop vs. tablet. Jeśli bounce% na mobile jest 30pp wyższy niż desktop → mobile UX wymaga pilnej naprawy (CTA za małe, mapa nieużywalna).
-          </div>
-          <div id="act-device-breakdown"><div class="loader">Ładowanie…</div></div>
-        </div>
+                <!-- ═══ SCROLL DEPTH BREAKDOWN ═══ -->
+                <div class="section" style="border:1.5px solid rgba(168,85,247,.25);background:linear-gradient(180deg,rgba(168,85,247,.04),transparent)">
+                  <div class="sec-hdr">
+                    <div class="sec-title" style="color:#A855F7">📜 Scroll Depth — jak głęboko scrollują</div>
+                    <div class="sec-actions">
+                      <span style="font-size:10px;color:var(--text3)">Ostatnie 30 dni · % sesji które dotarły do danej głębokości</span>
+                    </div>
+                  </div>
+                  <div style="font-size:11px;color:var(--text2);margin-bottom:10px;line-height:1.6">
+                    Ile procent sesji scrolluje do 25%, 50%, 75%, 90%, 100% strony. Duży spad między 25% a 50% = content above-the-fold nie wciąga wystarczająco.
+                  </div>
+                  <div id="act-scroll-depth"><div class="loader">Ładowanie…</div></div>
+                </div>
 
-        <!-- ═══ SESSION REPLAY ═══ -->
-        <div class="section" style="border:1.5px solid rgba(139,92,246,.25);background:linear-gradient(180deg,rgba(139,92,246,.04),transparent)">
-          <div class="sec-hdr">
-            <div class="sec-title" style="color:#8B5CF6">🎬 Session Replay — odtwarzaj sesje użytkowników</div>
-            <div class="sec-actions">
-              <span style="font-size:10px;color:var(--text3)">rrweb · nagrania DOM · tylko sesje z exit/rage/checkout</span>
-            </div>
-          </div>
-          <div style="font-size:11px;color:var(--text2);margin-bottom:10px;line-height:1.6">
-            Odtwórz dokładnie co user widział i klikał. Nagrania lądują tylko przy exit intent, rage click lub porzuceniu checkout — oszczędność storage. Kliknij sesję żeby odtworzyć.
-          </div>
-          <div id="act-session-replay"><div class="loader">Ładowanie…</div></div>
-        </div>
+                <!-- ═══ CLICK POSITION HEATMAP ═══ -->
+                <div class="section" style="border:1.5px solid rgba(236,72,153,.25);background:linear-gradient(180deg,rgba(236,72,153,.04),transparent)">
+                  <div class="sec-hdr">
+                    <div class="sec-title" style="color:#EC4899">🖱 Click Heatmap — gdzie klikają (pozycje X/Y)</div>
+                    <div class="sec-actions">
+                      <select id="act-heatmap2-path" onchange="_actRenderClickHeatmap()" style="padding:4px 8px;background:var(--surf);border:1px solid var(--border3);border-radius:7px;font-size:10px;color:var(--text)">
+                        <option value="/">/  (strona główna)</option>
+                        <option value="/map">/map</option>
+                        <option value="/admin">/admin</option>
+                      </select>
+                      <span style="font-size:10px;color:var(--text3)">Ostatnie 30 dni · agregat x/y w siatkę 5% okna</span>
+                    </div>
+                  </div>
+                  <div style="font-size:11px;color:var(--text2);margin-bottom:10px;line-height:1.6">
+                    Pokazuje <b>gdzie na ekranie użytkownicy klikają</b>. Ciepłe miejsca = CTA które działają. Zimne miejsca = marnowana przestrzeń. Osie: X = szerokość ekranu (0–100%), Y = wysokość (0–100%).
+                  </div>
+                  <div id="act-click-heatmap"><div class="loader">Ładowanie…</div></div>
+                </div>
+
+                <!-- ═══ TRAFFIC SOURCES ═══ -->
+                <div class="section" style="border:1.5px solid rgba(16,185,129,.25);background:linear-gradient(180deg,rgba(16,185,129,.04),transparent)">
+                  <div class="sec-hdr">
+                    <div class="sec-title" style="color:#10B981">🌐 Źródła Ruchu — skąd przychodzą użytkownicy</div>
+                    <div class="sec-actions">
+                      <span style="font-size:10px;color:var(--text3)">Na podstawie UTM + Referer · ostatnie 30 dni</span>
+                    </div>
+                  </div>
+                  <div style="font-size:11px;color:var(--text2);margin-bottom:10px;line-height:1.6">
+                    Kanały: direct, google, facebook, instagram itd. Dane z UTM params i referera. <b>Bounce%</b> per źródło — za wysoki z Google = SEO landing page nie konwertuje.
+                  </div>
+                  <div id="act-traffic-sources"><div class="loader">Ładowanie…</div></div>
+                </div>
+
+                <!-- ═══ RAGE CLICKS ═══ -->
+                <div class="section" style="border:1.5px solid rgba(245,158,11,.25);background:linear-gradient(180deg,rgba(245,158,11,.04),transparent)">
+                  <div class="sec-hdr">
+                    <div class="sec-title" style="color:#F59E0B">😤 Rage Clicks — gdzie użytkownicy się frustrują</div>
+                    <div class="sec-actions">
+                      <span style="font-size:10px;color:var(--text3)">≥3 kliknięcia w 700ms w to samo miejsce · ostatnie 30 dni</span>
+                    </div>
+                  </div>
+                  <div style="font-size:11px;color:var(--text2);margin-bottom:10px;line-height:1.6">
+                    Rage click = user kliknął wielokrotnie w krótkim czasie bo element nie zareagował. Top miejsca frustacji = broken UX. Napraw te elementy → wyraźny spadek bounce rate.
+                  </div>
+                  <div id="act-rage-clicks"><div class="loader">Ładowanie…</div></div>
+                </div>
+
+
+                <!-- ═══ SEARCH ANALYTICS ═══ -->
+                <div class="section" style="border:1.5px solid rgba(99,102,241,.25);background:linear-gradient(180deg,rgba(99,102,241,.04),transparent)">
+                  <div class="sec-hdr">
+                    <div class="sec-title" style="color:#6366F1">🔍 Search Analytics — co wyszukują użytkownicy</div>
+                    <div class="sec-actions">
+                      <span style="font-size:10px;color:var(--text3)">Ostatnie 30 dni · top queries + 0-wynikowe</span>
+                    </div>
+                  </div>
+                  <div style="font-size:11px;color:var(--text2);margin-bottom:10px;line-height:1.6">
+                    Top wyszukiwania, % z zerowymi wynikami (supply gap!), i jakie filtry towarzyszą danej frazie. Zero-result queries = ogłoszenia których nie ma, a są poszukiwane.
+                  </div>
+                  <div id="act-search-analytics"><div class="loader">Ładowanie…</div></div>
+                </div>
+
+                <!-- ═══ CORE WEB VITALS ═══ -->
+                <div class="section" style="border:1.5px solid rgba(16,185,129,.25);background:linear-gradient(180deg,rgba(16,185,129,.04),transparent)">
+                  <div class="sec-hdr">
+                    <div class="sec-title" style="color:#10B981">⚡ Core Web Vitals — wydajność strony</div>
+                    <div class="sec-actions">
+                      <span style="font-size:10px;color:var(--text3)">LCP · CLS · FID · INP · FCP · TTFB — mediana ostatnich 30 dni</span>
+                    </div>
+                  </div>
+                  <div style="font-size:11px;color:var(--text2);margin-bottom:10px;line-height:1.6">
+                    Performance <b>bezpośrednio powoduje bounce</b>. LCP &gt;2.5s → Google penalizuje SEO i user wychodzi zanim strona się załaduje. Dane z realnych wizyt (nie Lighthouse).
+                  </div>
+                  <div id="act-web-vitals"><div class="loader">Ładowanie…</div></div>
+                </div>
+
+                <!-- ═══ DEVICE BREAKDOWN ═══ -->
+                <div class="section" style="border:1.5px solid rgba(245,158,11,.25);background:linear-gradient(180deg,rgba(245,158,11,.04),transparent)">
+                  <div class="sec-hdr">
+                    <div class="sec-title" style="color:#F59E0B">📱 Device Breakdown — mobile vs desktop</div>
+                    <div class="sec-actions">
+                      <span style="font-size:10px;color:var(--text3)">Ostatnie 30 dni · sesje per urządzenie + bounce% + czas</span>
+                    </div>
+                  </div>
+                  <div style="font-size:11px;color:var(--text2);margin-bottom:10px;line-height:1.6">
+                    Porównuje zachowanie mobile vs. desktop vs. tablet. Jeśli bounce% na mobile jest 30pp wyższy niż desktop → mobile UX wymaga pilnej naprawy (CTA za małe, mapa nieużywalna).
+                  </div>
+                  <div id="act-device-breakdown"><div class="loader">Ładowanie…</div></div>
+                </div>
+
+                <!-- ═══ SESSION REPLAY ═══ -->
+                <div class="section" style="border:1.5px solid rgba(139,92,246,.25);background:linear-gradient(180deg,rgba(139,92,246,.04),transparent)">
+                  <div class="sec-hdr">
+                    <div class="sec-title" style="color:#8B5CF6">🎬 Session Replay — odtwarzaj sesje użytkowników</div>
+                    <div class="sec-actions">
+                      <span style="font-size:10px;color:var(--text3)">rrweb · nagrania DOM · tylko sesje z exit/rage/checkout</span>
+                    </div>
+                  </div>
+                  <div style="font-size:11px;color:var(--text2);margin-bottom:10px;line-height:1.6">
+                    Odtwórz dokładnie co user widział i klikał. Nagrania lądują tylko przy exit intent, rage click lub porzuceniu checkout — oszczędność storage. Kliknij sesję żeby odtworzyć.
+                  </div>
+                  <div id="act-session-replay"><div class="loader">Ładowanie…</div></div>
+                </div>
+              </div>
+
       </div>
 
       <!-- ═══ TIMELINE SESSION MODAL ═══ -->
@@ -12817,17 +12834,7 @@ async function loadActivity(){
     _actRenderCohorts();
     _actRenderHeatmap();
     _actRenderTimeToX();
-    /* User journey: exit analysis, scroll depth, click heatmap, traffic sources, rage clicks. */
-    _actRenderExitAnalysis();
-    _actRenderScrollDepth();
-    _actRenderClickHeatmap();
-    _actRenderTrafficSources();
-    _actRenderRageClicks();
-    /* New: search analytics, web vitals, device breakdown, session replay. */
-    _actRenderSearchAnalytics();
-    _actRenderWebVitals();
-    _actRenderDeviceBreakdown();
-    _actRenderSessionReplay();
+
   }catch(e){
     var msg = '<div style="padding:20px;text-align:center;color:var(--red);font-size:13px">❌ Błąd: '+escH(e.message||String(e))+'<br><br><span style="color:var(--text3);font-size:11px">Zaaplikuj migrację <code>20260422_user_activity.sql</code> w Supabase.</span></div>';
     if(sess)sess.innerHTML=msg; if(onList)onList.innerHTML=''; if(drop)drop.innerHTML='';
@@ -14990,6 +14997,19 @@ async function actOpenSession(id){
   }
 }
 function actCloseSession(){ var m=document.getElementById('act-session-modal'); if(m)m.style.display='none'; }
+
+async function loadTracking(){
+  _actRenderExitAnalysis();
+  _actRenderScrollDepth();
+  _actRenderClickHeatmap();
+  _actRenderTrafficSources();
+  _actRenderRageClicks();
+  _actRenderSearchAnalytics();
+  _actRenderWebVitals();
+  _actRenderDeviceBreakdown();
+  _actRenderSessionReplay();
+}
+
 
 function actToggleAuto(on){
   if(_actTimer){ clearInterval(_actTimer); _actTimer=null; }
