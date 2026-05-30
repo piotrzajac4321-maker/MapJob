@@ -5,7 +5,7 @@
 //   - Supabase / Stripe / OSM tiles / Nominatim: zawsze network (bez cache)
 //   - push + notificationclick: standardowe
 
-const VERSION = 'v2026-05-29-berker-dominis-fix';
+const VERSION = 'v2026-05-30-green-salary-similar-jobs';
 const CACHE_STATIC = 'mapjob-static-' + VERSION;
 const CACHE_RUNTIME = 'mapjob-runtime-' + VERSION;
 
