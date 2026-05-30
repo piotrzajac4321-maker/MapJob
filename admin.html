@@ -2164,8 +2164,17 @@ header{position:sticky;top:0;z-index:20;background:rgba(6,8,14,.94);backdrop-fil
                       <span style="font-size:10px;color:var(--text3)">Ostatnie 30 dni · top strony wyjścia + 3 ostatnie akcje</span>
                     </div>
                   </div>
-                  <div style="font-size:11px;color:var(--text2);margin-bottom:10px;line-height:1.6">
-                    Pokazuje <b>dokładnie które kliknięcie było ostatnim</b> przed zamknięciem karty. Kolumna „pre2→pre1→exit" to ścieżka ostatnich 3 akcji — wzorzec tej ścieżki = punkt tarcia który trzeba naprawić.
+                  <div style="font-size:11px;color:var(--text2);margin-bottom:10px;line-height:1.8">
+                    <b>Jak czytać te dane?</b> Każdy kafelek to adres strony z której użytkownicy wychodzili. Pod nim widać co robili tuż przed wyjściem.<br>
+                    Format <span style="font-family:monospace;background:rgba(255,255,255,.07);padding:1px 5px;border-radius:4px">pre2 → pre1 → ostatnia akcja</span> = 3 ostatnie kliknięcia/zdarzenia zanim zamknęli kartę.<br>
+                    <span style="color:var(--text3)">Myślnik (—) = brak akcji (user nic nie kliknął przed tym zdarzeniem).</span><br><br>
+                    <b>Słowniczek zdarzeń:</b><br>
+                    🔵 <b>visit</b> — wejście na stronę (otwarcie karty). Sama "visit" bez poprzednich akcji = odbicie (bounce), user wszedł i od razu wyszedł.<br>
+                    🔵 <b>login</b> — próba logowania lub kliknięcie przycisku "Zaloguj".<br>
+                    🔵 <b>tab</b> — kliknięcie w zakładkę/filtr na stronie.<br>
+                    🔵 <b>click</b> — kliknięcie w dowolny element.<br>
+                    🔵 <b>search</b> — wpisanie czegoś w wyszukiwarkę.<br><br>
+                    <b>Co zrobić z tą wiedzą?</b> Jeśli dużo osób wychodzi po "login" → sprawdź czy logowanie działa. Dużo "visit" bez czegokolwiek → strona główna nie zachęca do zostania.
                   </div>
                   <div id="act-exit-analysis"><div class="loader">Ładowanie…</div></div>
                 </div>
@@ -14171,11 +14180,21 @@ async function _actRenderExitAnalysis(){
       html += '<div style="font-size:12px;font-weight:800;color:var(--text);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="'+escH(path)+'">'+escH(path)+'</div>';
       html += '<span style="padding:2px 8px;border-radius:999px;background:rgba(239,68,68,.15);color:#EF4444;font-size:11px;font-weight:700">'+data.total+' wyjść ('+pct+'%)</span>';
       html += '</div>';
-      html += '<div style="font-size:10px;color:var(--text3);margin-bottom:5px;font-weight:700">TOP ŚCIEŻKI PRZED WYJŚCIEM:</div>';
+      html += '<div style="font-size:10px;color:var(--text3);margin-bottom:5px;font-weight:700">OSTATNIE 3 AKCJE PRZED WYJŚCIEM <span style="font-weight:400;opacity:.7">(pre2 → pre1 → ostatnia)</span>:</div>';
       topEvents.forEach(function(ev){
-        html += '<div style="display:flex;justify-content:space-between;align-items:center;padding:4px 0;border-bottom:1px solid var(--border3)">';
-        html += '<div style="font-size:10px;color:var(--text2);flex:1;overflow:hidden;text-overflow:ellipsis">'+escH(ev[0])+'</div>';
+        var parts = ev[0].split(' → ');
+        var last = parts[parts.length-1]||'';
+        var hint = last==='visit'?'👋 odbicie — wszedł i od razu wyszedł':
+                   last==='login'?'🔐 wyszedł przy logowaniu':
+                   last==='tab'?'📑 kliknął zakładkę i wyszedł':
+                   last==='search'?'🔍 szukał i wyszedł':
+                   last==='click'?'🖱 kliknął coś i wyszedł':'';
+        html += '<div style="padding:5px 0;border-bottom:1px solid var(--border3)">';
+        html += '<div style="display:flex;justify-content:space-between;align-items:center">';
+        html += '<div style="font-size:10px;color:var(--text2);flex:1;overflow:hidden;text-overflow:ellipsis;font-family:monospace">'+escH(ev[0])+'</div>';
         html += '<div style="font-size:10px;font-weight:700;color:var(--text);margin-left:8px;white-space:nowrap">'+ev[1]+'×</div>';
+        html += '</div>';
+        if(hint) html += '<div style="font-size:9px;color:var(--text3);margin-top:1px">'+hint+'</div>';
         html += '</div>';
       });
       html += '</div>';
