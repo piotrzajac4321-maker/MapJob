@@ -2716,26 +2716,6 @@ body.light-mode .mj-theme-btn:hover{ background: var(--surf2) }
   </div>
 
   <!-- ===== Engagement: social proof ticker ===== -->
-  <div id="home-social-proof" style="margin:0 14px 20px;background:var(--surf);border:1px solid var(--border3);border-radius:14px;padding:11px 14px;display:flex;align-items:center;gap:10px;overflow:hidden">
-    <div style="width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,var(--blue),#7C3AED);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:900;color:#fff;flex-shrink:0" id="sp-avatar">M</div>
-    <div style="flex:1;min-width:0;font-size:12px;color:var(--text2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis" id="sp-text"><b style="color:var(--text)">Marek z Warszawy</b> właśnie aplikował na ofertę Elektryka</div>
-    <div style="width:6px;height:6px;border-radius:50%;background:#4ADE80;box-shadow:0 0 8px rgba(74,222,128,.6);flex-shrink:0;animation:pulse-dot 2s ease-in-out infinite"></div>
-  </div>
-  <style>@keyframes pulse-dot{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.4);opacity:.7}}</style>
-  <script>
-  (function(){var _spMessages=[
-    {a:'M',c:'linear-gradient(135deg,#3B82F6,#7C3AED)',t:'<b style="color:var(--text)">Marek z Warszawy</b> właśnie aplikował na ofertę Elektryka'},
-    {a:'K',c:'linear-gradient(135deg,#10B981,#059669)',t:'<b style="color:var(--text)">Karolina z Krakowa</b> znalazła pracę przez MapJob'},
-    {a:'P',c:'linear-gradient(135deg,#EF4444,#DC2626)',t:'<b style="color:var(--text)">Piotr z Gdańska</b> dodał nowe ogłoszenie — Hydraulik'},
-    {a:'A',c:'linear-gradient(135deg,#F59E0B,#D97706)',t:'<b style="color:var(--text)">Anna z Wrocławia</b> przejrzała 3 oferty z okolicy'},
-    {a:'T',c:'linear-gradient(135deg,#6366F1,#4F46E5)',t:'<b style="color:var(--text)">Tomek z Łodzi</b> aplikował na stanowisko Kierowcy'},
-    {a:'J',c:'linear-gradient(135deg,#EC4899,#DB2777)',t:'<b style="color:var(--text)">Joanna z Poznania</b> dostała zaproszenie na rozmowę'},
-  ];var _spI=0;function _spNext(){_spI=(_spI+1)%_spMessages.length;var m=_spMessages[_spI];var av=document.getElementById('sp-avatar');var tx=document.getElementById('sp-text');if(av&&tx){av.style.background=m.c;av.textContent=m.a;tx.style.opacity='0';setTimeout(function(){tx.innerHTML=m.t;tx.style.opacity='1';},300);}}
-  setInterval(_spNext,4000);
-  try{document.getElementById('sp-text').style.transition='opacity .3s';}catch(e){}
-  })();
-  </script>
-
   <!-- ===== Globe "enter" modal — opened when the user taps the globe ===== -->
   <div class="modal" id="m-globe-enter" style="z-index:9500;padding-bottom:var(--nav-h,62px)"><div class="msheet" style="max-height:calc(92dvh - var(--nav-h,62px))">
     <div class="drag"><div class="dpill"></div></div>
