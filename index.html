@@ -5560,7 +5560,7 @@ if(session&&session.user){var uid=session.user.id;if(_lastAuthUserId===uid&&_isL
      (~3–5 min). Flushes to session_replays table on exit / rage / checkout.
      rrweb.js loaded from CDN only after page fully interactive.
      ═════════════════════════════════════════════════════════════════════ */
-  var _rrStop=null,_rrEvents=[],_rrFlushed=false,_rrLoaded=false;
+  var _rrStop=null,_rrEvents=[],_rrFullSnap=null,_rrFlushed=false,_rrLoaded=false;
   var _RR_MAX=500,_RR_CDN='https://cdn.jsdelivr.net/npm/rrweb@1.1.3/dist/record/rrweb-record.min.js';
   function _rrLoad(cb){
     if(_rrLoaded){cb&&cb();return;}
@@ -5574,6 +5574,7 @@ if(session&&session.user){var uid=session.user.id;if(_lastAuthUserId===uid&&_isL
         if(!_rrStop){throw new Error('rrweb.record not found');}
         _rrStop=_rrStop.call(null,{
           emit:function(ev){
+            if(ev.type===2)_rrFullSnap=ev; /* keep last FullSnapshot for replayer */
             _rrEvents.push(ev);
             if(_rrEvents.length>_RR_MAX)_rrEvents.shift();
           },
@@ -5592,7 +5593,9 @@ if(session&&session.user){var uid=session.user.id;if(_lastAuthUserId===uid&&_isL
     if(_rrFlushed||!_rrEvents.length||!window._mjSessionId||!_sb)return;
     _rrFlushed=true;
     if(typeof _rrStop==='function')try{_rrStop();}catch(e){}
+    /* Ensure replay starts with a FullSnapshot (rrweb requirement). */
     var evs=_rrEvents.slice();
+    if(_rrFullSnap&&(evs.length===0||evs[0].type!==2))evs=[_rrFullSnap].concat(evs);
     var CHUNK=100,rows=[];
     for(var i=0;i<evs.length;i+=CHUNK){
       rows.push({session_id:window._mjSessionId,chunk_index:Math.floor(i/CHUNK),events:evs.slice(i,i+CHUNK),trigger:trigger||'exit',total_events:evs.length});

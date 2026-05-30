@@ -14773,19 +14773,8 @@ async function _actRenderSessionReplay(){
       .order('created_at',{ascending:false})
       .limit(50);
     if(r.error){
-      box.innerHTML='<div style="padding:14px;color:var(--text3);font-size:12px">Tabela <code>session_replays</code> nie istnieje. Zaaplikuj migrację <code>002_session_replays.sql</code> w Supabase.<br><br><b>SQL do uruchomienia:</b><br><pre style="margin-top:8px;padding:10px;background:var(--surf2);border-radius:6px;font-size:10px;overflow-x:auto">CREATE TABLE session_replays (
-  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-  session_id UUID REFERENCES user_sessions(id) ON DELETE CASCADE,
-  chunk_index INTEGER NOT NULL DEFAULT 0,
-  events JSONB NOT NULL DEFAULT '[]',
-  trigger TEXT,
-  total_events INTEGER DEFAULT 0,
-  created_at TIMESTAMPTZ DEFAULT NOW()
-);
-CREATE INDEX idx_sr_session ON session_replays(session_id);
-ALTER TABLE session_replays ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "anon_insert" ON session_replays FOR INSERT WITH CHECK (true);
-CREATE POLICY "service_select" ON session_replays FOR SELECT USING (true);</pre></div>';
+      var sqlHint='CREATE TABLE session_replays (\n  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,\n  session_id UUID REFERENCES user_sessions(id) ON DELETE CASCADE,\n  chunk_index INTEGER NOT NULL DEFAULT 0,\n  events JSONB NOT NULL DEFAULT \'[]\',\n  trigger TEXT,\n  total_events INTEGER DEFAULT 0,\n  created_at TIMESTAMPTZ DEFAULT NOW()\n);\nCREATE INDEX idx_sr_session ON session_replays(session_id);\nALTER TABLE session_replays ENABLE ROW LEVEL SECURITY;\nCREATE POLICY "anon_insert" ON session_replays FOR INSERT WITH CHECK (true);\nCREATE POLICY "service_select" ON session_replays FOR SELECT USING (true);';
+      box.innerHTML='<div style="padding:14px;color:var(--text3);font-size:12px">Tabela <code>session_replays</code> nie istnieje. Zaaplikuj migrację <code>002_session_replays.sql</code> w Supabase.<br><br><b>SQL do uruchomienia:</b><br><pre style="margin-top:8px;padding:10px;background:var(--surf2);border-radius:6px;font-size:10px;overflow-x:auto;white-space:pre">'+escH(sqlHint)+'</pre></div>';
       return;
     }
     var replays=r.data||[];
@@ -14840,23 +14829,39 @@ async function _actOpenReplay(sessionId){
   var allEvents=[];
   r.data.forEach(function(chunk){(chunk.events||[]).forEach(function(ev){allEvents.push(ev);});});
   /* Build HTML as string array — no nested quote escaping needed */
+  /* Escape <\/script> sequences in event JSON (prevents early tag close in blob HTML). */
+  var eventsJson=JSON.stringify(allEvents).replace(/<\/script>/gi,'<\\/script>');
+  /* Use rrweb built-in Replayer — no separate rrweb-player package needed. */
   var parts=[
     '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Session Replay — MapJob</title>',
-    '<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/rrweb-player@1.0.0/dist/style.css">',
-    '<style>body{margin:0;background:#0f172a;display:flex;flex-direction:column;align-items:center;min-height:100vh;font-family:system-ui;color:#e2e8f0;padding:20px;box-sizing:border-box}',
-    '.hdr{margin-bottom:16px;font-size:13px;color:#94a3b8}#pc{width:100%;max-width:1200px}',
-    '#err{display:none;margin:20px;padding:14px;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.3);border-radius:8px;color:#ef4444;font-size:12px}</style>',
-    '</head><body>',
-    '<div class="hdr">🎬 Session Replay &mdash; '+escH(sessionId)+' &mdash; '+allEvents.length+' events</div>',
-    '<div id="err"></div><div id="pc"></div>',
-    '<script src="https://cdn.jsdelivr.net/npm/rrweb@1.1.3/dist/rrweb.min.js"><\/script>',
-    '<script src="https://cdn.jsdelivr.net/npm/rrweb-player@1.0.0/dist/index.js"><\/script>',
-    '<script>var E='+JSON.stringify(allEvents)+';',
+    '<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/rrweb@1.1.3/dist/replay/rrweb-replay.min.css">',
+    '<style>body{margin:0;background:#0f172a;font-family:system-ui;color:#e2e8f0;padding:20px;box-sizing:border-box}',
+    '.hdr{margin-bottom:14px;font-size:13px;color:#94a3b8;display:flex;align-items:center;gap:12px}',
+    '.ctrl{display:flex;gap:8px;margin-top:10px}',
+    '.btn{padding:7px 14px;border-radius:8px;border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.08);color:#e2e8f0;cursor:pointer;font-size:12px}',
+    '#err{display:none;margin:20px 0;padding:14px;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.3);border-radius:8px;color:#ef4444;font-size:12px}',
+    '#rr-player .replayer-wrapper{background:#fff;border-radius:8px;overflow:hidden}',
+    '</style></head><body>',
+    '<div class="hdr"><span>🎬 Session Replay</span><span style="color:#475569;font-size:11px">'+escH(sessionId)+'</span><span style="color:#475569;font-size:11px">'+allEvents.length+' events</span></div>',
+    '<div id="err"></div>',
+    '<div id="rr-player"></div>',
+    '<div class="ctrl">',
+    '  <button class="btn" onclick="if(window._r)window._r.play()">▶ Play</button>',
+    '  <button class="btn" onclick="if(window._r)window._r.pause()">⏸ Pause</button>',
+    '  <button class="btn" onclick="if(window._r){window._r.pause();window._r.play(0);}">⏮ Restart</button>',
+    '  <button class="btn" onclick="if(window._r)window._r.play()" style="margin-left:auto">1×</button>',
+    '</div>',
+    '<script src="https://cdn.jsdelivr.net/npm/rrweb@1.1.3/dist/replay/rrweb-replay.min.js"><\/script>',
+    '<script>',
+    'var E='+eventsJson+';',
     'window.addEventListener("load",function(){',
-    '  var d=document.getElementById("pc"),er=document.getElementById("err");',
-    '  try{new rrwebPlayer({target:d,props:{events:E,width:1200,height:700,autoPlay:true,showController:true}});}',
-    '  catch(ex){er.style.display="block";er.textContent="Błąd odtwarzacza: "+(ex&&ex.message||String(ex));}',
-    '});<\/script></body></html>'
+    '  var er=document.getElementById("err");',
+    '  try{',
+    '    window._r=new rrweb.Replayer(E,{root:document.getElementById("rr-player"),skipInactive:true,speed:1});',
+    '    window._r.play();',
+    '  }catch(ex){er.style.display="block";er.textContent="Błąd odtwarzacza: "+(ex&&ex.message||String(ex));}',
+    '});',
+    '<\/script></body></html>'
   ];
   var html=parts.join('');
   try{
@@ -14865,9 +14870,6 @@ async function _actOpenReplay(sessionId){
     var win=window.open(url,'_blank');
     if(!win)try{toast('Odblokuj popup w przeglądarce','warn');}catch(_){}
   }catch(ex){try{toast('Błąd replay: '+(ex&&ex.message||ex),'err');}catch(_){}}
-});'+
-    '</sc'+'ript></body></html>');
-  win.document.close();
 }
 
 /* ══════════════════════════════════════════════════════════════════════
