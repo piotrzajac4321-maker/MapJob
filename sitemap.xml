@@ -2,15 +2,9 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://mapjob.pl/</loc>
-    <lastmod>2026-05-27</lastmod>
+    <lastmod>2026-05-30</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
-  </url>
-  <url>
-    <loc>https://mapjob.pl/zaufali-nam/</loc>
-    <lastmod>2026-05-27</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://mapjob.pl/?action=add-pin</loc>
@@ -24,49 +18,49 @@
   </url>
   <url>
     <loc>https://mapjob.pl/praca-w-polsce/</loc>
-    <lastmod>2026-05-27</lastmod>
+    <lastmod>2026-05-30</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
     <loc>https://mapjob.pl/praca-warszawa/</loc>
-    <lastmod>2026-05-27</lastmod>
+    <lastmod>2026-05-30</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
     <loc>https://mapjob.pl/praca-trener-personalny/</loc>
-    <lastmod>2026-05-27</lastmod>
+    <lastmod>2026-05-30</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
     <loc>https://mapjob.pl/praca-za-granica/</loc>
-    <lastmod>2026-05-27</lastmod>
+    <lastmod>2026-05-30</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
     <loc>https://mapjob.pl/praca-niemcy/</loc>
-    <lastmod>2026-05-27</lastmod>
+    <lastmod>2026-05-30</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
     <loc>https://mapjob.pl/praca-holandia/</loc>
-    <lastmod>2026-05-27</lastmod>
+    <lastmod>2026-05-30</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
     <loc>https://mapjob.pl/praca-magazynier/</loc>
-    <lastmod>2026-05-27</lastmod>
+    <lastmod>2026-05-30</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
     <loc>https://mapjob.pl/praca-produkcja/</loc>
-    <lastmod>2026-05-27</lastmod>
+    <lastmod>2026-05-30</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
   </url>
