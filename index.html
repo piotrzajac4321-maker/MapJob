@@ -3374,7 +3374,7 @@ body.light-mode .mj-theme-btn:hover{ background: var(--surf2) }
 
   /* Reorder category chips by count of currently loaded offers (most → least) */
   window._mjReorderJobCats=function(){
-    var row=document.getElementById('jobs-filters-row');if(!row)return;
+    var row=document.getElementById('jobs-cat-bar');if(!row)return;
     var cards=document.querySelectorAll('.job-card-item');
     var counts={};
     cards.forEach(function(c){var k=c.getAttribute('data-cat')||'';if(k)counts[k]=(counts[k]||0)+1;});
