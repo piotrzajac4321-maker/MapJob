@@ -14243,7 +14243,7 @@ async function _actRenderScrollDepth(){
     var rows = r.data||[];
 
     if(!rows.length){
-      box.innerHTML='<div style="padding:14px;color:var(--text3);font-size:12px">Brak danych scroll depth. Upewnij się że tracker.js jest wdrożony na stronie.</div>';
+      box.innerHTML='<div style="padding:14px;color:var(--text3);font-size:12px">Brak danych scroll depth — zdarzenia zaczną napływać wkrótce (nowe sesje po aktualizacji kodu).</div>';
       return;
     }
 
@@ -14329,7 +14329,7 @@ async function _actRenderClickHeatmap(){
     });
 
     if(!clicks.length){
-      box.innerHTML='<div style="padding:14px;color:var(--text3);font-size:12px">Brak danych pozycji kliknięć dla ścieżki <b>'+escH(path)+'</b>. Upewnij się że tracker.js wysyła koordinaty x/y.</div>';
+      box.innerHTML='<div style="padding:14px;color:var(--text3);font-size:12px">Brak danych pozycji kliknięć dla ścieżki <b>'+escH(path)+'</b> — wymagana zgoda analityczna użytkowników.</div>';
       return;
     }
 
@@ -14630,7 +14630,7 @@ async function _actRenderWebVitals(){
     if(r.error)throw r.error;
     var rows=r.data||[];
     if(!rows.length){
-      box.innerHTML='<div style="padding:14px;color:var(--text3);font-size:12px">Brak danych Web Vitals. Dodaj tracker.js — PerformanceObserver zapisuje LCP/CLS/FID automatycznie.</div>';return;
+      box.innerHTML='<div style="padding:14px;color:var(--text3);font-size:12px">Brak danych Web Vitals — dane napływają od użytkowników z nowych sesji.</div>';return;
     }
     /* Group by metric name */
     var byMetric={};

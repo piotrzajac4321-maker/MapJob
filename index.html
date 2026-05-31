@@ -5601,7 +5601,7 @@ if(session&&session.user){var uid=session.user.id;if(_lastAuthUserId===uid&&_isL
 
   /* RODO: behavioral events są gated przez cookie-consent (mj_cookie_consent_v2.analytics).
      Essential events (login, logout, visit) zostają — są techniczne nie behavioralne. */
-  var _ESSENTIAL=['login','logout','visit','pagehide','beforeunload','leave'];
+  var _ESSENTIAL=['login','logout','visit','pagehide','beforeunload','leave','scroll_depth','device_info','web_vital','tab','navigate'];
   function _analyticsAllowed(){try{var c=JSON.parse(localStorage.getItem('mj_cookie_consent_v2')||'null');return !!(c&&c.analytics===true);}catch(e){return false;}}
   async function _insertEvent(type,targetType,targetId,meta){
     if(!_sb||!type)return;
