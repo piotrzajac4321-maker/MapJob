@@ -622,6 +622,8 @@ h1{font-size:28px;font-weight:900;letter-spacing:-.6px;line-height:1.15;margin-b
 .cross-links{display:flex;flex-wrap:wrap;gap:7px}
 .cross-links a{font-size:12.5px;font-weight:700;color:var(--text);background:var(--surf2);border:1px solid var(--border2);border-radius:999px;padding:7px 13px;text-decoration:none}
 .cross-links a:hover{border-color:var(--blue);color:var(--blue2)}
+.employer-more{display:inline-flex;align-items:center;gap:7px;background:var(--surf);border:1px solid var(--border2);border-radius:10px;padding:9px 14px;font-size:12.5px;font-weight:700;color:var(--text2);text-decoration:none;margin-top:12px;margin-bottom:4px}
+.employer-more:hover{border-color:var(--blue);color:var(--blue2);text-decoration:none}
 @media(max-width:640px){h1{font-size:22px}.wrap{padding:18px 16px 40px}.head-row{gap:12px}.logo-tile{width:50px;height:50px;font-size:22px}}"""
 
 
@@ -818,6 +820,7 @@ def render_offer(o, all_offers):
     <div class="head-main">
       <h1>{html_lib.escape(title)}</h1>
       <div class="subt"><b>{html_lib.escape(company)}</b>{' · ' + html_lib.escape(loc_full) if loc_full else ''}</div>
+      <a class="employer-more" href="/?q={html_lib.escape(company)}">🏢 Sprawdź więcej ogłoszeń tego pracodawcy →</a>
     </div>
   </div>
 
