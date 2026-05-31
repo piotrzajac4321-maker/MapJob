@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+Disallow: /admin.html
+Disallow: /admin
+Disallow: /?action=
+Disallow: /*?ref=
+
+Sitemap: https://mapjob.pl/sitemap.xml

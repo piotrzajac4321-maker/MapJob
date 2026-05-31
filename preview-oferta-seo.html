@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>[MAKIETA] Strona pojedynczej oferty — Florysta Radom | MapJob</title>
+<meta name="description" content="Florysta/Florystka w Radomiu — 6000-8000 zł brutto, etat, Floral Studio. Sprawdź lokalizację na mapie i aplikuj."/>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap"/>
+<style>
+:root{--bg:#0B0D10;--surf:#15181F;--surf2:#1C2029;--border:rgba(255,255,255,.09);--border2:rgba(255,255,255,.14);
+--text:#F5F7FA;--text2:#A1A9B8;--text3:#6B7280;--blue:#2D7FF9;--blue2:#60A5FA;--green:#10B981;--gold:#D97706;
+--ff:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--ff);background:#070809;color:var(--text);-webkit-font-smoothing:antialiased;line-height:1.55}
+a{color:var(--blue2);text-decoration:none}a:hover{text-decoration:underline}
+
+/* MAKIETA chip */
+.mockup-bar{background:rgba(217,119,6,.14);border-bottom:1px solid rgba(217,119,6,.4);padding:8px 22px;text-align:center;font-size:11px;font-weight:800;letter-spacing:.6px;text-transform:uppercase;color:var(--gold)}
+
+.topbar{position:sticky;top:0;z-index:50;display:flex;align-items:center;gap:12px;padding:13px 22px;background:rgba(7,8,9,.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--border)}
+.topbar .logo{display:flex;align-items:center;gap:8px;font-weight:900;font-size:18px;letter-spacing:-.5px;color:var(--text)}
+.topbar .logo .dot{width:26px;height:26px;border-radius:8px;background:var(--blue);display:flex;align-items:center;justify-content:center;font-size:14px}
+.topbar .nav{margin-left:auto;display:flex;gap:14px;font-size:13px;font-weight:700}
+
+.wrap{max-width:920px;margin:0 auto;padding:24px 22px 60px}
+.crumbs{font-size:12px;color:var(--text3);margin-bottom:14px}
+.crumbs a{color:var(--text3)}.crumbs span{margin:0 7px}
+
+.url-preview{background:rgba(45,127,249,.07);border:1px dashed rgba(45,127,249,.35);border-radius:8px;padding:9px 14px;font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;font-size:12px;color:var(--blue2);margin-bottom:18px;word-break:break-all}
+
+/* Header */
+.head{display:flex;gap:18px;align-items:flex-start;flex-wrap:wrap;margin-bottom:6px}
+.logo-tile{width:64px;height:64px;border-radius:14px;background:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:32px;font-weight:900;color:#0a1228}
+.head-main{flex:1;min-width:240px}
+h1{font-size:28px;font-weight:900;letter-spacing:-.6px;line-height:1.15;margin-bottom:6px}
+.subt{font-size:14.5px;color:var(--text2)}
+.subt b{color:var(--text);font-weight:800}
+.subt .verif{font-size:10px;font-weight:800;color:#fff;background:var(--green);padding:3px 7px;border-radius:6px;margin-left:7px;vertical-align:middle}
+
+/* Quick facts row */
+.facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;margin:22px 0 26px}
+.fact{background:var(--surf);border:1px solid var(--border);border-radius:12px;padding:13px 14px}
+.fact .lbl{font-size:10.5px;font-weight:800;letter-spacing:.4px;text-transform:uppercase;color:var(--text3);margin-bottom:4px}
+.fact .val{font-size:14.5px;font-weight:800;color:var(--text)}
+.fact .val.salary{color:var(--green)}
+.fact .val.urgent{color:var(--gold)}
+
+/* Apply card (sticky-ish) */
+.apply{background:linear-gradient(135deg,rgba(45,127,249,.12),rgba(96,165,250,.05));border:1px solid rgba(45,127,249,.35);border-radius:16px;padding:18px 20px;display:flex;gap:14px;align-items:center;flex-wrap:wrap;margin-bottom:30px}
+.apply .info{flex:1;min-width:200px}
+.apply .info b{display:block;font-size:14.5px;font-weight:900;margin-bottom:3px}
+.apply .info span{font-size:12.5px;color:var(--text2)}
+.apply .btn{background:var(--blue);color:#fff;font-weight:800;font-size:14.5px;padding:13px 24px;border-radius:11px;display:inline-flex;align-items:center;gap:7px;border:0;cursor:pointer}
+.apply .btn:hover{text-decoration:none;background:#1f6ce0}
+
+/* Sections */
+.sec{margin-bottom:30px}
+.sec h2{font-size:18px;font-weight:900;letter-spacing:-.3px;margin-bottom:12px}
+.sec p, .sec li{font-size:14.5px;color:var(--text2);line-height:1.7}
+.desc{background:var(--surf);border:1px solid var(--border);border-radius:14px;padding:18px 20px;white-space:pre-line}
+.desc b{color:var(--text)}
+
+/* Map placeholder */
+.map-ph{height:220px;background:linear-gradient(135deg,#0c1626,#0a1322);border:1px solid var(--border);border-radius:14px;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;color:var(--text3);font-size:13px}
+.map-ph::before{content:"";position:absolute;inset:0;background-image:radial-gradient(circle at 50% 50%,rgba(45,127,249,.18),transparent 60%),repeating-linear-gradient(45deg,transparent,transparent 30px,rgba(255,255,255,.025) 30px,rgba(255,255,255,.025) 31px);}
+.map-ph .pin{position:absolute;left:48%;top:42%;font-size:32px;filter:drop-shadow(0 4px 10px rgba(45,127,249,.6));z-index:2}
+.map-ph .lbl{position:absolute;left:50%;top:60%;transform:translateX(-50%);font-size:12px;color:var(--text2);background:rgba(11,13,16,.85);padding:5px 10px;border-radius:6px;border:1px solid var(--border2);z-index:2}
+
+/* Similar offers */
+.similar{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px}
+.simcard{background:var(--surf);border:1px solid var(--border);border-radius:12px;padding:14px;display:block;color:var(--text);text-decoration:none}
+.simcard:hover{border-color:var(--border2);text-decoration:none}
+.simcard .t{font-size:13.5px;font-weight:800;line-height:1.3;margin-bottom:5px}
+.simcard .l{font-size:11.5px;color:var(--text3);margin-bottom:7px}
+.simcard .s{font-size:12.5px;font-weight:900;color:var(--green)}
+
+/* Cross strip (jak na landingach) */
+.cross{margin-top:30px;padding:20px;background:var(--surf);border:1px solid var(--border);border-radius:14px}
+.cross h2{font-size:15px;font-weight:900;margin-bottom:10px}
+.cross .sub{font-size:12.5px;color:var(--text3);margin-bottom:12px}
+.cross-links{display:flex;flex-wrap:wrap;gap:7px}
+.cross-links a{font-size:12.5px;font-weight:700;color:var(--text);background:var(--surf2);border:1px solid var(--border2);border-radius:999px;padding:7px 13px;text-decoration:none}
+.cross-links a:hover{border-color:var(--blue);color:var(--blue2)}
+
+.foot{margin-top:38px;padding-top:20px;border-top:1px solid var(--border);font-size:12px;color:var(--text3);line-height:1.6}
+.foot a{color:var(--text2)}
+
+/* Schema preview box */
+.schema-box{margin:30px 0 0;background:#0a0e14;border:1px solid var(--border);border-left:3px solid var(--gold);border-radius:10px;padding:14px 16px;font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;font-size:11px;color:#8ba3c7;line-height:1.5;white-space:pre-wrap;overflow-x:auto}
+.schema-box .k{color:#7dd3fc}.schema-box .s{color:#86efac}.schema-box .n{color:#fbbf24}.schema-box .c{color:var(--text3);font-style:italic}
+
+@media(max-width:640px){h1{font-size:22px}.wrap{padding:16px 16px 40px}.head{gap:12px}.logo-tile{width:50px;height:50px;font-size:22px}}
+</style>
+</head>
+<body>
+
+<div class="mockup-bar">⚠ MAKIETA — tak będzie wyglądać każda z ~69 stron ofert (Florysta Radom jako przykład)</div>
+
+<header class="topbar">
+  <a href="/" class="logo"><span class="dot">📍</span><span>Map<span style="color:var(--blue2)">Job</span></span></a>
+  <nav class="nav">
+    <a href="/">Mapa ofert</a>
+    <a href="#">Dodaj ogłoszenie</a>
+  </nav>
+</header>
+
+<main class="wrap">
+
+  <div class="url-preview">URL: https://mapjob.pl/oferta/florysta-florystka-radom-1004</div>
+
+  <nav class="crumbs">
+    <a href="/">Strona główna</a><span>›</span>
+    <a href="/praca-w-polsce/">Praca w Polsce</a><span>›</span>
+    <a href="/praca-w-polsce/">Radom</a><span>›</span>
+    Florysta/Florystka — Radom
+  </nav>
+
+  <div class="head">
+    <div class="logo-tile">F</div>
+    <div class="head-main">
+      <h1>Florysta/Florystka — Radom</h1>
+      <div class="subt"><b>Floral Studio Sp. z o.o.</b><span class="verif">✓ Zweryfikowany</span> · Radom, woj. mazowieckie</div>
+    </div>
+  </div>
+
+  <section class="facts">
+    <div class="fact"><div class="lbl">💶 Wynagrodzenie</div><div class="val salary">6000 – 8000 zł / mies.</div></div>
+    <div class="fact"><div class="lbl">📋 Umowa</div><div class="val">Etat</div></div>
+    <div class="fact"><div class="lbl">📍 Lokalizacja</div><div class="val">Radom</div></div>
+    <div class="fact"><div class="lbl">👥 Wakaty</div><div class="val">1 miejsce</div></div>
+  </section>
+
+  <div class="apply">
+    <div class="info">
+      <b>Aplikuj bezpośrednio u pracodawcy</b>
+      <span>MapJob nie pobiera prowizji. Twoje dane trafiają tylko do Floral Studio.</span>
+    </div>
+    <a class="btn" href="/?o=1004">📝 Aplikuj na MapJob →</a>
+  </div>
+
+  <section class="sec">
+    <h2>Opis stanowiska</h2>
+    <div class="desc">Poszukujemy doświadczonego specjalisty do pracy w Radomiu. Oferujemy atrakcyjne wynagrodzenie i pakiet benefitów.
+
+🎁 <b>Oferujemy:</b>
+• Karta sportowa Multisport / Benefit Systems
+• 26 dni urlopu
+• Ubezpieczenie grupowe
+• Prywatna opieka medyczna (LUX MED / Medicover)</div>
+  </section>
+
+  <section class="sec">
+    <h2>Lokalizacja</h2>
+    <div class="map-ph">
+      <span class="pin">📍</span>
+      <span class="lbl">Radom · woj. mazowieckie</span>
+      (mini-mapa z pinem oferty + ikoną „Otwórz pełną mapę")
+    </div>
+  </section>
+
+  <section class="sec">
+    <h2>Podobne oferty w okolicy</h2>
+    <div class="similar">
+      <a class="simcard" href="#">
+        <div class="t">Promotor / Promotorka</div>
+        <div class="l">📍 Katowice · Klaudia Maj</div>
+        <div class="s">7500 – 8000 zł / mies.</div>
+      </a>
+      <a class="simcard" href="#">
+        <div class="t">Fryzjer/Fryzjerka — Katowice</div>
+        <div class="l">📍 Katowice · Hair Studio Premium</div>
+        <div class="s">5000 – 7000 zł / mies.</div>
+      </a>
+      <a class="simcard" href="#">
+        <div class="t">Trener personalny · Studio Mokotów</div>
+        <div class="l">📍 Warszawa · Platinum Active</div>
+        <div class="s">5100 – 6500 zł / mies.</div>
+      </a>
+    </div>
+  </section>
+
+  <section class="cross">
+    <h2>Zobacz też</h2>
+    <p class="sub">Inne kategorie i lokalizacje z aktualnymi ofertami:</p>
+    <div class="cross-links">
+      <a href="/praca-w-polsce/">Praca w Polsce</a>
+      <a href="/praca-warszawa/">Praca Warszawa</a>
+      <a href="/praca-trener-personalny/">Trener personalny</a>
+      <a href="/praca-produkcja/">Praca w produkcji</a>
+      <a href="/praca-za-granica/">Praca za granicą</a>
+    </div>
+  </section>
+
+  <details class="schema-box" open>
+    <summary style="cursor:pointer;color:var(--gold);font-family:var(--ff);font-size:12px;font-weight:800;margin-bottom:8px">🏷 JobPosting JSON-LD (niewidoczny dla usera, kluczowy dla Google)</summary>
+<span class="c">// Wstawione w &lt;script type="application/ld+json"&gt; w &lt;head&gt;</span>
+{
+  <span class="k">"@context"</span>: <span class="s">"https://schema.org"</span>,
+  <span class="k">"@type"</span>: <span class="s">"JobPosting"</span>,
+  <span class="k">"title"</span>: <span class="s">"Florysta/Florystka — Radom"</span>,
+  <span class="k">"description"</span>: <span class="s">"Poszukujemy doświadczonego specjalisty..."</span>,
+  <span class="k">"datePosted"</span>: <span class="s">"2026-05-27"</span>,
+  <span class="k">"validThrough"</span>: <span class="s">"2027-05-27"</span>,
+  <span class="k">"employmentType"</span>: <span class="s">"FULL_TIME"</span>,
+  <span class="k">"hiringOrganization"</span>: {
+    <span class="k">"@type"</span>: <span class="s">"Organization"</span>,
+    <span class="k">"name"</span>: <span class="s">"Floral Studio Sp. z o.o."</span>
+  },
+  <span class="k">"jobLocation"</span>: {
+    <span class="k">"@type"</span>: <span class="s">"Place"</span>,
+    <span class="k">"address"</span>: {
+      <span class="k">"@type"</span>: <span class="s">"PostalAddress"</span>,
+      <span class="k">"addressLocality"</span>: <span class="s">"Radom"</span>,
+      <span class="k">"addressCountry"</span>: <span class="s">"PL"</span>
+    }
+  },
+  <span class="k">"baseSalary"</span>: {
+    <span class="k">"@type"</span>: <span class="s">"MonetaryAmount"</span>,
+    <span class="k">"currency"</span>: <span class="s">"PLN"</span>,
+    <span class="k">"value"</span>: { <span class="k">"@type"</span>: <span class="s">"QuantitativeValue"</span>, <span class="k">"minValue"</span>: <span class="n">6000</span>, <span class="k">"maxValue"</span>: <span class="n">8000</span>, <span class="k">"unitText"</span>: <span class="s">"MONTH"</span> }
+  },
+  <span class="k">"url"</span>: <span class="s">"https://mapjob.pl/oferta/florysta-florystka-radom-1004"</span>
+}
+  </details>
+
+  <footer class="foot">
+    <p>© 2026 MapJob — mapa ogłoszeń o pracę. <a href="/regulamin.html">Regulamin</a> · <a href="/polityka-prywatnosci.html">Polityka prywatności</a></p>
+  </footer>
+
+</main>
+
+</body>
+</html>

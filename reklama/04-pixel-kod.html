@@ -1,0 +1,87 @@
+<!--
+====================================================================
+  META PIXEL — GOTOWY SNIPPET DO WKLEJENIA W index.html
+====================================================================
+
+  Instrukcja:
+  1. Wejdź na https://business.facebook.com → Ustawienia → Źródła zdarzeń
+  2. Utwórz Pixel (jeśli jeszcze nie masz) — nazwa: "MapJob Pixel"
+  3. Skopiuj swój 16-cyfrowy Pixel ID (np. 1234567890123456)
+  4. Podmień PLACEHOLDER "REPLACE_WITH_YOUR_PIXEL_ID" poniżej na swój ID
+  5. Wklej CAŁY blok <script>...</script> + <noscript>...</noscript> w index.html
+     — zaraz po otwierającym <head> (przed jakimikolwiek innymi skryptami)
+
+  UWAGA O ZGODACH (RODO):
+  MapJob już ma system zgód (ChecknijPolityka). Pixel MUSI:
+  - nie ładować się przed zaakceptowaniem zgody marketingowej
+  - być możliwy do wyłączenia (opt-out)
+  Zobacz plik 05-pixel-eventy.md, sekcja "Consent mode" — tam jest finalny kod
+  z warunkowym ładowaniem.
+====================================================================
+-->
+
+<!-- ==================== META PIXEL — BASE CODE ==================== -->
+<script>
+!function(f,b,e,v,n,t,s){
+  if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+  n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+  if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+  n.queue=[];t=b.createElement(e);t.async=!0;
+  t.src=v;s=b.getElementsByTagName(e)[0];
+  s.parentNode.insertBefore(t,s)
+}(window, document,'script','https://connect.facebook.net/en_US/fbevents.js');
+
+fbq('init', 'REPLACE_WITH_YOUR_PIXEL_ID');
+fbq('track', 'PageView');
+</script>
+
+<!-- Fallback dla użytkowników z wyłączonym JS -->
+<noscript>
+  <img height="1" width="1" style="display:none"
+    src="https://www.facebook.com/tr?id=REPLACE_WITH_YOUR_PIXEL_ID&ev=PageView&noscript=1"/>
+</noscript>
+
+<!-- ==================== KONIEC META PIXEL ==================== -->
+
+
+<!--
+====================================================================
+  BONUS: CONSENT MODE (wersja z RODO-friendly gating)
+====================================================================
+  Poniżej wersja która nie ładuje Pixel dopóki user nie zaakceptuje
+  zgody marketingowej. To jest PRAWIDŁOWY sposób dla rynku UE/PL.
+
+  Jeśli masz w apce zmienną np. window.userConsent.marketing === true
+  po akceptacji cookies/zgody → użyj wersji poniżej zamiast bazowej.
+====================================================================
+-->
+
+<script>
+(function(){
+  // Funkcja ładująca Pixel — wywoływana TYLKO po zgodzie
+  window.loadMetaPixel = function() {
+    if (window.fbq) return; // już załadowane
+
+    !function(f,b,e,v,n,t,s){
+      if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+      n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+      if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+      n.queue=[];t=b.createElement(e);t.async=!0;
+      t.src=v;s=b.getElementsByTagName(e)[0];
+      s.parentNode.insertBefore(t,s)
+    }(window, document,'script','https://connect.facebook.net/en_US/fbevents.js');
+
+    fbq('init', 'REPLACE_WITH_YOUR_PIXEL_ID');
+    fbq('track', 'PageView');
+    console.log('[MapJob] Meta Pixel załadowany po zgodzie');
+  };
+
+  // Sprawdź czy user już wcześniej zaakceptował (localStorage)
+  try {
+    var consent = localStorage.getItem('mapjob_consent_marketing');
+    if (consent === 'true') {
+      window.loadMetaPixel();
+    }
+  } catch(e) {}
+})();
+</script>

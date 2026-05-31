@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MapJob — Po zmianach (sober C + SVG icons + bez bannera)</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@500;700;800&display=swap">
+<style>
+:root{
+  --bg:#08090B; --bg2:#0C0D10; --surf:#111316; --surf2:#16181C;
+  --border:rgba(255,255,255,.06); --border3:rgba(255,255,255,.10);
+  --text:#F1F2F4; --text2:#9CA3AF; --text3:#5C6370;
+  --blue:#3B82F6; --blue2:#60A5FA; --blue-dim:rgba(59,130,246,.10);
+  --green:#10B981; --red:#EF4444;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{font-family:Inter,'Plus Jakarta Sans',-apple-system,sans-serif;background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased}
+.app{max-width:480px;margin:0 auto;min-height:100vh;border-left:1px solid var(--border);border-right:1px solid var(--border)}
+
+/* TOPBAR */
+.tb{display:flex;align-items:center;justify-content:space-between;padding:8px 14px;height:46px;background:var(--bg2);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:10}
+.tb-logo{display:flex;align-items:center;gap:0}
+.tb-logo-img{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,#3B82F6,#1D4ED8);box-shadow:0 0 0 1px rgba(255,255,255,.10);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:13px}
+.tb-sep{width:1px;height:24px;background:rgba(255,255,255,.12);margin:0 10px}
+.tb-pin{display:flex;align-items:center;gap:5px}
+.tb-pin svg{flex-shrink:0;color:var(--blue2)}
+.tb-mark{font-family:'Plus Jakarta Sans';font-size:18px;font-weight:800;letter-spacing:-.5px;line-height:1}
+.tb-mark span{color:var(--blue2)}
+.tb-acts{display:flex;align-items:center;gap:6px}
+.tb-login{padding:6px 13px;border-radius:22px;background:var(--blue);border:none;color:#fff;font-family:inherit;font-size:11.5px;font-weight:700;cursor:pointer;box-shadow:0 1px 2px rgba(0,0,0,.20)}
+.tb-btn{width:34px;height:34px;border-radius:50%;background:none;border:none;cursor:pointer;color:var(--text2);display:flex;align-items:center;justify-content:center;position:relative;transition:background .15s}
+.tb-btn:hover{background:var(--surf)}
+.tb-badge{position:absolute;top:3px;right:3px;width:8px;height:8px;border-radius:50%;background:var(--red);border:1.5px solid var(--bg2)}
+
+/* HERO */
+.hero{padding:28px 18px 16px;text-align:center}
+.hero-eyebrow{display:inline-flex;align-items:center;gap:7px;padding:5px 12px;border-radius:999px;background:var(--surf);border:1px solid var(--border);font-size:11.5px;color:var(--text2);margin-bottom:14px}
+.hero-eyebrow .dot{width:6px;height:6px;border-radius:50%;background:var(--green)}
+.hero-h1{font-family:'Plus Jakarta Sans';font-size:34px;font-weight:700;line-height:1.18;letter-spacing:-.025em;color:#F4F4F5;padding-bottom:4px;margin-bottom:10px}
+.hero-h1 .accent{background:linear-gradient(90deg,#F4F4F5 0%,#9CA3AF 100%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent;display:block;line-height:1.18;padding-bottom:2px}
+.hero-sub{font-size:14px;color:var(--text2);line-height:1.5;max-width:340px;margin:0 auto 18px}
+.hero-cta{display:inline-flex;align-items:center;gap:8px;padding:12px 22px;background:var(--blue);color:#fff;border:none;border-radius:999px;font-family:inherit;font-size:14px;font-weight:600;cursor:pointer;box-shadow:0 4px 14px rgba(59,130,246,.30)}
+
+/* SECTION */
+.sec{padding:14px 14px 0}
+.sec-eyebrow{font-size:11px;font-weight:600;color:var(--text3);letter-spacing:.08em;text-transform:uppercase;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.sec-eyebrow::after{content:'';flex:1;height:1px;background:var(--border)}
+
+/* CHIPS */
+.chips{display:flex;gap:6px;overflow-x:auto;padding:0 14px 14px;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chip{padding:6px 13px;border-radius:8px;background:var(--surf);border:1px solid var(--border3);font-size:11.5px;font-weight:600;color:var(--text2);white-space:nowrap;cursor:pointer}
+.chip.on{background:var(--blue);border-color:var(--blue);color:#fff}
+
+/* JOB CARDS */
+.jobs{padding:0 14px 80px;display:flex;flex-direction:column;gap:10px}
+.job{background:var(--surf);border:1px solid var(--border3);border-radius:16px;cursor:pointer;overflow:hidden;position:relative}
+.job.urg-strip::before{content:'● PILNE — szybka rekrutacja';display:block;background:var(--red);padding:4px 14px;font-size:10px;font-weight:800;color:#fff;letter-spacing:.5px}
+.job-row{display:flex}
+.job-strip{width:4px;flex-shrink:0}
+.job-body{flex:1;padding:13px 14px;min-width:0}
+.job-head{display:flex;align-items:flex-start;gap:11px;margin-bottom:10px}
+.job-tile{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0;border:1.5px solid;background:var(--surf2)}
+.job-meta{flex:1;min-width:0}
+.job-title{font-size:14px;font-weight:800;color:var(--text);line-height:1.3;margin-bottom:2px}
+.job-comp{font-size:12px;color:var(--text2);font-weight:600}
+.job-time{font-size:10px;color:var(--text3);text-align:right;flex-shrink:0}
+.tags{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:10px}
+.tag{display:inline-flex;align-items:center;gap:5px;padding:4px 9px;border-radius:20px;font-size:11px;font-weight:600;background:var(--surf2);color:var(--text2)}
+.tag.b2b{background:rgba(59,130,246,.10);color:var(--blue2);font-weight:700}
+.tag.spots{background:rgba(16,185,129,.10);border:1px solid rgba(16,185,129,.30);color:var(--green);font-weight:800}
+.tag svg{flex-shrink:0;color:currentColor}
+.job-foot{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.salary{font-size:16px;font-weight:900;color:var(--text);line-height:1}
+.salary-sub{font-size:10px;color:var(--text3);margin-top:1px}
+.apply{padding:10px 16px;border-radius:12px;border:none;font-family:inherit;font-size:12px;font-weight:800;color:#fff;cursor:pointer;white-space:nowrap}
+.apps{margin-top:8px;font-size:10px;color:var(--text3);display:flex;align-items:center;gap:5px}
+.apps svg{color:var(--text3)}
+
+/* heading row */
+.note{padding:18px 14px 12px}
+.note-bar{background:var(--surf);border:1px solid var(--border3);border-left:3px solid var(--blue);border-radius:12px;padding:11px 14px;font-size:12px;color:var(--text2);line-height:1.5}
+.note-bar b{color:var(--text)}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <div class="tb">
+    <div class="tb-logo">
+      <div class="tb-logo-img">M</div>
+      <div class="tb-sep"></div>
+      <div class="tb-pin">
+        <svg width="16" height="20" viewBox="0 0 18 22" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 0C4.03 0 0 4.03 0 9c0 6.75 9 13 9 13s9-6.25 9-13c0-4.97-4.03-9-9-9z" fill="#3B82F6" stroke="none"/><circle cx="9" cy="9" r="3.5" fill="#080D18" stroke="none"/></svg>
+        <span class="tb-mark">Map<span>Job</span></span>
+      </div>
+    </div>
+    <div class="tb-acts">
+      <button class="tb-login">Zaloguj się</button>
+      <button class="tb-btn" aria-label="Motyw">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      </button>
+      <button class="tb-btn" aria-label="Powiadomienia">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
+        <span class="tb-badge"></span>
+      </button>
+    </div>
+  </div>
+
+  <div class="note">
+    <div class="note-bar">
+      <b>Po zmianach:</b> beta banner zniknął (topbar przylega do góry), wszystkie kafelki kategorii to czyste SVG, chipy z Lucide-style ikonami (zamiast 📍 💼 🌐 🔀 📄 📋 🌙).
+    </div>
+  </div>
+
+  <section class="hero">
+    <div class="hero-eyebrow"><span class="dot"></span>Online · 412 zleceń</div>
+    <h1 class="hero-h1">
+      Cały rynek pracy
+      <span class="accent">w Twoim zasięgu</span>
+    </h1>
+    <p class="hero-sub">Firma, zlecenie czy etat — wbij pinezkę i bądź widoczny w Polsce i Europie.</p>
+    <button class="hero-cta">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+      Dodaj swój pin
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+    </button>
+  </section>
+
+  <div class="sec">
+    <div class="sec-eyebrow"><span>Najnowsze zlecenia</span></div>
+  </div>
+
+  <div class="chips">
+    <div class="chip on">Wszystkie</div>
+    <div class="chip">Etat</div>
+    <div class="chip">B2B</div>
+    <div class="chip">Zlecenia</div>
+    <div class="chip">Stacjonarnie</div>
+    <div class="chip">Zdalnie</div>
+  </div>
+
+  <div class="jobs">
+
+    <!-- JOB 1: ELECTRIC, urgent -->
+    <div class="job urg-strip">
+      <div class="job-row">
+        <div class="job-strip" style="background:#2563EB"></div>
+        <div class="job-body">
+          <div class="job-head">
+            <div class="job-tile" style="background:#2563EB22;border-color:#2563EB44;color:#2563EB">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+            </div>
+            <div class="job-meta">
+              <div class="job-title">Elektryk SEP — instalacje przemysłowe</div>
+              <div class="job-comp">Energo-Tech Sp. z o.o.</div>
+            </div>
+            <div class="job-time">14 min temu</div>
+          </div>
+          <div class="tags">
+            <span class="tag">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+              Warszawa
+            </span>
+            <span class="tag b2b">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+              B2B
+            </span>
+            <span class="tag">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+              Stacjonarnie
+            </span>
+            <span class="tag spots">3 miejsc</span>
+          </div>
+          <div class="job-foot">
+            <div>
+              <div class="salary">12&nbsp;000 – 18&nbsp;000 zł/mies.</div>
+              <div class="salary-sub">B2B netto</div>
+            </div>
+            <button class="apply" style="background:#2563EB">Aplikuj →</button>
+          </div>
+          <div class="apps">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            7 aplikacji
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- JOB 2: PLUMBER -->
+    <div class="job">
+      <div class="job-row">
+        <div class="job-strip" style="background:#0891B2"></div>
+        <div class="job-body">
+          <div class="job-head">
+            <div class="job-tile" style="background:#0891B222;border-color:#0891B244;color:#0891B2">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+            </div>
+            <div class="job-meta">
+              <div class="job-title">Hydraulik — montaż instalacji</div>
+              <div class="job-comp">AquaPro Instal</div>
+            </div>
+            <div class="job-time">1 godz.</div>
+          </div>
+          <div class="tags">
+            <span class="tag"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>Kraków</span>
+            <span class="tag b2b"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>Etat</span>
+          </div>
+          <div class="job-foot">
+            <div>
+              <div class="salary">7&nbsp;000 – 9&nbsp;000 zł/mies.</div>
+              <div class="salary-sub">brutto/mies.</div>
+            </div>
+            <button class="apply" style="background:#0891B2">Aplikuj →</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- JOB 3: CONSTRUCTION -->
+    <div class="job">
+      <div class="job-row">
+        <div class="job-strip" style="background:#059669"></div>
+        <div class="job-body">
+          <div class="job-head">
+            <div class="job-tile" style="background:#05966922;border-color:#05966944;color:#059669">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 18h20"/><path d="M4 18a8 8 0 0 1 16 0"/><path d="M9 18V8a3 3 0 0 1 6 0v10"/></svg>
+            </div>
+            <div class="job-meta">
+              <div class="job-title">Brygadzista — budowy mieszkaniowe</div>
+              <div class="job-comp">DachBud Polska</div>
+            </div>
+            <div class="job-time">2 godz.</div>
+          </div>
+          <div class="tags">
+            <span class="tag"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>Wrocław</span>
+            <span class="tag b2b"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/></svg>Zlecenie</span>
+            <span class="tag spots">2 miejsc</span>
+          </div>
+          <div class="job-foot">
+            <div>
+              <div class="salary">15&nbsp;000 zł/mies.</div>
+              <div class="salary-sub">B2B netto</div>
+            </div>
+            <button class="apply" style="background:#059669">Aplikuj →</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- JOB 4: IT, dorywczo, zdalnie -->
+    <div class="job">
+      <div class="job-row">
+        <div class="job-strip" style="background:#7C3AED"></div>
+        <div class="job-body">
+          <div class="job-head">
+            <div class="job-tile" style="background:#7C3AED22;border-color:#7C3AED44;color:#7C3AED">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+            </div>
+            <div class="job-meta">
+              <div class="job-title">React Developer — projekt SaaS</div>
+              <div class="job-comp">CodeWave Studio</div>
+            </div>
+            <div class="job-time">3 godz.</div>
+          </div>
+          <div class="tags">
+            <span class="tag"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>Gdańsk</span>
+            <span class="tag b2b"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>Dorywczo</span>
+            <span class="tag"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15 15 0 0 1 4 10 15 15 0 0 1-4 10 15 15 0 0 1-4-10 15 15 0 0 1 4-10z"/></svg>Zdalnie</span>
+          </div>
+          <div class="job-foot">
+            <div>
+              <div class="salary">180 zł/h</div>
+              <div class="salary-sub"></div>
+            </div>
+            <button class="apply" style="background:#7C3AED">Aplikuj →</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- JOB 5: COOK -->
+    <div class="job">
+      <div class="job-row">
+        <div class="job-strip" style="background:#D97706"></div>
+        <div class="job-body">
+          <div class="job-head">
+            <div class="job-tile" style="background:#D9770622;border-color:#D9770644;color:#D97706">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2v0a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3z"/></svg>
+            </div>
+            <div class="job-meta">
+              <div class="job-title">Kucharz — restauracja włoska</div>
+              <div class="job-comp">Trattoria Sole</div>
+            </div>
+            <div class="job-time">5 godz.</div>
+          </div>
+          <div class="tags">
+            <span class="tag"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>Poznań</span>
+            <span class="tag b2b"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>Etat</span>
+          </div>
+          <div class="job-foot">
+            <div>
+              <div class="salary">5&nbsp;500 – 6&nbsp;500 zł/mies.</div>
+              <div class="salary-sub">brutto/mies.</div>
+            </div>
+            <button class="apply" style="background:#D97706">Aplikuj →</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- JOB 6: GARDEN -->
+    <div class="job">
+      <div class="job-row">
+        <div class="job-strip" style="background:#10B981"></div>
+        <div class="job-body">
+          <div class="job-head">
+            <div class="job-tile" style="background:#10B98122;border-color:#10B98144;color:#10B981">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19.2 2.96c.5 5.42-1.5 14.04-8.2 17.04Z"/><path d="M2 21c0-3 1.85-5.36 5.08-6"/></svg>
+            </div>
+            <div class="job-meta">
+              <div class="job-title">Pielęgnacja ogrodu — sezon wiosenny</div>
+              <div class="job-comp">Ogród Marzeń</div>
+            </div>
+            <div class="job-time">wczoraj</div>
+          </div>
+          <div class="tags">
+            <span class="tag"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>Łódź</span>
+            <span class="tag b2b"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/></svg>Zlecenie</span>
+          </div>
+          <div class="job-foot">
+            <div>
+              <div class="salary">2&nbsp;800 zł</div>
+              <div class="salary-sub"></div>
+            </div>
+            <button class="apply" style="background:#10B981">Aplikuj →</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+</body>
+</html>

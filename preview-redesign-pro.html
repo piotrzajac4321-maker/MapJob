@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MapJob — redesign PRZED / PO</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{
+  font-family:'Plus Jakarta Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  background:#0a0e16;color:#e8edf5;padding:28px 16px 60px;line-height:1.5;
+}
+.wrap{max-width:1080px;margin:0 auto}
+h1{font-size:22px;font-weight:800;letter-spacing:-.02em;text-align:center;margin-bottom:4px}
+.sub{text-align:center;color:#8b97ab;font-size:13px;margin-bottom:28px}
+.cols{display:flex;gap:32px;justify-content:center;flex-wrap:wrap}
+.col{flex:0 0 auto;width:340px}
+.col-label{text-align:center;font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;margin-bottom:12px;display:flex;align-items:center;justify-content:center;gap:8px}
+.tag{font-size:10px;padding:2px 8px;border-radius:20px;font-weight:700}
+.tag-before{background:rgba(239,68,68,.14);color:#f87171}
+.tag-after{background:rgba(34,197,94,.14);color:#4ade80}
+
+/* phone frame */
+.phone{
+  width:340px;height:680px;border-radius:38px;overflow:hidden;position:relative;
+  border:1px solid rgba(255,255,255,.08);
+}
+
+/* ============ BEFORE (obecny) ============ */
+.b{
+  --bg:#080D18;--surf:#131C2D;--surf2:#1A2438;--surf3:#22304A;
+  --text:#F0F4FF;--text2:#94A3B8;--blue:#2563EB;--blue2:#60A5FA;--gold:#F59E0B;--green:#22C55E;
+  background:var(--bg);height:100%;color:var(--text);font-size:13px;position:relative
+}
+.b .promo{height:30px;background:linear-gradient(90deg,#7C3AED,#2563EB,#F59E0B);display:flex;align-items:center;justify-content:center;font-size:10.5px;font-weight:700;color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.3)}
+.b .top{height:50px;display:flex;align-items:center;gap:8px;padding:0 14px;
+  background:linear-gradient(180deg,rgba(8,13,24,.98),rgba(13,18,32,.95));backdrop-filter:blur(20px);border-bottom:1px solid rgba(255,255,255,.06)}
+.b .logo{font-weight:800;font-size:16px;background:linear-gradient(90deg,#60A5FA,#F59E0B);-webkit-background-clip:text;background-clip:text;color:transparent}
+.b .srch{flex:1;height:34px;border-radius:20px;background:var(--surf2);border:1px solid rgba(255,255,255,.08);display:flex;align-items:center;padding:0 12px;color:var(--text2);font-size:12px;box-shadow:inset 0 1px 0 rgba(255,255,255,.04)}
+.b .map{height:300px;position:relative;overflow:hidden;
+  background:radial-gradient(circle at 30% 30%,#1a2942,#0d1626 60%),repeating-linear-gradient(45deg,rgba(255,255,255,.015) 0 18px,transparent 18px 36px)}
+.b .pin{position:absolute;width:40px;height:40px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);box-shadow:0 0 20px rgba(37,99,235,.6),0 4px 10px rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center}
+.b .pin span{transform:rotate(45deg);font-size:14px}
+.b .pin1{background:linear-gradient(135deg,#2563EB,#60A5FA);top:70px;left:60px}
+.b .pin2{background:linear-gradient(135deg,#F59E0B,#fbbf24);top:120px;left:200px;box-shadow:0 0 20px rgba(245,158,11,.6),0 4px 10px rgba(0,0,0,.5)}
+.b .pin3{background:linear-gradient(135deg,#22C55E,#4ade80);top:180px;left:110px;box-shadow:0 0 20px rgba(34,197,94,.6),0 4px 10px rgba(0,0,0,.5)}
+.b .pin4{background:linear-gradient(135deg,#7C3AED,#a78bfa);top:40px;left:230px;box-shadow:0 0 20px rgba(124,58,237,.6),0 4px 10px rgba(0,0,0,.5)}
+.b .sheet{position:absolute;left:10px;right:10px;bottom:64px;
+  background:linear-gradient(145deg,var(--surf2),var(--surf));border:1px solid rgba(255,255,255,.09);
+  border-radius:18px;padding:14px;box-shadow:0 8px 30px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,255,255,.06);overflow:hidden}
+.b .sheet::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.4),transparent)}
+.b .crow{display:flex;gap:10px;align-items:center;margin-bottom:10px}
+.b .av{width:42px;height:42px;border-radius:12px;background:linear-gradient(135deg,#2563EB,#7C3AED);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:16px;box-shadow:0 0 14px rgba(37,99,235,.5)}
+.b .ttl{font-weight:800;font-size:14px}
+.b .co{color:var(--text2);font-size:11px}
+.b .badge{margin-left:auto;font-size:9px;font-weight:800;padding:3px 8px;border-radius:20px;background:linear-gradient(90deg,#F59E0B,#fbbf24);color:#1a1207;box-shadow:0 0 12px rgba(245,158,11,.5);text-transform:uppercase}
+.b .chips{display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap}
+.b .chip{font-size:10px;padding:4px 9px;border-radius:20px;background:rgba(37,99,235,.18);border:1px solid rgba(37,99,235,.3);color:#93c5fd}
+.b .chip.g{background:rgba(34,197,94,.16);border-color:rgba(34,197,94,.3);color:#86efac}
+.b .pay{font-weight:800;font-size:17px;background:linear-gradient(90deg,#22C55E,#4ade80);-webkit-background-clip:text;background-clip:text;color:transparent;text-shadow:0 0 18px rgba(34,197,94,.4)}
+.b .btn{margin-top:10px;height:42px;border-radius:14px;background:linear-gradient(135deg,#2563EB,#60A5FA);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px;color:#fff;box-shadow:0 4px 18px rgba(37,99,235,.5),inset 0 1px 0 rgba(255,255,255,.2)}
+.b .nav{position:absolute;left:0;right:0;bottom:0;height:60px;display:flex;background:rgba(10,10,11,.94);backdrop-filter:blur(24px);border-top:1px solid rgba(255,255,255,.06)}
+.b .nav div{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-size:9px;color:var(--text2)}
+.b .nav div.on{color:#60A5FA}
+.b .ni{width:22px;height:22px;border-radius:7px;background:rgba(255,255,255,.06)}
+.b .nav div.on .ni{background:linear-gradient(135deg,#2563EB,#60A5FA);box-shadow:0 0 12px rgba(37,99,235,.6)}
+
+/* ============ AFTER (profesjonalny / flat) ============ */
+.a{
+  --bg:#fbfcfe;--surf:#ffffff;--line:#e7ebf0;--line2:#eef1f5;
+  --text:#0f1722;--text2:#5b6676;--text3:#8a94a3;--accent:#1b6ef3;--accent-soft:#eef4ff;--green:#0f9d58;
+  background:var(--bg);height:100%;color:var(--text);font-size:13px;position:relative
+}
+.a .top{height:54px;display:flex;align-items:center;gap:10px;padding:0 16px;background:var(--surf);border-bottom:1px solid var(--line)}
+.a .logo{font-weight:800;font-size:16px;letter-spacing:-.02em;color:var(--text)}
+.a .logo b{color:var(--accent)}
+.a .srch{flex:1;height:36px;border-radius:10px;background:#f3f5f8;border:1px solid var(--line);display:flex;align-items:center;padding:0 12px;color:var(--text3);font-size:12.5px;gap:7px}
+.a .icobtn{width:36px;height:36px;border-radius:10px;border:1px solid var(--line);display:flex;align-items:center;justify-content:center;color:var(--text2);background:var(--surf)}
+.a .map{height:296px;position:relative;overflow:hidden;background:#eef1f5;
+  background-image:linear-gradient(rgba(0,0,0,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(0,0,0,.035) 1px,transparent 1px);background-size:26px 26px}
+.a .road{position:absolute;background:#fff;box-shadow:0 0 0 1px var(--line)}
+.a .pin{position:absolute;height:26px;display:flex;align-items:center;gap:5px;padding:0 9px 0 7px;border-radius:14px;background:var(--surf);border:1px solid var(--line);box-shadow:0 2px 6px rgba(15,23,34,.10);font-size:11px;font-weight:700;color:var(--text)}
+.a .pin .dot{width:7px;height:7px;border-radius:50%}
+.a .pin1{top:78px;left:48px}.a .pin1 .dot{background:var(--accent)}
+.a .pin2{top:128px;left:178px;border-color:var(--accent);box-shadow:0 4px 12px rgba(27,110,243,.22)}.a .pin2 .dot{background:var(--accent)}
+.a .pin3{top:186px;left:96px}.a .pin3 .dot{background:var(--green)}
+.a .pin4{top:46px;left:206px}.a .pin4 .dot{background:#e8a020}
+.a .sheet{position:absolute;left:12px;right:12px;bottom:70px;background:var(--surf);border:1px solid var(--line);border-radius:14px;padding:15px;box-shadow:0 6px 24px rgba(15,23,34,.10)}
+.a .grab{width:34px;height:4px;border-radius:4px;background:var(--line);margin:-6px auto 12px}
+.a .crow{display:flex;gap:11px;align-items:center;margin-bottom:12px}
+.a .av{width:44px;height:44px;border-radius:11px;background:var(--accent-soft);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:16px;color:var(--accent);border:1px solid #dce8fd}
+.a .ttl{font-weight:700;font-size:14.5px;letter-spacing:-.01em}
+.a .co{color:var(--text2);font-size:11.5px;display:flex;align-items:center;gap:4px;margin-top:1px}
+.a .verified{color:var(--accent);font-size:11px}
+.a .badge{margin-left:auto;font-size:10px;font-weight:700;padding:4px 9px;border-radius:7px;background:var(--accent-soft);color:var(--accent)}
+.a .chips{display:flex;gap:6px;margin-bottom:13px;flex-wrap:wrap}
+.a .chip{font-size:11px;padding:4px 10px;border-radius:7px;background:#f3f5f8;border:1px solid var(--line);color:var(--text2);font-weight:600}
+.a .payrow{display:flex;align-items:baseline;gap:6px;margin-bottom:2px}
+.a .pay{font-weight:800;font-size:19px;letter-spacing:-.02em;color:var(--text)}
+.a .payu{font-size:11px;color:var(--text3);font-weight:600}
+.a .dist{font-size:11px;color:var(--text3);margin-bottom:13px}
+.a .btn{height:44px;border-radius:10px;background:var(--accent);display:flex;align-items:center;justify-content:center;gap:7px;font-weight:700;font-size:14px;color:#fff}
+.a .nav{position:absolute;left:0;right:0;bottom:0;height:62px;display:flex;background:var(--surf);border-top:1px solid var(--line)}
+.a .nav div{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;font-size:9.5px;color:var(--text3);font-weight:600}
+.a .nav div.on{color:var(--accent)}
+.a .ni{width:21px;height:21px;border-radius:6px;border:1.8px solid currentColor;opacity:.9}
+.a .nav div.on .ni{border-width:0;background:var(--accent)}
+
+.legend{max-width:760px;margin:34px auto 0;display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.lbox{background:#0f1420;border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:16px 18px}
+.lbox h3{font-size:13px;margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.lbox ul{list-style:none;font-size:12.5px;color:#aab4c4}
+.lbox li{padding:4px 0 4px 18px;position:relative}
+.lbox li::before{position:absolute;left:0;top:4px}
+.lbox.bef li::before{content:'×';color:#f87171;font-weight:800}
+.lbox.aft li::before{content:'✓';color:#4ade80;font-weight:800}
+.note{max-width:760px;margin:18px auto 0;font-size:12px;color:#8b97ab;text-align:center;line-height:1.7}
+@media(max-width:760px){.legend{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>MapJob — kierunek redesignu</h1>
+  <div class="sub">Ten sam ekran (mapa + oferta) w obecnym stylu i w wersji „profesjonalnej / flat"</div>
+
+  <div class="cols">
+    <!-- ===== BEFORE ===== -->
+    <div class="col">
+      <div class="col-label"><span class="tag tag-before">PRZED</span> obecny styl</div>
+      <div class="phone">
+        <div class="b">
+          <div class="promo">🔥 OSTATNIE MIEJSCA — załóż pin teraz!</div>
+          <div class="top">
+            <div class="logo">MapJob</div>
+            <div class="srch">🔍 Szukaj pracy w okolicy…</div>
+          </div>
+          <div class="map">
+            <div class="pin pin4"><span>💼</span></div>
+            <div class="pin pin1"><span>🔧</span></div>
+            <div class="pin pin2"><span>⭐</span></div>
+            <div class="pin pin3"><span>🚚</span></div>
+            <div class="sheet">
+              <div class="crow">
+                <div class="av">P</div>
+                <div>
+                  <div class="ttl">Elektryk / Pomocnik</div>
+                  <div class="co">Pramer Sp. z o.o.</div>
+                </div>
+                <div class="badge">★ TOP</div>
+              </div>
+              <div class="chips">
+                <div class="chip">Pełny etat</div>
+                <div class="chip g">Od zaraz</div>
+                <div class="chip">Wrocław</div>
+              </div>
+              <div class="pay">6 500 – 8 200 zł</div>
+              <div class="btn">⚡ Aplikuj szybko</div>
+            </div>
+          </div>
+          <div class="nav">
+            <div class="on"><div class="ni"></div>Mapa</div>
+            <div><div class="ni"></div>Oferty</div>
+            <div><div class="ni"></div>Czat</div>
+            <div><div class="ni"></div>Profil</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== AFTER ===== -->
+    <div class="col">
+      <div class="col-label"><span class="tag tag-after">PO</span> profesjonalny / flat</div>
+      <div class="phone">
+        <div class="a">
+          <div class="top">
+            <div class="logo">Map<b>Job</b></div>
+            <div class="srch">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg>
+              Szukaj pracy w okolicy
+            </div>
+            <div class="icobtn">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M7 12h10M10 18h4"/></svg>
+            </div>
+          </div>
+          <div class="map">
+            <div class="road" style="top:120px;left:0;right:0;height:8px"></div>
+            <div class="road" style="top:0;bottom:0;left:140px;width:8px"></div>
+            <div class="pin pin4"><span class="dot"></span>Biuro</div>
+            <div class="pin pin1"><span class="dot"></span>Elektryk</div>
+            <div class="pin pin3"><span class="dot"></span>Kierowca</div>
+            <div class="pin pin2"><span class="dot"></span>6,5–8,2k</div>
+            <div class="sheet">
+              <div class="grab"></div>
+              <div class="crow">
+                <div class="av">P</div>
+                <div>
+                  <div class="ttl">Elektryk / Pomocnik</div>
+                  <div class="co">Pramer Sp. z o.o. <span class="verified">✓ zweryfikowana</span></div>
+                </div>
+                <div class="badge">Wyróżniona</div>
+              </div>
+              <div class="chips">
+                <div class="chip">Pełny etat</div>
+                <div class="chip">Od zaraz</div>
+                <div class="chip">Wrocław</div>
+              </div>
+              <div class="payrow">
+                <div class="pay">6 500 – 8 200 zł</div>
+                <div class="payu">/ mies. brutto</div>
+              </div>
+              <div class="dist">📍 2,4 km od Ciebie · dodano dziś</div>
+              <div class="btn">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+                Aplikuj
+              </div>
+            </div>
+          </div>
+          <div class="nav">
+            <div class="on"><div class="ni"></div>Mapa</div>
+            <div><div class="ni"></div>Oferty</div>
+            <div><div class="ni"></div>Czat</div>
+            <div><div class="ni"></div>Profil</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="legend">
+    <div class="lbox bef">
+      <h3><span class="tag tag-before">PRZED</span> co obniża profesjonalny odbiór</h3>
+      <ul>
+        <li>Tęczowy gradient w pasku promo i logo</li>
+        <li>Glow/poświata na pinach, avatarze, kwocie i przyciskach</li>
+        <li>Każda karta na gradiencie + błyszczący pasek u góry</li>
+        <li>Wielokolorowe piny (4 różne kolory naraz)</li>
+        <li>Mocne cienie + „inset highlight" = efekt plastiku</li>
+        <li>Emoji jako ikony interfejsu</li>
+      </ul>
+    </div>
+    <div class="lbox aft">
+      <h3><span class="tag tag-after">PO</span> co daje spokój i zaufanie</h3>
+      <ul>
+        <li>Jeden kolor akcentu (niebieski), reszta neutralna</li>
+        <li>Płaskie powierzchnie, cienie tylko subtelne i celowe</li>
+        <li>Cienkie linie 1px zamiast gradientów i glow</li>
+        <li>Piny czytelne, z etykietą — od razu wiesz co to</li>
+        <li>Spójne ikony liniowe (SVG) zamiast emoji</li>
+        <li>Więcej oddechu, mocniejsza hierarchia typografii</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="note">
+    Pokazałem wariant <b>jasny</b> (najczęstszy w „poważnych" appkach pracy: pracuj.pl, OLX Praca, LinkedIn).<br>
+    Ten sam kierunek umiem zrobić też w <b>ciemnej, ale wygładzonej</b> wersji (granat bez glow/gradientów) — jeśli wolisz zostać przy dark mode.
+  </div>
+</div>
+</body>
+</html>

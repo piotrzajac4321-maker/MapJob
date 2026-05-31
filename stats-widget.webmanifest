@@ -1,0 +1,19 @@
+{
+  "name": "MapJob Stats",
+  "short_name": "MJ Stats",
+  "description": "Szybki podgląd statystyk MapJob",
+  "start_url": "/stats-widget.html",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0f1117",
+  "theme_color": "#0f1117",
+  "icons": [
+    {
+      "src": "/apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

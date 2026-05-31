@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>MapJob — podgląd profilu firmy: Randstad Polska Sp. z o.o. (do akceptacji)</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"/>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<style>
+  :root{
+    --bg:#0B0D10;--surf:#15181F;--surf2:#1C2029;--border:rgba(255,255,255,.09);--border2:rgba(255,255,255,.14);
+    --text:#F5F7FA;--text2:#A1A9B8;--text3:#6B7280;--green:#10B981;--gold:#D97706;
+    --brand:#2175D9;--brand2:#0F1571;
+    --ff:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:var(--ff);background:#070809;color:var(--text);-webkit-font-smoothing:antialiased;line-height:1.4}
+  .topbar{display:flex;align-items:center;gap:12px;padding:14px 22px;background:rgba(7,8,9,.9);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:50}
+  .topbar .brand{display:flex;align-items:center;gap:8px;font-size:16px;font-weight:900;letter-spacing:-.3px}
+  .badge-akc{margin-left:auto;font-size:10px;font-weight:800;letter-spacing:.8px;text-transform:uppercase;color:var(--gold);background:rgba(217,119,6,.14);border:1px solid rgba(217,119,6,.35);padding:5px 11px;border-radius:999px}
+
+  .wrap{max-width:560px;margin:0 auto;padding:34px 22px 8px}
+  .wrap h1{font-size:25px;font-weight:900;letter-spacing:-.5px;line-height:1.25;margin-bottom:12px;text-align:center}
+  .wrap h1 .hl{color:#60A5FA}
+  .intro{font-size:14px;color:var(--text2);line-height:1.65;margin:0 auto 24px;text-align:center;max-width:500px}
+  .intro b{color:var(--text)}
+
+  .stage{display:flex;justify-content:center;padding:0 0 6px}
+  .desc{max-width:490px;margin:30px auto 0}
+  .okbox{background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.3);border-left:3px solid var(--green);border-radius:0 12px 12px 0;padding:14px 16px;margin-bottom:18px}
+  .okbox b{color:#34D399}
+  .okbox p{margin:0;font-size:13.5px;color:var(--text2)}
+  .feat{list-style:none}
+  .feat li{font-size:13.5px;color:var(--text2);padding-left:24px;position:relative;margin-bottom:10px;line-height:1.5}
+  .feat li::before{content:'✓';position:absolute;left:0;top:0;color:var(--green);font-weight:900}
+  .feat li b{color:var(--text)}
+  .note{font-size:12px;color:var(--text3);margin-top:18px;line-height:1.6}
+
+  .phone{width:392px;max-width:100%;background:var(--bg);border-radius:36px;border:1px solid var(--border2);box-shadow:0 0 0 9px #121419,0 40px 90px rgba(0,0,0,.6);overflow:hidden}
+  .notch{height:28px;display:flex;align-items:center;justify-content:center}
+  .notch::after{content:'';width:110px;height:6px;border-radius:99px;background:#26292f}
+  .pscroll{height:720px;overflow-y:auto;scrollbar-width:thin}
+  .pscroll::-webkit-scrollbar{width:5px}.pscroll::-webkit-scrollbar-thumb{background:#2a2e36;border-radius:4px}
+  @media(max-width:640px){
+    .pscroll{height:auto;overflow:visible}
+    .phone{box-shadow:0 0 0 6px #121419,0 20px 50px rgba(0,0,0,.5)}
+  }
+  .pbar{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:10px;padding:12px 14px;background:rgba(11,13,16,.92);backdrop-filter:blur(8px)}
+  .pbar .bk{width:32px;height:32px;border-radius:50%;background:var(--surf2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;color:var(--text2);font-size:15px}
+  .pbar .ti{font-size:13px;font-weight:700;color:var(--text2)}
+
+  .cover{height:104px;position:relative;background:linear-gradient(135deg,var(--brand),var(--brand2))}
+  .cover::after{content:'';position:absolute;inset:0;background:radial-gradient(120% 120% at 80% -20%,rgba(255,255,255,.18),transparent 55%)}
+  .logo{position:absolute;left:18px;bottom:-32px;z-index:2;width:152px;height:86px;border-radius:16px;padding:8px;box-shadow:0 6px 18px rgba(0,0,0,.35);background:#fff;display:flex;align-items:center;justify-content:center;border:4px solid var(--bg);overflow:hidden}
+  .logo img{width:92%;height:92%;object-fit:contain}
+  .head{padding:42px 18px 6px}
+  .name{font-size:21px;font-weight:900;letter-spacing:-.4px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  .verif{font-size:10px;font-weight:800;color:#fff;background:var(--green);border-radius:7px;padding:4px 9px;display:inline-flex;align-items:center;gap:4px}
+  .ind{font-size:13px;color:var(--text2);margin-top:5px;font-weight:600}
+  .loc{font-size:12px;color:var(--text3);margin-top:3px}
+  .descco{font-size:12.5px;color:var(--text2);line-height:1.6;margin-top:11px}
+  .trust{display:flex;flex-wrap:wrap;gap:7px;margin-top:13px}
+  .tchip{font-size:11px;font-weight:700;color:#34D399;background:rgba(16,185,129,.12);border:1px solid rgba(16,185,129,.3);border-radius:999px;padding:6px 11px}
+
+  .stats{display:flex;margin:16px 18px 4px;background:var(--surf);border:1px solid var(--border);border-radius:14px;overflow:hidden}
+  .stats>div{flex:1;text-align:center;padding:13px 6px;border-right:1px solid var(--border)}
+  .stats>div:last-child{border-right:none}
+  .stats .v{font-size:19px;font-weight:900}
+  .stats .v small{font-size:11px;font-weight:800;color:var(--text2)}
+  .stats .k{font-size:9.5px;color:var(--text3);text-transform:uppercase;letter-spacing:.4px;margin-top:2px}
+
+  .sec{font-size:11px;font-weight:800;letter-spacing:.5px;text-transform:uppercase;color:var(--text3);margin:18px 18px 9px}
+  .bens{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:0 18px}
+  .ben{display:flex;align-items:center;gap:9px;background:var(--surf);border:1px solid var(--border);border-radius:11px;padding:10px 11px}
+  .ben .i{width:28px;height:28px;border-radius:8px;background:rgba(16,185,129,.14);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
+  .ben .t{font-size:11.5px;font-weight:700;line-height:1.2}
+
+  .map{height:215px;margin:0 18px;border-radius:14px;overflow:hidden;border:1px solid var(--border)}
+  .map .leaflet-control-zoom a{background:var(--surf2);color:var(--text);border-color:var(--border)}
+  .maphint{font-size:11px;color:var(--text3);margin:7px 18px 0;text-align:center}
+
+  .filters{display:flex;gap:7px;overflow-x:auto;padding:2px 18px 4px;scrollbar-width:none}
+  .filters::-webkit-scrollbar{display:none}
+  .fchip{flex-shrink:0;font-size:12px;font-weight:700;color:var(--text2);background:var(--surf);border:1px solid var(--border);border-radius:999px;padding:7px 13px;cursor:pointer;white-space:nowrap;transition:.12s}
+  .fchip.on{color:#fff;background:var(--brand);border-color:var(--brand)}
+
+  .offers{padding:6px 18px 8px}
+  .offer{background:var(--surf);border:1px solid var(--border);border-radius:14px;padding:13px;margin-bottom:10px;transition:border-color .15s}
+  .offer:hover{border-color:var(--border2)}
+  .offer-top{display:flex;gap:11px;align-items:flex-start}
+  .offer-logo{width:38px;height:38px;border-radius:10px;background:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0;overflow:hidden}
+  .offer-logo img{width:90%;height:90%;object-fit:contain}
+  .offer-t{font-size:14px;font-weight:800;line-height:1.25}
+  .offer-loc{font-size:11.5px;color:var(--text3);margin-top:3px}
+  .obadges{display:flex;flex-wrap:wrap;gap:5px;margin-top:9px}
+  .ob{font-size:9.5px;font-weight:800;padding:3px 7px;border-radius:8px;letter-spacing:.2px}
+  .ob.sup{background:rgba(217,119,6,.16);color:#F59E0B;border:1px solid rgba(217,119,6,.35)}
+  .ob.oz{background:rgba(239,68,68,.13);color:#F87171;border:1px solid rgba(239,68,68,.28)}
+  .ob.ua{background:rgba(56,135,255,.14);color:#7FB0FF;border:1px solid rgba(56,135,255,.32)}
+  .ob.cv{background:rgba(16,185,129,.13);color:#34D399;border:1px solid rgba(16,185,129,.3)}
+  .ob.vac{background:var(--surf2);color:var(--text2);border:1px solid var(--border)}
+  .ob.lvl{background:var(--surf2);color:var(--text2);border:1px solid var(--border)}
+  .offer-bottom{display:flex;align-items:center;gap:10px;margin-top:11px;padding-top:11px;border-top:1px solid var(--border)}
+  .salary{font-size:12.5px;font-weight:900;color:#34D399;flex:1}
+  .salary.none{color:var(--text3);font-weight:700;font-size:11.5px}
+  .date{font-size:10.5px;color:var(--text3);flex-shrink:0}
+  .apply{background:var(--brand);color:#fff;border:none;border-radius:10px;padding:8px 14px;font-family:var(--ff);font-size:12px;font-weight:800;flex-shrink:0}
+  .nores{padding:18px;text-align:center;color:var(--text3);font-size:12.5px}
+  .morebtn{display:block;width:calc(100% - 36px);margin:2px 18px 8px;padding:13px;border-radius:13px;background:var(--surf);border:1px solid var(--border2);color:var(--text);font-family:var(--ff);font-size:13px;font-weight:800;cursor:pointer;transition:.12s}
+  .morebtn:hover{background:var(--surf2);border-color:rgba(33,117,217,.5)}
+  .morebtn .cnt{color:var(--brand)}
+
+  .followbar{display:flex;gap:8px;padding:6px 18px 18px}
+  .followbar .fb{flex:1;padding:12px;border-radius:13px;background:var(--brand);border:none;font-family:var(--ff);font-size:13.5px;font-weight:800;color:#fff}
+  .followbar .ca{padding:12px 15px;border-radius:13px;background:rgba(34,197,94,.14);border:1px solid rgba(34,197,94,.45);font-family:var(--ff);font-size:13px;font-weight:800;color:#22C55E;display:flex;align-items:center;gap:6px}
+
+  .footer{border-top:1px solid var(--border);padding:34px 22px 48px;text-align:center;margin-top:8px}
+  .ob.ab{background:rgba(33,117,217,.14);color:#60A5FA;border:1px solid rgba(33,117,217,.32)}
+  .bpin .head2{width:36px;height:36px;border-radius:50% 50% 50% 0;background:#fff;transform:rotate(-45deg);box-shadow:0 4px 10px rgba(0,0,0,.4);border:3px solid var(--brand);display:flex;align-items:center;justify-content:center}
+  .bpin .head2 .ic{transform:rotate(45deg);width:21px;height:21px;display:flex;align-items:center;justify-content:center}
+  .bpin .head2 .ic img{width:100%;height:100%;object-fit:contain}
+  .leaflet-popup-content-wrapper{background:var(--surf);color:var(--text);border-radius:10px;border:1px solid var(--border2)}
+  .leaflet-popup-tip{background:var(--surf)}
+  .leaflet-popup-content{margin:9px 12px;font-family:var(--ff)}
+  .leaflet-popup-content b{font-size:13px}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <div class="brand"><svg width="20" height="24" viewBox="0 0 18 22" fill="none"><path d="M9 0C4.03 0 0 4.03 0 9c0 6.75 9 13 9 13s9-6.25 9-13c0-4.97-4.03-9-9-9z" fill="#60A5FA"/><circle cx="9" cy="9" r="3.5" fill="#080D18"/></svg><span><span style="color:#F0F4FF">Map</span><span style="color:#60A5FA">Job</span><span style="color:#F0F4FF">.pl</span></span></div>
+  <span class="badge-akc">Podgląd · do akceptacji</span>
+</div>
+
+<div class="wrap">
+  <h1>Tak będzie wyglądać profil <span style="color:#2175D9">Randstad Polska</span> na Map<span class="hl">Job</span>.pl</h1>
+  <p class="intro">Przygotowaliśmy kompletny <b>profil agencji</b> wraz ze wszystkimi aktualnymi ogłoszeniami. Kandydaci znajdą Wasze oferty na mapie i zaaplikują jednym kliknięciem — bez logowania, bez zbędnych formularzy.</p>
+
+  <div class="stage">
+    <div class="phone">
+      <div class="notch"></div>
+      <div class="pscroll">
+        <div class="pbar"><div class="bk">←</div><div class="ti">Profil firmy</div></div>
+        <div class="cover"><div class="logo"><img id="hd-logo" alt="Randstad Polska"></div></div>
+        <div class="head">
+          <div class="name">Randstad Polska <span class="verif">✓ Zweryfikowana</span></div>
+          <div class="ind">Agencja pracy tymczasowej i doradztwa HR</div>
+          <div class="loc">📍 Cała Polska · <span id="st-ci2">30</span> miast · oferty także za granicą</div>
+          <div class="descco">Randstad to światowy lider rozwiązań HR. Łączymy ludzi z pracą — od produkcji, magazynów i utrzymania ruchu po role specjalistyczne i menedżerskie. Praca stała, tymczasowa i sezonowa w całej Polsce oraz za granicą.</div>
+          <div class="trust">
+            <span class="tchip">Globalny lider HR</span>
+            <span class="tchip">Agencja pracy tymczasowej</span>
+            <span class="tchip">Obecni w całej Polsce</span>
+            <span class="tchip">Legalne zatrudnienie</span>
+          </div>
+        </div>
+
+        <div class="stats">
+          <div><div class="v" id="st-count">50</div><div class="k">Aktywnych ofert</div></div>
+          <div><div class="v" id="st-ci">30</div><div class="k">Miast w Polsce</div></div>
+          <div><div class="v">PL·DE</div><div class="k">Kraje</div></div>
+        </div>
+
+        <div class="sec">🎁 Co zyskujesz z Randstad</div>
+        <div class="bens">
+          <div class="ben"><div class="i">💼</div><div class="t">Umowy stałe i tymczasowe</div></div>
+          <div class="ben"><div class="i">🌍</div><div class="t">Oferty w PL i za granicą</div></div>
+          <div class="ben"><div class="i">⚡</div><div class="t">Szybka rekrutacja</div></div>
+          <div class="ben"><div class="i">🤝</div><div class="t">Program poleceń</div></div>
+          <div class="ben"><div class="i">🎓</div><div class="t">Szkolenia i rozwój</div></div>
+          <div class="ben"><div class="i">🚌</div><div class="t">Wsparcie w relokacji</div></div>
+        </div>
+
+        <div class="sec">🗺️ Oferty na mapie</div>
+        <div class="map" id="r-map"></div>
+        <div class="maphint">✋ Przeciągnij i przybliż mapę · 🔵 <span id="mh-n">50</span> ofert w <span id="mh-c">30</span> miastach</div>
+
+        <div class="sec" data-anchor="oferty" style="margin-bottom:11px">💼 Aktywne ogłoszenia (<span id="sec-count">50</span>)</div>
+        <div class="filters" id="filters">
+          <span class="fchip on" data-f="all">Wszystkie</span>
+          <span class="fchip" data-f="oz">⚡ Od zaraz</span>
+          <span class="fchip" data-f="prod">🏭 Produkcja</span>
+          <span class="fchip" data-f="tech">🔧 Technika / UR</span>
+          <span class="fchip" data-f="office">📊 Biuro</span>
+          <span class="fchip" data-f="mgmt">👔 Management</span>
+          <span class="fchip" data-f="abroad">🌍 Za granicą</span>
+        </div>
+        <div class="offers" id="offers"></div>
+        <button class="morebtn" id="morebtn" style="display:none"></button>
+
+        <div class="followbar">
+          <button class="fb">🔔 Obserwuj firmę</button>
+          <div class="ca">📞 Kontakt</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="desc">
+    <div class="okbox"><p><b>Nie musicie nic robić ani niczego wypełniać</b> — cały profil i wszystkie ogłoszenia przygotowaliśmy za Was na podstawie Waszych ofert. Wystarczy, że <b>zatwierdzicie</b>, a my opublikujemy. Publikacja jest <b style="color:#F87171">BEZPŁATNA</b>.</p></div>
+    <ul class="feat">
+      <li><b>Jeden profil agencji</b> ze wszystkimi ogłoszeniami — kandydat widzi całą ofertę Randstad w jednym miejscu</li>
+      <li><b>Piny na mapie</b> dla każdego miasta — od Szczecina i Koszalina po Rzeszów i Bielsko, plus oferty w Niemczech</li>
+      <li><b>Filtry</b> — od zaraz, produkcja, technika / UR, biuro, management, za granicą</li>
+      <li><b>Szybki kontakt</b> — „Aplikuj szybko" przy każdej ofercie, bez logowania</li>
+      <li><b>Wasze prawdziwe logo</b> — użyliśmy oryginalnego znaku Randstad</li>
+    </ul>
+    <div class="note">To tylko podgląd — nic nie zostało jeszcze opublikowane. Po Waszej akceptacji profil pojawi się na mapjob.pl. W każdej chwili go dla Was zmienimy lub usuniemy.</div>
+  </div>
+</div>
+
+<div class="footer">
+  <div style="font-size:19px;font-weight:900;letter-spacing:-.3px;margin-bottom:8px">Zatwierdzacie profil?</div>
+  <p style="font-size:14px;color:var(--text2);max-width:520px;margin:0 auto 20px;line-height:1.65">Jeśli wszystko się zgadza — <b style="color:var(--text)">odpowiedzcie na wiadomość, w której dostaliście ten link</b>. <b style="color:#34D399">Czekamy na potwierdzenie i działamy</b> — opublikujemy profil od ręki na mapie MapJob. Publikacja jest <b style="color:#F87171">BEZPŁATNA</b>, a profil w każdej chwili dla Was zmienimy lub usuniemy.</p>
+  <div style="font-size:11px;color:var(--text3)">To tylko podgląd — nic nie zostało jeszcze opublikowane na mapjob.pl.</div>
+
+  <div style="margin-top:28px;font-size:14px;color:var(--text);font-weight:700">Wejdźcie na naszą stronę i zobaczcie, jak to działa</div>
+  <div style="margin-top:12px">
+    <a href="https://mapjob.pl" target="_blank" rel="noopener" style="display:inline-block;font-size:14px;font-weight:800;color:#fff;background:var(--surf);border:1px solid var(--border2);padding:13px 24px;border-radius:13px;text-decoration:none">🌐 Wejdź na Map<span style="color:#60A5FA">Job</span>.pl →</a>
+  </div>
+
+  <div style="margin-top:22px;font-size:13px;color:var(--text2);font-weight:600">📱 Już niedługo dostępni także w aplikacji mobilnej</div>
+  <div style="margin-top:10px;display:inline-flex;flex-wrap:wrap;gap:9px;justify-content:center">
+    <span style="display:inline-flex;align-items:center;gap:7px;font-size:12px;font-weight:700;color:var(--text2);background:var(--surf);border:1px solid var(--border);border-radius:10px;padding:9px 15px">▶ Google Play <span style="color:var(--text3);font-weight:600">· wkrótce</span></span>
+    <span style="display:inline-flex;align-items:center;gap:7px;font-size:12px;font-weight:700;color:var(--text2);background:var(--surf);border:1px solid var(--border);border-radius:10px;padding:9px 15px">🍎 App Store <span style="color:var(--text3);font-weight:600">· wkrótce</span></span>
+  </div>
+
+  <div style="margin-top:24px;display:inline-flex;align-items:center;gap:7px;font-size:14px;font-weight:800;opacity:.85"><svg width="16" height="20" viewBox="0 0 18 22" fill="none"><path d="M9 0C4.03 0 0 4.03 0 9c0 6.75 9 13 9 13s9-6.25 9-13c0-4.97-4.03-9-9-9z" fill="#60A5FA"/><circle cx="9" cy="9" r="3.5" fill="#080D18"/></svg><span><span style="color:#F0F4FF">Map</span><span style="color:#60A5FA">Job</span><span style="color:#F0F4FF">.pl</span></span> <span style="font-weight:600;color:var(--text3);font-size:12px">· mapa pracy i fachowców</span></div>
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+var OFFERS=[{"t": "Kontroler / Kontrolerka jakości urządzeń elektrycznych", "loc": "Świebodzice", "lvl": "Pracownik fizyczny", "cat": "prod", "date": "24 maja", "sal": "5 400 – 7 100 zł brutto / mies.", "sup": 1}, {"t": "Pracownik / Pracownica produkcji", "loc": "Wrocław", "lvl": "Pracownik fizyczny", "cat": "prod", "date": "24 maja", "sal": "5 980 – 6 200 zł brutto / mies.", "oz": 1, "sup": 1, "ua": 1}, {"t": "Operator maszyn produkcyjnych (k/m)", "loc": "Wrocław", "lvl": "Pracownik fizyczny", "cat": "prod", "date": "24 maja", "sup": 1}, {"t": "Automatyk-Elektryk w dziale UR (k/m/n)", "loc": "Kostomłoty (pow. średzki)", "lvl": "Pracownik fizyczny", "cat": "tech", "date": "24 maja", "sal": "od 8 000 zł brutto / mies.", "sup": 1}, {"t": "Monter / Monterka wnętrz", "loc": "Bydgoszcz", "lvl": "Pracownik fizyczny", "cat": "tech", "date": "24 maja", "sal": "5 500 – 6 200 zł brutto / mies.", "sup": 1}, {"t": "Customer Service Analyst with English", "loc": "Cała Polska (zdalna) · Wrocław", "lvl": "Specjalista", "cat": "office", "date": "23 maja"}, {"t": "Specjalista / ka ds. elektryki", "loc": "Ozimek", "lvl": "Pracownik fizyczny", "cat": "tech", "date": "24 maja", "sup": 1}, {"t": "Młodszy monter / Młodsza monterka", "loc": "Aleksandrów Łódzki", "lvl": "Pracownik fizyczny", "cat": "tech", "date": "24 maja", "oz": 1, "sup": 1}, {"t": "Młodszy monter / Młodsza monterka", "loc": "Łódź", "lvl": "Pracownik fizyczny", "cat": "tech", "date": "24 maja", "oz": 1, "sup": 1}, {"t": "Pracownik produkcji / Pracownica produkcji", "loc": "Pabianice", "lvl": "Pracownik fizyczny", "cat": "prod", "date": "24 maja", "oz": 1, "sup": 1}, {"t": "Order Management Specialist with Italian (B1+)", "loc": "Cała Polska (zdalna) · Wrocław", "lvl": "Specjalista", "cat": "office", "date": "22 maja"}, {"t": "Mechanik – utrzymanie ruchu k/m/n", "loc": "Bydgoszcz", "lvl": "Pracownik fizyczny", "cat": "tech", "date": "24 maja", "sup": 1}, {"t": "Technik Automatyk w dziale Utrzymania Ruchu (k/m)", "loc": "Biskupice Podgórne (pow. wrocławski)", "lvl": "Pracownik fizyczny", "cat": "tech", "date": "23 maja", "sup": 1}, {"t": "Elektryk (k/m)", "loc": "Koszalin", "lvl": "Pracownik fizyczny", "cat": "tech", "date": "24 maja", "sup": 1}, {"t": "Spawacz / Monter (K/M)", "loc": "Szczecin", "lvl": "Pracownik fizyczny", "cat": "tech", "date": "23 maja", "sup": 1}, {"t": "Mechanik / Elektromechanik (k/m)", "loc": "Gorzów Wielkopolski", "lvl": "Pracownik fizyczny", "cat": "tech", "date": "22 maja", "sup": 1}, {"t": "Serwisant / mechanik maszyn k/m", "loc": "Zabrze", "lvl": "Pracownik fizyczny", "cat": "tech", "date": "22 maja", "sup": 1}, {"t": "Operator Produkcji / Operatorka Produkcji", "loc": "Kąty Wrocławskie", "lvl": "Pracownik fizyczny", "cat": "prod", "date": "24 maja", "sal": "5 083 – 7 711 zł brutto / mies.", "oz": 1, "sup": 1}, {"t": "Production Planner", "loc": "Wrocław", "lvl": "Specjalista", "cat": "office", "date": "13 maja"}, {"t": "Travel & Expense Analyst", "loc": "Wrocław", "lvl": "Specjalista", "cat": "office", "date": "13 maja"}, {"t": "Operator wózka widłowego bez UDT", "loc": "Oleśnica", "lvl": "Pracownik fizyczny", "cat": "prod", "date": "24 maja", "sal": "od 34,30 zł brutto / godz.", "oz": 1, "sup": 1}, {"t": "Operator Produkcji / Operatorka Produkcji", "loc": "Wałbrzych", "lvl": "Pracownik fizyczny", "cat": "prod", "date": "24 maja", "sal": "5 070 – 5 750 zł brutto / mies.", "oz": 1, "sup": 1}, {"t": "Работник производства / работница производства", "loc": "Lubań", "lvl": "Pracownik fizyczny", "cat": "prod", "date": "24 maja", "oz": 1, "sup": 1, "ua": 1}, {"t": "Technik utrzymania ruchu (elektryk / automatyk / mechanik) k/m", "loc": "Niepołomice", "lvl": "Pracownik fizyczny", "cat": "tech", "date": "24 maja", "sup": 1}, {"t": "Mechanik / Elektromechanik (k/m)", "loc": "Sulęcin", "lvl": "Pracownik fizyczny", "cat": "tech", "date": "19 maja", "sup": 1}, {"t": "Працівниця / Працівник виробництва", "loc": "Bolesławiec", "lvl": "Pracownik fizyczny", "cat": "prod", "date": "24 maja", "oz": 1, "sup": 1, "ua": 1}, {"t": "Osoba do wsparcia bistra", "loc": "Bielany Wrocławskie (pow. wrocławski)", "lvl": "Pracownik fizyczny", "cat": "prod", "date": "24 maja", "oz": 1, "sup": 1}, {"t": "Operator maszyn (k/m)", "loc": "Łódź", "lvl": "Pracownik fizyczny", "cat": "prod", "date": "24 maja", "sup": 1}, {"t": "Pracownik produkcji (k/m)", "loc": "Pabianice", "lvl": "Pracownik fizyczny", "cat": "prod", "date": "24 maja", "sup": 1}, {"t": "Pracownik produkcji / Pracownica produkcji", "loc": "Bolesławiec", "lvl": "Pracownik fizyczny", "cat": "prod", "date": "24 maja", "oz": 1, "sup": 1}, {"t": "Pomocnik montera rusztowań przemysłowych", "loc": "Niemcy (okolice Kolonii)", "lvl": "Pracownik fizyczny", "cat": "abroad", "date": "23 maja", "sup": 1}, {"t": "Operator maszyn CNC (k/m) w nowoczesnej firmie", "loc": "Wałbrzych", "lvl": "Pracownik fizyczny", "cat": "tech", "date": "23 maja", "sal": "5 000 – 7 300 zł brutto / mies.", "sup": 1}, {"t": "Operator maszyn CNC (k/m) w nowoczesnej firmie", "loc": "Świdnica", "lvl": "Pracownik fizyczny", "cat": "tech", "date": "23 maja", "sal": "5 000 – 7 300 zł brutto / mies.", "sup": 1}, {"t": "Operator maszyn CNC (k/m) w nowoczesnej firmie", "loc": "Dzierżoniów", "lvl": "Pracownik fizyczny", "cat": "tech", "date": "23 maja", "sal": "5 000 – 7 300 zł brutto / mies.", "sup": 1}, {"t": "Liderka / Lider Zespołu Magazynowego", "loc": "Kąty Wrocławskie", "lvl": "Starszy specjalista", "cat": "mgmt", "date": "23 maja"}, {"t": "Pracownik wspierający k/m/n", "loc": "Biskupice Podgórne (pow. wrocławski)", "lvl": "Pracownik fizyczny", "cat": "prod", "date": "23 maja", "oz": 1, "sup": 1}, {"t": "Specjalistka / Specjalista ds. Kadr i Płac", "loc": "Bolesławiec", "lvl": "Specjalista", "cat": "office", "date": "23 maja"}, {"t": "Pracownik na rusztowaniach", "loc": "Niemcy", "lvl": "Pracownik fizyczny", "cat": "abroad", "date": "22 maja", "oz": 1, "sup": 1, "nodoswiad": 1}, {"t": "Area / Warehouse Supervisor", "loc": "Magnice (pow. wrocławski)", "lvl": "Kierownik", "cat": "mgmt", "date": "22 maja"}, {"t": "Kierownik / Kierowniczka ds. księgowości", "loc": "Głogów", "lvl": "Kierownik", "cat": "mgmt", "date": "22 maja"}, {"t": "Operator / Operatorka Maszyn", "loc": "Biskupice Podgórne (pow. wrocławski)", "lvl": "Pracownik fizyczny", "cat": "prod", "date": "22 maja", "sal": "6 200 – 7 200 zł brutto / mies.", "oz": 1, "sup": 1}, {"t": "Area Manager", "loc": "Magnice (pow. wrocławski)", "lvl": "Menedżer", "cat": "mgmt", "date": "20 maja"}, {"t": "Mechanik (k/m)", "loc": "Świebodzin", "lvl": "Pracownik fizyczny", "cat": "tech", "date": "23 maja", "sal": "6 100 – 9 100 zł brutto / mies.", "sup": 1}, {"t": "Mechanik (k/m)", "loc": "Gorzów Wielkopolski", "lvl": "Pracownik fizyczny", "cat": "tech", "date": "23 maja", "sal": "6 100 – 9 100 zł brutto / mies.", "sup": 1}, {"t": "Mechanik (k/m)", "loc": "Międzyrzecz", "lvl": "Pracownik fizyczny", "cat": "tech", "date": "23 maja", "sal": "6 100 – 9 100 zł brutto / mies.", "sup": 1}, {"t": "Pracownik produkcji / Pracownica produkcji", "loc": "Łódź", "lvl": "Pracownik fizyczny", "cat": "prod", "date": "23 maja", "oz": 1, "sup": 1}, {"t": "Handlowiec z j. angielskim (K/M/X)", "loc": "Kruszyn (pow. bolesławiecki)", "lvl": "Specjalista", "cat": "office", "date": "19 maja"}, {"t": "Lakiernik (k/m)", "loc": "Jasionka (pow. rzeszowski)", "lvl": "Pracownik fizyczny", "cat": "tech", "date": "24 maja", "sup": 1}, {"t": "Operator procesów produkcyjnych k/m", "loc": "Jasionka (pow. rzeszowski)", "lvl": "Pracownik fizyczny", "cat": "prod", "date": "24 maja", "oz": 1, "sup": 1}, {"t": "Automatyk K/M", "loc": "Chwaszczyno (pow. kartuski)", "lvl": "Specjalista", "cat": "tech", "date": "19 maja"}];
+var PINS=[["Wroclaw", 51.1079, 17.0385, 6], ["Lodz", 51.7592, 19.456, 3], ["Biskupice Podgorne", 50.978, 16.928, 3], ["Boleslawiec", 51.264, 15.569, 3], ["Bydgoszcz", 53.1235, 18.0084, 2], ["Pabianice", 51.665, 19.355, 2], ["Gorzow Wielkopolski", 52.7368, 15.2288, 2], ["Katy Wroclawskie", 51.03, 16.768, 2], ["Walbrzych", 50.7842, 16.2845, 2], ["Magnice", 51.0, 16.965, 2], ["Jasionka", 50.11, 22.02, 2], ["Swiebodzice", 50.858, 16.325, 1], ["Kostomloty", 51.013, 16.795, 1], ["Ozimek", 50.673, 18.213, 1], ["Aleksandrow Lodzki", 51.819, 19.305, 1], ["Koszalin", 54.194, 16.172, 1], ["Szczecin", 53.4285, 14.5528, 1], ["Zabrze", 50.3249, 18.7857, 1], ["Olesnica", 51.21, 17.38, 1], ["Luban", 51.12, 15.29, 1], ["Niepolomice", 50.039, 20.221, 1], ["Sulecin", 52.444, 15.117, 1], ["Bielany Wroclawskie", 51.025, 17.0, 1], ["Niemcy (okolice Kolonii)", 50.938, 6.96, 1], ["Swidnica", 50.844, 16.489, 1], ["Dzierzoniow", 50.728, 16.652, 1], ["Niemcy", 51.0, 10.0, 1], ["Glogow", 51.664, 16.085, 1], ["Swiebodzin", 52.247, 15.532, 1], ["Miedzyrzecz", 52.446, 15.578, 1], ["Kruszyn", 51.23, 15.64, 1], ["Chwaszczyno", 54.434, 18.385, 1]];
+var STATS={"offers": 50, "cities": 30, "pins": 32};
+
+var LOGO="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMjAgMTg5LjE2Ij48c3ZnIHg9IjcyLjUwIiB5PSIxMC4wMCIgd2lkdGg9IjE3NS4wMCIgaGVpZ2h0PSI4Mi41MCIgdmlld0JveD0iMzMuNDAgNzYuNjggMTk3LjAxIDk0Ljk4IiBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJ4TWlkWU1pZCBtZWV0Ij48cGF0aCBkPSJtMTIzLjUzIDExMS44NjNzLTMwLjMyLTMwLjMyLTMwLjMzLTMwLjMyYy0xLjgwMy0xLjg1My00LjI0Ni0yLjg2NC02LjktMi44NjRoLTUwLjg5NXYxOS4zNjVoNTUuNzIzYTE1LjggMTUuOCAwIDAgMSAxMS4yNDUgNC42NTcgMTUuNzgyIDE1Ljc4MiAwIDAgMSA0LjY1NiAxMS4yNDR2NTUuNzEzaDE5LjM1NXYtNTAuODk2YzAtMi42NDQtMS4wMTEtNS4wOTctMi44NTQtNi45bTUzLjk5LTMzLjE4M2MtMi42NDMgMC01LjA5NiAxLjAxMS02Ljg5OSAyLjg2NGwtMzAuMzIgMzAuMzJjLTEuODQyIDEuODAyLTIuODUzIDQuMjU1LTIuODUzIDYuODk5djUwLjg5NmgxOS4zNTV2LTU1LjcxM2MwLTguNzcxIDcuMTMtMTUuOSAxNS45LTE1LjloNTUuNzE0di0xOS4zNjd6bTE4NC4wMTItMi4yMTNjLTkuMzczIDAtMTkuMDM1IDYuNjE5LTIzLjUwMSAxNi4xMTFsLS4xNS4zMWgtMS4yNjJ2LTE0LjIwN2gtMTQuNjl2OTAuOThoMTUuNzYxdi00MS4zNTVjMC0yMy4xNyAxMC4wNzQtMzguMTQgMjUuNjQ0LTM4LjE0IDMuMzY1IDAgNi4yOTguNTIgOC44NDIgMS40NTJ2LTEzLjk4OWMtMy4zNzUtLjY4MS01Ljg1OC0xLjE2Mi0xMC42NDQtMS4xNjJtNDg1LjU4OCA4Ljc4MmMtNS45MTktNS45MjgtMTQuODQtOC44MDItMjcuMjg3LTguODAyLTEwLjI0MyAwLTIwLjIzNiAyLjgzNC0yOS43MDkgOC4zNzFsLjgxMSAxMy4xNzdjNi45NS01LjU3NyAxNi44NjItOS4wMzEgMjYuMTk1LTkuMDMxIDcuOTggMCAxMy42NzggMS44MjIgMTcuNDMzIDUuNTc3IDMuOTc1IDMuOTY1IDUuODI3IDEwLjA0MyA1LjgyNyAxOS4xMTV2LjU5bC0uNTgtLjA0Yy02LjcxLS4zNi0xMS40NDYtLjM2LTE3Ljk5NC0uMzUtMTEuMTg1LS4wMS0yNi4yMjUgMy4wODQtMzQuOTI2IDExLjc4Ni00LjgxNiA0LjgxNi03LjI2IDEwLjg3NC03LjI2IDE3Ljk4MyAwIDguMzUxIDIuNDA0IDE0Ljk4IDcuMTQgMTkuNzI2IDUuNTk3IDUuNTg3IDE0LjU5OSA4LjU0MSAyNi4wMzQgOC41NDEgMTYuNDUyIDAgMjUuMDczLTkuNjEyIDI4LjAxNy0xMy43NDhsLjE2LS4yM2gxLjIwMnYxMS43MjVoMTMuOTY4di01NS42OTNjMC0xMy4yMzctMi45NDQtMjIuNjItOS4wMzItMjguNjk3em0tNi43MyA0MC40NjN2OC42ODFjMCA3LjIyLTIuMzEzIDEzLjM3OC02LjY2OSAxNy44MTMtNC42MjYgNC42OTctMTEuMzU0IDcuMTctMTkuNDc1IDcuMTgtNC45NDcgMC0xMC4wODMtMi4wNzMtMTMuNDE4LTUuMzk3LTIuNzczLTIuNzg0LTQuMjU1LTYuMzI4LTQuMjU1LTEwLjI2NCAwLTE2LjU4MSAyMi42OS0xOC4zNzQgMzIuNDUyLTE4LjM3NCAxLjgxMyAwIDMuNjU1LjA5IDUuNDI3LjE4IDEuNzczLjA5IDMuNTk1LjE4IDUuMzg4LjE4em0tNDAyLjg0OC00MC40NjNjLTUuOTI4LTUuOTI4LTE0Ljg1LTguODAyLTI3LjI5Ni04LjgwMi0xMC4yNDQgMC0yMC4yMzcgMi44MzQtMjkuNzEgOC4zNzFsLjgxMiAxMy4xNzdjNi45NDktNS41NzcgMTYuODYyLTkuMDMxIDI2LjE5NC05LjAzMSA3Ljk4IDAgMTMuNjg4IDEuODIyIDE3LjQzMyA1LjU3NyAzLjk3NSAzLjk2NSA1LjgyOCAxMC4wNDMgNS44MjggMTkuMTE1di41OWwtLjU4MS0uMDRjLTYuNjk5LS4zNi0xMS40MzUtLjM2LTE3Ljk5NC0uMzUtMTEuMTc0LS4wMS0yNi4yMjQgMy4wODQtMzQuOTE2IDExLjc4Ni00LjgyNiA0LjgxNi03LjI3IDEwLjg3NC03LjI3IDE3Ljk4MyAwIDguMzUxIDIuNDA0IDE0Ljk4IDcuMTUgMTkuNzI2IDUuNTg4IDUuNTg3IDE0LjU5IDguNTQxIDI2LjAyNCA4LjU0MSAxNi40NTIgMCAyNS4wNzMtOS42MTIgMjguMDE3LTEzLjc0OGwuMTctLjIzaDEuMTkydjExLjcyNWgxMy45Nzh2LTU1LjY5M2MwLTEzLjIzNy0yLjk2NC0yMi42Mi05LjAzMS0yOC42OTd6bS02Ljc0IDQwLjQ2M3Y4LjY4MWMwIDcuMjItMi4zMTIgMTMuMzc4LTYuNjY4IDE3LjgxMy00LjYxNiA0LjY5Ny0xMS4zNTUgNy4xNy0xOS40NzYgNy4xOC00Ljk0NiAwLTEwLjA4My0yLjA3My0xMy40MDctNS4zOTctMi43ODQtMi43ODQtNC4yNTYtNi4zMjgtNC4yNTYtMTAuMjY0IDAtMTYuNTgxIDIyLjY5LTE4LjM3NCAzMi40NDMtMTguMzc0IDEuODEyIDAgMy42NTUuMDkgNS40MzcuMTggMS43NjIuMDkgMy41ODUuMTggNS4zNzcuMTh6bTEwMS4xMTMtNDAuODA0Yy01LjYxNy01LjYxNy0xMy43MTgtOC40NjEtMjQuMDgxLTguNDYxLTEzLjAwNyAwLTI0Ljk1MyA2LjU3OS0yOS43MSAxNi4zODJsLS4xNS4zMmgtMS4yNjF2LTE0LjQ0OWgtMTUuMjJ2OTAuOTZoMTUuNzd2LTQyLjA0NmMwLTExLjgwNSAyLjMwNC0yMS4xNjggNi44NS0yNy44MTYgNC45MTYtNy4xOSAxMi4yMzYtMTAuODM0IDIxLjc1OC0xMC44MzQgMTQuNDMuODkgMjAuMDU3IDEwLjI3MyAyMC4wNTcgMzMuNDgzdjQ3LjIxMmgxNS43N3YtNTQuMjdjMC0xMy43MzktMy4yOTQtMjMuOTkyLTkuNzgzLTMwLjQ4bTE1My42MzIgMzIuMzEyYy04LjcwMS0zLjk3Ni0xNi45MjItNy43Mi0xNi45MjItMTYuNDUyIDAtNy4xOCA2LjU3OC0xMS44MDUgMTYuNzYyLTExLjgwNSAzLjcxNSAwIDEzLjAxNyAyLjA4MiAxNy4zOTMgNC40MDVsMS4zMTEtMTMuNDI3Yy02Ljk2OS0yLjEwMy0xMy4xNzctMy40OTUtMjAuNTA3LTMuNDk1LTEwLjUxMyAwLTE5LjA1NSAyLjk4NC0yNC42OTIgOC42MjEtNC43ODYgNC43ODctNy4yMSAxMS4yMjUtNy4yMSAxOS4xNDYgMCAxNC4wMTggMTIuMTA2IDE5LjkzNiAyMi43OSAyNS4xNjMgOC43NzIgNC4yNzUgMTcuMDQzIDguMzMgMTcuMDQzIDE2LjIxIDAgMy41NjUtMS4xNzIgNi41NS0zLjQ4NSA4Ljg2Mi00LjQ0NiA0LjQ0Ni0xMS41MjUgNC45MjctMTQuMzQ5IDQuOTI3LTQuNTA1IDAtMTMuNjc4LTEuOTMzLTIwLjYxNy02LjE0OGwtLjgyIDEzLjg2OGM4LjE5IDQuMjM2IDE3LjQ3MiA0Ljc5NiAyNC42NzIgNC43OTYgOC41IDAgMTYuMjcxLTIuNDEzIDIxLjg1OC02LjgxOSA2LjMzOS00Ljk5NiA5LjY5My0xMi4zNTYgOS42OTMtMjEuMzA4IDAtMTYuMDktMTIuMTc2LTIxLjYzOC0yMi45Mi0yNi41NDRtNzcuODkzIDQyLjE2NWMtMy45MDYgMC03LjQ5LTEuNDUyLTEwLjEwNC00LjA1NS0zLjA4NC0zLjA4NC00LjcwNi03LjU4LTQuNzA2LTEyLjk5N3YtNTEuMTM4aDI0LjM2MnYtMTIuNTE1aC0yNC4zNjJ2LTI2LjUwNmwtMTUuNzggNS4wNjd2MjEuNDM4aC0yMC43NTh2MTIuNTE2aDIwLjc1N3Y1NC41ODJjMCA4LjI5IDIuMjIzIDE0LjcxIDYuNjA5IDE5LjA4NSA0LjY1NiA0LjY2NiAxMS43NTUgNy4wMyAyMS4wODcgNy4wMyA1LjMyNyAwIDEwLjU3NC0xLjQzMyAxMy44ODktMi4zNzR2LTEzLjAyN2MtMy4yNDUgMS44OTMtNi45MyAyLjg5NC0xMC45OTUgMi44OTRtMTc1Ljc0MS0xMjMuOTkzdjU1Ljc2M2gtMS4yMjJsLS4xNi0uMjZjLTUuOTM4LTkuNTkzLTE2LjAzMS0xNC40NDktMzAtMTQuNDQ5LTEwLjY2MyAwLTE5LjUyNSAzLjQ0NS0yNi4zMjQgMTAuMjQ0LTguMjYgOC4yNi0xMi44MDcgMjAuOTY3LTEyLjgwNyAzNS43NjYgMCAxNi40MzIgNC45NzcgMzAuODMgMTMuNjU4IDM5LjUwMiA2LjU4OSA2LjU5OSAxNS4xIDkuOTMzIDI1LjI5MyA5LjkzMyAxNS41OCAwIDI2LjE4NS03LjY1IDMwLjkxMS0xNC44MmwuMTYtLjI1aDEuMjAydjEyLjgxN2gxNS4wNnYtMTM0LjI0NnptMCA4OC45NTdjMCAxMS4xMzUtMy44MDUgMjEuNTc4LTEwLjE4MyAyNy45NTctNC42ODcgNC42OTYtMTAuNTQ0IDcuMDc5LTE3LjQxMyA3LjA3OS02LjE3OCAwLTExLjU0NS0yLjI4My0xNS45MzEtNi43NzktNy43NC03Ljk0LTEwLjI0NC0yMC40NzctMTAuMDQzLTI4Ljc4OC0uMjUtMTEuNzI1IDMuMDY0LTIxLjk3OSA5LjA4MS0yOC4xMzcgNC4zNjYtNC40NTYgOS45OTQtNi43MTggMTYuNzEyLTYuNzE4IDYuOTQgMCAxMi44NzcgMi40MTMgMTcuNjM0IDcuMTY5IDYuNDQ4IDYuNDQ4IDEwLjE0MyAxNi43MzIgMTAuMTQzIDI4LjIxN20tMzE0LjM0My04OC45NTd2NTUuNzYzaC0xLjIyMWwtLjE2LS4yNmMtNS45NDgtOS41OTMtMTYuMDQyLTE0LjQ0OS0zMC0xNC40NDktMTAuNjc0IDAtMTkuNTM1IDMuNDQ1LTI2LjMyNCAxMC4yNDQtOC4yNjEgOC4yNi0xMi44MTcgMjAuOTY3LTEyLjgxNyAzNS43NjYgMCAxNi40MzIgNC45ODYgMzAuODMgMTMuNjU4IDM5LjUwMiA2LjU4OCA2LjU5OSAxNS4xIDkuOTMzIDI1LjMwMyA5LjkzMyAxNS41NyAwIDI2LjE3NC03LjY1IDMwLjktMTQuODJsLjE2LS4yNWgxLjIxMnYxMi44MTdoMTUuMDV2LTEzNC4yNDZ6bTAgODguOTU3YzAgMTEuMTM1LTMuODE1IDIxLjU3OC0xMC4xODMgMjcuOTU3LTQuNjk2IDQuNjk2LTEwLjU1NCA3LjA3OS0xNy40MTMgNy4wNzktNi4xODggMC0xMS41NDUtMi4yODMtMTUuOTMtNi43NzktNy43NDEtNy45NC0xMC4yNTQtMjAuNDc3LTEwLjA0NC0yOC43ODgtLjI1LTExLjcyNSAzLjA1NC0yMS45NzkgOS4wODItMjguMTM3IDQuMzY2LTQuNDU2IDkuOTgzLTYuNzE4IDE2LjcxMi02LjcxOCA2LjkzOSAwIDEyLjg2NyAyLjQxMyAxNy42MjMgNy4xNjkgNi40NDggNi40NDggMTAuMTUzIDE2LjczMiAxMC4xNTMgMjguMjE3IiBmaWxsPSIjMDA3Y2M1Ii8+PC9zdmc+PHN2ZyB4PSIxMC4wMCIgeT0iMTE0LjUwIiB3aWR0aD0iMzAwLjAwIiBoZWlnaHQ9IjY0LjY2IiB2aWV3Qm94PSIzMTkuOTMgMzMuMzkgNjM3LjAyIDE0MC41MCIgcHJlc2VydmVBc3BlY3RSYXRpbz0ieE1pZFlNaWQgbWVldCI+PHBhdGggZD0ibTEyMy41MyAxMTEuODYzcy0zMC4zMi0zMC4zMi0zMC4zMy0zMC4zMmMtMS44MDMtMS44NTMtNC4yNDYtMi44NjQtNi45LTIuODY0aC01MC44OTV2MTkuMzY1aDU1LjcyM2ExNS44IDE1LjggMCAwIDEgMTEuMjQ1IDQuNjU3IDE1Ljc4MiAxNS43ODIgMCAwIDEgNC42NTYgMTEuMjQ0djU1LjcxM2gxOS4zNTV2LTUwLjg5NmMwLTIuNjQ0LTEuMDExLTUuMDk3LTIuODU0LTYuOW01My45OS0zMy4xODNjLTIuNjQzIDAtNS4wOTYgMS4wMTEtNi44OTkgMi44NjRsLTMwLjMyIDMwLjMyYy0xLjg0MiAxLjgwMi0yLjg1MyA0LjI1NS0yLjg1MyA2Ljg5OXY1MC44OTZoMTkuMzU1di01NS43MTNjMC04Ljc3MSA3LjEzLTE1LjkgMTUuOS0xNS45aDU1LjcxNHYtMTkuMzY3em0xODQuMDEyLTIuMjEzYy05LjM3MyAwLTE5LjAzNSA2LjYxOS0yMy41MDEgMTYuMTExbC0uMTUuMzFoLTEuMjYydi0xNC4yMDdoLTE0LjY5djkwLjk4aDE1Ljc2MXYtNDEuMzU1YzAtMjMuMTcgMTAuMDc0LTM4LjE0IDI1LjY0NC0zOC4xNCAzLjM2NSAwIDYuMjk4LjUyIDguODQyIDEuNDUydi0xMy45ODljLTMuMzc1LS42ODEtNS44NTgtMS4xNjItMTAuNjQ0LTEuMTYybTQ4NS41ODggOC43ODJjLTUuOTE5LTUuOTI4LTE0Ljg0LTguODAyLTI3LjI4Ny04LjgwMi0xMC4yNDMgMC0yMC4yMzYgMi44MzQtMjkuNzA5IDguMzcxbC44MTEgMTMuMTc3YzYuOTUtNS41NzcgMTYuODYyLTkuMDMxIDI2LjE5NS05LjAzMSA3Ljk4IDAgMTMuNjc4IDEuODIyIDE3LjQzMyA1LjU3NyAzLjk3NSAzLjk2NSA1LjgyNyAxMC4wNDMgNS44MjcgMTkuMTE1di41OWwtLjU4LS4wNGMtNi43MS0uMzYtMTEuNDQ2LS4zNi0xNy45OTQtLjM1LTExLjE4NS0uMDEtMjYuMjI1IDMuMDg0LTM0LjkyNiAxMS43ODYtNC44MTYgNC44MTYtNy4yNiAxMC44NzQtNy4yNiAxNy45ODMgMCA4LjM1MSAyLjQwNCAxNC45OCA3LjE0IDE5LjcyNiA1LjU5NyA1LjU4NyAxNC41OTkgOC41NDEgMjYuMDM0IDguNTQxIDE2LjQ1MiAwIDI1LjA3My05LjYxMiAyOC4wMTctMTMuNzQ4bC4xNi0uMjNoMS4yMDJ2MTEuNzI1aDEzLjk2OHYtNTUuNjkzYzAtMTMuMjM3LTIuOTQ0LTIyLjYyLTkuMDMyLTI4LjY5N3ptLTYuNzMgNDAuNDYzdjguNjgxYzAgNy4yMi0yLjMxMyAxMy4zNzgtNi42NjkgMTcuODEzLTQuNjI2IDQuNjk3LTExLjM1NCA3LjE3LTE5LjQ3NSA3LjE4LTQuOTQ3IDAtMTAuMDgzLTIuMDczLTEzLjQxOC01LjM5Ny0yLjc3My0yLjc4NC00LjI1NS02LjMyOC00LjI1NS0xMC4yNjQgMC0xNi41ODEgMjIuNjktMTguMzc0IDMyLjQ1Mi0xOC4zNzQgMS44MTMgMCAzLjY1NS4wOSA1LjQyNy4xOCAxLjc3My4wOSAzLjU5NS4xOCA1LjM4OC4xOHptLTQwMi44NDgtNDAuNDYzYy01LjkyOC01LjkyOC0xNC44NS04LjgwMi0yNy4yOTYtOC44MDItMTAuMjQ0IDAtMjAuMjM3IDIuODM0LTI5LjcxIDguMzcxbC44MTIgMTMuMTc3YzYuOTQ5LTUuNTc3IDE2Ljg2Mi05LjAzMSAyNi4xOTQtOS4wMzEgNy45OCAwIDEzLjY4OCAxLjgyMiAxNy40MzMgNS41NzcgMy45NzUgMy45NjUgNS44MjggMTAuMDQzIDUuODI4IDE5LjExNXYuNTlsLS41ODEtLjA0Yy02LjY5OS0uMzYtMTEuNDM1LS4zNi0xNy45OTQtLjM1LTExLjE3NC0uMDEtMjYuMjI0IDMuMDg0LTM0LjkxNiAxMS43ODYtNC44MjYgNC44MTYtNy4yNyAxMC44NzQtNy4yNyAxNy45ODMgMCA4LjM1MSAyLjQwNCAxNC45OCA3LjE1IDE5LjcyNiA1LjU4OCA1LjU4NyAxNC41OSA4LjU0MSAyNi4wMjQgOC41NDEgMTYuNDUyIDAgMjUuMDczLTkuNjEyIDI4LjAxNy0xMy43NDhsLjE3LS4yM2gxLjE5MnYxMS43MjVoMTMuOTc4di01NS42OTNjMC0xMy4yMzctMi45NjQtMjIuNjItOS4wMzEtMjguNjk3em0tNi43NCA0MC40NjN2OC42ODFjMCA3LjIyLTIuMzEyIDEzLjM3OC02LjY2OCAxNy44MTMtNC42MTYgNC42OTctMTEuMzU1IDcuMTctMTkuNDc2IDcuMTgtNC45NDYgMC0xMC4wODMtMi4wNzMtMTMuNDA3LTUuMzk3LTIuNzg0LTIuNzg0LTQuMjU2LTYuMzI4LTQuMjU2LTEwLjI2NCAwLTE2LjU4MSAyMi42OS0xOC4zNzQgMzIuNDQzLTE4LjM3NCAxLjgxMiAwIDMuNjU1LjA5IDUuNDM3LjE4IDEuNzYyLjA5IDMuNTg1LjE4IDUuMzc3LjE4em0xMDEuMTEzLTQwLjgwNGMtNS42MTctNS42MTctMTMuNzE4LTguNDYxLTI0LjA4MS04LjQ2MS0xMy4wMDcgMC0yNC45NTMgNi41NzktMjkuNzEgMTYuMzgybC0uMTUuMzJoLTEuMjYxdi0xNC40NDloLTE1LjIydjkwLjk2aDE1Ljc3di00Mi4wNDZjMC0xMS44MDUgMi4zMDQtMjEuMTY4IDYuODUtMjcuODE2IDQuOTE2LTcuMTkgMTIuMjM2LTEwLjgzNCAyMS43NTgtMTAuODM0IDE0LjQzLjg5IDIwLjA1NyAxMC4yNzMgMjAuMDU3IDMzLjQ4M3Y0Ny4yMTJoMTUuNzd2LTU0LjI3YzAtMTMuNzM5LTMuMjk0LTIzLjk5Mi05Ljc4My0zMC40OG0xNTMuNjMyIDMyLjMxMmMtOC43MDEtMy45NzYtMTYuOTIyLTcuNzItMTYuOTIyLTE2LjQ1MiAwLTcuMTggNi41NzgtMTEuODA1IDE2Ljc2Mi0xMS44MDUgMy43MTUgMCAxMy4wMTcgMi4wODIgMTcuMzkzIDQuNDA1bDEuMzExLTEzLjQyN2MtNi45NjktMi4xMDMtMTMuMTc3LTMuNDk1LTIwLjUwNy0zLjQ5NS0xMC41MTMgMC0xOS4wNTUgMi45ODQtMjQuNjkyIDguNjIxLTQuNzg2IDQuNzg3LTcuMjEgMTEuMjI1LTcuMjEgMTkuMTQ2IDAgMTQuMDE4IDEyLjEwNiAxOS45MzYgMjIuNzkgMjUuMTYzIDguNzcyIDQuMjc1IDE3LjA0MyA4LjMzIDE3LjA0MyAxNi4yMSAwIDMuNTY1LTEuMTcyIDYuNTUtMy40ODUgOC44NjItNC40NDYgNC40NDYtMTEuNTI1IDQuOTI3LTE0LjM0OSA0LjkyNy00LjUwNSAwLTEzLjY3OC0xLjkzMy0yMC42MTctNi4xNDhsLS44MiAxMy44NjhjOC4xOSA0LjIzNiAxNy40NzIgNC43OTYgMjQuNjcyIDQuNzk2IDguNSAwIDE2LjI3MS0yLjQxMyAyMS44NTgtNi44MTkgNi4zMzktNC45OTYgOS42OTMtMTIuMzU2IDkuNjkzLTIxLjMwOCAwLTE2LjA5LTEyLjE3Ni0yMS42MzgtMjIuOTItMjYuNTQ0bTc3Ljg5MyA0Mi4xNjVjLTMuOTA2IDAtNy40OS0xLjQ1Mi0xMC4xMDQtNC4wNTUtMy4wODQtMy4wODQtNC43MDYtNy41OC00LjcwNi0xMi45OTd2LTUxLjEzOGgyNC4zNjJ2LTEyLjUxNWgtMjQuMzYydi0yNi41MDZsLTE1Ljc4IDUuMDY3djIxLjQzOGgtMjAuNzU4djEyLjUxNmgyMC43NTd2NTQuNTgyYzAgOC4yOSAyLjIyMyAxNC43MSA2LjYwOSAxOS4wODUgNC42NTYgNC42NjYgMTEuNzU1IDcuMDMgMjEuMDg3IDcuMDMgNS4zMjcgMCAxMC41NzQtMS40MzMgMTMuODg5LTIuMzc0di0xMy4wMjdjLTMuMjQ1IDEuODkzLTYuOTMgMi44OTQtMTAuOTk1IDIuODk0bTE3NS43NDEtMTIzLjk5M3Y1NS43NjNoLTEuMjIybC0uMTYtLjI2Yy01LjkzOC05LjU5My0xNi4wMzEtMTQuNDQ5LTMwLTE0LjQ0OS0xMC42NjMgMC0xOS41MjUgMy40NDUtMjYuMzI0IDEwLjI0NC04LjI2IDguMjYtMTIuODA3IDIwLjk2Ny0xMi44MDcgMzUuNzY2IDAgMTYuNDMyIDQuOTc3IDMwLjgzIDEzLjY1OCAzOS41MDIgNi41ODkgNi41OTkgMTUuMSA5LjkzMyAyNS4yOTMgOS45MzMgMTUuNTggMCAyNi4xODUtNy42NSAzMC45MTEtMTQuODJsLjE2LS4yNWgxLjIwMnYxMi44MTdoMTUuMDZ2LTEzNC4yNDZ6bTAgODguOTU3YzAgMTEuMTM1LTMuODA1IDIxLjU3OC0xMC4xODMgMjcuOTU3LTQuNjg3IDQuNjk2LTEwLjU0NCA3LjA3OS0xNy40MTMgNy4wNzktNi4xNzggMC0xMS41NDUtMi4yODMtMTUuOTMxLTYuNzc5LTcuNzQtNy45NC0xMC4yNDQtMjAuNDc3LTEwLjA0My0yOC43ODgtLjI1LTExLjcyNSAzLjA2NC0yMS45NzkgOS4wODEtMjguMTM3IDQuMzY2LTQuNDU2IDkuOTk0LTYuNzE4IDE2LjcxMi02LjcxOCA2Ljk0IDAgMTIuODc3IDIuNDEzIDE3LjYzNCA3LjE2OSA2LjQ0OCA2LjQ0OCAxMC4xNDMgMTYuNzMyIDEwLjE0MyAyOC4yMTdtLTMxNC4zNDMtODguOTU3djU1Ljc2M2gtMS4yMjFsLS4xNi0uMjZjLTUuOTQ4LTkuNTkzLTE2LjA0Mi0xNC40NDktMzAtMTQuNDQ5LTEwLjY3NCAwLTE5LjUzNSAzLjQ0NS0yNi4zMjQgMTAuMjQ0LTguMjYxIDguMjYtMTIuODE3IDIwLjk2Ny0xMi44MTcgMzUuNzY2IDAgMTYuNDMyIDQuOTg2IDMwLjgzIDEzLjY1OCAzOS41MDIgNi41ODggNi41OTkgMTUuMSA5LjkzMyAyNS4zMDMgOS45MzMgMTUuNTcgMCAyNi4xNzQtNy42NSAzMC45LTE0LjgybC4xNi0uMjVoMS4yMTJ2MTIuODE3aDE1LjA1di0xMzQuMjQ2em0wIDg4Ljk1N2MwIDExLjEzNS0zLjgxNSAyMS41NzgtMTAuMTgzIDI3Ljk1Ny00LjY5NiA0LjY5Ni0xMC41NTQgNy4wNzktMTcuNDEzIDcuMDc5LTYuMTg4IDAtMTEuNTQ1LTIuMjgzLTE1LjkzLTYuNzc5LTcuNzQxLTcuOTQtMTAuMjU0LTIwLjQ3Ny0xMC4wNDQtMjguNzg4LS4yNS0xMS43MjUgMy4wNTQtMjEuOTc5IDkuMDgyLTI4LjEzNyA0LjM2Ni00LjQ1NiA5Ljk4My02LjcxOCAxNi43MTItNi43MTggNi45MzkgMCAxMi44NjcgMi40MTMgMTcuNjIzIDcuMTY5IDYuNDQ4IDYuNDQ4IDEwLjE1MyAxNi43MzIgMTAuMTUzIDI4LjIxNyIgZmlsbD0iIzAwN2NjNSIvPjwvc3ZnPjwvc3ZnPg==";
+var LOGO_MARK="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjMzLjQwIDc2LjY4IDE5Ny4wMSA5NC45OCI+PHBhdGggZD0ibTEyMy41MyAxMTEuODYzcy0zMC4zMi0zMC4zMi0zMC4zMy0zMC4zMmMtMS44MDMtMS44NTMtNC4yNDYtMi44NjQtNi45LTIuODY0aC01MC44OTV2MTkuMzY1aDU1LjcyM2ExNS44IDE1LjggMCAwIDEgMTEuMjQ1IDQuNjU3IDE1Ljc4MiAxNS43ODIgMCAwIDEgNC42NTYgMTEuMjQ0djU1LjcxM2gxOS4zNTV2LTUwLjg5NmMwLTIuNjQ0LTEuMDExLTUuMDk3LTIuODU0LTYuOW01My45OS0zMy4xODNjLTIuNjQzIDAtNS4wOTYgMS4wMTEtNi44OTkgMi44NjRsLTMwLjMyIDMwLjMyYy0xLjg0MiAxLjgwMi0yLjg1MyA0LjI1NS0yLjg1MyA2Ljg5OXY1MC44OTZoMTkuMzU1di01NS43MTNjMC04Ljc3MSA3LjEzLTE1LjkgMTUuOS0xNS45aDU1LjcxNHYtMTkuMzY3em0xODQuMDEyLTIuMjEzYy05LjM3MyAwLTE5LjAzNSA2LjYxOS0yMy41MDEgMTYuMTExbC0uMTUuMzFoLTEuMjYydi0xNC4yMDdoLTE0LjY5djkwLjk4aDE1Ljc2MXYtNDEuMzU1YzAtMjMuMTcgMTAuMDc0LTM4LjE0IDI1LjY0NC0zOC4xNCAzLjM2NSAwIDYuMjk4LjUyIDguODQyIDEuNDUydi0xMy45ODljLTMuMzc1LS42ODEtNS44NTgtMS4xNjItMTAuNjQ0LTEuMTYybTQ4NS41ODggOC43ODJjLTUuOTE5LTUuOTI4LTE0Ljg0LTguODAyLTI3LjI4Ny04LjgwMi0xMC4yNDMgMC0yMC4yMzYgMi44MzQtMjkuNzA5IDguMzcxbC44MTEgMTMuMTc3YzYuOTUtNS41NzcgMTYuODYyLTkuMDMxIDI2LjE5NS05LjAzMSA3Ljk4IDAgMTMuNjc4IDEuODIyIDE3LjQzMyA1LjU3NyAzLjk3NSAzLjk2NSA1LjgyNyAxMC4wNDMgNS44MjcgMTkuMTE1di41OWwtLjU4LS4wNGMtNi43MS0uMzYtMTEuNDQ2LS4zNi0xNy45OTQtLjM1LTExLjE4NS0uMDEtMjYuMjI1IDMuMDg0LTM0LjkyNiAxMS43ODYtNC44MTYgNC44MTYtNy4yNiAxMC44NzQtNy4yNiAxNy45ODMgMCA4LjM1MSAyLjQwNCAxNC45OCA3LjE0IDE5LjcyNiA1LjU5NyA1LjU4NyAxNC41OTkgOC41NDEgMjYuMDM0IDguNTQxIDE2LjQ1MiAwIDI1LjA3My05LjYxMiAyOC4wMTctMTMuNzQ4bC4xNi0uMjNoMS4yMDJ2MTEuNzI1aDEzLjk2OHYtNTUuNjkzYzAtMTMuMjM3LTIuOTQ0LTIyLjYyLTkuMDMyLTI4LjY5N3ptLTYuNzMgNDAuNDYzdjguNjgxYzAgNy4yMi0yLjMxMyAxMy4zNzgtNi42NjkgMTcuODEzLTQuNjI2IDQuNjk3LTExLjM1NCA3LjE3LTE5LjQ3NSA3LjE4LTQuOTQ3IDAtMTAuMDgzLTIuMDczLTEzLjQxOC01LjM5Ny0yLjc3My0yLjc4NC00LjI1NS02LjMyOC00LjI1NS0xMC4yNjQgMC0xNi41ODEgMjIuNjktMTguMzc0IDMyLjQ1Mi0xOC4zNzQgMS44MTMgMCAzLjY1NS4wOSA1LjQyNy4xOCAxLjc3My4wOSAzLjU5NS4xOCA1LjM4OC4xOHptLTQwMi44NDgtNDAuNDYzYy01LjkyOC01LjkyOC0xNC44NS04LjgwMi0yNy4yOTYtOC44MDItMTAuMjQ0IDAtMjAuMjM3IDIuODM0LTI5LjcxIDguMzcxbC44MTIgMTMuMTc3YzYuOTQ5LTUuNTc3IDE2Ljg2Mi05LjAzMSAyNi4xOTQtOS4wMzEgNy45OCAwIDEzLjY4OCAxLjgyMiAxNy40MzMgNS41NzcgMy45NzUgMy45NjUgNS44MjggMTAuMDQzIDUuODI4IDE5LjExNXYuNTlsLS41ODEtLjA0Yy02LjY5OS0uMzYtMTEuNDM1LS4zNi0xNy45OTQtLjM1LTExLjE3NC0uMDEtMjYuMjI0IDMuMDg0LTM0LjkxNiAxMS43ODYtNC44MjYgNC44MTYtNy4yNyAxMC44NzQtNy4yNyAxNy45ODMgMCA4LjM1MSAyLjQwNCAxNC45OCA3LjE1IDE5LjcyNiA1LjU4OCA1LjU4NyAxNC41OSA4LjU0MSAyNi4wMjQgOC41NDEgMTYuNDUyIDAgMjUuMDczLTkuNjEyIDI4LjAxNy0xMy43NDhsLjE3LS4yM2gxLjE5MnYxMS43MjVoMTMuOTc4di01NS42OTNjMC0xMy4yMzctMi45NjQtMjIuNjItOS4wMzEtMjguNjk3em0tNi43NCA0MC40NjN2OC42ODFjMCA3LjIyLTIuMzEyIDEzLjM3OC02LjY2OCAxNy44MTMtNC42MTYgNC42OTctMTEuMzU1IDcuMTctMTkuNDc2IDcuMTgtNC45NDYgMC0xMC4wODMtMi4wNzMtMTMuNDA3LTUuMzk3LTIuNzg0LTIuNzg0LTQuMjU2LTYuMzI4LTQuMjU2LTEwLjI2NCAwLTE2LjU4MSAyMi42OS0xOC4zNzQgMzIuNDQzLTE4LjM3NCAxLjgxMiAwIDMuNjU1LjA5IDUuNDM3LjE4IDEuNzYyLjA5IDMuNTg1LjE4IDUuMzc3LjE4em0xMDEuMTEzLTQwLjgwNGMtNS42MTctNS42MTctMTMuNzE4LTguNDYxLTI0LjA4MS04LjQ2MS0xMy4wMDcgMC0yNC45NTMgNi41NzktMjkuNzEgMTYuMzgybC0uMTUuMzJoLTEuMjYxdi0xNC40NDloLTE1LjIydjkwLjk2aDE1Ljc3di00Mi4wNDZjMC0xMS44MDUgMi4zMDQtMjEuMTY4IDYuODUtMjcuODE2IDQuOTE2LTcuMTkgMTIuMjM2LTEwLjgzNCAyMS43NTgtMTAuODM0IDE0LjQzLjg5IDIwLjA1NyAxMC4yNzMgMjAuMDU3IDMzLjQ4M3Y0Ny4yMTJoMTUuNzd2LTU0LjI3YzAtMTMuNzM5LTMuMjk0LTIzLjk5Mi05Ljc4My0zMC40OG0xNTMuNjMyIDMyLjMxMmMtOC43MDEtMy45NzYtMTYuOTIyLTcuNzItMTYuOTIyLTE2LjQ1MiAwLTcuMTggNi41NzgtMTEuODA1IDE2Ljc2Mi0xMS44MDUgMy43MTUgMCAxMy4wMTcgMi4wODIgMTcuMzkzIDQuNDA1bDEuMzExLTEzLjQyN2MtNi45NjktMi4xMDMtMTMuMTc3LTMuNDk1LTIwLjUwNy0zLjQ5NS0xMC41MTMgMC0xOS4wNTUgMi45ODQtMjQuNjkyIDguNjIxLTQuNzg2IDQuNzg3LTcuMjEgMTEuMjI1LTcuMjEgMTkuMTQ2IDAgMTQuMDE4IDEyLjEwNiAxOS45MzYgMjIuNzkgMjUuMTYzIDguNzcyIDQuMjc1IDE3LjA0MyA4LjMzIDE3LjA0MyAxNi4yMSAwIDMuNTY1LTEuMTcyIDYuNTUtMy40ODUgOC44NjItNC40NDYgNC40NDYtMTEuNTI1IDQuOTI3LTE0LjM0OSA0LjkyNy00LjUwNSAwLTEzLjY3OC0xLjkzMy0yMC42MTctNi4xNDhsLS44MiAxMy44NjhjOC4xOSA0LjIzNiAxNy40NzIgNC43OTYgMjQuNjcyIDQuNzk2IDguNSAwIDE2LjI3MS0yLjQxMyAyMS44NTgtNi44MTkgNi4zMzktNC45OTYgOS42OTMtMTIuMzU2IDkuNjkzLTIxLjMwOCAwLTE2LjA5LTEyLjE3Ni0yMS42MzgtMjIuOTItMjYuNTQ0bTc3Ljg5MyA0Mi4xNjVjLTMuOTA2IDAtNy40OS0xLjQ1Mi0xMC4xMDQtNC4wNTUtMy4wODQtMy4wODQtNC43MDYtNy41OC00LjcwNi0xMi45OTd2LTUxLjEzOGgyNC4zNjJ2LTEyLjUxNWgtMjQuMzYydi0yNi41MDZsLTE1Ljc4IDUuMDY3djIxLjQzOGgtMjAuNzU4djEyLjUxNmgyMC43NTd2NTQuNTgyYzAgOC4yOSAyLjIyMyAxNC43MSA2LjYwOSAxOS4wODUgNC42NTYgNC42NjYgMTEuNzU1IDcuMDMgMjEuMDg3IDcuMDMgNS4zMjcgMCAxMC41NzQtMS40MzMgMTMuODg5LTIuMzc0di0xMy4wMjdjLTMuMjQ1IDEuODkzLTYuOTMgMi44OTQtMTAuOTk1IDIuODk0bTE3NS43NDEtMTIzLjk5M3Y1NS43NjNoLTEuMjIybC0uMTYtLjI2Yy01LjkzOC05LjU5My0xNi4wMzEtMTQuNDQ5LTMwLTE0LjQ0OS0xMC42NjMgMC0xOS41MjUgMy40NDUtMjYuMzI0IDEwLjI0NC04LjI2IDguMjYtMTIuODA3IDIwLjk2Ny0xMi44MDcgMzUuNzY2IDAgMTYuNDMyIDQuOTc3IDMwLjgzIDEzLjY1OCAzOS41MDIgNi41ODkgNi41OTkgMTUuMSA5LjkzMyAyNS4yOTMgOS45MzMgMTUuNTggMCAyNi4xODUtNy42NSAzMC45MTEtMTQuODJsLjE2LS4yNWgxLjIwMnYxMi44MTdoMTUuMDZ2LTEzNC4yNDZ6bTAgODguOTU3YzAgMTEuMTM1LTMuODA1IDIxLjU3OC0xMC4xODMgMjcuOTU3LTQuNjg3IDQuNjk2LTEwLjU0NCA3LjA3OS0xNy40MTMgNy4wNzktNi4xNzggMC0xMS41NDUtMi4yODMtMTUuOTMxLTYuNzc5LTcuNzQtNy45NC0xMC4yNDQtMjAuNDc3LTEwLjA0My0yOC43ODgtLjI1LTExLjcyNSAzLjA2NC0yMS45NzkgOS4wODEtMjguMTM3IDQuMzY2LTQuNDU2IDkuOTk0LTYuNzE4IDE2LjcxMi02LjcxOCA2Ljk0IDAgMTIuODc3IDIuNDEzIDE3LjYzNCA3LjE2OSA2LjQ0OCA2LjQ0OCAxMC4xNDMgMTYuNzMyIDEwLjE0MyAyOC4yMTdtLTMxNC4zNDMtODguOTU3djU1Ljc2M2gtMS4yMjFsLS4xNi0uMjZjLTUuOTQ4LTkuNTkzLTE2LjA0Mi0xNC40NDktMzAtMTQuNDQ5LTEwLjY3NCAwLTE5LjUzNSAzLjQ0NS0yNi4zMjQgMTAuMjQ0LTguMjYxIDguMjYtMTIuODE3IDIwLjk2Ny0xMi44MTcgMzUuNzY2IDAgMTYuNDMyIDQuOTg2IDMwLjgzIDEzLjY1OCAzOS41MDIgNi41ODggNi41OTkgMTUuMSA5LjkzMyAyNS4zMDMgOS45MzMgMTUuNTcgMCAyNi4xNzQtNy42NSAzMC45LTE0LjgybC4xNi0uMjVoMS4yMTJ2MTIuODE3aDE1LjA1di0xMzQuMjQ2em0wIDg4Ljk1N2MwIDExLjEzNS0zLjgxNSAyMS41NzgtMTAuMTgzIDI3Ljk1Ny00LjY5NiA0LjY5Ni0xMC41NTQgNy4wNzktMTcuNDEzIDcuMDc5LTYuMTg4IDAtMTEuNTQ1LTIuMjgzLTE1LjkzLTYuNzc5LTcuNzQxLTcuOTQtMTAuMjU0LTIwLjQ3Ny0xMC4wNDQtMjguNzg4LS4yNS0xMS43MjUgMy4wNTQtMjEuOTc5IDkuMDgyLTI4LjEzNyA0LjM2Ni00LjQ1NiA5Ljk4My02LjcxOCAxNi43MTItNi43MTggNi45MzkgMCAxMi44NjcgMi40MTMgMTcuNjIzIDcuMTY5IDYuNDQ4IDYuNDQ4IDEwLjE1MyAxNi43MzIgMTAuMTUzIDI4LjIxNyIgZmlsbD0iIzAwN2NjNSIvPjwvc3ZnPg==";
+
+document.getElementById('hd-logo').src=LOGO;
+document.getElementById('st-count').textContent=STATS.offers;
+document.getElementById('st-ci').textContent=STATS.cities;
+document.getElementById('st-ci2').textContent=STATS.cities;
+document.getElementById('sec-count').textContent=STATS.offers;
+document.getElementById('mh-n').textContent=STATS.offers;
+document.getElementById('mh-c').textContent=STATS.cities;
+
+function badges(o){
+  var h='';
+  if(o.sup) h+='<span class="ob sup">★ Superoferta</span>';
+  if(o.oz) h+='<span class="ob oz">⚡ Od zaraz</span>';
+  if(o.cat==='abroad') h+='<span class="ob ab">🌍 Za granicą</span>';
+  h+='<span class="ob lvl">'+o.lvl+'</span>';
+  if(o.ua) h+='<span class="ob ua">🇺🇦 Україна</span>';
+  if(o.nodoswiad) h+='<span class="ob cv">Bez doświadczenia</span>';
+  return h;
+}
+function card(o){
+  var sal=o.sal?'<div class="salary">'+o.sal+'</div>':'<div class="salary none">Wynagrodzenie do uzgodnienia</div>';
+  return '<div class="offer"><div class="offer-top"><div class="offer-logo"><img src="'+LOGO_MARK+'" alt=""></div><div style="flex:1;min-width:0"><div class="offer-t">'+o.t+'</div><div class="offer-loc">📍 '+o.loc+'</div></div></div><div class="obadges">'+badges(o)+'</div><div class="offer-bottom">'+sal+'<div class="date">'+o.date+'</div><button class="apply">Aplikuj szybko</button></div></div>';
+}
+var LIMIT=5, curFilter='all', expanded=false;
+var offersEl=document.getElementById('offers');
+var moreBtn=document.getElementById('morebtn');
+function filtered(){
+  if(curFilter==='all') return OFFERS;
+  if(curFilter==='oz') return OFFERS.filter(function(o){return o.oz;});
+  return OFFERS.filter(function(o){return o.cat===curFilter;});
+}
+function render(){
+  var list=filtered();
+  var shown=expanded?list:list.slice(0,LIMIT);
+  offersEl.innerHTML=shown.length?shown.map(card).join(''):'<div class="nores">Brak ofert w tej kategorii.</div>';
+  document.getElementById('sec-count').textContent=list.length;
+  if(list.length>LIMIT){
+    moreBtn.style.display='block';
+    moreBtn.innerHTML=expanded?'▴ Zwiń listę':('▾ Pokaż wszystkie ogłoszenia <span class="cnt">('+list.length+')</span>');
+  }else{moreBtn.style.display='none';}
+}
+moreBtn.addEventListener('click',function(){
+  expanded=!expanded; render();
+  if(!expanded){var a=document.querySelector('.sec[data-anchor="oferty"]'); if(a) a.scrollIntoView({behavior:'smooth',block:'start'});}
+});
+document.getElementById('filters').addEventListener('click',function(e){
+  var c=e.target.closest('.fchip'); if(!c) return;
+  document.querySelectorAll('.fchip').forEach(function(x){x.classList.remove('on');});
+  c.classList.add('on'); curFilter=c.dataset.f; expanded=false; render();
+});
+render();
+
+(function(){
+  function pin(){return L.divIcon({className:'',html:'<div class="bpin"><div class="head2"><span class="ic"><img src="'+LOGO_MARK+'"/></span></div></div>',iconSize:[36,42],iconAnchor:[18,42],popupAnchor:[0,-40]});}
+  try{
+    var m=L.map('r-map',{zoomControl:true,attributionControl:false,dragging:true,scrollWheelZoom:false,touchZoom:true,doubleClickZoom:true}).setView([51.6,16.8],6);
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',{maxZoom:19}).addTo(m);
+    var b=[];
+    PINS.forEach(function(p){
+      var mk=L.marker([p[1],p[2]],{icon:pin()}).addTo(m);
+      var word=p[3]===1?'oferta':(p[3]<5?'oferty':'ofert');
+      mk.bindPopup('<b>'+p[0]+'</b><br>'+p[3]+' '+word+' Randstad');
+      b.push([p[1],p[2]]);
+    });
+    if(b.length>1) m.fitBounds(b,{padding:[28,28],maxZoom:7});
+    setTimeout(function(){m.invalidateSize();},200);
+  }catch(e){
+    var el=document.getElementById('r-map');
+    if(el) el.innerHTML='<div style="display:flex;align-items:center;justify-content:center;height:100%;color:#6B7280;font-size:12px;text-align:center;padding:14px">Mapa wczyta się po otwarciu strony z dostępem do internetu.</div>';
+  }
+})();
+</script>
+</body>
+</html>

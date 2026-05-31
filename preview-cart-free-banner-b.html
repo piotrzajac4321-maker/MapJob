@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<title>Podgląd — Wariant B + „bez karty / bez płatności"</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#18181B;color:#F4F4F5;padding:40px 20px;line-height:1.5}
+h1{font-size:22px;font-weight:800;margin:0 0 8px;letter-spacing:-.3px}
+.sub{color:#A1A1AA;font-size:14px;margin-bottom:36px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(360px,1fr));gap:32px;max-width:1500px;margin:0 auto}
+.col{display:flex;flex-direction:column}
+.label{font-size:11px;font-weight:800;color:#71717A;text-transform:uppercase;letter-spacing:.6px;margin-bottom:4px}
+.title{font-size:16px;font-weight:700;color:#F4F4F5;margin-bottom:4px}
+.desc{font-size:12.5px;color:#A1A1AA;margin-bottom:14px;min-height:34px}
+
+.phone{width:100%;max-width:380px;margin:0 auto;background:#0A0A0B;border:1px solid rgba(255,255,255,.08);border-radius:24px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.5)}
+.phone-top{padding:14px 16px 12px;border-bottom:1px solid rgba(255,255,255,.06);display:flex;align-items:center;gap:12px;background:#0A0A0B}
+.back-btn{width:36px;height:36px;border-radius:10px;background:#18181B;border:1px solid rgba(255,255,255,.09);color:#71717A;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.title-row{font-size:17px;font-weight:900;flex:1;color:#F4F4F5}
+.tot{font-size:14px;font-weight:700;color:#2563EB}
+.body{padding:0;background:#0A0A0B;min-height:480px}
+
+.mock-pkg{margin:16px;padding:18px;background:#0F0F11;border:1px solid rgba(255,255,255,.06);border-radius:14px}
+.mock-pkg-h{display:flex;align-items:center;gap:12px}
+.mock-pkg-icon{width:46px;height:46px;border-radius:11px;background:rgba(37,99,235,.12);border:1px solid rgba(37,99,235,.3);display:flex;align-items:center;justify-content:center;font-size:22px}
+.mock-pkg-name{font-size:14.5px;font-weight:700;color:#F4F4F5}
+.mock-pkg-sub{font-size:11.5px;color:#A1A1AA;margin-top:2px}
+.mock-pkg-price{margin-left:auto;font-size:18px;font-weight:800;color:#2563EB}
+.section-h{padding:18px 16px 6px;display:flex;align-items:center;gap:8px}
+.section-bar{width:3px;height:14px;background:#2563EB;border-radius:2px}
+.section-t{font-size:11px;font-weight:700;color:#F4F4F5;text-transform:uppercase;letter-spacing:.5px}
+
+/* === wspólny B === */
+.vb{margin:14px 16px 0;position:relative;overflow:hidden;border-radius:14px;background:linear-gradient(135deg,rgba(34,197,94,.13) 0%,rgba(34,197,94,.03) 60%,rgba(34,197,94,.10) 100%);border:1px solid rgba(34,197,94,.38);padding:18px}
+.vb-pill{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;background:rgba(34,197,94,.16);border:1px solid rgba(34,197,94,.4);border-radius:20px;font-size:10px;font-weight:800;color:#22C55E;letter-spacing:.5px;text-transform:uppercase;margin-bottom:11px}
+.vb-pill::before{content:'';width:6px;height:6px;border-radius:50%;background:#22C55E;box-shadow:0 0 8px rgba(34,197,94,.7);animation:pulse 1.6s ease-in-out infinite}
+@keyframes pulse{50%{opacity:.45}}
+.vb-h{font-size:18px;font-weight:800;color:#F4F4F5;letter-spacing:-.3px;margin-bottom:6px}
+.vb-h s{color:#71717A;font-weight:600;margin-right:6px}
+.vb-d{font-size:12.5px;color:#A1A1AA;line-height:1.5}
+.vb-d b{color:#F4F4F5;font-weight:700}
+.vb-row{display:flex;align-items:center;gap:8px;margin-top:12px;padding-top:12px;border-top:1px solid rgba(34,197,94,.18);font-size:11px;color:#71717A}
+.vb-row svg{flex-shrink:0}
+
+/* benefit lines (B1) */
+.vb-benefits{margin-top:12px;display:flex;flex-direction:column;gap:8px}
+.vb-li{display:flex;align-items:center;gap:9px;font-size:12px;color:#D4D4D8;line-height:1.4}
+.vb-li svg{flex-shrink:0}
+.vb-li b{color:#F4F4F5;font-weight:700}
+
+/* shield row (B2) — strong message */
+.vb-shield{margin-top:13px;padding:11px 12px;display:flex;align-items:center;gap:10px;background:rgba(34,197,94,.07);border:1px solid rgba(34,197,94,.22);border-radius:10px}
+.vb-shield-i{width:30px;height:30px;border-radius:8px;background:rgba(34,197,94,.18);border:1px solid rgba(34,197,94,.35);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.vb-shield-t{font-size:12px;font-weight:700;color:#F4F4F5;line-height:1.35}
+.vb-shield-s{font-size:10.5px;color:#A1A1AA;margin-top:2px;line-height:1.4}
+
+/* chip row (B3) */
+.vb-chips{margin-top:13px;display:flex;flex-wrap:wrap;gap:6px}
+.vb-chip{display:inline-flex;align-items:center;gap:5px;padding:5px 10px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:20px;font-size:10.5px;font-weight:600;color:#D4D4D8}
+.vb-chip svg{flex-shrink:0}
+</style>
+</head>
+<body>
+
+<h1>Wariant B + „bez karty / bez płatności"</h1>
+<p class="sub">3 sposoby na dodanie informacji że <b>nie wymagamy danych karty ani żadnych płatności</b>. Wybierz który układ implementujemy.</p>
+
+<div class="grid">
+
+<!-- ============ B1 — Lista korzyści ============ -->
+<div class="col">
+  <div class="label">B1 — lista korzyści</div>
+  <div class="title">Trzy linie z checkmarkami</div>
+  <div class="desc">Każda korzyść osobno — czytelnie i symetrycznie. Najbardziej przejrzysty układ.</div>
+  <div class="phone">
+    <div class="phone-top">
+      <div class="back-btn"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 5l-7 7 7 7"/></svg></div>
+      <div class="title-row">Koszyk</div>
+      <div class="tot">0 zł</div>
+    </div>
+    <div class="body">
+      <div class="vb">
+        <div class="vb-pill">Oferta limitowana</div>
+        <div class="vb-h"><s>od 49 zł</s>Wszystkie ogłoszenia — 0 zł</div>
+        <div class="vb-d">Publikowanie ofert pracy na mapie jest teraz <b>całkowicie darmowe i bez limitu</b> dla wszystkich firm.</div>
+        <div class="vb-benefits">
+          <div class="vb-li"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#22C55E" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg><span><b>Bez karty kredytowej</b> — nie prosimy o dane płatnicze</span></div>
+          <div class="vb-li"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#22C55E" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg><span><b>Bez subskrypcji</b> — żadnych ukrytych opłat</span></div>
+          <div class="vb-li"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#22C55E" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg><span><b>Bez limitu</b> ogłoszeń i czasu publikacji</span></div>
+        </div>
+        <div class="vb-row">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#71717A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          <span>Oferta wygasa wraz z wprowadzeniem cennika</span>
+        </div>
+      </div>
+      <div class="section-h"><div class="section-bar"></div><div class="section-t">Dodatkowe pakiety</div></div>
+      <div class="mock-pkg">
+        <div class="mock-pkg-h">
+          <div class="mock-pkg-icon">⭐</div>
+          <div><div class="mock-pkg-name">Wyróżnienie pinu × 3</div><div class="mock-pkg-sub">złota ramka · 7 dni</div></div>
+          <div class="mock-pkg-price">49 zł</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ B2 — Shield card ============ -->
+<div class="col">
+  <div class="label">B2 — kafelek z tarczą <span style="color:#22C55E">· rekomendowany</span></div>
+  <div class="title">Wyróżnione zapewnienie</div>
+  <div class="desc">Mocna gwarancja w osobnym kafelku z ikoną tarczy — wygląda jak gwarancja banku/SaaS-a.</div>
+  <div class="phone">
+    <div class="phone-top">
+      <div class="back-btn"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 5l-7 7 7 7"/></svg></div>
+      <div class="title-row">Koszyk</div>
+      <div class="tot">0 zł</div>
+    </div>
+    <div class="body">
+      <div class="vb">
+        <div class="vb-pill">Oferta limitowana</div>
+        <div class="vb-h"><s>od 49 zł</s>Wszystkie ogłoszenia — 0 zł</div>
+        <div class="vb-d">Dla <b>wszystkich firm</b> publikowanie ofert pracy na mapie jest teraz <b>całkowicie darmowe i bez limitu</b>. Korzystaj póki trwa oferta wprowadzająca.</div>
+        <div class="vb-shield">
+          <div class="vb-shield-i">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#22C55E" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
+          </div>
+          <div>
+            <div class="vb-shield-t">Bez karty, bez subskrypcji, bez płatności</div>
+            <div class="vb-shield-s">Nie prosimy o dane płatnicze. Wystarczy konto firmowe — i publikujesz.</div>
+          </div>
+        </div>
+        <div class="vb-row">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#71717A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          <span>Oferta wygasa wraz z wprowadzeniem cennika</span>
+        </div>
+      </div>
+      <div class="section-h"><div class="section-bar"></div><div class="section-t">Dodatkowe pakiety</div></div>
+      <div class="mock-pkg">
+        <div class="mock-pkg-h">
+          <div class="mock-pkg-icon">⭐</div>
+          <div><div class="mock-pkg-name">Wyróżnienie pinu × 3</div><div class="mock-pkg-sub">złota ramka · 7 dni</div></div>
+          <div class="mock-pkg-price">49 zł</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ B3 — chip row ============ -->
+<div class="col">
+  <div class="label">B3 — chipy</div>
+  <div class="title">Tagi w jednej linii</div>
+  <div class="desc">Lekkie chipy „bez karty", „bez subskrypcji" itp. Najbardziej zwięzły, ale mniej krzyczy.</div>
+  <div class="phone">
+    <div class="phone-top">
+      <div class="back-btn"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 5l-7 7 7 7"/></svg></div>
+      <div class="title-row">Koszyk</div>
+      <div class="tot">0 zł</div>
+    </div>
+    <div class="body">
+      <div class="vb">
+        <div class="vb-pill">Oferta limitowana</div>
+        <div class="vb-h"><s>od 49 zł</s>Wszystkie ogłoszenia — 0 zł</div>
+        <div class="vb-d">Dla <b>wszystkich firm</b> publikowanie ofert pracy na mapie jest teraz <b>całkowicie darmowe i bez limitu</b>. Korzystaj póki trwa oferta wprowadzająca.</div>
+        <div class="vb-chips">
+          <span class="vb-chip"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#22C55E" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>bez karty</span>
+          <span class="vb-chip"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#22C55E" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>bez subskrypcji</span>
+          <span class="vb-chip"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#22C55E" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>bez płatności</span>
+          <span class="vb-chip"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#22C55E" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>bez limitu</span>
+        </div>
+        <div class="vb-row">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#71717A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          <span>Oferta wygasa wraz z wprowadzeniem cennika</span>
+        </div>
+      </div>
+      <div class="section-h"><div class="section-bar"></div><div class="section-t">Dodatkowe pakiety</div></div>
+      <div class="mock-pkg">
+        <div class="mock-pkg-h">
+          <div class="mock-pkg-icon">⭐</div>
+          <div><div class="mock-pkg-name">Wyróżnienie pinu × 3</div><div class="mock-pkg-sub">złota ramka · 7 dni</div></div>
+          <div class="mock-pkg-price">49 zł</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div>
+
+<div style="max-width:760px;margin:48px auto 0;padding:20px 22px;background:#0F0F11;border:1px solid rgba(255,255,255,.06);border-radius:14px">
+  <div style="font-size:12px;font-weight:800;color:#71717A;text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px">Rekomendacja</div>
+  <div style="font-size:13.5px;color:#D4D4D8;line-height:1.6">
+    <b style="color:#22C55E">B2 (kafelek z tarczą)</b> — najmocniejsze, profesjonalne zapewnienie. Wygląda jak gwarancja zaufanego SaaS-a, jeden krótki zdanie + uzupełnienie. Nie rozciąga banneru, czytelne na pierwszy rzut oka.<br><br>
+    B1 wybierz jeśli chcesz wyraźnie wymienić trzy korzyści (lista). B3 jeśli chcesz najlżejszy, najbardziej minimalny wygląd.
+  </div>
+</div>
+
+</body>
+</html>

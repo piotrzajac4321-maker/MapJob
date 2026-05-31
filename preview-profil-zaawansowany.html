@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>MapJob — redesign: Profil zaawansowany (propozycje)</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#070B14; --bg2:#0B1018; --surf:#11161F; --surf2:#171D28; --surf3:#1E2532;
+  --border:rgba(255,255,255,.08); --border2:rgba(255,255,255,.14);
+  --text:#EBEDF1; --text2:#9AA1AD; --text3:#626A78;
+  --accent:#2D7FF9; --accent2:#60A5FA; --accent-soft:rgba(45,127,249,.14); --accent-bd:rgba(45,127,249,.4);
+  --ok:#3DD68C; --ok-soft:rgba(61,214,140,.14); --gold:#F5C451; --violet:#9B8CFF;
+  --ff:'Inter','Plus Jakarta Sans',-apple-system,sans-serif;
+}
+html,body{font-family:var(--ff);background:#0a0a0a;color:var(--text);-webkit-font-smoothing:antialiased}
+.shell{max-width:1180px;margin:0 auto;padding:30px 22px 70px}
+.h1{font-size:22px;font-weight:800;letter-spacing:-.02em}
+.sub{font-size:13px;color:#8b919b;margin-top:5px;max-width:780px;line-height:1.55}
+.banner{margin:15px 0 22px;padding:12px 16px;background:var(--accent-soft);border:1px solid var(--accent-bd);border-radius:12px;font-size:12.5px;line-height:1.6;color:#cfe0ff}
+.banner b{color:#7fb0ff}
+.modes{display:flex;gap:9px;flex-wrap:wrap;margin-bottom:22px}
+.mbtn{background:#161616;border:1px solid #232323;color:#9aa0a8;font-family:inherit;font-size:12px;font-weight:600;padding:8px 14px;border-radius:9px;cursor:pointer}
+.mbtn.on{background:#1f1f1f;color:#fff;border-color:#2f2f2f}
+.grid{display:grid;grid-template-columns:1fr;gap:30px;justify-items:center}
+@media(min-width:920px){.grid.compare{grid-template-columns:1fr 1fr}}
+.col{width:100%;max-width:430px}
+.col-h{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.col-h .tag{font-size:11px;font-weight:800;padding:3px 9px;border-radius:7px;background:var(--accent-soft);color:var(--accent2);border:1px solid var(--accent-bd)}
+.col-h .name{font-size:14px;font-weight:800}
+.col-h .desc{font-size:11px;color:var(--text3)}
+
+/* phone */
+.device{width:100%;background:#10141c;border-radius:34px;padding:10px;box-shadow:0 26px 54px rgba(0,0,0,.5)}
+.screen{border-radius:26px;overflow:hidden;background:var(--bg);position:relative;height:760px;display:flex;flex-direction:column}
+
+/* shared editor bits */
+.eh{display:flex;align-items:center;gap:11px;padding:16px 16px 13px;border-bottom:1px solid var(--border);background:var(--bg2)}
+.eh-ic{width:38px;height:38px;border-radius:11px;background:linear-gradient(135deg,var(--accent),var(--violet));display:flex;align-items:center;justify-content:center;font-size:19px;flex-shrink:0}
+.eh-t{flex:1}.eh-t b{font-size:16px;font-weight:800;letter-spacing:-.01em}
+.eh-t span{display:block;font-size:11px;color:var(--text3);margin-top:1px}
+.eh-x{width:30px;height:30px;border-radius:9px;background:var(--surf);border:1px solid var(--border);color:var(--text2);display:flex;align-items:center;justify-content:center;font-size:15px}
+.body{flex:1;overflow-y:auto;padding:14px 16px 12px}
+.body::-webkit-scrollbar{width:0}
+.foot{padding:12px 16px 16px;border-top:1px solid var(--border);background:var(--bg2);display:flex;gap:9px}
+.btn-cancel{flex:1;padding:13px;border-radius:12px;background:var(--surf);border:1px solid var(--border);color:var(--text);font-family:inherit;font-size:13.5px;font-weight:700}
+.btn-save{flex:2;padding:13px;border-radius:12px;background:var(--accent);border:none;color:#fff;font-family:inherit;font-size:14px;font-weight:800;box-shadow:0 6px 18px rgba(45,127,249,.32)}
+
+.sec-h{font-size:11px;font-weight:800;color:var(--text3);letter-spacing:.07em;text-transform:uppercase;margin:18px 0 10px;display:flex;align-items:center;gap:7px}
+.sec-h:first-child{margin-top:4px}
+.hint{font-size:10.5px;color:var(--text3);margin-top:6px;line-height:1.5}
+
+/* refined chips */
+.chips{display:flex;flex-wrap:wrap;gap:7px}
+.chip{display:inline-flex;align-items:center;gap:6px;padding:8px 12px;border-radius:10px;background:var(--surf);border:1px solid var(--border);font-size:12px;font-weight:700;color:var(--text2);cursor:pointer;transition:all .15s}
+.chip .fl{font-size:14px}
+.chip.on{background:var(--accent-soft);border-color:var(--accent-bd);color:#bcd6ff}
+.chip.ok.on{background:var(--ok-soft);border-color:rgba(61,214,140,.4);color:#8df0bd}
+
+/* refined inputs */
+.field{position:relative;margin-bottom:9px}
+.field .ic{position:absolute;left:11px;top:50%;transform:translateY(-50%);width:22px;height:22px;border-radius:7px;background:var(--surf3);display:flex;align-items:center;justify-content:center;font-size:13px;color:var(--text2)}
+.field input{width:100%;padding:12px 12px 12px 42px;border-radius:11px;background:var(--surf);border:1px solid var(--border);color:var(--text);font-family:inherit;font-size:12.5px}
+.field input::placeholder{color:var(--text3)}
+
+.swatches{display:flex;flex-wrap:wrap;gap:9px;align-items:center}
+.sw{width:34px;height:34px;border-radius:50%;cursor:pointer;border:2px solid transparent}
+.sw.on{border:3px solid #fff;box-shadow:0 0 0 2px currentColor}
+
+.addbtn{width:100%;margin-top:6px;padding:11px;border-radius:11px;background:var(--accent-soft);border:1px dashed var(--accent-bd);color:#bcd6ff;font-family:inherit;font-size:12px;font-weight:700;cursor:pointer}
+
+.foot-note{margin-top:14px;padding:14px 16px;background:#101010;border:1px solid #1a1a1a;border-radius:13px;font-size:12px;line-height:1.7;color:#9aa0a8}
+.foot-note b{color:#e6e6e6}
+
+/* ====== Direction A specifics ====== */
+.progress{padding:13px 14px;background:var(--surf);border:1px solid var(--border);border-radius:14px;margin-bottom:4px}
+.progress .row{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.progress .lbl{font-size:12px;font-weight:700;color:var(--text)}
+.progress .pct{font-size:12px;font-weight:800;color:var(--accent2)}
+.bar{height:7px;border-radius:99px;background:var(--surf3);overflow:hidden}
+.bar i{display:block;height:100%;width:60%;border-radius:99px;background:linear-gradient(90deg,var(--accent),var(--ok))}
+.progress .tip{font-size:10.5px;color:var(--text3);margin-top:7px}
+.segs{display:flex;gap:4px;background:var(--surf);border:1px solid var(--border);border-radius:12px;padding:4px;margin:14px 0 4px}
+.seg{flex:1;text-align:center;font-size:12px;font-weight:700;color:var(--text2);padding:8px;border-radius:9px;cursor:pointer}
+.seg.on{background:var(--bg);color:var(--text);box-shadow:0 1px 3px rgba(0,0,0,.3)}
+.skillrow{display:flex;gap:7px;margin-bottom:7px}
+.skillrow input{flex:1;padding:10px 11px;border-radius:10px;background:var(--surf);border:1px solid var(--border);color:var(--text);font-family:inherit;font-size:12px}
+.skillrow select{width:96px;padding:10px;border-radius:10px;background:var(--surf);border:1px solid var(--border);color:var(--text);font-family:inherit;font-size:12px}
+.skillrow .del{width:38px;border-radius:10px;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.28);color:#F87171;cursor:pointer}
+
+/* ====== Direction B specifics ====== */
+.live{border-radius:16px;overflow:hidden;border:1px solid var(--border);background:var(--surf);margin-bottom:6px}
+.live-cov{height:54px;background:linear-gradient(120deg,var(--bcolor,#2D7FF9),#2BE2C2);position:relative}
+.live-tag{position:absolute;top:9px;left:12px;font-size:9px;font-weight:800;letter-spacing:.06em;color:rgba(255,255,255,.92);background:rgba(0,0,0,.25);padding:3px 8px;border-radius:6px}
+.live-row{display:flex;align-items:flex-end;gap:11px;padding:0 14px 13px}
+.live-av{width:58px;height:58px;border-radius:16px;margin-top:-26px;background:var(--bcolor,#2D7FF9);border:3px solid var(--surf);display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:800;color:#fff}
+.live-meta{flex:1;padding-bottom:2px}
+.live-name{font-size:16px;font-weight:800;display:flex;align-items:center;gap:6px}
+.live-vb{display:inline-flex;align-items:center;gap:3px;font-size:9px;font-weight:800;color:#8df0bd;background:var(--ok-soft);border:1px solid rgba(61,214,140,.34);padding:2px 6px;border-radius:999px}
+.live-flags{font-size:14px;margin-top:4px;letter-spacing:1px}
+.live-edit{font-size:9.5px;color:var(--text3);text-align:center;padding:0 0 9px}
+.group{border:1px solid var(--border);border-radius:13px;background:var(--surf);overflow:hidden;margin-bottom:9px}
+.group>.gh{display:flex;align-items:center;gap:10px;padding:13px 14px;cursor:pointer}
+.group .gh .gi{width:30px;height:30px;border-radius:9px;background:var(--accent-soft);color:var(--accent2);display:flex;align-items:center;justify-content:center;font-size:14px}
+.group .gh b{flex:1;font-size:13px;font-weight:700}
+.group .gh .ar{color:var(--text3);font-size:13px}
+.group .gc{padding:0 14px 14px;border-top:1px solid var(--border)}
+.group .gc.collapsed{display:none}
+.colorpill{display:inline-flex;align-items:center;gap:6px;font-size:10px;color:var(--text3);background:var(--surf2);border:1px solid var(--border);border-radius:999px;padding:3px 8px;margin-left:auto}
+.dot{width:10px;height:10px;border-radius:50%}
+</style>
+</head>
+<body>
+<div class="shell">
+  <div class="h1">Redesign: „Profil zaawansowany" — propozycje</div>
+  <div class="sub">Dwa profesjonalne kierunki przebudowy edytora. Ten sam zestaw pól, inny układ i nastrój. Wybierz jeden (albo „A z elementem B"), wtedy wdrożę w aplikacji.</div>
+  <div class="banner"><b>MAKIETA</b> — to podgląd wyglądu, nieklikalne. Styl płaski, akcent electric-blue #2D7FF9. Dane przykładowe.</div>
+
+  <div class="modes">
+    <button class="mbtn on" data-v="compare" onclick="setV('compare')">Oba obok siebie</button>
+    <button class="mbtn" data-v="A" onclick="setV('A')">Tylko A — Czysty kreator</button>
+    <button class="mbtn" data-v="B" onclick="setV('B')">Tylko B — Z podglądem na żywo</button>
+  </div>
+
+  <div class="grid compare" id="grid">
+
+    <!-- ============ DIRECTION A ============ -->
+    <div class="col" data-col="A">
+      <div class="col-h"><span class="tag">A</span><div><div class="name">Czysty kreator</div><div class="desc">Pasek postępu · segmenty · dopracowane pola</div></div></div>
+      <div class="device"><div class="screen">
+        <div class="eh">
+          <div class="eh-ic">✨</div>
+          <div class="eh-t"><b>Profil zaawansowany</b><span>Im pełniejszy profil, tym wyżej w wynikach</span></div>
+          <div class="eh-x">✕</div>
+        </div>
+        <div class="body">
+          <div class="progress">
+            <div class="row"><span class="lbl">Uzupełnienie profilu</span><span class="pct">60%</span></div>
+            <div class="bar"><i></i></div>
+            <div class="tip">Dodaj specjalizacje i linki, aby dobić do 100%.</div>
+          </div>
+
+          <div class="segs">
+            <div class="seg on">Podstawowe</div>
+            <div class="seg">Usługi</div>
+            <div class="seg">Widoczność</div>
+          </div>
+
+          <div class="sec-h">🌍 Języki</div>
+          <div class="chips">
+            <span class="chip on"><span class="fl">🇵🇱</span> Polski</span>
+            <span class="chip on"><span class="fl">🇬🇧</span> Angielski</span>
+            <span class="chip"><span class="fl">🇩🇪</span> Niemiecki</span>
+            <span class="chip"><span class="fl">🇺🇦</span> Ukraiński</span>
+            <span class="chip"><span class="fl">🇨🇿</span> Czeski</span>
+          </div>
+
+          <div class="sec-h">🏷 Specjalizacje i poziom</div>
+          <div class="skillrow"><input value="Instalacje elektryczne"><select><option>Expert</option></select><button class="del">✕</button></div>
+          <div class="skillrow"><input value="Pomiary SEP"><select><option>Senior</option></select><button class="del">✕</button></div>
+          <button class="addbtn">+ Dodaj specjalizację</button>
+
+          <div class="sec-h">🔗 Linki — strona, social media</div>
+          <div class="field"><div class="ic">🌐</div><input placeholder="https://twoja-strona.pl"></div>
+          <div class="field"><div class="ic">📸</div><input placeholder="instagram.com/twoj"></div>
+
+          <div class="sec-h">🎨 Kolor akcentu</div>
+          <div class="swatches">
+            <span class="sw on" style="background:#2D7FF9;color:#2D7FF9"></span>
+            <span class="sw" style="background:#9B8CFF"></span>
+            <span class="sw" style="background:#3DD68C"></span>
+            <span class="sw" style="background:#F5C451"></span>
+            <span class="sw" style="background:#EC4899"></span>
+          </div>
+        </div>
+        <div class="foot"><button class="btn-cancel">Anuluj</button><button class="btn-save">💾 Zapisz profil</button></div>
+      </div></div>
+    </div>
+
+    <!-- ============ DIRECTION B ============ -->
+    <div class="col" data-col="B">
+      <div class="col-h"><span class="tag">B</span><div><div class="name">Z podglądem na żywo</div><div class="desc">Widzisz efekt u góry · grupy zwijane</div></div></div>
+      <div class="device"><div class="screen" style="--bcolor:#2D7FF9">
+        <div class="eh">
+          <div class="eh-ic">✨</div>
+          <div class="eh-t"><b>Profil zaawansowany</b><span>Tak zobaczą Cię klienci</span></div>
+          <div class="eh-x">✕</div>
+        </div>
+        <div class="body">
+          <div class="live">
+            <div class="live-cov"><span class="live-tag">PODGLĄD NA ŻYWO</span></div>
+            <div class="live-row">
+              <div class="live-av">B</div>
+              <div class="live-meta">
+                <div class="live-name">Biuro <span class="live-vb">✓ zweryf.</span></div>
+                <div class="live-flags">🇵🇱 🇬🇧 🇩🇪</div>
+              </div>
+            </div>
+          </div>
+          <div class="live-edit">Zmiany poniżej od razu widać w podglądzie ↑</div>
+
+          <div class="group">
+            <div class="gh"><div class="gi">🌍</div><b>Języki</b><span class="ar">▴</span></div>
+            <div class="gc">
+              <div class="chips" style="margin-top:12px">
+                <span class="chip on"><span class="fl">🇵🇱</span> Polski</span>
+                <span class="chip on"><span class="fl">🇬🇧</span> Angielski</span>
+                <span class="chip on"><span class="fl">🇩🇪</span> Niemiecki</span>
+                <span class="chip"><span class="fl">🇺🇦</span> Ukraiński</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="group">
+            <div class="gh"><div class="gi">🎨</div><b>Kolor marki</b>
+              <span class="colorpill"><span class="dot" style="background:#2D7FF9"></span> Niebieski</span>
+            </div>
+            <div class="gc">
+              <div class="swatches" style="margin-top:12px">
+                <span class="sw on" style="background:#2D7FF9;color:#2D7FF9"></span>
+                <span class="sw" style="background:#9B8CFF"></span>
+                <span class="sw" style="background:#3DD68C"></span>
+                <span class="sw" style="background:#F5C451"></span>
+                <span class="sw" style="background:#EC4899"></span>
+              </div>
+            </div>
+          </div>
+
+          <div class="group">
+            <div class="gh"><div class="gi">💳</div><b>Płatności i linki</b><span class="ar">▾</span></div>
+            <div class="gc collapsed"></div>
+          </div>
+          <div class="group">
+            <div class="gh"><div class="gi">🏢</div><b>Firma i oferta</b><span class="ar">▾</span></div>
+            <div class="gc collapsed"></div>
+          </div>
+          <div class="group">
+            <div class="gh"><div class="gi">👁</div><b>Widoczność sekcji</b><span class="ar">▾</span></div>
+            <div class="gc collapsed"></div>
+          </div>
+        </div>
+        <div class="foot"><button class="btn-cancel">Anuluj</button><button class="btn-save">💾 Zapisz profil</button></div>
+      </div></div>
+    </div>
+
+  </div>
+
+  <div class="foot-note">
+    <b>A · Czysty kreator</b> — pasek postępu „Uzupełnienie profilu 60%" (motywuje do uzupełnienia), segmenty Podstawowe/Usługi/Widoczność zamiast jednej długiej listy, dopracowane pola z ikonami i spójne chipy. Szybkie, profesjonalne, mobilne.<br><br>
+    <b>B · Z podglądem na żywo</b> — u góry mini-podgląd profilu (awatar, kolor marki, flagi języków, znak „zweryfikowany"), który zmienia się wraz z edycją; pola w zwijanych grupach z ikonami. „Widzisz, co dostaje klient" — najbardziej premium.
+  </div>
+</div>
+
+<script>
+function setV(v){
+  document.querySelectorAll('.mbtn').forEach(function(b){b.classList.toggle('on',b.dataset.v===v);});
+  var g=document.getElementById('grid');
+  if(v==='compare'){g.classList.add('compare');document.querySelectorAll('.col').forEach(function(c){c.style.display='';});}
+  else{g.classList.remove('compare');document.querySelectorAll('.col').forEach(function(c){c.style.display=(c.dataset.col===v)?'':'none';});}
+}
+</script>
+</body>
+</html>

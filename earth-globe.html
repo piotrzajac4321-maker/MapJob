@@ -1,0 +1,1107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>MapJob · Global Network</title>
+<style>
+  :root{
+    --bg-0:#030510;
+    --bg-1:#07102a;
+    --ink:#F0F6FF;
+    --ink-dim:rgba(220,230,255,.62);
+    --ink-faint:rgba(220,230,255,.38);
+    --acc-cyan:#6ee7ff;
+    --acc-violet:#a78bfa;
+    --acc-amber:#ffb86b;
+    --line:rgba(150,200,255,.14);
+    --line-strong:rgba(150,200,255,.32);
+    --glass:rgba(8,14,32,.58);
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;overflow:hidden;color:var(--ink);
+    font-family:'Inter',system-ui,-apple-system,Segoe UI,sans-serif;
+    background:radial-gradient(ellipse at 30% 20%,#0a1030 0%,#050714 45%,#000 100%)}
+  canvas{display:block}
+
+  /* Film grain overlay */
+  .grain{
+    position:fixed;inset:0;z-index:5;pointer-events:none;opacity:.045;
+    mix-blend-mode:overlay;
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 1 0'/></filter><rect width='100%' height='100%' filter='url(%23n)' opacity='1'/></svg>");
+    background-size:200px 200px
+  }
+  /* Vignette */
+  .vignette{
+    position:fixed;inset:0;z-index:4;pointer-events:none;
+    background:radial-gradient(ellipse at center,transparent 40%,rgba(0,0,0,.55) 100%)
+  }
+
+  /* ------- Brand mark (top-left) ------- */
+  .brand{
+    position:fixed;top:22px;left:22px;z-index:10;
+    display:flex;align-items:center;gap:12px;
+    pointer-events:none;user-select:none;
+  }
+  .brand .mark{
+    width:34px;height:34px;position:relative;
+    display:grid;place-items:center;
+  }
+  .brand .mark::before,.brand .mark::after{
+    content:'';position:absolute;inset:0;border:1px solid var(--line-strong);
+    border-radius:10px;
+  }
+  .brand .mark::after{
+    inset:6px;border:1px solid rgba(110,231,255,.55);border-radius:6px;
+    background:radial-gradient(circle at 30% 30%,rgba(110,231,255,.35),transparent 70%);
+    animation:pulse 3.2s ease-in-out infinite
+  }
+  @keyframes pulse{0%,100%{opacity:.55}50%{opacity:1}}
+  .brand .wordmark{display:flex;flex-direction:column;gap:3px;line-height:1}
+  .brand .wordmark .t1{
+    font-size:13px;font-weight:700;letter-spacing:.22em;
+    background:linear-gradient(90deg,#e6f5ff 20%,#a9c4ff 90%);
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+  }
+  .brand .wordmark .t2{
+    font-size:9.5px;font-weight:500;letter-spacing:.32em;
+    color:var(--ink-faint);text-transform:uppercase
+  }
+
+  /* ------- Live clock (top-right) ------- */
+  .hud-clock{
+    position:fixed;top:22px;right:22px;z-index:10;
+    display:flex;flex-direction:column;align-items:flex-end;gap:6px;
+    pointer-events:none;user-select:none;
+    font-family:'JetBrains Mono','SF Mono',ui-monospace,monospace;
+  }
+  .hud-clock .time{
+    font-size:13px;font-weight:500;letter-spacing:.15em;
+    color:var(--ink);
+  }
+  .hud-clock .time .lbl{color:var(--acc-cyan);font-weight:600;margin-left:6px}
+  .hud-clock .coords{
+    font-size:10px;letter-spacing:.16em;color:var(--ink-faint);
+    display:flex;gap:10px
+  }
+  .hud-clock .coords span{min-width:62px;text-align:right}
+
+  /* ------- Stats panel (bottom-left) ------- */
+  .hud-stats{
+    position:fixed;bottom:22px;left:22px;z-index:10;
+    min-width:220px;
+    padding:14px 18px 16px;
+    background:var(--glass);
+    border:1px solid var(--line);
+    border-radius:14px;
+    backdrop-filter:blur(16px) saturate(140%);-webkit-backdrop-filter:blur(16px) saturate(140%);
+    pointer-events:none;user-select:none;
+    box-shadow:0 20px 50px rgba(0,0,0,.55),inset 0 1px 0 rgba(255,255,255,.05);
+  }
+  .hud-stats::before{
+    content:'';position:absolute;top:0;left:18px;right:18px;height:1px;
+    background:linear-gradient(90deg,transparent,var(--acc-cyan),transparent);
+    opacity:.55
+  }
+  .hud-stats .hdr{
+    display:flex;align-items:center;gap:8px;margin-bottom:10px;
+    font-size:10px;font-weight:600;letter-spacing:.24em;
+    color:var(--ink-dim);text-transform:uppercase
+  }
+  .hud-stats .hdr .dot{
+    width:7px;height:7px;border-radius:50%;
+    background:#6ee7ff;box-shadow:0 0 10px #6ee7ff;
+    animation:blink 1.8s ease-in-out infinite
+  }
+  @keyframes blink{0%,100%{opacity:.45;transform:scale(1)}50%{opacity:1;transform:scale(1.15)}}
+  .hud-stats .row{
+    display:flex;justify-content:space-between;align-items:baseline;
+    padding:6px 0;border-top:1px solid rgba(150,200,255,.08);
+  }
+  .hud-stats .row:first-of-type{border-top:none}
+  .hud-stats .row .k{
+    font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;
+    color:var(--ink-faint);font-weight:500
+  }
+  .hud-stats .row .v{
+    font-family:'JetBrains Mono','SF Mono',ui-monospace,monospace;
+    font-size:15px;font-weight:600;color:var(--ink);
+    letter-spacing:.04em
+  }
+  .hud-stats .row .v.accent{
+    background:linear-gradient(90deg,var(--acc-cyan),var(--acc-violet));
+    -webkit-background-clip:text;background-clip:text;color:transparent
+  }
+
+  /* ------- Hint (bottom-right) ------- */
+  .hud-hint{
+    position:fixed;bottom:22px;right:22px;z-index:10;
+    display:flex;flex-direction:column;align-items:flex-end;gap:6px;
+    pointer-events:none;user-select:none;
+    font-size:10px;letter-spacing:.2em;text-transform:uppercase;
+    color:var(--ink-faint);font-weight:500
+  }
+  .hud-hint .row{display:flex;align-items:center;gap:8px}
+  .hud-hint kbd{
+    font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.05em;
+    padding:3px 7px;border:1px solid var(--line);border-radius:5px;
+    background:rgba(255,255,255,.03);color:var(--ink-dim);text-transform:none
+  }
+
+  /* ------- Popup ------- */
+  #popup{
+    position:fixed;z-index:20;min-width:180px;
+    padding:12px 16px 14px;
+    background:linear-gradient(135deg,rgba(18,26,52,.94),rgba(8,14,32,.94));
+    border:1px solid rgba(150,220,255,.38);
+    border-radius:12px;
+    font-size:13px;color:var(--ink);
+    pointer-events:none;display:none;
+    backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+    box-shadow:
+      0 16px 48px rgba(0,0,0,.72),
+      0 0 40px rgba(110,231,255,.22),
+      inset 0 1px 0 rgba(255,255,255,.1);
+    transform:translate(-50%,calc(-100% - 18px));
+  }
+  #popup::before{
+    content:'';position:absolute;top:0;left:14px;right:14px;height:1px;
+    background:linear-gradient(90deg,transparent,rgba(150,220,255,.85),transparent)
+  }
+  #popup::after{
+    content:'';position:absolute;bottom:-6px;left:50%;
+    width:10px;height:10px;
+    background:rgba(18,26,52,.94);
+    border-right:1px solid rgba(150,220,255,.38);
+    border-bottom:1px solid rgba(150,220,255,.38);
+    transform:translateX(-50%) rotate(45deg)
+  }
+  #popup .name{
+    font-size:15px;font-weight:700;letter-spacing:.01em;
+    color:var(--ink);line-height:1.1;margin-bottom:3px
+  }
+  #popup .country{
+    display:block;font-size:9.5px;font-weight:600;letter-spacing:.2em;
+    color:rgba(150,220,255,.85);text-transform:uppercase;
+  }
+  #popup .divider{
+    height:1px;margin:9px 0 8px;
+    background:linear-gradient(90deg,transparent,rgba(150,200,255,.22),transparent)
+  }
+  #popup .meta{
+    display:grid;grid-template-columns:auto 1fr;gap:3px 10px;
+    font-family:'JetBrains Mono','SF Mono',ui-monospace,monospace;
+    font-size:10.5px;line-height:1.5
+  }
+  #popup .meta .k{color:var(--ink-faint);letter-spacing:.1em;text-transform:uppercase;font-size:9px}
+  #popup .meta .v{color:var(--ink-dim);letter-spacing:.04em}
+  #popup .meta .v.hi{color:var(--acc-cyan)}
+
+  /* ------- Loading ------- */
+  #loading{
+    position:fixed;inset:0;z-index:30;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:28px;
+    background:radial-gradient(ellipse at center,#0a1030 0%,#000 70%);
+    color:rgba(255,255,255,.75);
+    transition:opacity .7s ease
+  }
+  #loading .logo{
+    width:56px;height:56px;position:relative;
+  }
+  #loading .logo::before,#loading .logo::after{
+    content:'';position:absolute;border-radius:50%;
+  }
+  #loading .logo::before{
+    inset:0;border:1px solid rgba(150,200,255,.35);
+    animation:spin 3s linear infinite
+  }
+  #loading .logo::after{
+    inset:10px;border:1px dashed rgba(110,231,255,.7);
+    animation:spin 6s linear infinite reverse
+  }
+  @keyframes spin{to{transform:rotate(360deg)}}
+  #loading .label{
+    font-size:10.5px;letter-spacing:.42em;text-transform:uppercase;font-weight:600;
+    color:rgba(220,230,255,.7)
+  }
+  #loading .bar{
+    width:180px;height:2px;background:rgba(150,200,255,.12);
+    border-radius:2px;overflow:hidden;position:relative
+  }
+  #loading .bar::after{
+    content:'';position:absolute;inset:0;width:var(--p,0%);
+    background:linear-gradient(90deg,var(--acc-cyan),var(--acc-violet));
+    transition:width .35s ease;
+    box-shadow:0 0 12px var(--acc-cyan)
+  }
+  #loading .pct{
+    font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.2em;
+    color:rgba(220,230,255,.5)
+  }
+  #loading.gone{opacity:0;pointer-events:none}
+
+  /* Responsive tweaks */
+  @media (max-width:640px){
+    .hud-stats{min-width:170px;padding:11px 14px 12px}
+    .hud-clock .coords{display:none}
+    .hud-hint{display:none}
+    .brand .wordmark .t2{display:none}
+  }
+</style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<!-- Loading -->
+<div id="loading">
+  <div class="logo"></div>
+  <div class="label">Initializing Earth</div>
+  <div class="bar"></div>
+  <div class="pct">0%</div>
+</div>
+
+<!-- Brand mark -->
+<div class="brand">
+  <div class="mark"></div>
+  <div class="wordmark">
+    <div class="t1">MAPJOB</div>
+    <div class="t2">Global Network</div>
+  </div>
+</div>
+
+<!-- Live clock + coords -->
+<div class="hud-clock">
+  <div class="time"><span id="hudTime">00:00:00</span><span class="lbl">UTC</span></div>
+  <div class="coords">
+    <span id="hudLat">0.00°N</span>
+    <span id="hudLon">0.00°E</span>
+  </div>
+</div>
+
+<!-- Stats panel -->
+<div class="hud-stats">
+  <div class="hdr"><span class="dot"></span><span>Network Status</span></div>
+  <div class="row"><span class="k">Active Nodes</span><span class="v accent" id="hudNodes">—</span></div>
+  <div class="row"><span class="k">Live Routes</span><span class="v" id="hudRoutes">—</span></div>
+  <div class="row"><span class="k">Signal</span><span class="v">ONLINE</span></div>
+</div>
+
+<!-- Hint -->
+<div class="hud-hint">
+  <div class="row"><kbd>drag</kbd><span>rotate</span></div>
+  <div class="row"><kbd>scroll</kbd><span>zoom</span></div>
+  <div class="row"><kbd>click</kbd><span>inspect</span></div>
+</div>
+
+<!-- Overlays -->
+<div class="vignette"></div>
+<div class="grain"></div>
+
+<!-- Popup -->
+<div id="popup"></div>
+
+<script src="https://unpkg.com/three@0.128.0/build/three.min.js"></script>
+<script src="https://unpkg.com/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<script src="https://unpkg.com/three@0.128.0/examples/js/shaders/CopyShader.js"></script>
+<script src="https://unpkg.com/three@0.128.0/examples/js/shaders/LuminosityHighPassShader.js"></script>
+<script src="https://unpkg.com/three@0.128.0/examples/js/postprocessing/EffectComposer.js"></script>
+<script src="https://unpkg.com/three@0.128.0/examples/js/postprocessing/RenderPass.js"></script>
+<script src="https://unpkg.com/three@0.128.0/examples/js/postprocessing/ShaderPass.js"></script>
+<script src="https://unpkg.com/three@0.128.0/examples/js/postprocessing/UnrealBloomPass.js"></script>
+
+<script>
+(function(){
+  'use strict';
+
+  // ---------- Scene ----------
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(38, innerWidth/innerHeight, 0.1, 2000);
+  camera.position.set(0, 0.8, 4.8);
+
+  const renderer = new THREE.WebGLRenderer({
+    antialias: true,
+    powerPreference: 'high-performance'
+  });
+  renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+  renderer.setSize(innerWidth, innerHeight);
+  renderer.outputEncoding = THREE.sRGBEncoding;
+  renderer.toneMapping = THREE.ACESFilmicToneMapping;
+  renderer.toneMappingExposure = 0.78;
+  document.body.appendChild(renderer.domElement);
+
+  // ---------- Textures ----------
+  const MAX_ANISO = renderer.capabilities.getMaxAnisotropy() || 8;
+  const loader = new THREE.TextureLoader();
+  loader.crossOrigin = 'anonymous';
+  const BASE = 'https://cdn.jsdelivr.net/gh/mrdoob/three.js@r128/examples/textures/planets/';
+
+  const TEXS = [
+    { key:'day',    url: BASE + 'earth_atmos_2048.jpg',    srgb:true  },
+    { key:'night',  url: BASE + 'earth_lights_2048.png',   srgb:true  },
+    { key:'spec',   url: BASE + 'earth_specular_2048.jpg', srgb:false },
+    { key:'normal', url: BASE + 'earth_normal_2048.jpg',   srgb:false },
+    { key:'cloud',  url: BASE + 'earth_clouds_1024.png',   srgb:true  }
+  ];
+
+  const textures = {};
+  const loadingEl = document.getElementById('loading');
+  const loadingBar = loadingEl.querySelector('.bar');
+  const loadingPct = loadingEl.querySelector('.pct');
+  let loaded = 0;
+  const onOne = () => {
+    loaded++;
+    const pct = Math.min(100, Math.round((loaded / TEXS.length) * 100));
+    loadingBar.style.setProperty('--p', pct + '%');
+    loadingPct.textContent = pct + '%';
+    if (loaded >= TEXS.length){
+      setTimeout(()=>loadingEl.classList.add('gone'), 380);
+    }
+  };
+  TEXS.forEach(t => {
+    const tex = loader.load(t.url, onOne, undefined, () => onOne());
+    if (t.srgb) tex.encoding = THREE.sRGBEncoding;
+    tex.anisotropy = MAX_ANISO;
+    tex.minFilter = THREE.LinearMipmapLinearFilter;
+    tex.magFilter = THREE.LinearFilter;
+    textures[t.key] = tex;
+  });
+
+  // ---------- Earth: day/night terminator shader ----------
+  // Sun in WORLD space; normal transformed to world space in vertex.
+  const SUN_DIR = new THREE.Vector3(1.0, 0.28, 0.7).normalize();
+
+  const earthMat = new THREE.ShaderMaterial({
+    uniforms: {
+      dayMap:     { value: textures.day },
+      nightMap:   { value: textures.night },
+      specMap:    { value: textures.spec },
+      normalMap:  { value: textures.normal },
+      uSunDir:    { value: SUN_DIR.clone() },
+      uAtmoColor: { value: new THREE.Color(0x6ab6ff) },
+      uDuskColor: { value: new THREE.Color(0xffa76b) }
+    },
+    vertexShader: `
+      varying vec3 vWorldNormal;
+      varying vec3 vViewDir;
+      varying vec2 vUv;
+      void main(){
+        vUv = uv;
+        vWorldNormal = normalize(mat3(modelMatrix) * normal);
+        vec4 worldPos = modelMatrix * vec4(position, 1.0);
+        vViewDir = normalize(cameraPosition - worldPos.xyz);
+        gl_Position = projectionMatrix * viewMatrix * worldPos;
+      }
+    `,
+    fragmentShader: `
+      uniform sampler2D dayMap;
+      uniform sampler2D nightMap;
+      uniform sampler2D specMap;
+      uniform sampler2D normalMap;
+      uniform vec3 uSunDir;
+      uniform vec3 uAtmoColor;
+      uniform vec3 uDuskColor;
+      varying vec3 vWorldNormal;
+      varying vec3 vViewDir;
+      varying vec2 vUv;
+
+      void main(){
+        vec3 N = normalize(vWorldNormal);
+
+        // Subtle relief from normal map (world-aligned, gentle)
+        vec3 nrm = texture2D(normalMap, vUv).rgb * 2.0 - 1.0;
+        float relief = 1.0 + dot(nrm, vec3(0.3, 0.3, 1.0)) * 0.08;
+
+        vec3 day   = texture2D(dayMap, vUv).rgb * relief;
+        vec3 night = texture2D(nightMap, vUv).rgb;
+        float specMask = texture2D(specMap, vUv).r;
+
+        // Subtle saturation lift only (no contrast stretch — keeps natural look)
+        float luma = dot(day, vec3(0.299, 0.587, 0.114));
+        day = mix(vec3(luma), day, 1.10);
+
+        // Day/night mix — smooth terminator
+        float ndl = dot(N, uSunDir);
+        float dayMix = smoothstep(-0.14, 0.20, ndl);
+
+        // Specular oceans (only on day side, tight + subtle)
+        vec3 reflDir = reflect(-uSunDir, N);
+        float specHi = pow(max(dot(reflDir, vViewDir), 0.0), 48.0);
+        vec3 specCol = vec3(1.0, 0.96, 0.86) * specHi * specMask * dayMix * 0.35;
+
+        // Night city lights — warm-tint, gentle boost (just above bloom threshold)
+        vec3 warmLights = night * vec3(1.0, 0.82, 0.52) * 2.2;
+        vec3 nightCol = warmLights * (1.0 - dayMix);
+
+        // Dusk/dawn glow at terminator (atmospheric scattering)
+        float term = exp(-abs(ndl) * 10.0);
+        vec3 duskGlow = mix(uAtmoColor, uDuskColor, 0.55) * term * 0.28;
+
+        // Compose
+        vec3 color = day * dayMix + nightCol + specCol + duskGlow;
+
+        // Fresnel atmosphere rim — subtle
+        float fres = pow(1.0 - max(dot(N, vViewDir), 0.0), 2.8);
+        color += uAtmoColor * fres * 0.18;
+
+        gl_FragColor = vec4(color, 1.0);
+      }
+    `
+  });
+
+  const earth = new THREE.Mesh(new THREE.SphereGeometry(1, 256, 192), earthMat);
+  scene.add(earth);
+
+  // ---------- Clouds (subtle, respects day/night) ----------
+  const cloudMat = new THREE.ShaderMaterial({
+    uniforms: {
+      cloudMap: { value: textures.cloud },
+      uSunDir:  { value: SUN_DIR.clone() }
+    },
+    vertexShader:`
+      varying vec3 vWorldNormal;
+      varying vec2 vUv;
+      void main(){
+        vUv = uv;
+        vWorldNormal = normalize(mat3(modelMatrix) * normal);
+        gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4(position, 1.0);
+      }
+    `,
+    fragmentShader:`
+      uniform sampler2D cloudMap;
+      uniform vec3 uSunDir;
+      varying vec3 vWorldNormal;
+      varying vec2 vUv;
+      void main(){
+        float a = texture2D(cloudMap, vUv).r;
+        float ndl = dot(normalize(vWorldNormal), uSunDir);
+        float lit = smoothstep(-0.25, 0.5, ndl);
+        vec3 col = mix(vec3(0.28,0.35,0.55), vec3(1.0), lit);
+        gl_FragColor = vec4(col, a * 0.42);
+      }
+    `,
+    transparent: true,
+    depthWrite: false
+  });
+  const clouds = new THREE.Mesh(new THREE.SphereGeometry(1.006, 96, 64), cloudMat);
+  scene.add(clouds);
+
+  // ---------- Atmosphere (inner glow) ----------
+  const atmosphere = new THREE.Mesh(
+    new THREE.SphereGeometry(1.085, 96, 64),
+    new THREE.ShaderMaterial({
+      vertexShader:`
+        varying vec3 vNormal;
+        void main(){
+          vNormal = normalize(normalMatrix * normal);
+          gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+        }
+      `,
+      fragmentShader:`
+        varying vec3 vNormal;
+        void main(){
+          float i = pow(0.68 - dot(vNormal, vec3(0.0,0.0,1.0)), 2.6);
+          vec3 col = mix(vec3(0.32,0.65,1.00), vec3(0.48,0.38,0.95), 0.20);
+          gl_FragColor = vec4(col, 1.0) * i * 0.75;
+        }
+      `,
+      blending: THREE.AdditiveBlending,
+      side: THREE.BackSide,
+      transparent: true,
+      depthWrite: false
+    })
+  );
+  scene.add(atmosphere);
+
+  // Outer soft halo
+  const halo = new THREE.Mesh(
+    new THREE.SphereGeometry(1.24, 64, 48),
+    new THREE.ShaderMaterial({
+      vertexShader:`
+        varying vec3 vNormal;
+        void main(){
+          vNormal = normalize(normalMatrix * normal);
+          gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+        }
+      `,
+      fragmentShader:`
+        varying vec3 vNormal;
+        void main(){
+          float i = pow(0.52 - dot(vNormal, vec3(0.0,0.0,1.0)), 3.8);
+          gl_FragColor = vec4(0.38, 0.52, 1.00, 1.0) * i * 0.28;
+        }
+      `,
+      blending: THREE.AdditiveBlending,
+      side: THREE.BackSide,
+      transparent: true,
+      depthWrite: false
+    })
+  );
+  scene.add(halo);
+
+  // ---------- Stars (colored + twinkle) ----------
+  const starField = (function stars(){
+    const N = 7000;
+    const pos    = new Float32Array(N * 3);
+    const col    = new Float32Array(N * 3);
+    const sizes  = new Float32Array(N);
+    const phases = new Float32Array(N);
+    // Star color palette — blue/white/warm
+    const palette = [
+      [0.65, 0.80, 1.00], // blue
+      [1.00, 1.00, 1.00], // white
+      [1.00, 0.95, 0.80], // warm white
+      [1.00, 0.75, 0.55], // amber (rare)
+      [0.80, 0.88, 1.00]  // icy
+    ];
+    for (let i = 0; i < N; i++){
+      const r = 160 + Math.random() * 380;
+      const theta = Math.random() * Math.PI * 2;
+      const phi = Math.acos(2 * Math.random() - 1);
+      pos[i*3]   = r * Math.sin(phi) * Math.cos(theta);
+      pos[i*3+1] = r * Math.sin(phi) * Math.sin(theta);
+      pos[i*3+2] = r * Math.cos(phi);
+
+      // Bias heavily to blue/white; rare ambers
+      const pickRoll = Math.random();
+      const c = pickRoll < 0.55 ? palette[1]
+              : pickRoll < 0.80 ? palette[0]
+              : pickRoll < 0.93 ? palette[2]
+              : pickRoll < 0.97 ? palette[4]
+              : palette[3];
+      col[i*3]   = c[0]; col[i*3+1] = c[1]; col[i*3+2] = c[2];
+
+      sizes[i]  = Math.random() < 0.04 ? 2.4 : (0.4 + Math.random() * 0.95);
+      phases[i] = Math.random() * Math.PI * 2;
+    }
+    const g = new THREE.BufferGeometry();
+    g.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+    g.setAttribute('aColor',   new THREE.BufferAttribute(col, 3));
+    g.setAttribute('aSize',    new THREE.BufferAttribute(sizes, 1));
+    g.setAttribute('aPhase',   new THREE.BufferAttribute(phases, 1));
+    const m = new THREE.ShaderMaterial({
+      uniforms: { uTime: { value: 0 } },
+      vertexShader: `
+        attribute float aSize;
+        attribute float aPhase;
+        attribute vec3 aColor;
+        uniform float uTime;
+        varying float vTwinkle;
+        varying vec3 vCol;
+        void main(){
+          vTwinkle = 0.65 + 0.35 * sin(uTime * 1.6 + aPhase);
+          vCol = aColor;
+          vec4 mv = modelViewMatrix * vec4(position, 1.0);
+          gl_PointSize = aSize * vTwinkle;
+          gl_Position = projectionMatrix * mv;
+        }
+      `,
+      fragmentShader: `
+        varying float vTwinkle;
+        varying vec3 vCol;
+        void main(){
+          vec2 p = gl_PointCoord - 0.5;
+          float d = length(p);
+          if (d > 0.5) discard;
+          float a = smoothstep(0.5, 0.0, d);
+          gl_FragColor = vec4(vCol, a * vTwinkle);
+        }
+      `,
+      transparent: true,
+      depthWrite: false,
+      blending: THREE.AdditiveBlending
+    });
+    const pts = new THREE.Points(g, m);
+    scene.add(pts);
+    return { points: pts, material: m };
+  })();
+
+  // ---------- Cities ----------
+  const cities = [
+    // Europe
+    { name:'London',       country:'UK',          lat: 51.5074, lon:  -0.1278 },
+    { name:'Paris',        country:'France',      lat: 48.8566, lon:   2.3522 },
+    { name:'Berlin',       country:'Germany',     lat: 52.5200, lon:  13.4050 },
+    { name:'Madrid',       country:'Spain',       lat: 40.4168, lon:  -3.7038 },
+    { name:'Rome',         country:'Italy',       lat: 41.9028, lon:  12.4964 },
+    { name:'Warsaw',       country:'Poland',      lat: 52.2297, lon:  21.0122 },
+    { name:'Moscow',       country:'Russia',      lat: 55.7558, lon:  37.6173 },
+    { name:'Istanbul',     country:'Turkey',      lat: 41.0082, lon:  28.9784 },
+    { name:'Athens',       country:'Greece',      lat: 37.9838, lon:  23.7275 },
+    { name:'Amsterdam',    country:'Netherlands', lat: 52.3676, lon:   4.9041 },
+    { name:'Stockholm',    country:'Sweden',      lat: 59.3293, lon:  18.0686 },
+    { name:'Oslo',         country:'Norway',      lat: 59.9139, lon:  10.7522 },
+    { name:'Vienna',       country:'Austria',     lat: 48.2082, lon:  16.3738 },
+    { name:'Prague',       country:'Czechia',     lat: 50.0755, lon:  14.4378 },
+    { name:'Budapest',     country:'Hungary',     lat: 47.4979, lon:  19.0402 },
+    { name:'Dublin',       country:'Ireland',     lat: 53.3498, lon:  -6.2603 },
+    { name:'Lisbon',       country:'Portugal',    lat: 38.7223, lon:  -9.1393 },
+    { name:'Zurich',       country:'Switzerland', lat: 47.3769, lon:   8.5417 },
+    { name:'Copenhagen',   country:'Denmark',     lat: 55.6761, lon:  12.5683 },
+    { name:'Helsinki',     country:'Finland',     lat: 60.1699, lon:  24.9384 },
+    { name:'Kyiv',         country:'Ukraine',     lat: 50.4501, lon:  30.5234 },
+    { name:'Bucharest',    country:'Romania',     lat: 44.4268, lon:  26.1025 },
+    { name:'Brussels',     country:'Belgium',     lat: 50.8503, lon:   4.3517 },
+    { name:'Barcelona',    country:'Spain',       lat: 41.3851, lon:   2.1734 },
+    { name:'Munich',       country:'Germany',     lat: 48.1351, lon:  11.5820 },
+    // North America
+    { name:'New York',     country:'USA',         lat: 40.7128, lon: -74.0060 },
+    { name:'Los Angeles',  country:'USA',         lat: 34.0522, lon:-118.2437 },
+    { name:'Chicago',      country:'USA',         lat: 41.8781, lon: -87.6298 },
+    { name:'Toronto',      country:'Canada',      lat: 43.6532, lon: -79.3832 },
+    { name:'Mexico City',  country:'Mexico',      lat: 19.4326, lon: -99.1332 },
+    { name:'Miami',        country:'USA',         lat: 25.7617, lon: -80.1918 },
+    { name:'Vancouver',    country:'Canada',      lat: 49.2827, lon:-123.1207 },
+    { name:'Montreal',     country:'Canada',      lat: 45.5017, lon: -73.5673 },
+    { name:'Seattle',      country:'USA',         lat: 47.6062, lon:-122.3321 },
+    { name:'San Francisco',country:'USA',         lat: 37.7749, lon:-122.4194 },
+    { name:'Houston',      country:'USA',         lat: 29.7604, lon: -95.3698 },
+    { name:'Boston',       country:'USA',         lat: 42.3601, lon: -71.0589 },
+    { name:'Dallas',       country:'USA',         lat: 32.7767, lon: -96.7970 },
+    { name:'Washington',   country:'USA',         lat: 38.9072, lon: -77.0369 },
+    { name:'Havana',       country:'Cuba',        lat: 23.1136, lon: -82.3666 },
+    // South America
+    { name:'São Paulo',    country:'Brazil',      lat:-23.5505, lon: -46.6333 },
+    { name:'Buenos Aires', country:'Argentina',   lat:-34.6037, lon: -58.3816 },
+    { name:'Rio de Janeiro',country:'Brazil',     lat:-22.9068, lon: -43.1729 },
+    { name:'Lima',         country:'Peru',        lat:-12.0464, lon: -77.0428 },
+    { name:'Bogotá',       country:'Colombia',    lat:  4.7110, lon: -74.0721 },
+    { name:'Santiago',     country:'Chile',       lat:-33.4489, lon: -70.6693 },
+    { name:'Caracas',      country:'Venezuela',   lat: 10.4806, lon: -66.9036 },
+    { name:'Quito',        country:'Ecuador',     lat: -0.1807, lon: -78.4678 },
+    // Asia
+    { name:'Tokyo',        country:'Japan',       lat: 35.6762, lon: 139.6503 },
+    { name:'Beijing',      country:'China',       lat: 39.9042, lon: 116.4074 },
+    { name:'Shanghai',     country:'China',       lat: 31.2304, lon: 121.4737 },
+    { name:'Hong Kong',    country:'China',       lat: 22.3193, lon: 114.1694 },
+    { name:'Seoul',        country:'S. Korea',    lat: 37.5665, lon: 126.9780 },
+    { name:'Singapore',    country:'Singapore',   lat:  1.3521, lon: 103.8198 },
+    { name:'Bangkok',      country:'Thailand',    lat: 13.7563, lon: 100.5018 },
+    { name:'Mumbai',       country:'India',       lat: 19.0760, lon:  72.8777 },
+    { name:'Delhi',        country:'India',       lat: 28.7041, lon:  77.1025 },
+    { name:'Jakarta',      country:'Indonesia',   lat: -6.2088, lon: 106.8456 },
+    { name:'Manila',       country:'Philippines', lat: 14.5995, lon: 120.9842 },
+    { name:'Kuala Lumpur', country:'Malaysia',    lat:  3.1390, lon: 101.6869 },
+    { name:'Taipei',       country:'Taiwan',      lat: 25.0330, lon: 121.5654 },
+    { name:'Dubai',        country:'UAE',         lat: 25.2048, lon:  55.2708 },
+    { name:'Tel Aviv',     country:'Israel',      lat: 32.0853, lon:  34.7818 },
+    { name:'Riyadh',       country:'Saudi Arabia',lat: 24.7136, lon:  46.6753 },
+    { name:'Tehran',       country:'Iran',        lat: 35.6892, lon:  51.3890 },
+    { name:'Karachi',      country:'Pakistan',    lat: 24.8607, lon:  67.0011 },
+    { name:'Dhaka',        country:'Bangladesh',  lat: 23.8103, lon:  90.4125 },
+    { name:'Hanoi',        country:'Vietnam',     lat: 21.0285, lon: 105.8542 },
+    { name:'Ho Chi Minh',  country:'Vietnam',     lat: 10.8231, lon: 106.6297 },
+    { name:'Osaka',        country:'Japan',       lat: 34.6937, lon: 135.5023 },
+    { name:'Bengaluru',    country:'India',       lat: 12.9716, lon:  77.5946 },
+    { name:'Kolkata',      country:'India',       lat: 22.5726, lon:  88.3639 },
+    { name:'Doha',         country:'Qatar',       lat: 25.2854, lon:  51.5310 },
+    // Africa
+    { name:'Cairo',        country:'Egypt',       lat: 30.0444, lon:  31.2357 },
+    { name:'Lagos',        country:'Nigeria',     lat:  6.5244, lon:   3.3792 },
+    { name:'Nairobi',      country:'Kenya',       lat: -1.2921, lon:  36.8219 },
+    { name:'Cape Town',    country:'S. Africa',   lat:-33.9249, lon:  18.4241 },
+    { name:'Johannesburg', country:'S. Africa',   lat:-26.2041, lon:  28.0473 },
+    { name:'Casablanca',   country:'Morocco',     lat: 33.5731, lon:  -7.5898 },
+    { name:'Addis Ababa',  country:'Ethiopia',    lat:  9.1450, lon:  40.4897 },
+    { name:'Algiers',      country:'Algeria',     lat: 36.7538, lon:   3.0588 },
+    { name:'Accra',        country:'Ghana',       lat:  5.6037, lon:  -0.1870 },
+    { name:'Dakar',        country:'Senegal',     lat: 14.7167, lon: -17.4677 },
+    // Oceania
+    { name:'Sydney',       country:'Australia',   lat:-33.8688, lon: 151.2093 },
+    { name:'Melbourne',    country:'Australia',   lat:-37.8136, lon: 144.9631 },
+    { name:'Auckland',     country:'New Zealand', lat:-36.8485, lon: 174.7633 },
+    { name:'Perth',        country:'Australia',   lat:-31.9505, lon: 115.8605 },
+    { name:'Brisbane',     country:'Australia',   lat:-27.4698, lon: 153.0251 }
+  ];
+
+  // Major routes (pairs by city name)
+  const ROUTES = [
+    ['New York','London'], ['London','Dubai'], ['Dubai','Singapore'],
+    ['Singapore','Tokyo'], ['Tokyo','Los Angeles'], ['Los Angeles','New York'],
+    ['New York','São Paulo'], ['London','Johannesburg'], ['Sydney','Los Angeles'],
+    ['Sydney','Tokyo'], ['Paris','New York'], ['Paris','Dubai'],
+    ['Mumbai','Singapore'], ['Mumbai','Dubai'], ['Seoul','Beijing'],
+    ['Hong Kong','Bangkok'], ['Chicago','Toronto'], ['Moscow','Beijing'],
+    ['Warsaw','Berlin'], ['Cairo','Istanbul'], ['São Paulo','Buenos Aires'],
+    ['Auckland','Sydney'], ['Cape Town','Nairobi'], ['San Francisco','Tokyo'],
+    ['Frankfurt', 'Singapore'] // will be skipped if not in cities — harmless
+  ];
+
+  function latLonToVec3(lat, lon, r){
+    r = r || 1;
+    const phi   = (90 - lat) * Math.PI / 180;
+    const theta = (lon + 180) * Math.PI / 180;
+    return new THREE.Vector3(
+      -r * Math.sin(phi) * Math.cos(theta),
+       r * Math.cos(phi),
+       r * Math.sin(phi) * Math.sin(theta)
+    );
+  }
+
+  // ---------- Marker textures (canvas) ----------
+  function glowTexture(inner, mid){
+    const c = document.createElement('canvas');
+    c.width = c.height = 256;
+    const ctx = c.getContext('2d');
+    const g = ctx.createRadialGradient(128, 128, 0, 128, 128, 128);
+    g.addColorStop(0.00, inner);
+    g.addColorStop(0.25, mid);
+    g.addColorStop(1.00, 'rgba(0,0,0,0)');
+    ctx.fillStyle = g;
+    ctx.fillRect(0, 0, 256, 256);
+    const t = new THREE.CanvasTexture(c);
+    t.encoding = THREE.sRGBEncoding;
+    return t;
+  }
+  function ringTexture(){
+    const c = document.createElement('canvas');
+    c.width = c.height = 256;
+    const ctx = c.getContext('2d');
+    ctx.strokeStyle = 'rgba(150,230,255,0.95)';
+    ctx.lineWidth = 6;
+    ctx.beginPath(); ctx.arc(128, 128, 110, 0, Math.PI * 2); ctx.stroke();
+    ctx.strokeStyle = 'rgba(150,230,255,0.35)';
+    ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.arc(128, 128, 116, 0, Math.PI * 2); ctx.stroke();
+    const t = new THREE.CanvasTexture(c);
+    t.encoding = THREE.sRGBEncoding;
+    return t;
+  }
+  const haloTex = glowTexture('rgba(180,240,255,1)','rgba(80,190,255,0.55)');
+  const coreTex = glowTexture('rgba(255,255,255,1)','rgba(180,240,255,0.8)');
+  const ringTex = ringTexture();
+
+  // ---------- Pins ----------
+  const beamGeom = new THREE.CylinderGeometry(0.0012, 0.0012, 1, 6, 1, true);
+  const beamMat  = new THREE.MeshBasicMaterial({
+    color: 0x9fe8ff, transparent: true, opacity: 0.8,
+    depthWrite: false, blending: THREE.AdditiveBlending
+  });
+  const headGeom = new THREE.SphereGeometry(0.008, 16, 12);
+  const headMat  = new THREE.MeshBasicMaterial({ color: 0xcdf4ff });
+  const baseGeom = new THREE.SphereGeometry(0.005, 10, 8);
+  const baseMat  = new THREE.MeshBasicMaterial({ color: 0x9fe8ff });
+
+  const markers = [];
+  const pulseSprites = [];
+  const ringSprites  = [];
+  const BEAM_LENGTH = 0.055;
+
+  cities.forEach((city, i) => {
+    const surface = latLonToVec3(city.lat, city.lon, 1.002);
+    const top     = latLonToVec3(city.lat, city.lon, 1.002 + BEAM_LENGTH);
+    const mid     = surface.clone().add(top).multiplyScalar(0.5);
+
+    const base = new THREE.Mesh(baseGeom, baseMat);
+    base.position.copy(surface);
+    earth.add(base);
+
+    const beam = new THREE.Mesh(beamGeom, beamMat);
+    beam.position.copy(mid);
+    beam.scale.y = BEAM_LENGTH;
+    const up = new THREE.Vector3(0, 1, 0);
+    const dir = surface.clone().normalize();
+    beam.quaternion.setFromUnitVectors(up, dir);
+    earth.add(beam);
+
+    const head = new THREE.Mesh(headGeom, headMat);
+    head.position.copy(top);
+    head.userData = city;
+    earth.add(head);
+    markers.push(head);
+
+    const haloSpr = new THREE.Sprite(new THREE.SpriteMaterial({
+      map: haloTex, color: 0x80dfff, transparent: true,
+      blending: THREE.AdditiveBlending, depthWrite: false
+    }));
+    haloSpr.position.copy(top);
+    haloSpr.scale.set(0.055, 0.055, 1);
+    earth.add(haloSpr);
+
+    const coreSpr = new THREE.Sprite(new THREE.SpriteMaterial({
+      map: coreTex, color: 0xffffff, transparent: true,
+      blending: THREE.AdditiveBlending, depthWrite: false
+    }));
+    coreSpr.position.copy(top);
+    coreSpr.scale.set(0.022, 0.022, 1);
+    earth.add(coreSpr);
+
+    const ringSpr = new THREE.Sprite(new THREE.SpriteMaterial({
+      map: ringTex, color: 0x9fe8ff, transparent: true,
+      blending: THREE.AdditiveBlending, depthWrite: false, opacity: 0
+    }));
+    ringSpr.position.copy(top);
+    ringSpr.scale.set(0.03, 0.03, 1);
+    ringSpr.userData = { phase: (i * 0.31) % 1 };
+    earth.add(ringSpr);
+    ringSprites.push(ringSpr);
+    pulseSprites.push(haloSpr);
+  });
+
+  // ---------- Route arcs (great-circle curves + traveling particle) ----------
+  const cityMap = Object.fromEntries(cities.map(c => [c.name, c]));
+  const arcs = [];
+
+  ROUTES.forEach((pair, i) => {
+    const a = cityMap[pair[0]], b = cityMap[pair[1]];
+    if (!a || !b) return;
+
+    const p1 = latLonToVec3(a.lat, a.lon, 1.002);
+    const p2 = latLonToVec3(b.lat, b.lon, 1.002);
+    const dist = p1.distanceTo(p2);
+    // Control point: midpoint pushed outward; taller arc for longer routes
+    const midDir = p1.clone().add(p2).multiplyScalar(0.5).normalize();
+    const mid = midDir.multiplyScalar(1 + Math.min(0.45, dist * 0.35));
+    const curve = new THREE.QuadraticBezierCurve3(p1, mid, p2);
+    const pts = curve.getPoints(80);
+
+    // Vertex-colored line so opacity fades at ends (looks more refined)
+    const positions = new Float32Array(pts.length * 3);
+    const colors    = new Float32Array(pts.length * 3);
+    for (let j = 0; j < pts.length; j++){
+      positions[j*3]   = pts[j].x;
+      positions[j*3+1] = pts[j].y;
+      positions[j*3+2] = pts[j].z;
+      // Edges fade; middle brighter
+      const edge = Math.min(j, pts.length - 1 - j) / (pts.length * 0.5);
+      const a2 = Math.pow(edge, 0.7);
+      // Mix cyan→violet along the arc for subtle variety
+      const t2 = j / (pts.length - 1);
+      const r = 0.43 + (0.65 - 0.43) * Math.sin(t2 * Math.PI);
+      const g = 0.90 + (0.55 - 0.90) * Math.sin(t2 * Math.PI);
+      const bl= 1.00;
+      colors[j*3]   = r * a2;
+      colors[j*3+1] = g * a2;
+      colors[j*3+2] = bl * a2;
+    }
+    const geom = new THREE.BufferGeometry();
+    geom.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+    geom.setAttribute('color',    new THREE.BufferAttribute(colors, 3));
+    const mat = new THREE.LineBasicMaterial({
+      vertexColors: true,
+      transparent: true,
+      opacity: 0.55,
+      blending: THREE.AdditiveBlending,
+      depthWrite: false
+    });
+    const line = new THREE.Line(geom, mat);
+    earth.add(line);
+
+    // Traveling particle (sprite)
+    const particle = new THREE.Sprite(new THREE.SpriteMaterial({
+      map: coreTex, color: 0xaee0ff, transparent: true,
+      blending: THREE.AdditiveBlending, depthWrite: false
+    }));
+    particle.scale.set(0.018, 0.018, 1);
+    earth.add(particle);
+
+    // Secondary particle (trailing, offset phase) for a feeling of traffic
+    const particle2 = new THREE.Sprite(new THREE.SpriteMaterial({
+      map: coreTex, color: 0xffd2a8, transparent: true,
+      blending: THREE.AdditiveBlending, depthWrite: false
+    }));
+    particle2.scale.set(0.012, 0.012, 1);
+    earth.add(particle2);
+
+    arcs.push({
+      curve, particle, particle2,
+      phase:  (i * 0.37) % 1,
+      phase2: (i * 0.37 + 0.55) % 1,
+      speed:  0.05 + Math.random() * 0.035
+    });
+  });
+
+  // ---------- Post-processing: UnrealBloom for realistic glow ----------
+  const composer = new THREE.EffectComposer(renderer);
+  composer.setPixelRatio(Math.min(devicePixelRatio, 2));
+  composer.setSize(innerWidth, innerHeight);
+  composer.addPass(new THREE.RenderPass(scene, camera));
+
+  const bloomPass = new THREE.UnrealBloomPass(
+    new THREE.Vector2(innerWidth, innerHeight),
+    0.28,   // strength — subtle glow, no wash-out
+    0.32,   // radius
+    0.92    // threshold — only very bright areas (night city lights, spec, particles)
+  );
+  composer.addPass(bloomPass);
+
+  // ---------- Controls ----------
+  const controls = new THREE.OrbitControls(camera, renderer.domElement);
+  controls.enableDamping = true;
+  controls.dampingFactor = 0.07;
+  controls.rotateSpeed = 0.5;
+  controls.zoomSpeed = 0.8;
+  controls.panSpeed = 0.5;
+  controls.minDistance = 1.4;
+  controls.maxDistance = 8;
+  controls.enablePan = true;
+  controls.autoRotate = false;
+
+  // ---------- Raycasting / popup ----------
+  const raycaster = new THREE.Raycaster();
+  raycaster.params.Points = { threshold: 0.02 };
+  const mouse = new THREE.Vector2();
+  const popup = document.getElementById('popup');
+  let hovered = null;
+
+  function localTime(city){
+    const tz = Math.round(city.lon / 15); // approx hours from longitude
+    const nowUtc = Date.now();
+    const local = new Date(nowUtc + tz * 3600 * 1000);
+    const hh = String(local.getUTCHours()).padStart(2,'0');
+    const mm = String(local.getUTCMinutes()).padStart(2,'0');
+    return hh + ':' + mm;
+  }
+  function fmtCoord(v, posLbl, negLbl){
+    const a = Math.abs(v).toFixed(2);
+    return a + '°' + (v >= 0 ? posLbl : negLbl);
+  }
+  function showPopup(city, x, y){
+    popup.innerHTML =
+      '<div class="name">' + city.name + '</div>' +
+      '<div class="country">' + city.country + '</div>' +
+      '<div class="divider"></div>' +
+      '<div class="meta">' +
+        '<span class="k">LOCAL</span><span class="v hi">' + localTime(city) + '</span>' +
+        '<span class="k">LAT</span><span class="v">' + fmtCoord(city.lat, 'N', 'S') + '</span>' +
+        '<span class="k">LON</span><span class="v">' + fmtCoord(city.lon, 'E', 'W') + '</span>' +
+      '</div>';
+    popup.style.left = x + 'px';
+    popup.style.top  = y + 'px';
+    popup.style.display = 'block';
+  }
+  function hidePopup(){ popup.style.display = 'none'; }
+
+  function pick(e){
+    mouse.x =  (e.clientX / innerWidth)  * 2 - 1;
+    mouse.y = -(e.clientY / innerHeight) * 2 + 1;
+    raycaster.setFromCamera(mouse, camera);
+    return raycaster.intersectObjects(markers, false);
+  }
+
+  renderer.domElement.addEventListener('click', (e) => {
+    const hits = pick(e);
+    if (hits.length) showPopup(hits[0].object.userData, e.clientX, e.clientY);
+    else hidePopup();
+  });
+  renderer.domElement.addEventListener('mousemove', (e) => {
+    const hits = pick(e);
+    if (hits.length){
+      renderer.domElement.style.cursor = 'pointer';
+      if (hovered !== hits[0].object){
+        hovered = hits[0].object;
+        showPopup(hovered.userData, e.clientX, e.clientY);
+      } else {
+        popup.style.left = e.clientX + 'px';
+        popup.style.top  = e.clientY + 'px';
+      }
+    } else {
+      renderer.domElement.style.cursor = 'grab';
+      if (hovered){ hovered = null; hidePopup(); }
+    }
+  });
+
+  // ---------- HUD live data ----------
+  const hudTime   = document.getElementById('hudTime');
+  const hudLat    = document.getElementById('hudLat');
+  const hudLon    = document.getElementById('hudLon');
+  const hudNodes  = document.getElementById('hudNodes');
+  const hudRoutes = document.getElementById('hudRoutes');
+
+  hudNodes.textContent  = String(cities.length).padStart(3,'0');
+  hudRoutes.textContent = String(arcs.length).padStart(3,'0');
+
+  function tickClock(){
+    const n = new Date();
+    const pad = (x) => String(x).padStart(2,'0');
+    hudTime.textContent = pad(n.getUTCHours()) + ':' + pad(n.getUTCMinutes()) + ':' + pad(n.getUTCSeconds());
+  }
+  tickClock();
+  setInterval(tickClock, 1000);
+
+  function updateHudCoords(){
+    // Derive approx lat/lon camera is looking at (origin) via spherical
+    const v = camera.position.clone().normalize();
+    const lat = 90 - Math.acos(v.y) * 180 / Math.PI;
+    const lon = Math.atan2(v.z, -v.x) * 180 / Math.PI - 180;
+    const lonNorm = ((lon + 540) % 360) - 180;
+    hudLat.textContent = fmtCoord(lat, 'N', 'S');
+    hudLon.textContent = fmtCoord(lonNorm, 'E', 'W');
+  }
+
+  // ---------- Intro camera animation ----------
+  const introFrom = new THREE.Vector3(0, 0.8, 4.8);
+  const introTo   = new THREE.Vector3(0, 0.6, 3.2);
+  const introStart = performance.now();
+  const INTRO_MS = 1800;
+  camera.position.copy(introFrom);
+
+  // ---------- Animate ----------
+  const clock = new THREE.Clock();
+  function tick(){
+    requestAnimationFrame(tick);
+    const dt = clock.getDelta();
+    const t  = clock.getElapsedTime();
+
+    // Intro ease-out
+    const ip = Math.min(1, (performance.now() - introStart) / INTRO_MS);
+    if (ip < 1){
+      const e = 1 - Math.pow(1 - ip, 3); // easeOutCubic
+      camera.position.lerpVectors(introFrom, introTo, e);
+    }
+
+    earth.rotation.y  += dt * 0.035;
+    clouds.rotation.y += dt * 0.042;
+    clouds.rotation.x  = Math.sin(t * 0.05) * 0.002;
+
+    // Pin halo pulse
+    for (let i = 0; i < pulseSprites.length; i++){
+      const s = 0.055 + Math.sin(t * 2.0 + i * 0.17) * 0.012;
+      pulseSprites[i].scale.set(s, s, 1);
+    }
+    // Ring pulse
+    for (let i = 0; i < ringSprites.length; i++){
+      const r = ringSprites[i];
+      const phase = ((t * 0.45 + r.userData.phase) % 1);
+      const size = 0.02 + phase * 0.09;
+      r.scale.set(size, size, 1);
+      r.material.opacity = (1 - phase) * 0.8;
+    }
+
+    // Arc particles
+    for (let i = 0; i < arcs.length; i++){
+      const arc = arcs[i];
+      const p1 = ((t * arc.speed + arc.phase)  % 1);
+      const p2 = ((t * arc.speed + arc.phase2) % 1);
+      arc.curve.getPoint(p1, arc.particle.position);
+      arc.curve.getPoint(p2, arc.particle2.position);
+      // Fade at endpoints (sin curve peaks at mid)
+      arc.particle.material.opacity  = Math.sin(p1 * Math.PI) * 0.95;
+      arc.particle2.material.opacity = Math.sin(p2 * Math.PI) * 0.55;
+    }
+
+    // Stars twinkle
+    starField.material.uniforms.uTime.value = t;
+
+    // HUD coords (update at ~10fps is enough)
+    if ((performance.now() | 0) % 4 === 0) updateHudCoords();
+
+    controls.update();
+    composer.render();
+  }
+  tick();
+
+  // ---------- Resize ----------
+  addEventListener('resize', () => {
+    camera.aspect = innerWidth / innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(innerWidth, innerHeight);
+    composer.setSize(innerWidth, innerHeight);
+    bloomPass.setSize(innerWidth, innerHeight);
+  });
+
+})();
+</script>
+</body>
+</html>

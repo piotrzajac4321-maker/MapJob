@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>MapJob — podgląd oferty: K&K ELECTRIC (do akceptacji)</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"/>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<style>
+  :root{
+    --bg:#0B0D10;--surf:#15181F;--surf2:#1C2029;--border:rgba(255,255,255,.09);--border2:rgba(255,255,255,.14);
+    --text:#F5F7FA;--text2:#A1A9B8;--text3:#6B7280;--green:#10B981;--gold:#D97706;
+    --brand:#2563EB;--brand2:#1D4ED8;
+    --ff:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:var(--ff);background:#070809;color:var(--text);-webkit-font-smoothing:antialiased;line-height:1.4}
+  .topbar{display:flex;align-items:center;gap:12px;padding:14px 22px;background:rgba(7,8,9,.9);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:50}
+  .topbar .brand{display:flex;align-items:center;gap:8px;font-size:16px;font-weight:900;letter-spacing:-.3px}
+  .topbar .brand svg{flex-shrink:0}
+  .badge-akc{margin-left:auto;font-size:10px;font-weight:800;letter-spacing:.8px;text-transform:uppercase;color:var(--gold);background:rgba(217,119,6,.14);border:1px solid rgba(217,119,6,.35);padding:5px 11px;border-radius:999px}
+  .layout{display:grid;grid-template-columns:1fr 400px;gap:0;min-height:calc(100vh - 53px)}
+  @media(max-width:1000px){.layout{grid-template-columns:1fr}}
+  .rail{padding:34px 30px;border-right:1px solid var(--border)}
+  @media(max-width:1000px){.rail{border-right:none;border-bottom:1px solid var(--border)}}
+  .rail h1{font-size:24px;font-weight:900;letter-spacing:-.5px;line-height:1.25;margin-bottom:12px}
+  .rail h1 .hl{color:#60A5FA}
+  .rail p{font-size:14px;color:var(--text2);line-height:1.65;margin-bottom:16px;max-width:460px}
+  .okbox{background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.3);border-left:3px solid var(--green);border-radius:0 12px 12px 0;padding:14px 16px;margin-bottom:18px;max-width:460px}
+  .okbox b{color:#34D399}
+  .okbox p{margin:0;font-size:13.5px;color:var(--text2)}
+  .feat{list-style:none;max-width:460px}
+  .feat li{font-size:13.5px;color:var(--text2);padding-left:24px;position:relative;margin-bottom:10px;line-height:1.5}
+  .feat li::before{content:'✓';position:absolute;left:0;top:0;color:var(--green);font-weight:900}
+  .feat li b{color:var(--text)}
+  .note{font-size:12px;color:var(--text3);margin-top:18px;max-width:460px;line-height:1.6}
+
+  .stage{padding:28px 22px 60px;display:flex;justify-content:center;align-items:flex-start}
+  .phone{width:380px;max-width:100%;background:var(--bg);border-radius:36px;border:1px solid var(--border2);box-shadow:0 0 0 9px #121419,0 40px 90px rgba(0,0,0,.6);overflow:hidden}
+  .notch{height:28px;display:flex;align-items:center;justify-content:center}
+  .notch::after{content:'';width:110px;height:6px;border-radius:99px;background:#26292f}
+  .pscroll{height:720px;overflow-y:auto;scrollbar-width:thin}
+  .pscroll::-webkit-scrollbar{width:5px}.pscroll::-webkit-scrollbar-thumb{background:#2a2e36;border-radius:4px}
+  .pbar{display:flex;align-items:center;gap:10px;padding:12px 14px;background:var(--surf)}
+  .pbar .bk{width:32px;height:32px;border-radius:50%;background:var(--surf2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;color:var(--text2);font-size:15px}
+  .pbar .ti{font-size:13px;font-weight:700;color:var(--text2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+  .urg{background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.3);border-radius:10px;padding:8px 12px;margin:14px 16px 0;font-size:12px;font-weight:700;color:#F87171}
+  .head{display:flex;align-items:center;gap:14px;padding:16px}
+  .logo{width:62px;height:62px;border-radius:16px;flex-shrink:0;display:flex;flex-direction:column;align-items:center;justify-content:center;background:linear-gradient(135deg,var(--brand),var(--brand2));box-shadow:0 4px 16px rgba(37,99,235,.4);color:#fff;font-weight:900;letter-spacing:-.5px}
+  .logo .k{font-size:20px;line-height:1}
+  .logo .e{font-size:8px;font-weight:800;letter-spacing:1.5px;margin-top:2px;opacity:.9}
+  .title{font-size:18px;font-weight:900;line-height:1.2;margin-bottom:3px}
+  .co{font-size:13px;color:var(--text2);font-weight:600}
+  .addr{font-size:11px;color:var(--text3);margin-top:3px}
+  .chips{display:flex;flex-wrap:wrap;gap:6px;padding:0 16px 14px}
+  .chip{padding:5px 11px;background:var(--surf);border:1px solid var(--border);border-radius:20px;font-size:12px;color:var(--text2)}
+  .chip.g{background:rgba(16,185,129,.1);border-color:rgba(16,185,129,.3);color:#34D399;font-weight:700}
+  .salbox{margin:0 16px 14px;background:linear-gradient(135deg,rgba(37,99,235,.16),rgba(124,58,237,.08));border:1px solid rgba(37,99,235,.25);border-radius:16px;padding:15px}
+  .salbox .lab{font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.8px;margin-bottom:4px}
+  .salbox .v{font-size:23px;font-weight:900}
+  .salbox .v small{font-size:12px;font-weight:700;color:var(--text2)}
+  .salbox .v2{font-size:13px;font-weight:700;color:var(--text2);margin-top:7px;padding-top:7px;border-top:1px solid var(--border)}
+  .sec{font-size:11px;font-weight:800;letter-spacing:.5px;text-transform:uppercase;color:var(--text3);margin:18px 16px 9px}
+  .body{font-size:13px;color:var(--text2);line-height:1.7;padding:0 16px}
+  .body .b{display:flex;gap:8px;margin-bottom:6px;align-items:flex-start}
+  .body .b::before{content:'•';color:#60A5FA;flex-shrink:0}
+  .extra{margin:0 16px;background:var(--surf);border:1px solid var(--border);border-radius:12px;padding:12px 14px;font-size:12px;color:var(--text2);line-height:1.7}
+  .map{height:150px;margin:0 16px;border-radius:14px;overflow:hidden;border:1px solid var(--border)}
+  .foot{display:flex;gap:8px;padding:14px 16px 18px}
+  .foot .ap{flex:1;padding:13px;border-radius:13px;background:var(--brand);border:none;font-family:var(--ff);font-size:14px;font-weight:800;color:#fff}
+  .foot .ca{padding:13px 15px;border-radius:13px;background:rgba(34,197,94,.14);border:1px solid rgba(34,197,94,.45);font-family:var(--ff);font-size:13px;font-weight:800;color:#22C55E;display:flex;align-items:center;gap:6px}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <div class="brand"><svg width="20" height="24" viewBox="0 0 18 22" fill="none"><path d="M9 0C4.03 0 0 4.03 0 9c0 6.75 9 13 9 13s9-6.25 9-13c0-4.97-4.03-9-9-9z" fill="#60A5FA"/><circle cx="9" cy="9" r="3.5" fill="#080D18"/></svg><span><span style="color:#F0F4FF">Map</span><span style="color:#60A5FA">Job</span></span></div>
+  <span class="badge-akc">Podgląd · do akceptacji</span>
+</div>
+
+<div class="layout">
+  <div class="rail">
+    <h1>Tak Twoja oferta będzie wyglądać <span class="hl">na mapie MapJob</span></h1>
+    <p>Przygotowaliśmy wpis dla <b style="color:var(--text)">K&amp;K ELECTRIC</b> na podstawie Waszego ogłoszenia. Kandydaci znajdą Was na mapie Wrocławia i zaaplikują jednym kliknięciem albo zadzwonią bezpośrednio.</p>
+    <div class="okbox"><p><b>Nic nie musisz robić ani wypełniać</b> — wszystko przygotowaliśmy za Was. Wystarczy, że <b>zatwierdzicie</b>, a opublikujemy. Publikacja jest <b>bezpłatna</b>.</p></div>
+    <ul class="feat">
+      <li><b>Pin na mapie</b> we Wrocławiu — widoczny dla szukających pracy w okolicy</li>
+      <li><b>Pełne szczegóły oferty</b> — obowiązki, wymagania, godziny, widełki (UoP i B2B)</li>
+      <li><b>Szybki kontakt</b> — przycisk „Zadzwoń" pod Wasz numer + aplikacja online</li>
+      <li><b>Logo i marka</b> — podmienimy na Wasze prawdziwe logo, jeśli prześlecie plik</li>
+    </ul>
+    <div class="note">To tylko podgląd — nic nie zostało jeszcze opublikowane. Po Waszej akceptacji oferta pojawi się na mapjob.pl. W każdej chwili można ją zmienić lub usunąć.</div>
+  </div>
+
+  <div class="stage">
+    <div class="phone">
+      <div class="notch"></div>
+      <div class="pscroll">
+        <div class="pbar"><div class="bk">←</div><div class="ti">Oferta pracy</div></div>
+        <div class="urg">● Praca od zaraz · szybka rekrutacja (3 wakaty)</div>
+        <div class="head">
+          <div class="logo"><span class="k">K&amp;K</span><span class="e">ELECTRIC</span></div>
+          <div style="flex:1;min-width:0">
+            <div class="title">Elektryk – Monter instalacji elektrycznej</div>
+            <div class="co">K&amp;K ELECTRIC Kordian Kaczmarski</div>
+            <div class="addr">📍 Wrocław (dolnośląskie)</div>
+          </div>
+        </div>
+        <div class="chips">
+          <span class="chip">Pełny etat</span>
+          <span class="chip">Stacjonarnie</span>
+          <span class="chip">⚡ Elektryk</span>
+          <span class="chip g">3 wolne miejsca</span>
+          <span class="chip">⏳ do 23 cze</span>
+        </div>
+        <div class="salbox">
+          <div class="lab">Wynagrodzenie</div>
+          <div class="v">4 806 – 9 300 zł <small>brutto / mies. · umowa o pracę</small></div>
+          <div class="v2">lub 7 000 – 11 000 zł netto (+VAT) / mies. · kontrakt B2B</div>
+        </div>
+        <div class="sec">📋 Zakres obowiązków</div>
+        <div class="body">
+          <div class="b">Montaż instalacji elektrycznych w budynkach mieszkalnych i przemysłowych</div>
+          <div class="b">Diagnozowanie i naprawa usterek instalacji elektrycznych</div>
+          <div class="b">Wykonywanie pomiarów elektrycznych i testowanie sprawności instalacji</div>
+          <div class="b">Czytanie i interpretacja schematów oraz dokumentacji projektowej</div>
+          <div class="b">Przestrzeganie przepisów BHP i norm</div>
+        </div>
+        <div class="sec">✅ Wymagania</div>
+        <div class="body" style="margin-bottom:14px">Mile widziane doświadczenie</div>
+        <div class="sec">🗒️ Dodatkowe informacje</div>
+        <div class="extra">Dni pracy: poniedziałek – piątek · Godziny: 6:00–14:00 lub 7:00–15:00 · Bez pracy zmianowej · Wypłata miesięczna · <b style="color:var(--text)">Pracodawca nie wymaga CV</b></div>
+        <div class="sec">🗺️ Lokalizacja</div>
+        <div class="map" id="kk-map"></div>
+        <div class="foot">
+          <button class="ap">Aplikuj teraz →</button>
+          <div class="ca">📞 Zadzwoń</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+  (function(){
+    try{
+      var m=L.map('kk-map',{zoomControl:false,attributionControl:false,dragging:false,scrollWheelZoom:false,tap:false,touchZoom:false}).setView([51.1079,17.0385],11);
+      L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',{maxZoom:19}).addTo(m);
+      var ic=L.divIcon({className:'',html:'<div style="width:38px;height:38px;border-radius:50% 50% 50% 0;background:#fff;transform:rotate(-45deg);box-shadow:0 4px 12px rgba(0,0,0,.5);border:3px solid #2563EB;display:flex;align-items:center;justify-content:center"><span style="transform:rotate(45deg);font-size:16px">⚡</span></div>',iconSize:[38,44],iconAnchor:[19,44]});
+      L.marker([51.1079,17.0385],{icon:ic}).addTo(m);
+      setTimeout(function(){m.invalidateSize();},200);
+    }catch(e){var el=document.getElementById('kk-map');if(el)el.innerHTML='<div style="display:flex;align-items:center;justify-content:center;height:100%;color:#6B7280;font-size:12px">📍 Wrocław</div>';}
+  })();
+</script>
+</body>
+</html>

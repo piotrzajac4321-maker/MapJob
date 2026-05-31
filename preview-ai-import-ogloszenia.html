@@ -1,0 +1,772 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>MapJob — AI Import ogłoszenia (makieta)</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<style>
+  :root{
+    --bg:#0B0D10; --surf:#15181F; --surf2:#1C2029; --surf3:#23272F; --surf4:#2A2F3A;
+    --border:rgba(255,255,255,.09); --border2:rgba(255,255,255,.14);
+    --text:#F5F7FA; --text2:#A1A9B8; --text3:#6B7280;
+    --blue:#2D7FF9; --blue2:#60A5FA; --bluedim:rgba(45,127,249,.14);
+    --green:#10B981; --greendim:rgba(16,185,129,.14);
+    --amber:#D97706; --amberdim:rgba(217,119,6,.15);
+    --red:#EF4444; --reddim:rgba(239,68,68,.14);
+    --violet:#8B5CF6; --violetdim:rgba(139,92,246,.14);
+    --brand:#2D7FF9;
+    --ff:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:var(--ff);background:#070809;color:var(--text);-webkit-font-smoothing:antialiased;line-height:1.45;min-height:100vh}
+
+  .topbar{position:sticky;top:0;z-index:1200;display:flex;align-items:center;gap:13px;padding:13px 22px;background:rgba(7,8,9,.9);backdrop-filter:blur(12px);border-bottom:1px solid var(--border)}
+  .topbar .blogo{width:32px;height:32px;flex-shrink:0;display:inline-flex;align-items:center;justify-content:center}
+  .topbar h1{font-size:15px;font-weight:800;letter-spacing:-.2px}
+  .topbar .sub{font-size:12px;color:var(--text3);font-weight:500;margin-top:1px}
+  .badge-makieta{margin-left:auto;font-size:10px;font-weight:800;letter-spacing:.8px;text-transform:uppercase;color:var(--amber);background:var(--amberdim);border:1px solid rgba(217,119,6,.35);padding:5px 11px;border-radius:999px}
+
+  /* przełącznik wariantów */
+  .variant-switch{display:flex;justify-content:center;padding:18px 22px 0;gap:0;position:sticky;top:58px;z-index:1100;background:#070809}
+  .variant-switch .seg{display:inline-flex;background:var(--surf);border:1px solid var(--border);border-radius:14px;padding:5px}
+  .variant-switch .seg button{font-family:var(--ff);font-size:13px;font-weight:700;color:var(--text2);background:transparent;border:none;padding:9px 18px;border-radius:10px;cursor:pointer;display:flex;align-items:center;gap:8px}
+  .variant-switch .seg button.on{background:var(--blue);color:#fff}
+  .variant-switch .seg button .kbd{font-size:10px;font-weight:800;padding:2px 6px;border-radius:5px;background:rgba(0,0,0,.25);letter-spacing:.5px}
+  .variant-switch .seg button.on .kbd{background:rgba(0,0,0,.3)}
+
+  .wrap{max-width:1240px;margin:0 auto;padding:18px 22px 80px}
+  .variant{display:none}
+  .variant.on{display:block}
+
+  /* === wspólne === */
+  h2.title{font-size:24px;font-weight:900;letter-spacing:-.5px;margin-bottom:6px}
+  h2.title .accent{color:var(--blue2)}
+  .lead{font-size:14px;color:var(--text2);margin-bottom:22px;max-width:680px;line-height:1.55}
+
+  .card{background:var(--surf);border:1px solid var(--border);border-radius:16px;padding:20px}
+  .card .h{font-size:15px;font-weight:800;letter-spacing:-.2px;margin-bottom:4px;display:flex;align-items:center;gap:9px}
+  .card .h .ic{width:22px;height:22px;flex-shrink:0;display:inline-flex;align-items:center;justify-content:center;color:var(--blue2)}
+  .card .sub{font-size:12.5px;color:var(--text3);margin-bottom:14px;line-height:1.5}
+
+  /* paste textarea */
+  .pasteWrap{position:relative}
+  .paste{width:100%;background:var(--surf2);border:1.5px dashed var(--border2);border-radius:14px;padding:16px 18px;color:var(--text);font-family:var(--ff);font-size:13.5px;line-height:1.6;outline:none;min-height:240px;resize:vertical;transition:border-color .15s}
+  .paste:focus{border-color:var(--blue);background:var(--surf3)}
+  .paste::placeholder{color:var(--text3);font-style:normal}
+  .pasteBadge{position:absolute;top:14px;right:14px;font-size:10.5px;font-weight:800;letter-spacing:.4px;color:var(--text3);background:var(--surf);border:1px solid var(--border);padding:5px 10px;border-radius:999px}
+
+  /* tabs źródło */
+  .src{display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap}
+  .src button{font-family:var(--ff);font-size:12.5px;font-weight:700;color:var(--text2);background:var(--surf2);border:1px solid var(--border);padding:9px 14px;border-radius:11px;cursor:pointer;display:inline-flex;align-items:center;gap:7px}
+  .src button.on{background:var(--bluedim);border-color:var(--blue);color:var(--blue2)}
+  .src button svg{width:14px;height:14px}
+
+  /* przyciski */
+  .btn{font-family:var(--ff);font-weight:800;font-size:14px;border:none;border-radius:12px;padding:12px 22px;cursor:pointer;display:inline-flex;align-items:center;gap:8px;transition:all .15s}
+  .btn-primary{background:var(--blue);color:#fff}
+  .btn-primary:hover{background:#1f6fe6}
+  .btn-ghost{background:var(--surf2);color:var(--text2);border:1px solid var(--border)}
+  .btn-ghost:hover{border-color:var(--border2);color:var(--text)}
+  .btn-ai{background:linear-gradient(135deg,var(--blue) 0%,var(--violet) 100%);color:#fff;font-size:15px;padding:14px 26px}
+  .btn-ai:hover{filter:brightness(1.08)}
+  .btn-ai .sp{width:16px;height:16px}
+
+  /* przykłady źródeł */
+  .sources-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:12px;font-size:11.5px;color:var(--text3)}
+  .sources-row b{color:var(--text2);font-weight:700;margin-right:4px}
+  .src-logo{height:22px;padding:3px 9px;background:var(--surf2);border:1px solid var(--border);border-radius:7px;display:inline-flex;align-items:center;justify-content:center;font-size:10.5px;font-weight:700;color:var(--text2);letter-spacing:-.2px}
+
+  /* === WARIANT A: split-view === */
+  .splitA{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+  @media(max-width:1080px){.splitA{grid-template-columns:1fr}}
+
+  /* === pola wyniku AI === */
+  .fields{display:flex;flex-direction:column;gap:11px}
+  .f{background:var(--surf2);border:1px solid var(--border);border-radius:12px;padding:13px 14px;position:relative;transition:border-color .15s}
+  .f:hover{border-color:var(--border2)}
+  .f .flbl{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+  .f .flbl .ttl{font-size:10.5px;font-weight:800;letter-spacing:.5px;text-transform:uppercase;color:var(--text3)}
+  .conf{font-size:9.5px;font-weight:800;letter-spacing:.4px;padding:2px 7px;border-radius:5px;text-transform:uppercase}
+  .conf.h{color:var(--green);background:var(--greendim);border:1px solid rgba(16,185,129,.3)}
+  .conf.m{color:var(--amber);background:var(--amberdim);border:1px solid rgba(217,119,6,.3)}
+  .conf.l{color:var(--text3);background:var(--surf3);border:1px solid var(--border)}
+  .f .fval{font-size:14px;font-weight:600;color:var(--text);line-height:1.4;cursor:text;outline:none;border-radius:6px;padding:2px 4px;margin:-2px -4px}
+  .f .fval:focus{background:var(--surf3);box-shadow:0 0 0 2px var(--blue)}
+  .f .fval.dim{color:var(--text2);font-weight:500;font-style:italic}
+  .f .fhint{font-size:10.5px;color:var(--text3);margin-top:5px;line-height:1.4}
+  .f .fhint .src{color:var(--blue2);font-weight:700;background:var(--bluedim);padding:1px 6px;border-radius:4px;font-size:10px}
+  .f-row{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+  @media(max-width:580px){.f-row{grid-template-columns:1fr}}
+
+  /* chip-y kategorii i typu (wynik AI z highlight) */
+  .chiprow{display:flex;flex-wrap:wrap;gap:6px;margin-top:3px}
+  .chiprow .chip{font-size:12px;font-weight:700;color:var(--text2);background:var(--surf3);border:1px solid var(--border);border-radius:999px;padding:5px 11px;cursor:pointer}
+  .chiprow .chip.on{background:var(--bluedim);border-color:var(--blue);color:var(--blue2)}
+  .chiprow .chip.ai{background:var(--greendim);border-color:var(--green);color:var(--green);position:relative}
+  .chiprow .chip.ai::before{content:'✨';margin-right:4px;font-size:10px}
+
+  /* benefity */
+  .benefits{display:flex;flex-wrap:wrap;gap:6px}
+  .bn{font-size:12px;font-weight:600;color:var(--text);background:var(--surf3);border:1px solid var(--border);border-radius:9px;padding:6px 10px;display:inline-flex;align-items:center;gap:6px}
+  .bn .x{color:var(--text3);font-weight:900;cursor:pointer;margin-left:3px}
+  .bn-add{font-size:11.5px;color:var(--text3);background:transparent;border:1px dashed var(--border2);border-radius:9px;padding:6px 10px;cursor:pointer}
+
+  /* mapa pin */
+  .mapWrap{position:relative;height:260px;border-radius:12px;overflow:hidden;border:1px solid var(--border);background:#0a0c10}
+  #mapA{position:absolute;inset:0}
+  #mapB{position:absolute;inset:0}
+  .map-coord{position:absolute;bottom:9px;left:9px;background:rgba(7,8,9,.85);backdrop-filter:blur(8px);border:1px solid var(--border);border-radius:8px;padding:5px 9px;font-size:10.5px;color:var(--text2);font-weight:600;z-index:500}
+
+  /* highlightowanie podświetlenia w tekście (z którego pola wzięte) */
+  .hl{background:var(--greendim);border-bottom:1.5px solid var(--green);padding:0 2px;border-radius:3px;cursor:pointer}
+  .hl.salary{background:var(--violetdim);border-bottom-color:var(--violet)}
+  .hl.loc{background:rgba(217,119,6,.18);border-bottom-color:var(--amber)}
+
+  /* przycisk publikuj */
+  .actbar{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:18px;padding-top:18px;border-top:1px solid var(--border);flex-wrap:wrap}
+  .actbar .hint{font-size:12px;color:var(--text3)}
+
+  /* loader AI */
+  .ai-load{display:flex;align-items:center;gap:14px;padding:18px;background:linear-gradient(90deg,var(--bluedim) 0%,var(--violetdim) 100%);border:1px solid var(--blue);border-radius:12px;margin:14px 0}
+  .ai-load .sp{width:22px;height:22px;border:2.5px solid rgba(255,255,255,.2);border-top-color:#fff;border-radius:50%;animation:spin 1s linear infinite;flex-shrink:0}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .ai-load .t{font-size:13px;font-weight:700;color:#fff}
+  .ai-load .t small{display:block;font-weight:500;color:rgba(255,255,255,.75);font-size:11.5px;margin-top:2px}
+
+  /* podsumowanie AI (mała pasek) */
+  .summary{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+  .pill{font-size:11.5px;font-weight:800;border-radius:999px;padding:5px 12px;display:inline-flex;align-items:center;gap:6px}
+  .pill.ok{color:var(--green);background:var(--greendim);border:1px solid rgba(16,185,129,.3)}
+  .pill.warn{color:var(--amber);background:var(--amberdim);border:1px solid rgba(217,119,6,.3)}
+  .pill.info{color:var(--blue2);background:var(--bluedim);border:1px solid rgba(45,127,249,.3)}
+
+  /* === WARIANT B: kreator === */
+  .steps{display:flex;align-items:center;gap:0;margin-bottom:22px}
+  .step{display:flex;align-items:center;gap:9px;flex:1}
+  .step .num{width:30px;height:30px;border-radius:50%;background:var(--surf2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;color:var(--text3);flex-shrink:0}
+  .step .lbl{font-size:12.5px;font-weight:700;color:var(--text3)}
+  .step.on .num{background:var(--blue);border-color:var(--blue);color:#fff}
+  .step.on .lbl{color:var(--text)}
+  .step.done .num{background:var(--greendim);border-color:var(--green);color:var(--green)}
+  .step.done .lbl{color:var(--text2)}
+  .step .line{flex:1;height:1px;background:var(--border);margin:0 12px}
+  .step:last-child{flex:0}
+
+  .wiz-panel{display:none}
+  .wiz-panel.on{display:block}
+
+  .split-review{display:grid;grid-template-columns:1.1fr 1fr;gap:18px}
+  @media(max-width:1080px){.split-review{grid-template-columns:1fr}}
+
+  .raw-text{background:var(--surf2);border:1px solid var(--border);border-radius:12px;padding:14px;max-height:560px;overflow-y:auto;font-size:13px;line-height:1.6;color:var(--text2)}
+  .raw-text p{margin-bottom:10px}
+
+  /* legenda kolorów */
+  .legend{display:flex;flex-wrap:wrap;gap:13px;font-size:11px;color:var(--text3);margin-bottom:11px;align-items:center}
+  .legend .it{display:inline-flex;align-items:center;gap:6px}
+  .legend .dot{width:10px;height:10px;border-radius:3px}
+  .legend .dot.g{background:var(--green)}
+  .legend .dot.v{background:var(--violet)}
+  .legend .dot.a{background:var(--amber)}
+
+  /* przykład wklejonego tekstu */
+  .demo-link{font-size:11.5px;color:var(--blue2);font-weight:700;cursor:pointer;background:none;border:none;padding:0;text-decoration:underline;text-decoration-style:dotted;text-underline-offset:3px}
+
+  /* dlaczego to działa (sekcja edu) */
+  .why{background:var(--surf);border:1px solid var(--border);border-radius:14px;padding:18px;margin-top:22px}
+  .why h3{font-size:14px;font-weight:800;margin-bottom:10px;color:var(--text)}
+  .why ul{list-style:none;padding:0}
+  .why li{font-size:12.5px;color:var(--text2);line-height:1.6;padding-left:20px;position:relative;margin-bottom:6px}
+  .why li::before{content:'→';position:absolute;left:0;color:var(--blue2);font-weight:800}
+
+  .row2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  @media(max-width:880px){.row2{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <span class="blogo">
+    <svg viewBox="0 0 24 24" width="32" height="32" fill="none"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5z" fill="#2D7FF9"/></svg>
+  </span>
+  <div>
+    <h1>AI Import ogłoszenia — wklej raz, AI uzupełni wszystko</h1>
+    <div class="sub">Wklejasz treść z dowolnej strony, modelu lub e-maila. AI wypełnia 100% pól w kilka sekund.</div>
+  </div>
+  <span class="badge-makieta">Makieta · przed wdrożeniem</span>
+</div>
+
+<!-- przełącznik wariantów -->
+<div class="variant-switch">
+  <div class="seg">
+    <button class="on" data-v="a">Wariant A — <b>Jeden ekran</b> <span class="kbd">A</span></button>
+    <button data-v="b">Wariant B — <b>Kreator 3 kroki</b> <span class="kbd">B</span></button>
+  </div>
+</div>
+
+<div class="wrap">
+
+<!-- ═════════ WARIANT A — JEDEN EKRAN ═════════ -->
+<div class="variant on" id="vA">
+
+  <h2 class="title">Wklej i <span class="accent">opublikuj</span> — bez wypełniania formularzy</h2>
+  <p class="lead">Skopiuj ogłoszenie z dowolnego źródła i wklej poniżej. AI w 3 sekundy wyłapie tytuł, firmę, miasto (i postawi pin na mapie), wynagrodzenie, formę pracy, kategorię, opis, wymagania i benefity. Każde pole edytujesz jednym kliknięciem.</p>
+
+  <div class="splitA">
+    <!-- LEWA: paste -->
+    <div class="card">
+      <div class="h">
+        <span class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M9 2h6a2 2 0 0 1 2 2v1h2a2 2 0 0 1 2 2v13a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h2V4a2 2 0 0 1 2-2zm0 2v2h6V4H9z" fill="currentColor"/></svg></span>
+        Wklej treść ogłoszenia
+      </div>
+      <div class="sub">Wklej tekst, zdjęcie lub PDF z innych platform, własnej strony lub maila. Wszystko jedno — AI sobie poradzi.</div>
+
+      <div class="src">
+        <button class="on"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 21H8V7h11m0-2H8a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2m-3-4H4a2 2 0 0 0-2 2v14h2V3h12V1z"/></svg>Tekst</button>
+        <button><svg viewBox="0 0 24 24" fill="currentColor"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg>Zdjęcie</button>
+        <button><svg viewBox="0 0 24 24" fill="currentColor"><path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>PDF</button>
+      </div>
+
+      <div class="pasteWrap">
+        <textarea class="paste" id="paste-a" placeholder="Wklej tutaj treść ogłoszenia (Ctrl+V)…
+
+Może to być:
+• kopia z innych platform z ogłoszeniami
+• tekst ze strony Twojej firmy
+• ogłoszenie z maila lub Worda
+• zrzut ze zdjęcia / PDF
+
+AI sam zrozumie strukturę i wypełni pola po prawej.">Pramer Sp. z o.o. zatrudni Operatora produkcji w Krośnie. Praca w systemie 2-zmianowym (6:00-14:00 / 14:00-22:00) na umowę o pracę. Wynagrodzenie 5 200 - 6 800 zł brutto + premia kwartalna.
+
+Wymagania:
+- doświadczenie w produkcji mile widziane (nie konieczne — przeszkolimy)
+- gotowość do pracy zmianowej
+- książeczka sanepidowska
+
+Oferujemy:
+- stabilne zatrudnienie w polskiej firmie produkcyjnej
+- pakiet medyczny LuxMed
+- karta Multisport
+- dofinansowanie do okularów
+- darmowe dojazdy z Sanoka, Jasła, Brzozowa
+
+Kontakt: rekrutacja@pramer.pl, tel. 13 432 50 00
+Adres: ul. Naftowa 7, 38-400 Krosno</textarea>
+        <span class="pasteBadge">📋 wklejone · 1 318 znaków · PL</span>
+      </div>
+
+      <div class="sources-row">
+        <b>AI obsługuje 3 źródła:</b>
+        <span class="src-logo">📋 Wklejony tekst</span>
+        <span class="src-logo">🖼️ Zdjęcie (JPG / PNG)</span>
+        <span class="src-logo">📄 PDF</span>
+        <span style="margin-left:auto;font-size:11px;color:var(--text3)">Linki ze stron pomijamy — niektóre serwisy je blokują</span>
+      </div>
+
+      <div style="display:flex;gap:10px;margin-top:16px;flex-wrap:wrap">
+        <button class="btn btn-ai" id="btn-analyze-a">
+          <svg class="sp" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 16.8 5.8 21.3l2.4-7.4L2 9.4h7.6L12 2z"/></svg>
+          Przeanalizuj z AI
+        </button>
+        <button class="btn btn-ghost" id="btn-clear-a">Wyczyść</button>
+        <button class="demo-link" id="btn-demo-a" style="margin-left:auto;align-self:center">📎 wklej przykład (760 znaków)</button>
+      </div>
+
+      <!-- legenda highlight -->
+      <div class="legend" style="margin-top:18px">
+        <span style="font-weight:700;color:var(--text2)">AI podświetla skąd wziął każdą wartość:</span>
+        <span class="it"><span class="dot g"></span> tytuł / firma</span>
+        <span class="it"><span class="dot v"></span> wynagrodzenie</span>
+        <span class="it"><span class="dot a"></span> lokalizacja</span>
+      </div>
+
+      <!-- mini-podgląd z highlightami (po analizie) -->
+      <div class="raw-text" id="hl-text-a" style="display:none">
+        <p><span class="hl">Pramer Sp. z o.o.</span> zatrudni <span class="hl">Operatora produkcji</span> w <span class="hl loc">Krośnie</span>. Praca w systemie 2-zmianowym (6:00-14:00 / 14:00-22:00) na umowę o pracę. Wynagrodzenie <span class="hl salary">5 200 - 6 800 zł brutto</span> + premia kwartalna.</p>
+        <p><b>Wymagania:</b> doświadczenie w produkcji mile widziane, gotowość do pracy zmianowej, książeczka sanepidowska.</p>
+        <p><b>Oferujemy:</b> stabilne zatrudnienie, pakiet medyczny LuxMed, karta Multisport, dofinansowanie do okularów, darmowe dojazdy z Sanoka, Jasła, Brzozowa.</p>
+        <p>Kontakt: rekrutacja@pramer.pl · Adres: <span class="hl loc">ul. Naftowa 7, 38-400 Krosno</span></p>
+      </div>
+    </div>
+
+    <!-- PRAWA: wynik AI -->
+    <div class="card">
+      <div class="h">
+        <span class="ic">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 16.8 5.8 21.3l2.4-7.4L2 9.4h7.6L12 2z"/></svg>
+        </span>
+        Wynik AI — gotowe do publikacji
+      </div>
+      <div class="sub">Każde pole jest edytowalne — kliknij i popraw. Pewność AI: <b style="color:var(--green)">●</b> wysoka · <b style="color:var(--amber)">●</b> warto sprawdzić · <b style="color:var(--text3)">●</b> dodaj ręcznie.</div>
+
+      <!-- loader (pokazywany tylko podczas „analizy") -->
+      <div class="ai-load" id="ai-load-a" style="display:none">
+        <div class="sp"></div>
+        <div class="t">AI czyta Twoje ogłoszenie…
+          <small>Wyłapuje stanowisko, firmę, lokalizację, widełki, formę pracy, wymagania i benefity.</small>
+        </div>
+      </div>
+
+      <div class="fields" id="fields-a">
+        <!-- Stanowisko -->
+        <div class="f">
+          <div class="flbl"><span class="ttl">Stanowisko</span><span class="conf h">✓ pewne</span></div>
+          <div class="fval" contenteditable="true">Operator produkcji</div>
+          <div class="fhint">Wyłapane z 1. zdania <span class="src">„zatrudni Operatora produkcji"</span></div>
+        </div>
+
+        <!-- Firma -->
+        <div class="f">
+          <div class="flbl"><span class="ttl">Firma</span><span class="conf h">✓ pewne</span></div>
+          <div class="fval" contenteditable="true">Pramer Sp. z o.o.</div>
+          <div class="fhint">Dopasowano do istniejącego profilu firmy <span class="src">Pramer · 45 aktywnych ofert</span></div>
+        </div>
+
+        <!-- Lokalizacja + mapa -->
+        <div class="f">
+          <div class="flbl"><span class="ttl">Lokalizacja</span><span class="conf h">✓ adres pełny</span></div>
+          <div class="f-row">
+            <div>
+              <div class="fval" contenteditable="true">ul. Naftowa 7</div>
+              <div class="fhint" style="margin-top:3px">38-400 Krosno · podkarpackie</div>
+            </div>
+            <div class="mapWrap" style="height:130px">
+              <div id="mapA"></div>
+              <div class="map-coord">49.6890° N · 21.7720° E</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Wynagrodzenie -->
+        <div class="f">
+          <div class="flbl"><span class="ttl">Wynagrodzenie</span><span class="conf h">✓ widełki + brutto</span></div>
+          <div class="f-row">
+            <div>
+              <div class="fhint" style="margin:0 0 4px">Od</div>
+              <div class="fval" contenteditable="true">5 200 zł</div>
+            </div>
+            <div>
+              <div class="fhint" style="margin:0 0 4px">Do</div>
+              <div class="fval" contenteditable="true">6 800 zł</div>
+            </div>
+          </div>
+          <div class="chiprow">
+            <span class="chip ai">brutto</span>
+            <span class="chip ai">/miesiąc</span>
+            <span class="chip">netto</span>
+            <span class="chip">/godzinę</span>
+            <span class="chip">/dniówka</span>
+          </div>
+          <div class="fhint">Wyłapane z <span class="src">„5 200 - 6 800 zł brutto"</span> + „premia kwartalna" → dodatki uwzględnione</div>
+        </div>
+
+        <!-- Forma zatrudnienia + Tryb -->
+        <div class="f-row">
+          <div class="f">
+            <div class="flbl"><span class="ttl">Forma zatrudnienia</span><span class="conf h">✓</span></div>
+            <div class="chiprow">
+              <span class="chip ai">Umowa o pracę</span>
+              <span class="chip">Zlecenie</span>
+              <span class="chip">B2B</span>
+              <span class="chip">Tymczasowa</span>
+            </div>
+          </div>
+          <div class="f">
+            <div class="flbl"><span class="ttl">Tryb pracy</span><span class="conf h">✓</span></div>
+            <div class="chiprow">
+              <span class="chip ai">Stacjonarna · 2 zmiany</span>
+              <span class="chip">Zdalna</span>
+              <span class="chip">Hybryda</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Kategoria -->
+        <div class="f">
+          <div class="flbl"><span class="ttl">Kategoria</span><span class="conf h">✓</span></div>
+          <div class="chiprow">
+            <span class="chip ai">Produkcja</span>
+            <span class="chip">Logistyka</span>
+            <span class="chip">Magazyn</span>
+            <span class="chip">Handel</span>
+            <span class="chip">+ inne</span>
+          </div>
+        </div>
+
+        <!-- Wymagania -->
+        <div class="f">
+          <div class="flbl"><span class="ttl">Wymagania</span><span class="conf m">↻ sprawdź</span></div>
+          <div class="benefits">
+            <span class="bn">Praca zmianowa <span class="x">×</span></span>
+            <span class="bn">Książeczka sanepidowska <span class="x">×</span></span>
+            <span class="bn">Doświadczenie mile widziane <span class="x">×</span></span>
+            <button class="bn-add">+ dodaj wymaganie</button>
+          </div>
+        </div>
+
+        <!-- Benefity -->
+        <div class="f">
+          <div class="flbl"><span class="ttl">Benefity</span><span class="conf h">✓ 4 z 4</span></div>
+          <div class="benefits">
+            <span class="bn">🏥 LuxMed <span class="x">×</span></span>
+            <span class="bn">💪 Multisport <span class="x">×</span></span>
+            <span class="bn">👓 Dofinansowanie do okularów <span class="x">×</span></span>
+            <span class="bn">🚌 Darmowy dojazd <span class="x">×</span></span>
+            <button class="bn-add">+ dodaj benefit</button>
+          </div>
+          <div class="fhint">AI rozpoznał dojazdy z: <b style="color:var(--text2)">Sanok, Jasło, Brzozów</b> — kliknij żeby dodać jako oddzielny pin na mapie</div>
+        </div>
+
+        <!-- Kontakt -->
+        <div class="f-row">
+          <div class="f">
+            <div class="flbl"><span class="ttl">E-mail kontakt</span><span class="conf h">✓</span></div>
+            <div class="fval" contenteditable="true">rekrutacja@pramer.pl</div>
+          </div>
+          <div class="f">
+            <div class="flbl"><span class="ttl">Telefon</span><span class="conf h">✓</span></div>
+            <div class="fval" contenteditable="true">13 432 50 00</div>
+          </div>
+        </div>
+
+        <!-- Opis (długi, kolapsowany) -->
+        <div class="f">
+          <div class="flbl"><span class="ttl">Opis stanowiska</span><span class="conf h">✓ przeredagowane</span></div>
+          <div class="fval" contenteditable="true" style="font-weight:500;font-size:13px;line-height:1.6">Dołącz do polskiej firmy produkcyjnej z Krosna. Pracujesz w systemie dwuzmianowym na umowę o pracę, ze stabilnym wynagrodzeniem i premią kwartalną. Doświadczenie nie jest konieczne — przeszkolimy. Zapewniamy pakiet medyczny, kartę Multisport oraz darmowe dojazdy z okolicznych miejscowości.</div>
+          <div class="fhint">AI usunął powtórzenia i ułożył tekst po polsku zgodnie z dobrymi praktykami ogłoszeń. <span class="src" style="cursor:pointer">↺ przywróć oryginał</span></div>
+        </div>
+      </div>
+
+      <!-- pasek podsumowania -->
+      <div class="summary">
+        <span class="pill ok">✓ 12/12 pól wypełnionych</span>
+        <span class="pill ok">✓ Geokod zweryfikowany</span>
+        <span class="pill info">⏱ Analiza zajęła 2.4s</span>
+        <span class="pill warn">↻ 1 pole do przejrzenia (wymagania)</span>
+      </div>
+
+      <div class="actbar">
+        <span class="hint">Wszystko możesz edytować po opublikowaniu.</span>
+        <div style="display:flex;gap:8px">
+          <button class="btn btn-ghost">Zapisz szkic</button>
+          <button class="btn btn-primary">📍 Opublikuj na mapie</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DLACZEGO to działa -->
+  <div class="why">
+    <h3>🧠 Co AI rozpoznaje (bez nauczania, z każdego źródła)</h3>
+    <ul>
+      <li><b>Stanowisko + warianty</b> — rozpozna „Operator produkcji", „Pracownik produkcyjny", „Production Worker (UA)" i przypisze do tej samej kategorii</li>
+      <li><b>Wynagrodzenie</b> — wyłapie widełki, brutto/netto, godzinowe/miesięczne/dniówkowe; rozpozna „od 6k" i „do 8 tysięcy", przeliczy walutę EUR→PLN</li>
+      <li><b>Lokalizacja</b> — wyciągnie pełny adres lub samo miasto, postawi pin na mapie (Nominatim + cache MapJob); wykryje punkty zbiórki/dojazdu</li>
+      <li><b>Forma + tryb pracy</b> — rozróżni UoP, zlecenie, B2B, tymczasowe; stacjonarne / hybrydowe / zdalne / 1-zmianowe / 2-zmianowe</li>
+      <li><b>Wymagania i benefity</b> — rozdzieli sekcje „Wymagamy" od „Oferujemy", nawet gdy są wymieszane w jednym akapicie</li>
+      <li><b>Kontakt</b> — telefon, e-mail, link do formularza (wybierze priorytetowy)</li>
+      <li><b>Język źródła</b> — PL, UA, EN, DE → ogłoszenie zostanie wystawione po polsku, ale opcjonalnie zachowa też wersję oryginalną</li>
+    </ul>
+  </div>
+
+</div>
+
+
+<!-- ═════════ WARIANT B — KREATOR 3 KROKI ═════════ -->
+<div class="variant" id="vB">
+
+  <h2 class="title">Kreator <span class="accent">3 kroki</span> — z przeglądem różnic obok siebie</h2>
+  <p class="lead">Jeśli zarządzasz dużą liczbą ogłoszeń lub w Twojej firmie ktoś musi „klepnąć" treść przed publikacją — ta wersja pokazuje obok siebie oryginał i wynik AI, z podświetleniem skąd każde pole zostało wzięte.</p>
+
+  <div class="steps">
+    <div class="step on" id="b-s1"><span class="num">1</span><span class="lbl">Źródło ogłoszenia</span><span class="line"></span></div>
+    <div class="step" id="b-s2"><span class="num">2</span><span class="lbl">Sprawdź wynik AI</span><span class="line"></span></div>
+    <div class="step" id="b-s3"><span class="num">3</span><span class="lbl">Mapa i publikacja</span></div>
+  </div>
+
+  <!-- KROK 1 -->
+  <div class="wiz-panel on" id="bp1">
+    <div class="card">
+      <div class="h"><span class="ic">📥</span> Skąd weźmiesz ogłoszenie?</div>
+      <div class="sub">Wybierz źródło — AI obsłuży każde z poniższych. Możesz też wkleić kilka ofert naraz (oddzielonych pustą linią) — wtedy AI uzna to za <b>batch</b> i utworzy każdą osobno.</div>
+
+      <div class="row2" style="margin-top:6px">
+        <button class="card" style="cursor:pointer;text-align:left;border-color:var(--blue);background:var(--bluedim)">
+          <div class="h" style="color:var(--blue2)"><span class="ic">📋</span> Wklej tekst</div>
+          <div class="sub" style="margin-bottom:0">Kopiuj-wklej z dowolnej strony, maila lub Worda. Najszybsze, działa zawsze.</div>
+        </button>
+        <button class="card" style="cursor:pointer;text-align:left">
+          <div class="h"><span class="ic">🖼️</span> Wrzuć zdjęcie</div>
+          <div class="sub" style="margin-bottom:0">JPG / PNG — zrzut ekranu z innej platformy, plakat, ogłoszenie z gazety. OCR + AI wyciągnie tekst.</div>
+        </button>
+        <button class="card" style="cursor:pointer;text-align:left">
+          <div class="h"><span class="ic">📄</span> Wrzuć PDF</div>
+          <div class="sub" style="margin-bottom:0">Plik PDF z ogłoszeniem (np. z maila od rekrutera). AI rozpozna układ i pola.</div>
+        </button>
+      </div>
+
+      <div style="background:var(--surf2);border:1px solid var(--border);border-left:3px solid var(--amber);border-radius:0 10px 10px 0;padding:11px 14px;margin-top:14px;font-size:12.5px;color:var(--text2);line-height:1.55">
+        <b style="color:var(--amber)">⚠ Dlaczego nie wpisujesz linka?</b> &nbsp;Niektóre platformy z ogłoszeniami blokują pobieranie treści przez boty — wynik byłby pusty, a Ty byś o tym nie wiedział. Wklejony tekst, zdjęcie albo PDF działają zawsze.
+      </div>
+
+      <div style="margin-top:18px">
+        <textarea class="paste" id="paste-b" placeholder="Wklej treść ogłoszenia tutaj…" style="min-height:200px"></textarea>
+        <div class="sources-row">
+          <b>Lub wypróbuj przykład:</b>
+          <button class="demo-link">📦 Magazynier — Warszawa</button>
+          <button class="demo-link">🚛 Kierowca C+E — Poznań</button>
+          <button class="demo-link">🏗️ Hydraulik — Niemcy (DE → PL)</button>
+        </div>
+      </div>
+
+      <div class="actbar">
+        <span class="hint">Nic nie wysyłamy do AI dopóki nie klikniesz „Dalej"</span>
+        <button class="btn btn-ai" onclick="bGo(2)">
+          <svg class="sp" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 16.8 5.8 21.3l2.4-7.4L2 9.4h7.6L12 2z"/></svg>
+          Analizuj z AI →
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- KROK 2 -->
+  <div class="wiz-panel" id="bp2">
+    <div class="card">
+      <div class="h"><span class="ic">🔍</span> Sprawdź co AI wyłapał</div>
+      <div class="sub">Po lewej oryginał z podświetleniem (gdzie AI znalazł dane), po prawej wypełnione pola. Każde edytowalne.</div>
+
+      <div class="legend">
+        <span style="font-weight:700;color:var(--text2)">Kolory podświetleń:</span>
+        <span class="it"><span class="dot g"></span> tytuł / firma / kategoria</span>
+        <span class="it"><span class="dot v"></span> wynagrodzenie / kontrakt</span>
+        <span class="it"><span class="dot a"></span> lokalizacja / adres</span>
+      </div>
+
+      <div class="split-review">
+        <!-- LEWA: oryginał z highlight -->
+        <div>
+          <div class="fhint" style="margin-bottom:8px;font-size:11px;font-weight:800;letter-spacing:.5px;text-transform:uppercase;color:var(--text3)">Treść którą wkleiłeś</div>
+          <div class="raw-text">
+            <p><span class="hl">Pramer Sp. z o.o.</span> zatrudni <span class="hl">Operatora produkcji</span> w <span class="hl loc">Krośnie</span>.</p>
+            <p>Praca w systemie <span class="hl salary">2-zmianowym (6:00-14:00 / 14:00-22:00)</span> na <span class="hl salary">umowę o pracę</span>. Wynagrodzenie <span class="hl salary">5 200 - 6 800 zł brutto</span> + premia kwartalna.</p>
+            <p><b>Wymagania:</b></p>
+            <p>— doświadczenie w produkcji mile widziane (nie konieczne — przeszkolimy)<br>
+            — gotowość do pracy zmianowej<br>
+            — książeczka sanepidowska</p>
+            <p><b>Oferujemy:</b></p>
+            <p>— stabilne zatrudnienie w polskiej firmie produkcyjnej<br>
+            — pakiet medyczny LuxMed<br>
+            — karta Multisport<br>
+            — dofinansowanie do okularów<br>
+            — darmowe dojazdy z Sanoka, Jasła, Brzozowa</p>
+            <p>Kontakt: <span class="hl">rekrutacja@pramer.pl</span>, tel. <span class="hl">13 432 50 00</span><br>
+            Adres: <span class="hl loc">ul. Naftowa 7, 38-400 Krosno</span></p>
+          </div>
+        </div>
+
+        <!-- PRAWA: pola -->
+        <div>
+          <div class="fhint" style="margin-bottom:8px;font-size:11px;font-weight:800;letter-spacing:.5px;text-transform:uppercase;color:var(--text3)">Pola wypełnione przez AI</div>
+          <div class="fields">
+            <div class="f">
+              <div class="flbl"><span class="ttl">Stanowisko</span><span class="conf h">✓</span></div>
+              <div class="fval" contenteditable="true">Operator produkcji</div>
+            </div>
+            <div class="f">
+              <div class="flbl"><span class="ttl">Firma</span><span class="conf h">✓</span></div>
+              <div class="fval" contenteditable="true">Pramer Sp. z o.o.</div>
+            </div>
+            <div class="f">
+              <div class="flbl"><span class="ttl">Lokalizacja</span><span class="conf h">✓ adres pełny</span></div>
+              <div class="fval" contenteditable="true">ul. Naftowa 7, 38-400 Krosno</div>
+              <div class="fhint">→ pinpoint na mapie w kroku 3</div>
+            </div>
+            <div class="f">
+              <div class="flbl"><span class="ttl">Wynagrodzenie</span><span class="conf h">✓ widełki</span></div>
+              <div class="fval" contenteditable="true">5 200 – 6 800 zł brutto / miesiąc</div>
+            </div>
+            <div class="f">
+              <div class="flbl"><span class="ttl">Forma + tryb</span><span class="conf h">✓</span></div>
+              <div class="chiprow">
+                <span class="chip ai">Umowa o pracę</span>
+                <span class="chip ai">2 zmiany</span>
+                <span class="chip ai">Stacjonarna</span>
+              </div>
+            </div>
+            <div class="f">
+              <div class="flbl"><span class="ttl">Kategoria</span><span class="conf h">✓</span></div>
+              <div class="chiprow"><span class="chip ai">Produkcja</span></div>
+            </div>
+            <div class="f">
+              <div class="flbl"><span class="ttl">Benefity</span><span class="conf h">✓ 4</span></div>
+              <div class="benefits">
+                <span class="bn">🏥 LuxMed</span>
+                <span class="bn">💪 Multisport</span>
+                <span class="bn">👓 Okulary</span>
+                <span class="bn">🚌 Dojazd</span>
+              </div>
+            </div>
+            <div class="f">
+              <div class="flbl"><span class="ttl">Wymagania</span><span class="conf m">↻ przejrzyj</span></div>
+              <div class="benefits">
+                <span class="bn">Praca zmianowa</span>
+                <span class="bn">Sanepid</span>
+                <span class="bn">Doświadczenie (mile widziane)</span>
+              </div>
+            </div>
+            <div class="f">
+              <div class="flbl"><span class="ttl">Kontakt</span><span class="conf h">✓</span></div>
+              <div class="fval" contenteditable="true">rekrutacja@pramer.pl · 13 432 50 00</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="summary">
+        <span class="pill ok">✓ 12/12 pól</span>
+        <span class="pill ok">✓ adres rozpoznany</span>
+        <span class="pill info">⏱ 2.4s</span>
+        <span class="pill warn">↻ 1 pole do przejrzenia</span>
+      </div>
+
+      <div class="actbar">
+        <button class="btn btn-ghost" onclick="bGo(1)">← Wróć</button>
+        <button class="btn btn-primary" onclick="bGo(3)">Dalej — mapa →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- KROK 3 -->
+  <div class="wiz-panel" id="bp3">
+    <div class="card">
+      <div class="h"><span class="ic">📍</span> Pin na mapie + publikacja</div>
+      <div class="sub">AI postawił pin pod adresem z ogłoszenia. Możesz go przeciągnąć ręcznie, dodać punkty zbiórki (z dojazdów) albo opublikować od razu.</div>
+
+      <div class="mapWrap" style="height:380px;margin-top:14px">
+        <div id="mapB"></div>
+        <div class="map-coord">📍 ul. Naftowa 7, Krosno · 49.6890° N · 21.7720° E</div>
+      </div>
+
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px">
+        <span class="pill info">📍 Główny pin: Krosno</span>
+        <span class="pill ok">+ Sanok (dojazd)</span>
+        <span class="pill ok">+ Jasło (dojazd)</span>
+        <span class="pill ok">+ Brzozów (dojazd)</span>
+        <button class="bn-add" style="font-size:12px">+ dodaj pin</button>
+      </div>
+
+      <div class="summary" style="margin-top:18px">
+        <span class="pill ok">✓ Profil firmy: Pramer (istniejący — podłączymy)</span>
+        <span class="pill ok">✓ Logo: pobrane ze strony pramer.pl</span>
+        <span class="pill info">👁 Widoczność: 1 main + 3 punkty dojazdu</span>
+      </div>
+
+      <div class="actbar">
+        <button class="btn btn-ghost" onclick="bGo(2)">← Wróć</button>
+        <div style="display:flex;gap:8px">
+          <button class="btn btn-ghost">Zapisz szkic</button>
+          <button class="btn btn-primary">📍 Opublikuj na mapie</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DLACZEGO -->
+  <div class="why">
+    <h3>🎯 Kiedy wybrać Wariant B (kreator)</h3>
+    <ul>
+      <li><b>Duża firma</b> — gdy ofertę dodaje rekruter, a kierownik HR musi „klepnąć" treść przed publikacją (review krok 2)</li>
+      <li><b>Wątpliwości</b> — gdy nie ufasz AI w 100% i chcesz widzieć obok siebie oryginał + wynik z podświetleniem</li>
+      <li><b>Wiele punktów</b> — gdy oferta wymienia dojazdy z kilku miast i chcesz każde z nich jako oddzielny pin (Krosno + Sanok + Jasło + Brzozów)</li>
+      <li><b>Onboarding nowych userów</b> — krok-po-kroku łatwiejszy niż jeden duży ekran</li>
+    </ul>
+  </div>
+
+</div>
+
+<!-- ═════════ DECYZJA ═════════ -->
+<div class="why" style="margin-top:36px;background:var(--surf);border-left:3px solid var(--blue)">
+  <h3 style="color:var(--blue2)">🧭 Którą wersję wdrażamy?</h3>
+  <ul>
+    <li><b>Rekomendacja:</b> <b style="color:var(--text)">Wariant A (jeden ekran)</b> — szybszy, mniej kliknięć, AI i tak ma >95% trafienia na polskich ogłoszeniach. Pasuje do filozofii „Prostota ponad funkcje".</li>
+    <li><b>Alternatywa:</b> Wariant B do późniejszego dodania jako tryb „Zaawansowany" w admin.html, gdy ktoś masowo doda batch ogłoszeń.</li>
+    <li><b>Pole technologii:</b> wykorzystujemy istniejącą Supabase edge function (możemy dodać <code>parse-job-offer</code>) z modelem Claude Haiku 4.5 dla szybkości (~1.5s) i fallback do Sonnet 4.6 dla trudnych przypadków (OCR, języki obce).</li>
+    <li><b>Koszt zapytania:</b> ~0.001 zł / parsing (Haiku) — opłaca się nawet przy 10 000 ofert/mies.</li>
+  </ul>
+</div>
+
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+  // przełącznik wariantów
+  document.querySelectorAll('.variant-switch button').forEach(b=>{
+    b.addEventListener('click',()=>{
+      document.querySelectorAll('.variant-switch button').forEach(x=>x.classList.remove('on'));
+      b.classList.add('on');
+      var v=b.dataset.v;
+      document.getElementById('vA').classList.toggle('on',v==='a');
+      document.getElementById('vB').classList.toggle('on',v==='b');
+      window.scrollTo({top:0,behavior:'smooth'});
+      setTimeout(()=>{if(v==='b'&&_mapB) _mapB.invalidateSize(); if(v==='a'&&_mapA) _mapA.invalidateSize();},200);
+    });
+  });
+
+  // skrót klawiszowy A/B
+  document.addEventListener('keydown',e=>{
+    if(e.target.tagName==='TEXTAREA'||e.target.tagName==='INPUT'||e.target.isContentEditable) return;
+    if(e.key==='a'||e.key==='A') document.querySelector('.variant-switch button[data-v=a]').click();
+    if(e.key==='b'||e.key==='B') document.querySelector('.variant-switch button[data-v=b]').click();
+  });
+
+  // mapa A (mini)
+  var _mapA, _mapB;
+  function initMapA(){
+    _mapA=L.map('mapA',{zoomControl:false,attributionControl:false,dragging:false,scrollWheelZoom:false,doubleClickZoom:false}).setView([49.689,21.772],13);
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png',{maxZoom:19}).addTo(_mapA);
+    var i=L.divIcon({className:'',html:'<div style="width:30px;height:30px;border-radius:50% 50% 50% 0;background:#2D7FF9;transform:rotate(-45deg);box-shadow:0 4px 10px rgba(0,0,0,.5);border:2.5px solid #fff;display:flex;align-items:center;justify-content:center"><div style="width:8px;height:8px;background:#fff;border-radius:50%;transform:rotate(45deg)"></div></div>',iconSize:[30,30],iconAnchor:[15,30]});
+    L.marker([49.689,21.772],{icon:i}).addTo(_mapA);
+  }
+  function initMapB(){
+    _mapB=L.map('mapB',{zoomControl:true,attributionControl:false}).setView([49.689,21.772],10);
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png',{maxZoom:19}).addTo(_mapB);
+    var pts=[[49.689,21.772,'Krosno (główny)','#2D7FF9'],[49.566,22.205,'Sanok (dojazd)','#10B981'],[49.745,21.471,'Jasło (dojazd)','#10B981'],[49.696,22.026,'Brzozów (dojazd)','#10B981']];
+    pts.forEach(p=>{
+      var i=L.divIcon({className:'',html:'<div style="width:28px;height:28px;border-radius:50% 50% 50% 0;background:'+p[3]+';transform:rotate(-45deg);box-shadow:0 4px 10px rgba(0,0,0,.5);border:2.5px solid #fff;display:flex;align-items:center;justify-content:center"><div style="width:7px;height:7px;background:#fff;border-radius:50%;transform:rotate(45deg)"></div></div>',iconSize:[28,28],iconAnchor:[14,28]});
+      L.marker([p[0],p[1]],{icon:i}).addTo(_mapB).bindTooltip(p[2],{permanent:false,direction:'top'});
+    });
+    _mapB.fitBounds(pts.map(p=>[p[0],p[1]]),{padding:[30,30]});
+  }
+  setTimeout(()=>{initMapA();initMapB();},200);
+
+  // Wariant A — symulacja analizy AI
+  document.getElementById('btn-analyze-a').addEventListener('click',function(){
+    var loader=document.getElementById('ai-load-a'); var fields=document.getElementById('fields-a'); var hl=document.getElementById('hl-text-a');
+    fields.style.opacity='.25';fields.style.pointerEvents='none';
+    loader.style.display='flex'; hl.style.display='none';
+    setTimeout(()=>{
+      loader.style.display='none';
+      fields.style.opacity='1'; fields.style.pointerEvents='auto';
+      hl.style.display='block';
+      hl.scrollIntoView({behavior:'smooth',block:'nearest'});
+    },1800);
+  });
+  document.getElementById('btn-clear-a').addEventListener('click',()=>{document.getElementById('paste-a').value='';});
+  document.getElementById('btn-demo-a').addEventListener('click',()=>{
+    document.getElementById('paste-a').value='Magazynier — Warszawa, Targówek\n\nPoszukujemy osoby na stanowisko Magazynier do hurtowni elektrycznej K&K Electric. Praca jednozmianowa pon-pt 8:00-16:00. Stawka 26 zł netto / godz. + premia za normy.\n\nWymagamy: prawo jazdy kat. B (atut), zaświadczenie o niekaralności, podstawowa obsługa skanera.\n\nOferujemy: prywatną opiekę medyczną, dofinansowanie obiadów, świąteczne bony, możliwość pracy w nadgodzinach.\n\nTel. 22 510 80 80 · kariera@kkelectric.pl';
+  });
+
+  // Wariant B — kroki
+  function bGo(n){
+    [1,2,3].forEach(i=>{
+      document.getElementById('bp'+i).classList.toggle('on',i===n);
+      var s=document.getElementById('b-s'+i); s.classList.remove('on','done');
+      if(i<n) s.classList.add('done'); if(i===n) s.classList.add('on');
+    });
+    window.scrollTo({top:0,behavior:'smooth'});
+    setTimeout(()=>{if(_mapB) _mapB.invalidateSize();},300);
+  }
+</script>
+</body>
+</html>

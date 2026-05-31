@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8"/>
+<title>OG Image Generator — MapJob</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{background:#0b1220;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;color:#fff;min-height:100vh}
+  .wrap{padding:24px;display:flex;flex-direction:column;align-items:center;gap:16px}
+  .toolbar{display:flex;gap:12px;align-items:center;background:#0f172a;border:1px solid #1e293b;border-radius:12px;padding:12px 16px}
+  .toolbar button{
+    background:linear-gradient(135deg,#00B8D9 0%,#1D6FF2 55%,#7C3AED 120%);
+    color:#fff;border:0;padding:10px 20px;border-radius:8px;font-weight:700;font-size:14px;cursor:pointer
+  }
+  .toolbar button:hover{filter:brightness(1.1)}
+  .toolbar .hint{color:#94a3b8;font-size:13px}
+
+  /* === KARTA OG 1200x630 === */
+  #og-card{
+    width:1200px;height:630px;position:relative;overflow:hidden;
+    background:
+      radial-gradient(ellipse 900px 600px at 20% 10%, rgba(110,231,255,.22), transparent 60%),
+      radial-gradient(ellipse 800px 500px at 90% 90%, rgba(255,154,214,.18), transparent 60%),
+      radial-gradient(ellipse 700px 500px at 50% 50%, rgba(200,182,255,.12), transparent 60%),
+      linear-gradient(135deg,#080D18 0%,#0b1220 50%,#1a0b2e 100%);
+    border-radius:24px;
+    box-shadow:0 30px 80px rgba(0,0,0,.5);
+  }
+  /* Siatka kropek */
+  #og-card::before{
+    content:"";position:absolute;inset:0;
+    background-image:radial-gradient(circle at 1px 1px, rgba(255,255,255,.06) 1px, transparent 0);
+    background-size:32px 32px;
+    mask-image:radial-gradient(ellipse 80% 80% at 50% 50%, #000 40%, transparent 100%);
+    -webkit-mask-image:radial-gradient(ellipse 80% 80% at 50% 50%, #000 40%, transparent 100%);
+  }
+  /* Markery na "mapie" */
+  .pin{position:absolute;width:36px;height:36px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);
+    box-shadow:0 6px 20px rgba(0,0,0,.4), 0 0 30px currentColor;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .pin::after{content:"";width:14px;height:14px;background:#fff;border-radius:50%}
+  .pin.p1{top:80px;left:880px;color:#6ee7ff;background:#6ee7ff}
+  .pin.p2{top:180px;left:1020px;color:#c8b6ff;background:#c8b6ff}
+  .pin.p3{top:340px;left:920px;color:#ff9ad6;background:#ff9ad6}
+  .pin.p4{top:460px;left:1060px;color:#22C55E;background:#22C55E}
+  .pin.p5{top:120px;left:60px;color:#1D6FF2;background:#1D6FF2;width:28px;height:28px;opacity:.7}
+  .pin.p6{top:480px;left:160px;color:#7C3AED;background:#7C3AED;width:28px;height:28px;opacity:.7}
+
+  /* Treść */
+  .content{position:relative;z-index:2;height:100%;display:flex;flex-direction:column;justify-content:space-between;padding:64px 72px}
+
+  .brand{display:flex;align-items:center;gap:14px}
+  .brand-mark{
+    width:64px;height:64px;border-radius:18px;
+    background:linear-gradient(135deg,#00B8D9 0%,#1D6FF2 55%,#7C3AED 120%);
+    display:flex;align-items:center;justify-content:center;
+    box-shadow:0 10px 30px rgba(29,111,242,.4), 0 0 40px rgba(124,58,237,.3);
+    position:relative;
+  }
+  .brand-mark svg{width:36px;height:36px;fill:#fff}
+  .brand-name{font-size:38px;font-weight:800;letter-spacing:-1px}
+  .brand-name .accent{
+    background:linear-gradient(90deg,#6ee7ff 0%,#c8b6ff 45%,#ff9ad6 90%);
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+  }
+
+  .headline{
+    font-size:84px;line-height:1.05;font-weight:800;letter-spacing:-2px;max-width:880px;
+    background:linear-gradient(135deg,#fff 0%,#e2e8f0 100%);
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+  }
+  .headline .hl-accent{
+    background:linear-gradient(90deg,#6ee7ff 0%,#c8b6ff 45%,#ff9ad6 90%);
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+  }
+  .sub{font-size:30px;color:#cbd5e1;margin-top:18px;max-width:820px;line-height:1.35;font-weight:500}
+
+  .footer{display:flex;justify-content:space-between;align-items:center;gap:24px}
+  .badges{display:flex;gap:14px;flex-wrap:wrap}
+  .badge{
+    background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.18);
+    border-radius:999px;padding:10px 20px;font-size:18px;color:#e2e8f0;font-weight:600;
+    display:flex;align-items:center;gap:8px
+  }
+  .badge .dot{width:8px;height:8px;border-radius:50%;background:#22C55E;box-shadow:0 0 12px #22C55E}
+  .url{font-size:24px;color:#94a3b8;font-weight:700;letter-spacing:.5px}
+  .url .u-accent{color:#6ee7ff}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="toolbar">
+    <button id="btnPng">Pobierz og-image.png</button>
+    <button id="btnJpg">Pobierz og-image.jpg</button>
+    <span class="hint">Wymiary: 1200×630 px. Po pobraniu wgraj plik do katalogu głównego strony (obok index.html).</span>
+  </div>
+
+  <div id="og-card">
+    <span class="pin p1"></span>
+    <span class="pin p2"></span>
+    <span class="pin p3"></span>
+    <span class="pin p4"></span>
+    <span class="pin p5"></span>
+    <span class="pin p6"></span>
+
+    <div class="content">
+      <div class="brand">
+        <div class="brand-mark">
+          <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 0 1 0-5 2.5 2.5 0 0 1 0 5z"/></svg>
+        </div>
+        <div class="brand-name">map<span class="accent">job</span>.pl</div>
+      </div>
+
+      <div>
+        <div class="headline">Znajdź fachowca<br/><span class="hl-accent">na mapie Polski.</span></div>
+        <div class="sub">Tysiące specjalistów i zleceń w Twojej okolicy. Dodaj ogłoszenie w 30 sekund — bezpłatnie.</div>
+      </div>
+
+      <div class="footer">
+        <div class="badges">
+          <div class="badge"><span class="dot"></span>Mapa pracy i zleceń</div>
+          <div class="badge">Bez prowizji</div>
+          <div class="badge">PL & DE</div>
+        </div>
+        <div class="url">map<span class="u-accent">job</span>.pl</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+<script>
+  function download(type){
+    const card = document.getElementById('og-card');
+    html2canvas(card, {width:1200, height:630, scale:1, backgroundColor:null, useCORS:true}).then(canvas=>{
+      const a = document.createElement('a');
+      a.download = type==='jpg' ? 'og-image.jpg' : 'og-image.png';
+      a.href = canvas.toDataURL(type==='jpg' ? 'image/jpeg' : 'image/png', 0.95);
+      a.click();
+    });
+  }
+  document.getElementById('btnPng').onclick = ()=>download('png');
+  document.getElementById('btnJpg').onclick = ()=>download('jpg');
+</script>
+</body>
+</html>

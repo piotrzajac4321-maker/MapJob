@@ -1,0 +1,519 @@
+/* =====================================================================
+   MapJob — Design Refresh v1
+   Override layer. Loaded AFTER original styles — CSS cascade wins.
+   Philosophy: Linear/Stripe-inspired. Calm, confident, minimal.
+   ===================================================================== */
+
+/* ---------- 1. Refined design tokens ---------- */
+:root {
+  /* Neutral dark palette (replaces blue-tinted midnight) */
+  --bg:        #0B0D10;
+  --bg2:       #101318;
+  --surf:      #15181F;
+  --surf2:     #1C2029;
+  --surf3:     #252A35;
+
+  /* Borders — flat, no transparency stacking */
+  --border:    rgba(255,255,255,.06);
+  --border2:   rgba(255,255,255,.04);
+  --border3:   rgba(255,255,255,.09);
+
+  /* Text — WCAG AA compliant contrast ratios */
+  --text:      #F5F7FA;
+  --text2:     #A1A9B8;
+  --text3:     #6B7280;
+
+  /* Single refined accent — indigo-blue */
+  --blue:      #3B82F6;
+  --blue2:     #60A5FA;
+  --blue-dim:  rgba(59,130,246,.10);
+  --blue-mid:  rgba(59,130,246,.22);
+
+  /* Semantic colors — reserved for meaning, not decoration */
+  --green:     #10B981;
+  --green-dim: rgba(16,185,129,.10);
+  --gold:      #D97706;
+  --gold-dim:  rgba(217,119,6,.10);
+  --gold-dark: #92400E;
+  --red:       #DC2626;
+  --red-dim:   rgba(220,38,38,.10);
+  --purple:    #7C3AED;
+  --purple-dim:rgba(124,58,237,.10);
+
+  /* Typography — Inter is more neutral/pro than Plus Jakarta */
+  --ff: 'Inter', 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+
+  /* Tighter radius scale — 8 / 12 / 16 */
+  --r: 12px;
+
+  /* Removed decorative glows entirely */
+  --glow-blue: none;
+  --glow-gold: none;
+  --glow-green: none;
+
+  /* Tighter hover motion */
+  --card-hover: translateY(-1px);
+}
+
+/* Light theme — MapJob uses body.light-mode class (not data-theme attr) */
+[data-theme="light"],
+body.light-mode {
+  --bg:    #FAFBFC;
+  --bg2:   #FFFFFF;
+  --bg3:   #F3F5F8;
+  --surf:  #FFFFFF;
+  --surf2: #F7F8FA;
+  --surf3: #EDF0F4;
+  --border:  rgba(15,23,42,.08);
+  --border2: rgba(15,23,42,.05);
+  --border3: rgba(15,23,42,.10);
+  --text:  #0F172A;
+  --text2: #475569;
+  --text3: #64748B;
+  --blue:  #2563EB;
+  --blue2: #3B82F6;
+  --blue-dim:  rgba(37,99,235,.08);
+  --blue-mid:  rgba(37,99,235,.20);
+  --green:     #059669;
+  --red:       #DC2626;
+  --gold:      #D97706;
+  --gold-dark: #B45309;
+}
+
+/* Force consistent surfaces in light mode — original had oddly saturated bg */
+body.light-mode {
+  background: var(--bg) !important;
+  color: var(--text) !important;
+}
+body.light-mode #topbar,
+body.light-mode #nav,
+body.light-mode #beta-banner {
+  background: var(--bg2) !important;
+  border-color: var(--border) !important;
+}
+body.light-mode .bitem { color: var(--text2) !important; }
+body.light-mode .bsep  { color: var(--border3) !important; }
+body.light-mode .ni { color: var(--text3) !important; }
+body.light-mode .ni.on { color: var(--blue) !important; }
+
+/* ---------- 2. Body — remove radial tint, use flat bg ---------- */
+body {
+  background: var(--bg) !important;
+  font-family: var(--ff) !important;
+}
+
+/* ---------- 3. KILL DARK PATTERNS ---------- */
+
+/* Founder urgency: was rainbow-shimmering text — unacceptable for pro */
+#founder-urgency {
+  animation: none !important;
+  color: var(--text2) !important;
+  text-shadow: none !important;
+}
+#founder-urgency span { font-weight: 600; }
+
+/* Urgent job card: was red/orange pulsing top bar — now subtle left border */
+.tcard.urgent::after,
+.job-card.urgent::after {
+  content: none !important;
+}
+.tcard.urgent,
+.job-card.urgent {
+  border-color: var(--border3) !important;
+  border-left: 3px solid var(--red) !important;
+  box-shadow: none !important;
+}
+
+/* Urgent pulse animation — disable */
+@keyframes urgentPulse { 0%,100% { } 50% { } }
+
+/* CTA red-glow pulse — disable */
+@keyframes ctaPulse { 0%,100% { } 50% { } }
+
+/* Login pulse — disable */
+@keyframes loginPulse { 0%,100% { } 50% { } }
+
+/* Splash logo pulsing aura — disable, keep only static */
+.splash-logo {
+  animation: none !important;
+  box-shadow: 0 0 0 1px rgba(255,255,255,.08) !important;
+}
+@keyframes spulse { 0%,100% { } 50% { } }
+
+/* Nav badge dot pulse — keep subtle, kill outer ring */
+@keyframes dpulse { 0%,100% { } 50% { } }
+.ni-dot { box-shadow: none !important; }
+
+/* "WKRÓTCE W GOOGLE PLAY" FOMO badge — less shouty (restyled inline in welcome modal, out of our reach here; noted) */
+
+/* ---------- 4. Primary button — clean, no rainbow gradient ---------- */
+.btn-p {
+  background: var(--blue) !important;
+  box-shadow: 0 1px 2px rgba(0,0,0,.1), 0 0 0 1px rgba(255,255,255,.04) inset !important;
+  letter-spacing: -0.01em !important;
+  font-weight: 600 !important;
+  font-size: 15px !important;
+  padding: 12px 16px !important;
+  border-radius: 10px !important;
+  transition: background .15s ease, transform .1s ease !important;
+}
+.btn-p::before,
+.btn-p::after { content: none !important; }
+.btn-p:hover {
+  background: #2563EB !important;
+  transform: none !important;
+  box-shadow: 0 2px 8px rgba(59,130,246,.25) !important;
+}
+.btn-p:active {
+  transform: scale(.98) !important;
+  background: #1D4ED8 !important;
+}
+
+/* Secondary button */
+.btn-s {
+  background: var(--surf) !important;
+  border: 1px solid var(--border3) !important;
+  color: var(--text) !important;
+  font-weight: 500 !important;
+  border-radius: 10px !important;
+  padding: 11px 14px !important;
+}
+.btn-s:hover { background: var(--surf2) !important; border-color: var(--border) !important; }
+
+/* Gold button — calmer, no neon */
+.btn-gold {
+  background: var(--gold) !important;
+  color: #fff !important;
+  font-weight: 600 !important;
+  border-radius: 10px !important;
+  box-shadow: 0 1px 2px rgba(0,0,0,.1) !important;
+}
+
+/* ---------- 5. Cards & surfaces — flat with subtle border ---------- */
+.job-card,
+.tool-card,
+.teaser,
+.pcard,
+.rcard,
+.skeleton-card {
+  background: var(--surf) !important;
+  border: 1px solid var(--border3) !important;
+  border-radius: 12px !important;
+  box-shadow: none !important;
+}
+.job-card:hover,
+.tool-card:hover,
+.teaser:hover,
+.pcard:hover,
+.rcard:hover {
+  transform: none !important;
+  border-color: var(--border) !important;
+  box-shadow: 0 2px 12px rgba(0,0,0,.25) !important;
+}
+
+/* Review card — no shimmer top line */
+.rcard::before { content: none !important; }
+.rcard {
+  background: var(--surf) !important;
+  padding: 14px !important;
+  border-radius: 12px !important;
+}
+.rstars { color: var(--gold) !important; }
+.rtext { font-style: normal !important; }
+
+/* Pro/Port hero cards — reduce to single subtle border, no decorative gradient */
+.pro-hero-card,
+.port-hero-card {
+  background: linear-gradient(180deg, var(--surf), var(--surf2)) !important;
+  border: 1px solid var(--border3) !important;
+  box-shadow: none !important;
+  border-radius: 14px !important;
+}
+.pro-hero-card::before,
+.pro-hero-card::after,
+.port-hero-card::before,
+.port-hero-card::after { content: none !important; }
+
+/* ---------- 6. Hero section — calm typography ---------- */
+.hero::before { opacity: .5 !important; }
+.hero::after { display: none !important; }
+.hero-h1 {
+  background: none !important;
+  -webkit-text-fill-color: currentColor !important;
+  color: var(--text) !important;
+  font-weight: 700 !important;
+  letter-spacing: -0.025em !important;
+}
+.hero-h1 .accent {
+  background: none !important;
+  -webkit-text-fill-color: currentColor !important;
+  color: var(--blue2) !important;
+}
+.hero-eyebrow {
+  color: var(--text3) !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.1em !important;
+  text-transform: uppercase !important;
+}
+
+/* Stat numbers — no glowing text shadow */
+.stat-num {
+  text-shadow: none !important;
+  font-weight: 700 !important;
+  animation: none !important;
+}
+.glass-stat-val {
+  background: none !important;
+  -webkit-text-fill-color: currentColor !important;
+  color: var(--text) !important;
+  text-shadow: none !important;
+}
+
+/* ---------- 7. Chips & filters — calmer on-state ---------- */
+.chip, .fchip, .mfc, .glass-chip {
+  border-radius: 8px !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+.chip.on,
+.fchip.on,
+.mfc.on,
+.glass-chip.on {
+  background: var(--blue) !important;
+  border-color: var(--blue) !important;
+  color: #fff !important;
+  box-shadow: none !important;
+  font-weight: 600 !important;
+}
+.chip-gold.on {
+  background: var(--gold) !important;
+  color: #fff !important;
+  border-color: var(--gold) !important;
+  box-shadow: none !important;
+}
+
+/* ---------- 8. Topbar — flat, no heavy gradient ---------- */
+#topbar {
+  background: var(--bg2) !important;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+  border-bottom: 1px solid var(--border) !important;
+}
+
+/* ---------- 9. Bottom nav — flat ---------- */
+#nav {
+  background: var(--bg2) !important;
+  border-top: 1px solid var(--border) !important;
+  box-shadow: none !important;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+}
+.ni.on .ni-ic {
+  background: var(--blue-dim) !important;
+  box-shadow: none !important;
+}
+
+/* ---------- 10. Modal sheets — flat ---------- */
+.msheet {
+  background: var(--bg2) !important;
+  border-top: 1px solid var(--border) !important;
+}
+
+/* ---------- 11. Form inputs — tighter, clearer focus ---------- */
+.fi {
+  background: var(--surf) !important;
+  border: 1px solid var(--border3) !important;
+  border-radius: 10px !important;
+  font-size: 15px !important;
+  transition: border-color .15s ease, box-shadow .15s ease !important;
+}
+.fi:focus {
+  border-color: var(--blue) !important;
+  box-shadow: 0 0 0 3px var(--blue-dim) !important;
+}
+.flbl {
+  color: var(--text3) !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.02em !important;
+  text-transform: none !important;
+  font-size: 12px !important;
+}
+
+/* ---------- 12. Chat bubbles — flat ---------- */
+.bubble-me {
+  background: var(--blue) !important;
+  box-shadow: none !important;
+  border-radius: 14px 14px 4px 14px !important;
+}
+.bubble-them {
+  background: var(--surf2) !important;
+  border: 1px solid var(--border3) !important;
+  border-radius: 4px 14px 14px 14px !important;
+}
+
+/* ---------- 13. Counter badge (numeric stats) ---------- */
+.counter-badge {
+  background: var(--surf) !important;
+  border: 1px solid var(--border3) !important;
+  color: var(--text) !important;
+}
+
+/* ---------- 14. Kill gradient text effects that tint numbers ---------- */
+.tbudget {
+  background: none !important;
+  -webkit-text-fill-color: currentColor !important;
+  color: var(--green) !important;
+}
+
+/* ---------- 15. How-it-works steps — flat ---------- */
+.how-step,
+.glass-step {
+  background: var(--surf) !important;
+  border: 1px solid var(--border3) !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+.glass-step:hover { transform: none !important; border-color: var(--border) !important; }
+.how-num,
+.glass-num {
+  background: var(--blue-dim) !important;
+  border: 1px solid var(--blue-mid) !important;
+  color: var(--blue2) !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  font-weight: 700 !important;
+}
+
+/* ---------- 16. Stat strip — flat ---------- */
+.stat-strip {
+  background: var(--surf) !important;
+  border: 1px solid var(--border3) !important;
+  box-shadow: none !important;
+}
+
+/* ---------- 17. Toggle switch — refined ---------- */
+.ttrack { background: var(--surf3) !important; }
+.tsw input:checked + .ttrack { background: var(--blue) !important; }
+
+/* ---------- 18. Scrollbar — subtle ---------- */
+.scr::-webkit-scrollbar-thumb {
+  background: var(--border3) !important;
+}
+.scr::-webkit-scrollbar-thumb:hover {
+  background: var(--text3) !important;
+}
+
+/* ---------- 19. Reduced motion respect ---------- */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ---------- 20. Focus visible — keyboard a11y ---------- */
+:focus-visible {
+  outline: 2px solid var(--blue) !important;
+  outline-offset: 2px !important;
+  border-radius: 4px;
+}
+button:focus:not(:focus-visible),
+a:focus:not(:focus-visible) { outline: none; }
+
+/* ---------- 21. Typography polish ---------- */
+body, button, input, select, textarea {
+  font-family: var(--ff) !important;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+h1, h2, h3, h4, .mhtitle {
+  letter-spacing: -0.02em;
+  font-weight: 700 !important;
+}
+
+/* ---------- 22. Tender card left-border shimmer — disable ---------- */
+.tender-card:hover { transform: none !important; border-left-width: 1px !important; }
+
+/* ---------- 23. Ref glow — remove purple halo ---------- */
+.ref-glow {
+  box-shadow: none !important;
+}
+.ref-glow:hover {
+  box-shadow: 0 2px 8px rgba(0,0,0,.2) !important;
+  transform: none !important;
+}
+
+/* ---------- 24. Premium hero gradient decorations — remove ---------- */
+.pro-feat {
+  border-bottom: 1px solid var(--border3) !important;
+}
+.pro-feat-ic {
+  background: var(--blue-dim) !important;
+  border: 1px solid var(--blue-mid) !important;
+}
+
+/* ---------- 25. Beta banner — kill FOMO, keep informative ---------- */
+#beta-banner {
+  background: var(--bg2) !important;
+  border-bottom: 1px solid var(--border) !important;
+}
+#beta-banner::after { display: none !important; }
+#beta-track { animation-duration: 80s !important; } /* slower, less urgent */
+.bitem {
+  font-size: 11px !important;
+  font-weight: 500 !important;
+  color: var(--text2) !important;
+  opacity: 0.75;
+}
+.bitem a { color: var(--blue2) !important; text-decoration: none; }
+.bsep { color: var(--border3) !important; }
+.beta-tag {
+  background: var(--blue-dim) !important;
+  border: 1px solid var(--blue-mid) !important;
+  color: var(--blue2) !important;
+}
+
+/* Hide emoji noise in beta banner text (can't edit scroll content itself) */
+/* — emoji are inside the text nodes, not individually selectable; left as-is */
+
+/* ---------- 26. Splash screen — clean, no glow ---------- */
+.splash-logo {
+  box-shadow: none !important;
+  background: var(--surf) !important;
+}
+.splash-name {
+  font-weight: 700 !important;
+  letter-spacing: -0.02em;
+}
+.splash-fill {
+  background: var(--blue) !important;
+}
+
+/* ---------- 27. Top-level gradient text cleanup ---------- */
+.grad-text {
+  background: none !important;
+  -webkit-text-fill-color: currentColor !important;
+  color: var(--blue2) !important;
+}
+
+/* ---------- 28. Fix body — default html has no class = dark ---------- */
+html, body {
+  background: var(--bg) !important;
+}
+
+/* Ensure text readable in light mode hero area (which uses CSS vars) */
+body.light-mode .hero-h1 { color: var(--text) !important; }
+body.light-mode .hero-eyebrow { color: var(--blue) !important; }
+body.light-mode .hero-sub { color: var(--text2) !important; }
+body.light-mode .stat-num { color: var(--text) !important; }
+
+/* ---------- 29. Welcome modal — override inline styles where possible ---------- */
+#mj-welcome-modal > div {
+  background: var(--bg2) !important;
+  border: 1px solid var(--border) !important;
+  box-shadow: 0 20px 40px rgba(0,0,0,.3) !important;
+}
+

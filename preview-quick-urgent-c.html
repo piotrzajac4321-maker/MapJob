@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<title>Podgląd — Wariant C, bardziej widoczny</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#0B0D10;color:#E5E7EB;padding:40px 20px;line-height:1.5}
+h1{font-size:22px;font-weight:800;margin:0 0 8px;letter-spacing:-.3px;color:#fff}
+.sub{color:#A1A1AA;font-size:14px;margin-bottom:30px;max-width:760px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(360px,1fr));gap:32px;max-width:1500px;margin:0 auto}
+.col{display:flex;flex-direction:column}
+.label{font-size:11px;font-weight:800;color:#71717A;text-transform:uppercase;letter-spacing:.6px;margin-bottom:4px}
+.title{font-size:16px;font-weight:700;color:#F4F4F5;margin-bottom:4px}
+.desc{font-size:12.5px;color:#A1A1AA;margin-bottom:14px;min-height:34px}
+
+.phone{width:100%;max-width:380px;margin:0 auto;background:#0B0D10;border:1px solid rgba(255,255,255,.08);border-radius:24px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.5)}
+.cp-header{display:flex;align-items:center;gap:10px;padding:12px 14px;background:rgba(11,13,16,.92);border-bottom:1px solid rgba(255,255,255,.06)}
+.cp-back{width:36px;height:36px;border-radius:10px;background:#15171C;border:1px solid rgba(255,255,255,.08);color:#A1A1AA;display:flex;align-items:center;justify-content:center}
+.cp-title{flex:1;font-size:14px;font-weight:700;color:#D4D4D8}
+
+.owner-banner{margin:12px 14px 0;background:#13161B;border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:12px;font-size:11.5px;color:#A1A1AA;display:flex;align-items:center;gap:9px}
+.owner-banner b{color:#F4F4F5}
+.section{font-size:11px;font-weight:800;letter-spacing:.5px;text-transform:uppercase;color:#71717A;margin:18px 18px 10px}
+
+/* base card */
+.offer{position:relative;background:#15171C;border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:14px;margin:0 18px 12px}
+.offer-t{font-size:14.5px;font-weight:800;color:#F4F4F5;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.offer-sub{font-size:11.5px;color:#71717A;margin-top:3px}
+.offer-foot{display:flex;align-items:center;gap:10px;margin-top:11px;padding-top:11px;border-top:1px solid rgba(255,255,255,.06)}
+.offer-sal{flex:1;font-size:14px;font-weight:900;color:#22C55E}
+.offer-see{font-size:12px;font-weight:800;color:#2D7FF9}
+
+@keyframes pulse{50%{opacity:.55}}
+@keyframes glow{0%,100%{box-shadow:0 0 0 0 rgba(239,68,68,.6),0 4px 14px rgba(239,68,68,.35)}50%{box-shadow:0 0 0 6px rgba(239,68,68,0),0 4px 14px rgba(239,68,68,.45)}}
+@keyframes shine{0%{transform:translateX(-100%)}60%,100%{transform:translateX(200%)}}
+
+/* ===== C1 — Pigułka „🔴 PILNE 19 zł" w rogu ===== */
+.c1{position:absolute;top:10px;right:10px;display:inline-flex;align-items:center;gap:5px;padding:5px 10px 5px 8px;border-radius:20px;background:linear-gradient(135deg,#EF4444,#DC2626);border:1px solid rgba(255,255,255,.18);font-size:10.5px;font-weight:900;color:#fff;cursor:pointer;letter-spacing:.3px;box-shadow:0 4px 12px rgba(239,68,68,.4);animation:glow 2.4s ease-in-out infinite}
+.c1 .d{width:6px;height:6px;border-radius:50%;background:#fff;box-shadow:0 0 6px #fff;animation:pulse 1.4s infinite}
+
+/* ===== C2 — Kwadrat z napisem PILNE pionowo + cena ===== */
+.c2{position:absolute;top:10px;right:10px;display:flex;flex-direction:column;align-items:center;gap:1px;padding:7px 9px;border-radius:11px;background:linear-gradient(180deg,#EF4444,#B91C1C);border:1px solid rgba(255,255,255,.2);cursor:pointer;box-shadow:0 5px 14px rgba(239,68,68,.4);min-width:54px}
+.c2-t{font-size:9px;font-weight:900;color:#fff;letter-spacing:1.2px;line-height:1}
+.c2-p{font-size:13px;font-weight:900;color:#fff;line-height:1;margin-top:3px}
+.c2-u{font-size:8px;font-weight:700;color:rgba(255,255,255,.85);letter-spacing:.5px;margin-top:1px}
+
+/* ===== C3 — Banderola „rocket" 3D z ikonką ===== */
+.c3{position:absolute;top:-1px;right:14px;display:flex;flex-direction:column;align-items:center;cursor:pointer}
+.c3-body{position:relative;padding:7px 10px 9px;background:linear-gradient(135deg,#EF4444 0%,#DC2626 60%,#991B1B 100%);border-radius:0 0 11px 11px;border:1px solid rgba(255,255,255,.15);border-top:none;box-shadow:0 6px 18px rgba(239,68,68,.45);overflow:hidden}
+.c3-body::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.35),transparent);transform:translateX(-100%);animation:shine 3s ease-in-out infinite}
+.c3-i{font-size:14px;line-height:1}
+.c3-t{font-size:9px;font-weight:900;color:#fff;letter-spacing:.8px;margin-top:3px;line-height:1}
+.c3-p{font-size:11px;font-weight:900;color:#fff;line-height:1;margin-top:3px}
+
+/* ===== C4 — Świecąca pinezka 🔴 z dymkiem przy ===== */
+.c4{position:absolute;top:9px;right:10px;display:flex;align-items:center;gap:7px;cursor:pointer}
+.c4-bubble{padding:5px 10px;border-radius:8px;background:rgba(239,68,68,.14);border:1px solid rgba(239,68,68,.4);font-size:10.5px;font-weight:800;color:#FCA5A5;white-space:nowrap;position:relative}
+.c4-bubble::after{content:'';position:absolute;top:50%;right:-5px;width:8px;height:8px;background:rgba(239,68,68,.14);border-right:1px solid rgba(239,68,68,.4);border-top:1px solid rgba(239,68,68,.4);transform:translateY(-50%) rotate(45deg)}
+.c4-bubble b{color:#F87171;font-weight:900}
+.c4-orb{width:34px;height:34px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#FCA5A5 0%,#EF4444 50%,#991B1B 100%);border:2px solid rgba(255,255,255,.25);box-shadow:0 4px 14px rgba(239,68,68,.55),inset 0 -3px 6px rgba(0,0,0,.25);display:flex;align-items:center;justify-content:center;animation:glow 2s ease-in-out infinite;flex-shrink:0}
+.c4-orb-i{font-size:16px;line-height:1;filter:drop-shadow(0 1px 2px rgba(0,0,0,.4))}
+
+.note{max-width:1100px;margin:48px auto 0;padding:20px 22px;background:#13161B;border:1px solid rgba(255,255,255,.06);border-radius:14px;font-size:13.5px;color:#D4D4D8;line-height:1.65}
+.note b{color:#F4F4F5}
+.note .rec{color:#F87171}
+</style>
+</head>
+<body>
+
+<h1>Wariant C — bardziej widoczny</h1>
+<p class="sub">Wszystkie warianty zachowują kompaktową pozycję w rogu karty (nie zajmują miejsca w stopce), ale są <b>znacznie bardziej krzyczące</b> niż pierwotne C: kolor, animacja, kontrast, czytelna cena.</p>
+
+<div class="grid">
+
+<!-- ============ C1 — Pill ============ -->
+<div class="col">
+  <div class="label">C1 — pigułka</div>
+  <div class="title">Czerwona pigułka „🔴 PILNE 19 zł"</div>
+  <div class="desc">Pełny tekst w rogu. Pulsująca poświata. Kropka jak migająca dioda.</div>
+  <div class="phone">
+    <div class="cp-header"><div class="cp-back"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 5l-7 7 7 7"/></svg></div><div class="cp-title">Profil pracodawcy</div></div>
+    <div class="owner-banner">👁️ <div><b>To Twój profil</b> — tak widzą go kandydaci</div></div>
+    <div class="section">💼 Aktywne oferty (3)</div>
+    <div class="offer">
+      <div class="c1"><span class="d"></span>PILNE 19 zł</div>
+      <div class="offer-t" style="padding-right:100px">Stolarz — montaż mebli kuchennych</div>
+      <div class="offer-sub">Warszawa · Budownictwo</div>
+      <div class="offer-foot"><span class="offer-sal">7 500 – 9 000 zł</span><span class="offer-see">Zobacz →</span></div>
+    </div>
+    <div class="offer">
+      <div class="offer-t">Spawacz MIG/MAG <span style="font-size:9px;font-weight:900;padding:2px 7px;border-radius:10px;background:rgba(239,68,68,.18);color:#F87171;border:1px solid rgba(239,68,68,.35)">PILNE</span></div>
+      <div class="offer-sub">Łódź · Produkcja</div>
+      <div class="offer-foot"><span class="offer-sal">35 zł/h</span><span class="offer-see">Zobacz →</span></div>
+    </div>
+    <div class="offer">
+      <div class="c1"><span class="d"></span>PILNE 19 zł</div>
+      <div class="offer-t" style="padding-right:100px">Pomocnik magazynowy</div>
+      <div class="offer-sub">Pruszków · Logistyka</div>
+      <div class="offer-foot"><span class="offer-sal">28 zł/h</span><span class="offer-see">Zobacz →</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ C2 — Kwadrat ============ -->
+<div class="col">
+  <div class="label">C2 — kafelek</div>
+  <div class="title">Kafelek z ceną — jak metka</div>
+  <div class="desc">Dwa rzędy: napis PILNE + duża cena 19 zł + „BLIK/karta". Wygląda jak metka cenowa.</div>
+  <div class="phone">
+    <div class="cp-header"><div class="cp-back"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 5l-7 7 7 7"/></svg></div><div class="cp-title">Profil pracodawcy</div></div>
+    <div class="owner-banner">👁️ <div><b>To Twój profil</b> — tak widzą go kandydaci</div></div>
+    <div class="section">💼 Aktywne oferty (3)</div>
+    <div class="offer">
+      <div class="c2"><div class="c2-t">PILNE</div><div class="c2-p">19 zł</div><div class="c2-u">BLIK</div></div>
+      <div class="offer-t" style="padding-right:74px">Stolarz — montaż mebli kuchennych</div>
+      <div class="offer-sub">Warszawa · Budownictwo</div>
+      <div class="offer-foot"><span class="offer-sal">7 500 – 9 000 zł</span><span class="offer-see">Zobacz →</span></div>
+    </div>
+    <div class="offer">
+      <div class="offer-t">Spawacz MIG/MAG <span style="font-size:9px;font-weight:900;padding:2px 7px;border-radius:10px;background:rgba(239,68,68,.18);color:#F87171;border:1px solid rgba(239,68,68,.35)">PILNE</span></div>
+      <div class="offer-sub">Łódź · Produkcja</div>
+      <div class="offer-foot"><span class="offer-sal">35 zł/h</span><span class="offer-see">Zobacz →</span></div>
+    </div>
+    <div class="offer">
+      <div class="c2"><div class="c2-t">PILNE</div><div class="c2-p">19 zł</div><div class="c2-u">BLIK</div></div>
+      <div class="offer-t" style="padding-right:74px">Pomocnik magazynowy</div>
+      <div class="offer-sub">Pruszków · Logistyka</div>
+      <div class="offer-foot"><span class="offer-sal">28 zł/h</span><span class="offer-see">Zobacz →</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ C3 — Banderola ============ -->
+<div class="col">
+  <div class="label">C3 — banderola <span class="rec">· rekomendowana</span></div>
+  <div class="title">Wisząca banderola „PILNE 19 zł"</div>
+  <div class="desc">Wystaje z górnej krawędzi karty, animowany połysk. Wygląda jak naklejka „promocja".</div>
+  <div class="phone">
+    <div class="cp-header"><div class="cp-back"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 5l-7 7 7 7"/></svg></div><div class="cp-title">Profil pracodawcy</div></div>
+    <div class="owner-banner">👁️ <div><b>To Twój profil</b> — tak widzą go kandydaci</div></div>
+    <div class="section">💼 Aktywne oferty (3)</div>
+    <div class="offer">
+      <div class="c3"><div class="c3-body"><div class="c3-i">🔴</div><div class="c3-t">PILNE</div><div class="c3-p">19 zł</div></div></div>
+      <div class="offer-t" style="padding-right:62px">Stolarz — montaż mebli kuchennych</div>
+      <div class="offer-sub">Warszawa · Budownictwo</div>
+      <div class="offer-foot"><span class="offer-sal">7 500 – 9 000 zł</span><span class="offer-see">Zobacz →</span></div>
+    </div>
+    <div class="offer">
+      <div class="offer-t">Spawacz MIG/MAG <span style="font-size:9px;font-weight:900;padding:2px 7px;border-radius:10px;background:rgba(239,68,68,.18);color:#F87171;border:1px solid rgba(239,68,68,.35)">PILNE</span></div>
+      <div class="offer-sub">Łódź · Produkcja</div>
+      <div class="offer-foot"><span class="offer-sal">35 zł/h</span><span class="offer-see">Zobacz →</span></div>
+    </div>
+    <div class="offer">
+      <div class="c3"><div class="c3-body"><div class="c3-i">🔴</div><div class="c3-t">PILNE</div><div class="c3-p">19 zł</div></div></div>
+      <div class="offer-t" style="padding-right:62px">Pomocnik magazynowy</div>
+      <div class="offer-sub">Pruszków · Logistyka</div>
+      <div class="offer-foot"><span class="offer-sal">28 zł/h</span><span class="offer-see">Zobacz →</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ C4 — Orb + dymek ============ -->
+<div class="col">
+  <div class="label">C4 — kula + dymek</div>
+  <div class="title">3D kula 🔴 z dymkiem obok</div>
+  <div class="desc">Świecąca kula z animowaną aurą, obok dymek „+ PILNE 19 zł". Najbardziej krzyczy.</div>
+  <div class="phone">
+    <div class="cp-header"><div class="cp-back"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 5l-7 7 7 7"/></svg></div><div class="cp-title">Profil pracodawcy</div></div>
+    <div class="owner-banner">👁️ <div><b>To Twój profil</b> — tak widzą go kandydaci</div></div>
+    <div class="section">💼 Aktywne oferty (3)</div>
+    <div class="offer">
+      <div class="c4"><div class="c4-bubble">+ <b>PILNE</b> 19 zł</div><div class="c4-orb"><span class="c4-orb-i">🔴</span></div></div>
+      <div class="offer-t" style="padding-right:140px">Stolarz — montaż mebli kuchennych</div>
+      <div class="offer-sub">Warszawa · Budownictwo</div>
+      <div class="offer-foot"><span class="offer-sal">7 500 – 9 000 zł</span><span class="offer-see">Zobacz →</span></div>
+    </div>
+    <div class="offer">
+      <div class="offer-t">Spawacz MIG/MAG <span style="font-size:9px;font-weight:900;padding:2px 7px;border-radius:10px;background:rgba(239,68,68,.18);color:#F87171;border:1px solid rgba(239,68,68,.35)">PILNE</span></div>
+      <div class="offer-sub">Łódź · Produkcja</div>
+      <div class="offer-foot"><span class="offer-sal">35 zł/h</span><span class="offer-see">Zobacz →</span></div>
+    </div>
+    <div class="offer">
+      <div class="c4"><div class="c4-bubble">+ <b>PILNE</b> 19 zł</div><div class="c4-orb"><span class="c4-orb-i">🔴</span></div></div>
+      <div class="offer-t" style="padding-right:140px">Pomocnik magazynowy</div>
+      <div class="offer-sub">Pruszków · Logistyka</div>
+      <div class="offer-foot"><span class="offer-sal">28 zł/h</span><span class="offer-see">Zobacz →</span></div>
+    </div>
+  </div>
+</div>
+
+</div>
+
+<div class="note">
+  <b>Porównanie:</b><br>
+  • <b>C1 — pigułka</b>: poziomy tekst, najczytelniejszy, najmniej miejsca pionowo. Wpisuje się w typowy język UI (pill badge).<br>
+  • <b>C2 — kafelek</b>: wygląda jak metka cenowa w sklepie — najbardziej „commerce", bezpośrednio krzyczy 19 zł.<br>
+  • <b class="rec">C3 — banderola</b>: wystaje z góry karty, animowany połysk → najbardziej zwraca uwagę bez rozsadzania layoutu. <b>Najlepszy balans widoczność/elegancja.</b><br>
+  • <b>C4 — kula+dymek</b>: najbardziej dramatyczny, ale „głośny" — jeśli masz 10 ogłoszeń, może męczyć wzrok.<br><br>
+  Daj znać który, albo powiedz w którą stronę dalej iterować (np. „C3 ale bez połysku" / „C2 z animacją").
+</div>
+
+</body>
+</html>

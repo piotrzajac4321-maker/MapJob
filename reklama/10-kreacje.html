@@ -1,0 +1,1152 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<title>MapJob — Kreacje reklamowe (gotowe do screenshotów)</title>
+<style>
+  :root {
+    --bg: #0A1228;
+    --bg2: #0F1B3A;
+    --surf: rgba(255,255,255,.06);
+    --border: rgba(255,255,255,.1);
+    --blue: #1D6FF2;
+    --blue2: #00D4FF;
+    --purple: #7C3AED;
+    --pink: #ff9ad6;
+    --green: #16C45E;
+    --gold: #FFD700;
+    --red: #F87171;
+    --text: #fff;
+    --text2: rgba(255,255,255,.75);
+    --text3: rgba(255,255,255,.5);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', 'Inter', system-ui, sans-serif; }
+  body {
+    background: #1a1a24;
+    color: #fff;
+    padding: 40px 20px;
+    min-height: 100vh;
+  }
+  .page-header {
+    max-width: 1200px;
+    margin: 0 auto 40px;
+    text-align: center;
+  }
+  .page-header h1 {
+    font-size: 32px;
+    font-weight: 900;
+    margin-bottom: 12px;
+    background: linear-gradient(90deg, #6ee7ff, #c8b6ff, #ff9ad6);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .page-header p {
+    color: #aaa;
+    font-size: 14px;
+    line-height: 1.6;
+    max-width: 700px;
+    margin: 0 auto;
+  }
+  .instructions {
+    max-width: 1200px;
+    margin: 0 auto 50px;
+    background: rgba(29,111,242,.1);
+    border: 1px solid rgba(29,111,242,.3);
+    border-radius: 16px;
+    padding: 20px 24px;
+    font-size: 13px;
+    line-height: 1.7;
+    color: #ddd;
+  }
+  .instructions b { color: #6ee7ff; }
+  .mockup-wrap {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 60px;
+  }
+  .mockup-label {
+    font-size: 18px;
+    font-weight: 800;
+    color: #fff;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .mockup-label .badge {
+    padding: 4px 10px;
+    background: rgba(0,212,255,.15);
+    border: 1px solid rgba(0,212,255,.3);
+    border-radius: 8px;
+    font-size: 11px;
+    color: #00D4FF;
+    font-weight: 700;
+  }
+  .mockup-label .meta {
+    font-size: 12px;
+    color: #888;
+    font-weight: 500;
+    margin-left: auto;
+  }
+
+  /* ===== FACEBOOK AD FRAME (1080x1080) ===== */
+  .fb-frame {
+    width: 1080px;
+    height: 1080px;
+    background: var(--bg);
+    border-radius: 0;
+    overflow: hidden;
+    position: relative;
+    box-shadow: 0 20px 60px rgba(0,0,0,.5);
+    transform: scale(0.55);
+    transform-origin: top left;
+    margin-bottom: -486px; /* skaluje wysokość przy zmniejszeniu */
+  }
+  @media (min-width: 1250px) {
+    .fb-frame {
+      transform: scale(0.85);
+      margin-bottom: -162px;
+    }
+  }
+
+  /* ===== MOCKUP #1 — Telefon dzwoni sam ===== */
+  .m1 {
+    background: radial-gradient(circle at 50% 30%, #1a2a5a 0%, #0A1228 60%, #050814 100%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    padding: 80px 60px;
+    position: relative;
+  }
+  .m1-map-bg {
+    position: absolute;
+    inset: 0;
+    opacity: .18;
+    background:
+      radial-gradient(circle at 20% 30%, rgba(110,231,255,.3) 0, transparent 15%),
+      radial-gradient(circle at 80% 60%, rgba(124,58,237,.3) 0, transparent 15%),
+      radial-gradient(circle at 50% 80%, rgba(255,154,214,.3) 0, transparent 15%);
+  }
+  .m1-poland-outline {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 600px;
+    height: 600px;
+    opacity: .12;
+    border: 2px solid #6ee7ff;
+    border-radius: 40% 60% 55% 45% / 50% 40% 60% 50%;
+  }
+  .m1-pin {
+    position: absolute;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: #ff5252;
+    box-shadow: 0 0 0 4px rgba(255,82,82,.3), 0 0 30px rgba(255,82,82,.6);
+    animation: m1Pulse 2s infinite;
+  }
+  .m1-pin.p1 { top: 30%; left: 35%; animation-delay: 0s; }
+  .m1-pin.p2 { top: 45%; left: 60%; animation-delay: .4s; }
+  .m1-pin.p3 { top: 60%; left: 40%; animation-delay: .8s; background: #00D4FF; box-shadow: 0 0 0 4px rgba(0,212,255,.3), 0 0 30px rgba(0,212,255,.6); }
+  .m1-pin.p4 { top: 35%; left: 70%; animation-delay: 1.2s; background: #16C45E; }
+  .m1-pin.p5 { top: 70%; left: 55%; animation-delay: 1.6s; background: #FFD700; }
+  @keyframes m1Pulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.4)} }
+
+  .m1-logo {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    z-index: 10;
+  }
+  .m1-logo-icon {
+    width: 56px;
+    height: 56px;
+    border-radius: 14px;
+    background: linear-gradient(135deg, #1D6FF2, #7C3AED);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 30px;
+    box-shadow: 0 8px 24px rgba(29,111,242,.5);
+  }
+  .m1-logo-text {
+    font-size: 32px;
+    font-weight: 900;
+    letter-spacing: -0.5px;
+  }
+  .m1-headline {
+    font-size: 84px;
+    font-weight: 900;
+    text-align: center;
+    line-height: 1.0;
+    letter-spacing: -2px;
+    z-index: 10;
+    filter: drop-shadow(0 8px 40px rgba(0,0,0,.8));
+  }
+  .m1-headline .accent {
+    background: linear-gradient(90deg, #6ee7ff 0%, #c8b6ff 50%, #ff9ad6 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .m1-sub {
+    font-size: 30px;
+    font-weight: 600;
+    text-align: center;
+    color: var(--text2);
+    z-index: 10;
+    max-width: 720px;
+  }
+  .m1-cta {
+    padding: 24px 48px;
+    border-radius: 18px;
+    background: linear-gradient(135deg, #1D6FF2, #7C3AED);
+    font-size: 32px;
+    font-weight: 900;
+    color: #fff;
+    box-shadow: 0 12px 40px rgba(29,111,242,.5);
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  /* ===== MOCKUP #2 — AI Kreator CV ===== */
+  .m2 {
+    padding: 80px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    background: linear-gradient(180deg, #0A1228 0%, #1a0a2a 100%);
+  }
+  .m2-top { display: flex; align-items: center; gap: 14px; }
+  .m2-logo-ico { width: 56px; height: 56px; border-radius: 14px; background: linear-gradient(135deg, #1D6FF2, #7C3AED); display: flex; align-items: center; justify-content: center; font-size: 30px; }
+  .m2-logo-txt { font-size: 28px; font-weight: 900; }
+  .m2-logo-sub { font-size: 14px; color: #6ee7ff; font-weight: 600; margin-top: 2px; }
+  .m2-headline {
+    font-size: 96px;
+    font-weight: 900;
+    line-height: 1;
+    letter-spacing: -3px;
+    color: #fff;
+  }
+  .m2-amount {
+    background: linear-gradient(90deg, #FFD700, #FFA500);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    filter: drop-shadow(0 0 30px rgba(255,215,0,.5));
+  }
+  .m2-cards {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .m2-card {
+    padding: 24px 28px;
+    border-radius: 18px;
+    background: rgba(255,255,255,.06);
+    border: 1px solid rgba(255,255,255,.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .m2-card-left { display: flex; align-items: center; gap: 16px; }
+  .m2-card-ico {
+    width: 52px; height: 52px; border-radius: 12px;
+    background: rgba(22,196,94,.15);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 26px;
+  }
+  .m2-card-title { font-size: 22px; font-weight: 800; }
+  .m2-card-sub { font-size: 14px; color: var(--text3); margin-top: 2px; }
+  .m2-card-val { font-size: 32px; font-weight: 900; color: #16C45E; }
+  .m2-quote {
+    padding: 28px 32px;
+    border-radius: 20px;
+    background: linear-gradient(135deg, rgba(124,58,237,.15), rgba(29,111,242,.1));
+    border-left: 5px solid #7C3AED;
+    position: relative;
+  }
+  .m2-quote-stars { font-size: 20px; color: #FFD700; letter-spacing: 2px; margin-bottom: 8px; }
+  .m2-quote-text { font-size: 22px; font-style: italic; line-height: 1.4; }
+  .m2-quote-author { font-size: 15px; color: var(--text3); margin-top: 10px; font-weight: 600; }
+
+  /* ===== MOCKUP #3 — FOMO lokalny ===== */
+  .m3 {
+    padding: 0;
+    background: #0A1228;
+    display: flex;
+    flex-direction: column;
+  }
+  .m3-top {
+    flex: 1;
+    position: relative;
+    background:
+      linear-gradient(to bottom, rgba(10,18,40,.5), rgba(10,18,40,.95)),
+      radial-gradient(circle at 50% 50%, #1a2a4a 0%, #0A1228 100%);
+  }
+  .m3-map {
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(255,255,255,.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,.04) 1px, transparent 1px);
+    background-size: 60px 60px;
+  }
+  .m3-pin-grid {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    grid-template-rows: repeat(4, 1fr);
+    padding: 80px;
+    gap: 20px;
+  }
+  .m3-pin-cell {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+  .m3-pin-small {
+    width: 48px; height: 60px;
+    position: relative;
+  }
+  .m3-pin-small svg { width: 100%; height: 100%; }
+  .m3-pin-question {
+    width: 120px; height: 150px;
+    animation: m3Pulse 1.8s infinite;
+  }
+  @keyframes m3Pulse {
+    0%,100% { transform: scale(1); filter: drop-shadow(0 0 20px rgba(255,215,0,.6)); }
+    50% { transform: scale(1.15); filter: drop-shadow(0 0 40px rgba(255,215,0,.9)); }
+  }
+  .m3-bottom {
+    padding: 60px 80px 80px;
+    background: #0A1228;
+    border-top: 1px solid rgba(255,255,255,.08);
+  }
+  .m3-city {
+    font-size: 20px;
+    color: #6ee7ff;
+    font-weight: 700;
+    margin-bottom: 8px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+  }
+  .m3-headline {
+    font-size: 72px;
+    font-weight: 900;
+    line-height: 1.02;
+    letter-spacing: -2px;
+    margin-bottom: 20px;
+  }
+  .m3-headline em {
+    font-style: normal;
+    color: #FFD700;
+  }
+  .m3-sub {
+    font-size: 24px;
+    color: var(--text2);
+    line-height: 1.4;
+    margin-bottom: 32px;
+  }
+  .m3-cta-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .m3-cta {
+    padding: 22px 44px;
+    border-radius: 16px;
+    background: linear-gradient(135deg, #FFD700, #FFA500);
+    color: #000;
+    font-size: 26px;
+    font-weight: 900;
+    box-shadow: 0 10px 30px rgba(255,215,0,.4);
+  }
+  .m3-logo {
+    font-size: 22px;
+    font-weight: 900;
+    color: var(--text2);
+  }
+
+  /* ===== MOCKUP #5 — Klienci: Spawacz w 2 dni ===== */
+  .m5 {
+    background: linear-gradient(160deg, #0A1228 0%, #1a2a4a 100%);
+    padding: 70px 60px;
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+  }
+  .m5-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
+  .m5-logo { display: flex; align-items: center; gap: 12px; }
+  .m5-logo-ico { width: 48px; height: 48px; border-radius: 12px; background: linear-gradient(135deg, #1D6FF2, #7C3AED); display: flex; align-items: center; justify-content: center; font-size: 24px; }
+  .m5-logo-txt { font-size: 22px; font-weight: 900; }
+  .m5-badge {
+    padding: 10px 18px;
+    border-radius: 999px;
+    background: rgba(22,196,94,.2);
+    border: 1px solid rgba(22,196,94,.4);
+    color: #4ADE80;
+    font-size: 14px;
+    font-weight: 700;
+  }
+  .m5-hero {
+    font-size: 80px;
+    font-weight: 900;
+    line-height: 1;
+    letter-spacing: -2px;
+    margin: 10px 0;
+  }
+  .m5-hero em {
+    font-style: normal;
+    color: #00D4FF;
+  }
+  .m5-sub {
+    font-size: 22px;
+    color: var(--text2);
+    margin-bottom: 10px;
+  }
+  .m5-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 10px;
+  }
+  .m5-item {
+    padding: 20px 24px;
+    border-radius: 16px;
+    background: rgba(255,255,255,.05);
+    border: 1px solid rgba(255,255,255,.1);
+    display: flex;
+    align-items: center;
+    gap: 18px;
+  }
+  .m5-avatar {
+    width: 60px; height: 60px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #1D6FF2, #7C3AED);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 26px;
+    font-weight: 900;
+    flex-shrink: 0;
+  }
+  .m5-item-info { flex: 1; }
+  .m5-item-name { font-size: 22px; font-weight: 800; }
+  .m5-item-meta { font-size: 14px; color: var(--text3); margin-top: 4px; }
+  .m5-item-stars { font-size: 18px; color: #FFD700; letter-spacing: 1px; margin-top: 6px; }
+  .m5-item-badge {
+    padding: 8px 14px;
+    border-radius: 10px;
+    background: rgba(22,196,94,.15);
+    color: #4ADE80;
+    font-size: 13px;
+    font-weight: 700;
+  }
+  .m5-cta {
+    padding: 22px;
+    text-align: center;
+    border-radius: 16px;
+    background: linear-gradient(135deg, #00D4FF, #1D6FF2);
+    font-size: 26px;
+    font-weight: 900;
+    box-shadow: 0 10px 30px rgba(0,212,255,.3);
+    margin-top: 10px;
+  }
+
+  /* ===== MOCKUP #6 — Portfolio ===== */
+  .m6 {
+    background: #0A1228;
+    padding: 0;
+    position: relative;
+  }
+  .m6-header {
+    padding: 60px 60px 30px;
+    background: linear-gradient(180deg, #1a2a5a 0%, #0A1228 100%);
+  }
+  .m6-title-big {
+    font-size: 68px;
+    font-weight: 900;
+    line-height: 1;
+    letter-spacing: -2px;
+    margin-bottom: 14px;
+  }
+  .m6-title-big em { font-style: normal; color: #FFD700; }
+  .m6-title-sub { font-size: 22px; color: var(--text2); }
+  .m6-gallery {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    padding: 0 60px;
+  }
+  .m6-img {
+    aspect-ratio: 1;
+    border-radius: 14px;
+    background: linear-gradient(135deg, #2a3a5a, #1a2a4a);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 50px;
+    color: rgba(255,255,255,.3);
+    position: relative;
+    overflow: hidden;
+  }
+  .m6-img.a { background: linear-gradient(135deg, #4a5c8c, #2a3a5c); }
+  .m6-img.b { background: linear-gradient(135deg, #5c4a8c, #3a2a5c); }
+  .m6-img.c { background: linear-gradient(135deg, #8c5c4a, #5c3a2a); }
+  .m6-img.d { background: linear-gradient(135deg, #4a8c7c, #2a5c4c); }
+  .m6-img.e { background: linear-gradient(135deg, #8c7c4a, #5c4c2a); }
+  .m6-img.f { background: linear-gradient(135deg, #4a7c8c, #2a4c5c); }
+  .m6-profile {
+    padding: 40px 60px 60px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  .m6-profile-row {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+  .m6-avatar-big {
+    width: 100px; height: 100px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #FFD700, #FFA500);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 44px;
+    font-weight: 900;
+    color: #000;
+    box-shadow: 0 10px 30px rgba(255,215,0,.3);
+  }
+  .m6-name { font-size: 32px; font-weight: 900; }
+  .m6-role { font-size: 18px; color: #6ee7ff; font-weight: 600; margin-top: 4px; }
+  .m6-stats {
+    display: flex;
+    gap: 12px;
+    margin-top: 10px;
+  }
+  .m6-stat {
+    padding: 10px 16px;
+    border-radius: 10px;
+    background: rgba(255,255,255,.06);
+    border: 1px solid rgba(255,255,255,.1);
+    font-size: 13px;
+    font-weight: 700;
+  }
+  .m6-stat .num { font-size: 20px; color: #FFD700; margin-right: 6px; }
+  .m6-cta-bottom {
+    padding: 24px;
+    text-align: center;
+    border-radius: 16px;
+    background: linear-gradient(135deg, #FFD700, #FFA500);
+    color: #000;
+    font-size: 26px;
+    font-weight: 900;
+    margin-top: 10px;
+  }
+
+  /* ===== MOCKUP #7 — Wspierający (200 zł FOMO) ===== */
+  .m7 {
+    background: radial-gradient(circle at 50% 20%, #3a2810 0%, #0A0503 100%);
+    padding: 70px 60px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    position: relative;
+  }
+  .m7::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 8px;
+    background: linear-gradient(90deg, transparent, #FFD700, #C0995A, #FFD700, transparent);
+  }
+  .m7-top { display: flex; justify-content: space-between; align-items: flex-start; }
+  .m7-fire { font-size: 100px; line-height: 1; }
+  .m7-counter {
+    text-align: right;
+  }
+  .m7-counter-label { font-size: 14px; color: rgba(255,215,0,.7); text-transform: uppercase; letter-spacing: 2px; font-weight: 800; }
+  .m7-counter-num { font-size: 100px; font-weight: 900; color: #FFD700; line-height: 1; filter: drop-shadow(0 0 30px rgba(255,215,0,.5)); }
+  .m7-counter-of { font-size: 18px; color: rgba(255,215,0,.5); font-weight: 700; }
+  .m7-headline {
+    font-size: 80px;
+    font-weight: 900;
+    line-height: 1;
+    letter-spacing: -2px;
+    color: #FFD700;
+  }
+  .m7-price-row {
+    display: flex;
+    align-items: baseline;
+    gap: 20px;
+  }
+  .m7-price-old { font-size: 36px; color: rgba(255,255,255,.4); text-decoration: line-through; }
+  .m7-price-arrow { font-size: 36px; color: rgba(255,215,0,.6); }
+  .m7-price-new { font-size: 72px; font-weight: 900; color: #FFD700; }
+  .m7-features {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .m7-feat {
+    display: flex; align-items: center; gap: 16px;
+    font-size: 20px;
+    color: rgba(255,255,255,.9);
+    font-weight: 600;
+  }
+  .m7-feat .check { color: #16C45E; font-size: 28px; font-weight: 900; }
+  .m7-cta {
+    padding: 26px;
+    text-align: center;
+    border-radius: 18px;
+    background: linear-gradient(135deg, #FFD700, #C0995A);
+    color: #000;
+    font-size: 32px;
+    font-weight: 900;
+    box-shadow: 0 12px 40px rgba(255,215,0,.4);
+  }
+
+  /* ===== MOCKUP #8 — Giełda Zleceń ===== */
+  .m8 {
+    background: linear-gradient(180deg, #0A1228 0%, #1a2a5a 100%);
+    padding: 70px 60px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+  .m8-top { display: flex; justify-content: space-between; align-items: center; }
+  .m8-title { font-size: 28px; font-weight: 900; }
+  .m8-title .sub { font-size: 14px; color: #00D4FF; font-weight: 600; display: block; margin-top: 2px; }
+  .m8-live {
+    padding: 8px 16px;
+    border-radius: 999px;
+    background: rgba(22,196,94,.15);
+    border: 1px solid rgba(22,196,94,.3);
+    color: #4ADE80;
+    font-size: 13px;
+    font-weight: 700;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .m8-live::before { content: ''; width: 8px; height: 8px; border-radius: 50%; background: #4ADE80; animation: m8Blink 1.5s infinite; }
+  @keyframes m8Blink { 0%,100%{opacity:1} 50%{opacity:.3} }
+  .m8-hero {
+    font-size: 90px;
+    font-weight: 900;
+    line-height: 1;
+    letter-spacing: -2px;
+    margin: 14px 0;
+  }
+  .m8-hero em {
+    font-style: normal;
+    background: linear-gradient(90deg, #FFD700, #FFA500);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    filter: drop-shadow(0 0 30px rgba(255,215,0,.4));
+  }
+  .m8-jobs {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .m8-job {
+    padding: 22px 26px;
+    border-radius: 16px;
+    background: rgba(255,255,255,.05);
+    border: 1px solid rgba(255,255,255,.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .m8-job.top {
+    background: linear-gradient(135deg, rgba(255,215,0,.15), rgba(255,215,0,.05));
+    border-color: rgba(255,215,0,.4);
+    box-shadow: 0 0 30px rgba(255,215,0,.15);
+  }
+  .m8-job-info { flex: 1; }
+  .m8-job-title { font-size: 22px; font-weight: 800; margin-bottom: 4px; }
+  .m8-job-meta { font-size: 14px; color: var(--text3); }
+  .m8-job-price {
+    font-size: 30px;
+    font-weight: 900;
+    color: #16C45E;
+  }
+  .m8-job.top .m8-job-price { color: #FFD700; }
+  .m8-cta {
+    padding: 24px;
+    text-align: center;
+    border-radius: 18px;
+    background: linear-gradient(135deg, #1D6FF2, #7C3AED);
+    font-size: 28px;
+    font-weight: 900;
+    box-shadow: 0 10px 40px rgba(29,111,242,.4);
+  }
+
+  /* ===== CAROUSEL 3 KARTY (Reklama A5) ===== */
+  .carousel-wrap {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  .car-card {
+    aspect-ratio: 1;
+    border-radius: 24px;
+    padding: 40px 30px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    position: relative;
+    overflow: hidden;
+  }
+  .car-card.c1 {
+    background: radial-gradient(circle at 50% 40%, #6ee7ff30 0, transparent 60%), #0A1228;
+    border: 2px solid rgba(110,231,255,.3);
+  }
+  .car-card.c2 {
+    background: radial-gradient(circle at 50% 40%, #c8b6ff30 0, transparent 60%), #0A1228;
+    border: 2px solid rgba(200,182,255,.3);
+  }
+  .car-card.c3 {
+    background: radial-gradient(circle at 50% 40%, #ff9ad630 0, transparent 60%), #0A1228;
+    border: 2px solid rgba(255,154,214,.3);
+  }
+  .car-num {
+    font-size: 80px;
+    font-weight: 900;
+    opacity: .15;
+    line-height: 1;
+    position: absolute;
+    top: 20px;
+    right: 30px;
+  }
+  .car-icon { font-size: 80px; text-align: center; margin: 20px 0; }
+  .car-title { font-size: 32px; font-weight: 900; text-align: center; line-height: 1.1; }
+  .car-desc { font-size: 16px; color: var(--text2); text-align: center; line-height: 1.5; }
+  .car-time { font-size: 13px; color: #00D4FF; text-align: center; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; margin-top: auto; }
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <h1>MapJob — Kreacje reklamowe</h1>
+  <p>8 gotowych kreacji 1080×1080 do kampanii Facebook/Instagram.</p>
+</div>
+
+<div class="instructions">
+  <b>Jak użyć tego pliku:</b><br>
+  1. Otwórz w Chrome (F11 dla full screen, wyłącz inne karty)<br>
+  2. Zainstaluj rozszerzenie <b>"Awesome Screenshot"</b> albo użyj Windows Snipping Tool (Shift+Win+S)<br>
+  3. Zrób zrzut każdej kreacji <b>dokładnie 1080×1080 px</b> (framka jest tej dokładnie wielkości — widzisz ją w skali 55%/85%)<br>
+  4. Najlepiej: prawym przyciskiem na kreacji → Inspect → Right-click na elemencie .fb-frame → Capture node screenshot → Chrome zapisze PNG 1080×1080<br>
+  5. Upload do Facebook Ads Manager<br><br>
+  <b>Alternatywa — eksport do PNG przez DevTools:</b> Otwórz DevTools (F12) → Run command (Ctrl+Shift+P) → wpisz <b>"Capture node screenshot"</b> → wybierz kreację → zapisze się PNG w pełnej rozdzielczości 1080×1080.
+</div>
+
+<div class="mockup-wrap">
+
+  <!-- MOCKUP #1 — Reklama A1 „Klik Google. Pin na mapie." -->
+  <div>
+    <div class="mockup-label">
+      <span class="badge">#1</span>
+      Klik Google · Pin na mapie (Reklama A1)
+      <span class="meta">1080×1080 · Facebook Feed / Instagram</span>
+    </div>
+    <div class="fb-frame m1">
+      <div class="m1-map-bg"></div>
+      <div class="m1-poland-outline"></div>
+      <div class="m1-pin p1"></div>
+      <div class="m1-pin p2"></div>
+      <div class="m1-pin p3"></div>
+      <div class="m1-pin p4"></div>
+      <div class="m1-pin p5"></div>
+
+      <div class="m1-logo">
+        <div class="m1-logo-icon">📍</div>
+        <div class="m1-logo-text">MapJob</div>
+      </div>
+
+      <div class="m1-headline">
+        Klik Google.<br>
+        <span class="accent">Klient pisze.</span>
+      </div>
+
+      <div class="m1-sub">
+        Polska mapa fachowców.<br>
+        Logowanie Googlem w 2 sekundy · Pierwszy pin 0 zł.
+      </div>
+
+      <div class="m1-cta">Wbij swój pin →</div>
+    </div>
+  </div>
+
+  <!-- MOCKUP #2 — Reklama A3 „AI Kreator CV w 30 sekund" -->
+  <div>
+    <div class="mockup-label">
+      <span class="badge">#2</span>
+      AI Kreator CV w 30 sekund (Reklama A3)
+      <span class="meta">1080×1080 · Killer feature</span>
+    </div>
+    <div class="fb-frame m2">
+      <div class="m2-top">
+        <div class="m2-logo-ico">📍</div>
+        <div>
+          <div class="m2-logo-txt">MapJob</div>
+          <div class="m2-logo-sub">AI Kreator CV · polska apka</div>
+        </div>
+      </div>
+
+      <div>
+        <div class="m2-headline">AI pisze</div>
+        <div class="m2-headline m2-amount">Twoje CV.</div>
+        <div class="m2-headline">W 30 sekundach.</div>
+      </div>
+
+      <div class="m2-cards">
+        <div class="m2-card">
+          <div class="m2-card-left">
+            <div class="m2-card-ico">📄</div>
+            <div>
+              <div class="m2-card-title">3 szablony</div>
+              <div class="m2-card-sub">Classic ATS · Modern · Creative</div>
+            </div>
+          </div>
+          <div class="m2-card-val">PDF</div>
+        </div>
+        <div class="m2-card">
+          <div class="m2-card-left">
+            <div class="m2-card-ico">🤖</div>
+            <div>
+              <div class="m2-card-title">AI dopracowuje</div>
+              <div class="m2-card-sub">Język + słowa klucze pod branżę</div>
+            </div>
+          </div>
+          <div class="m2-card-val">30 s</div>
+        </div>
+      </div>
+
+      <div class="m2-quote">
+        <div class="m2-quote-stars" style="color:#00D4FF">🔐 · 📍 · 🤖</div>
+        <div class="m2-quote-text">„Zaloguj Googlem. Wpisz doświadczenie. AI dopracowuje. PDF gotowy."</div>
+        <div class="m2-quote-author">— Polska apka. Polski support. Pierwszy pin 0 zł.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MOCKUP #3 -->
+  <div>
+    <div class="mockup-label">
+      <span class="badge">#3</span>
+      Bądź pierwszy w {{city}} (Reklama A4)
+      <span class="meta">1080×1080 · Dynamic City</span>
+    </div>
+    <div class="fb-frame m3">
+      <div class="m3-top">
+        <div class="m3-map"></div>
+        <div class="m3-pin-grid">
+          <div class="m3-pin-cell">
+            <svg viewBox="0 0 24 32" fill="#ff5252" stroke="#fff" stroke-width="1.5" class="m3-pin-small"><path d="M12 0C6 0 2 4 2 10c0 7 10 22 10 22s10-15 10-22c0-6-4-10-10-10z"/><circle cx="12" cy="10" r="3" fill="#fff"/></svg>
+          </div>
+          <div class="m3-pin-cell">
+            <svg viewBox="0 0 24 32" fill="#1D6FF2" stroke="#fff" stroke-width="1.5" class="m3-pin-small"><path d="M12 0C6 0 2 4 2 10c0 7 10 22 10 22s10-15 10-22c0-6-4-10-10-10z"/><circle cx="12" cy="10" r="3" fill="#fff"/></svg>
+          </div>
+          <div class="m3-pin-cell">
+            <svg viewBox="0 0 24 32" fill="#16C45E" stroke="#fff" stroke-width="1.5" class="m3-pin-small"><path d="M12 0C6 0 2 4 2 10c0 7 10 22 10 22s10-15 10-22c0-6-4-10-10-10z"/><circle cx="12" cy="10" r="3" fill="#fff"/></svg>
+          </div>
+          <div class="m3-pin-cell">
+            <svg viewBox="0 0 24 32" fill="#7C3AED" stroke="#fff" stroke-width="1.5" class="m3-pin-small"><path d="M12 0C6 0 2 4 2 10c0 7 10 22 10 22s10-15 10-22c0-6-4-10-10-10z"/><circle cx="12" cy="10" r="3" fill="#fff"/></svg>
+          </div>
+          <div class="m3-pin-cell">
+            <svg viewBox="0 0 24 32" fill="#ff9ad6" stroke="#fff" stroke-width="1.5" class="m3-pin-small"><path d="M12 0C6 0 2 4 2 10c0 7 10 22 10 22s10-15 10-22c0-6-4-10-10-10z"/><circle cx="12" cy="10" r="3" fill="#fff"/></svg>
+          </div>
+
+          <div class="m3-pin-cell">
+            <svg viewBox="0 0 24 32" fill="#00D4FF" stroke="#fff" stroke-width="1.5" class="m3-pin-small"><path d="M12 0C6 0 2 4 2 10c0 7 10 22 10 22s10-15 10-22c0-6-4-10-10-10z"/><circle cx="12" cy="10" r="3" fill="#fff"/></svg>
+          </div>
+          <div class="m3-pin-cell">
+            <svg viewBox="0 0 24 32" fill="#ff5252" stroke="#fff" stroke-width="1.5" class="m3-pin-small"><path d="M12 0C6 0 2 4 2 10c0 7 10 22 10 22s10-15 10-22c0-6-4-10-10-10z"/><circle cx="12" cy="10" r="3" fill="#fff"/></svg>
+          </div>
+          <div class="m3-pin-cell">
+            <svg viewBox="0 0 24 32" class="m3-pin-question" fill="none" stroke="#FFD700" stroke-width="2.5"><path d="M12 0C6 0 2 4 2 10c0 7 10 22 10 22s10-15 10-22c0-6-4-10-10-10z" stroke-dasharray="3 3"/><text x="12" y="14" fill="#FFD700" font-size="10" font-weight="900" text-anchor="middle">?</text></svg>
+          </div>
+          <div class="m3-pin-cell">
+            <svg viewBox="0 0 24 32" fill="#16C45E" stroke="#fff" stroke-width="1.5" class="m3-pin-small"><path d="M12 0C6 0 2 4 2 10c0 7 10 22 10 22s10-15 10-22c0-6-4-10-10-10z"/><circle cx="12" cy="10" r="3" fill="#fff"/></svg>
+          </div>
+          <div class="m3-pin-cell">
+            <svg viewBox="0 0 24 32" fill="#1D6FF2" stroke="#fff" stroke-width="1.5" class="m3-pin-small"><path d="M12 0C6 0 2 4 2 10c0 7 10 22 10 22s10-15 10-22c0-6-4-10-10-10z"/><circle cx="12" cy="10" r="3" fill="#fff"/></svg>
+          </div>
+
+          <div class="m3-pin-cell">
+            <svg viewBox="0 0 24 32" fill="#7C3AED" stroke="#fff" stroke-width="1.5" class="m3-pin-small"><path d="M12 0C6 0 2 4 2 10c0 7 10 22 10 22s10-15 10-22c0-6-4-10-10-10z"/><circle cx="12" cy="10" r="3" fill="#fff"/></svg>
+          </div>
+          <div class="m3-pin-cell">
+            <svg viewBox="0 0 24 32" fill="#ff5252" stroke="#fff" stroke-width="1.5" class="m3-pin-small"><path d="M12 0C6 0 2 4 2 10c0 7 10 22 10 22s10-15 10-22c0-6-4-10-10-10z"/><circle cx="12" cy="10" r="3" fill="#fff"/></svg>
+          </div>
+          <div class="m3-pin-cell">
+            <svg viewBox="0 0 24 32" fill="#FFD700" stroke="#fff" stroke-width="1.5" class="m3-pin-small"><path d="M12 0C6 0 2 4 2 10c0 7 10 22 10 22s10-15 10-22c0-6-4-10-10-10z"/><circle cx="12" cy="10" r="3" fill="#fff"/></svg>
+          </div>
+          <div class="m3-pin-cell">
+            <svg viewBox="0 0 24 32" fill="#00D4FF" stroke="#fff" stroke-width="1.5" class="m3-pin-small"><path d="M12 0C6 0 2 4 2 10c0 7 10 22 10 22s10-15 10-22c0-6-4-10-10-10z"/><circle cx="12" cy="10" r="3" fill="#fff"/></svg>
+          </div>
+          <div class="m3-pin-cell">
+            <svg viewBox="0 0 24 32" fill="#16C45E" stroke="#fff" stroke-width="1.5" class="m3-pin-small"><path d="M12 0C6 0 2 4 2 10c0 7 10 22 10 22s10-15 10-22c0-6-4-10-10-10z"/><circle cx="12" cy="10" r="3" fill="#fff"/></svg>
+          </div>
+
+          <div class="m3-pin-cell">
+            <svg viewBox="0 0 24 32" fill="#ff9ad6" stroke="#fff" stroke-width="1.5" class="m3-pin-small"><path d="M12 0C6 0 2 4 2 10c0 7 10 22 10 22s10-15 10-22c0-6-4-10-10-10z"/><circle cx="12" cy="10" r="3" fill="#fff"/></svg>
+          </div>
+          <div class="m3-pin-cell">
+            <svg viewBox="0 0 24 32" fill="#1D6FF2" stroke="#fff" stroke-width="1.5" class="m3-pin-small"><path d="M12 0C6 0 2 4 2 10c0 7 10 22 10 22s10-15 10-22c0-6-4-10-10-10z"/><circle cx="12" cy="10" r="3" fill="#fff"/></svg>
+          </div>
+          <div class="m3-pin-cell">
+            <svg viewBox="0 0 24 32" fill="#FFD700" stroke="#fff" stroke-width="1.5" class="m3-pin-small"><path d="M12 0C6 0 2 4 2 10c0 7 10 22 10 22s10-15 10-22c0-6-4-10-10-10z"/><circle cx="12" cy="10" r="3" fill="#fff"/></svg>
+          </div>
+          <div class="m3-pin-cell">
+            <svg viewBox="0 0 24 32" fill="#ff5252" stroke="#fff" stroke-width="1.5" class="m3-pin-small"><path d="M12 0C6 0 2 4 2 10c0 7 10 22 10 22s10-15 10-22c0-6-4-10-10-10z"/><circle cx="12" cy="10" r="3" fill="#fff"/></svg>
+          </div>
+          <div class="m3-pin-cell">
+            <svg viewBox="0 0 24 32" fill="#7C3AED" stroke="#fff" stroke-width="1.5" class="m3-pin-small"><path d="M12 0C6 0 2 4 2 10c0 7 10 22 10 22s10-15 10-22c0-6-4-10-10-10z"/><circle cx="12" cy="10" r="3" fill="#fff"/></svg>
+          </div>
+        </div>
+      </div>
+      <div class="m3-bottom">
+        <div class="m3-city">📍 {{city}} · mapa MapJob</div>
+        <div class="m3-headline">Bądź pierwszy<br>w <em>{{city}}</em><br>na mapie fachowców.</div>
+        <div class="m3-sub">Polska apka w fazie startu — pierwsi mają przewagę widoczności.</div>
+        <div class="m3-cta-row">
+          <div class="m3-cta">Dodaj swój pin →</div>
+          <div class="m3-logo">MapJob</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MOCKUP #4 — CAROUSEL 3 karty (Reklama A6) -->
+  <div>
+    <div class="mockup-label">
+      <span class="badge">#4</span>
+      Carousel — 3 kroki: Google · Pin · Chat (Reklama A6)
+      <span class="meta">3× 1080×1080 · Carousel Ad</span>
+    </div>
+    <div class="carousel-wrap">
+      <div class="car-card c1">
+        <div class="car-num">01</div>
+        <div class="car-icon">🔐</div>
+        <div class="car-title">Zaloguj Googlem</div>
+        <div class="car-desc">Klik. Wybierasz konto Google. Gotowe. Bez hasła, bez maila weryfikacyjnego.</div>
+        <div class="car-time">Zajmie 2 sekundy</div>
+      </div>
+      <div class="car-card c2">
+        <div class="car-num">02</div>
+        <div class="car-icon">📍</div>
+        <div class="car-title">Wbij pinezkę</div>
+        <div class="car-desc">Wybierz zawód, dodaj zdjęcia portfolio, ustaw obszar pracy. Pierwszy pin — 0 zł.</div>
+        <div class="car-time">Kilka minut</div>
+      </div>
+      <div class="car-card c3">
+        <div class="car-num">03</div>
+        <div class="car-icon">💬</div>
+        <div class="car-title">Klient pisze</div>
+        <div class="car-desc">Chat bezpośredni — zdjęcia, dokumenty, PDF-y. Bez pośredników, bez prowizji od zlecenia.</div>
+        <div class="car-time">Gdy klient zobaczy Twój pin</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MOCKUP #5 — Klienci: Fachowiec na mapie (Reklama B1) -->
+  <div>
+    <div class="mockup-label">
+      <span class="badge">#5</span>
+      Fachowiec na mapie (Reklama B1 — klienci)
+      <span class="meta">1080×1080 · Mockup interfejsu apki</span>
+    </div>
+    <div class="fb-frame m5">
+      <div class="m5-header">
+        <div class="m5-logo">
+          <div class="m5-logo-ico">📍</div>
+          <div class="m5-logo-txt">MapJob</div>
+        </div>
+        <div class="m5-badge">🔐 Logowanie Googlem · 2 sek.</div>
+      </div>
+      <div>
+        <div class="m5-hero">Fachowiec<br>w <em>Twojej okolicy</em>.</div>
+        <div class="m5-sub">Mapa · portfolio · oceny · chat bezpośredni. 0 zł dla klienta.</div>
+      </div>
+      <div class="m5-list">
+        <div class="m5-item">
+          <div class="m5-avatar" style="background:linear-gradient(135deg,#1D6FF2,#7C3AED)">⚡</div>
+          <div class="m5-item-info">
+            <div class="m5-item-name">Elektryk · instalacje</div>
+            <div class="m5-item-meta">📍 W Twoim mieście</div>
+            <div class="m5-item-stars" style="color:var(--text3);font-size:13px">Portfolio · oceny · chat w apce</div>
+          </div>
+          <div class="m5-item-badge">Na mapie</div>
+        </div>
+        <div class="m5-item">
+          <div class="m5-avatar" style="background:linear-gradient(135deg,#16C45E,#0a8a3e)">🔧</div>
+          <div class="m5-item-info">
+            <div class="m5-item-name">Hydraulik · instalacje wod.-kan.</div>
+            <div class="m5-item-meta">📍 W Twojej okolicy</div>
+            <div class="m5-item-stars" style="color:var(--text3);font-size:13px">Portfolio · oceny · chat w apce</div>
+          </div>
+          <div class="m5-item-badge">Na mapie</div>
+        </div>
+        <div class="m5-item">
+          <div class="m5-avatar" style="background:linear-gradient(135deg,#FFD700,#C0995A)">🔨</div>
+          <div class="m5-item-info">
+            <div class="m5-item-name">Stolarz · meble na wymiar</div>
+            <div class="m5-item-meta">📍 W Twojej okolicy</div>
+            <div class="m5-item-stars" style="color:var(--text3);font-size:13px">Portfolio · oceny · chat w apce</div>
+          </div>
+          <div class="m5-item-badge">Na mapie</div>
+        </div>
+      </div>
+      <div class="m5-cta">🗺 Otwórz mapę fachowców</div>
+    </div>
+  </div>
+
+  <!-- MOCKUP #6 — Portfolio -->
+  <div>
+    <div class="mockup-label">
+      <span class="badge">#6</span>
+      Portfolio Pro — zobacz realizacje (Reklama B2)
+      <span class="meta">1080×1080 · Portfolio fachowca</span>
+    </div>
+    <div class="fb-frame m6">
+      <div class="m6-header">
+        <div class="m6-title-big">Zobacz realizacje.<br><em>Zanim zadzwonisz.</em></div>
+        <div class="m6-title-sub">Każdy fachowiec na MapJob ma galerię + opinie + lokalizację.</div>
+      </div>
+      <div class="m6-gallery">
+        <div class="m6-img a">🏠</div>
+        <div class="m6-img b">🔧</div>
+        <div class="m6-img c">⚡</div>
+        <div class="m6-img d">🚿</div>
+        <div class="m6-img e">🔨</div>
+        <div class="m6-img f">🪜</div>
+      </div>
+      <div class="m6-profile">
+        <div class="m6-profile-row">
+          <div class="m6-avatar-big" style="background:linear-gradient(135deg,#1D6FF2,#7C3AED)">🔧</div>
+          <div>
+            <div class="m6-name">Profil fachowca</div>
+            <div class="m6-role">Portfolio · oceny · lokalizacja</div>
+            <div class="m6-stats">
+              <div class="m6-stat"><span class="num">📸</span>galeria realizacji</div>
+              <div class="m6-stat"><span class="num">⭐</span>oceny klientów</div>
+            </div>
+          </div>
+        </div>
+        <div class="m6-cta-bottom">🔍 Otwórz mapę fachowców →</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MOCKUP #7 — Pakiet Wspierający (Retargeting R2 — bez abonamentu) -->
+  <div>
+    <div class="mockup-label">
+      <span class="badge">#7</span>
+      Pakiet Wspierający — jednorazowo 200 zł (Retargeting R2)
+      <span class="meta">1080×1080 · Alternatywa dla abonamentu</span>
+    </div>
+    <div class="fb-frame m7">
+      <div class="m7-top">
+        <div class="m7-fire">💎</div>
+        <div class="m7-counter">
+          <div class="m7-counter-label">Jednorazowo</div>
+          <div class="m7-counter-num" style="font-size:72px">200 zł</div>
+          <div class="m7-counter-of">zamiast abonamentu</div>
+        </div>
+      </div>
+      <div>
+        <div class="m7-headline">Pakiet<br>Wspierający.</div>
+      </div>
+      <div class="m7-price-row">
+        <div class="m7-price-old" style="text-decoration:none;font-size:28px;color:var(--text3)">Nie lubisz abonamentów?</div>
+        <div class="m7-price-arrow" style="color:#FFD700">→</div>
+        <div class="m7-price-new">1 raz</div>
+      </div>
+      <div class="m7-features">
+        <div class="m7-feat"><span class="check">✓</span>Plan Pro przez <b>5 lat</b></div>
+        <div class="m7-feat"><span class="check">✓</span>Portfolio Pro w pakiecie</div>
+        <div class="m7-feat"><span class="check">✓</span>Pełna Giełda Zleceń</div>
+        <div class="m7-feat"><span class="check">✓</span>Płatność <b>BLIK</b> — bez karty</div>
+      </div>
+      <div class="m7-cta">Wspieram MapJob →</div>
+    </div>
+  </div>
+
+  <!-- MOCKUP #8 — Zero prowizji (Reklama A5 — porównanie z konkurencją) -->
+  <div>
+    <div class="mockup-label">
+      <span class="badge">#8</span>
+      Zero prowizji · zero kredytów (Reklama A5)
+      <span class="meta">1080×1080 · MapJob vs konkurencja</span>
+    </div>
+    <div class="fb-frame m8">
+      <div class="m8-top">
+        <div class="m8-title">💬 Chat bezpośredni<span class="sub">MapJob · Polska apka dla fachowców</span></div>
+        <div class="m8-live">bez prowizji</div>
+      </div>
+      <div class="m8-hero">Piszesz.<br><em>Odbierasz.</em></div>
+      <div class="m8-jobs">
+        <div class="m8-job top">
+          <div class="m8-job-info">
+            <div class="m8-job-title">✅ MapJob</div>
+            <div class="m8-job-meta">Pierwszy pin 0 zł · chat bezpośredni · bez prowizji</div>
+          </div>
+          <div class="m8-job-price" style="color:#16C45E">0 zł</div>
+        </div>
+        <div class="m8-job">
+          <div class="m8-job-info">
+            <div class="m8-job-title">❌ Oferia</div>
+            <div class="m8-job-meta">Punkty na oferty · płacisz za każdy kontakt</div>
+          </div>
+          <div class="m8-job-price" style="color:#F87171;font-size:20px">punkty</div>
+        </div>
+        <div class="m8-job">
+          <div class="m8-job-info">
+            <div class="m8-job-title">❌ Fixly</div>
+            <div class="m8-job-meta">Kredyty na kontakt z klientem</div>
+          </div>
+          <div class="m8-job-price" style="color:#F87171;font-size:20px">kredyty</div>
+        </div>
+        <div class="m8-job">
+          <div class="m8-job-info">
+            <div class="m8-job-title">❌ OLX</div>
+            <div class="m8-job-meta">Podbicie ogłoszeń · konkurencja bez selekcji</div>
+          </div>
+          <div class="m8-job-price" style="color:#F87171;font-size:20px">podbicia</div>
+        </div>
+      </div>
+      <div class="m8-cta">Zaloguj Googlem — 2 sek. →</div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// Keyboard shortcut: Ctrl+P = print, Alt+S = open Chrome screenshot
+document.addEventListener('keydown', function(e) {
+  if (e.altKey && e.key === 's') {
+    alert('Użyj DevTools (F12) → Cmd+Shift+P → "Capture node screenshot"\nlub Chrome extension "Awesome Screenshot"\nlub Windows: Shift+Win+S');
+  }
+});
+</script>
+
+</body>
+</html>

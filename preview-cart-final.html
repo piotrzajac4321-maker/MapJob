@@ -1,0 +1,290 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<title>Podgląd — finalny koszyk po zmianach</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#0B0D10;color:#E5E7EB;padding:40px 20px;line-height:1.5}
+h1{font-size:22px;font-weight:800;margin:0 0 8px;letter-spacing:-.3px;color:#fff}
+.sub{color:#A1A1AA;font-size:14px;margin-bottom:30px;max-width:760px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(380px,1fr));gap:36px;max-width:1300px;margin:0 auto 32px}
+.col{display:flex;flex-direction:column}
+.label{font-size:11px;font-weight:800;color:#71717A;text-transform:uppercase;letter-spacing:.6px;margin-bottom:4px}
+.title{font-size:16px;font-weight:700;color:#F4F4F5;margin-bottom:4px}
+.desc{font-size:12.5px;color:#A1A1AA;margin-bottom:14px;min-height:34px}
+
+.phone{width:100%;max-width:380px;margin:0 auto;background:#0B0D10;border:1px solid rgba(255,255,255,.08);border-radius:24px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.5)}
+.phone-top{padding:14px 16px 12px;border-bottom:1px solid rgba(255,255,255,.06);display:flex;align-items:center;gap:12px;background:#0B0D10}
+.back-btn{width:36px;height:36px;border-radius:10px;background:#15171C;border:1px solid rgba(255,255,255,.08);color:#71717A;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.title-row{font-size:17px;font-weight:900;flex:1;color:#F4F4F5}
+.tot{font-size:14px;font-weight:700;color:#22C55E}
+.body{padding:0;background:#0B0D10;min-height:560px}
+
+/* banner B2 — wzbogacony */
+.vb{margin:14px 16px 0;border-radius:14px;background:linear-gradient(135deg,rgba(34,197,94,.13) 0%,rgba(34,197,94,.03) 60%,rgba(34,197,94,.10) 100%);border:1px solid rgba(34,197,94,.38);padding:18px}
+.vb-pill{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;background:rgba(34,197,94,.16);border:1px solid rgba(34,197,94,.4);border-radius:20px;font-size:10px;font-weight:800;color:#22C55E;letter-spacing:.5px;text-transform:uppercase;margin-bottom:11px}
+.vb-pill::before{content:'';width:6px;height:6px;border-radius:50%;background:#22C55E;box-shadow:0 0 8px rgba(34,197,94,.7);animation:pulse 1.6s infinite}
+@keyframes pulse{50%{opacity:.45}}
+.vb-h{font-size:19px;font-weight:800;color:#F4F4F5;letter-spacing:-.3px;margin-bottom:6px}
+.vb-h s{color:#71717A;font-weight:600;margin-right:6px}
+.vb-d{font-size:12.5px;color:#A1A1AA;line-height:1.55}
+.vb-d b{color:#F4F4F5;font-weight:700}
+.vb-shield{margin-top:13px;padding:11px 12px;display:flex;align-items:center;gap:10px;background:rgba(34,197,94,.07);border:1px solid rgba(34,197,94,.22);border-radius:10px}
+.vb-shield-i{width:30px;height:30px;border-radius:8px;background:rgba(34,197,94,.18);border:1px solid rgba(34,197,94,.35);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.vb-shield-t{font-size:12px;font-weight:700;color:#F4F4F5;line-height:1.35}
+.vb-shield-s{font-size:10.5px;color:#A1A1AA;margin-top:2px;line-height:1.4}
+.vb-row{display:flex;align-items:center;gap:8px;margin-top:12px;padding-top:12px;border-top:1px solid rgba(34,197,94,.18);font-size:11px;color:#71717A}
+
+/* CTA dodaj ogłoszenie */
+.cta-add{margin:18px 16px 0;display:flex;align-items:center;gap:12px;padding:14px;border-radius:14px;background:linear-gradient(135deg,#2D7FF9,#1D4ED8);border:1px solid rgba(45,127,249,.4);cursor:pointer;box-shadow:0 6px 20px rgba(45,127,249,.3)}
+.cta-add-i{width:42px;height:42px;border-radius:11px;background:rgba(255,255,255,.18);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
+.cta-add-t1{font-size:14px;font-weight:800;color:#fff}
+.cta-add-t2{font-size:11px;color:rgba(255,255,255,.8);margin-top:2px}
+.cta-add-arr{margin-left:auto;color:#fff;font-size:18px;font-weight:900}
+
+/* sekcja pilne — jedyna płatna */
+.sec-h{padding:22px 16px 8px;display:flex;align-items:center;gap:8px}
+.sec-bar{width:3px;height:14px;background:#EF4444;border-radius:2px}
+.sec-t{font-size:11px;font-weight:800;color:#F4F4F5;text-transform:uppercase;letter-spacing:.5px}
+.sec-t .price-pill{margin-left:6px;font-size:10px;padding:2px 7px;border-radius:10px;background:rgba(239,68,68,.15);color:#F87171;border:1px solid rgba(239,68,68,.3);letter-spacing:.3px}
+
+.urgent-info{margin:0 16px 14px;padding:16px;border-radius:14px;background:linear-gradient(135deg,rgba(239,68,68,.08),rgba(239,68,68,.02));border:1px solid rgba(239,68,68,.25)}
+.ui-head{display:flex;align-items:center;gap:11px;margin-bottom:11px}
+.ui-orb{width:40px;height:40px;border-radius:11px;background:rgba(239,68,68,.18);border:1px solid rgba(239,68,68,.4);display:flex;align-items:center;justify-content:center;font-size:20px}
+.ui-t1{font-size:14px;font-weight:800;color:#F4F4F5}
+.ui-t2{font-size:11px;color:#A1A1AA;margin-top:2px}
+.ui-feats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:11px}
+.feat{text-align:center;padding:8px 4px;background:rgba(239,68,68,.06);border:1px solid rgba(239,68,68,.18);border-radius:9px}
+.feat-i{font-size:14px}
+.feat-t{font-size:9px;font-weight:700;color:#F87171;margin-top:2px;line-height:1.3}
+.ui-foot{display:flex;align-items:center;gap:8px;padding-top:10px;border-top:1px solid rgba(239,68,68,.18);font-size:11px;color:#A1A1AA}
+.ui-foot b{color:#F87171;font-weight:800}
+
+/* FAQ */
+.faq{margin:18px 16px 28px;padding:16px;border-radius:14px;background:#13161B;border:1px solid rgba(255,255,255,.06)}
+.faq-h{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;color:#71717A;margin-bottom:11px}
+.faq-q{font-size:12.5px;font-weight:700;color:#F4F4F5;margin-bottom:5px}
+.faq-q::before{content:'›';margin-right:6px;color:#22C55E}
+.faq-a{font-size:11.5px;color:#A1A1AA;margin-bottom:13px;line-height:1.5;padding-left:14px}
+
+/* DESKTOP / DRUGI WIDOK — po kliknięciu „dodaj ogłoszenie" */
+.j-modal-h{padding:12px 14px;background:rgba(11,13,16,.92);border-bottom:1px solid rgba(255,255,255,.06);display:flex;align-items:center;gap:10px}
+.j-title{font-size:15px;font-weight:800;flex:1}
+.j-x{width:32px;height:32px;border-radius:9px;background:#15171C;border:1px solid rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;color:#A1A1AA}
+.j-form{padding:16px;display:flex;flex-direction:column;gap:11px}
+.j-field-lbl{font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;color:#71717A;margin-bottom:5px}
+.j-input{background:#15171C;border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:11px 13px;font-size:13.5px;color:#F4F4F5}
+.j-urgent-box{border:1.5px solid rgba(239,68,68,.3);border-radius:14px;overflow:hidden;margin-top:6px}
+.j-urgent-row{display:flex;align-items:center;gap:11px;padding:13px 14px;background:rgba(239,68,68,.07);cursor:pointer}
+.j-urg-i{font-size:22px}
+.j-urg-t1{font-size:13px;font-weight:800;color:#F4F4F5}
+.j-urg-t1 .price{color:#EF4444}
+.j-urg-t2{font-size:10.5px;color:#A1A1AA;margin-top:2px}
+.j-urg-tog{width:42px;height:24px;border-radius:20px;background:#15171C;border:1px solid rgba(255,255,255,.1);position:relative;flex-shrink:0}
+.j-urg-dot{width:18px;height:18px;border-radius:50%;background:#666;position:absolute;top:2px;left:2px}
+
+/* C2 na karcie firmy */
+.cp-section{padding:18px 16px 0}
+.cp-section-h{font-size:11px;font-weight:800;letter-spacing:.5px;text-transform:uppercase;color:#71717A;margin-bottom:10px}
+.cp-offer{position:relative;background:#15171C;border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:14px;margin-bottom:10px}
+.cp-offer-t{font-size:14.5px;font-weight:800;color:#F4F4F5;padding-right:66px}
+.cp-offer-s{font-size:11.5px;color:#71717A;margin-top:3px}
+.cp-offer-f{display:flex;align-items:center;gap:10px;margin-top:11px;padding-top:11px;border-top:1px solid rgba(255,255,255,.06)}
+.cp-offer-sal{flex:1;font-size:14px;font-weight:900;color:#22C55E}
+.cp-offer-see{font-size:12px;font-weight:800;color:#2D7FF9}
+.c2{position:absolute;top:10px;right:10px;display:flex;flex-direction:column;align-items:center;gap:1px;padding:7px 9px;border-radius:11px;background:linear-gradient(180deg,#EF4444,#B91C1C);border:1px solid rgba(255,255,255,.2);box-shadow:0 5px 14px rgba(239,68,68,.4);min-width:54px}
+.c2-t{font-size:9px;font-weight:900;color:#fff;letter-spacing:1.2px;line-height:1}
+.c2-p{font-size:13px;font-weight:900;color:#fff;line-height:1;margin-top:3px}
+.c2-u{font-size:8px;font-weight:700;color:rgba(255,255,255,.85);letter-spacing:.5px;margin-top:1px}
+
+.flow-arrow{text-align:center;font-size:20px;color:#22C55E;margin:10px 0;font-weight:900}
+
+.note{max-width:1100px;margin:30px auto 0;padding:22px 24px;background:#13161B;border:1px solid rgba(255,255,255,.06);border-radius:14px;font-size:13.5px;color:#D4D4D8;line-height:1.7}
+.note b{color:#F4F4F5}
+.note .ok{color:#22C55E}
+.note .rm{color:#EF4444;text-decoration:line-through;opacity:.7}
+.note ul{margin:8px 0 16px;padding-left:20px}
+.note li{margin-bottom:5px}
+.note code{background:#0a0a0a;padding:2px 7px;border-radius:5px;color:#F87171;font-size:12px}
+</style>
+</head>
+<body>
+
+<h1>Finalny koszyk — informacyjny, bez płatności</h1>
+<p class="sub">Po wszystkich ustaleniach: koszyk jest <b>w pełni informacyjny</b>. Jedyna płatna opcja (<b style="color:#F87171">pilne ogłoszenie 19 zł</b>) jest dostępna <b>tylko przy dodawaniu/edycji ogłoszenia</b> i w profilu firmy jako metka C2 (już wdrożone).</p>
+
+<div class="grid">
+
+<!-- ============ EKRAN 1 — KOSZYK ============ -->
+<div class="col">
+  <div class="label">Ekran 1</div>
+  <div class="title">Co user widzi po kliknięciu koszyka</div>
+  <div class="desc">Banner + CTA do dodawania + sekcja „pilne" (jedyna płatna) + FAQ.</div>
+  <div class="phone">
+    <div class="phone-top">
+      <div class="back-btn"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 5l-7 7 7 7"/></svg></div>
+      <div class="title-row">Koszyk</div>
+      <div class="tot">0 zł</div>
+    </div>
+    <div class="body">
+
+      <div class="vb">
+        <div class="vb-pill">Oferta limitowana</div>
+        <div class="vb-h">Wszystkie ogłoszenia — 0 zł</div>
+        <div class="vb-d">Dla <b>wszystkich firm</b> publikowanie ofert pracy na mapie jest teraz <b>całkowicie darmowe i bez limitu</b>. Korzystaj póki trwa oferta wprowadzająca.</div>
+        <div class="vb-shield">
+          <div class="vb-shield-i"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#22C55E" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg></div>
+          <div><div class="vb-shield-t">Bez karty, bez subskrypcji, bez płatności</div><div class="vb-shield-s">Nie prosimy o dane płatnicze. Wystarczy konto firmowe — i publikujesz.</div></div>
+        </div>
+        <div class="vb-row">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#71717A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          <span>Oferta wygasa wraz z wprowadzeniem cennika</span>
+        </div>
+      </div>
+
+      <div class="cta-add">
+        <div class="cta-add-i">➕</div>
+        <div>
+          <div class="cta-add-t1">Dodaj ogłoszenie o pracę</div>
+          <div class="cta-add-t2">Za darmo, w 2 minuty</div>
+        </div>
+        <div class="cta-add-arr">→</div>
+      </div>
+
+      <div class="faq">
+        <div class="faq-h">Najczęstsze pytania</div>
+        <div class="faq-q">Czy naprawdę dodawanie jest za darmo?</div>
+        <div class="faq-a">Tak. Wszystkie firmy publikują dowolną liczbę ogłoszeń bez opłat, bez subskrypcji, bez podawania karty.</div>
+        <div class="faq-q">Czy są jakieś ukryte opłaty?</div>
+        <div class="faq-a">Nie. Nie prosimy o dane karty, nie ma subskrypcji, nie ma limitów. Korzystaj póki trwa oferta wprowadzająca.</div>
+        <div class="faq-q">Czy mogę edytować i usuwać ogłoszenia?</div>
+        <div class="faq-a">Tak — pełna kontrola nad swoimi ofertami w każdej chwili, za darmo.</div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ============ EKRAN 2 — DODAWANIE OGŁOSZENIA ============ -->
+<div class="col">
+  <div class="label">Ekran 2</div>
+  <div class="title">Formularz dodawania ogłoszenia</div>
+  <div class="desc">Tu jest opcja „pilne 19 zł" (już istnieje). User może ją włączyć lub pominąć.</div>
+  <div class="phone">
+    <div class="j-modal-h">
+      <div class="j-x"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg></div>
+      <div class="j-title">Dodaj ofertę pracy</div>
+    </div>
+    <div class="j-form">
+      <div>
+        <div class="j-field-lbl">Tytuł stanowiska</div>
+        <div class="j-input">Stolarz — montaż mebli</div>
+      </div>
+      <div>
+        <div class="j-field-lbl">Lokalizacja</div>
+        <div class="j-input">Warszawa</div>
+      </div>
+      <div>
+        <div class="j-field-lbl">Wynagrodzenie</div>
+        <div class="j-input">7 500 – 9 000 zł</div>
+      </div>
+
+      <div class="j-urgent-box">
+        <div class="j-urgent-row">
+          <div class="j-urg-i">🔴</div>
+          <div style="flex:1">
+            <div class="j-urg-t1">Oznacz jako pilne — <span class="price">19 zł</span></div>
+            <div class="j-urg-t2">Mieni się na czerwono · zawsze pierwsze · badge 🔴 PILNE</div>
+          </div>
+          <div class="j-urg-tog"><div class="j-urg-dot"></div></div>
+        </div>
+      </div>
+
+      <div style="padding:14px;border-radius:12px;background:#15171C;border:1px solid rgba(34,197,94,.22);font-size:11.5px;color:#A1A1AA;line-height:1.5;margin-top:6px">
+        <b style="color:#22C55E">✓ Pozostałe pola za darmo</b><br>
+        Publikacja, edycja, kandydaci, mapa — wszystko bez opłat dla wszystkich firm.
+      </div>
+
+      <button style="margin-top:8px;padding:14px;border-radius:13px;background:#22C55E;border:none;font-family:inherit;font-size:14px;font-weight:800;color:#0a0a0a;cursor:pointer">Opublikuj ofertę pracy →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ EKRAN 3 — PROFIL FIRMY ============ -->
+<div class="col">
+  <div class="label">Ekran 3 — JUŻ WDROŻONE</div>
+  <div class="title">Profil firmy — metka C2 na ofertach</div>
+  <div class="desc">Właściciel widzi czerwoną metkę PILNE/19 zł/BLIK. Klik → flow zakupu (już wdrożone).</div>
+  <div class="phone">
+    <div class="phone-top">
+      <div class="back-btn"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 5l-7 7 7 7"/></svg></div>
+      <div class="title-row">Profil pracodawcy</div>
+    </div>
+    <div class="body">
+      <div style="margin:12px 14px 0;background:#13161B;border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:12px;font-size:11.5px;color:#A1A1AA;display:flex;align-items:center;gap:9px"><span style="font-size:16px">👁️</span><div><b style="color:#F4F4F5">To Twój profil</b> — tak widzą go kandydaci</div></div>
+
+      <div class="cp-section">
+        <div class="cp-section-h">💼 Aktywne oferty (3)</div>
+        <div class="cp-offer">
+          <div class="c2"><div class="c2-t">PILNE</div><div class="c2-p">19 zł</div><div class="c2-u">BLIK</div></div>
+          <div class="cp-offer-t">Stolarz — montaż mebli kuchennych</div>
+          <div class="cp-offer-s">Warszawa · Budownictwo</div>
+          <div class="cp-offer-f"><span class="cp-offer-sal">7 500 – 9 000 zł</span><span class="cp-offer-see">Zobacz →</span></div>
+        </div>
+        <div class="cp-offer">
+          <div class="cp-offer-t" style="padding-right:0">Spawacz MIG/MAG <span style="font-size:9px;font-weight:900;padding:2px 6px;border-radius:10px;background:rgba(239,68,68,.15);color:#F87171;border:1px solid rgba(239,68,68,.3)">PILNE</span></div>
+          <div class="cp-offer-s">Łódź · Produkcja</div>
+          <div class="cp-offer-f"><span class="cp-offer-sal">35 zł/h</span><span class="cp-offer-see">Zobacz →</span></div>
+        </div>
+        <div class="cp-offer">
+          <div class="c2"><div class="c2-t">PILNE</div><div class="c2-p">19 zł</div><div class="c2-u">BLIK</div></div>
+          <div class="cp-offer-t">Pomocnik magazynowy</div>
+          <div class="cp-offer-s">Pruszków · Logistyka</div>
+          <div class="cp-offer-f"><span class="cp-offer-sal">28 zł/h</span><span class="cp-offer-see">Zobacz →</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div>
+
+<div class="note">
+  <b style="font-size:15px">Co dokładnie zmieniam w <code>index.html</code> przed wgraniem:</b>
+
+  <div style="margin-top:12px"><b class="ok">Co zostaje płatne (zarabiamy):</b></div>
+  <ul>
+    <li>🔴 <b>„Oznacz jako pilne — 19 zł"</b> w formularzu dodawania ogłoszenia (już jest, BLIK/karta)</li>
+    <li>🔴 <b>Metka C2 w profilu firmy</b> — szybki zakup pilne z karty oferty (już wdrożone w tej sesji)</li>
+  </ul>
+
+  <div><b class="ok">Co usuwam z koszyka (CART_ITEMS_CATALOG):</b></div>
+  <ul>
+    <li><code class="rm">highlight1</code> — 1 wyróżnienie pinu (29 zł)</li>
+    <li><code class="rm">highlight3</code> — 3 wyróżnienia pinów (69 zł)</li>
+    <li><code class="rm">pin3_highlight3</code> — 3 piny + 3 wyróżnienia (99 zł)</li>
+    <li><code class="rm">founder</code> — Pakiet Wspierający (200 zł) ← <b style="color:#F59E0B">do potwierdzenia</b></li>
+    <li><code class="rm">pro_30d / pro_monthly / pro_yearly</code> — Plany Pro ← <b style="color:#F59E0B">do potwierdzenia</b></li>
+    <li><code class="rm">portfolio</code> — Portfolio Pro (99 zł) ← <b style="color:#F59E0B">do potwierdzenia</b></li>
+    <li><code class="rm">pin1 / pin3</code> — Dodatkowe piny ← <b style="color:#F59E0B">do potwierdzenia</b></li>
+  </ul>
+
+  <div><b>Co dodaję:</b></div>
+  <ul>
+    <li>Nowy render <code>renderCartView()</code> — banner B2 + CTA dodaj ogłoszenie + sekcja info „pilne" + FAQ</li>
+    <li>Zamiast listy produktów — komunikat „Wszystko za darmo, jedyna płatna opcja przy ogłoszeniu"</li>
+  </ul>
+
+  <div style="margin-top:14px;padding:12px 14px;background:rgba(245,158,11,.07);border:1px solid rgba(245,158,11,.3);border-radius:10px">
+    <b style="color:#F59E0B">⚠️ Pytanie przed wgraniem:</b><br>
+    Czy usuwam <b>wszystkie</b> produkty z koszyka (Pakiet Wspierający, Plany Pro, Portfolio, dodatkowe piny), zostawiając tylko informację „wszystko darmo + pilne 19 zł"?<br>
+    Czy zachowuję te produkty (np. Pakiet Wspierający jako „wesprzyj projekt"), a usuwam tylko 3 pozycje z wyróżnieniami?
+  </div>
+
+  <div style="margin-top:12px;font-size:12.5px;color:#A1A1AA">Odpowiedz np. „wszystko" / „tylko wyróżnienia" — zaraz zaimplementuję i odpalimy.</div>
+</div>
+
+</body>
+</html>
