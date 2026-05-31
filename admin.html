@@ -3287,7 +3287,26 @@ var _fbData = [], _fbF = 'all';
 var _allUsers = [], _allPins = [];
 var _cid = null, _chatSub = null;
 var _2faOtpHash = null, _2faExpires = 0, _2faAttempts = 0, _2faTimer = null, _pendingUser = null;
-var _2faSessionKey = 'mj_admin_2fa_ok_v8';
+var _2faStorageKey = 'mj_admin_2fa_day_v1';
+
+function _2faTodayStr() {
+  var d = new Date();
+  return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+}
+function _2faIsVerifiedToday() {
+  try {
+    var raw = localStorage.getItem(_2faStorageKey);
+    if (!raw) return false;
+    var obj = JSON.parse(raw);
+    return obj && obj.date === _2faTodayStr();
+  } catch(e) { return false; }
+}
+function _2faMarkVerified() {
+  try { localStorage.setItem(_2faStorageKey, JSON.stringify({date: _2faTodayStr()})); } catch(e) {}
+}
+function _2faClearVerified() {
+  try { localStorage.removeItem(_2faStorageKey); } catch(e) {}
+}
 var _charts = {};
 var _auditData = [];
 var _confirmResolveF = null;
@@ -3399,7 +3418,7 @@ window.addEventListener('load', function() {
     if (!r.data || !r.data.session) return;
     var user = r.data.session.user;
     if (!isAdminEmail(user.email)) { _sb.auth.signOut(); return; }
-    if (sessionStorage.getItem(_2faSessionKey) === 'yes') {
+    if (_2faIsVerifiedToday()) {
       enterApp(user);
     } else {
       _pendingUser = user;
@@ -3450,7 +3469,7 @@ function enterApp(user) {
 }
 
 async function doLogout() {
-  sessionStorage.removeItem(_2faSessionKey);
+  _2faClearVerified();
   await _sb.auth.signOut();
   location.reload();
 }
@@ -3528,7 +3547,7 @@ async function doVerify2FA() {
     inp.value = ''; inp.focus(); return;
   }
   clearInterval(_2faTimer); _2faOtpHash = null;
-  sessionStorage.setItem(_2faSessionKey, 'yes');
+  _2faMarkVerified();
   enterApp(_pendingUser);
   toast('✅ Zalogowano pomyślnie!', 'ok');
 }
