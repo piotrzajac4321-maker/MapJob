@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(reklamy/**)",
+      "Write(reklamy/**)",
+      "Edit(reklamy/**)"
+    ]
+  }
+}
