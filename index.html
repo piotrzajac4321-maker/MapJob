@@ -12231,9 +12231,13 @@ window._openBoostBuy=async function(jobId){
     if(_payBtn){_payBtn.onclick=async function(){
       _payBtn.disabled=true;_payBtn.textContent='⏳ Przygotowujemy...';
       try{
-        var _fcResp=await _sb.functions.invoke('stripe-create-boost-checkout',{body:{boost_type:boostType,job_id:resolvedJobId}});
-        if(_fcResp.error||!_fcResp.data||!_fcResp.data.url){throw new Error((_fcResp.data&&_fcResp.data.error)||(_fcResp.error&&_fcResp.error.message)||'Brak URL płatności');}
-        window.location.href=_fcResp.data.url;
+        var _sess=await _sb.auth.getSession();var _jwt=(_sess&&_sess.data&&_sess.data.session)?_sess.data.session.access_token:'';
+        var SUPA_URL=(_sb.supabaseUrl||'https://ahgzjneegvptudphibdm.supabase.co');
+        var SUPA_KEY=(_sb.supabaseKey||'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFoZ3pqbmVlZ3ZwdHVkcGhpYmRtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQxMTA3NzcsImV4cCI6MjA4OTY4Njc3N30.KrCBuAzz7fsCHCUSGeTZ5vm7BOo-DIGvI3jZyrk4tL4');
+        var _raw=await fetch(SUPA_URL+'/functions/v1/stripe-create-boost-checkout',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+_jwt,'apikey':SUPA_KEY},body:JSON.stringify({boost_type:boostType,job_id:resolvedJobId})});
+        var _fcData=await _raw.json();
+        if(!_raw.ok||!_fcData.url){throw new Error(_fcData.error||'Brak URL płatności ('+_raw.status+')');}
+        window.location.href=_fcData.url;
       }catch(_err){_payBtn.disabled=false;_payBtn.textContent='🚀 Zapłać i aktywuj Boost';if(typeof toast==='function')toast('Błąd: '+(_err.message||_err),'err');}
     };}
   };
