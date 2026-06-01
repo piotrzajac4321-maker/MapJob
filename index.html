@@ -5578,6 +5578,7 @@ if(session&&session.user){var uid=session.user.id;if(_lastAuthUserId===uid&&_isL
       var payload={ id:id, anon_id:userId?null:anon, user_id:userId, last_path:_path(), user_agent:_ua() };
       var r=await _sb.from('user_sessions').insert(payload);
       if(r&&r.error){ console.warn('[mj-activity] startSession error',r.error.message||r.error); _starting=false; return; }
+      _starting=false;
       window._mjSessionId=id;
       window._mjSessionUser=userId;
       var q=_pending.slice(); _pending.length=0;
