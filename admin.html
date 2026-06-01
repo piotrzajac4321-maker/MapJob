@@ -8562,7 +8562,7 @@ async function loadTenderFakeOwners() {
   if (cur) sel.value = cur;
 }
 
-function onFakeOwnerChange() {
+async function onFakeOwnerChange() {
   var sel = document.getElementById('t-fake-owner');
   var posterEl = document.getElementById('t-poster');
   if (!sel || !posterEl) return;
@@ -8570,6 +8570,27 @@ function onFakeOwnerChange() {
   if (!uid) return;
   var u = (_fiAllFakeUsers||[]).find(function(u){ return u.auth_user_id === uid; });
   if (u && !posterEl.value) posterEl.value = u.name;
+  /* Auto-fill logo from profile photo when logo field is currently empty */
+  var logoUrlEl = document.getElementById('t-logo-url');
+  if (logoUrlEl && !logoUrlEl.value) {
+    try {
+      var rProf = await _sb.from('profiles').select('avatar_url').eq('id', uid).maybeSingle();
+      var photoUrl = (rProf.data && rProf.data.avatar_url) || null;
+      if (!photoUrl) {
+        var rPin = await _sb.from('pins').select('photo_url').eq('user_id', uid).not('photo_url','is',null).limit(1).maybeSingle();
+        photoUrl = (rPin.data && rPin.data.photo_url) || null;
+      }
+      if (photoUrl) {
+        logoUrlEl.value = photoUrl;
+        var lp = document.getElementById('t-logo-preview');
+        var lcb = document.getElementById('t-logo-clear-btn');
+        var ld = document.getElementById('t-logo-url-display');
+        if (lp) lp.innerHTML = '<img src="'+escH(photoUrl)+'?v='+Date.now()+'" style="width:100%;height:100%;object-fit:cover" onerror="this.parentNode.innerHTML=\'<span style=&quot;font-size:24px;color:var(--text3)&quot;>🖼</span>\'"/>';
+        if (lcb) lcb.style.display = '';
+        if (ld) ld.textContent = photoUrl.split('/').pop().split('?')[0];
+      }
+    } catch(e) { console.warn('[onFakeOwnerChange] photo autofill:', e); }
+  }
 }
 
 function editT(t) {
@@ -9147,31 +9168,34 @@ async function addPin() {
 
   if (btn) btn.textContent = '⏳ Tworzę profil użytkownika…';
 
-  /* ── Utwórz prawdziwe konto Supabase Auth przez fake-user-manager ── */
-  var fakeUserId = null;
-  try {
-    var fuData = await _fuCall('create', {
-      name:            name,
-      email:           fakeEmail,
-      password:        fakePass,
-      phone:           document.getElementById('p-phone').value.trim() || null,
-      role:            role || null,
-      category:        cat || null,
-      city:            city || null,
-      geo_query:       geoQuery || null,
-      lat:             coords.lat,
-      lng:             coords.lng,
-      type:            document.getElementById('p-type').value || 'worker',
-      rate:            rateLabel || null,
-      employment_type: document.getElementById('p-employment').value || null,
-      work_mode:       document.getElementById('p-workmode').value || null,
-      description:     document.getElementById('p-desc').value.trim() || null
-    });
-    if (fuData && fuData.ok && (fuData.auth_user_id || fuData.user_id)) {
-      fakeUserId = fuData.auth_user_id || fuData.user_id;
+  /* ── Utwórz konto lub reużyj istniejącego (Wystaw podobne) ── */
+  var _reusingExistingUser = !!window._pinReuseUserId;
+  var fakeUserId = window._pinReuseUserId || null;
+  if (_reusingExistingUser) { window._pinReuseUserId = null; } else {
+    try {
+      var fuData = await _fuCall('create', {
+        name:            name,
+        email:           fakeEmail,
+        password:        fakePass,
+        phone:           document.getElementById('p-phone').value.trim() || null,
+        role:            role || null,
+        category:        cat || null,
+        city:            city || null,
+        geo_query:       geoQuery || null,
+        lat:             coords.lat,
+        lng:             coords.lng,
+        type:            document.getElementById('p-type').value || 'worker',
+        rate:            rateLabel || null,
+        employment_type: document.getElementById('p-employment').value || null,
+        work_mode:       document.getElementById('p-workmode').value || null,
+        description:     document.getElementById('p-desc').value.trim() || null
+      });
+      if (fuData && fuData.ok && (fuData.auth_user_id || fuData.user_id)) {
+        fakeUserId = fuData.auth_user_id || fuData.user_id;
+      }
+    } catch(fuErr) {
+      console.warn('[addPin] _fuCall failed, fallback to UUID:', fuErr);
     }
-  } catch(fuErr) {
-    console.warn('[addPin] _fuCall failed, fallback to UUID:', fuErr);
   }
 
   /* ── Fallback: UUID gdy edge function niedostępna ── */
@@ -9185,9 +9209,9 @@ async function addPin() {
     toast('⚠️ Błąd edge function — pin bez konta Auth. Użyj 🔧 Profil po dodaniu.', 'err');
   }
 
-  /* ── Sprawdź czy pin został już wstawiony przez edge function ── */
+  /* ── Sprawdź czy pin został już wstawiony przez edge function (pomiń przy reużyciu usera) ── */
   if (btn) btn.textContent = '⏳ Dodaję pin na mapę…';
-  try {
+  if (!_reusingExistingUser) try {
     var pinCheck = await _sb.from('pins').select('id,user_id').eq('fake_user_id', fakeUserId).limit(1);
     if (pinCheck.data && pinCheck.data.length > 0) {
       /* FIX: edge function mogła wstawić pin bez user_id — uzupełnij go */
@@ -15423,6 +15447,7 @@ window.umgrLoadPins = async function(userId) {
         + '🖼 Logo'
         + '<input type="file" accept="image/*" style="display:none" onchange="umgrUploadAvatar(\''+p.id+'\',this)">'
         + '</label>'
+        + '<button class="btn-s" style="font-size:10px;padding:4px 8px;background:rgba(139,92,246,.15);border-color:rgba(139,92,246,.4);color:#A78BFA;white-space:nowrap" onclick="umgrDuplicatePin(\''+p.id+'\')" title="Wystaw podobny pin dla tego usera">📋 Podobne</button>'
         + '<button class="btn-s" style="font-size:10px;padding:4px 8px" onclick="umgrTogglePinActive(\''+p.id+'\','+p.is_active+')" title="Przełącz aktywność">'+(p.is_active?'⏸':'▶')+'</button>'
         + '</div>';
     }).join('');
@@ -15454,6 +15479,7 @@ window.umgrLoadJobs = async function(userId) {
         + '</div>'
         + '<div style="display:flex;gap:5px;flex-wrap:wrap">'
         + '<button class="btn-s" style="font-size:10px;padding:4px 8px" onclick="umgrEditJobOffer(\''+j.id+'\')">✏ Edytuj</button>'
+        + '<button class="btn-s" style="font-size:10px;padding:4px 8px;background:rgba(139,92,246,.15);border-color:rgba(139,92,246,.4);color:#A78BFA" onclick="umgrDuplicateJobOffer(\''+j.id+'\')">📋 Podobne</button>'
         + (j.status!=='active' ? '<button class="btn-ok" style="font-size:10px;padding:4px 8px" onclick="umgrSetJobStatus(\''+j.id+'\',\'active\')">▶ Aktywuj</button>' : '')
         + (j.status==='active' ? '<button class="btn-s" style="font-size:10px;padding:4px 8px" onclick="umgrSetJobStatus(\''+j.id+'\',\'paused\')">⏸ Wstrzymaj</button>' : '')
         + '<button class="btn-d" style="font-size:10px;padding:4px 8px" onclick="umgrSetJobStatus(\''+j.id+'\',\'closed\')">✕ Zamknij</button>'
@@ -15692,6 +15718,68 @@ window.umgrEditJobOffer = async function(jobId) {
     document.getElementById('umgr-jf-spots').value = j.spots||1;
     document.getElementById('umgr-job-form').style.display = '';
     umgrTab('jobs', document.querySelector('#modal-user-mgr [data-tab="jobs"]'));
+  } catch(e) { toast('Błąd: '+(e.message||e), 'err'); }
+};
+
+window.umgrDuplicateJobOffer = async function(jobId) {
+  _umgrJobFormMode = 'add';
+  _umgrEditJobId = null;
+  document.getElementById('umgr-job-form-title').textContent = '📋 Nowe ogłoszenie (podobne)';
+  try {
+    var r = await _sb.from('job_offers').select('*').eq('id', jobId).single();
+    var j = r.data;
+    if (!j) { toast('Nie znaleziono ogłoszenia', 'err'); return; }
+    document.getElementById('umgr-jf-title').value = (j.title||'') + ' (kopia)';
+    document.getElementById('umgr-jf-company').value = j.company_name||'';
+    document.getElementById('umgr-jf-location').value = j.location||'';
+    var _zEl=document.getElementById('umgr-jf-zip');if(_zEl)_zEl.value=j.location_zip||'';
+    var _sEl=document.getElementById('umgr-jf-street');if(_sEl)_sEl.value=j.location_street||'';
+    var _bEl=document.getElementById('umgr-jf-building');if(_bEl)_bEl.value=j.location_building||'';
+    document.getElementById('umgr-jf-category').value = j.category||'other';
+    document.getElementById('umgr-jf-emptype').value = j.employment_type||'etat';
+    document.getElementById('umgr-jf-workmode').value = j.work_mode||'onsite';
+    document.getElementById('umgr-jf-salmin').value = j.salary_min||'';
+    document.getElementById('umgr-jf-salmax').value = j.salary_max||'';
+    document.getElementById('umgr-jf-saltype').value = j.salary_type||'monthly';
+    var _curEl=document.getElementById('umgr-jf-currency');if(_curEl)_curEl.value=j.salary_currency||'PLN';
+    if(typeof window.umgrUpdateJfCurrency==='function')window.umgrUpdateJfCurrency();
+    document.getElementById('umgr-jf-urgent').checked = false;
+    document.getElementById('umgr-jf-desc').value = j.description||'';
+    document.getElementById('umgr-jf-req').value = j.requirements||'';
+    document.getElementById('umgr-jf-spots').value = j.spots||1;
+    document.getElementById('umgr-job-form').style.display = '';
+    umgrTab('jobs', document.querySelector('#modal-user-mgr [data-tab="jobs"]'));
+    toast('📋 Formularz wypełniony — edytuj i zapisz', 'ok');
+  } catch(e) { toast('Błąd: '+(e.message||e), 'err'); }
+};
+
+window.umgrDuplicatePin = async function(pinId) {
+  try {
+    var r = await _sb.from('pins').select('*').eq('id', pinId).single();
+    var p = r.data;
+    if (!p) { toast('Nie znaleziono pina', 'err'); return; }
+    var rateVal='', rateCur='PLN', ratePer='/h';
+    if (p.rate) {
+      var rm = p.rate.match(/^([\d.,]+)\s*(PLN|EUR)(\/\S+)?/);
+      if (rm) { rateVal=rm[1]; rateCur=rm[2]||'PLN'; ratePer=rm[3]||'/h'; }
+    }
+    var _sv = function(id,v){ var el=document.getElementById(id);if(el)el.value=v||''; };
+    var _ss = function(id,v){ var el=document.getElementById(id);if(el&&v)el.value=v; };
+    _sv('p-name', p.name); _sv('p-role', p.role); _sv('p-city', p.city);
+    _sv('p-rate-val', rateVal); _sv('p-street', p.street||'');
+    _sv('p-houseno', p.building||''); _sv('p-zipcode', p.zip||'');
+    _sv('p-phone', p.phone||''); _sv('p-desc', p.description||'');
+    _ss('p-cat', p.category); _ss('p-type', p.type);
+    _ss('p-rate-cur', rateCur); _ss('p-rate-per', ratePer);
+    _ss('p-employment', p.employment_type); _ss('p-workmode', p.work_mode);
+    window._pinReuseUserId = p.user_id || p.fake_user_id;
+    document.getElementById('modal-user-mgr').style.display = 'none';
+    go('pins', document.querySelector('.mnav-btn[onclick*="\'pins\'"]'));
+    setTimeout(function(){
+      var formEl = document.querySelector('#panel-pins .section');
+      if (formEl) { formEl.scrollIntoView({behavior:'smooth',block:'start'}); formEl.style.border='2px solid var(--blue2)'; setTimeout(function(){formEl.style.border='';},2000); }
+    }, 300);
+    toast('📋 Formularz wypełniony — zmodyfikuj dane i kliknij Dodaj pin', 'ok');
   } catch(e) { toast('Błąd: '+(e.message||e), 'err'); }
 };
 
