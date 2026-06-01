@@ -8,6 +8,12 @@
 import Stripe from 'https://esm.sh/stripe@14.21.0?target=deno'
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.7'
 
+const CORS_HEADERS = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  'Access-Control-Allow-Methods': 'POST, OPTIONS',
+}
+
 const stripe = new Stripe(Deno.env.get('STRIPE_SECRET_KEY') ?? '', {
   apiVersion: '2024-06-20',
   httpClient: Stripe.createFetchHttpClient(),
@@ -52,8 +58,12 @@ async function getOrCreateBoostPrice(): Promise<{ priceId: string; productId: st
 }
 
 Deno.serve(async (req: Request): Promise<Response> => {
+  if (req.method === 'OPTIONS') {
+    return new Response('ok', { status: 200, headers: CORS_HEADERS })
+  }
+
   if (req.method !== 'POST') {
-    return new Response('Method not allowed', { status: 405 })
+    return new Response('Method not allowed', { status: 405, headers: CORS_HEADERS })
   }
 
   const authHeader = req.headers.get('Authorization') ?? ''
@@ -71,7 +81,7 @@ Deno.serve(async (req: Request): Promise<Response> => {
   } catch {
     return new Response(JSON.stringify({ error: 'Unauthorized' }), {
       status: 401,
-      headers: { 'content-type': 'application/json' },
+      headers: { ...CORS_HEADERS, 'content-type': 'application/json' },
     })
   }
 
@@ -81,7 +91,7 @@ Deno.serve(async (req: Request): Promise<Response> => {
   } catch {
     return new Response(JSON.stringify({ error: 'Invalid JSON' }), {
       status: 400,
-      headers: { 'content-type': 'application/json' },
+      headers: { ...CORS_HEADERS, 'content-type': 'application/json' },
     })
   }
 
@@ -89,7 +99,7 @@ Deno.serve(async (req: Request): Promise<Response> => {
   if (!['job', 'company'].includes(boostType)) {
     return new Response(JSON.stringify({ error: 'Invalid boost_type' }), {
       status: 400,
-      headers: { 'content-type': 'application/json' },
+      headers: { ...CORS_HEADERS, 'content-type': 'application/json' },
     })
   }
 
@@ -116,13 +126,13 @@ Deno.serve(async (req: Request): Promise<Response> => {
 
     return new Response(
       JSON.stringify({ url: session.url, price_id: priceId, product_id: productId }),
-      { status: 200, headers: { 'content-type': 'application/json' } },
+      { status: 200, headers: { ...CORS_HEADERS, 'content-type': 'application/json' } },
     )
   } catch (e) {
     console.error('[stripe-create-boost-checkout]', (e as Error).message)
     return new Response(JSON.stringify({ error: (e as Error).message }), {
       status: 500,
-      headers: { 'content-type': 'application/json' },
+      headers: { ...CORS_HEADERS, 'content-type': 'application/json' },
     })
   }
 })
