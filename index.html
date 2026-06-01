@@ -12035,6 +12035,24 @@ window._MJ_BENEFITS=[
   {k:'auto',i:'🚗',t:'Samochód / paliwo'}
 ];
 window._openFirmOffer=async function(userId){if(!userId){if(typeof toast==='function')toast('Brak danych firmy');return;}if(!_sb){if(typeof openCompanyProfile==='function')openCompanyProfile(userId);return;}try{var r=await _sb.from('job_offers').select('id').eq('user_id',userId).eq('status','active').order('is_urgent',{ascending:false}).order('created_at',{ascending:false}).limit(1);if(r.data&&r.data.length&&typeof openJobDetail==='function'){openJobDetail(r.data[0].id);return;}}catch(e){}if(typeof openCompanyProfile==='function')openCompanyProfile(userId);};
+window._mjExpandTA=function(taId,label){
+  var ta=document.getElementById(taId);if(!ta)return;
+  var old=document.getElementById('mj-ta-expand');if(old)old.remove();
+  var m=document.createElement('div');m.id='mj-ta-expand';
+  m.style.cssText='position:fixed;inset:0;z-index:9997;background:var(--bg);display:flex;flex-direction:column;padding-top:max(0px,env(safe-area-inset-top,0px))';
+  var safeB='max(16px,calc(12px + env(safe-area-inset-bottom,0px)))';
+  m.innerHTML=
+    '<div style="display:flex;align-items:center;gap:10px;padding:12px 14px;background:var(--bg);border-bottom:1px solid var(--border3);flex-shrink:0">'
+    +'<button onclick="document.getElementById(\'mj-ta-expand\').remove()" style="width:36px;height:36px;border-radius:10px;background:var(--surf);border:1px solid var(--border3);cursor:pointer;color:var(--text2);display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 5l-7 7 7 7"/></svg></button>'
+    +'<div style="flex:1;font-size:15px;font-weight:800">'+label+'</div>'
+    +'<button id="mj-ta-save" style="padding:8px 18px;border-radius:10px;background:var(--blue);border:none;font-family:var(--ff);font-size:13px;font-weight:800;color:#fff;cursor:pointer">Gotowe ✓</button>'
+    +'</div>'
+    +'<textarea id="mj-ta-big" style="flex:1;width:100%;box-sizing:border-box;padding:16px;background:var(--bg);border:none;outline:none;font-family:var(--ff);font-size:15px;line-height:1.65;color:var(--text);resize:none;padding-bottom:'+safeB+'"></textarea>';
+  document.body.appendChild(m);
+  var big=document.getElementById('mj-ta-big');
+  if(big){big.value=ta.value;setTimeout(function(){big.focus();big.setSelectionRange(big.value.length,big.value.length);},80);}
+  document.getElementById('mj-ta-save').onclick=function(){ta.value=big?big.value:'';m.remove();};
+};
 window._mjStackZ=function(base){var z=(base||905);try{document.querySelectorAll('body>div[id^="m-"]').forEach(function(el){if(!el)return;var cs=getComputedStyle(el);if(cs.display==='none'||cs.position!=='fixed')return;var v=parseInt(cs.zIndex,10);if(!isNaN(v)&&v<1500&&v>=z)z=v+5;});}catch(_e){}return z;};
 window._openUrgentBuy=async function(jobId){
   if(!jobId){if(typeof toast==='function')toast('Niedostępne');return;}
@@ -12946,11 +12964,17 @@ Może to być tekst skopiowany z innej platformy, ze strony Twojej firmy, z mail
       <button type="button" onclick="_jobAiGenerate()" style="flex:1;min-width:140px;padding:9px 10px;border-radius:10px;background:linear-gradient(135deg,rgba(139,92,246,.15),rgba(99,102,241,.08));border:1px solid rgba(139,92,246,.35);color:#A78BFA;font-family:inherit;font-size:12px;font-weight:700;cursor:pointer">✨ Generuj opis + wymagania (AI)</button>
       <button type="button" id="job-desc-ai-pol" onclick="_jobAiPolish()" style="flex:1;min-width:120px;padding:9px 10px;border-radius:10px;background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.3);color:#4ADE80;font-family:inherit;font-size:12px;font-weight:700;cursor:pointer">✨ Popraw treść</button>
     </div>
-    <textarea class="fi" id="job-desc" placeholder="Czym będzie zajmować się pracownik? Jakie obowiązki? Co oferujecie?" style="height:110px;resize:none;"></textarea>
+    <div style="position:relative">
+      <textarea class="fi" id="job-desc" placeholder="Czym będzie zajmować się pracownik? Jakie obowiązki? Co oferujecie?" style="height:110px;resize:none;padding-bottom:32px;"></textarea>
+      <button type="button" onclick="_mjExpandTA('job-desc','Opis stanowiska')" title="Powiększ pole" style="position:absolute;bottom:8px;right:8px;width:28px;height:28px;border-radius:8px;background:var(--surf2);border:1px solid var(--border3);color:var(--text3);font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1">⛶</button>
+    </div>
 
 
     <label class="flbl">Wymagania</label>
-    <textarea class="fi" id="job-req" placeholder="Doświadczenie, uprawnienia, certyfikaty, umiejętności..." style="height:90px;resize:none;"></textarea>
+    <div style="position:relative">
+      <textarea class="fi" id="job-req" placeholder="Doświadczenie, uprawnienia, certyfikaty, umiejętności..." style="height:90px;resize:none;padding-bottom:32px;"></textarea>
+      <button type="button" onclick="_mjExpandTA('job-req','Wymagania')" title="Powiększ pole" style="position:absolute;bottom:8px;right:8px;width:28px;height:28px;border-radius:8px;background:var(--surf2);border:1px solid var(--border3);color:var(--text3);font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1">⛶</button>
+    </div>
 
 
     <label class="flbl">Telefon kontaktowy <span style="font-weight:400;color:var(--text3)">(opcjonalne)</span></label>
