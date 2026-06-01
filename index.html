@@ -12100,7 +12100,7 @@ window._openUrgentBuy=async function(jobId){
   var m=document.createElement('div');m.id='mj-urgent-modal';
   m.style.cssText='position:fixed;inset:0;z-index:9998;background:rgba(0,0,0,.75);display:flex;align-items:flex-end;justify-content:center;animation:mjFdIn .18s ease';
   m.innerHTML=
-    '<style>.mj-urg-sheet{background:var(--bg);border-radius:24px 24px 0 0;width:100%;max-width:520px;padding:0 0 max(24px,calc(16px + env(safe-area-inset-bottom,0px)));overflow:hidden;animation:mjSlUp .42s cubic-bezier(.22,1,.36,1)}'
+    '<style>.mj-urg-sheet{background:var(--bg);border-radius:24px 24px 0 0;width:100%;max-width:520px;padding:0 0 max(24px,calc(16px + env(safe-area-inset-bottom,0px)));overflow-y:auto;max-height:90dvh;-webkit-overflow-scrolling:touch;animation:mjSlUp .42s cubic-bezier(.22,1,.36,1)}'
     +'@keyframes mjSlUp{from{transform:translateY(100%)}to{transform:translateY(0)}}'
     +'@keyframes mjFdIn{from{opacity:0}to{opacity:1}}'
     +'.mj-urg-blik{width:100%;padding:16px;border-radius:14px;background:linear-gradient(135deg,#16A34A,#15803D);border:none;font-family:var(--ff);font-size:16px;font-weight:900;color:#fff;cursor:pointer;letter-spacing:.3px;box-shadow:0 6px 20px rgba(22,163,74,.45);transition:transform .12s,box-shadow .12s}'
@@ -12176,7 +12176,7 @@ window._openBoostBuy=async function(jobId){
   var _bPrice=STRIPE_PRICES['boost_job'];var _bLink=STRIPE_LINKS['boost_job'];
   var m=document.createElement('div');m.id='mj-boost-modal';
   m.style.cssText='position:fixed;inset:0;z-index:9998;background:rgba(0,0,0,.75);display:flex;align-items:flex-end;justify-content:center;animation:mjFdIn .18s ease';
-  var _bSheetStyle='<style>.mj-bst-sh{background:var(--bg);border-radius:24px 24px 0 0;width:100%;max-width:520px;padding:0 0 max(24px,calc(16px + env(safe-area-inset-bottom,0px)));overflow:hidden;animation:mjSlUp .42s cubic-bezier(.22,1,.36,1)}'
+  var _bSheetStyle='<style>.mj-bst-sh{background:var(--bg);border-radius:24px 24px 0 0;width:100%;max-width:520px;padding:0 0 max(24px,calc(16px + env(safe-area-inset-bottom,0px)));overflow-y:auto;max-height:90dvh;-webkit-overflow-scrolling:touch;animation:mjSlUp .42s cubic-bezier(.22,1,.36,1)}'
     +'.mj-bst-blik{width:100%;padding:16px;border-radius:14px;background:linear-gradient(135deg,#16A34A,#15803D);border:none;font-family:var(--ff);font-size:15px;font-weight:900;color:#fff;cursor:pointer;box-shadow:0 5px 18px rgba(22,163,74,.4);margin-bottom:9px;display:block}'
     +'.mj-bst-card{width:100%;padding:15px;border-radius:14px;background:linear-gradient(135deg,#7C3AED,#6D28D9);border:none;font-family:var(--ff);font-size:14px;font-weight:900;color:#fff;cursor:pointer;box-shadow:0 5px 16px rgba(124,58,237,.35);margin-bottom:9px;display:block}</style>';
   var _timerStr=function(ms){var h=Math.max(0,Math.floor(ms/3600000));var min=Math.max(0,Math.floor((ms%3600000)/60000));var s=Math.max(0,Math.floor((ms%60000)/1000));return String(h).padStart(2,'0')+':'+String(min).padStart(2,'0')+':'+String(s).padStart(2,'0');};
@@ -12240,19 +12240,50 @@ window._openBoostBuy=async function(jobId){
   var _jobTitle='Oferta pracy';
   if(jobId){try{if(_sb){var _jr3=await _sb.from('job_offers').select('title').eq('id',jobId).maybeSingle();if(_jr3&&_jr3.data)_jobTitle=_jr3.data.title||_jobTitle;}}catch(_e){}}
   m.innerHTML=_bSheetStyle
-    +'<div class="mj-bst-sh"><div style="background:linear-gradient(135deg,rgba(234,179,8,.2),rgba(161,120,5,.1));border-bottom:1px solid rgba(234,179,8,.25);padding:20px 20px 18px;text-align:center">'
-    +'<div style="display:inline-flex;align-items:center;justify-content:center;width:56px;height:56px;border-radius:50%;background:rgba(234,179,8,.15);border:2px solid rgba(234,179,8,.45);font-size:26px;box-shadow:0 0 24px rgba(234,179,8,.3);margin-bottom:10px">🚀</div>'
-    +'<div style="font-size:20px;font-weight:900">Boost Dnia — co chcesz wypromować?</div>'
-    +'<div style="font-size:12px;color:var(--text3);margin-top:4px">9 zł · 48h · 1 slot na całej platformie</div>'
-    +'</div><div style="padding:18px 20px">'
-    +'<div id="mj-bst-opt-job" onclick="window._mj_bst_pick=\'job\';document.getElementById(\'mj-bst-opt-job\').style.borderColor=\'#FBBF24\';document.getElementById(\'mj-bst-opt-job\').style.background=\'rgba(234,179,8,.18)\';document.getElementById(\'mj-bst-opt-co\').style.borderColor=\'var(--border3)\';document.getElementById(\'mj-bst-opt-co\').style.background=\'var(--surf)\'" style="padding:14px;border-radius:14px;background:var(--surf);border:1.5px solid var(--border3);cursor:pointer;display:flex;align-items:center;gap:12px;margin-bottom:10px;transition:all .15s">'
-    +'<div style="width:44px;height:44px;border-radius:12px;background:rgba(234,179,8,.12);border:1px solid rgba(234,179,8,.3);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0">📋</div>'
-    +'<div style="flex:1"><div style="font-size:14px;font-weight:800">Ogłoszenie pracy</div><div style="font-size:11px;color:var(--text3);margin-top:2px">'+(jobId?escHtml(_jobTitle):'Wybierz konkretne ogłoszenie')+'<br>Złota ramka + oznaczenie TOP DNIA na liście</div></div>'
+    +'<div class="mj-bst-sh">'
+    // ── HEADER ──────────────────────────────────────────
+    +'<div style="background:linear-gradient(160deg,rgba(234,179,8,.22) 0%,rgba(161,120,5,.06) 100%);border-bottom:1px solid rgba(234,179,8,.18);padding:26px 20px 20px;text-align:center">'
+    +'<div style="display:inline-flex;align-items:center;justify-content:center;width:66px;height:66px;border-radius:50%;background:rgba(234,179,8,.18);border:2px solid rgba(234,179,8,.5);font-size:30px;box-shadow:0 0 32px rgba(234,179,8,.45);margin-bottom:13px">🚀</div>'
+    +'<div style="font-size:22px;font-weight:900;letter-spacing:-.3px">Boost Dnia</div>'
+    +'<div style="font-size:36px;font-weight:900;color:#FBBF24;letter-spacing:-1.5px;line-height:1.1;margin:7px 0 5px">9 zł</div>'
+    +'<div style="font-size:12.5px;color:var(--text3);margin-bottom:13px">jednorazowo · 48 godzin od momentu zakupu</div>'
+    +'<div style="display:inline-flex;align-items:center;gap:7px;background:rgba(34,197,94,.12);border:1px solid rgba(34,197,94,.3);border-radius:20px;padding:7px 15px;font-size:12px;font-weight:800;color:#4ADE80"><span style="width:8px;height:8px;border-radius:50%;background:#22C55E;flex-shrink:0"></span>Slot wolny — dostępny teraz!</div>'
     +'</div>'
-    +'<div id="mj-bst-opt-co" onclick="window._mj_bst_pick=\'company\';document.getElementById(\'mj-bst-opt-co\').style.borderColor=\'#FBBF24\';document.getElementById(\'mj-bst-opt-co\').style.background=\'rgba(234,179,8,.18)\';document.getElementById(\'mj-bst-opt-job\').style.borderColor=\'var(--border3)\';document.getElementById(\'mj-bst-opt-job\').style.background=\'var(--surf)\'" style="padding:14px;border-radius:14px;background:var(--surf);border:1.5px solid var(--border3);cursor:pointer;display:flex;align-items:center;gap:12px;margin-bottom:18px;transition:all .15s">'
-    +'<div style="width:44px;height:44px;border-radius:12px;background:rgba(234,179,8,.12);border:1px solid rgba(234,179,8,.3);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0">🏢</div>'
-    +'<div style="flex:1"><div style="font-size:14px;font-weight:800">Profil firmy</div><div style="font-size:11px;color:var(--text3);margin-top:2px">Karta Twojej firmy na szczycie listy<br>Kandydaci klikają i widzą wszystkie Twoje oferty</div></div>'
-    +'</div>'
+    // ── BODY ────────────────────────────────────────────
+    +'<div style="padding:18px 20px 20px">'
+    // EKSKLUZYWNOŚĆ
+    +'<div style="background:linear-gradient(135deg,rgba(234,179,8,.1),rgba(161,120,5,.05));border:1.5px solid rgba(234,179,8,.3);border-radius:16px;padding:15px 16px;margin-bottom:20px;display:flex;align-items:flex-start;gap:13px">'
+    +'<div style="font-size:28px;flex-shrink:0;margin-top:1px">🏆</div>'
+    +'<div><div style="font-size:14px;font-weight:900;color:#FBBF24;margin-bottom:5px">Tylko 1 firma jednocześnie na całej platformie</div>'
+    +'<div style="font-size:12.5px;color:var(--text2);line-height:1.65">Nikt inny nie może kupić Boost Dnia, dopóki Twój trwa. Przez 48h masz pełną wyłączność — Twoje ogłoszenie lub profil firmy wyświetlane jako <b style="color:var(--text)">pierwsze dla wszystkich kandydatów</b>.</div>'
+    +'</div></div>'
+    // ETYKIETA SEKCJI
+    +'<div style="font-size:11px;font-weight:800;letter-spacing:.6px;text-transform:uppercase;color:var(--text3);margin-bottom:11px">Co chcesz wypromować?</div>'
+    // KAFELEK: OGŁOSZENIE
+    +'<div id="mj-bst-opt-job" onclick="window._mj_bst_pick=\'job\';document.getElementById(\'mj-bst-opt-job\').style.borderColor=\'#FBBF24\';document.getElementById(\'mj-bst-opt-job\').style.background=\'rgba(234,179,8,.14)\';document.getElementById(\'mj-bst-opt-co\').style.borderColor=\'var(--border3)\';document.getElementById(\'mj-bst-opt-co\').style.background=\'var(--surf)\'" style="padding:16px;border-radius:16px;background:var(--surf);border:1.5px solid var(--border3);cursor:pointer;margin-bottom:10px;transition:all .15s">'
+    +'<div style="display:flex;align-items:center;gap:12px;margin-bottom:11px">'
+    +'<div style="width:48px;height:48px;border-radius:13px;background:rgba(234,179,8,.12);border:1px solid rgba(234,179,8,.3);display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0">📋</div>'
+    +'<div><div style="font-size:15px;font-weight:900">Ogłoszenie pracy</div>'
+    +'<div style="font-size:11.5px;color:var(--text3);margin-top:2px">'+(jobId?escHtml(_jobTitle):'Konkretna oferta — Twój wybór')+'</div></div></div>'
+    +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:7px">'
+    +'<div style="display:flex;align-items:center;gap:6px;font-size:11.5px;color:var(--text2)"><span style="color:#FBBF24;font-weight:900">✓</span>Złota ramka na karcie</div>'
+    +'<div style="display:flex;align-items:center;gap:6px;font-size:11.5px;color:var(--text2)"><span style="color:#FBBF24;font-weight:900">✓</span>Znacznik 🚀 TOP DNIA</div>'
+    +'<div style="display:flex;align-items:center;gap:6px;font-size:11.5px;color:var(--text2)"><span style="color:#FBBF24;font-weight:900">✓</span>Szczyt listy wszystkich ofert</div>'
+    +'<div style="display:flex;align-items:center;gap:6px;font-size:11.5px;color:var(--text2)"><span style="color:#FBBF24;font-weight:900">✓</span>Więcej kliknięć i aplikacji</div>'
+    +'</div></div>'
+    // KAFELEK: PROFIL FIRMY
+    +'<div id="mj-bst-opt-co" onclick="window._mj_bst_pick=\'company\';document.getElementById(\'mj-bst-opt-co\').style.borderColor=\'#FBBF24\';document.getElementById(\'mj-bst-opt-co\').style.background=\'rgba(234,179,8,.14)\';document.getElementById(\'mj-bst-opt-job\').style.borderColor=\'var(--border3)\';document.getElementById(\'mj-bst-opt-job\').style.background=\'var(--surf)\'" style="padding:16px;border-radius:16px;background:var(--surf);border:1.5px solid var(--border3);cursor:pointer;margin-bottom:18px;transition:all .15s">'
+    +'<div style="display:flex;align-items:center;gap:12px;margin-bottom:11px">'
+    +'<div style="width:48px;height:48px;border-radius:13px;background:rgba(234,179,8,.12);border:1px solid rgba(234,179,8,.3);display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0">🏢</div>'
+    +'<div><div style="font-size:15px;font-weight:900">Profil firmy</div>'
+    +'<div style="font-size:11.5px;color:var(--text3);margin-top:2px">Cały profil pracodawcy</div></div></div>'
+    +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:7px">'
+    +'<div style="display:flex;align-items:center;gap:6px;font-size:11.5px;color:var(--text2)"><span style="color:#FBBF24;font-weight:900">✓</span>Karta firmy na szczycie</div>'
+    +'<div style="display:flex;align-items:center;gap:6px;font-size:11.5px;color:var(--text2)"><span style="color:#FBBF24;font-weight:900">✓</span>Kandydaci widzą Cię pierwsi</div>'
+    +'<div style="display:flex;align-items:center;gap:6px;font-size:11.5px;color:var(--text2)"><span style="color:#FBBF24;font-weight:900">✓</span>Link do wszystkich ofert</div>'
+    +'<div style="display:flex;align-items:center;gap:6px;font-size:11.5px;color:var(--text2)"><span style="color:#FBBF24;font-weight:900">✓</span>Logo, opis i branża</div>'
+    +'</div></div>'
+    // PRZYCISKI
     +'<button id="mj-bst-next-btn" style="width:100%;padding:15px;border-radius:14px;background:linear-gradient(135deg,#D97706,#B45309);border:none;font-family:var(--ff);font-size:15px;font-weight:900;color:#fff;cursor:pointer;box-shadow:0 5px 20px rgba(217,119,6,.4);margin-bottom:9px">Dalej →</button>'
     +'<button onclick="document.getElementById(\'mj-boost-modal\').remove()" style="width:100%;padding:12px;border-radius:14px;background:transparent;border:1px solid var(--border3);font-family:var(--ff);font-size:13px;color:var(--text3);cursor:pointer">Anuluj</button>'
     +'</div></div>';
