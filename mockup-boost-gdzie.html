@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Boost Dnia — Gdzie to znaleźć</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:#0B0D10;color:#F1F5F9;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;min-height:100vh}
+  .header{background:#111318;border-bottom:1px solid #1E2330;padding:18px 20px;text-align:center}
+  .header h1{font-size:22px;font-weight:900;color:#FBBF24}
+  .header p{font-size:13px;color:#94A3B8;margin-top:4px}
+  .step{padding:24px 16px 0;max-width:420px;margin:0 auto}
+  .step-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(251,191,36,.12);border:1px solid rgba(251,191,36,.3);border-radius:20px;padding:5px 12px;font-size:12px;font-weight:800;color:#FBBF24;margin-bottom:14px}
+  .step-title{font-size:17px;font-weight:900;margin-bottom:8px}
+  .step-desc{font-size:13px;color:#94A3B8;line-height:1.5;margin-bottom:16px}
+  .arrow-down{text-align:center;padding:16px 0;font-size:24px;color:#334155}
+  .screen{background:#111318;border-radius:20px;overflow:hidden;border:1.5px solid #1E2330;margin-bottom:6px}
+
+  /* ── Topbar ── */
+  .topbar{background:#111318;border-bottom:1px solid #1E2330;padding:10px 14px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+  .tb-logo{font-size:15px;font-weight:900;color:#2D7FF9}
+  .tb-icons{display:flex;gap:10px;align-items:center}
+  .tb-icon{width:32px;height:32px;border-radius:9px;background:#1A1F2E;border:1px solid #1E2330;display:flex;align-items:center;justify-content:center;font-size:14px}
+  .tb-profile{width:32px;height:32px;border-radius:50%;background:#2D7FF9;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:900;color:#fff}
+
+  /* ── Nav tabs ── */
+  .navtabs{display:flex;border-bottom:1px solid #1E2330;background:#0B0D10}
+  .navtab{flex:1;padding:10px 4px 8px;text-align:center;font-size:10px;font-weight:700;color:#475569;display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer}
+  .navtab.active{color:#2D7FF9;border-bottom:2px solid #2D7FF9}
+  .navtab span{font-size:18px}
+  .navtab.highlight{color:#FBBF24;border-bottom:2px solid #FBBF24}
+
+  /* ── Profile panel ── */
+  .prof-header{background:linear-gradient(135deg,#0A1628,#0D1E3A);padding:14px 16px 12px}
+  .prof-user{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+  .prof-avatar{width:52px;height:52px;border-radius:50%;background:#2D7FF9;border:2.5px solid rgba(45,127,249,.3);display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:900;color:#fff;flex-shrink:0}
+  .prof-name{font-size:15px;font-weight:800}
+  .prof-sub{font-size:11.5px;color:#64748B;margin-top:2px}
+  .prof-pill{display:inline-flex;align-items:center;gap:4px;background:rgba(45,127,249,.12);border:1px solid rgba(45,127,249,.25);border-radius:20px;padding:3px 10px;font-size:11px;font-weight:700;color:#2D7FF9}
+
+  /* ── Boost bar highlight ── */
+  .boost-bar{margin:0 16px 14px}
+  .boost-bar-inner{position:relative;overflow:hidden;padding:14px 16px;border-radius:16px;background:linear-gradient(135deg,rgba(234,179,8,.14),rgba(161,120,5,.08));border:2px solid rgba(234,179,8,.55);cursor:pointer;display:flex;align-items:center;gap:14px;box-shadow:0 4px 20px rgba(234,179,8,.2)}
+  .boost-icon-wrap{width:42px;height:42px;border-radius:12px;background:rgba(234,179,8,.15);border:1.5px solid rgba(234,179,8,.4);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
+  .boost-text-main{font-size:14px;font-weight:900;color:#FBBF24}
+  .boost-text-sub{font-size:11.5px;color:#94A3B8;margin-top:2px}
+  .boost-cta{margin-left:auto;font-size:12px;font-weight:900;color:#FBBF24;background:rgba(234,179,8,.15);border:1px solid rgba(234,179,8,.35);padding:6px 12px;border-radius:8px;flex-shrink:0}
+  .boost-pulse{position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(234,179,8,.06),transparent);animation:bpulse 2s ease-in-out infinite}
+  @keyframes bpulse{0%,100%{transform:translateX(-100%)}50%{transform:translateX(100%)}}
+
+  /* ── My offers panel header ── */
+  .panel-header{background:#111318;border-bottom:1px solid #1E2330;padding:12px 14px;display:flex;align-items:center;gap:10px}
+  .panel-back{width:32px;height:32px;border-radius:9px;background:#1A1F2E;border:1px solid #1E2330;display:flex;align-items:center;justify-content:center}
+  .panel-title{font-size:14px;font-weight:800}
+
+  /* ── Offer card ── */
+  .offer-card{margin:14px 14px 0;background:#111318;border-radius:16px;border:1px solid #1E2330;overflow:hidden;padding:14px}
+  .offer-top{display:flex;align-items:flex-start;gap:10px;margin-bottom:10px}
+  .offer-logo{width:44px;height:44px;border-radius:11px;background:#1A2540;border:1.5px solid #1E2330;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+  .offer-title{font-size:14px;font-weight:800;margin-bottom:2px}
+  .offer-meta{font-size:11px;color:#475569}
+  .offer-status{font-size:10px;font-weight:700;color:#22C55E;padding:3px 8px;border-radius:20px;background:rgba(34,197,94,.12);border:1px solid rgba(34,197,94,.2);margin-left:auto;white-space:nowrap}
+  .offer-actions{display:flex;gap:6px;margin-top:8px}
+  .btn-sm{padding:9px 12px;border-radius:10px;font-size:12px;font-weight:700;border:1px solid #1E2330;background:#1A1F2E;color:#94A3B8;cursor:pointer;text-align:center}
+  .btn-sm.blue{background:#2D7FF9;border-color:#2D7FF9;color:#fff}
+  .btn-boost{width:100%;margin-top:8px;padding:11px;border-radius:12px;background:linear-gradient(135deg,rgba(234,179,8,.18),rgba(161,120,5,.12));border:1.5px solid rgba(234,179,8,.5);font-size:13px;font-weight:900;color:#FBBF24;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:7px;box-shadow:0 3px 12px rgba(234,179,8,.2)}
+  .btn-boost-active{width:100%;margin-top:8px;padding:11px;border-radius:12px;background:linear-gradient(90deg,rgba(234,179,8,.12),transparent);border:1.5px solid rgba(234,179,8,.35);font-size:12px;font-weight:900;color:#FBBF24;cursor:default;display:flex;align-items:center;justify-content:center;gap:7px}
+
+  /* ── Modal sheet ── */
+  .modal-backdrop{position:relative;background:rgba(0,0,0,.6);border-radius:0 0 20px 20px}
+  .modal-sheet{background:#111318;border-radius:24px 24px 0 0;overflow:hidden}
+  .sheet-gold-header{background:linear-gradient(135deg,rgba(234,179,8,.2),rgba(161,120,5,.1));border-bottom:1px solid rgba(234,179,8,.25);padding:20px 20px 18px;text-align:center}
+  .sheet-icon{display:inline-flex;align-items:center;justify-content:center;width:56px;height:56px;border-radius:50%;background:rgba(234,179,8,.15);border:2px solid rgba(234,179,8,.45);font-size:26px;box-shadow:0 0 24px rgba(234,179,8,.3);margin-bottom:10px}
+  .sheet-title{font-size:20px;font-weight:900}
+  .sheet-sub{font-size:12.5px;color:#94A3B8;margin-top:4px}
+  .sheet-body{padding:18px 20px 0}
+  .slot-free-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.3);border-radius:20px;padding:5px 12px;font-size:11.5px;font-weight:800;color:#4ADE80;margin-bottom:14px}
+  .feature-list{background:#1A1F2E;border:1px solid #1E2330;border-radius:16px;overflow:hidden;margin-bottom:16px}
+  .feature-row{display:flex;align-items:center;gap:12px;padding:12px 14px;border-bottom:1px solid #1E2330}
+  .feature-row:last-child{border-bottom:none}
+  .feature-emoji{font-size:20px;flex-shrink:0}
+  .feature-label{font-size:13px;font-weight:800}
+  .feature-desc{font-size:11.5px;color:#64748B;margin-top:1px}
+  .price-block{text-align:center;margin-bottom:16px}
+  .price-big{font-size:36px;font-weight:900;color:#FBBF24;letter-spacing:-.8px}
+  .price-sub{font-size:12px;color:#64748B;margin-top:2px}
+  .btn-pay{width:100%;padding:16px;border-radius:14px;background:linear-gradient(135deg,#16A34A,#15803D);border:none;font-size:15px;font-weight:900;color:#fff;cursor:pointer;margin-bottom:9px;display:block;text-align:center;box-shadow:0 5px 18px rgba(22,163,74,.4)}
+  .btn-cancel{width:100%;padding:13px;border-radius:14px;background:transparent;border:1px solid #1E2330;font-size:13px;color:#64748B;cursor:pointer;margin-bottom:16px;display:block;text-align:center}
+
+  /* ── Type picker ── */
+  .type-opt{padding:14px;border-radius:14px;background:#1A1F2E;border:1.5px solid #1E2330;display:flex;align-items:center;gap:12px;margin-bottom:10px;cursor:pointer;transition:all .15s}
+  .type-opt.selected{border-color:#FBBF24;background:rgba(234,179,8,.12)}
+  .type-opt-icon{width:44px;height:44px;border-radius:12px;background:rgba(234,179,8,.12);border:1px solid rgba(234,179,8,.3);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
+  .type-opt-title{font-size:14px;font-weight:800}
+  .type-opt-desc{font-size:11px;color:#64748B;margin-top:2px}
+  .btn-next{width:100%;padding:15px;border-radius:14px;background:linear-gradient(135deg,#D97706,#B45309);border:none;font-size:15px;font-weight:900;color:#fff;cursor:pointer;box-shadow:0 5px 20px rgba(217,119,6,.4);margin-bottom:9px;display:block;text-align:center}
+
+  /* ── Browse list with boost ── */
+  .boost-card-top{margin:12px 10px 6px;background:linear-gradient(135deg,rgba(234,179,8,.12),rgba(161,120,5,.06));border:1.5px solid rgba(234,179,8,.4);border-radius:16px;padding:14px;display:flex;align-items:center;gap:12px;box-shadow:0 4px 20px rgba(234,179,8,.15)}
+  .boost-card-logo{width:46px;height:46px;border-radius:12px;background:#fff;border:1.5px solid rgba(234,179,8,.3);display:flex;align-items:center;justify-content:center;font-size:20px}
+  .boost-card-top-badge{font-size:10px;font-weight:900;color:#FBBF24;background:rgba(234,179,8,.15);border:1px solid rgba(234,179,8,.3);border-radius:6px;padding:2px 6px;display:inline-block;margin-bottom:2px}
+  .boost-card-name{font-size:14px;font-weight:800}
+  .boost-card-link{font-size:11.5px;color:#FBBF24;margin-top:2px}
+  .job-item{margin:6px 10px;background:#111318;border-radius:14px;border:1px solid #1E2330;padding:12px;display:flex;align-items:center;gap:10px}
+  .job-item.boosted{border-color:rgba(234,179,8,.45);background:rgba(234,179,8,.03)}
+  .job-item-icon{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+  .job-item-title{font-size:13px;font-weight:800;margin-bottom:2px}
+  .job-item-meta{font-size:11px;color:#475569}
+  .boost-ribbon{font-size:10px;font-weight:900;color:#FBBF24;background:rgba(234,179,8,.18);border:1px solid rgba(234,179,8,.4);border-radius:6px;padding:2px 7px;margin-left:auto;white-space:nowrap;flex-shrink:0}
+
+  /* ── Stripe redirect screen ── */
+  .stripe-screen{background:#fff;border-radius:16px;padding:20px;text-align:center;margin-bottom:4px}
+  .stripe-logo{font-size:13px;font-weight:900;color:#635BFF;margin-bottom:16px;letter-spacing:.5px}
+  .stripe-amount{font-size:28px;font-weight:900;color:#111;margin-bottom:4px}
+  .stripe-desc{font-size:13px;color:#6B7280;margin-bottom:20px}
+  .stripe-methods{display:flex;gap:8px;justify-content:center;margin-bottom:16px}
+  .stripe-method{padding:8px 16px;border:1.5px solid #E5E7EB;border-radius:8px;font-size:12px;font-weight:700;color:#374151;cursor:pointer}
+  .stripe-method.active{border-color:#635BFF;background:#F5F4FF;color:#635BFF}
+  .blik-input{border:1.5px solid #635BFF;border-radius:12px;padding:14px;font-size:24px;font-weight:900;letter-spacing:6px;text-align:center;color:#111;width:100%;margin-bottom:12px;font-family:monospace}
+  .stripe-pay-btn{width:100%;padding:14px;border-radius:12px;background:#635BFF;color:#fff;font-size:15px;font-weight:800;border:none;cursor:pointer}
+
+  /* ── Success ── */
+  .success-toast{background:rgba(34,197,94,.15);border:1.5px solid rgba(34,197,94,.4);border-radius:14px;padding:14px 16px;display:flex;align-items:center;gap:12px;margin:12px 10px}
+  .success-icon{font-size:24px;flex-shrink:0}
+  .success-text{font-size:13px;font-weight:800;color:#4ADE80}
+  .success-sub{font-size:11.5px;color:#64748B;margin-top:2px}
+
+  /* ── Annotations ── */
+  .annotation{display:flex;align-items:flex-start;gap:10px;background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.25);border-radius:12px;padding:12px 14px;margin:12px 0}
+  .ann-num{width:22px;height:22px;border-radius:50%;background:#FBBF24;color:#000;font-size:11px;font-weight:900;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+  .ann-text{font-size:12.5px;color:#CBD5E1;line-height:1.5}
+  .ann-text b{color:#FBBF24}
+
+  /* ── Section divider ── */
+  .section-div{margin:28px 16px 0;border-top:1px solid #1E2330;padding-top:24px}
+  .section-label{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:#334155;margin-bottom:16px;text-align:center}
+
+  /* ── Red arrow highlight ── */
+  .highlight-arrow{text-align:center;font-size:28px;color:#EF4444;padding:4px 0}
+  .highlight-box{border:2px dashed #EF4444;border-radius:14px;padding:4px;position:relative}
+  .highlight-label{position:absolute;top:-10px;left:14px;background:#EF4444;color:#fff;font-size:10px;font-weight:900;padding:2px 8px;border-radius:6px}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>🚀 Boost Dnia — Jak to działa</h1>
+  <p>Krok po kroku: gdzie znaleźć, jak kupić, jak wygląda</p>
+</div>
+
+<!-- ============ KROK 0 ============ -->
+<div class="step">
+  <div class="step-badge">🔑 Warunek wstępny</div>
+  <div class="step-title">Musisz być zalogowany jako pracodawca z aktywną ofertą</div>
+  <div class="step-desc">Boost jest widoczny tylko dla zalogowanych użytkowników z typem konta "Pracodawca" i co najmniej jedną aktywną ofertą pracy.</div>
+</div>
+
+<!-- ============ KROK 1 ============ -->
+<div class="step section-div">
+  <div class="section-label">Sposób 1 — przez panel profilu</div>
+  <div class="step-badge">📍 Krok 1</div>
+  <div class="step-title">Otwórz swój profil (ikona w prawym górnym rogu)</div>
+  <div class="step-desc">Na pasku na górze kliknij swoją ikonę profilu. Otworzy się panel boczny.</div>
+</div>
+
+<div class="step">
+  <div class="screen">
+    <div class="topbar">
+      <div class="tb-logo">MapJob</div>
+      <div class="tb-icons">
+        <div class="tb-icon">🔔</div>
+        <div class="tb-icon">🔍</div>
+        <div class="highlight-box" style="border-radius:50%;padding:2px">
+          <div class="highlight-label" style="white-space:nowrap">Kliknij tutaj!</div>
+          <div class="tb-profile">PZ</div>
+        </div>
+      </div>
+    </div>
+    <!-- nav -->
+    <div class="navtabs">
+      <div class="navtab active"><span>🗺️</span>Mapa</div>
+      <div class="navtab"><span>💼</span>Oferty</div>
+      <div class="navtab"><span>📋</span>Zlecenia</div>
+      <div class="navtab"><span>📨</span>Wiad.</div>
+      <div class="navtab"><span>👤</span>Profil</div>
+    </div>
+    <!-- placeholder map -->
+    <div style="height:120px;background:#0F1521;display:flex;align-items:center;justify-content:center;color:#334155;font-size:13px">🗺️ Mapa ofert pracy</div>
+  </div>
+</div>
+
+<div class="arrow-down">↓</div>
+
+<!-- Profil panel widok -->
+<div class="step">
+  <div class="step-badge">📍 Krok 2</div>
+  <div class="step-title">W panelu profilu znajdź sekcję "Boost Dnia"</div>
+  <div class="step-desc">Pod nagłówkiem profilu pojawi się złoty pasek Boost Dnia (jeśli masz aktywną ofertę i nie ma aktywnego boostu).</div>
+</div>
+
+<div class="step">
+  <div class="screen">
+    <!-- profil header -->
+    <div class="prof-header">
+      <div class="prof-user">
+        <div class="prof-avatar">PZ</div>
+        <div>
+          <div class="prof-name">Piotr Zając</div>
+          <div class="prof-sub">Pracodawca · piotr.zajac4321@gmail.com</div>
+          <div class="prof-pill" style="margin-top:5px">✓ Plan Pro</div>
+        </div>
+      </div>
+    </div>
+    <!-- boost bar highlight -->
+    <div style="border-top:1px solid #1E2330;padding-top:2px">
+      <div class="highlight-box" style="margin:10px;border-radius:18px">
+        <div class="highlight-label">Tu jest Boost Dnia!</div>
+        <div class="boost-bar" style="margin:0">
+          <div class="boost-bar-inner">
+            <div class="boost-pulse"></div>
+            <div class="boost-icon-wrap">🚀</div>
+            <div>
+              <div class="boost-text-main">Boost Dnia — 9 zł</div>
+              <div class="boost-text-sub">Slot wolny! Na szczycie listy · 24h od zakupu</div>
+            </div>
+            <div class="boost-cta">Kup →</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- other links below -->
+    <div style="padding:10px 16px 14px;display:flex;flex-direction:column;gap:8px">
+      <div style="padding:11px 14px;border-radius:12px;background:#1A1F2E;border:1px solid #1E2330;font-size:13px;font-weight:700;color:#94A3B8">📋 Moje oferty pracy</div>
+      <div style="padding:11px 14px;border-radius:12px;background:#1A1F2E;border:1px solid #1E2330;font-size:13px;font-weight:700;color:#94A3B8">⭐ Kup plan Pro</div>
+      <div style="padding:11px 14px;border-radius:12px;background:#1A1F2E;border:1px solid #1E2330;font-size:13px;font-weight:700;color:#94A3B8">⚙️ Ustawienia konta</div>
+    </div>
+  </div>
+
+  <div class="annotation">
+    <div class="ann-num">!</div>
+    <div class="ann-text">Pasek jest widoczny tylko gdy <b>slot jest wolny</b>. Gdy inna firma aktywnie boostuje, pasek pokazuje <b>licznik czasu</b> do wygaśnięcia.</div>
+  </div>
+</div>
+
+<!-- ============ KROK 1B ============ -->
+<div class="step section-div">
+  <div class="section-label">Sposób 2 — przez panel "Moje oferty"</div>
+  <div class="step-badge">📍 Alternatywna ścieżka</div>
+  <div class="step-title">Moje oferty → przycisk pod każdą ofertą</div>
+  <div class="step-desc">Wejdź w "Moje oferty pracy" (z profilu lub z nawigacji). Pod każdą aktywną ofertą widoczny jest przycisk Boost.</div>
+</div>
+
+<div class="step">
+  <div class="screen">
+    <div class="panel-header">
+      <div class="panel-back">←</div>
+      <div class="panel-title">Moje oferty pracy</div>
+    </div>
+    <!-- offer card 1 -->
+    <div class="offer-card">
+      <div class="offer-top">
+        <div class="offer-logo">🔧</div>
+        <div style="flex:1">
+          <div class="offer-title">Elektryk przemysłowy</div>
+          <div class="offer-meta">Warszawa · Elektryk</div>
+        </div>
+        <div class="offer-status">Aktywna</div>
+      </div>
+      <div class="offer-actions">
+        <div class="btn-sm blue" style="flex:1">Kandydaci</div>
+        <div class="btn-sm">Wstrzymaj</div>
+        <div class="btn-sm">✎</div>
+      </div>
+      <!-- no urgent -->
+      <div class="btn-sm" style="width:100%;margin-top:6px;background:rgba(239,68,68,.1);border-color:rgba(239,68,68,.3);color:#F87171;text-align:center">🔴 Kup pilne — 19 zł</div>
+      <!-- BOOST button highlight -->
+      <div class="highlight-box" style="margin-top:6px;border-radius:14px">
+        <div class="highlight-label">Kliknij tu!</div>
+        <div class="btn-boost">🚀 Boost Dnia — 9 zł / 24h</div>
+      </div>
+    </div>
+    <!-- offer card 2 (already boosted) -->
+    <div class="offer-card" style="margin-top:10px;margin-bottom:14px">
+      <div class="offer-top">
+        <div class="offer-logo">🏗</div>
+        <div style="flex:1">
+          <div class="offer-title">Murarz — pilne!</div>
+          <div class="offer-meta">Kraków · Budownictwo</div>
+        </div>
+        <div class="offer-status">Aktywna</div>
+      </div>
+      <div class="offer-actions">
+        <div class="btn-sm blue" style="flex:1">Kandydaci</div>
+        <div class="btn-sm">Wstrzymaj</div>
+        <div class="btn-sm">✎</div>
+      </div>
+      <div class="btn-boost-active">✅ Boost aktywny · wygasa za 18h 42min</div>
+    </div>
+  </div>
+
+  <div class="annotation">
+    <div class="ann-num">!</div>
+    <div class="ann-text">Jeśli boost jest już aktywny na danej ofercie, przycisk zamienia się w <b>"✅ Boost aktywny · wygasa za Xh Ymin"</b>.</div>
+  </div>
+</div>
+
+<!-- ============ KROK 2 ============ -->
+<div class="step section-div">
+  <div class="section-label">Przepływ zakupu</div>
+  <div class="step-badge">📍 Krok 3</div>
+  <div class="step-title">Wybierz co chcesz wypromować</div>
+  <div class="step-desc">Najpierw pojawia się picker: konkretne ogłoszenie pracy (złota ramka w liście) albo profil firmy (karta firmy na szczycie listy).</div>
+</div>
+
+<div class="step">
+  <div class="screen">
+    <div class="modal-backdrop">
+      <div class="modal-sheet">
+        <div class="sheet-gold-header">
+          <div class="sheet-icon">🚀</div>
+          <div class="sheet-title">Boost Dnia — co chcesz wypromować?</div>
+          <div class="sheet-sub">9 zł · 24h · 1 slot na całej platformie</div>
+        </div>
+        <div class="sheet-body" style="padding:18px 20px">
+          <div class="type-opt selected">
+            <div class="type-opt-icon">📋</div>
+            <div>
+              <div class="type-opt-title">Ogłoszenie pracy</div>
+              <div class="type-opt-desc">Elektryk przemysłowy<br>Złota ramka + oznaczenie TOP DNIA na liście</div>
+            </div>
+          </div>
+          <div class="type-opt" style="margin-bottom:18px">
+            <div class="type-opt-icon">🏢</div>
+            <div>
+              <div class="type-opt-title">Profil firmy</div>
+              <div class="type-opt-desc">Karta Twojej firmy na szczycie listy<br>Kandydaci klikają i widzą wszystkie Twoje oferty</div>
+            </div>
+          </div>
+          <div class="btn-next">Dalej →</div>
+          <div class="btn-cancel">Anuluj</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="arrow-down">↓</div>
+
+<!-- KROK 3b -->
+<div class="step">
+  <div class="step-badge">📍 Krok 4</div>
+  <div class="step-title">Potwierdzenie i płatność</div>
+  <div class="step-desc">Widzisz szczegóły boostu i jeden przycisk "Zapłać". Kliknięcie przenosi na stronę Stripe Checkout.</div>
+</div>
+
+<div class="step">
+  <div class="screen">
+    <div class="modal-backdrop">
+      <div class="modal-sheet">
+        <div class="sheet-gold-header">
+          <div class="sheet-icon">🚀</div>
+          <div class="sheet-title">Boost Dnia</div>
+          <div class="sheet-sub">📋 Elektryk przemysłowy</div>
+        </div>
+        <div class="sheet-body">
+          <div style="text-align:center;margin-bottom:14px">
+            <div class="slot-free-badge"><span style="width:7px;height:7px;border-radius:50%;background:#22C55E;flex-shrink:0"></span>Slot wolny — kup teraz!</div>
+          </div>
+          <div class="feature-list">
+            <div class="feature-row">
+              <div class="feature-emoji">🏆</div>
+              <div><div class="feature-label">Tylko 1 firma jednocześnie</div><div class="feature-desc">Nikt inny nie może kupić boostu dopóki Twój trwa</div></div>
+            </div>
+            <div class="feature-row">
+              <div class="feature-emoji">⏱</div>
+              <div><div class="feature-label">Dokładnie 24h od zakupu</div><div class="feature-desc">Pełne 24 godziny od momentu płatności</div></div>
+            </div>
+            <div class="feature-row" style="border-bottom:none">
+              <div class="feature-emoji">👁</div>
+              <div><div class="feature-label">Złota ramka i oznaczenie TOP DNIA</div><div class="feature-desc">Wyróżnia Twoją ofertę na tle wszystkich pozostałych</div></div>
+            </div>
+          </div>
+          <div class="price-block">
+            <div class="price-big">9 zł</div>
+            <div class="price-sub">jednorazowo · pełne 24h od zakupu · BLIK / karta / P24</div>
+          </div>
+          <div class="btn-pay">🚀 Zapłać i aktywuj Boost</div>
+          <div class="btn-cancel">Anuluj</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="arrow-down">↓</div>
+
+<!-- KROK 4 — Stripe -->
+<div class="step">
+  <div class="step-badge">📍 Krok 5</div>
+  <div class="step-title">Stripe Checkout — płatność BLIK / kartą / P24</div>
+  <div class="step-desc">Aplikacja przenosi na stronę Stripe. Wybierasz metodę płatności tam. Po zapłaceniu Stripe wraca na mapjob.pl automatycznie.</div>
+</div>
+
+<div class="step">
+  <div class="screen" style="border-radius:20px;overflow:hidden">
+    <div style="background:#0B0D10;padding:10px 14px;font-size:11px;color:#475569;text-align:center">mapjob.pl → checkout.stripe.com</div>
+    <div class="stripe-screen">
+      <div class="stripe-logo">stripe</div>
+      <div class="stripe-amount">9,00 zł</div>
+      <div class="stripe-desc">Boost Dnia (24h) — MapJob</div>
+      <div class="stripe-methods">
+        <div class="stripe-method active">BLIK</div>
+        <div class="stripe-method">Karta</div>
+        <div class="stripe-method">Przelewy24</div>
+      </div>
+      <input class="blik-input" type="text" value="123 456" readonly>
+      <button class="stripe-pay-btn">Zapłać 9,00 zł</button>
+    </div>
+  </div>
+</div>
+
+<div class="arrow-down">↓</div>
+
+<!-- KROK 5 — Success -->
+<div class="step">
+  <div class="step-badge">✅ Krok 6</div>
+  <div class="step-title">Powrót do aplikacji — Boost aktywny!</div>
+  <div class="step-desc">Stripe wraca na mapjob.pl z parametrem ?boost=ok. Aplikacja pokazuje toast i od razu odświeża listę ofert.</div>
+</div>
+
+<div class="step">
+  <div class="screen">
+    <div class="topbar">
+      <div class="tb-logo">MapJob</div>
+      <div class="tb-icons">
+        <div class="tb-icon">🔔</div>
+        <div class="tb-icon">🔍</div>
+        <div class="tb-profile">PZ</div>
+      </div>
+    </div>
+    <div class="success-toast">
+      <div class="success-icon">🚀</div>
+      <div>
+        <div class="success-text">Boost Dnia aktywny!</div>
+        <div class="success-sub">Twoja promocja jest na szczycie listy przez 24h.</div>
+      </div>
+    </div>
+    <!-- browse list -->
+    <div style="font-size:11px;font-weight:800;color:#475569;padding:8px 14px 4px;text-transform:uppercase;letter-spacing:.06em">Oferty pracy</div>
+    <!-- boosted job at top -->
+    <div class="job-item boosted">
+      <div class="job-item-icon" style="background:rgba(234,179,8,.12);border:1.5px solid rgba(234,179,8,.3)">⚡</div>
+      <div style="flex:1">
+        <div class="job-item-title">Elektryk przemysłowy <span style="font-size:10px;color:#FBBF24">★ TOP</span></div>
+        <div class="job-item-meta">Warszawa · do 45 zł/h</div>
+      </div>
+      <div class="boost-ribbon">🚀 TOP DNIA</div>
+    </div>
+    <div class="job-item" style="opacity:.6">
+      <div class="job-item-icon" style="background:#1A1F2E">🔧</div>
+      <div style="flex:1"><div class="job-item-title">Hydraulik</div><div class="job-item-meta">Kraków · 25–35 zł/h</div></div>
+    </div>
+    <div class="job-item" style="opacity:.5;margin-bottom:14px">
+      <div class="job-item-icon" style="background:#1A1F2E">🏗</div>
+      <div style="flex:1"><div class="job-item-title">Murarz — budowa centrum</div><div class="job-item-meta">Gdańsk · 30 zł/h</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ WARIANT B — Company boost ============ -->
+<div class="step section-div">
+  <div class="section-label">Wariant B — Boost profilu firmy</div>
+  <div class="step-badge">🏢 Alternatywny efekt</div>
+  <div class="step-title">Po wybraniu "Profil firmy" — karta firmy na szczycie listy</div>
+  <div class="step-desc">Zamiast złotej ramki na ofercie, na samej górze listy ofert pojawia się karta Twojej firmy z linkiem do profilu.</div>
+</div>
+
+<div class="step" style="padding-bottom:32px">
+  <div class="screen">
+    <div style="font-size:11px;font-weight:800;color:#475569;padding:10px 14px 4px;text-transform:uppercase;letter-spacing:.06em">Oferty pracy</div>
+    <!-- company boost card -->
+    <div class="boost-card-top">
+      <div class="boost-card-logo">🏢</div>
+      <div style="flex:1">
+        <div class="boost-card-top-badge">🚀 BOOST DNIA</div>
+        <div class="boost-card-name">FirmaXYZ Sp. z o.o.</div>
+        <div class="boost-card-link">Sprawdź wszystkie oferty →</div>
+      </div>
+    </div>
+    <!-- regular jobs below -->
+    <div class="job-item" style="opacity:.7">
+      <div class="job-item-icon" style="background:#1A1F2E">🔧</div>
+      <div style="flex:1"><div class="job-item-title">Hydraulik</div><div class="job-item-meta">Kraków · 25–35 zł/h</div></div>
+    </div>
+    <div class="job-item" style="opacity:.5;margin-bottom:14px">
+      <div class="job-item-icon" style="background:#1A1F2E">🏗</div>
+      <div style="flex:1"><div class="job-item-title">Murarz — budowa centrum</div><div class="job-item-meta">Gdańsk · 30 zł/h</div></div>
+    </div>
+  </div>
+
+  <div class="annotation" style="margin-top:12px">
+    <div class="ann-num">ℹ</div>
+    <div class="ann-text"><b>Aktywacja:</b> Boost jest aktywowany przez Stripe webhook — zazwyczaj w ciągu kilku sekund od zapłaty. Jeśli lista się nie odśwież automatycznie, przeładuj stronę.</div>
+  </div>
+</div>
+
+<!-- Footer -->
+<div style="padding:24px 16px;text-align:center;border-top:1px solid #1E2330;margin-top:8px">
+  <div style="font-size:13px;color:#475569;line-height:1.7">
+    <b style="color:#94A3B8">Podsumowanie lokalizacji:</b><br>
+    1. Ikona profilu (góra prawo) → złoty pasek Boost Dnia<br>
+    2. Profil → Moje oferty pracy → przycisk pod kartą oferty<br>
+    <br>
+    <b style="color:#FBBF24">Wymagane:</b> zalogowany pracodawca z aktywną ofertą
+  </div>
+</div>
+
+</body>
+</html>
