@@ -128,8 +128,9 @@ Deno.serve(async (req: Request): Promise<Response> => {
       line_items: [{ price: priceId, quantity: 1 }],
       client_reference_id: userId,
       customer_email: userEmail ?? undefined,
-      // Bez payment_method_types -> Stripe pokazuje wszystkie metody włączone w Dashboardzie
-      // (karta + BLIK + P24 itd.), a użytkownik wybiera sam. Nowe metody działają bez redeployu.
+      // card + BLIK (obie aktywne na koncie). P24 nieaktywne -> nie dodajemy, bo
+      // Stripe zwraca 500 przy każdej nieaktywowanej metodzie.
+      payment_method_types: ['card', 'blik'],
       metadata: {
         product_key: 'boost_job',
         boost_type: boostType,
