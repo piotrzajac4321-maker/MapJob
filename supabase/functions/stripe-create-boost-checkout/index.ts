@@ -3,7 +3,8 @@
 // caches IDs in system_config, then returns a per-user Checkout Session URL.
 //
 // Deploy: supabase functions deploy stripe-create-boost-checkout
-// Env: STRIPE_SECRET_KEY, SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY (auto-injected)
+// Env: STRIPE_SECRET_KEY (or system_config.stripe_secret_key fallback),
+//      SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY (auto-injected)
 
 import Stripe from 'https://esm.sh/stripe@14.21.0?target=deno'
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.7'
@@ -14,18 +15,31 @@ const CORS_HEADERS = {
   'Access-Control-Allow-Methods': 'POST, OPTIONS',
 }
 
-const stripe = new Stripe(Deno.env.get('STRIPE_SECRET_KEY') ?? '', {
-  apiVersion: '2024-06-20',
-  httpClient: Stripe.createFetchHttpClient(),
-})
-
 const supabaseAdmin = createClient(
   Deno.env.get('SUPABASE_URL') ?? '',
   Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '',
   { auth: { persistSession: false, autoRefreshToken: false } },
 )
 
-async function getOrCreateBoostPrice(): Promise<{ priceId: string; productId: string }> {
+// STRIPE_SECRET_KEY z env, a jeśli brak — z system_config (fallback)
+async function getStripeClient(): Promise<Stripe> {
+  let key = Deno.env.get('STRIPE_SECRET_KEY') ?? ''
+  if (!key) {
+    const { data } = await supabaseAdmin
+      .from('system_config')
+      .select('value')
+      .eq('key', 'stripe_secret_key')
+      .maybeSingle()
+    key = data?.value ?? ''
+  }
+  if (!key) throw new Error('STRIPE_SECRET_KEY not configured')
+  return new Stripe(key, {
+    apiVersion: '2024-06-20',
+    httpClient: Stripe.createFetchHttpClient(),
+  })
+}
+
+async function getOrCreateBoostPrice(stripe: Stripe): Promise<{ priceId: string; productId: string }> {
   const { data: cfgRows } = await supabaseAdmin
     .from('system_config')
     .select('key,value')
@@ -106,14 +120,15 @@ Deno.serve(async (req: Request): Promise<Response> => {
   const jobId = body.job_id || null
 
   try {
-    const { priceId, productId } = await getOrCreateBoostPrice()
+    const stripe = await getStripeClient()
+    const { priceId, productId } = await getOrCreateBoostPrice(stripe)
 
     const session = await stripe.checkout.sessions.create({
       mode: 'payment',
       line_items: [{ price: priceId, quantity: 1 }],
       client_reference_id: userId,
       customer_email: userEmail ?? undefined,
-      automatic_payment_methods: { enabled: true },
+      payment_method_types: ['card', 'blik', 'p24'],
       metadata: {
         product_key: 'boost_job',
         boost_type: boostType,
