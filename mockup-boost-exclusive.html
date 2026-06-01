@@ -209,20 +209,20 @@ body{background:var(--bg);color:var(--text);font-family:var(--ff);padding-bottom
 <!-- ═══════════════════════════════════════════
      SEKCJA 1 — WIDGET W PROFILU (slot WOLNY)
      ═══════════════════════════════════════════ -->
-<div class="sect">Panel profilu — slot dostępny dziś</div>
+<div class="sect">Panel profilu — slot dostępny</div>
 
 <div class="slot-widget slot-avail">
   <div class="slot-header">
     <div class="slot-icon-wrap slot-icon-gold">🚀</div>
     <div>
       <div class="slot-title">Boost Dnia</div>
-      <div class="slot-sub">Twoje ogłoszenie na szczycie — tylko 1 slot na dobę</div>
+      <div class="slot-sub">Twoje ogłoszenie na szczycie — tylko 1 slot na platformie</div>
     </div>
   </div>
   <div class="slot-status">
     <div class="dot-live"></div>
-    <span class="status-txt-avail">Dostępny dziś!</span>
-    <span class="status-timer">zostało ~14h</span>
+    <span class="status-txt-avail">Slot wolny!</span>
+    <span class="status-timer">24h od zakupu</span>
   </div>
   <div class="slot-divider"></div>
   <div class="slot-cta">
@@ -232,14 +232,14 @@ body{background:var(--bg);color:var(--text);font-family:var(--ff);padding-bottom
         <div class="price-sub">/ 24 godziny</div>
       </div>
       <div class="price-desc">
-        Twoje ogłoszenie pojawi się <b style="color:var(--text)">na samej górze</b> wyników — powyżej wszystkich zwykłych ofert, przez całą dobę.
+        Twoje ogłoszenie na <b style="color:var(--text)">samej górze</b> listy przez całe 24 godziny od zakupu — dla wszystkich kandydatów.
       </div>
     </div>
-    <button class="btn-buy-boost">🚀 Kup Boost Dnia</button>
+    <button class="btn-buy-boost">🚀 Kup Boost — 24h gwarancji</button>
   </div>
   <div class="scarcity-bar scarcity-bar-avail">
     <span>⚡</span>
-    <span><b style="color:#FBBF24">Limit: 1 ogłoszenie dziennie</b> na całej platformie · jutro reset o północy</span>
+    <span><b style="color:#FBBF24">Limit: 1 firma jednocześnie</b> · następna może kupić dopiero po wygaśnięciu Twojego boostu</span>
   </div>
 </div>
 
@@ -247,32 +247,32 @@ body{background:var(--bg);color:var(--text);font-family:var(--ff);padding-bottom
 <!-- ═══════════════════════════════════════════
      SEKCJA 2 — WIDGET W PROFILU (slot ZAJĘTY)
      ═══════════════════════════════════════════ -->
-<div class="sect" style="margin-top:4px">Panel profilu — slot już zajęty</div>
+<div class="sect" style="margin-top:4px">Panel profilu — slot aktualnie zajęty</div>
 
 <div class="slot-widget slot-taken">
   <div class="slot-header">
     <div class="slot-icon-wrap slot-icon-grey">🔒</div>
     <div>
       <div class="slot-title" style="color:var(--text2)">Boost Dnia</div>
-      <div class="slot-sub">Dzisiaj już zajęty — dostępny ponownie jutro</div>
+      <div class="slot-sub">Teraz zajęty — wolny gdy wygaśnie boost innej firmy</div>
     </div>
   </div>
   <div class="slot-status">
     <div class="dot-locked"></div>
-    <span class="status-txt-taken">Zajęty · kupi jutro od 00:00</span>
-    <span class="status-timer" style="color:var(--text3)">reset za 9h 23min</span>
+    <span class="status-txt-taken">Zajęty · wolny za</span>
+    <span class="status-timer" style="color:var(--text3)">9h 23min</span>
   </div>
   <div class="slot-divider-grey"></div>
   <div class="slot-cta">
-    <button class="btn-locked">🔒 Niedostępny — jutro od 00:00</button>
+    <button class="btn-locked">🔒 Niedostępny — wolny za 9h 23min</button>
     <div style="margin-top:10px;font-size:11.5px;color:var(--text3);text-align:center;line-height:1.5">
-      Kto pierwszy jutro, ten lepszy 🏆<br>
-      <span style="color:var(--text2);font-weight:700">Postaw alarm na północ i zgarniaj slot jako pierwszy!</span>
+      Kto pierwszy po wygaśnięciu, ten lepszy 🏆<br>
+      <span style="color:var(--text2);font-weight:700">Możesz ustawić powiadomienie, gdy slot się zwolni.</span>
     </div>
   </div>
   <div class="scarcity-bar">
     <span>🔒</span>
-    <span>Dzisiaj slot zajął ktoś inny · następny dostępny: <b style="color:var(--text2)">jutro 00:00</b></span>
+    <span>Slot zajęty przez inną firmę · szacowane zwolnienie za <b style="color:var(--text2)">~9h 23min</b></span>
   </div>
 </div>
 
@@ -282,6 +282,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--ff);padding-bottom
      ═══════════════════════════════════════════ -->
 <div class="sect" style="margin-top:4px">Moje oferty — karta ogłoszenia</div>
 
+<!-- Karta — SLOT WOLNY -->
 <div class="job-card">
   <div class="card-body">
     <div class="card-head">
@@ -302,7 +303,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--ff);padding-bottom
       <button class="btn btn-ghost" style="flex:1">⧉ Kopiuj</button>
     </div>
     <!-- SLOT WOLNY -->
-    <button class="btn-boost-card">🚀 Boost Dnia dostępny! — 9 zł</button>
+    <button class="btn-boost-card">🚀 Boost Dnia dostępny! — 9 zł · 24h</button>
   </div>
 </div>
 
@@ -352,7 +353,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--ff);padding-bottom
       <button class="btn btn-ghost" style="flex:1">⧉ Kopiuj</button>
     </div>
     <!-- Slot zajęty przez kogoś innego -->
-    <button class="btn-boost-card-taken">🔒 Boost Dnia zajęty · dostępny jutro 00:00</button>
+    <button class="btn-boost-card-taken">🔒 Boost zajęty przez inną firmę · wolny za ~9h</button>
   </div>
 </div>
 
@@ -412,36 +413,36 @@ body{background:var(--bg);color:var(--text);font-family:var(--ff);padding-bottom
   </div>
   <div class="modal-body">
     <div style="text-align:center">
-      <div class="avail-pill"><div class="avail-pill-dot"></div>Slot dostępny dziś!</div>
+      <div class="avail-pill"><div class="avail-pill-dot"></div>Slot wolny — kup teraz!</div>
     </div>
 
     <div class="excl-box">
       <div class="excl-row">
         <div class="excl-icon">🏆</div>
         <div>
-          <div class="excl-text-title">Tylko 1 ogłoszenie na całej platformie</div>
-          <div class="excl-text-sub">W danym dniu tylko jedna firma zajmuje pozycję TOP — nikt inny nie może Cię tam wyprzedzić do końca doby</div>
+          <div class="excl-text-title">Tylko 1 ogłoszenie jednocześnie</div>
+          <div class="excl-text-sub">Żadna inna firma nie może kupić boostu dopóki Twój trwa — masz szyt platformy tylko dla siebie</div>
         </div>
       </div>
       <div class="excl-row">
-        <div class="excl-icon">⏰</div>
+        <div class="excl-icon">⏱</div>
         <div>
-          <div class="excl-text-title">Trwa dokładnie 24 godziny</div>
-          <div class="excl-text-sub">Od momentu zakupu do godziny 00:00 następnego dnia — potem slot znów dostępny dla wszystkich</div>
+          <div class="excl-text-title">Dokładnie 24 godziny od zakupu</div>
+          <div class="excl-text-sub">Kupisz o 14:37 → wygasa jutro o 14:37. Bez odcinania o północy — pełne 24 godziny gwarantowane</div>
         </div>
       </div>
       <div class="excl-row">
         <div class="excl-icon">👁</div>
         <div>
           <div class="excl-text-title">Widoczny przez wszystkich kandydatów</div>
-          <div class="excl-text-sub">Oznaczenie "🚀 TOP DNIA" i złota ramka wyróżnia Twoją ofertę na tle reszty</div>
+          <div class="excl-text-sub">Oznaczenie "🚀 TOP DNIA" i złota ramka wyróżnia Twoją ofertę na tle reszty przez cały czas trwania</div>
         </div>
       </div>
     </div>
 
     <div class="price-block">
       <div class="price-block-num">9 zł</div>
-      <div class="price-block-sub">jednorazowo · 24 godziny · tylko 1 slot / dzień</div>
+      <div class="price-block-sub">jednorazowo · pełne 24 godziny od zakupu · tylko 1 slot</div>
     </div>
 
     <button class="pay-blik">📱 Płać BLIK</button>
@@ -455,29 +456,29 @@ body{background:var(--bg);color:var(--text);font-family:var(--ff);padding-bottom
 <!-- ═══════════════════════════════════════════
      SEKCJA 6 — MODAL gdy slot ZAJĘTY
      ═══════════════════════════════════════════ -->
-<div class="sect" style="margin-top:20px">Modal — slot już zajęty dziś</div>
+<div class="sect" style="margin-top:20px">Modal — slot aktualnie zajęty</div>
 
 <div class="taken-modal-wrap">
   <div class="taken-head">
     <div style="display:inline-flex;align-items:center;justify-content:center;width:58px;height:58px;border-radius:50%;background:rgba(148,163,184,.1);border:2px solid rgba(148,163,184,.25);font-size:28px;margin-bottom:12px">🔒</div>
     <div style="font-size:20px;font-weight:900;color:var(--text2)">Boost Dnia zajęty</div>
-    <div style="font-size:12px;color:var(--text3);margin-top:4px">Dziś ktoś był szybszy — ale jutro masz szansę</div>
+    <div style="font-size:12px;color:var(--text3);margin-top:4px">Inna firma kupiła wcześniej — czekaj aż wygaśnie</div>
   </div>
   <div class="taken-body">
     <div style="background:var(--surf2);border:1px solid var(--border3);border-radius:14px;padding:16px;margin-bottom:16px;text-align:center">
-      <div style="font-size:11px;color:var(--text3);margin-bottom:8px">Następny slot dostępny za</div>
+      <div style="font-size:11px;color:var(--text3);margin-bottom:8px">Slot wolny za</div>
       <div class="countdown-num">09:23:41</div>
       <div class="countdown-lbl">godz : min : sek</div>
     </div>
 
     <div style="background:rgba(234,179,8,.06);border:1px solid rgba(234,179,8,.2);border-radius:14px;padding:14px;margin-bottom:18px">
-      <div style="font-size:13px;font-weight:900;color:#FBBF24;margin-bottom:6px">🏆 Kto pierwszy, ten lepszy</div>
+      <div style="font-size:13px;font-weight:900;color:#FBBF24;margin-bottom:6px">🏆 Kto pierwszy po wygaśnięciu, ten lepszy</div>
       <div style="font-size:12px;color:var(--text2);line-height:1.6">
-        Jutro o <b style="color:var(--text)">00:00</b> slot resetuje się i będzie dostępny dla wszystkich jednocześnie. Postaw alarm — kto kupi pierwszy, jego ogłoszenie przez cały dzień siedzi na szczycie.
+        Gdy licznik dobiegnie zera, slot staje się wolny dla wszystkich jednocześnie. Włącz powiadomienie — jak tylko tamten boost wygaśnie, dostaniesz sygnał i możesz kupić jako pierwszy.
       </div>
     </div>
 
-    <button class="notify-btn">🔔 Przypomnij mi o 23:55</button>
+    <button class="notify-btn">🔔 Powiadom mnie gdy slot się zwolni</button>
     <button class="pay-cancel" style="margin-top:9px">Zamknij</button>
   </div>
 </div>
