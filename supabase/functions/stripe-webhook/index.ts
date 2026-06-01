@@ -52,7 +52,7 @@ const MONTHS_MAP: Record<string, number> = {
   pin_highlight_bundle: 0,
   urgent_tender: 0,
   urgent_job: 0,       // jednorazowe — aktywacja przez activate_urgent_job lub formularz
-  boost_job: 0,        // jednorazowe — aktywacja przez webhook (24h od zakupu)
+  boost_job: 0,        // jednorazowe — aktywacja przez webhook (48h od zakupu)
 }
 
 // User-facing product labels — dla powiadomień. Dopasowane do CART_LABELS w index.html.
@@ -75,7 +75,7 @@ const PRODUCT_LABELS: Record<string, string> = {
   pin_highlight_bundle: 'Pin + wyróżnienie',
   urgent_tender: 'Pilne zlecenie',
   urgent_job: 'Pilna oferta pracy',
-  boost_job: 'Boost Dnia (24h)',
+  boost_job: 'Boost Dnia (48h)',
 }
 
 function productLabel(key: string): string {
@@ -304,7 +304,7 @@ async function activatePackage(
     const meta = (payment.metadata ?? {}) as Record<string, unknown>
     const boostType = meta.boost_type as string | undefined
     const jobId = (meta.job_id as string | undefined) || null
-    const expiry = new Date(Date.now() + 86400000).toISOString()
+    const expiry = new Date(Date.now() + 172800000).toISOString()
 
     if (boostType === 'company') {
       await supabaseAdmin.from('profiles').update({ company_boost_until: expiry }).eq('id', userId)
@@ -319,9 +319,9 @@ async function activatePackage(
     }
 
     const notifBody = boostType === 'company'
-      ? 'Twój profil firmy jest na szczycie listy przez 24h.'
+      ? 'Twój profil firmy jest na szczycie listy przez 48h.'
       : jobId
-        ? 'Twoje ogłoszenie ma złotą ramkę i oznaczenie TOP DNIA przez 24h.'
+        ? 'Twoje ogłoszenie ma złotą ramkę i oznaczenie TOP DNIA przez 48h.'
         : 'Boost zostanie aktywowany automatycznie na Twoim pierwszym ogłoszeniu.'
 
     await notifyUser(userId, {

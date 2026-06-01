@@ -33,8 +33,8 @@ async function getOrCreateBoostPrice(): Promise<{ priceId: string; productId: st
   }
 
   const product = await stripe.products.create({
-    name: 'Boost Dnia (24h)',
-    description: 'Wyróżnienie ogłoszenia lub profilu firmy na 24h. Tylko 1 slot na platformie.',
+    name: 'Boost Dnia (48h)',
+    description: 'Wyróżnienie ogłoszenia lub profilu firmy na 48h. Tylko 1 slot na platformie.',
   })
 
   const price = await stripe.prices.create({
