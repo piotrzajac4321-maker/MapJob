@@ -12037,7 +12037,73 @@ window._MJ_BENEFITS=[
 ];
 window._openFirmOffer=async function(userId){if(!userId){if(typeof toast==='function')toast('Brak danych firmy');return;}if(!_sb){if(typeof openCompanyProfile==='function')openCompanyProfile(userId);return;}try{var r=await _sb.from('job_offers').select('id').eq('user_id',userId).eq('status','active').order('is_urgent',{ascending:false}).order('created_at',{ascending:false}).limit(1);if(r.data&&r.data.length&&typeof openJobDetail==='function'){openJobDetail(r.data[0].id);return;}}catch(e){}if(typeof openCompanyProfile==='function')openCompanyProfile(userId);};
 window._mjStackZ=function(base){var z=(base||905);try{document.querySelectorAll('body>div[id^="m-"]').forEach(function(el){if(!el)return;var cs=getComputedStyle(el);if(cs.display==='none'||cs.position!=='fixed')return;var v=parseInt(cs.zIndex,10);if(!isNaN(v)&&v<1500&&v>=z)z=v+5;});}catch(_e){}return z;};
-window._openUrgentBuy=function(jobId){if(!jobId||typeof editJobOffer!=='function'){if(typeof toast==='function')toast('Niedostępne');return;}var cp=document.getElementById('m-company-profile');if(cp)cp.remove();editJobOffer(jobId);setTimeout(function(){var hid=document.getElementById('job-urgent');if(hid&&hid.value==='1'){if(typeof toast==='function')toast('To ogłoszenie jest już pilne');return;}if(typeof toggleJobUrgent==='function'){var w=document.getElementById('job-urgent-wrap');if(w)toggleJobUrgent(w);}setTimeout(function(){var urgWrap=document.getElementById('job-urgent-wrap');if(urgWrap){try{urgWrap.scrollIntoView({behavior:'smooth',block:'center'});}catch(_e){}}},260);},420);};
+window._openUrgentBuy=async function(jobId){
+  if(!jobId){if(typeof toast==='function')toast('Niedostępne');return;}
+  var old=document.getElementById('mj-urgent-modal');if(old)old.remove();
+  var jobTitle='Oferta pracy';
+  try{if(_sb){var r=await _sb.from('job_offers').select('title,company_name,is_urgent').eq('id',jobId).maybeSingle();if(r&&r.data){if(r.data.is_urgent){if(typeof toast==='function')toast('To ogłoszenie jest już pilne ✅');return;}jobTitle=r.data.title||r.data.company_name||jobTitle;}}}catch(_e){}
+  var price=STRIPE_PRICES['urgent_job'];var link=STRIPE_LINKS['urgent_job'];
+  var m=document.createElement('div');m.id='mj-urgent-modal';
+  m.style.cssText='position:fixed;inset:0;z-index:9998;background:rgba(0,0,0,.75);display:flex;align-items:flex-end;justify-content:center;animation:mjFdIn .18s ease';
+  m.innerHTML=
+    '<style>.mj-urg-sheet{background:var(--bg);border-radius:24px 24px 0 0;width:100%;max-width:520px;padding:0 0 max(24px,calc(16px + env(safe-area-inset-bottom,0px)));overflow:hidden;animation:mjSlUp .25s cubic-bezier(.22,1,.36,1)}'
+    +'@keyframes mjSlUp{from{transform:translateY(100%)}to{transform:translateY(0)}}'
+    +'@keyframes mjFdIn{from{opacity:0}to{opacity:1}}'
+    +'.mj-urg-blik{width:100%;padding:16px;border-radius:14px;background:linear-gradient(135deg,#16A34A,#15803D);border:none;font-family:var(--ff);font-size:16px;font-weight:900;color:#fff;cursor:pointer;letter-spacing:.3px;box-shadow:0 6px 20px rgba(22,163,74,.45);transition:transform .12s,box-shadow .12s}'
+    +'.mj-urg-blik:active{transform:scale(.97);box-shadow:0 3px 10px rgba(22,163,74,.35)}'
+    +'.mj-urg-card{width:100%;padding:15px;border-radius:14px;background:linear-gradient(135deg,#7C3AED,#6D28D9);border:none;font-family:var(--ff);font-size:15px;font-weight:900;color:#fff;cursor:pointer;letter-spacing:.3px;box-shadow:0 6px 18px rgba(124,58,237,.4);transition:transform .12s,box-shadow .12s;margin-top:10px}'
+    +'.mj-urg-card:active{transform:scale(.97)}'
+    +'</style>'
+    +'<div class="mj-urg-sheet">'
+    +  '<div style="background:linear-gradient(135deg,rgba(239,68,68,.18),rgba(185,28,28,.22));border-bottom:1px solid rgba(239,68,68,.25);padding:20px 20px 18px;text-align:center">'
+    +    '<div style="display:inline-flex;align-items:center;justify-content:center;width:56px;height:56px;border-radius:50%;background:rgba(239,68,68,.18);border:2px solid rgba(239,68,68,.4);font-size:26px;box-shadow:0 0 24px rgba(239,68,68,.3);margin-bottom:10px">🔴</div>'
+    +    '<div style="font-size:20px;font-weight:900;letter-spacing:-.3px;line-height:1.1">Pilne ogłoszenie</div>'
+    +    '<div style="font-size:12.5px;color:var(--text3);margin-top:4px;max-width:260px;margin-left:auto;margin-right:auto;line-height:1.4">'+escHtml(jobTitle)+'</div>'
+    +  '</div>'
+    +  '<div style="padding:18px 20px 0">'
+    +    '<div style="text-align:center;margin-bottom:16px">'
+    +      '<span style="display:inline-block;background:rgba(239,68,68,.12);border:1.5px solid rgba(239,68,68,.35);border-radius:14px;padding:6px 20px">'
+    +        '<span style="font-size:28px;font-weight:900;color:#F87171;letter-spacing:-.5px">19 zł</span>'
+    +        '<span style="font-size:13px;color:var(--text3);margin-left:4px">jednorazowo</span>'
+    +      '</span>'
+    +    '</div>'
+    +    '<div style="background:var(--surf);border:1px solid var(--border3);border-radius:16px;overflow:hidden;margin-bottom:18px">'
+    +      '<div style="display:flex;align-items:center;gap:12px;padding:12px 14px;border-bottom:1px solid var(--border3)">'
+    +        '<div style="font-size:20px;flex-shrink:0">🥇</div>'
+    +        '<div><div style="font-size:13px;font-weight:800">Zawsze pierwsze w wynikach</div><div style="font-size:11.5px;color:var(--text3);margin-top:1px">Twoje ogłoszenie pojawia się na górze listy</div></div>'
+    +      '</div>'
+    +      '<div style="display:flex;align-items:center;gap:12px;padding:12px 14px;border-bottom:1px solid var(--border3)">'
+    +        '<div style="font-size:20px;flex-shrink:0">🔴</div>'
+    +        '<div><div style="font-size:13px;font-weight:800">Mieni się na czerwono</div><div style="font-size:11.5px;color:var(--text3);margin-top:1px">Specjalne oznaczenie przyciąga wzrok</div></div>'
+    +      '</div>'
+    +      '<div style="display:flex;align-items:center;gap:12px;padding:12px 14px">'
+    +        '<div style="font-size:20px;flex-shrink:0">📢</div>'
+    +        '<div><div style="font-size:13px;font-weight:800">3× więcej aplikacji</div><div style="font-size:11.5px;color:var(--text3);margin-top:1px">Pilne oferty generują dużo więcej zgłoszeń</div></div>'
+    +      '</div>'
+    +    '</div>'
+    +    '<button class="mj-urg-blik" id="mj-urg-blik-btn">📱 Płać BLIK</button>'
+    +    '<button class="mj-urg-card" id="mj-urg-card-btn">💳 Płać kartą</button>'
+    +    '<button onclick="document.getElementById(\'mj-urgent-modal\').remove()" style="width:100%;padding:13px;border-radius:14px;background:transparent;border:1px solid var(--border3);font-family:var(--ff);font-size:13px;color:var(--text3);cursor:pointer;margin-top:10px">Anuluj</button>'
+    +  '</div>'
+    +'</div>';
+  m.onclick=function(e){if(e.target===m)m.remove();};
+  document.body.appendChild(m);
+  var userRef=(_supaUser)?('?client_reference_id='+encodeURIComponent(_supaUser.id)+'&prefilled_email='+encodeURIComponent(_supaUser.email)):'';
+  var blikBtn=document.getElementById('mj-urg-blik-btn');
+  if(blikBtn){blikBtn.onclick=async function(){
+    m.remove();
+    if(_sb&&_supaUser){try{await _sb.from('payments').insert([{user_id:_supaUser.id,email:_supaUser.email,product_key:'urgent_job',product_name:price.label,amount:price.amount,currency:'PLN',stripe_price_id:price.id,stripe_product_id:price.product_id,status:'pending_blik',metadata:{job_title:jobTitle,job_id:jobId}}]);}catch(_e){}}
+    window.open(link+userRef+(userRef?'&':'?')+'payment_method_types[]=blik','_blank');
+    if(typeof toast==='function')toast('📱 Otwieramy Stripe — wpisz kod BLIK');
+  };}
+  var cardBtn=document.getElementById('mj-urg-card-btn');
+  if(cardBtn){cardBtn.onclick=async function(){
+    m.remove();
+    if(_sb&&_supaUser){try{await _sb.from('payments').insert([{user_id:_supaUser.id,email:_supaUser.email,product_key:'urgent_job',product_name:price.label,amount:price.amount,currency:'PLN',stripe_price_id:price.id,stripe_product_id:price.product_id,status:'pending',metadata:{job_title:jobTitle,job_id:jobId}}]);}catch(_e){}}
+    window.open(link+userRef,'_blank');
+    if(typeof toast==='function')toast('🔗 Otwieramy Stripe...');
+  };}
+};
 window.openCompanyProfile=async function(userId){
   if(!userId){if(typeof toast==='function')toast('Brak danych pracodawcy');return;}if(!_sb){if(typeof toast==='function')toast('Trwa ładowanie — spróbuj za chwilę');return;}
   var prof=null;try{var r=await _sb.from('profiles_public').select('id,short_id,name,avatar_url,is_verified,account_type,company_name,company_logo_url,industry,company_description,accent_color,nip_verified,regon,krs,company_cover_url,benefits,gallery,slug').eq('id',userId).maybeSingle();prof=r&&r.data?r.data:null;}catch(_e){}
