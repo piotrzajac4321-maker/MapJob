@@ -127,9 +127,6 @@ Deno.serve(async (req: Request): Promise<Response> => {
       mode: 'payment',
       line_items: [{ price: priceId, quantity: 1 }],
       client_reference_id: userId,
-      customer_email: userEmail ?? undefined,
-      // card + BLIK (obie aktywne na koncie). P24 nieaktywne -> nie dodajemy, bo
-      // Stripe zwraca 500 przy każdej nieaktywowanej metodzie.
       payment_method_types: ['card', 'blik'],
       metadata: {
         product_key: 'boost_job',
