@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>MapJob – makieta paska kategorii</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:#080D18;color:#F0F4FF;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:24px 0 40px}
+
+  .phone{width:390px;background:#080D18;border-radius:40px;border:2px solid #1E293B;overflow:hidden;box-shadow:0 32px 80px rgba(0,0,0,.7)}
+
+  .statusbar{display:flex;justify-content:space-between;align-items:center;padding:14px 24px 8px;font-size:12px;font-weight:600;color:#94A3B8}
+
+  .header{display:flex;align-items:center;justify-content:space-between;padding:4px 16px 12px}
+  .header h1{font-size:20px;font-weight:700;color:#F0F4FF}
+  .icon-btn{width:36px;height:36px;border-radius:10px;background:#131C2D;display:flex;align-items:center;justify-content:center;font-size:16px;cursor:pointer}
+
+  .search{margin:0 16px 12px;background:#131C2D;border:1px solid #1E293B;border-radius:12px;display:flex;align-items:center;gap:8px;padding:10px 14px}
+  .search span{font-size:15px}
+  .search p{font-size:14px;color:#64748B}
+
+  /* PASEK KATEGORII */
+  .cat-bar{display:flex;gap:8px;padding:0 16px 14px;overflow-x:auto;scrollbar-width:none}
+  .cat-bar::-webkit-scrollbar{display:none}
+
+  .cat-chip{flex:0 0 auto;display:flex;align-items:center;gap:6px;padding:6px 12px;border-radius:20px;background:#131C2D;border:1px solid #1E293B;cursor:pointer;white-space:nowrap}
+  .cat-chip.active{background:rgba(37,99,235,.18);border-color:rgba(37,99,235,.5)}
+
+  .cat-chip .lbl{font-size:13px;font-weight:500;color:#CBD5E1}
+  .cat-chip .cnt{font-size:11px;font-weight:600;color:#64748B;background:#0F172A;border-radius:6px;padding:1px 5px;margin-left:2px}
+  .cat-chip.active .lbl{color:#60A5FA}
+  .cat-chip.active .cnt{color:#3B82F6;background:rgba(37,99,235,.15)}
+
+  .divider{height:1px;background:#1E293B;margin:0 16px 12px}
+
+  .offers-header{display:flex;justify-content:space-between;align-items:center;padding:0 16px 10px}
+  .offers-header span{font-size:13px;color:#64748B}
+  .offers-header strong{font-size:14px;font-weight:600;color:#F0F4FF}
+
+  .card{background:#131C2D;border:1px solid #1E293B;border-radius:14px;margin:0 16px 8px;padding:13px 14px;display:flex;gap:11px;align-items:flex-start}
+  .av{width:38px;height:38px;border-radius:10px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#fff}
+  .card-body{flex:1;min-width:0}
+  .card-co{font-size:11px;color:#64748B;margin-bottom:2px}
+  .card-title{font-size:14px;font-weight:600;color:#F0F4FF;margin-bottom:6px}
+  .card-row{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+  .badge{font-size:10px;font-weight:700;padding:2px 7px;border-radius:6px}
+  .badge.pilne{background:rgba(239,68,68,.15);color:#F87171;border:1px solid rgba(239,68,68,.3)}
+  .badge.stac{background:rgba(245,158,11,.15);color:#FCD34D;border:1px solid rgba(245,158,11,.3)}
+  .salary{font-size:13px;font-weight:600;color:#22C55E;margin-top:4px}
+  .card-btn{background:#2563EB;border:none;border-radius:8px;color:#fff;font-size:12px;font-weight:600;padding:5px 12px;cursor:pointer;margin-top:6px}
+
+  .nav{display:flex;border-top:1px solid #1E293B;background:#0C1322;padding:8px 0 20px}
+  .nav-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;font-size:10px;color:#475569;cursor:pointer;padding:4px 0}
+  .nav-item.active{color:#2563EB}
+  .nav-item .ni{font-size:20px}
+
+  .note{width:390px;margin-top:20px;padding:14px 18px;background:#131C2D;border:1px solid #334155;border-radius:14px;font-size:13px;color:#94A3B8;line-height:1.6}
+  .note strong{color:#60A5FA}
+</style>
+</head>
+<body>
+
+<div class="phone">
+  <div class="statusbar"><span>9:41</span><span>●●● 5G 🔋</span></div>
+
+  <div class="header">
+    <h1>Praca</h1>
+    <div class="icon-btn">⚙️</div>
+  </div>
+
+  <div class="search">
+    <span>🔍</span>
+    <p>Szukaj stanowiska lub firmy…</p>
+  </div>
+
+  <!-- PASEK KATEGORII (poziomy scroll) -->
+  <div class="cat-bar">
+    <div class="cat-chip active">
+      <span class="lbl">Wszystkie</span>
+      <span class="cnt">119</span>
+    </div>
+    <div class="cat-chip">
+      <span class="lbl">Produkcja</span>
+      <span class="cnt">42</span>
+    </div>
+    <div class="cat-chip">
+      <span class="lbl">Kierowca</span>
+      <span class="cnt">18</span>
+    </div>
+    <div class="cat-chip">
+      <span class="lbl">Elektryk</span>
+      <span class="cnt">12</span>
+    </div>
+    <div class="cat-chip">
+      <span class="lbl">Spawacz</span>
+      <span class="cnt">9</span>
+    </div>
+    <div class="cat-chip">
+      <span class="lbl">Budowlanka</span>
+      <span class="cnt">8</span>
+    </div>
+    <div class="cat-chip">
+      <span class="lbl">Gastronomia</span>
+      <span class="cnt">7</span>
+    </div>
+    <div class="cat-chip">
+      <span class="lbl">IT/Dev</span>
+      <span class="cnt">6</span>
+    </div>
+    <div class="cat-chip">
+      <span class="lbl">Hydraulik</span>
+      <span class="cnt">5</span>
+    </div>
+    <div class="cat-chip">
+      <span class="lbl">Sprzątanie</span>
+      <span class="cnt">5</span>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="offers-header">
+    <strong>119 ogłoszeń</strong>
+    <span>Sortuj ↕</span>
+  </div>
+
+  <div class="card">
+    <div class="av" style="background:#3B82F6">MK</div>
+    <div class="card-body">
+      <div class="card-co">Mex Kraków ✓</div>
+      <div class="card-title">Operator maszyn CNC</div>
+      <div class="card-row">
+        <span class="badge pilne">PILNE</span>
+        <span class="badge stac">STACJONARNIE</span>
+      </div>
+      <div class="salary">5 000 – 7 500 zł brutto/mies.</div>
+      <button class="card-btn">Zobacz →</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="av" style="background:#EF4444">TL</div>
+    <div class="card-body">
+      <div class="card-co">Trans-Logistik Sp. z o.o.</div>
+      <div class="card-title">Kierowca kat. C+E — trasy krajowe</div>
+      <div class="card-row">
+        <span class="badge stac">STACJONARNIE</span>
+      </div>
+      <div class="salary">8 000 – 10 000 zł netto/mies.</div>
+      <button class="card-btn">Zobacz →</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="av" style="background:#22C55E">EX</div>
+    <div class="card-body">
+      <div class="card-co">ElektroX Serwis</div>
+      <div class="card-title">Elektryk instalacyjny</div>
+      <div class="card-row">
+        <span class="badge stac">STACJONARNIE</span>
+      </div>
+      <div class="salary">4 500 – 6 000 zł brutto/mies.</div>
+      <button class="card-btn">Zobacz →</button>
+    </div>
+  </div>
+
+  <div class="nav">
+    <div class="nav-item"><span class="ni">🏠</span>Start</div>
+    <div class="nav-item active"><span class="ni">💼</span>Praca</div>
+    <div class="nav-item"><span class="ni">🔔</span>Powiadomienia</div>
+    <div class="nav-item"><span class="ni">👤</span>Profil</div>
+  </div>
+</div>
+
+<div class="note">
+  <strong>Jak to działa:</strong><br>
+  Pasek przewija się poziomo (swipe/scroll). Kliknięcie chipa filtruje listę ofert — "Wszystkie" zawsze aktywne jako domyślne. Liczba przy chipie = aktualna liczba ogłoszeń w tej kategorii pobrana z bazy.
+</div>
+
+</body>
+</html>

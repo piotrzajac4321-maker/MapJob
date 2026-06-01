@@ -1,0 +1,132 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "buildCommand": "python3 build_seo_landings.py && python3 build_dlafirm.py",
+  "outputDirectory": ".",
+  "rewrites": [
+    {
+      "source": "/firma/(.*)",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/statystyki",
+      "destination": "/statystyki.html"
+    },
+    {
+      "source": "/panel",
+      "destination": "/statystyki.html"
+    },
+    {
+      "source": "/zaufali-makieta-a-4r8w2k",
+      "destination": "/zaufali-makieta-a-4r8w2k.html"
+    },
+    {
+      "source": "/zaufali-makieta-b-9m3x7p",
+      "destination": "/zaufali-makieta-b-9m3x7p.html"
+    },
+    {
+      "source": "/zaufali-makieta-c-6t1n5q",
+      "destination": "/zaufali-makieta-c-6t1n5q.html"
+    },
+    {
+      "source": "/zaufali-preview-real-7k4p9x",
+      "destination": "/zaufali-preview-real-7k4p9x.html"
+    },
+    {
+      "source": "/stats",
+      "destination": "/stats-widget.html"
+    },
+    { "source": "/wariant-blue-8n2p4k",   "destination": "/wariant-blue-8n2p4k.html" },
+    { "source": "/wariant-green-5m7r1w",  "destination": "/wariant-green-5m7r1w.html" },
+    { "source": "/wariant-gold-3x6q9v",   "destination": "/wariant-gold-3x6q9v.html" },
+    { "source": "/wariant-purple-2h8t5j", "destination": "/wariant-purple-2h8t5j.html" },
+    { "source": "/profil-green-k3m8r2",  "destination": "/profil-green-k3m8r2.html" },
+    { "source": "/profil-gold-w9x4n7",   "destination": "/profil-gold-w9x4n7.html" },
+    { "source": "/profil-purple-h5v2t9", "destination": "/profil-purple-h5v2t9.html" },
+    { "source": "/profil-pro-q8m3n1",   "destination": "/profil-pro-q8m3n1.html" },
+    { "source": "/dla-firm-9k3x7m",     "destination": "/dla-firm-9k3x7m.html" }
+  ],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "Strict-Transport-Security",
+          "value": "max-age=63072000; includeSubDomains; preload"
+        },
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "strict-origin-when-cross-origin"
+        },
+        {
+          "key": "X-Frame-Options",
+          "value": "DENY"
+        },
+        {
+          "key": "Content-Security-Policy",
+          "value": "frame-ancestors 'none'"
+        },
+        {
+          "key": "Permissions-Policy",
+          "value": "camera=(), microphone=(), geolocation=(self), payment=(self), interest-cohort=()"
+        },
+        {
+          "key": "Cross-Origin-Opener-Policy",
+          "value": "same-origin"
+        }
+      ]
+    },
+    {
+      "source": "/sw.js",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=0, must-revalidate"
+        },
+        {
+          "key": "Service-Worker-Allowed",
+          "value": "/"
+        }
+      ]
+    },
+    {
+      "source": "/(statystyki|panel)(.html)?",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-cache, no-store, must-revalidate"
+        }
+      ]
+    },
+    {
+      "source": "/",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-cache, must-revalidate"
+        }
+      ]
+    },
+    {
+      "source": "/index.html",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-cache, must-revalidate"
+        }
+      ]
+    },
+    {
+      "source": "/manifest.json",
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "application/manifest+json"
+        }
+      ]
+    }
+  ]
+}

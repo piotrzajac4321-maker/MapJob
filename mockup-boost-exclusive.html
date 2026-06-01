@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Makieta — Boost Dnia (z wyborem)</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0B0D10;--bg2:#0F1117;--surf:#151821;--surf2:#1C2030;
+  --border:#1E2330;--border3:#2A3048;
+  --text:#E8EAF0;--text2:#9BA3B8;--text3:#5A6480;
+  --blue:#2563EB;--red:#EF4444;--green:#22C55E;
+  --ff:system-ui,-apple-system,sans-serif;
+}
+body{background:var(--bg);color:var(--text);font-family:var(--ff);padding-bottom:60px}
+.topbar{background:var(--bg2);border-bottom:1px solid var(--border);padding:12px 16px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:10}
+.logo{font-size:15px;font-weight:900}.logo span{color:#2563EB}
+.sect{padding:22px 16px 8px;font-size:10px;font-weight:800;letter-spacing:.8px;text-transform:uppercase;color:var(--text3);display:flex;align-items:center;gap:8px}
+.sect::after{content:'';flex:1;height:1px;background:var(--border3)}
+.note{margin:0 16px 12px;padding:10px 14px;background:rgba(37,99,235,.08);border:1px solid rgba(37,99,235,.25);border-radius:10px;font-size:11px;color:var(--text2);line-height:1.5}
+
+/* ── MODAL SHEET ── */
+.sheet{margin:0 16px;background:var(--bg);border-radius:24px 24px 16px 16px;overflow:hidden;border:1px solid var(--border3)}
+.sheet-head-gold{background:linear-gradient(135deg,rgba(234,179,8,.2),rgba(161,120,5,.1));border-bottom:1px solid rgba(234,179,8,.25);padding:22px 20px 18px;text-align:center}
+.sheet-icon{display:inline-flex;align-items:center;justify-content:center;width:56px;height:56px;border-radius:50%;font-size:26px;margin-bottom:10px}
+.icon-gold{background:rgba(234,179,8,.15);border:2px solid rgba(234,179,8,.45);box-shadow:0 0 24px rgba(234,179,8,.3)}
+.icon-grey{background:rgba(148,163,184,.1);border:2px solid rgba(148,163,184,.25)}
+.sheet-title{font-size:20px;font-weight:900}
+.sheet-sub{font-size:12px;color:var(--text3);margin-top:4px;line-height:1.4}
+.sheet-body{padding:18px 20px}
+
+/* type picker cards */
+.pick-opt{padding:14px;border-radius:14px;background:var(--surf);border:1.5px solid var(--border3);cursor:pointer;display:flex;align-items:center;gap:12px;margin-bottom:10px;transition:all .15s}
+.pick-opt.sel{border-color:#FBBF24;background:rgba(234,179,8,.14)}
+.pick-icon{width:44px;height:44px;border-radius:12px;background:rgba(234,179,8,.12);border:1px solid rgba(234,179,8,.3);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
+.pick-title{font-size:14px;font-weight:800}
+.pick-sub{font-size:11px;color:var(--text3);margin-top:2px;line-height:1.4}
+.pick-check{width:20px;height:20px;border-radius:50%;background:#FBBF24;border:2px solid #D97706;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:10px;font-weight:900;color:#000}
+
+/* CTAs */
+.btn-gold{width:100%;padding:15px;border-radius:14px;background:linear-gradient(135deg,#D97706,#B45309);border:none;font-family:var(--ff);font-size:15px;font-weight:900;color:#fff;cursor:pointer;box-shadow:0 5px 20px rgba(217,119,6,.4);margin-bottom:9px;display:block;text-align:center}
+.btn-blik{width:100%;padding:16px;border-radius:14px;background:linear-gradient(135deg,#16A34A,#15803D);border:none;font-family:var(--ff);font-size:15px;font-weight:900;color:#fff;cursor:pointer;box-shadow:0 5px 18px rgba(22,163,74,.4);margin-bottom:9px;display:block;text-align:center}
+.btn-card{width:100%;padding:15px;border-radius:14px;background:linear-gradient(135deg,#7C3AED,#6D28D9);border:none;font-family:var(--ff);font-size:14px;font-weight:900;color:#fff;cursor:pointer;box-shadow:0 5px 16px rgba(124,58,237,.35);margin-bottom:9px;display:block;text-align:center}
+.btn-cancel{width:100%;padding:12px;border-radius:14px;background:transparent;border:1px solid var(--border3);font-family:var(--ff);font-size:13px;color:var(--text3);cursor:pointer;display:block;text-align:center}
+
+/* benefits box */
+.ben-box{background:var(--surf);border:1px solid var(--border3);border-radius:16px;overflow:hidden;margin-bottom:16px}
+.ben-row{display:flex;align-items:center;gap:12px;padding:12px 14px}
+.ben-row+.ben-row{border-top:1px solid var(--border3)}
+.ben-icon{font-size:20px;flex-shrink:0}
+.ben-title{font-size:13px;font-weight:800}
+.ben-sub{font-size:11.5px;color:var(--text3);margin-top:1px}
+.price-block{text-align:center;margin-bottom:16px}
+.price-num{font-size:36px;font-weight:900;color:#FBBF24;letter-spacing:-.8px}
+.price-sub{font-size:12px;color:var(--text3);margin-top:2px}
+.avail-pill{display:inline-flex;align-items:center;gap:6px;background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.3);border-radius:20px;padding:5px 12px;font-size:11.5px;font-weight:800;color:#4ADE80;margin-bottom:16px}
+
+/* browse */
+.browse-card{background:var(--surf);border:1px solid var(--border3);border-radius:14px;margin:0 16px 8px;cursor:pointer;position:relative;overflow:hidden}
+.boost-ribbon{position:absolute;top:0;left:0;right:0;background:linear-gradient(90deg,rgba(234,179,8,.18),transparent 70%);padding:3px 12px;font-size:8.5px;font-weight:900;letter-spacing:.8px;color:#FBBF24;display:flex;align-items:center;gap:5px}
+.ribbon-dot{width:5px;height:5px;border-radius:50%;background:#FBBF24}
+.browse-inner{padding:14px;margin-top:16px}
+
+/* countdown */
+.countdown-box{background:var(--surf);border:1px solid var(--border3);border-radius:14px;padding:16px;margin-bottom:16px;text-align:center}
+.countdown-lbl{font-size:11px;color:var(--text3);margin-bottom:8px}
+.countdown-num{font-size:34px;font-weight:900;color:var(--text2);letter-spacing:-.5px;font-variant-numeric:tabular-nums}
+.countdown-sub{font-size:11px;color:var(--text3);margin-top:4px}
+.tip-box{background:rgba(234,179,8,.06);border:1px solid rgba(234,179,8,.2);border-radius:14px;padding:14px;margin-bottom:18px}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="logo">Map<span>Job</span></div>
+  <div style="flex:1"></div>
+  <div style="font-size:11px;color:var(--text3);background:var(--surf2);padding:4px 10px;border-radius:20px;border:1px solid var(--border3)">Firma Budowlana Sp. z o.o.</div>
+</div>
+
+
+<!-- ══════════════════════════════════════
+     KROK 0 — WYBÓR TYPU BOOSTU
+     ══════════════════════════════════════ -->
+<div class="sect">Krok 1 — wybór co chcesz wypromować</div>
+<div class="note">Użytkownik klika "🚀 Boost Dnia" (z karty ogłoszenia lub panelu profilu) → pojawia się ten ekran</div>
+
+<div class="sheet">
+  <div class="sheet-head-gold">
+    <div class="sheet-icon icon-gold">🚀</div>
+    <div class="sheet-title">Boost Dnia — co promujesz?</div>
+    <div class="sheet-sub">9 zł · 24h od zakupu · 1 slot na całej platformie</div>
+  </div>
+  <div class="sheet-body">
+
+    <!-- opcja A — zaznaczona -->
+    <div class="pick-opt sel">
+      <div class="pick-icon">📋</div>
+      <div style="flex:1">
+        <div class="pick-title">Ogłoszenie pracy</div>
+        <div class="pick-sub">Murarz / tynkarz — Warszawa<br>Złota ramka + oznaczenie TOP DNIA na liście</div>
+      </div>
+      <div class="pick-check">✓</div>
+    </div>
+
+    <!-- opcja B — niezaznaczona -->
+    <div class="pick-opt" style="margin-bottom:18px">
+      <div class="pick-icon">🏢</div>
+      <div style="flex:1">
+        <div class="pick-title">Profil firmy</div>
+        <div class="pick-sub">Karta Twojej firmy na szczycie listy<br>Kandydaci klikają i widzą wszystkie Twoje oferty</div>
+      </div>
+      <div style="width:20px;height:20px;border-radius:50%;border:1.5px solid var(--border3);flex-shrink:0"></div>
+    </div>
+
+    <div class="btn-gold">Dalej →</div>
+    <div class="btn-cancel">Anuluj</div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════
+     KROK 0b — PROFIL FIRMY ZAZNACZONY
+     ══════════════════════════════════════ -->
+<div class="sect" style="margin-top:8px">Krok 1b — wybrano "Profil firmy"</div>
+
+<div class="sheet">
+  <div class="sheet-head-gold">
+    <div class="sheet-icon icon-gold">🚀</div>
+    <div class="sheet-title">Boost Dnia — co promujesz?</div>
+    <div class="sheet-sub">9 zł · 24h od zakupu · 1 slot na całej platformie</div>
+  </div>
+  <div class="sheet-body">
+
+    <div class="pick-opt" style="margin-bottom:10px">
+      <div class="pick-icon">📋</div>
+      <div style="flex:1">
+        <div class="pick-title">Ogłoszenie pracy</div>
+        <div class="pick-sub">Murarz / tynkarz — Warszawa<br>Złota ramka + oznaczenie TOP DNIA na liście</div>
+      </div>
+      <div style="width:20px;height:20px;border-radius:50%;border:1.5px solid var(--border3);flex-shrink:0"></div>
+    </div>
+
+    <div class="pick-opt sel" style="margin-bottom:18px">
+      <div class="pick-icon">🏢</div>
+      <div style="flex:1">
+        <div class="pick-title">Profil firmy</div>
+        <div class="pick-sub">Firma Budowlana Sp. z o.o.<br>Karta firmy na szczycie — link do wszystkich ofert</div>
+      </div>
+      <div class="pick-check">✓</div>
+    </div>
+
+    <div class="btn-gold">Dalej →</div>
+    <div class="btn-cancel">Anuluj</div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════
+     KROK 2A — PŁATNOŚĆ (boost ogłoszenia)
+     ══════════════════════════════════════ -->
+<div class="sect" style="margin-top:8px">Krok 2a — płatność (boost ogłoszenia)</div>
+
+<div class="sheet">
+  <div class="sheet-head-gold">
+    <div class="sheet-icon icon-gold">🚀</div>
+    <div class="sheet-title">Boost Dnia</div>
+    <div class="sheet-sub">📋 Murarz / tynkarz — Warszawa</div>
+  </div>
+  <div class="sheet-body">
+    <div style="text-align:center;margin-bottom:14px">
+      <div class="avail-pill"><span style="width:7px;height:7px;border-radius:50%;background:#22C55E;flex-shrink:0"></span>Slot wolny — kup teraz!</div>
+    </div>
+    <div class="ben-box">
+      <div class="ben-row"><div class="ben-icon">🏆</div><div><div class="ben-title">Tylko 1 firma jednocześnie na platformie</div><div class="ben-sub">Nikt inny nie może kupić boostu dopóki Twój trwa</div></div></div>
+      <div class="ben-row"><div class="ben-icon">⏱</div><div><div class="ben-title">Dokładnie 24h od zakupu</div><div class="ben-sub">Pełne 24 godziny od momentu płatności</div></div></div>
+      <div class="ben-row"><div class="ben-icon">👁</div><div><div class="ben-title">Złota ramka i oznaczenie TOP DNIA</div><div class="ben-sub">Wyróżnia Twoją ofertę na tle wszystkich pozostałych</div></div></div>
+    </div>
+    <div class="price-block">
+      <div class="price-num">9 zł</div>
+      <div class="price-sub">jednorazowo · pełne 24h od zakupu · tylko 1 slot</div>
+    </div>
+    <div class="btn-blik">📱 Płać BLIK</div>
+    <div class="btn-card">💳 Płać kartą</div>
+    <div class="btn-cancel">Anuluj</div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════
+     KROK 2B — PŁATNOŚĆ (boost firmy)
+     ══════════════════════════════════════ -->
+<div class="sect" style="margin-top:8px">Krok 2b — płatność (boost profilu firmy)</div>
+
+<div class="sheet">
+  <div class="sheet-head-gold">
+    <div class="sheet-icon icon-gold">🚀</div>
+    <div class="sheet-title">Boost Dnia</div>
+    <div class="sheet-sub">🏢 Profil firmy — Firma Budowlana Sp. z o.o.</div>
+  </div>
+  <div class="sheet-body">
+    <div style="text-align:center;margin-bottom:14px">
+      <div class="avail-pill"><span style="width:7px;height:7px;border-radius:50%;background:#22C55E;flex-shrink:0"></span>Slot wolny — kup teraz!</div>
+    </div>
+    <div class="ben-box">
+      <div class="ben-row"><div class="ben-icon">🏆</div><div><div class="ben-title">Tylko 1 firma jednocześnie na platformie</div><div class="ben-sub">Nikt inny nie może kupić boostu dopóki Twój trwa</div></div></div>
+      <div class="ben-row"><div class="ben-icon">⏱</div><div><div class="ben-title">Dokładnie 24h od zakupu</div><div class="ben-sub">Pełne 24 godziny od momentu płatności</div></div></div>
+      <div class="ben-row"><div class="ben-icon">🏢</div><div><div class="ben-title">Karta firmy na szczycie listy ogłoszeń</div><div class="ben-sub">Kandydaci widzą firmę i mogą przejść do wszystkich Twoich ofert</div></div></div>
+    </div>
+    <div class="price-block">
+      <div class="price-num">9 zł</div>
+      <div class="price-sub">jednorazowo · pełne 24h od zakupu · tylko 1 slot</div>
+    </div>
+    <div class="btn-blik">📱 Płać BLIK</div>
+    <div class="btn-card">💳 Płać kartą</div>
+    <div class="btn-cancel">Anuluj</div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════
+     LISTA OGŁOSZEŃ — boost OGŁOSZENIA
+     ══════════════════════════════════════ -->
+<div class="sect" style="margin-top:8px">Browse lista — boost ogłoszenia (TOP DNIA)</div>
+<div class="note">Kolejność: 🚀 Boost Dnia (ogłoszenie lub firma) → 🔴 Pilne → zwykłe</div>
+
+<!-- boost ogłoszenia -->
+<div class="browse-card" style="border-color:rgba(234,179,8,.45);box-shadow:0 0 0 1px rgba(234,179,8,.12),0 4px 18px rgba(234,179,8,.1)">
+  <div class="boost-ribbon"><div class="ribbon-dot"></div>BOOST DNIA</div>
+  <div class="browse-inner">
+    <div style="display:flex;align-items:center;gap:10px">
+      <div style="width:44px;height:44px;border-radius:12px;background:#F97316;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:900;color:#fff;flex-shrink:0">FB</div>
+      <div style="flex:1">
+        <div style="font-size:11px;color:var(--text3);margin-bottom:2px">Firma Budowlana Sp. z o.o.</div>
+        <div style="font-size:15px;font-weight:800">Murarz / tynkarz <span style="font-size:9px;font-weight:900;padding:2px 6px;border-radius:8px;background:rgba(234,179,8,.15);color:#FBBF24;border:1px solid rgba(234,179,8,.3);margin-left:4px">🚀 TOP DNIA</span></div>
+      </div>
+    </div>
+    <div style="margin-top:10px;display:flex;align-items:center;justify-content:space-between">
+      <div style="font-size:17px;font-weight:900;color:#22C55E">7 200 zł</div>
+      <div style="padding:8px 16px;border-radius:20px;background:var(--blue);font-size:12px;font-weight:800;color:#fff">Zobacz →</div>
+    </div>
+  </div>
+</div>
+
+<!-- pilne -->
+<div class="browse-card" style="border-color:rgba(239,68,68,.4)">
+  <div style="position:absolute;top:0;left:0;right:0;background:linear-gradient(90deg,rgba(239,68,68,.15),transparent);padding:3px 12px;font-size:8.5px;font-weight:900;letter-spacing:.8px;color:#F87171">🔴 PILNE</div>
+  <div class="browse-inner">
+    <div style="display:flex;align-items:center;justify-content:space-between">
+      <div><div style="font-size:15px;font-weight:800">Elektryk przemysłowy</div><div style="font-size:11px;color:var(--text3);margin-top:2px">Katowice · 3 miejsca</div></div>
+      <div style="text-align:right"><div style="font-size:17px;font-weight:900;color:#22C55E">8 500 zł</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- zwykłe -->
+<div class="browse-card" style="padding:14px">
+  <div style="display:flex;align-items:center;justify-content:space-between">
+    <div><div style="font-size:15px;font-weight:800">Operator wózka widłowego</div><div style="font-size:11px;color:var(--text3);margin-top:2px">Poznań · 1 miejsce</div></div>
+    <div style="font-size:17px;font-weight:900;color:#22C55E">5 400 zł</div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════
+     LISTA OGŁOSZEŃ — boost PROFILU FIRMY
+     ══════════════════════════════════════ -->
+<div class="sect" style="margin-top:8px">Browse lista — boost profilu firmy</div>
+
+<!-- karta firmy — BOOST DNIA -->
+<div class="browse-card" style="border-color:rgba(234,179,8,.45);box-shadow:0 0 0 1px rgba(234,179,8,.12),0 4px 18px rgba(234,179,8,.1)">
+  <div class="boost-ribbon"><div class="ribbon-dot"></div>BOOST DNIA</div>
+  <div style="padding:14px;margin-top:14px;display:flex;align-items:center;gap:12px">
+    <div style="width:52px;height:52px;border-radius:14px;background:rgba(234,179,8,.15);border:1.5px solid rgba(234,179,8,.35);display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:900;color:#FBBF24;flex-shrink:0">FB</div>
+    <div style="flex:1;min-width:0">
+      <div style="font-size:16px;font-weight:900">Firma Budowlana Sp. z o.o.</div>
+      <div style="font-size:12px;color:var(--text3);margin-top:3px">Sprawdź wszystkie oferty pracy tej firmy</div>
+    </div>
+    <div style="padding:8px 14px;border-radius:20px;background:rgba(234,179,8,.15);border:1px solid rgba(234,179,8,.4);font-size:12px;font-weight:900;color:#FBBF24;flex-shrink:0">Zobacz →</div>
+  </div>
+</div>
+
+<!-- pilne -->
+<div class="browse-card" style="border-color:rgba(239,68,68,.4)">
+  <div style="position:absolute;top:0;left:0;right:0;background:linear-gradient(90deg,rgba(239,68,68,.15),transparent);padding:3px 12px;font-size:8.5px;font-weight:900;letter-spacing:.8px;color:#F87171">🔴 PILNE</div>
+  <div class="browse-inner">
+    <div style="display:flex;align-items:center;justify-content:space-between">
+      <div><div style="font-size:15px;font-weight:800">Elektryk przemysłowy</div><div style="font-size:11px;color:var(--text3);margin-top:2px">Katowice · 3 miejsca</div></div>
+      <div style="font-size:17px;font-weight:900;color:#22C55E">8 500 zł</div>
+    </div>
+  </div>
+</div>
+
+<div class="browse-card" style="padding:14px">
+  <div style="display:flex;align-items:center;justify-content:space-between">
+    <div><div style="font-size:15px;font-weight:800">Operator wózka widłowego</div><div style="font-size:11px;color:var(--text3);margin-top:2px">Poznań</div></div>
+    <div style="font-size:17px;font-weight:900;color:#22C55E">5 400 zł</div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════
+     MOJE OFERTY — stany kart
+     ══════════════════════════════════════ -->
+<div class="sect" style="margin-top:8px">Moje oferty — stany przycisków Boost</div>
+
+<!-- karta: slot wolny, nie pilne -->
+<div style="background:var(--surf);border:1px solid var(--border3);border-radius:16px;margin:0 16px 12px;padding:14px">
+  <div style="font-size:14px;font-weight:800;margin-bottom:4px">Murarz / tynkarz — Warszawa</div>
+  <div style="font-size:11px;color:var(--text3);margin-bottom:12px">Budowlanka · Aktywna</div>
+  <!-- pilne -->
+  <div style="width:100%;padding:11px;border-radius:12px;background:linear-gradient(135deg,rgba(239,68,68,.18),rgba(185,28,28,.12));border:1.5px solid rgba(239,68,68,.45);font-size:13px;font-weight:900;color:#F87171;display:flex;align-items:center;justify-content:center;gap:7px;margin-bottom:6px">🔴 Kup pilne — 19 zł</div>
+  <!-- boost — slot wolny -->
+  <div style="width:100%;padding:11px;border-radius:12px;background:linear-gradient(135deg,rgba(234,179,8,.18),rgba(161,120,5,.12));border:1.5px solid rgba(234,179,8,.5);font-size:13px;font-weight:900;color:#FBBF24;display:flex;align-items:center;justify-content:center;gap:7px;box-shadow:0 3px 12px rgba(234,179,8,.2)">🚀 Boost Dnia — 9 zł / 24h</div>
+</div>
+
+<!-- karta: boost aktywny -->
+<div style="background:var(--surf);border:1.5px solid rgba(234,179,8,.4);box-shadow:0 0 0 1px rgba(234,179,8,.1);border-radius:16px;margin:0 16px 12px;overflow:hidden">
+  <div style="background:linear-gradient(90deg,rgba(234,179,8,.14),transparent);padding:5px 14px;font-size:9px;font-weight:900;letter-spacing:.7px;color:#FBBF24;border-bottom:1px solid rgba(234,179,8,.2);display:flex;justify-content:space-between">
+    <span>🚀 BOOST AKTYWNY</span><span>wygasa za 21h 12min</span>
+  </div>
+  <div style="padding:14px">
+    <div style="font-size:14px;font-weight:800;margin-bottom:4px">Spawacz MIG/MAG — Wrocław <span style="font-size:9px;font-weight:900;padding:2px 6px;border-radius:10px;background:rgba(234,179,8,.15);color:#FBBF24;border:1px solid rgba(234,179,8,.3)">🚀 TOP DNIA</span></div>
+    <div style="font-size:11px;color:var(--text3);margin-bottom:12px">Spawalnictwo · Aktywna</div>
+    <div style="width:100%;padding:11px;border-radius:12px;background:linear-gradient(90deg,rgba(234,179,8,.1),transparent);border:1.5px solid rgba(234,179,8,.3);font-size:12px;font-weight:900;color:#FBBF24;display:flex;align-items:center;justify-content:center;gap:7px">✅ Boost aktywny · wygasa za 21h 12min</div>
+  </div>
+</div>
+
+<!-- karta: slot zajęty przez inną firmę -->
+<div style="background:var(--surf);border:1px solid var(--border3);border-radius:16px;margin:0 16px 12px;padding:14px">
+  <div style="font-size:14px;font-weight:800;margin-bottom:4px">Elektryk przemysłowy — Katowice</div>
+  <div style="font-size:11px;color:var(--text3);margin-bottom:12px">Elektryka · Aktywna</div>
+  <div style="width:100%;padding:11px;border-radius:12px;background:var(--surf2);border:1.5px solid var(--border3);font-size:12px;font-weight:700;color:var(--text3);display:flex;align-items:center;justify-content:center;gap:7px">🔒 Boost zajęty przez inną firmę · wolny za ~9h</div>
+</div>
+
+
+<!-- ══════════════════════════════════════
+     MODAL — SLOT ZAJĘTY (z odliczaniem)
+     ══════════════════════════════════════ -->
+<div class="sect" style="margin-top:8px">Modal — slot aktualnie zajęty</div>
+
+<div class="sheet">
+  <div class="sheet-head-gold" style="background:rgba(148,163,184,.06);border-bottom-color:rgba(148,163,184,.15)">
+    <div class="sheet-icon icon-grey">🔒</div>
+    <div class="sheet-title" style="color:var(--text2)">Boost Dnia zajęty</div>
+    <div class="sheet-sub">Inna firma kupiła wcześniej — czekaj aż wygaśnie</div>
+  </div>
+  <div class="sheet-body">
+    <div class="countdown-box">
+      <div class="countdown-lbl">Slot wolny za</div>
+      <div class="countdown-num">09:23:41</div>
+      <div class="countdown-sub">godz : min : sek</div>
+    </div>
+    <div class="tip-box">
+      <div style="font-size:13px;font-weight:900;color:#FBBF24;margin-bottom:6px">🏆 Kto pierwszy po wygaśnięciu, ten lepszy</div>
+      <div style="font-size:12px;color:var(--text2);line-height:1.6">Gdy licznik dobiegnie zera, slot staje się wolny dla wszystkich jednocześnie. Włącz powiadomienie — dostaniesz sygnał gdy będzie można kupić.</div>
+    </div>
+    <div class="btn-cancel">Zamknij</div>
+  </div>
+</div>
+
+<div style="height:40px"></div>
+</body>
+</html>

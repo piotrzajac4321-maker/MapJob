@@ -1,0 +1,246 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<title>Podgląd — szybki zakup PILNE na karcie ogłoszenia (profil firmy)</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#0B0D10;color:#E5E7EB;padding:40px 20px;line-height:1.5}
+h1{font-size:22px;font-weight:800;margin:0 0 8px;letter-spacing:-.3px;color:#fff}
+.sub{color:#A1A1AA;font-size:14px;margin-bottom:30px;max-width:760px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(360px,1fr));gap:32px;max-width:1500px;margin:0 auto}
+.col{display:flex;flex-direction:column}
+.label{font-size:11px;font-weight:800;color:#71717A;text-transform:uppercase;letter-spacing:.6px;margin-bottom:4px}
+.title{font-size:16px;font-weight:700;color:#F4F4F5;margin-bottom:4px}
+.desc{font-size:12.5px;color:#A1A1AA;margin-bottom:14px;min-height:34px}
+
+.phone{width:100%;max-width:380px;margin:0 auto;background:#0B0D10;border:1px solid rgba(255,255,255,.08);border-radius:24px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.5)}
+.cp-header{display:flex;align-items:center;gap:10px;padding:12px 14px;background:rgba(11,13,16,.92);border-bottom:1px solid rgba(255,255,255,.06)}
+.cp-back{width:36px;height:36px;border-radius:10px;background:#15171C;border:1px solid rgba(255,255,255,.08);color:#A1A1AA;display:flex;align-items:center;justify-content:center}
+.cp-title{flex:1;font-size:14px;font-weight:700;color:#D4D4D8}
+
+.owner-banner{margin:12px 14px 0;background:#13161B;border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:12px;font-size:11.5px;color:#A1A1AA;display:flex;align-items:center;gap:9px}
+.owner-banner b{color:#F4F4F5}
+
+.section{font-size:11px;font-weight:800;letter-spacing:.5px;text-transform:uppercase;color:#71717A;margin:18px 18px 10px}
+
+/* base offer card */
+.offer{background:#15171C;border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:14px;margin:0 18px 10px}
+.offer-t{font-size:14.5px;font-weight:800;color:#F4F4F5;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.offer-sub{font-size:11.5px;color:#71717A;margin-top:3px}
+.offer-foot{display:flex;align-items:center;gap:10px;margin-top:11px;padding-top:11px;border-top:1px solid rgba(255,255,255,.06)}
+.offer-sal{flex:1;font-size:14px;font-weight:900;color:#22C55E}
+.offer-see{font-size:12px;font-weight:800;color:#2D7FF9}
+
+.urgent-badge{font-size:9px;font-weight:900;padding:2px 7px;border-radius:10px;background:rgba(239,68,68,.18);color:#F87171;border:1px solid rgba(239,68,68,.35)}
+
+/* ===== VARIANT A — Inline button obok „Zobacz" ===== */
+.va-btn{padding:7px 11px;border-radius:9px;background:linear-gradient(135deg,#EF4444,#DC2626);border:none;font-family:inherit;font-size:11.5px;font-weight:800;color:#fff;cursor:pointer;display:inline-flex;align-items:center;gap:5px;box-shadow:0 2px 8px rgba(239,68,68,.3)}
+.va-btn .dot{width:6px;height:6px;border-radius:50%;background:#fff;box-shadow:0 0 6px rgba(255,255,255,.8);animation:pulse 1.4s infinite}
+@keyframes pulse{50%{opacity:.5}}
+
+/* ===== VARIANT B — Bottom red strip (full width) ===== */
+.vb-strip{margin:11px -14px -14px;padding:11px 14px;background:linear-gradient(90deg,rgba(239,68,68,.10),rgba(239,68,68,.04));border-top:1px solid rgba(239,68,68,.25);display:flex;align-items:center;gap:10px;cursor:pointer;border-radius:0 0 13px 13px}
+.vb-strip:hover{background:linear-gradient(90deg,rgba(239,68,68,.16),rgba(239,68,68,.06))}
+.vb-strip-i{width:24px;height:24px;border-radius:7px;background:rgba(239,68,68,.18);border:1px solid rgba(239,68,68,.35);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:11px}
+.vb-strip-t{flex:1;font-size:12px;font-weight:700;color:#F4F4F5}
+.vb-strip-t .price{color:#F87171;font-weight:900}
+.vb-strip-arr{color:#F87171;font-size:14px;font-weight:900}
+
+/* ===== VARIANT C — Top-right icon-only ===== */
+.vc-icon{position:absolute;top:10px;right:10px;width:32px;height:32px;border-radius:10px;background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.35);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s}
+.vc-icon:hover{background:rgba(239,68,68,.22)}
+.vc-icon-dot{width:7px;height:7px;border-radius:50%;background:#EF4444;box-shadow:0 0 6px rgba(239,68,68,.8);animation:pulse 1.4s infinite}
+.vc-tooltip{position:absolute;top:46px;right:8px;background:#0a0a0a;border:1px solid rgba(239,68,68,.4);border-radius:8px;padding:6px 9px;font-size:10.5px;color:#F87171;font-weight:700;white-space:nowrap;pointer-events:none;box-shadow:0 6px 16px rgba(0,0,0,.5)}
+.vc-tooltip::before{content:'';position:absolute;top:-5px;right:14px;width:8px;height:8px;background:#0a0a0a;border-left:1px solid rgba(239,68,68,.4);border-top:1px solid rgba(239,68,68,.4);transform:rotate(45deg)}
+
+/* ===== VARIANT D — Boost card (most prominent) ===== */
+.vd-boost{margin:11px -14px -14px;padding:13px 14px;background:linear-gradient(135deg,rgba(239,68,68,.14),rgba(239,68,68,.05) 60%,rgba(239,68,68,.10));border-top:1px solid rgba(239,68,68,.32);display:flex;align-items:center;gap:11px;cursor:pointer;border-radius:0 0 13px 13px}
+.vd-boost-i{width:36px;height:36px;border-radius:10px;background:rgba(239,68,68,.2);border:1px solid rgba(239,68,68,.45);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:16px}
+.vd-boost-t1{font-size:12.5px;font-weight:800;color:#F4F4F5;line-height:1.3}
+.vd-boost-t2{font-size:10.5px;color:#A1A1AA;margin-top:2px;line-height:1.35}
+.vd-boost-price{margin-left:auto;text-align:right;flex-shrink:0}
+.vd-boost-amt{font-size:16px;font-weight:900;color:#F87171;line-height:1}
+.vd-boost-unit{font-size:9px;font-weight:700;color:#A1A1AA;margin-top:2px}
+
+.note{max-width:1100px;margin:48px auto 0;padding:20px 22px;background:#13161B;border:1px solid rgba(255,255,255,.06);border-radius:14px;font-size:13.5px;color:#D4D4D8;line-height:1.65}
+.note b{color:#F4F4F5}
+.note .rec{color:#F87171}
+</style>
+</head>
+<body>
+
+<h1>Szybki zakup „PILNE" w profilu firmy</h1>
+<p class="sub">Pokazuje się <b>tylko właścicielowi</b> profilu na ofertach, które jeszcze <b>nie są pilne</b>. Klik otwiera istniejący flow płatności BLIK/karta (19 zł). 4 warianty wizualne.</p>
+
+<div class="grid">
+
+<!-- ============ VARIANT A ============ -->
+<div class="col">
+  <div class="label">Wariant A</div>
+  <div class="title">Inline button obok „Zobacz →"</div>
+  <div class="desc">Mały czerwony przycisk w stopce karty. Najmniej miejsca, dobry dla wielu ofert.</div>
+  <div class="phone">
+    <div class="cp-header"><div class="cp-back"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 5l-7 7 7 7"/></svg></div><div class="cp-title">Profil pracodawcy</div></div>
+    <div class="owner-banner">👁️ <div><b>To Twój profil</b> — tak widzą go kandydaci</div></div>
+    <div class="section">💼 Aktywne oferty (3)</div>
+    <div class="offer">
+      <div class="offer-t">Stolarz — montaż mebli kuchennych</div>
+      <div class="offer-sub">Warszawa · Budownictwo</div>
+      <div class="offer-foot">
+        <span class="offer-sal">7 500 – 9 000 zł</span>
+        <button class="va-btn"><span class="dot"></span>🔴 Pilne 19 zł</button>
+        <span class="offer-see">→</span>
+      </div>
+    </div>
+    <div class="offer">
+      <div class="offer-t">Spawacz MIG/MAG <span class="urgent-badge">PILNE</span></div>
+      <div class="offer-sub">Łódź · Produkcja</div>
+      <div class="offer-foot">
+        <span class="offer-sal">35 zł/h</span>
+        <span class="offer-see">Zobacz →</span>
+      </div>
+    </div>
+    <div class="offer">
+      <div class="offer-t">Pomocnik magazynowy</div>
+      <div class="offer-sub">Pruszków · Logistyka</div>
+      <div class="offer-foot">
+        <span class="offer-sal">28 zł/h</span>
+        <button class="va-btn"><span class="dot"></span>🔴 Pilne 19 zł</button>
+        <span class="offer-see">→</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ VARIANT B ============ -->
+<div class="col">
+  <div class="label">Wariant B</div>
+  <div class="title">Czerwony pasek na dole karty</div>
+  <div class="desc">Pasek pod stopką — czytelny, nie kradnie miejsca w głównej linii. Dobry kompromis.</div>
+  <div class="phone">
+    <div class="cp-header"><div class="cp-back"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 5l-7 7 7 7"/></svg></div><div class="cp-title">Profil pracodawcy</div></div>
+    <div class="owner-banner">👁️ <div><b>To Twój profil</b> — tak widzą go kandydaci</div></div>
+    <div class="section">💼 Aktywne oferty (3)</div>
+    <div class="offer" style="overflow:hidden;padding-bottom:0">
+      <div class="offer-t">Stolarz — montaż mebli kuchennych</div>
+      <div class="offer-sub">Warszawa · Budownictwo</div>
+      <div class="offer-foot" style="padding-bottom:11px"><span class="offer-sal">7 500 – 9 000 zł</span><span class="offer-see">Zobacz →</span></div>
+      <div class="vb-strip">
+        <div class="vb-strip-i">🔴</div>
+        <div class="vb-strip-t">Wyróżnij jako <b>PILNE</b> — <span class="price">19 zł</span></div>
+        <div class="vb-strip-arr">→</div>
+      </div>
+    </div>
+    <div class="offer">
+      <div class="offer-t">Spawacz MIG/MAG <span class="urgent-badge">PILNE</span></div>
+      <div class="offer-sub">Łódź · Produkcja</div>
+      <div class="offer-foot"><span class="offer-sal">35 zł/h</span><span class="offer-see">Zobacz →</span></div>
+    </div>
+    <div class="offer" style="overflow:hidden;padding-bottom:0">
+      <div class="offer-t">Pomocnik magazynowy</div>
+      <div class="offer-sub">Pruszków · Logistyka</div>
+      <div class="offer-foot" style="padding-bottom:11px"><span class="offer-sal">28 zł/h</span><span class="offer-see">Zobacz →</span></div>
+      <div class="vb-strip">
+        <div class="vb-strip-i">🔴</div>
+        <div class="vb-strip-t">Wyróżnij jako <b>PILNE</b> — <span class="price">19 zł</span></div>
+        <div class="vb-strip-arr">→</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ VARIANT C ============ -->
+<div class="col">
+  <div class="label">Wariant C</div>
+  <div class="title">Mała ikona w rogu karty</div>
+  <div class="desc">Subtelny przycisk 🔴 w prawym górnym rogu z dymkiem. Najbardziej minimalny.</div>
+  <div class="phone">
+    <div class="cp-header"><div class="cp-back"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 5l-7 7 7 7"/></svg></div><div class="cp-title">Profil pracodawcy</div></div>
+    <div class="owner-banner">👁️ <div><b>To Twój profil</b> — tak widzą go kandydaci</div></div>
+    <div class="section">💼 Aktywne oferty (3)</div>
+    <div class="offer" style="position:relative;padding-right:50px">
+      <div class="vc-icon"><div class="vc-icon-dot"></div></div>
+      <div class="vc-tooltip">+ PILNE 19 zł</div>
+      <div class="offer-t">Stolarz — montaż mebli kuchennych</div>
+      <div class="offer-sub">Warszawa · Budownictwo</div>
+      <div class="offer-foot"><span class="offer-sal">7 500 – 9 000 zł</span><span class="offer-see">Zobacz →</span></div>
+    </div>
+    <div class="offer">
+      <div class="offer-t">Spawacz MIG/MAG <span class="urgent-badge">PILNE</span></div>
+      <div class="offer-sub">Łódź · Produkcja</div>
+      <div class="offer-foot"><span class="offer-sal">35 zł/h</span><span class="offer-see">Zobacz →</span></div>
+    </div>
+    <div class="offer" style="position:relative;padding-right:50px">
+      <div class="vc-icon"><div class="vc-icon-dot"></div></div>
+      <div class="offer-t">Pomocnik magazynowy</div>
+      <div class="offer-sub">Pruszków · Logistyka</div>
+      <div class="offer-foot"><span class="offer-sal">28 zł/h</span><span class="offer-see">Zobacz →</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ VARIANT D ============ -->
+<div class="col">
+  <div class="label">Wariant D <span class="rec">· rekomendowany</span></div>
+  <div class="title">Boost card — pełny CTA pod kartą</div>
+  <div class="desc">Najmocniejszy, najlepiej konwertujący. Ikona + tytuł + zachęta + cena po prawej.</div>
+  <div class="phone">
+    <div class="cp-header"><div class="cp-back"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 5l-7 7 7 7"/></svg></div><div class="cp-title">Profil pracodawcy</div></div>
+    <div class="owner-banner">👁️ <div><b>To Twój profil</b> — tak widzą go kandydaci</div></div>
+    <div class="section">💼 Aktywne oferty (3)</div>
+    <div class="offer" style="overflow:hidden;padding-bottom:0">
+      <div class="offer-t">Stolarz — montaż mebli kuchennych</div>
+      <div class="offer-sub">Warszawa · Budownictwo</div>
+      <div class="offer-foot" style="padding-bottom:11px"><span class="offer-sal">7 500 – 9 000 zł</span><span class="offer-see">Zobacz →</span></div>
+      <div class="vd-boost">
+        <div class="vd-boost-i">🔴</div>
+        <div>
+          <div class="vd-boost-t1">Wyróżnij jako PILNE</div>
+          <div class="vd-boost-t2">3× więcej aplikacji · zawsze pierwsze</div>
+        </div>
+        <div class="vd-boost-price">
+          <div class="vd-boost-amt">19 zł</div>
+          <div class="vd-boost-unit">BLIK / KARTA</div>
+        </div>
+      </div>
+    </div>
+    <div class="offer">
+      <div class="offer-t">Spawacz MIG/MAG <span class="urgent-badge">PILNE</span></div>
+      <div class="offer-sub">Łódź · Produkcja</div>
+      <div class="offer-foot"><span class="offer-sal">35 zł/h</span><span class="offer-see">Zobacz →</span></div>
+    </div>
+    <div class="offer" style="overflow:hidden;padding-bottom:0">
+      <div class="offer-t">Pomocnik magazynowy</div>
+      <div class="offer-sub">Pruszków · Logistyka</div>
+      <div class="offer-foot" style="padding-bottom:11px"><span class="offer-sal">28 zł/h</span><span class="offer-see">Zobacz →</span></div>
+      <div class="vd-boost">
+        <div class="vd-boost-i">🔴</div>
+        <div>
+          <div class="vd-boost-t1">Wyróżnij jako PILNE</div>
+          <div class="vd-boost-t2">3× więcej aplikacji · zawsze pierwsze</div>
+        </div>
+        <div class="vd-boost-price">
+          <div class="vd-boost-amt">19 zł</div>
+          <div class="vd-boost-unit">BLIK / KARTA</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div>
+
+<div class="note">
+  <b>Jak to działa:</b><br>
+  • Widoczne <b>tylko właścicielowi</b> profilu (<code style="background:#0a0a0a;padding:2px 6px;border-radius:4px;color:#F87171">_supaUser.id === userId</code>)<br>
+  • Pokazuje się <b>tylko na ofertach które nie są pilne</b> (<code style="background:#0a0a0a;padding:2px 6px;border-radius:4px;color:#F87171">!o.is_urgent</code>)<br>
+  • Klik → otwiera istniejący flow w m-add-job z włączonym togglem „pilne" + płatnością BLIK/karta (19 zł)<br>
+  • Po opłaceniu — <code style="background:#0a0a0a;padding:2px 6px;border-radius:4px;color:#F87171">job_offers.is_urgent = true</code>, badge PILNE pojawia się na karcie<br><br>
+  <b class="rec">Moja rekomendacja: Wariant D</b> — najmocniej komunikuje wartość (3× więcej aplikacji), pokazuje cenę i metodę płatności, naturalnie zachęca do kliknięcia. Wariant B jeśli ma być oszczędniej, A jeśli chcesz trzymać wszystko w jednej linii.<br><br>
+  Daj znać który implementuję.
+</div>
+
+</body>
+</html>

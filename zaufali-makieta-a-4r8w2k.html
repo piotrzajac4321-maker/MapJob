@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MapJob — Zaufali Nam (Wariant A)</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: #080D18;
+      color: #F0F4FF;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 24px 0 48px;
+    }
+
+    .phone-frame {
+      width: 100%;
+      max-width: 430px;
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    /* Dev label */
+    .note {
+      background: #1D6FF2;
+      color: #fff;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: .1em;
+      text-align: center;
+      padding: 6px 12px;
+      border-radius: 6px;
+      margin: 0 16px 20px;
+      text-transform: uppercase;
+    }
+
+    /* ── FAKE MAP ────────────────────────────────────────── */
+    .map-section {
+      position: relative;
+      height: 220px;
+      background: #0e1a2e;
+      border-radius: 20px;
+      margin: 0 16px;
+      overflow: hidden;
+    }
+
+    /* Grid lines to mimic map tiles */
+    .map-section::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(255,255,255,.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.04) 1px, transparent 1px);
+      background-size: 40px 40px;
+    }
+
+    /* Subtle road lines */
+    .map-section::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(120deg, transparent 30%, rgba(255,255,255,.06) 30%, rgba(255,255,255,.06) 31%, transparent 31%),
+        linear-gradient(60deg, transparent 45%, rgba(255,255,255,.05) 45%, rgba(255,255,255,.05) 46%, transparent 46%),
+        linear-gradient(90deg, transparent 55%, rgba(255,255,255,.04) 55%, rgba(255,255,255,.04) 57%, transparent 57%);
+    }
+
+    /* Cluster pins */
+    .cluster {
+      position: absolute;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      color: #fff;
+      font-size: 13px;
+      box-shadow: 0 0 0 3px rgba(29,111,242,.35), 0 4px 16px rgba(0,0,0,.5);
+      z-index: 2;
+    }
+    .cluster-lg {
+      width: 52px; height: 52px;
+      background: #1D6FF2;
+      font-size: 16px;
+    }
+    .cluster-md {
+      width: 40px; height: 40px;
+      background: #0fa0c8;
+    }
+    .cluster-sm {
+      width: 32px; height: 32px;
+      background: #00B8D9;
+      font-size: 11px;
+    }
+    .c1 { top: 50px;  left: 60px; }
+    .c2 { top: 30px;  right: 70px; }
+    .c3 { top: 110px; right: 100px; }
+    .c4 { top: 130px; left: 130px; }
+
+    /* Pulse ring on largest cluster */
+    .c1::before {
+      content: '';
+      position: absolute;
+      width: 70px; height: 70px;
+      border-radius: 50%;
+      border: 2px solid rgba(29,111,242,.4);
+      animation: pulse 2s ease-out infinite;
+    }
+    @keyframes pulse {
+      0%   { transform: scale(.7); opacity: 1; }
+      100% { transform: scale(1.4); opacity: 0; }
+    }
+
+    .map-btn {
+      position: absolute;
+      bottom: 16px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(255,255,255,.12);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(255,255,255,.18);
+      color: #F0F4FF;
+      font-size: 13px;
+      font-weight: 600;
+      padding: 9px 20px;
+      border-radius: 999px;
+      white-space: nowrap;
+      cursor: pointer;
+      letter-spacing: .02em;
+    }
+
+    /* ── ZAUFALI NAM SECTION ─────────────────────────────── */
+    .trusted-section {
+      padding: 32px 16px 24px;
+    }
+
+    .section-eyebrow {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+    .section-eyebrow span {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: .14em;
+      color: #00B8D9;
+      text-transform: uppercase;
+    }
+    .eyebrow-line {
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(90deg, rgba(0,184,217,.4), transparent);
+    }
+
+    .section-headline {
+      font-size: 22px;
+      font-weight: 800;
+      color: #F0F4FF;
+      line-height: 1.25;
+      margin-bottom: 6px;
+      letter-spacing: -.02em;
+    }
+    .section-headline em {
+      font-style: normal;
+      color: #1D6FF2;
+    }
+
+    .section-subtext {
+      font-size: 13px;
+      color: #8A94A8;
+      margin-bottom: 28px;
+      line-height: 1.5;
+    }
+
+    /* ── TICKER / MARQUEE ───────────────────────────────── */
+    .ticker-wrapper {
+      position: relative;
+      overflow: hidden;
+      /* Fade edges */
+      -webkit-mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
+      mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
+    }
+
+    .ticker-track {
+      display: flex;
+      gap: 12px;
+      width: max-content;
+      animation: ticker-scroll 28s linear infinite;
+    }
+    .ticker-track:hover {
+      animation-play-state: paused;
+    }
+
+    @keyframes ticker-scroll {
+      0%   { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+
+    .logo-card {
+      background: #ffffff;
+      border-radius: 16px;
+      box-shadow: 0 2px 14px rgba(0,0,0,.2);
+      padding: 10px 18px;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .logo-card svg {
+      display: block;
+      height: 28px;
+      width: auto;
+    }
+
+    .ticker-more {
+      text-align: right;
+      margin-top: 12px;
+      font-size: 12px;
+      color: #8A94A8;
+      letter-spacing: .02em;
+    }
+    .ticker-more a {
+      color: #1D6FF2;
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    /* ── BOTTOM BADGE ───────────────────────────────────── */
+    .trust-badge {
+      margin: 0 16px;
+      padding: 14px 18px;
+      background: rgba(29,111,242,.08);
+      border: 1px solid rgba(29,111,242,.2);
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .trust-badge-icon {
+      width: 36px;
+      height: 36px;
+      background: rgba(29,111,242,.15);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .trust-badge-icon svg {
+      width: 18px;
+      height: 18px;
+    }
+    .trust-badge-text {
+      font-size: 12px;
+      color: #8A94A8;
+      line-height: 1.5;
+    }
+    .trust-badge-text strong {
+      display: block;
+      color: #F0F4FF;
+      font-size: 13px;
+      margin-bottom: 1px;
+    }
+  </style>
+</head>
+<body>
+  <div class="phone-frame">
+
+    <div class="note">MAKIETA A — wariant Ticker z licznikiem</div>
+
+    <!-- FAKE MAP -->
+    <div class="map-section">
+      <div class="cluster cluster-lg c1">44</div>
+      <div class="cluster cluster-md c2">9</div>
+      <div class="cluster cluster-sm c3">3</div>
+      <div class="cluster cluster-sm c4">6</div>
+      <button class="map-btn">Otwórz pełną mapę</button>
+    </div>
+
+    <!-- ZAUFALI NAM -->
+    <section class="trusted-section">
+
+      <div class="section-eyebrow">
+        <span>Zaufali nam</span>
+        <div class="eyebrow-line"></div>
+      </div>
+
+      <h2 class="section-headline">
+        Już <em>87 firm</em> rekrutuje<br>z MapJob
+      </h2>
+      <p class="section-subtext">Pracodawcy, którzy znaleźli kandydatów na mapie</p>
+
+      <!-- MARQUEE -->
+      <div class="ticker-wrapper">
+        <div class="ticker-track">
+
+          <!-- SET 1 -->
+          <div class="logo-card">
+            <!-- JobWerke -->
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 40" role="img" aria-label="JobWerke">
+              <rect x="0" y="10" width="6" height="20" rx="3" fill="#1D6FF2"/>
+              <text x="14" y="28" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="20" font-weight="800" fill="#111827">Job</text>
+              <text x="56" y="28" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="20" font-weight="300" fill="#1D6FF2">Werke</text>
+            </svg>
+          </div>
+
+          <div class="logo-card">
+            <!-- Pramer -->
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 140 40" role="img" aria-label="Pramer">
+              <circle cx="10" cy="20" r="7" fill="#00B8D9" opacity=".9"/>
+              <text x="24" y="27" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="19" font-weight="700" fill="#111827">pramer</text>
+            </svg>
+          </div>
+
+          <div class="logo-card">
+            <!-- Żabka -->
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 140 40" role="img" aria-label="Żabka">
+              <text x="70" y="28" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="21" font-weight="900" fill="#2D8B3E" text-anchor="middle" letter-spacing="-1">Żabka</text>
+            </svg>
+          </div>
+
+          <div class="logo-card">
+            <!-- Nordic HR -->
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 40" role="img" aria-label="Nordic HR">
+              <text x="8" y="27" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="17" font-weight="800" fill="#111827">NORDIC</text>
+              <text x="90" y="27" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="17" font-weight="300" fill="#1D6FF2">HR</text>
+              <line x1="8" y1="31" x2="108" y2="31" stroke="#e5e7eb" stroke-width="1"/>
+            </svg>
+          </div>
+
+          <div class="logo-card">
+            <!-- ProWork -->
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 150 40" role="img" aria-label="ProWork">
+              <text x="75" y="27" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="19" font-weight="700" fill="#111827" text-anchor="middle">Pro<tspan fill="#00B8D9">Work</tspan></text>
+            </svg>
+          </div>
+
+          <div class="logo-card">
+            <!-- EuroRecruit -->
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 190 40" role="img" aria-label="EuroRecruit">
+              <text x="8" y="27" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="17" font-weight="800" fill="#1D6FF2">Euro</text>
+              <text x="62" y="27" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="17" font-weight="400" fill="#111827">Recruit</text>
+            </svg>
+          </div>
+
+          <div class="logo-card">
+            <!-- TalentPL -->
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 40" role="img" aria-label="TalentPL">
+              <polygon points="8,28 14,12 20,28" fill="#1D6FF2" opacity=".8"/>
+              <text x="26" y="28" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="19" font-weight="700" fill="#111827">Talent<tspan fill="#6b7280" font-weight="400">PL</tspan></text>
+            </svg>
+          </div>
+
+          <div class="logo-card">
+            <!-- WorkBridge -->
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 190 40" role="img" aria-label="WorkBridge">
+              <text x="8" y="27" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="16" font-weight="600" fill="#111827">Work</text>
+              <text x="60" y="27" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="16" font-weight="300" fill="#374151">Bridge</text>
+              <rect x="8" y="30" width="52" height="2" rx="1" fill="#00B8D9"/>
+            </svg>
+          </div>
+
+          <!-- SET 2 — duplicate for seamless loop -->
+          <div class="logo-card">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 40" role="img" aria-label="JobWerke">
+              <rect x="0" y="10" width="6" height="20" rx="3" fill="#1D6FF2"/>
+              <text x="14" y="28" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="20" font-weight="800" fill="#111827">Job</text>
+              <text x="56" y="28" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="20" font-weight="300" fill="#1D6FF2">Werke</text>
+            </svg>
+          </div>
+
+          <div class="logo-card">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 140 40" role="img" aria-label="Pramer">
+              <circle cx="10" cy="20" r="7" fill="#00B8D9" opacity=".9"/>
+              <text x="24" y="27" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="19" font-weight="700" fill="#111827">pramer</text>
+            </svg>
+          </div>
+
+          <div class="logo-card">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 140 40" role="img" aria-label="Żabka">
+              <text x="70" y="28" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="21" font-weight="900" fill="#2D8B3E" text-anchor="middle" letter-spacing="-1">Żabka</text>
+            </svg>
+          </div>
+
+          <div class="logo-card">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 40" role="img" aria-label="Nordic HR">
+              <text x="8" y="27" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="17" font-weight="800" fill="#111827">NORDIC</text>
+              <text x="90" y="27" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="17" font-weight="300" fill="#1D6FF2">HR</text>
+              <line x1="8" y1="31" x2="108" y2="31" stroke="#e5e7eb" stroke-width="1"/>
+            </svg>
+          </div>
+
+          <div class="logo-card">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 150 40" role="img" aria-label="ProWork">
+              <text x="75" y="27" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="19" font-weight="700" fill="#111827" text-anchor="middle">Pro<tspan fill="#00B8D9">Work</tspan></text>
+            </svg>
+          </div>
+
+          <div class="logo-card">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 190 40" role="img" aria-label="EuroRecruit">
+              <text x="8" y="27" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="17" font-weight="800" fill="#1D6FF2">Euro</text>
+              <text x="62" y="27" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="17" font-weight="400" fill="#111827">Recruit</text>
+            </svg>
+          </div>
+
+          <div class="logo-card">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 40" role="img" aria-label="TalentPL">
+              <polygon points="8,28 14,12 20,28" fill="#1D6FF2" opacity=".8"/>
+              <text x="26" y="28" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="19" font-weight="700" fill="#111827">Talent<tspan fill="#6b7280" font-weight="400">PL</tspan></text>
+            </svg>
+          </div>
+
+          <div class="logo-card">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 190 40" role="img" aria-label="WorkBridge">
+              <text x="8" y="27" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="16" font-weight="600" fill="#111827">Work</text>
+              <text x="60" y="27" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="16" font-weight="300" fill="#374151">Bridge</text>
+              <rect x="8" y="30" width="52" height="2" rx="1" fill="#00B8D9"/>
+            </svg>
+          </div>
+
+        </div><!-- /.ticker-track -->
+      </div><!-- /.ticker-wrapper -->
+
+      <p class="ticker-more">i wiele więcej <a href="#">→</a></p>
+
+    </section>
+
+    <!-- TRUST BADGE -->
+    <div class="trust-badge">
+      <div class="trust-badge-icon">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" stroke="#1D6FF2" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <div class="trust-badge-text">
+        <strong>Weryfikowane konta pracodawców</strong>
+        Każda firma przechodzi proces weryfikacji przed publikacją ofert.
+      </div>
+    </div>
+
+  </div><!-- /.phone-frame -->
+</body>
+</html>

@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>MapJob — Onboarding progresywny (makieta)</title>
+<style>
+  :root{
+    --bg:#0B0D10; --surf:#15181F; --surf2:#1C2029; --surf3:#23272F;
+    --border:rgba(255,255,255,.09); --border2:rgba(255,255,255,.14);
+    --text:#F5F7FA; --text2:#A1A9B8; --text3:#6B7280;
+    --blue:#2D7FF9; --blue2:#60A5FA; --bluedim:rgba(45,127,249,.14);
+    --green:#10B981; --greendim:rgba(16,185,129,.14);
+    --gold:#D97706; --golddim:rgba(217,119,6,.14);
+    --red:#DC2626; --redbiedronka:#E30613;
+    --ff:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:var(--ff);background:#070809;color:var(--text);-webkit-font-smoothing:antialiased;line-height:1.4}
+
+  /* ---------- page chrome ---------- */
+  .topbar{position:sticky;top:0;z-index:50;display:flex;align-items:center;gap:14px;padding:14px 22px;background:rgba(7,8,9,.85);backdrop-filter:blur(12px);border-bottom:1px solid var(--border)}
+  .topbar h1{font-size:15px;font-weight:800;letter-spacing:-.2px}
+  .topbar .sub{font-size:12px;color:var(--text3);font-weight:500}
+  .badge-makieta{margin-left:auto;font-size:10px;font-weight:800;letter-spacing:.8px;text-transform:uppercase;color:var(--gold);background:var(--golddim);border:1px solid rgba(217,119,6,.35);padding:5px 11px;border-radius:999px}
+
+  .layout{display:grid;grid-template-columns:1fr 380px;gap:0;min-height:calc(100vh - 53px)}
+  @media(max-width:1100px){.layout{grid-template-columns:1fr}}
+
+  /* ---------- stage ---------- */
+  .stage{padding:34px 22px 80px;display:flex;flex-direction:column;align-items:center}
+  .flow-nav{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-bottom:26px;max-width:760px}
+  .flow-nav button{font-family:var(--ff);font-size:12px;font-weight:700;color:var(--text2);background:var(--surf);border:1px solid var(--border);padding:8px 13px;border-radius:999px;cursor:pointer;transition:.15s;display:flex;align-items:center;gap:7px}
+  .flow-nav button .n{width:18px;height:18px;border-radius:50%;background:var(--surf3);color:var(--text3);font-size:10px;font-weight:800;display:flex;align-items:center;justify-content:center}
+  .flow-nav button:hover{border-color:var(--border2);color:var(--text)}
+  .flow-nav button.on{background:var(--bluedim);border-color:var(--blue);color:var(--blue2)}
+  .flow-nav button.on .n{background:var(--blue);color:#fff}
+
+  /* ---------- phone ---------- */
+  .phone{width:392px;max-width:100%;background:var(--bg);border-radius:38px;border:1px solid var(--border2);box-shadow:0 0 0 9px #121419,0 40px 90px rgba(0,0,0,.6);overflow:hidden;position:relative}
+  .notch{height:30px;display:flex;align-items:center;justify-content:center;background:var(--bg)}
+  .notch::after{content:'';width:120px;height:7px;border-radius:999px;background:#26292f}
+  .pscroll{height:720px;overflow-y:auto;overflow-x:hidden;scrollbar-width:thin;scrollbar-color:#2a2e36 transparent}
+  .pscroll::-webkit-scrollbar{width:5px}
+  .pscroll::-webkit-scrollbar-thumb{background:#2a2e36;border-radius:4px}
+
+  .screen{display:none;animation:fade .25s ease}
+  .screen.on{display:block}
+  @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+  /* phone header */
+  .ph-head{display:flex;align-items:center;gap:12px;padding:16px 18px 6px}
+  .ph-back{width:34px;height:34px;border-radius:50%;background:var(--surf);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;color:var(--text2);font-size:18px;flex-shrink:0;cursor:pointer}
+  .ph-title{font-size:17px;font-weight:800;letter-spacing:-.3px}
+  .ph-body{padding:8px 18px 30px}
+
+  /* generic ui atoms */
+  .flbl{display:block;font-size:11px;font-weight:800;color:var(--text2);text-transform:uppercase;letter-spacing:.5px;margin:16px 0 7px}
+  .flbl .opt{text-transform:none;letter-spacing:0;font-weight:500;color:var(--text3);font-size:10px}
+  .fi{width:100%;background:var(--surf);border:1.5px solid var(--border);border-radius:13px;padding:13px 14px;color:var(--text);font-family:var(--ff);font-size:14px;outline:none;transition:.15s}
+  .fi:focus{border-color:var(--blue)}
+  .fi::placeholder{color:var(--text3)}
+  textarea.fi{resize:none;line-height:1.5}
+  .hint{font-size:11px;color:var(--text3);margin-top:6px;line-height:1.45}
+
+  .btn-p{width:100%;background:var(--blue);color:#fff;border:none;border-radius:14px;padding:15px;font-family:var(--ff);font-size:15px;font-weight:800;cursor:pointer;transition:.15s;display:flex;align-items:center;justify-content:center;gap:8px}
+  .btn-p:hover{filter:brightness(1.08)}
+  .btn-p.green{background:var(--green)}
+  .btn-s{width:100%;background:transparent;color:var(--text2);border:none;padding:13px;font-family:var(--ff);font-size:13px;font-weight:600;cursor:pointer;margin-top:4px}
+  .btn-ghost{background:var(--surf);border:1px solid var(--border);color:var(--text);border-radius:12px;padding:11px 14px;font-family:var(--ff);font-size:13px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:8px}
+
+  .chip{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:600;color:var(--text2);background:var(--surf);border:1.5px solid var(--border);border-radius:11px;padding:9px 13px;cursor:pointer;transition:.15s}
+  .chip:hover{border-color:var(--border2)}
+  .chip.on{background:var(--bluedim);border-color:var(--blue);color:var(--blue2)}
+
+  /* intent cards */
+  .intent{display:flex;gap:14px;padding:17px;background:var(--surf);border:1.5px solid var(--border);border-radius:18px;cursor:pointer;transition:.15s;margin-bottom:12px;align-items:center}
+  .intent:hover{border-color:var(--blue);background:var(--surf2);transform:translateY(-1px)}
+  .intent .ic{width:52px;height:52px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0}
+  .intent .t{font-size:15px;font-weight:800;margin-bottom:3px}
+  .intent .d{font-size:12px;color:var(--text3);line-height:1.45}
+  .intent .arr{margin-left:auto;color:var(--text3);font-size:20px;flex-shrink:0}
+
+  /* progress meter */
+  .meter-card{background:linear-gradient(135deg,rgba(45,127,249,.12),rgba(45,127,249,.03));border:1px solid rgba(45,127,249,.28);border-radius:18px;padding:18px;margin-bottom:18px}
+  .meter-top{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:11px}
+  .meter-pct{font-size:30px;font-weight:900;letter-spacing:-1px;color:var(--blue2)}
+  .meter-lbl{font-size:12px;font-weight:700;color:var(--text2)}
+  .meter-track{height:9px;background:rgba(255,255,255,.07);border-radius:99px;overflow:hidden}
+  .meter-fill{height:100%;background:linear-gradient(90deg,var(--blue),var(--blue2));border-radius:99px;transition:width .6s cubic-bezier(.2,.8,.2,1)}
+
+  .task{display:flex;align-items:center;gap:13px;padding:14px;background:var(--surf);border:1px solid var(--border);border-radius:14px;margin-bottom:9px;cursor:pointer;transition:.15s}
+  .task:hover{border-color:var(--border2);background:var(--surf2)}
+  .task.done{opacity:.55}
+  .task .tic{width:38px;height:38px;border-radius:11px;background:var(--surf2);display:flex;align-items:center;justify-content:center;font-size:19px;flex-shrink:0}
+  .task .tt{font-size:14px;font-weight:700}
+  .task .td{font-size:11.5px;color:var(--text3);margin-top:2px}
+  .task .plus{margin-left:auto;font-size:12px;font-weight:800;color:var(--green);background:var(--greendim);border-radius:8px;padding:5px 9px;flex-shrink:0}
+  .task.done .plus{color:var(--text3);background:var(--surf2)}
+  .task .chk{margin-left:auto;color:var(--green);font-size:20px;flex-shrink:0;display:none}
+  .task.done .chk{display:block}
+  .task.done .plus{display:none}
+
+  .success-hero{text-align:center;padding:24px 10px 18px}
+  .success-ring{width:78px;height:78px;border-radius:50%;background:var(--greendim);border:2px solid var(--green);display:flex;align-items:center;justify-content:center;font-size:38px;margin:0 auto 14px}
+  .success-hero h2{font-size:21px;font-weight:900;letter-spacing:-.4px;margin-bottom:5px}
+  .success-hero p{font-size:13px;color:var(--text2);line-height:1.5;max-width:280px;margin:0 auto}
+
+  /* mini focused sheet */
+  .focus-note{display:flex;gap:10px;align-items:flex-start;background:var(--golddim);border:1px solid rgba(217,119,6,.3);border-radius:13px;padding:13px;margin-top:14px}
+  .focus-note .fi-ic{font-size:18px;flex-shrink:0}
+  .focus-note .ft{font-size:12.5px;color:var(--text2);line-height:1.5}
+
+  /* company preview card */
+  .biz-prev{border-radius:16px;overflow:hidden;border:1px solid var(--border);margin-top:16px;background:var(--surf)}
+  .biz-cover{height:70px;position:relative}
+  .biz-logo{position:absolute;left:16px;bottom:-22px;width:56px;height:56px;border-radius:14px;background:#fff;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:22px;border:3px solid var(--surf)}
+  .biz-meta{padding:30px 16px 16px}
+  .biz-name{font-size:16px;font-weight:800;display:flex;align-items:center;gap:7px}
+  .biz-verif{font-size:10px;font-weight:800;color:#fff;background:var(--green);border-radius:6px;padding:3px 7px;display:inline-flex;gap:4px;align-items:center}
+  .biz-stats{display:flex;gap:18px;margin-top:12px;padding-top:12px;border-top:1px solid var(--border)}
+  .biz-stat .v{font-size:17px;font-weight:900}
+  .biz-stat .k{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.4px;margin-top:1px}
+
+  /* listing management */
+  .lst{background:var(--surf);border:1px solid var(--border);border-radius:16px;padding:14px;margin-bottom:12px}
+  .lst-top{display:flex;gap:12px;align-items:flex-start}
+  .lst-logo{width:44px;height:44px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-weight:900;color:#fff;font-size:16px;flex-shrink:0}
+  .lst-title{font-size:14.5px;font-weight:800}
+  .lst-sub{font-size:11.5px;color:var(--text3);margin-top:2px}
+  .lst-state{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.4px;padding:4px 8px;border-radius:7px;flex-shrink:0}
+  .lst-state.live{color:var(--green);background:var(--greendim)}
+  .lst-state.off{color:var(--text3);background:var(--surf2)}
+  .lst-actions{display:flex;flex-wrap:wrap;gap:7px;margin-top:13px;padding-top:13px;border-top:1px solid var(--border)}
+  .lst-act{flex:1;min-width:0;display:flex;align-items:center;justify-content:center;gap:6px;font-size:11.5px;font-weight:700;color:var(--text2);background:var(--surf2);border:1px solid var(--border);border-radius:10px;padding:9px 6px;cursor:pointer;transition:.15s}
+  .lst-act:hover{border-color:var(--blue);color:var(--blue2);background:var(--bluedim)}
+  .lst-act.hero{color:var(--blue2);background:var(--bluedim);border-color:rgba(45,127,249,.35)}
+
+  .seg{display:flex;gap:4px;background:var(--surf);border:1px solid var(--border);border-radius:13px;padding:4px;margin-bottom:6px}
+  .seg button{flex:1;font-family:var(--ff);font-size:13px;font-weight:700;color:var(--text3);background:transparent;border:none;border-radius:10px;padding:10px;cursor:pointer;transition:.15s}
+  .seg button.on{background:var(--blue);color:#fff}
+
+  .divider{display:flex;align-items:center;gap:10px;margin:18px 0 6px;color:var(--text3);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.6px}
+  .divider::before,.divider::after{content:'';height:1px;background:var(--border);flex:1}
+
+  /* annotation rail */
+  .rail{background:var(--bg);border-left:1px solid var(--border);padding:30px 26px 60px;overflow-y:auto}
+  @media(max-width:1100px){.rail{border-left:none;border-top:1px solid var(--border)}}
+  .rail h3{font-size:11px;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:var(--blue2);margin-bottom:6px}
+  .rail .pn-title{font-size:19px;font-weight:900;letter-spacing:-.4px;margin-bottom:14px}
+  .anno{display:none}
+  .anno.on{display:block;animation:fade .25s ease}
+  .anno p{font-size:13.5px;color:var(--text2);line-height:1.65;margin-bottom:13px}
+  .anno strong{color:var(--text);font-weight:700}
+  .anno .why{background:var(--surf);border:1px solid var(--border);border-left:3px solid var(--blue);border-radius:0 12px 12px 0;padding:13px 15px;margin-bottom:13px}
+  .anno .why .wl{font-size:10px;font-weight:800;letter-spacing:.6px;text-transform:uppercase;color:var(--blue2);margin-bottom:5px}
+  .anno .why p{margin:0;font-size:13px}
+  .anno ul{list-style:none;margin-bottom:13px}
+  .anno li{font-size:13px;color:var(--text2);line-height:1.55;padding-left:20px;position:relative;margin-bottom:7px}
+  .anno li::before{content:'→';position:absolute;left:0;color:var(--blue2);font-weight:800}
+  .kpi{display:flex;gap:10px;margin-bottom:14px}
+  .kpi div{flex:1;background:var(--surf);border:1px solid var(--border);border-radius:12px;padding:12px 13px}
+  .kpi .v{font-size:20px;font-weight:900;color:var(--green);letter-spacing:-.5px}
+  .kpi .v.bad{color:var(--red)}
+  .kpi .k{font-size:10.5px;color:var(--text3);margin-top:2px;line-height:1.3}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div>
+    <h1>Onboarding progresywny — MapJob</h1>
+    <div class="sub">Podział profilu: szybki start → uzupełnianie krok po kroku · tryb firmy · zarządzanie ogłoszeniami</div>
+  </div>
+  <span class="badge-makieta">Makieta · do akceptacji</span>
+</div>
+
+<div class="layout">
+  <!-- ============ STAGE ============ -->
+  <div class="stage">
+    <div class="flow-nav" id="flowNav">
+      <button data-s="intent" class="on"><span class="n">1</span> Wybór ścieżki</button>
+      <button data-s="quick"><span class="n">2</span> Szybki pin (30s)</button>
+      <button data-s="success"><span class="n">3</span> Jesteś na mapie</button>
+      <button data-s="company"><span class="n">4</span> Firma (jak Biedronka)</button>
+      <button data-s="manage"><span class="n">5</span> Moje ogłoszenia</button>
+    </div>
+
+    <div class="phone">
+      <div class="notch"></div>
+      <div class="pscroll">
+
+        <!-- ===== 1. INTENT ===== -->
+        <div class="screen on" id="s-intent">
+          <div class="ph-head"><div class="ph-back">←</div><div class="ph-title">Dołącz do MapJob</div></div>
+          <div class="ph-body">
+            <p style="font-size:13px;color:var(--text2);margin-bottom:18px;line-height:1.55">Powiedz nam kim jesteś — dopasujemy formularz, żeby zajął <strong style="color:var(--text)">mniej niż minutę</strong>.</p>
+
+            <div class="intent" onclick="go('quick')">
+              <div class="ic" style="background:var(--bluedim)">🔧</div>
+              <div><div class="t">Szukam pracy / zleceń</div><div class="d">Jestem fachowcem lub specjalistą — chcę być widoczny na mapie</div></div>
+              <div class="arr">›</div>
+            </div>
+
+            <div class="intent" onclick="go('company')">
+              <div class="ic" style="background:var(--golddim)">🏢</div>
+              <div><div class="t">Jestem firmą / szukam ludzi</div><div class="d">Mam firmę i chcę wystawiać oferty pracy — nawet w wielu lokalizacjach</div></div>
+              <div class="arr">›</div>
+            </div>
+
+            <div class="intent" onclick="alert('(makieta) → formularz zlecenia jednorazowego')">
+              <div class="ic" style="background:var(--greendim)">📋</div>
+              <div><div class="t">Mam zlecenie do wykonania</div><div class="d">Jednorazowa robota — szukam kogoś, kto ją wykona</div></div>
+              <div class="arr">›</div>
+            </div>
+
+            <p style="font-size:11px;color:var(--text3);text-align:center;margin-top:18px;line-height:1.5">To tylko wstępny wybór — później dodasz dowolne role w jednym profilu.</p>
+          </div>
+        </div>
+
+        <!-- ===== 2. QUICK PIN ===== -->
+        <div class="screen" id="s-quick">
+          <div class="ph-head"><div class="ph-back" onclick="go('intent')">←</div><div class="ph-title">Wbij pinezkę</div></div>
+          <div class="ph-body">
+
+            <div style="display:flex;gap:8px;align-items:center;background:var(--greendim);border:1px solid rgba(16,185,129,.3);border-radius:12px;padding:11px 13px;margin-bottom:6px">
+              <span style="font-size:17px">⚡</span>
+              <span style="font-size:12.5px;color:var(--text);font-weight:600">Tylko 3 pola — resztę dodasz później jednym kliknięciem</span>
+            </div>
+
+            <label class="flbl">Imię / nazwa</label>
+            <input class="fi" value="Marek Kowalski"/>
+
+            <label class="flbl">Czym się zajmujesz?</label>
+            <input class="fi" placeholder="Szukaj zawodu — np. Elektryk, Spawacz, IT..."/>
+            <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:9px">
+              <span class="chip on">Elektryk ✓</span>
+              <span class="chip">Hydraulik</span>
+              <span class="chip">Spawacz</span>
+              <span class="chip" style="border-style:dashed">🌐 Otwarty na oferty</span>
+            </div>
+
+            <label class="flbl">Miasto</label>
+            <input class="fi" value="Wrocław"/>
+            <div class="hint">📍 Pinezkę ustawisz dokładniej później — na start wystarczy miasto.</div>
+
+            <label class="flbl">Krótki opis <span class="opt">— opcjonalnie, 1 zdanie</span></label>
+            <textarea class="fi" rows="2" placeholder="np. Elektryk z 15-letnim stażem, faktury VAT, dojazd po Wrocławiu."></textarea>
+            <button class="btn-ghost" style="margin-top:9px;font-size:12px;padding:9px 13px"><span>✨</span> Napisz za mnie (AI)</button>
+
+            <button class="btn-p" style="margin-top:22px" onclick="go('success')">📍 Opublikuj na mapie</button>
+            <div style="text-align:center;font-size:11px;color:var(--text3);margin-top:11px;line-height:1.5">Stawkę, zdjęcie, telefon i portfolio dodasz<br/>po publikacji — w sekcji „Wzmocnij profil".</div>
+          </div>
+        </div>
+
+        <!-- ===== 3. SUCCESS + PROGRESS ===== -->
+        <div class="screen" id="s-success">
+          <div class="ph-body" style="padding-top:24px">
+            <div class="success-hero">
+              <div class="success-ring">🎉</div>
+              <h2>Jesteś na mapie!</h2>
+              <p>Twój pin jest już widoczny dla klientów w okolicy Wrocławia. Teraz wzmocnij profil — to zajmuje sekundy, a robi różnicę.</p>
+            </div>
+
+            <div class="meter-card">
+              <div class="meter-top">
+                <div><div class="meter-pct" id="mpct">35%</div><div class="meter-lbl">siła profilu</div></div>
+                <div style="text-align:right;font-size:11.5px;color:var(--text3);max-width:150px;line-height:1.4">Profile <strong style="color:var(--text2)">100%</strong> dostają<br/>średnio <strong style="color:var(--green)">4× więcej</strong> kontaktów</div>
+              </div>
+              <div class="meter-track"><div class="meter-fill" id="mfill" style="width:35%"></div></div>
+            </div>
+
+            <div class="divider">Szybkie wzmocnienia</div>
+
+            <div class="task" onclick="doTask(this,15)">
+              <div class="tic">📷</div>
+              <div><div class="tt">Dodaj zdjęcie profilowe</div><div class="td">Profile ze zdjęciem = 3× więcej zapytań</div></div>
+              <span class="plus">+15%</span><span class="chk">✓</span>
+            </div>
+            <div class="task" onclick="doTask(this,10)">
+              <div class="tic">💰</div>
+              <div><div class="tt">Podaj stawkę</div><div class="td">Klienci filtrują po cenie — bez niej Cię pomijają</div></div>
+              <span class="plus">+10%</span><span class="chk">✓</span>
+            </div>
+            <div class="task" onclick="doTask(this,10)">
+              <div class="tic">📞</div>
+              <div><div class="tt">Dodaj telefon</div><div class="td">Szybszy kontakt = więcej zleceń</div></div>
+              <span class="plus">+10%</span><span class="chk">✓</span>
+            </div>
+            <div class="task" onclick="doTask(this,15)">
+              <div class="tic">🛠️</div>
+              <div><div class="tt">Pokaż realizacje (portfolio)</div><div class="td">Zdjęcia „przed/po" budują zaufanie</div></div>
+              <span class="plus">+15%</span><span class="chk">✓</span>
+            </div>
+            <div class="task" onclick="doTask(this,15)">
+              <div class="tic">🎓</div>
+              <div><div class="tt">Uprawnienia i weryfikacja</div><div class="td">Znak „Zweryfikowany" wyróżnia w wynikach</div></div>
+              <span class="plus">+15%</span><span class="chk">✓</span>
+            </div>
+
+            <div class="focus-note">
+              <span class="fi-ic">💡</span>
+              <span class="ft">Każde wzmocnienie otwiera <strong style="color:var(--text)">jeden mały ekran</strong>, nie cały formularz. Możesz przerwać w dowolnym momencie — pin już działa.</span>
+            </div>
+
+            <button class="btn-s" style="margin-top:16px" onclick="alert('(makieta) → mapa')">Zrobię to później — przejdź do mapy</button>
+          </div>
+        </div>
+
+        <!-- ===== 4. COMPANY QUICK ===== -->
+        <div class="screen" id="s-company">
+          <div class="ph-head"><div class="ph-back" onclick="go('intent')">←</div><div class="ph-title">Profil firmy</div></div>
+          <div class="ph-body">
+
+            <div class="seg">
+              <button class="on">🏢 Firma</button>
+              <button onclick="go('quick')">👤 Osoba prywatna</button>
+            </div>
+            <div class="hint" style="margin-bottom:6px">Jak Biedronka, Żabka czy lokalny warsztat — kilka pól na start, oferty dodasz potem.</div>
+
+            <label class="flbl">Logo <span class="opt">— opcjonalne</span></label>
+            <div style="display:flex;gap:13px;align-items:center">
+              <div style="width:60px;height:60px;border-radius:14px;background:var(--surf2);border:2px dashed var(--border2);display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0">🏢</div>
+              <button class="btn-ghost" style="font-size:12px"><span>📤</span> Wgraj logo</button>
+            </div>
+
+            <label class="flbl">Nazwa firmy</label>
+            <input class="fi" value="Biedronka"/>
+
+            <label class="flbl">Branża</label>
+            <input class="fi" value="Handel detaliczny / sieć sklepów"/>
+
+            <label class="flbl">Kolor marki <span class="opt">— wyróżnia Twoje oferty</span></label>
+            <div style="display:flex;gap:8px;margin-top:2px">
+              <span style="width:34px;height:34px;border-radius:9px;background:#E30613;border:2px solid #fff;cursor:pointer"></span>
+              <span style="width:34px;height:34px;border-radius:9px;background:#2D7FF9;cursor:pointer"></span>
+              <span style="width:34px;height:34px;border-radius:9px;background:#10B981;cursor:pointer"></span>
+              <span style="width:34px;height:34px;border-radius:9px;background:#D97706;cursor:pointer"></span>
+              <span style="width:34px;height:34px;border-radius:9px;background:#7C3AED;cursor:pointer"></span>
+            </div>
+
+            <label class="flbl">Krótki opis <span class="opt">— 1–2 zdania</span></label>
+            <textarea class="fi" rows="2">Największa sieć sklepów spożywczych w Polsce. Stałe rekrutacje w całym kraju.</textarea>
+
+            <div style="background:var(--surf);border:1px solid var(--border);border-radius:13px;padding:13px;margin-top:16px;display:flex;gap:11px;align-items:flex-start">
+              <input type="checkbox" style="width:17px;height:17px;margin-top:1px;accent-color:var(--blue);flex-shrink:0"/>
+              <div style="font-size:12px;color:var(--text2);line-height:1.5">Chcę znak <strong style="color:var(--text)">„Zweryfikowany pracodawca"</strong> — podam NIP/REGON po publikacji (opcjonalne, +zaufanie)</div>
+            </div>
+
+            <!-- live preview -->
+            <div class="divider">Tak zobaczą to kandydaci</div>
+            <div class="biz-prev">
+              <div class="biz-cover" style="background:linear-gradient(135deg,#E30613,#a30410)"></div>
+              <div class="biz-logo" style="color:#E30613">B</div>
+              <div class="biz-meta">
+                <div class="biz-name">Biedronka <span class="biz-verif">✓ Zweryfikowany</span></div>
+                <div style="font-size:12px;color:var(--text3);margin-top:3px">Handel detaliczny · cała Polska</div>
+                <div class="biz-stats">
+                  <div class="biz-stat"><div class="v">0</div><div class="k">oferty</div></div>
+                  <div class="biz-stat"><div class="v">320</div><div class="k">lokalizacje</div></div>
+                  <div class="biz-stat"><div class="v">—</div><div class="k">ocena</div></div>
+                </div>
+              </div>
+            </div>
+
+            <button class="btn-p" style="margin-top:18px" onclick="go('manage')">🏢 Opublikuj profil firmy</button>
+            <button class="btn-s">Anuluj</button>
+          </div>
+        </div>
+
+        <!-- ===== 5. MANAGE LISTINGS ===== -->
+        <div class="screen" id="s-manage">
+          <div class="ph-head"><div class="ph-back" onclick="go('company')">←</div><div class="ph-title">Moje ogłoszenia</div></div>
+          <div class="ph-body">
+
+            <button class="btn-p" style="margin-bottom:16px"><span>＋</span> Dodaj nową ofertę</button>
+
+            <!-- listing 1 -->
+            <div class="lst">
+              <div class="lst-top">
+                <div class="lst-logo" style="background:#E30613">B</div>
+                <div style="flex:1;min-width:0">
+                  <div class="lst-title">Kasjer-sprzedawca</div>
+                  <div class="lst-sub">Wrocław, ul. Legnicka · pełny etat · od 4 500 zł</div>
+                </div>
+                <span class="lst-state live">Aktywne</span>
+              </div>
+              <div class="lst-actions">
+                <div class="lst-act"><span>✏️</span> Edytuj</div>
+                <div class="lst-act"><span>📋</span> Kopiuj</div>
+                <div class="lst-act hero"><span>📍</span> Inna lokalizacja</div>
+                <div class="lst-act"><span>⏸</span> Wstrzymaj</div>
+              </div>
+            </div>
+
+            <!-- listing 2 -->
+            <div class="lst">
+              <div class="lst-top">
+                <div class="lst-logo" style="background:#E30613">B</div>
+                <div style="flex:1;min-width:0">
+                  <div class="lst-title">Kierownik zmiany</div>
+                  <div class="lst-sub">Kraków, ul. Wielicka · pełny etat · 6 000–7 200 zł</div>
+                </div>
+                <span class="lst-state live">Aktywne</span>
+              </div>
+              <div class="lst-actions">
+                <div class="lst-act"><span>✏️</span> Edytuj</div>
+                <div class="lst-act"><span>📋</span> Kopiuj</div>
+                <div class="lst-act hero"><span>📍</span> Inna lokalizacja</div>
+                <div class="lst-act"><span>⏸</span> Wstrzymaj</div>
+              </div>
+            </div>
+
+            <!-- listing 3 - inactive -->
+            <div class="lst" style="opacity:.72">
+              <div class="lst-top">
+                <div class="lst-logo" style="background:#E30613">B</div>
+                <div style="flex:1;min-width:0">
+                  <div class="lst-title">Magazynier (sezon)</div>
+                  <div class="lst-sub">Poznań, ul. Górecka · zlecenie · do uzgodnienia</div>
+                </div>
+                <span class="lst-state off">Wstrzymane</span>
+              </div>
+              <div class="lst-actions">
+                <div class="lst-act"><span>✏️</span> Edytuj</div>
+                <div class="lst-act"><span>📋</span> Wystaw podobne</div>
+                <div class="lst-act hero"><span>▶️</span> Wznów</div>
+                <div class="lst-act"><span>🗑</span> Usuń</div>
+              </div>
+            </div>
+
+            <div class="focus-note" style="background:var(--bluedim);border-color:rgba(45,127,249,.3)">
+              <span class="fi-ic">📍</span>
+              <span class="ft"><strong style="color:var(--text)">„Inna lokalizacja"</strong> kopiuje całą ofertę i prosi tylko o nowe miasto — dla sieci typu Biedronka jedna oferta × 320 sklepów w kilka kliknięć.</span>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ ANNOTATION RAIL ============ -->
+  <div class="rail">
+    <h3>Dlaczego tak</h3>
+    <div class="pn-title" id="railTitle">Wybór ścieżki</div>
+
+    <div class="anno on" id="a-intent">
+      <p>Zamiast jednego molocha-formularza, na wejściu pytamy <strong>kim jesteś</strong>. To pozwala pokazać każdej grupie tylko jej pola — fachowiec nie widzi NIP-u firmy, firma nie widzi „stawki godzinowej".</p>
+      <div class="why"><div class="wl">Zasada</div><p>Najlepszy formularz to ten, którego nie widać. Decyzja „kim jestem" jest łatwa i angażuje — buduje zaangażowanie zanim poprosimy o cokolwiek trudnego.</p></div>
+      <p>Wybór jest <strong>miękki</strong> — jeden profil może później pełnić kilka ról. Nikogo nie zamykamy w ścieżce.</p>
+    </div>
+
+    <div class="anno" id="a-quick">
+      <div class="kpi">
+        <div><div class="v bad">~15</div><div class="k">pól w obecnym formularzu</div></div>
+        <div><div class="v">3</div><div class="k">pola w szybkim starcie</div></div>
+      </div>
+      <p>Dziś dodanie pinu wymaga przejścia przez <strong>kategorię, kraje, miasto, kod, ulicę, numer, typ stawki, walutę, kwotę, zespół, telefon, email, opis na 260px</strong> i zgodę. To ściana, na której ludzie odpadają.</p>
+      <p>Nowy szybki start to <strong>imię + zawód + miasto</strong>. Opis opcjonalny, z przyciskiem „napisz za mnie (AI)". Publikacja w ~30 sekund.</p>
+      <div class="why"><div class="wl">Zasada</div><p>Time-to-value. Im szybciej user zobaczy swój pin na mapie, tym większa szansa, że wróci go dopracować. Pusty profil > brak profilu.</p></div>
+      <ul>
+        <li>Dokładny adres (ulica/numer) → przeniesione do „dopracuj później"</li>
+        <li>Stawka, waluta, typ zatrudnienia → krok po publikacji</li>
+        <li>Email pobrany z konta, nie pytamy ponownie</li>
+      </ul>
+    </div>
+
+    <div class="anno" id="a-success">
+      <p>To serce pomysłu: <strong>całe „CV" zostaje — ale po publikacji</strong>, rozbite na małe, nagradzane kroki. Klik w kafelek = jeden mini-ekran, nie powrót do molocha.</p>
+      <div class="why"><div class="wl">Zasada</div><p>Pasek postępu + konkretna korzyść („zdjęcie = 3× więcej zapytań") zamienia żmudne uzupełnianie w grę z jasną nagrodą. Liczby motywują mocniej niż „uzupełnij profil".</p></div>
+      <p>Każdy krok pokazuje <strong>ile doda do siły profilu</strong> i <strong>co user z tego ma</strong> — nie „wymagane pole", tylko „więcej klientów".</p>
+      <p style="font-size:12px;color:var(--text3)">Kliknij kafelki w makiecie — pasek rośnie na żywo.</p>
+      <ul>
+        <li>Można wyjść w każdej chwili — pin już działa</li>
+        <li>Te same pola co dziś, inny moment i inne opakowanie</li>
+        <li>„Profil zaawansowany" przestaje być osobnym molochem</li>
+      </ul>
+    </div>
+
+    <div class="anno" id="a-company">
+      <p>Profil firmy <strong>celowo prosty</strong> — jak prosiłeś, „na szybko jak Biedronka". Logo, nazwa, branża, kolor marki, jedno zdanie. Tyle wystarczy, żeby ruszyć.</p>
+      <div class="why"><div class="wl">Zasada</div><p>Duzi pracodawcy nie wypełniają długich ankiet. Im niższy próg, tym większa szansa, że marka w ogóle założy profil. Wiarygodność (NIP/REGON) to opcja „na potem", nie blokada.</p></div>
+      <p><strong>Podgląd na żywo</strong> karty pracodawcy pokazuje od razu efekt — kolor marki, logo, znak „Zweryfikowany". To sprzedaje dopracowanie bez zmuszania do niego.</p>
+      <ul>
+        <li>Oferty (stanowiska) dodaje się osobno, po profilu</li>
+        <li>Kolor marki spina się z Twoim systemem verified-employer</li>
+        <li>Bez fake danych — weryfikacja realna, opcjonalna</li>
+      </ul>
+    </div>
+
+    <div class="anno" id="a-manage">
+      <p>Zarządzanie ogłoszeniami z akcjami, o które prosiłeś: <strong>edytuj, kopiuj, wystaw podobne</strong> — oraz kluczowe dla sieci <strong>„Inna lokalizacja"</strong>.</p>
+      <div class="why"><div class="wl">Zasada</div><p>Dla pracodawcy z wieloma punktami (Biedronka = setki sklepów) ręczne przepisywanie tej samej oferty to zabójca. Duplikacja jednym kliknięciem z podmianą tylko miasta = realna wartość, której nie ma na portalach.</p></div>
+      <ul>
+        <li><strong>Kopiuj</strong> — identyczna oferta jako szkic do edycji</li>
+        <li><strong>Wystaw podobne</strong> — nowa oferta z wypełnionymi polami starej</li>
+        <li><strong>Inna lokalizacja</strong> — ta sama oferta, pytamy tylko o miasto</li>
+        <li><strong>Wstrzymaj / Wznów</strong> — bez usuwania, sezonowość</li>
+      </ul>
+      <p style="font-size:12px;color:var(--text3)">Działa tak samo dla fachowca (kilka pinów w różnych miastach) jak dla firmy.</p>
+    </div>
+
+    <div style="margin-top:26px;padding-top:18px;border-top:1px solid var(--border)">
+      <h3>Status</h3>
+      <p style="font-size:12.5px;color:var(--text2);line-height:1.6">To klikalna makieta — <strong style="color:var(--text)">nic nie ruszone w index.html</strong>. Przejrzyj 5 ekranów u góry, daj znać co zmienić, a potem wdrożę wybrane elementy etapami z migracjami DB.</p>
+    </div>
+  </div>
+</div>
+
+<script>
+  var titles={intent:'Wybór ścieżki',quick:'Szybki pin (30 s)',success:'Jesteś na mapie',company:'Firma — jak Biedronka',manage:'Moje ogłoszenia'};
+  function go(s){
+    document.querySelectorAll('.screen').forEach(function(e){e.classList.remove('on')});
+    document.getElementById('s-'+s).classList.add('on');
+    document.querySelectorAll('#flowNav button').forEach(function(b){b.classList.toggle('on',b.dataset.s===s)});
+    document.querySelectorAll('.anno').forEach(function(e){e.classList.remove('on')});
+    document.getElementById('a-'+s).classList.add('on');
+    document.getElementById('railTitle').textContent=titles[s];
+    document.querySelector('.pscroll').scrollTop=0;
+  }
+  document.querySelectorAll('#flowNav button').forEach(function(b){b.onclick=function(){go(b.dataset.s)}});
+
+  var prog=35;
+  function doTask(el,add){
+    if(el.classList.contains('done'))return;
+    el.classList.add('done');
+    prog=Math.min(100,prog+add);
+    document.getElementById('mpct').textContent=prog+'%';
+    document.getElementById('mfill').style.width=prog+'%';
+    if(prog>=100){document.getElementById('mpct').textContent='100% 🏆';}
+  }
+</script>
+</body>
+</html>

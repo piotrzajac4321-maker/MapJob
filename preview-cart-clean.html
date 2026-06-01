@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<title>Podgląd — usunięcie wyróżnień z koszyka</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#18181B;color:#F4F4F5;padding:40px 20px;line-height:1.5}
+h1{font-size:22px;font-weight:800;margin:0 0 8px;letter-spacing:-.3px}
+.sub{color:#A1A1AA;font-size:14px;margin-bottom:36px;max-width:760px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:32px;max-width:1100px;margin:0 auto 40px}
+.col{display:flex;flex-direction:column}
+.label{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.6px;margin-bottom:4px}
+.label.bef{color:#EF4444}
+.label.aft{color:#22C55E}
+.title{font-size:16px;font-weight:700;color:#F4F4F5;margin-bottom:4px}
+.desc{font-size:12.5px;color:#A1A1AA;margin-bottom:14px}
+
+.phone{width:100%;max-width:380px;margin:0 auto;background:#0A0A0B;border:1px solid rgba(255,255,255,.08);border-radius:24px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.5)}
+.phone-top{padding:14px 16px 12px;border-bottom:1px solid rgba(255,255,255,.06);display:flex;align-items:center;gap:12px;background:#0A0A0B}
+.back-btn{width:36px;height:36px;border-radius:10px;background:#18181B;border:1px solid rgba(255,255,255,.09);color:#71717A;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.title-row{font-size:17px;font-weight:900;flex:1;color:#F4F4F5}
+.tot{font-size:14px;font-weight:700;color:#2563EB}
+.body{padding:0;background:#0A0A0B;min-height:520px}
+
+.mock-pkg{margin:0 16px 8px;padding:14px;background:#0F0F11;border:1px solid rgba(255,255,255,.06);border-radius:12px;display:flex;align-items:center;gap:12px;position:relative}
+.mock-pkg.strike{opacity:.45}
+.mock-pkg.strike::after{content:'USUWAMY';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%) rotate(-6deg);font-size:11px;font-weight:900;color:#EF4444;background:#1A0A0A;border:1.5px solid #EF4444;padding:4px 10px;border-radius:6px;letter-spacing:1px}
+.mock-pkg-icon{width:40px;height:40px;border-radius:10px;background:rgba(37,99,235,.12);border:1px solid rgba(37,99,235,.3);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.mock-pkg-icon.gold{background:rgba(200,164,86,.14);border-color:rgba(200,164,86,.35)}
+.mock-pkg-name{font-size:13.5px;font-weight:700;color:#F4F4F5}
+.mock-pkg-sub{font-size:11px;color:#71717A;margin-top:2px}
+.mock-pkg-price{margin-left:auto;font-size:14px;font-weight:800;color:#2563EB}
+.mock-pkg-price.gold{color:#C8A456}
+
+.section-h{padding:16px 16px 8px;display:flex;align-items:center;gap:8px}
+.section-bar{width:3px;height:14px;background:#2563EB;border-radius:2px}
+.section-t{font-size:11px;font-weight:700;color:#F4F4F5;text-transform:uppercase;letter-spacing:.5px}
+
+/* banner B2 */
+.vb{margin:14px 16px 0;border-radius:14px;background:linear-gradient(135deg,rgba(34,197,94,.13) 0%,rgba(34,197,94,.03) 60%,rgba(34,197,94,.10) 100%);border:1px solid rgba(34,197,94,.38);padding:16px}
+.vb-pill{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;background:rgba(34,197,94,.16);border:1px solid rgba(34,197,94,.4);border-radius:20px;font-size:10px;font-weight:800;color:#22C55E;letter-spacing:.5px;text-transform:uppercase;margin-bottom:10px}
+.vb-pill::before{content:'';width:6px;height:6px;border-radius:50%;background:#22C55E;box-shadow:0 0 8px rgba(34,197,94,.7)}
+.vb-h{font-size:17px;font-weight:800;color:#F4F4F5;letter-spacing:-.3px;margin-bottom:5px}
+.vb-h s{color:#71717A;font-weight:600;margin-right:6px}
+.vb-d{font-size:12px;color:#A1A1AA;line-height:1.5}
+.vb-d b{color:#F4F4F5;font-weight:700}
+.vb-shield{margin-top:11px;padding:10px 11px;display:flex;align-items:center;gap:10px;background:rgba(34,197,94,.07);border:1px solid rgba(34,197,94,.22);border-radius:10px}
+.vb-shield-i{width:28px;height:28px;border-radius:8px;background:rgba(34,197,94,.18);border:1px solid rgba(34,197,94,.35);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.vb-shield-t{font-size:11.5px;font-weight:700;color:#F4F4F5;line-height:1.35}
+.vb-shield-s{font-size:10.5px;color:#A1A1AA;margin-top:2px;line-height:1.4}
+
+/* urgent toggle preview (na ogłoszeniu) */
+.urgent-box{border:1.5px solid rgba(239,68,68,.25);border-radius:14px;overflow:hidden;max-width:380px;margin:0 auto}
+.urgent-row{display:flex;align-items:center;gap:10px;padding:14px;background:rgba(239,68,68,.07)}
+.urgent-icon{font-size:22px}
+.urgent-t{flex:1}
+.urgent-t1{font-size:13.5px;font-weight:800;color:#F4F4F5}
+.urgent-t1 .price{color:#EF4444}
+.urgent-t2{font-size:11px;color:#A1A1AA;margin-top:2px}
+.urgent-tog{width:42px;height:24px;border-radius:20px;background:#EF4444;position:relative;flex-shrink:0;box-shadow:0 0 0 3px rgba(239,68,68,.12)}
+.urgent-dot{width:18px;height:18px;border-radius:50%;background:#fff;position:absolute;top:3px;right:3px}
+.urgent-pay{padding:14px;border-top:1px solid rgba(239,68,68,.2);background:rgba(239,68,68,.04)}
+.pay-row{display:flex;gap:8px;margin-top:6px}
+.pay-btn{flex:1;padding:11px;border-radius:11px;font-size:12px;font-weight:800;text-align:center;border:2px solid}
+.pay-blik{background:rgba(22,196,94,.12);border-color:rgba(22,196,94,.4);color:#22C55E}
+.pay-card{background:rgba(99,91,255,.12);border-color:rgba(99,91,255,.35);color:#A5B4FC}
+.feature-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:10px}
+.feat{text-align:center;padding:8px 4px;background:rgba(239,68,68,.08);border-radius:10px}
+.feat-i{font-size:16px}
+.feat-t{font-size:9px;font-weight:700;color:#F87171;margin-top:2px;line-height:1.3}
+
+.note{max-width:1100px;margin:0 auto;padding:20px 22px;background:#0F0F11;border:1px solid rgba(255,255,255,.06);border-radius:14px;font-size:13.5px;color:#D4D4D8;line-height:1.65}
+.note b{color:#F4F4F5}
+.note .ok{color:#22C55E}
+.note .rm{color:#EF4444}
+</style>
+</head>
+<body>
+
+<h1>Usuwamy „wyróżnienia" z koszyka</h1>
+<p class="sub">Zarabianie przenosi się na opcję <b style="color:#EF4444">„Oznacz jako pilne — 19 zł"</b> przy każdym ogłoszeniu (już istnieje w formularzu). Poniżej widać co znika z koszyka i jak teraz działa monetyzacja na poziomie ogłoszenia.</p>
+
+<!-- Cart before / after -->
+<div class="grid">
+
+<!-- BEFORE -->
+<div class="col">
+  <div class="label bef">PRZED</div>
+  <div class="title">Aktualny koszyk</div>
+  <div class="desc">5 pozycji „wyróżnienie/pin+wyróżnienie" mieszane z innymi.</div>
+  <div class="phone">
+    <div class="phone-top">
+      <div class="back-btn"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 5l-7 7 7 7"/></svg></div>
+      <div class="title-row">Koszyk</div>
+      <div class="tot">0 zł</div>
+    </div>
+    <div class="body">
+      <div class="section-h" style="padding-top:18px"><div class="section-bar" style="background:#C8A456"></div><div class="section-t">Najkorzystniejsza oferta</div></div>
+      <div class="mock-pkg">
+        <div class="mock-pkg-icon gold">🚀</div>
+        <div><div class="mock-pkg-name">Pakiet Wspierający</div><div class="mock-pkg-sub">2 piny · 2 wyróżnienia · Pro 3 mc</div></div>
+        <div class="mock-pkg-price gold">200 zł</div>
+      </div>
+      <div class="section-h"><div class="section-bar"></div><div class="section-t">Pozostałe pakiety</div></div>
+      <div class="mock-pkg"><div class="mock-pkg-icon">⚡</div><div><div class="mock-pkg-name">Plan Pro — mies.</div><div class="mock-pkg-sub">2 piny · 2 wyróżnienia</div></div><div class="mock-pkg-price">79 zł</div></div>
+      <div class="mock-pkg"><div class="mock-pkg-icon">📍</div><div><div class="mock-pkg-name">3 dodatkowe piny</div><div class="mock-pkg-sub">do wyczerpania</div></div><div class="mock-pkg-price">49 zł</div></div>
+      <div class="mock-pkg strike"><div class="mock-pkg-icon">🌟</div><div><div class="mock-pkg-name">1 wyróżnienie pinu</div><div class="mock-pkg-sub">złota ramka</div></div><div class="mock-pkg-price">29 zł</div></div>
+      <div class="mock-pkg strike"><div class="mock-pkg-icon">✨</div><div><div class="mock-pkg-name">3 wyróżnienia pinów</div><div class="mock-pkg-sub">złota ramka × 3</div></div><div class="mock-pkg-price">69 zł</div></div>
+      <div class="mock-pkg strike"><div class="mock-pkg-icon">🎁</div><div><div class="mock-pkg-name">3 piny + 3 wyróżnienia</div><div class="mock-pkg-sub">do wyczerpania</div></div><div class="mock-pkg-price">99 zł</div></div>
+      <div class="mock-pkg"><div class="mock-pkg-icon">💼</div><div><div class="mock-pkg-name">Portfolio Pro</div><div class="mock-pkg-sub">dożywotnio</div></div><div class="mock-pkg-price">99 zł</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- AFTER -->
+<div class="col">
+  <div class="label aft">PO</div>
+  <div class="title">Po zmianie + banner B2</div>
+  <div class="desc">Wylatują 3 pozycje wyróżnień. Banner „darmowe ogłoszenia" + pozostałe pakiety.</div>
+  <div class="phone">
+    <div class="phone-top">
+      <div class="back-btn"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 5l-7 7 7 7"/></svg></div>
+      <div class="title-row">Koszyk</div>
+      <div class="tot">0 zł</div>
+    </div>
+    <div class="body">
+      <div class="vb">
+        <div class="vb-pill">Oferta limitowana</div>
+        <div class="vb-h"><s>od 49 zł</s>Ogłoszenia — 0 zł</div>
+        <div class="vb-d">Publikowanie ofert pracy na mapie jest teraz <b>całkowicie darmowe i bez limitu</b> dla wszystkich firm.</div>
+        <div class="vb-shield">
+          <div class="vb-shield-i"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#22C55E" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg></div>
+          <div><div class="vb-shield-t">Bez karty, bez subskrypcji, bez płatności</div><div class="vb-shield-s">Nie prosimy o dane płatnicze. Wystarczy konto firmowe — i publikujesz.</div></div>
+        </div>
+      </div>
+      <div class="section-h" style="padding-top:18px"><div class="section-bar" style="background:#C8A456"></div><div class="section-t">Najkorzystniejsza oferta</div></div>
+      <div class="mock-pkg">
+        <div class="mock-pkg-icon gold">🚀</div>
+        <div><div class="mock-pkg-name">Pakiet Wspierający</div><div class="mock-pkg-sub">2 piny · Pro 3 mc · Portfolio</div></div>
+        <div class="mock-pkg-price gold">200 zł</div>
+      </div>
+      <div class="section-h"><div class="section-bar"></div><div class="section-t">Pozostałe pakiety</div></div>
+      <div class="mock-pkg"><div class="mock-pkg-icon">⚡</div><div><div class="mock-pkg-name">Plan Pro — mies.</div><div class="mock-pkg-sub">priorytet · giełda</div></div><div class="mock-pkg-price">79 zł</div></div>
+      <div class="mock-pkg"><div class="mock-pkg-icon">📍</div><div><div class="mock-pkg-name">3 dodatkowe piny</div><div class="mock-pkg-sub">do wyczerpania</div></div><div class="mock-pkg-price">49 zł</div></div>
+      <div class="mock-pkg"><div class="mock-pkg-icon">📍</div><div><div class="mock-pkg-name">1 dodatkowy pin</div><div class="mock-pkg-sub">do wyczerpania</div></div><div class="mock-pkg-price">19 zł</div></div>
+      <div class="mock-pkg"><div class="mock-pkg-icon">💼</div><div><div class="mock-pkg-name">Portfolio Pro</div><div class="mock-pkg-sub">dożywotnio</div></div><div class="mock-pkg-price">99 zł</div></div>
+    </div>
+  </div>
+</div>
+
+</div>
+
+<!-- Urgent on listing -->
+<div style="max-width:1100px;margin:0 auto 30px">
+  <div class="label aft" style="margin-bottom:6px">MONETYZACJA — JUŻ DZIAŁA</div>
+  <div class="title">Opcja „Pilne" przy każdym ogłoszeniu (formularz dodawania pracy)</div>
+  <div class="desc">Istnieje w m-add-job: toggle 🔴 PILNE z płatnością BLIK / karta — 19 zł od ogłoszenia. To zostaje, to zarabia.</div>
+  <div class="urgent-box">
+    <div class="urgent-row">
+      <div class="urgent-icon">🔴</div>
+      <div class="urgent-t">
+        <div class="urgent-t1">Oznacz jako pilne — <span class="price">19 zł</span></div>
+        <div class="urgent-t2">Mieni się na czerwono · zawsze pierwsze w wynikach · badge 🔴 PILNE</div>
+      </div>
+      <div class="urgent-tog"><div class="urgent-dot"></div></div>
+    </div>
+    <div class="urgent-pay">
+      <div class="feature-row">
+        <div class="feat"><div class="feat-i">🥇</div><div class="feat-t">Zawsze<br>pierwsze</div></div>
+        <div class="feat"><div class="feat-i">🔴</div><div class="feat-t">Mieni się<br>czerwono</div></div>
+        <div class="feat"><div class="feat-i">📢</div><div class="feat-t">3× więcej<br>ofert</div></div>
+      </div>
+      <div class="pay-row">
+        <div class="pay-btn pay-blik">📱 BLIK — 19 zł</div>
+        <div class="pay-btn pay-card">💳 Karta — 19 zł</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="note">
+  <b>Co dokładnie się zmieni w kodzie:</b><br>
+  <span class="rm">Usuwam z <b>CART_ITEMS_CATALOG</b>:</span> <code style="background:#1A0A0A;padding:2px 6px;border-radius:4px;color:#F87171">highlight1</code> · <code style="background:#1A0A0A;padding:2px 6px;border-radius:4px;color:#F87171">highlight3</code> · <code style="background:#1A0A0A;padding:2px 6px;border-radius:4px;color:#F87171">pin3_highlight3</code><br><br>
+  <span class="rm">Aktualizuję opisy:</span> Pakiet Wspierający i Plany Pro — usuwam „2 wyróżnienia" z opisów (zostaje: piny + Pro + portfolio).<br><br>
+  <span class="ok">Zostaje bez zmian:</span> toggle „Oznacz jako pilne — 19 zł" w <b>m-add-job</b> (formularz dodawania ogłoszenia o pracę) — działa, ma BLIK/kartę, monetyzuje per-ogłoszenie.<br><br>
+  <span class="ok">Wcześniej omawiane:</span> banner B2 „darmowe ogłoszenia / bez karty" trafi na górę koszyka.<br><br>
+  <b>Pytanie do potwierdzenia:</b> czy usuwam wzmianki o „wyróżnieniach" też z opisów Pakietu Wspierającego i Planów Pro (skoro nie sprzedajemy ich osobno) — czy tam zostają jako bundled benefit?
+</div>
+
+</body>
+</html>

@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Mockup — Podbij ogłoszenie</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0B0D10;--bg2:#0F1117;--surf:#151821;--surf2:#1C2030;--surf3:#222840;
+  --border:#1E2330;--border3:#2A3048;
+  --text:#E8EAF0;--text2:#9BA3B8;--text3:#5A6480;
+  --blue:#2563EB;--blue2:#60A5FA;--red:#EF4444;--green:#22C55E;
+  --gold:#C8A456;
+  --ff:system-ui,-apple-system,sans-serif;
+  --r:14px;
+}
+body{background:var(--bg);color:var(--text);font-family:var(--ff);padding:0 0 60px}
+
+/* ── TOP BAR ── */
+.topbar{
+  background:var(--bg2);border-bottom:1px solid var(--border);
+  padding:12px 16px;display:flex;align-items:center;gap:10px;
+  position:sticky;top:0;z-index:10;
+}
+.topbar-logo{font-size:15px;font-weight:900;color:#fff}
+.topbar-logo span{color:#2563EB}
+.sect{padding:20px 16px 8px;font-size:10px;font-weight:800;letter-spacing:.8px;text-transform:uppercase;color:var(--text3)}
+
+/* ── CARD ── */
+.job-card{background:var(--surf);border:1px solid var(--border3);border-radius:16px;overflow:hidden;margin:0 16px 12px}
+.card-body{padding:14px}
+.card-head{display:flex;align-items:flex-start;gap:10px;margin-bottom:10px}
+.avatar{width:44px;height:44px;border-radius:11px;background:#EF444422;border:1.5px solid #EF444433;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.avatar.boosted{background:rgba(234,179,8,.1);border-color:rgba(234,179,8,.35)}
+.title{font-size:14px;font-weight:800;margin-bottom:2px}
+.sub{font-size:11px;color:var(--text3)}
+.status-badge{font-size:10px;font-weight:700;padding:3px 8px;border-radius:20px;background:var(--surf2);white-space:nowrap}
+.status-active{color:#22C55E}
+.badge-urgent{display:inline-block;font-size:9px;font-weight:900;padding:2px 6px;border-radius:10px;background:rgba(239,68,68,.15);color:#F87171;border:1px solid rgba(239,68,68,.3);margin-left:4px}
+.badge-boost{display:inline-block;font-size:9px;font-weight:900;padding:2px 6px;border-radius:10px;background:rgba(234,179,8,.15);color:#FBBF24;border:1px solid rgba(234,179,8,.3);margin-left:4px;animation:bpulse 2s ease-in-out infinite}
+@keyframes bpulse{0%,100%{box-shadow:0 0 0 0 rgba(234,179,8,.2)}50%{box-shadow:0 0 0 5px rgba(234,179,8,.0)}}
+
+.stats-row{display:flex;gap:16px;margin-bottom:10px}
+.stat{text-align:center}
+.stat-num{font-size:20px;font-weight:900}
+.stat-lbl{font-size:10px;color:var(--text3)}
+
+/* ── BUTTONS ── */
+.btn-row{display:flex;gap:6px}
+.btn{padding:9px;border-radius:10px;border:none;font-family:var(--ff);font-size:12px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:5px}
+.btn-blue{background:var(--blue);color:#fff;flex:1}
+.btn-ghost{background:var(--surf2);border:1px solid var(--border3);color:var(--text2)}
+.btn-del{background:var(--surf2);border:1px solid var(--border3);color:var(--red)}
+.btn-row2{display:flex;gap:6px;margin-top:6px}
+.btn-boost{
+  width:100%;margin-top:6px;padding:11px;border-radius:12px;
+  background:linear-gradient(135deg,rgba(234,179,8,.18),rgba(161,120,5,.12));
+  border:1.5px solid rgba(234,179,8,.45);
+  font-family:var(--ff);font-size:13px;font-weight:900;
+  color:#FBBF24;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;gap:7px;
+  box-shadow:0 3px 12px rgba(234,179,8,.18);
+  animation:bglow 3s ease-in-out infinite;
+}
+@keyframes bglow{0%,100%{box-shadow:0 3px 12px rgba(234,179,8,.18)}50%{box-shadow:0 3px 18px rgba(234,179,8,.35)}}
+.btn-urgent{
+  width:100%;margin-top:6px;padding:11px;border-radius:12px;
+  background:linear-gradient(135deg,rgba(239,68,68,.18),rgba(185,28,28,.12));
+  border:1.5px solid rgba(239,68,68,.45);
+  font-family:var(--ff);font-size:13px;font-weight:900;
+  color:#F87171;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;gap:7px;
+}
+.btn-loc{
+  width:100%;margin-top:6px;padding:9px;border-radius:10px;
+  background:rgba(45,127,249,.1);border:1px solid rgba(45,127,249,.35);
+  font-family:var(--ff);font-size:12px;font-weight:800;color:#9ec3ff;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;gap:6px;
+}
+
+/* ── BROWSE LISTING (jak wygląda podbite ogłoszenie na liście) ── */
+.browse-card{
+  background:var(--surf);border:1px solid var(--border3);border-radius:14px;
+  padding:14px;margin:0 16px 8px;cursor:pointer;position:relative;overflow:hidden;
+}
+.browse-card.boosted-card{
+  border-color:rgba(234,179,8,.35);
+  box-shadow:0 0 0 1px rgba(234,179,8,.12), 0 4px 14px rgba(234,179,8,.1);
+}
+.browse-card.boosted-card::before{
+  content:'🚀 PODBITE';
+  position:absolute;top:0;left:0;right:0;
+  background:linear-gradient(90deg,rgba(234,179,8,.15),transparent);
+  padding:4px 12px;
+  font-size:8.5px;font-weight:900;letter-spacing:.8px;color:#FBBF24;
+}
+.browse-card.boosted-card .bcard-inner{margin-top:18px}
+.bcard-title{font-size:14px;font-weight:800;margin-bottom:3px}
+.bcard-sub{font-size:11px;color:var(--text3)}
+.bcard-salary{font-size:14px;font-weight:900;color:var(--green)}
+.bcard-loc{font-size:11px;color:var(--text2)}
+
+/* ── MODAL ── */
+.modal-backdrop{
+  position:fixed;inset:0;z-index:100;background:rgba(0,0,0,.75);
+  display:flex;align-items:flex-end;justify-content:center;
+}
+.modal-sheet{
+  background:var(--bg);border-radius:24px 24px 0 0;width:100%;max-width:480px;
+  padding:0 0 max(28px,env(safe-area-inset-bottom,28px));overflow:hidden;
+}
+.modal-header{
+  background:linear-gradient(135deg,rgba(234,179,8,.18),rgba(161,120,5,.1));
+  border-bottom:1px solid rgba(234,179,8,.25);
+  padding:20px 20px 18px;text-align:center;
+}
+.modal-icon{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:56px;height:56px;border-radius:50%;
+  background:rgba(234,179,8,.15);border:2px solid rgba(234,179,8,.4);
+  font-size:26px;box-shadow:0 0 24px rgba(234,179,8,.25);margin-bottom:10px;
+}
+.modal-title{font-size:20px;font-weight:900;letter-spacing:-.3px}
+.modal-sub{font-size:12.5px;color:var(--text3);margin-top:4px;line-height:1.4}
+.modal-body{padding:18px 20px 0}
+
+/* Pakiety */
+.pack-grid{display:flex;flex-direction:column;gap:8px;margin-bottom:18px}
+.pack{
+  border:1.5px solid var(--border3);border-radius:14px;padding:13px 14px;
+  cursor:pointer;display:flex;align-items:center;gap:12px;
+  transition:border-color .15s,background .15s;
+}
+.pack:hover,.pack.sel{border-color:rgba(234,179,8,.6);background:rgba(234,179,8,.06)}
+.pack.sel{box-shadow:0 0 0 1px rgba(234,179,8,.25)}
+.pack-icon{font-size:22px;flex-shrink:0}
+.pack-name{font-size:13px;font-weight:800}
+.pack-desc{font-size:11px;color:var(--text3);margin-top:1px}
+.pack-price{margin-left:auto;text-align:right;flex-shrink:0}
+.pack-price-main{font-size:17px;font-weight:900;color:#FBBF24}
+.pack-price-sub{font-size:10px;color:var(--text3)}
+.pack-best{
+  font-size:8px;font-weight:900;padding:2px 6px;border-radius:8px;
+  background:rgba(234,179,8,.2);color:#FBBF24;border:1px solid rgba(234,179,8,.3);
+  display:block;text-align:center;margin-top:3px;letter-spacing:.4px;
+}
+
+.pay-btn-blik{
+  width:100%;padding:15px;border-radius:14px;
+  background:linear-gradient(135deg,#16A34A,#15803D);
+  border:none;font-family:var(--ff);font-size:15px;font-weight:900;color:#fff;
+  cursor:pointer;box-shadow:0 5px 18px rgba(22,163,74,.4);
+}
+.pay-btn-card{
+  width:100%;margin-top:9px;padding:14px;border-radius:14px;
+  background:linear-gradient(135deg,#7C3AED,#6D28D9);
+  border:none;font-family:var(--ff);font-size:14px;font-weight:900;color:#fff;
+  cursor:pointer;box-shadow:0 5px 16px rgba(124,58,237,.35);
+}
+.pay-btn-cancel{
+  width:100%;margin-top:9px;padding:12px;border-radius:14px;
+  background:transparent;border:1px solid var(--border3);
+  font-family:var(--ff);font-size:13px;color:var(--text3);cursor:pointer;
+}
+
+/* Section labels */
+.section-label{
+  font-size:11px;font-weight:800;letter-spacing:.4px;
+  color:var(--text3);padding:0 16px;margin-bottom:6px;
+}
+
+/* Diff badge */
+.diff-box{
+  background:var(--surf2);border:1px solid var(--border3);border-radius:14px;
+  padding:12px 14px;margin:0 16px 14px;
+}
+.diff-row{display:flex;align-items:center;gap:10px;padding:6px 0;border-bottom:1px solid var(--border3)}
+.diff-row:last-child{border-bottom:none}
+.diff-icon{font-size:18px;flex-shrink:0;width:28px;text-align:center}
+.diff-text{flex:1}
+.diff-name{font-size:12px;font-weight:800}
+.diff-sub{font-size:11px;color:var(--text3);margin-top:1px}
+.diff-price{font-size:13px;font-weight:900;flex-shrink:0}
+.diff-price.gold{color:#FBBF24}
+.diff-price.red{color:#F87171}
+
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-logo">Map<span>Job</span></div>
+  <div style="flex:1"></div>
+  <div style="font-size:11px;color:var(--text3);background:var(--surf2);padding:4px 10px;border-radius:20px;border:1px solid var(--border3)">Magdalena J.</div>
+</div>
+
+
+<!-- ══════════════════════════════════
+     SEKCJA 1: KARTA W "MOJE OFERTY"
+     ══════════════════════════════════ -->
+<div class="sect">Moje oferty — widok karty</div>
+
+<!-- Karta: zwykła oferta (nie-pilna) z przyciskiem Podbij -->
+<div class="job-card">
+  <div class="card-body">
+    <div class="card-head">
+      <div class="avatar">🏭</div>
+      <div style="flex:1;min-width:0">
+        <div class="title">Magazynier w Niemczech (k/m)</div>
+        <div class="sub">Dresden · Produkcja</div>
+      </div>
+      <div class="status-badge status-active">Aktywna</div>
+    </div>
+    <div class="stats-row">
+      <div class="stat"><div class="stat-num" style="color:var(--text)">1</div><div class="stat-lbl">Miejsc</div></div>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-blue">Kandydaci</button>
+      <button class="btn btn-ghost">Wstrzymaj</button>
+      <button class="btn btn-del">🗑</button>
+    </div>
+    <div class="btn-row2">
+      <button class="btn btn-ghost" style="flex:1">✏ Edytuj</button>
+      <button class="btn btn-ghost" style="flex:1">⧉ Kopiuj</button>
+    </div>
+    <!-- NOWY przycisk Podbij -->
+    <button class="btn-boost">🚀 Podbij ogłoszenie — 9 zł</button>
+    <!-- Pilne też jest -->
+    <button class="btn-urgent">🔴 Kup pilne — 19 zł</button>
+    <button class="btn-loc">📍 Wystaw w innej lokalizacji</button>
+  </div>
+</div>
+
+<!-- Karta: oferta już podbita -->
+<div class="job-card" style="border-color:rgba(234,179,8,.35);box-shadow:0 0 0 1px rgba(234,179,8,.1)">
+  <div style="background:linear-gradient(90deg,rgba(234,179,8,.12),transparent);padding:5px 14px;font-size:9px;font-weight:900;letter-spacing:.7px;color:#FBBF24;border-bottom:1px solid rgba(234,179,8,.2)">
+    🚀 PODBITE · wygasa za 21h 44min
+  </div>
+  <div class="card-body">
+    <div class="card-head">
+      <div class="avatar boosted">🏭</div>
+      <div style="flex:1;min-width:0">
+        <div class="title">Spawacz MIG/MAG <span class="badge-boost">🚀 PODBITE</span></div>
+        <div class="sub">Wrocław · Spawalnictwo</div>
+      </div>
+      <div class="status-badge status-active">Aktywna</div>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-blue">Kandydaci</button>
+      <button class="btn btn-ghost">Wstrzymaj</button>
+      <button class="btn btn-del">🗑</button>
+    </div>
+    <div class="btn-row2">
+      <button class="btn btn-ghost" style="flex:1">✏ Edytuj</button>
+      <button class="btn btn-ghost" style="flex:1">⧉ Kopiuj</button>
+    </div>
+    <!-- Podbij ponownie gdy wygasa -->
+    <button class="btn-boost" style="opacity:.55;cursor:default">🚀 Już podbite — odnów po wygaśnięciu</button>
+    <button class="btn-loc">📍 Wystaw w innej lokalizacji</button>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════
+     SEKCJA 2: LISTA BROWSE — jak wygląda podbite ogłoszenie
+     ══════════════════════════════════ -->
+<div class="sect" style="margin-top:8px">Przeglądaj — jak widzą kandydaci</div>
+<div style="font-size:11px;color:var(--text3);padding:0 16px;margin-bottom:10px;line-height:1.5">Podbite ogłoszenia są wyżej od zwykłych, ale poniżej Pilnych.</div>
+
+<!-- Pilne — zawsze najwyżej -->
+<div class="browse-card" style="border-color:rgba(239,68,68,.4);box-shadow:0 0 0 1px rgba(239,68,68,.1)">
+  <div style="position:absolute;top:0;left:0;right:0;background:linear-gradient(90deg,rgba(239,68,68,.15),transparent);padding:4px 12px;font-size:8.5px;font-weight:900;letter-spacing:.8px;color:#F87171">🔴 PILNE</div>
+  <div class="bcard-inner" style="margin-top:18px;display:flex;align-items:center;gap:10px">
+    <div style="flex:1">
+      <div class="bcard-title">Elektryk przemysłowy <span class="badge-urgent">🔴 PILNE</span></div>
+      <div class="bcard-sub">Katowice · Elektryka · 3 miejsca</div>
+    </div>
+    <div style="text-align:right"><div class="bcard-salary">8 500 zł</div><div class="bcard-loc">netto/mies</div></div>
+  </div>
+</div>
+
+<!-- Podbite — zaraz po Pilnych -->
+<div class="browse-card boosted-card">
+  <div class="bcard-inner">
+    <div style="display:flex;align-items:center;gap:10px">
+      <div style="flex:1">
+        <div class="bcard-title">Spawacz MIG/MAG <span class="badge-boost">🚀 PODBITE</span></div>
+        <div class="bcard-sub">Wrocław · Spawalnictwo · 2 miejsca</div>
+      </div>
+      <div style="text-align:right"><div class="bcard-salary">6 200 zł</div><div class="bcard-loc">brutto/mies</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- Zwykłe ogłoszenie -->
+<div class="browse-card">
+  <div style="display:flex;align-items:center;gap:10px">
+    <div style="flex:1">
+      <div class="bcard-title">Operator wózka widłowego</div>
+      <div class="bcard-sub">Poznań · Produkcja · 1 miejsce</div>
+    </div>
+    <div style="text-align:right"><div class="bcard-salary">5 400 zł</div><div class="bcard-loc">brutto/mies</div></div>
+  </div>
+</div>
+
+<div class="browse-card">
+  <div style="display:flex;align-items:center;gap:10px">
+    <div style="flex:1">
+      <div class="bcard-title">Monter mebli</div>
+      <div class="bcard-sub">Gdańsk · Produkcja · 2 miejsca</div>
+    </div>
+    <div style="text-align:right"><div class="bcard-salary">4 800 zł</div><div class="bcard-loc">brutto/mies</div></div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════
+     SEKCJA 3: MODAL ZAKUPU — "Podbij"
+     ══════════════════════════════════ -->
+<div class="sect" style="margin-top:8px">Modal zakupu — wybór pakietu</div>
+
+<div style="margin:0 16px 0;border-radius:24px 24px 16px 16px;overflow:hidden;border:1px solid var(--border3)">
+  <div class="modal-header">
+    <div class="modal-icon">🚀</div>
+    <div class="modal-title">Podbij ogłoszenie</div>
+    <div class="modal-sub">Magazynier w Niemczech (k/m)</div>
+  </div>
+  <div class="modal-body">
+
+    <div class="pack-grid">
+      <div class="pack">
+        <div class="pack-icon">⚡</div>
+        <div>
+          <div class="pack-name">Błyskawiczny boost</div>
+          <div class="pack-desc">Podbicie na 24 godziny</div>
+        </div>
+        <div class="pack-price">
+          <div class="pack-price-main">9 zł</div>
+          <div class="pack-price-sub">/ 24h</div>
+        </div>
+      </div>
+
+      <div class="pack sel">
+        <div class="pack-icon">🚀</div>
+        <div>
+          <div class="pack-name">Weekend boost</div>
+          <div class="pack-desc">Podbicie na 72 godziny</div>
+          <span class="pack-best">NAJPOPULARNIEJSZY</span>
+        </div>
+        <div class="pack-price">
+          <div class="pack-price-main">19 zł</div>
+          <div class="pack-price-sub">/ 3 dni</div>
+        </div>
+      </div>
+
+      <div class="pack">
+        <div class="pack-icon">🌟</div>
+        <div>
+          <div class="pack-name">Tygodniowy boost</div>
+          <div class="pack-desc">Podbicie na 7 dni + powiadomienie</div>
+        </div>
+        <div class="pack-price">
+          <div class="pack-price-main">35 zł</div>
+          <div class="pack-price-sub">/ 7 dni</div>
+        </div>
+      </div>
+    </div>
+
+    <button class="pay-btn-blik">📱 Płać BLIK — 19 zł</button>
+    <button class="pay-btn-card">💳 Płać kartą — 19 zł</button>
+    <button class="pay-btn-cancel">Anuluj</button>
+  </div>
+  <div style="height:28px"></div>
+</div>
+
+
+<!-- ══════════════════════════════════
+     SEKCJA 4: PORÓWNANIE Pilne vs Podbij
+     ══════════════════════════════════ -->
+<div class="sect" style="margin-top:20px">Porównanie — Pilne vs Podbij</div>
+<div class="diff-box">
+  <div class="diff-row">
+    <div class="diff-icon">🔴</div>
+    <div class="diff-text">
+      <div class="diff-name">Pilne ogłoszenie</div>
+      <div class="diff-sub">Stała plakietka · zawsze 1. miejsce · do ręcznego usunięcia</div>
+    </div>
+    <div class="diff-price red">19 zł</div>
+  </div>
+  <div class="diff-row">
+    <div class="diff-icon">🚀</div>
+    <div class="diff-text">
+      <div class="diff-name">Podbij na 24h</div>
+      <div class="diff-sub">Brak plakietki · tymczasowo wyżej · wygasa automatycznie</div>
+    </div>
+    <div class="diff-price gold">9 zł</div>
+  </div>
+  <div class="diff-row">
+    <div class="diff-icon">🚀</div>
+    <div class="diff-text">
+      <div class="diff-name">Podbij na 3 dni</div>
+      <div class="diff-sub">Widoczna złota plakietka · ponad zwykłymi, pod Pilnymi</div>
+    </div>
+    <div class="diff-price gold">19 zł</div>
+  </div>
+  <div class="diff-row">
+    <div class="diff-icon">🌟</div>
+    <div class="diff-text">
+      <div class="diff-name">Podbij na 7 dni</div>
+      <div class="diff-sub">+ powiadomienie push do kandydatów z alertami</div>
+    </div>
+    <div class="diff-price gold">35 zł</div>
+  </div>
+</div>
+
+<div style="padding:16px;font-size:11px;color:var(--text3);line-height:1.7;margin:0 16px;background:var(--surf);border-radius:14px;border:1px solid var(--border3)">
+  <b style="color:var(--text2)">Kolejność w wynikach:</b><br>
+  🔴 Pilne → 🚀 Podbite → zwykłe ogłoszenia (od najnowszych)<br><br>
+  <b style="color:var(--text2)">Klucz różnicy:</b> Pilne kupuje się raz na stałe. Podbij to tanie, powtarzalne wypchnięcie — idealne gdy ogłoszenie "zestarzeje się" po kilku dniach i zjadzie w dół listy.
+</div>
+
+</body>
+</html>

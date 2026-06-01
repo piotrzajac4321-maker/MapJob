@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Podgląd — baner cookie (2 warianty)</title>
+<style>
+:root{--bg:#06080E;--bg2:#0F1620;--text:#F4F4F5;--text2:#D4D4D8;--text3:#6B7280;--blue:#2563EB;--blue2:#60A5FA;--border3:rgba(255,255,255,.12)}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;padding:24px;max-width:960px;margin:0 auto}
+h2{font-size:14px;color:var(--blue2);margin:6px 0 14px;font-weight:800}
+.lab{font-size:11px;color:var(--text3);margin-bottom:8px;font-weight:700}
+.wrap{display:grid;grid-template-columns:1fr 1fr;gap:26px}
+@media(max-width:760px){.wrap{grid-template-columns:1fr}}
+.banner{width:100%;max-width:420px;background:var(--bg2);border:1px solid var(--border3);border-radius:16px;padding:22px 22px 18px;box-shadow:0 24px 60px rgba(0,0,0,.55)}
+.title{font-size:15px;font-weight:800;margin-bottom:6px;display:flex;align-items:center;gap:7px}
+.desc{font-size:12.5px;line-height:1.55;color:var(--text2);margin-bottom:16px}
+.lnk{background:none;border:none;padding:0;color:var(--blue2);font:inherit;cursor:pointer;text-decoration:underline}
+.sep{color:var(--text3);margin:0 3px}
+.b-primary{padding:13px 14px;border-radius:11px;background:linear-gradient(135deg,#2563EB,#1D4ED8);border:none;font:inherit;font-size:13.5px;font-weight:800;color:#fff;cursor:pointer;box-shadow:0 4px 16px rgba(37,99,235,.35)}
+.b-secondary{padding:13px 14px;border-radius:11px;background:transparent;border:1px solid var(--border3);font:inherit;font-size:13px;font-weight:600;color:var(--text2);cursor:pointer}
+.note{font-size:10px;color:var(--text3);margin-top:8px}
+.legal{margin-top:34px;padding:16px 18px;border:1px solid rgba(34,197,94,.25);background:rgba(34,197,94,.06);border-radius:14px;font-size:12px;line-height:1.7;color:var(--text2)}
+.legal b{color:#22C55E}
+</style>
+</head>
+<body>
+<div class="lab">Tło = makieta strony. Liczy się sam baner.</div>
+<div class="wrap">
+
+  <!-- WARIANT A -->
+  <div>
+    <h2>Wariant A — obok siebie (akcept dominuje szerokością)</h2>
+    <div class="banner">
+      <div class="title">🍪 Pliki cookie</div>
+      <div class="desc">
+        Używamy ich do <b style="color:var(--text2)">analizy ruchu i badania działań na stronie</b>, żeby ulepszać MapJob i pokazywać trafniejsze oferty.
+        <button class="lnk">Polityka prywatności</button><span class="sep">·</span><button class="lnk">Ustawienia</button>
+      </div>
+      <div style="display:flex;gap:8px">
+        <button class="b-secondary" style="flex:0 0 38%">Tylko niezbędne</button>
+        <button class="b-primary" style="flex:1">✓ Akceptuj wszystkie</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- WARIANT B -->
+  <div>
+    <h2>Wariant B — w pionie (akcept duży na górze)</h2>
+    <div class="banner">
+      <div class="title">🍪 Pliki cookie</div>
+      <div class="desc">
+        Używamy ich do <b style="color:var(--text2)">analizy ruchu i badania działań na stronie</b>, żeby ulepszać MapJob i pokazywać trafniejsze oferty.
+        <button class="lnk">Polityka prywatności</button><span class="sep">·</span><button class="lnk">Ustawienia</button>
+      </div>
+      <button class="b-primary" style="width:100%;padding:15px;font-size:14.5px;margin-bottom:9px">✓ Akceptuj wszystkie</button>
+      <button class="b-secondary" style="width:100%">Tylko niezbędne</button>
+    </div>
+  </div>
+
+</div>
+
+<div class="legal">
+  ✅ <b>Oba warianty są zgodne z RODO:</b> „Akceptuj wszystkie" jest wyróżnione (dozwolone), ale „Tylko niezbędne" to wciąż <b>jedno kliknięcie, na tym samym ekranie</b> — odmowa nie jest trudniejsza niż zgoda.<br>
+  ✅ „Tylko niezbędne" naprawdę wyłącza analitykę i marketing (`analytics:false, marketing:false`) — żadnego śledzenia po cichu.<br>
+  ❌ Czego świadomie <b>nie robię</b>: chowania odmowy, dodatkowych kliknięć do „Tylko niezbędne", ani wrzucania analityki do koszyka „niezbędne" — to dark patterny, za które UODO karze.
+</div>
+</body>
+</html>

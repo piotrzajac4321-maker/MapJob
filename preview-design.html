@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>MapJob — podgląd kierunków stylu</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@500;700;800&display=swap">
+
+<style>
+/* ===========================================================
+   Preview shell — switcher + side-by-side framing
+   =========================================================== */
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{font-family:'Inter','Plus Jakarta Sans',-apple-system,sans-serif;background:#0a0a0a;color:#e6e6e6;-webkit-font-smoothing:antialiased}
+.shell{max-width:1320px;margin:0 auto;padding:32px 24px 80px}
+.shell-head{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;margin-bottom:24px}
+.shell-h1{font-size:22px;font-weight:800;letter-spacing:-.02em}
+.shell-sub{font-size:13px;color:#888;margin-top:4px}
+.shell-tabs{display:inline-flex;gap:6px;background:#161616;border:1px solid #232323;border-radius:14px;padding:5px}
+.shell-tab{appearance:none;background:none;border:none;color:#9aa0a8;font-family:inherit;font-size:13px;font-weight:600;padding:8px 16px;border-radius:10px;cursor:pointer;transition:all .15s}
+.shell-tab:hover{color:#e6e6e6}
+.shell-tab.on{background:#262626;color:#fff;box-shadow:inset 0 0 0 1px #2f2f2f}
+.shell-grid{display:grid;grid-template-columns:1fr;gap:24px}
+@media(min-width:1100px){.shell-grid.compare{grid-template-columns:1fr 1fr 1fr}}
+.frame-wrap{background:#000;border-radius:24px;overflow:hidden;box-shadow:0 24px 60px rgba(0,0,0,.6),0 0 0 1px #1a1a1a}
+.frame-meta{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;background:#0e0e0e;border-bottom:1px solid #1a1a1a}
+.frame-name{font-size:13px;font-weight:700;letter-spacing:-.01em}
+.frame-pill{font-size:10px;font-weight:700;padding:3px 8px;border-radius:6px;background:#1a1a1a;color:#9aa0a8;letter-spacing:.05em;text-transform:uppercase}
+.frame-iframe{display:block;width:100%;height:1620px;border:none;background:#000}
+.shell-foot{margin-top:32px;padding:18px 22px;background:#101010;border:1px solid #1a1a1a;border-radius:14px;font-size:13px;line-height:1.6;color:#9aa0a8}
+.shell-foot b{color:#e6e6e6}
+.shell-mode-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:6px}
+.mode-toggle{appearance:none;background:#161616;border:1px solid #232323;color:#9aa0a8;font-family:inherit;font-size:12px;font-weight:600;padding:7px 12px;border-radius:9px;cursor:pointer;transition:all .15s}
+.mode-toggle:hover{color:#e6e6e6}
+.mode-toggle.on{background:#1f1f1f;color:#fff;border-color:#2f2f2f}
+</style>
+</head>
+
+<body>
+<div class="shell">
+  <div class="shell-head">
+    <div>
+      <div class="shell-h1">Podgląd kierunków stylu MapJob</div>
+      <div class="shell-sub">Trzy spójne kierunki na tych samych komponentach. Wybierz jeden albo powiedz „A z elementem B".</div>
+      <div class="shell-mode-row">
+        <button class="mode-toggle on" data-view="compare" onclick="setMode('compare')">Wszystkie obok siebie</button>
+        <button class="mode-toggle" data-view="A" onclick="setMode('A')">Tylko A — Mono Slate</button>
+        <button class="mode-toggle" data-view="B" onclick="setMode('B')">Tylko B — Notion Light</button>
+        <button class="mode-toggle" data-view="C" onclick="setMode('C')">Tylko C — Linear Sober</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="shell-grid compare" id="grid">
+    <div class="frame-wrap" data-frame="A">
+      <div class="frame-meta">
+        <div class="frame-name">A · Mono Slate</div>
+        <div class="frame-pill">Dark · 1 akcent</div>
+      </div>
+      <iframe class="frame-iframe" src="#" data-variant="A"></iframe>
+    </div>
+    <div class="frame-wrap" data-frame="B">
+      <div class="frame-meta">
+        <div class="frame-name">B · Notion Light</div>
+        <div class="frame-pill">Light · ciepły</div>
+      </div>
+      <iframe class="frame-iframe" src="#" data-variant="B"></iframe>
+    </div>
+    <div class="frame-wrap" data-frame="C">
+      <div class="frame-meta">
+        <div class="frame-name">C · Linear Sober</div>
+        <div class="frame-pill">Dark · ostry</div>
+      </div>
+      <iframe class="frame-iframe" src="#" data-variant="C"></iframe>
+    </div>
+  </div>
+
+  <div class="shell-foot">
+    <b>Jak czytać warianty:</b><br>
+    <b>A · Mono Slate</b> — głęboka czerń + grafit, JEDEN niebieski akcent, zero gradientów, hairline 1px obramowania, „aplikacja narzędziowa".<br>
+    <b>B · Notion Light</b> — jasne tło #FBFAF8, ciepłe szarości, bardzo małe kontrasty, jeden stonowany niebieski. „Notion / Linear-light feel".<br>
+    <b>C · Linear Sober</b> — ciemny ale ostry: czyste neutralne tło, jeden niebieski + jeden zielony semantyczny (urgent/aktywny), bez fioletu/złota/rainbow.
+  </div>
+</div>
+
+<!-- =================================================================
+     Mock layout — wstawiany do iframe via srcdoc
+     ================================================================= -->
+<template id="mockTpl">
+<!DOCTYPE html><html lang="pl"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@500;700;800&display=swap">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;font-family:'Inter','Plus Jakarta Sans',sans-serif;-webkit-font-smoothing:antialiased;background:var(--bg);color:var(--text)}
+body{padding-bottom:80px;overflow-x:hidden}
+.app-frame{max-width:480px;margin:0 auto;min-height:100%;position:relative;background:var(--bg);border-left:1px solid var(--border);border-right:1px solid var(--border)}
+
+/* topbar */
+.tb{position:sticky;top:0;z-index:10;display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:var(--bg2);border-bottom:1px solid var(--border);backdrop-filter:blur(12px)}
+.tb-logo{display:flex;align-items:center;gap:8px;font-size:16px;font-weight:800;letter-spacing:-.02em;color:var(--text)}
+.tb-logo-mark{width:26px;height:26px;border-radius:8px;display:flex;align-items:center;justify-content:center;background:var(--accent-soft);color:var(--accent)}
+.tb-actions{display:flex;align-items:center;gap:8px}
+.tb-icon{width:34px;height:34px;border-radius:9px;background:var(--surf);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;color:var(--text2);cursor:pointer;transition:all .15s}
+.tb-icon:hover{color:var(--text);background:var(--surf2)}
+
+/* beta banner */
+.bb{padding:7px 16px;font-size:11px;font-weight:500;color:var(--text3);background:var(--bg2);border-bottom:1px solid var(--border);text-align:center;letter-spacing:-.005em}
+.bb b{color:var(--text2);font-weight:600}
+
+/* hero */
+.hero{padding:36px 20px 28px;text-align:center;position:relative}
+.hero-eyebrow{display:inline-flex;align-items:center;gap:6px;padding:5px 11px;border-radius:999px;background:var(--surf);border:1px solid var(--border);font-size:11px;font-weight:600;color:var(--text2);margin-bottom:16px}
+.hero-eyebrow .dot{width:6px;height:6px;border-radius:50%;background:var(--ok)}
+.hero-h1{font-size:34px;line-height:1.1;font-weight:700;letter-spacing:-.03em;color:var(--text);margin-bottom:12px}
+.hero-h1 .accent{color:var(--accent)}
+.hero-sub{font-size:14px;line-height:1.55;color:var(--text2);max-width:340px;margin:0 auto 22px}
+.hero-cta{display:inline-flex;align-items:center;gap:8px;padding:13px 22px;background:var(--accent);color:var(--accent-fg);border:none;border-radius:12px;font-family:inherit;font-size:14px;font-weight:600;letter-spacing:-.005em;cursor:pointer;transition:all .15s}
+.hero-cta:hover{background:var(--accent-hover);transform:translateY(-1px)}
+.hero-cta svg{width:14px;height:14px}
+
+/* stats */
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border);border:1px solid var(--border);border-radius:14px;overflow:hidden;margin:0 16px 28px}
+.stat{padding:14px 8px;text-align:center;background:var(--surf)}
+.stat-num{font-size:20px;font-weight:700;color:var(--text);letter-spacing:-.02em}
+.stat-lbl{font-size:10px;font-weight:600;color:var(--text3);margin-top:3px;letter-spacing:.04em;text-transform:uppercase}
+
+/* sekcje */
+.sec{padding:0 16px 24px}
+.sec-eyebrow{font-size:11px;font-weight:600;color:var(--text3);letter-spacing:.08em;text-transform:uppercase;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.sec-eyebrow::after{content:'';flex:1;height:1px;background:var(--border)}
+.sec-h2{font-size:18px;font-weight:700;color:var(--text);letter-spacing:-.02em;margin-bottom:14px}
+
+/* steps */
+.steps{display:flex;flex-direction:column;gap:8px}
+.step{display:flex;gap:14px;padding:14px 16px;background:var(--surf);border:1px solid var(--border);border-radius:14px}
+.step-num{width:28px;height:28px;border-radius:8px;background:var(--accent-soft);color:var(--accent);font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.step-body{flex:1;min-width:0}
+.step-title{font-size:14px;font-weight:600;color:var(--text);margin-bottom:3px;letter-spacing:-.01em}
+.step-desc{font-size:12.5px;line-height:1.5;color:var(--text2)}
+
+/* chips row */
+.chips{display:flex;gap:8px;overflow-x:auto;padding:0 16px 18px;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chip{padding:7px 13px;border-radius:9px;background:var(--surf);border:1px solid var(--border);font-size:12px;font-weight:600;color:var(--text2);white-space:nowrap;cursor:pointer;transition:all .15s}
+.chip:hover{color:var(--text);border-color:var(--border-h)}
+.chip.on{background:var(--accent);border-color:var(--accent);color:var(--accent-fg)}
+
+/* job cards */
+.jobs{display:flex;flex-direction:column;gap:10px}
+.job{padding:14px 16px;background:var(--surf);border:1px solid var(--border);border-radius:14px;cursor:pointer;transition:all .15s;position:relative}
+.job:hover{border-color:var(--border-h);background:var(--surf2)}
+.job.urgent{border-left:3px solid var(--warn)}
+.job-row{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:8px}
+.job-h{font-size:14.5px;font-weight:600;color:var(--text);letter-spacing:-.01em}
+.job-budget{font-size:14px;font-weight:700;color:var(--ok);font-variant-numeric:tabular-nums;white-space:nowrap}
+.job-meta{display:flex;align-items:center;gap:10px;font-size:12px;color:var(--text3)}
+.job-meta-dot{width:3px;height:3px;border-radius:50%;background:var(--text3)}
+.job-tags{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap}
+.job-tag{font-size:10.5px;font-weight:600;padding:3px 8px;border-radius:6px;background:var(--surf2);color:var(--text2);border:1px solid var(--border)}
+
+/* nav */
+.nav{position:fixed;bottom:0;left:0;right:0;display:flex;background:var(--bg2);border-top:1px solid var(--border);padding-bottom:env(safe-area-inset-bottom);z-index:5;max-width:480px;margin:0 auto}
+.nav-i{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:10px 4px 8px;background:none;border:none;cursor:pointer;color:var(--text3);font-family:inherit;font-size:9.5px;font-weight:600;transition:color .15s}
+.nav-i.on{color:var(--accent)}
+.nav-i svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+
+/* modal preview block */
+.modal-prev{margin:18px 16px 0;background:var(--bg2);border:1px solid var(--border);border-radius:18px;overflow:hidden}
+.modal-head{padding:14px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.modal-head-t{font-size:15px;font-weight:700;letter-spacing:-.01em}
+.modal-head-x{width:28px;height:28px;border-radius:8px;background:var(--surf);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;color:var(--text2);cursor:pointer}
+.modal-body{padding:14px 16px}
+.lbl{font-size:11px;font-weight:600;color:var(--text3);letter-spacing:.04em;margin-bottom:6px;display:block}
+.fi{display:block;width:100%;padding:11px 12px;background:var(--surf);border:1px solid var(--border);border-radius:10px;font-family:inherit;font-size:14px;color:var(--text);outline:none;margin-bottom:12px;transition:border-color .15s}
+.fi:focus{border-color:var(--accent)}
+.btn-row{display:flex;gap:8px;margin-top:6px}
+.btn-p{flex:1;padding:11px 14px;background:var(--accent);color:var(--accent-fg);border:none;border-radius:10px;font-family:inherit;font-size:13.5px;font-weight:600;cursor:pointer;transition:background .15s}
+.btn-p:hover{background:var(--accent-hover)}
+.btn-s{flex:1;padding:11px 14px;background:var(--surf);color:var(--text);border:1px solid var(--border);border-radius:10px;font-family:inherit;font-size:13.5px;font-weight:500;cursor:pointer;transition:all .15s}
+.btn-s:hover{background:var(--surf2);border-color:var(--border-h)}
+
+/* spacer */
+.sp{height:8px}
+.sp-l{height:18px}
+</style>
+<style id="variant-css">/* injected per variant */</style>
+</head>
+<body>
+<div class="app-frame">
+
+  <div class="tb">
+    <div class="tb-logo">
+      <div class="tb-logo-mark">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+      </div>
+      MapJob
+    </div>
+    <div class="tb-actions">
+      <button class="tb-icon" aria-label="szukaj">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+      </button>
+      <button class="tb-icon" aria-label="powiadomienia">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10 21a2 2 0 0 0 4 0"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <div class="bb"><b>Beta:</b> Trwa testowanie · 1 207 fachowców · darmowe konto na zawsze</div>
+
+  <section class="hero">
+    <div class="hero-eyebrow"><span class="dot"></span>Online · 412 ogłoszeń</div>
+    <h1 class="hero-h1">Znajdź fachowca <span class="accent">obok ciebie</span></h1>
+    <p class="hero-sub">Mapa zleceń i specjalistów w twojej okolicy. Bez prowizji, bez czekania.</p>
+    <button class="hero-cta">
+      Otwórz mapę
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+    </button>
+  </section>
+
+  <div class="stats">
+    <div class="stat"><div class="stat-num">1 207</div><div class="stat-lbl">Fachowców</div></div>
+    <div class="stat"><div class="stat-num">412</div><div class="stat-lbl">Zleceń</div></div>
+    <div class="stat"><div class="stat-num">98%</div><div class="stat-lbl">Spełnione</div></div>
+  </div>
+
+  <section class="sec">
+    <div class="sec-eyebrow"><span>Jak to działa</span></div>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-body">
+          <div class="step-title">Zaznacz pin na mapie</div>
+          <div class="step-desc">Opisz potrzebę i podaj budżet — to zajmuje minutę.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-body">
+          <div class="step-title">Czekaj na oferty</div>
+          <div class="step-desc">Fachowcy z okolicy odzywają się sami. Zwykle w 2 godziny.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-body">
+          <div class="step-title">Wybierz i zleć</div>
+          <div class="step-desc">Sprawdzone profile, opinie, telefon — bez pośredników.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="sp"></div>
+
+  <div class="chips">
+    <div class="chip on">Wszystko</div>
+    <div class="chip">Hydraulik</div>
+    <div class="chip">Elektryk</div>
+    <div class="chip">Remont</div>
+    <div class="chip">Ogród</div>
+    <div class="chip">Sprzątanie</div>
+  </div>
+
+  <section class="sec">
+    <div class="sec-eyebrow"><span>Najnowsze zlecenia</span></div>
+    <div class="jobs">
+      <div class="job urgent">
+        <div class="job-row">
+          <div class="job-h">Awaria — przeciek pod zlewem</div>
+          <div class="job-budget">200 zł</div>
+        </div>
+        <div class="job-meta">Mokotów<span class="job-meta-dot"></span>2 km<span class="job-meta-dot"></span>14 min temu</div>
+        <div class="job-tags"><span class="job-tag">Hydraulik</span><span class="job-tag">Pilne</span></div>
+      </div>
+      <div class="job">
+        <div class="job-row">
+          <div class="job-h">Montaż lampy sufitowej, salon</div>
+          <div class="job-budget">150 zł</div>
+        </div>
+        <div class="job-meta">Wola<span class="job-meta-dot"></span>4 km<span class="job-meta-dot"></span>1 godz. temu</div>
+        <div class="job-tags"><span class="job-tag">Elektryk</span></div>
+      </div>
+      <div class="job">
+        <div class="job-row">
+          <div class="job-h">Malowanie kuchni, 12 m²</div>
+          <div class="job-budget">800 zł</div>
+        </div>
+        <div class="job-meta">Praga Płd.<span class="job-meta-dot"></span>6 km<span class="job-meta-dot"></span>3 godz. temu</div>
+        <div class="job-tags"><span class="job-tag">Malowanie</span><span class="job-tag">Remont</span></div>
+      </div>
+      <div class="job">
+        <div class="job-row">
+          <div class="job-h">Strzyżenie żywopłotu, 30 m</div>
+          <div class="job-budget">350 zł</div>
+        </div>
+        <div class="job-meta">Bemowo<span class="job-meta-dot"></span>8 km<span class="job-meta-dot"></span>wczoraj</div>
+        <div class="job-tags"><span class="job-tag">Ogród</span></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="modal-prev">
+    <div class="modal-head">
+      <div class="modal-head-t">Nowe zlecenie</div>
+      <div class="modal-head-x">✕</div>
+    </div>
+    <div class="modal-body">
+      <span class="lbl">Co potrzebujesz?</span>
+      <input class="fi" placeholder="Np. naprawa kranu w kuchni" value="Naprawa kranu w kuchni">
+      <span class="lbl">Budżet</span>
+      <input class="fi" placeholder="200 zł">
+      <div class="btn-row">
+        <button class="btn-s">Anuluj</button>
+        <button class="btn-p">Opublikuj pin</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="sp-l"></div>
+
+  <nav class="nav">
+    <button class="nav-i on">
+      <svg viewBox="0 0 24 24"><path d="M3 12 12 4l9 8"/><path d="M5 10v10h14V10"/></svg>
+      Start
+    </button>
+    <button class="nav-i">
+      <svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+      Mapa
+    </button>
+    <button class="nav-i">
+      <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 10h18"/></svg>
+      Zlecenia
+    </button>
+    <button class="nav-i">
+      <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+      Czat
+    </button>
+    <button class="nav-i">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>
+      Profil
+    </button>
+  </nav>
+
+</div>
+</body></html>
+</template>
+
+<script>
+/* ===========================================================
+   Per-variant CSS — only design tokens + a couple of overrides
+   =========================================================== */
+const VARIANTS = {
+
+  /* ====== A · Mono Slate (deep dark, single soft-blue accent) ===== */
+  A: `
+:root{
+  --bg:        #0B0C0E;
+  --bg2:       #0E1013;
+  --surf:      #131519;
+  --surf2:     #181B20;
+  --border:    rgba(255,255,255,.07);
+  --border-h:  rgba(255,255,255,.14);
+
+  --text:      #E9EAEC;
+  --text2:     #9095A0;
+  --text3:     #5C6370;
+
+  --accent:      #6E97FF;        /* soft, drained blue */
+  --accent-hover:#5A85F5;
+  --accent-soft: rgba(110,151,255,.10);
+  --accent-fg:   #fff;
+
+  --ok:   #4CAF7A;               /* desaturated green */
+  --warn: #C77B5C;               /* desaturated terracotta — replaces red */
+}
+body{background:var(--bg)}
+.hero-h1 .accent{ color:var(--accent) }
+.job-budget{ color:var(--text); font-weight:700 }   /* mono-slate: even budget is neutral */
+.tb-icon, .step-num{ font-weight:600 }
+.bb{ font-size:10.5px; opacity:.8 }
+.hero-cta{ box-shadow: 0 1px 0 rgba(255,255,255,.06) inset }
+`,
+
+  /* ====== B · Notion Light (warm, paper-like) ====== */
+  B: `
+:root{
+  --bg:        #FBFAF7;
+  --bg2:       #FFFFFF;
+  --surf:      #FFFFFF;
+  --surf2:     #F4F2EE;
+  --border:    rgba(15,17,21,.08);
+  --border-h:  rgba(15,17,21,.18);
+
+  --text:      #1F2227;
+  --text2:     #5E646E;
+  --text3:     #8A8F98;
+
+  --accent:      #2563EB;
+  --accent-hover:#1D4ED8;
+  --accent-soft: rgba(37,99,235,.08);
+  --accent-fg:   #fff;
+
+  --ok:   #047857;
+  --warn: #B45309;
+}
+body{background:var(--bg);color:var(--text)}
+.tb{ background:var(--bg); backdrop-filter:none }
+.bb{ background:var(--bg); color:var(--text3) }
+.bb b{ color:var(--text2) }
+.hero-eyebrow{ background:#fff; box-shadow:0 1px 2px rgba(15,17,21,.04) }
+.hero-cta{ box-shadow: 0 1px 2px rgba(37,99,235,.20) }
+.job{ box-shadow: 0 1px 2px rgba(15,17,21,.03) }
+.job:hover{ box-shadow: 0 4px 12px rgba(15,17,21,.06) }
+.job-budget{ color:var(--text); font-weight:700 }    /* w light dropujemy zielony budżet, neutralny */
+.job-tag{ background:#F4F2EE }
+.modal-prev{ box-shadow: 0 8px 24px rgba(15,17,21,.06) }
+.nav{ background:var(--bg); border-top-color:var(--border) }
+.stats{ background:var(--border); border-color:var(--border) }
+.tb-logo-mark{ background:var(--accent-soft); color:var(--accent) }
+`,
+
+  /* ====== C · Linear Sober (dark, sharp, neutral with one accent) ====== */
+  C: `
+:root{
+  --bg:        #08090B;
+  --bg2:       #0C0D10;
+  --surf:      #111316;
+  --surf2:     #16181C;
+  --border:    rgba(255,255,255,.06);
+  --border-h:  rgba(255,255,255,.16);
+
+  --text:      #F1F2F4;
+  --text2:     #9CA3AF;
+  --text3:     #5C6370;
+
+  --accent:      #3B82F6;
+  --accent-hover:#2563EB;
+  --accent-soft: rgba(59,130,246,.12);
+  --accent-fg:   #fff;
+
+  --ok:   #10B981;        /* zielony zostaje, ale tylko on */
+  --warn: #EF4444;        /* czerwony tylko na urgent jobie */
+}
+body{background:var(--bg)}
+.hero-h1 .accent{
+  background:linear-gradient(90deg,#fff 0%,#9CA3AF 100%);
+  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent;
+}
+.tb{ backdrop-filter: blur(14px) }
+.hero-cta{ box-shadow: 0 4px 16px rgba(59,130,246,.25) }
+.job-budget{ color:var(--ok) }
+.job.urgent{ border-left-color:var(--warn) }
+.bb{ background:var(--bg); border-bottom:1px solid var(--border) }
+.tb-logo-mark{ background:var(--accent-soft); color:var(--accent) }
+`
+};
+
+/* mount srcdoc into iframes */
+const tpl = document.getElementById('mockTpl').innerHTML;
+function mount(){
+  document.querySelectorAll('iframe[data-variant]').forEach(f=>{
+    const v = f.dataset.variant;
+    const css = VARIANTS[v] || '';
+    const doc = tpl.replace('/* injected per variant */', css);
+    f.srcdoc = doc;
+  });
+}
+mount();
+
+/* mode switcher */
+function setMode(m){
+  const grid = document.getElementById('grid');
+  document.querySelectorAll('.mode-toggle').forEach(b=>{
+    b.classList.toggle('on', b.dataset.view===m);
+  });
+  if(m==='compare'){
+    grid.classList.add('compare');
+    document.querySelectorAll('.frame-wrap').forEach(w=>w.style.display='block');
+  } else {
+    grid.classList.remove('compare');
+    document.querySelectorAll('.frame-wrap').forEach(w=>{
+      w.style.display = (w.dataset.frame===m) ? 'block' : 'none';
+    });
+  }
+}
+window.setMode = setMode;
+</script>
+</body></html>

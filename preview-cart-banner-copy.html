@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<title>Podgląd — copy banera z urgency / FOMO</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#0B0D10;color:#E5E7EB;padding:40px 20px;line-height:1.5}
+h1{font-size:22px;font-weight:800;margin:0 0 8px;letter-spacing:-.3px;color:#fff}
+.sub{color:#A1A1AA;font-size:14px;margin-bottom:30px;max-width:760px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(380px,1fr));gap:28px;max-width:1500px;margin:0 auto}
+.col{display:flex;flex-direction:column}
+.label{font-size:11px;font-weight:800;color:#71717A;text-transform:uppercase;letter-spacing:.6px;margin-bottom:4px}
+.title{font-size:15px;font-weight:700;color:#F4F4F5;margin-bottom:4px}
+.desc{font-size:12.5px;color:#A1A1AA;margin-bottom:14px;min-height:30px}
+
+.phone{width:100%;max-width:380px;margin:0 auto;background:#0B0D10;border:1px solid rgba(255,255,255,.08);border-radius:24px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.5)}
+.phone-top{padding:14px 16px 12px;border-bottom:1px solid rgba(255,255,255,.06);display:flex;align-items:center;gap:12px;background:#0B0D10}
+.back-btn{width:36px;height:36px;border-radius:10px;background:#15171C;border:1px solid rgba(255,255,255,.08);color:#71717A;display:flex;align-items:center;justify-content:center}
+.title-row{font-size:17px;font-weight:900;flex:1;color:#F4F4F5}
+.tot{font-size:14px;font-weight:700;color:#22C55E}
+
+.vb{margin:14px 16px;border-radius:14px;background:linear-gradient(135deg,rgba(34,197,94,.13) 0%,rgba(34,197,94,.03) 60%,rgba(34,197,94,.10) 100%);border:1px solid rgba(34,197,94,.38);padding:18px}
+.vb-pill{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;background:rgba(34,197,94,.16);border:1px solid rgba(34,197,94,.4);border-radius:20px;font-size:10px;font-weight:800;color:#22C55E;letter-spacing:.5px;text-transform:uppercase;margin-bottom:11px}
+.vb-pill::before{content:'';width:6px;height:6px;border-radius:50%;background:#22C55E;box-shadow:0 0 8px rgba(34,197,94,.7);animation:pulse 1.6s infinite}
+@keyframes pulse{50%{opacity:.45}}
+.vb-h{font-size:19px;font-weight:800;color:#F4F4F5;letter-spacing:-.3px;margin-bottom:6px}
+.vb-d{font-size:12.5px;color:#A1A1AA;line-height:1.55}
+.vb-d b{color:#F4F4F5;font-weight:700}
+.vb-d .accent{color:#22C55E;font-weight:700}
+.vb-shield{margin-top:13px;padding:11px 12px;display:flex;align-items:center;gap:10px;background:rgba(34,197,94,.07);border:1px solid rgba(34,197,94,.22);border-radius:10px}
+.vb-shield-i{width:30px;height:30px;border-radius:8px;background:rgba(34,197,94,.18);border:1px solid rgba(34,197,94,.35);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.vb-shield-t{font-size:12px;font-weight:700;color:#F4F4F5;line-height:1.35}
+.vb-shield-s{font-size:10.5px;color:#A1A1AA;margin-top:2px;line-height:1.4}
+.vb-row{display:flex;align-items:center;gap:8px;margin-top:12px;padding-top:12px;border-top:1px solid rgba(34,197,94,.18);font-size:11.5px;color:#A1A1AA;line-height:1.45}
+.vb-row b{color:#F4F4F5;font-weight:700}
+.vb-row .hot{color:#FCA5A5;font-weight:700}
+
+/* counter dla wariantów z liczbami */
+.counter{display:inline-flex;align-items:center;gap:6px;padding:3px 9px;background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.35);border-radius:20px;font-size:11px;font-weight:800;color:#FCA5A5;margin-top:10px}
+.counter::before{content:'';width:6px;height:6px;border-radius:50%;background:#EF4444;animation:pulse 1.2s infinite}
+
+.note{max-width:1100px;margin:48px auto 0;padding:20px 22px;background:#13161B;border:1px solid rgba(255,255,255,.06);border-radius:14px;font-size:13.5px;color:#D4D4D8;line-height:1.65}
+.note b{color:#F4F4F5}
+.note .rec{color:#22C55E}
+</style>
+</head>
+<body>
+
+<h1>Copy banera — z urgency i FOMO</h1>
+<p class="sub">4 warianty komunikatu „dołącz teraz, zanim Cię wyprzedzą". Różnią się tonem (od subtelnego do twardego FOMO).</p>
+
+<div class="grid">
+
+<!-- ============ V1 — Konkurencja wyprzedza ============ -->
+<div class="col">
+  <div class="label">V1 — konkurencja</div>
+  <div class="title">„Wyprzedź konkurencję"</div>
+  <div class="desc">Klasyczne FOMO. Mówi wprost: inne firmy już są — Ty też tu bądź.</div>
+  <div class="phone">
+    <div class="phone-top"><div class="back-btn"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 5l-7 7 7 7"/></svg></div><div class="title-row">Koszyk</div><div class="tot">0 zł</div></div>
+    <div class="vb">
+      <div class="vb-pill">Oferta ograniczona czasowo</div>
+      <div class="vb-h">Wszystkie ogłoszenia — 0 zł</div>
+      <div class="vb-d">Publikuj oferty pracy <b>za darmo i bez limitu</b>. <span class="accent">Dołącz już teraz</span>, zanim inne firmy z Twojej branży zajmą najlepsze miejsca na mapie.</div>
+      <div class="vb-shield">
+        <div class="vb-shield-i"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#22C55E" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg></div>
+        <div><div class="vb-shield-t">Bez karty, bez subskrypcji, bez płatności</div><div class="vb-shield-s">Nie prosimy o dane płatnicze. Wystarczy konto firmowe.</div></div>
+      </div>
+      <div class="vb-row">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        <span>Oferta wygasa wraz z wprowadzeniem cennika</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ V2 — Z licznikiem ============ -->
+<div class="col">
+  <div class="label">V2 — z licznikiem</div>
+  <div class="title">„X firm już z nami"</div>
+  <div class="desc">Social proof + FOMO. Pokazuje rosnącą liczbę firm — najbardziej przekonujące.</div>
+  <div class="phone">
+    <div class="phone-top"><div class="back-btn"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 5l-7 7 7 7"/></svg></div><div class="title-row">Koszyk</div><div class="tot">0 zł</div></div>
+    <div class="vb">
+      <div class="vb-pill">Oferta ograniczona czasowo</div>
+      <div class="vb-h">Wszystkie ogłoszenia — 0 zł</div>
+      <div class="vb-d">Publikuj oferty pracy <b>za darmo i bez limitu</b>. Bądź w gronie pierwszych firm na mapie — <span class="accent">im wcześniej dołączysz, tym więcej kandydatów Cię znajdzie</span>.</div>
+      <div class="counter">142 firm dołączyło w tym tygodniu</div>
+      <div class="vb-shield" style="margin-top:11px">
+        <div class="vb-shield-i"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#22C55E" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg></div>
+        <div><div class="vb-shield-t">Bez karty, bez subskrypcji, bez płatności</div><div class="vb-shield-s">Nie prosimy o dane płatnicze. Wystarczy konto firmowe.</div></div>
+      </div>
+      <div class="vb-row">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        <span>Cennik wejdzie w życie wkrótce — zdąż przed konkurencją</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ V3 — Pioneer bonus ============ -->
+<div class="col">
+  <div class="label">V3 — pioneer bonus <span class="rec">· rekomendowany</span></div>
+  <div class="title">„Pionierzy zostają za darmo"</div>
+  <div class="desc">Najsilniejszy bodziec: kto dołączy teraz — zostaje za darmo nawet po wprowadzeniu cennika.</div>
+  <div class="phone">
+    <div class="phone-top"><div class="back-btn"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 5l-7 7 7 7"/></svg></div><div class="title-row">Koszyk</div><div class="tot">0 zł</div></div>
+    <div class="vb">
+      <div class="vb-pill">Oferta ograniczona czasowo</div>
+      <div class="vb-h">Wszystkie ogłoszenia — 0 zł</div>
+      <div class="vb-d">Publikuj oferty pracy <b>za darmo i bez limitu</b>. <span class="accent">Firmy, które dołączą teraz</span>, zachowują darmowy dostęp nawet po wprowadzeniu cennika dla nowych użytkowników.</div>
+      <div class="vb-shield">
+        <div class="vb-shield-i"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#22C55E" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg></div>
+        <div><div class="vb-shield-t">Bez karty, bez subskrypcji, bez płatności</div><div class="vb-shield-s">Nie prosimy o dane płatnicze. Wystarczy konto firmowe.</div></div>
+      </div>
+      <div class="vb-row">
+        <span style="font-size:13px">🏆</span>
+        <span><b>Bonus pionierów</b> — dołącz teraz, zanim inne firmy Cię wyprzedzą</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ V4 — Twardy FOMO ============ -->
+<div class="col">
+  <div class="label">V4 — twardy FOMO</div>
+  <div class="title">„Zanim inne Cię wyprzedzą"</div>
+  <div class="desc">Najmocniejszy ton — bezpośrednie ostrzeżenie. Może być za agresywny w niektórych branżach.</div>
+  <div class="phone">
+    <div class="phone-top"><div class="back-btn"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 5l-7 7 7 7"/></svg></div><div class="title-row">Koszyk</div><div class="tot">0 zł</div></div>
+    <div class="vb">
+      <div class="vb-pill">⚡ Oferta ograniczona czasowo</div>
+      <div class="vb-h">Wszystkie ogłoszenia — 0 zł</div>
+      <div class="vb-d"><span class="accent">Dołącz już teraz</span>, zanim inne firmy z Twojej okolicy Cię wyprzedzą. Publikuj oferty pracy <b>za darmo i bez limitu</b> — póki trwa oferta wprowadzająca.</div>
+      <div class="vb-shield">
+        <div class="vb-shield-i"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#22C55E" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg></div>
+        <div><div class="vb-shield-t">Bez karty, bez subskrypcji, bez płatności</div><div class="vb-shield-s">Nie prosimy o dane płatnicze. Wystarczy konto firmowe.</div></div>
+      </div>
+      <div class="vb-row">
+        <span style="font-size:13px">🔥</span>
+        <span><span class="hot">Nie czekaj</span> — gdy wprowadzimy cennik, oferta wprowadzająca zniknie bez ostrzeżenia</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div>
+
+<div class="note">
+  <b>Porównanie tonu:</b><br>
+  • <b>V1 — konkurencja</b>: klasyczne FOMO, profesjonalne, do większości firm OK.<br>
+  • <b>V2 — z licznikiem</b>: social proof. Wymaga liczby (mogę ją pociągnąć z DB lub trzymać statyczną „142 firmy" rotowaną tygodniowo).<br>
+  • <b class="rec">V3 — pioneer bonus</b> (rekomendacja): najsilniejszy bodziec — obietnica że pionierzy zostają darmowo na zawsze. <b>Tworzy realną wartość bycia wcześnie</b>, nie tylko sztuczną presję. Wymaga ode mnie żebyś faktycznie utrzymał tę obietnicę w przyszłości.<br>
+  • <b>V4 — twardy FOMO</b>: najmocniejszy, najbardziej „sprzedażowy". Może odstraszyć ostrożne firmy.<br><br>
+  Daj znać który, albo „V3 ale bez tej obietnicy" / „V1 ale z licznikiem z V2" / inne wariacje.
+</div>
+
+</body>
+</html>

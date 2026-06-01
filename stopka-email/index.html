@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<title>Stopki e-mail — koncepcje MapJob</title>
+<style>
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+    background: #f3f4f6;
+    margin: 0;
+    padding: 40px 20px;
+    color: #1f2937;
+  }
+  .wrap { max-width: 920px; margin: 0 auto; }
+  h1 { font-size: 22px; font-weight: 700; margin: 0 0 8px; color: #0f172a; }
+  .sub { color: #6b7280; font-size: 14px; margin-bottom: 32px; }
+  .card {
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    margin-bottom: 24px;
+    overflow: hidden;
+  }
+  .card-header {
+    background: #fafafa;
+    border-bottom: 1px solid #e5e7eb;
+    padding: 12px 20px;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: #6b7280;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .card-header strong { color: #0f172a; font-weight: 700; letter-spacing: 0; text-transform: none; font-size: 14px; }
+  .mail-preview { padding: 24px 28px; background: #ffffff; }
+  .mail-body {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 13px;
+    color: #1f2937;
+    line-height: 1.5;
+    margin-bottom: 24px;
+  }
+  .mail-body p { margin: 0 0 12px; }
+  .divider { border: none; border-top: 1px solid #e5e7eb; margin: 0 0 20px; }
+  .note {
+    padding: 10px 20px;
+    background: #f9fafb;
+    border-top: 1px solid #e5e7eb;
+    font-size: 12px;
+    color: #6b7280;
+  }
+
+  /* wspólne kolory */
+  a { color: #0284c7; text-decoration: none; }
+
+  /* === KONCEPCJA 1: Klasyczna z separatorem === */
+  .sig1 { font-family: Arial, Helvetica, sans-serif; font-size: 13px; color: #1f2937; line-height: 1.45; }
+  .sig1 table { border-collapse: collapse; }
+  .sig1 .logo-cell { padding-right: 16px; border-right: 2px solid #0284c7; vertical-align: middle; }
+  .sig1 .logo-cell img { display: block; width: 56px; height: 56px; border-radius: 12px; }
+  .sig1 .info { padding-left: 16px; vertical-align: middle; }
+  .sig1 .name { font-size: 15px; font-weight: 700; color: #0f172a; }
+  .sig1 .role { font-size: 12px; color: #475569; margin-bottom: 6px; }
+  .sig1 .contact { font-size: 12px; color: #1f2937; }
+  .sig1 .contact a.dark { color: #1f2937; }
+
+  /* === KONCEPCJA 2: Pionowa, logo na górze === */
+  .sig2 { font-family: Arial, Helvetica, sans-serif; font-size: 13px; color: #1f2937; line-height: 1.5; }
+  .sig2 .top { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+  .sig2 .top img { width: 36px; height: 36px; border-radius: 8px; display: block; }
+  .sig2 .brand { font-size: 14px; font-weight: 700; color: #0f172a; letter-spacing: 0.02em; }
+  .sig2 .name { font-size: 15px; font-weight: 700; color: #0f172a; }
+  .sig2 .role { font-size: 12px; color: #6b7280; margin-bottom: 8px; }
+  .sig2 .contact { font-size: 12px; }
+  .sig2 .contact a.dark { color: #1f2937; }
+  .sig2 .sep { color: #cbd5e1; margin: 0 6px; }
+
+  /* === KONCEPCJA 3: Premium z paskiem akcentu === */
+  .sig3 {
+    font-family: Arial, Helvetica, sans-serif; font-size: 13px; color: #1f2937;
+    border-left: 3px solid #0284c7;
+    padding: 4px 0 4px 16px;
+  }
+  .sig3 .name { font-size: 16px; font-weight: 700; color: #0f172a; letter-spacing: -0.01em; }
+  .sig3 .role { font-size: 11px; color: #6b7280; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.08em; }
+  .sig3 .brand-row { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+  .sig3 .brand-row img { width: 24px; height: 24px; border-radius: 6px; display: block; }
+  .sig3 .brand { font-size: 13px; font-weight: 700; color: #0f172a; }
+  .sig3 .contact { font-size: 12px; line-height: 1.7; }
+  .sig3 .contact a.dark { color: #1f2937; }
+  .sig3 .label { display: inline-block; width: 52px; color: #9ca3af; }
+
+  /* === KONCEPCJA 4: Minimal Pro === */
+  .sig4 { font-family: Arial, Helvetica, sans-serif; font-size: 13px; color: #1f2937; line-height: 1.5; }
+  .sig4 .row1 { font-size: 14px; color: #0f172a; margin-bottom: 4px; }
+  .sig4 .row1 .name { font-weight: 700; }
+  .sig4 .row1 .role { color: #6b7280; font-weight: 400; }
+  .sig4 .row2 { font-size: 12px; color: #1f2937; }
+  .sig4 .row2 a.dark { color: #1f2937; }
+  .sig4 .sep { color: #cbd5e1; margin: 0 8px; }
+  .sig4 .brand-line { margin-top: 12px; display: flex; align-items: center; gap: 8px; }
+  .sig4 .brand-line img { width: 20px; height: 20px; border-radius: 5px; display: block; }
+  .sig4 .brand-text { font-size: 11px; color: #6b7280; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; }
+
+  /* === KONCEPCJA 5: Z banerem CTA === */
+  .sig5 { font-family: Arial, Helvetica, sans-serif; font-size: 13px; color: #1f2937; line-height: 1.5; }
+  .sig5 table { border-collapse: collapse; }
+  .sig5 .left { padding-right: 18px; vertical-align: top; }
+  .sig5 .left img { width: 64px; height: 64px; border-radius: 14px; display: block; }
+  .sig5 .info { vertical-align: top; }
+  .sig5 .name { font-size: 16px; font-weight: 700; color: #0f172a; }
+  .sig5 .role { font-size: 12px; color: #6b7280; margin-bottom: 8px; }
+  .sig5 .contact { font-size: 12px; }
+  .sig5 .contact a.dark { color: #1f2937; }
+  .sig5 .sep { color: #cbd5e1; margin: 0 6px; }
+  .sig5 .cta {
+    margin-top: 14px;
+    padding: 10px 14px;
+    background: #f1f5f9;
+    border-left: 3px solid #0284c7;
+    font-size: 12px;
+    color: #1f2937;
+    border-radius: 0 4px 4px 0;
+  }
+  .sig5 .cta a { font-weight: 600; }
+
+  /* === KONCEPCJA 6: Wizytówkowa (logo + dane w ramce) === */
+  .sig6 {
+    font-family: Arial, Helvetica, sans-serif; font-size: 13px; color: #1f2937;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 16px 20px;
+    max-width: 480px;
+    background: #ffffff;
+  }
+  .sig6 .top { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; padding-bottom: 12px; border-bottom: 1px solid #f1f5f9; }
+  .sig6 .top img { width: 40px; height: 40px; border-radius: 9px; display: block; }
+  .sig6 .top-text .brand { font-size: 14px; font-weight: 700; color: #0f172a; }
+  .sig6 .top-text .tag { font-size: 11px; color: #6b7280; }
+  .sig6 .name { font-size: 15px; font-weight: 700; color: #0f172a; }
+  .sig6 .role { font-size: 12px; color: #6b7280; margin-bottom: 10px; }
+  .sig6 .contact { font-size: 12px; line-height: 1.7; }
+  .sig6 .contact a.dark { color: #1f2937; }
+
+  /* === KONCEPCJA 7: Dark stripe (logo na ciemnym tle) === */
+  .sig7 {
+    font-family: Arial, Helvetica, sans-serif; font-size: 13px; color: #1f2937;
+    display: flex; align-items: stretch;
+    border-radius: 8px; overflow: hidden;
+    max-width: 480px;
+  }
+  .sig7 .left {
+    background: #0f172a;
+    padding: 16px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .sig7 .left img { width: 48px; height: 48px; border-radius: 10px; display: block; }
+  .sig7 .right {
+    background: #ffffff;
+    border: 1px solid #e5e7eb; border-left: none;
+    padding: 14px 18px;
+    flex: 1;
+  }
+  .sig7 .name { font-size: 15px; font-weight: 700; color: #0f172a; }
+  .sig7 .role { font-size: 12px; color: #6b7280; margin-bottom: 8px; }
+  .sig7 .contact { font-size: 12px; }
+  .sig7 .contact a.dark { color: #1f2937; }
+  .sig7 .sep { color: #cbd5e1; margin: 0 6px; }
+
+  /* === KONCEPCJA 8: Banner (logo + tagline + dane pod spodem) === */
+  .sig8 { font-family: Arial, Helvetica, sans-serif; font-size: 13px; color: #1f2937; line-height: 1.5; }
+  .sig8 .banner {
+    display: flex; align-items: center; gap: 12px;
+    background: #f0f9ff;
+    border-left: 3px solid #0284c7;
+    padding: 10px 14px;
+    margin-bottom: 12px;
+    border-radius: 0 6px 6px 0;
+  }
+  .sig8 .banner img { width: 32px; height: 32px; border-radius: 7px; display: block; }
+  .sig8 .banner-text .brand { font-size: 14px; font-weight: 700; color: #0f172a; }
+  .sig8 .banner-text .tag { font-size: 11px; color: #475569; }
+  .sig8 .name { font-size: 15px; font-weight: 700; color: #0f172a; }
+  .sig8 .role { font-size: 12px; color: #6b7280; margin-bottom: 8px; }
+  .sig8 .contact { font-size: 12px; }
+  .sig8 .contact a.dark { color: #1f2937; }
+  .sig8 .sep { color: #cbd5e1; margin: 0 6px; }
+
+  /* === KONCEPCJA 9: Inline minimalist (logo wpasowane w linię) === */
+  .sig9 { font-family: Arial, Helvetica, sans-serif; font-size: 13px; color: #1f2937; line-height: 1.5; }
+  .sig9 .name { font-size: 15px; font-weight: 700; color: #0f172a; }
+  .sig9 .role { font-size: 12px; color: #6b7280; margin-bottom: 8px; }
+  .sig9 .contact { font-size: 12px; }
+  .sig9 .contact a.dark { color: #1f2937; }
+  .sig9 .sep { color: #cbd5e1; margin: 0 8px; }
+  .sig9 .brand-row {
+    display: inline-flex; align-items: center; gap: 8px;
+    margin-top: 10px;
+    padding: 5px 10px 5px 5px;
+    background: #f1f5f9;
+    border-radius: 999px;
+  }
+  .sig9 .brand-row img { width: 20px; height: 20px; border-radius: 5px; display: block; }
+  .sig9 .brand-row .brand { font-size: 12px; font-weight: 600; color: #0f172a; }
+
+  /* === KONCEPCJA 10: Korporacyjna (logo + NIP + adres) === */
+  .sig10 { font-family: Arial, Helvetica, sans-serif; font-size: 13px; color: #1f2937; line-height: 1.5; }
+  .sig10 table { border-collapse: collapse; }
+  .sig10 .left { padding-right: 18px; vertical-align: top; border-right: 1px solid #e5e7eb; }
+  .sig10 .left img { width: 56px; height: 56px; border-radius: 12px; display: block; margin-bottom: 8px; }
+  .sig10 .left .brand { font-size: 12px; font-weight: 700; color: #0f172a; text-align: center; }
+  .sig10 .right { padding-left: 18px; vertical-align: top; }
+  .sig10 .name { font-size: 15px; font-weight: 700; color: #0f172a; }
+  .sig10 .role { font-size: 12px; color: #6b7280; margin-bottom: 8px; }
+  .sig10 .contact { font-size: 12px; margin-bottom: 8px; }
+  .sig10 .contact a.dark { color: #1f2937; }
+  .sig10 .legal { font-size: 11px; color: #9ca3af; line-height: 1.4; }
+
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <h1>Stopki e-mail dla MapJob — 10 koncepcji</h1>
+  <div class="sub">Wszystkie z prawdziwym logo MapJob (niebieska pinezka na ciemnym kwadracie). Stanowisko: CEO · Marketing &amp; Sprzedaż. Dane kontaktowe: +48 721 580 611, biuro@mapjob.pl, mapjob.pl.</div>
+
+  <!-- KONCEPCJA 1 -->
+  <div class="card">
+    <div class="card-header">
+      <strong>1. Klasyczna z separatorem</strong>
+      <span>uniwersalna · codzienna korespondencja</span>
+    </div>
+    <div class="mail-preview">
+      <div class="mail-body">
+        <p>Dzień dobry,</p>
+        <p>w załączeniu przesyłam ofertę współpracy. Pozostaję do dyspozycji.</p>
+        <p>Pozdrawiam,</p>
+      </div>
+      <hr class="divider">
+      <div class="sig1">
+        <table cellpadding="0" cellspacing="0" border="0">
+          <tr>
+            <td class="logo-cell"><img src="logo.png" alt="MapJob"></td>
+            <td class="info">
+              <div class="name">[Imię Nazwisko]</div>
+              <div class="role">CEO · Marketing &amp; Sprzedaż · MapJob</div>
+              <div class="contact">
+                tel. <a href="tel:+48721580611" class="dark">+48 721 580 611</a><br>
+                <a href="mailto:biuro@mapjob.pl">biuro@mapjob.pl</a><br>
+                <a href="https://mapjob.pl">mapjob.pl</a>
+              </div>
+            </td>
+          </tr>
+        </table>
+      </div>
+    </div>
+    <div class="note">+ Czytelne, klasyczny dwukolumnowy layout. − Brak CTA.</div>
+  </div>
+
+  <!-- KONCEPCJA 2 -->
+  <div class="card">
+    <div class="card-header">
+      <strong>2. Pionowa kompaktowa</strong>
+      <span>nowoczesna · świetna na mobile</span>
+    </div>
+    <div class="mail-preview">
+      <div class="mail-body">
+        <p>Dzień dobry,</p>
+        <p>dziękuję za rozmowę. Wszystkie ustalenia w załączniku.</p>
+        <p>Pozdrawiam,</p>
+      </div>
+      <hr class="divider">
+      <div class="sig2">
+        <div class="top">
+          <img src="logo.png" alt="MapJob">
+          <div class="brand">MAPJOB</div>
+        </div>
+        <div class="name">[Imię Nazwisko]</div>
+        <div class="role">CEO · Marketing &amp; Sprzedaż</div>
+        <div class="contact">
+          <a href="tel:+48721580611" class="dark">+48 721 580 611</a>
+          <span class="sep">·</span>
+          <a href="mailto:biuro@mapjob.pl">biuro@mapjob.pl</a>
+          <span class="sep">·</span>
+          <a href="https://mapjob.pl">mapjob.pl</a>
+        </div>
+      </div>
+    </div>
+    <div class="note">+ Nowoczesna, dobra na telefonie. − Linia kontaktu może się łamać w wąskich klientach.</div>
+  </div>
+
+  <!-- KONCEPCJA 3 -->
+  <div class="card">
+    <div class="card-header">
+      <strong>3. Premium z paskiem akcentu</strong>
+      <span>oficjalna B2B · „kancelaryjny" look</span>
+    </div>
+    <div class="mail-preview">
+      <div class="mail-body">
+        <p>Szanowni Państwo,</p>
+        <p>w nawiązaniu do naszej rozmowy przesyłam szczegóły oferty współpracy.</p>
+        <p>Z poważaniem,</p>
+      </div>
+      <hr class="divider">
+      <div class="sig3">
+        <div class="name">[Imię Nazwisko]</div>
+        <div class="role">CEO · Marketing &amp; Sprzedaż</div>
+        <div class="brand-row">
+          <img src="logo.png" alt="MapJob">
+          <div class="brand">MapJob</div>
+        </div>
+        <div class="contact">
+          <div><span class="label">tel.</span><a href="tel:+48721580611" class="dark">+48 721 580 611</a></div>
+          <div><span class="label">e-mail</span><a href="mailto:biuro@mapjob.pl">biuro@mapjob.pl</a></div>
+          <div><span class="label">www</span><a href="https://mapjob.pl">mapjob.pl</a></div>
+        </div>
+      </div>
+    </div>
+    <div class="note">+ Bardzo czytelne, „premium" look. − Zajmuje więcej wysokości.</div>
+  </div>
+
+  <!-- KONCEPCJA 4 -->
+  <div class="card">
+    <div class="card-header">
+      <strong>4. Minimal Pro</strong>
+      <span>najkrótsza · do szybkiej korespondencji</span>
+    </div>
+    <div class="mail-preview">
+      <div class="mail-body">
+        <p>Cześć,</p>
+        <p>wrzucam linki, o które prosiłeś. Daj znać jeśli coś jeszcze.</p>
+        <p>Pozdrawiam,</p>
+      </div>
+      <hr class="divider">
+      <div class="sig4">
+        <div class="row1">
+          <span class="name">[Imię Nazwisko]</span>, <span class="role">CEO MapJob · Marketing &amp; Sprzedaż</span>
+        </div>
+        <div class="row2">
+          <a href="tel:+48721580611" class="dark">+48 721 580 611</a>
+          <span class="sep">·</span>
+          <a href="mailto:biuro@mapjob.pl">biuro@mapjob.pl</a>
+          <span class="sep">·</span>
+          <a href="https://mapjob.pl">mapjob.pl</a>
+        </div>
+        <div class="brand-line">
+          <img src="logo.png" alt="MapJob">
+          <div class="brand-text">Praca na mapie</div>
+        </div>
+      </div>
+    </div>
+    <div class="note">+ Bardzo krótka, profesjonalna. − Mniej „brandingowa".</div>
+  </div>
+
+  <!-- KONCEPCJA 5 -->
+  <div class="card">
+    <div class="card-header">
+      <strong>5. Z banerem CTA</strong>
+      <span>sprzedaż / outreach · zawiera wezwanie do działania</span>
+    </div>
+    <div class="mail-preview">
+      <div class="mail-body">
+        <p>Dzień dobry,</p>
+        <p>nazywam się [Imię], prowadzę MapJob — platformę łączącą firmy z fachowcami w okolicy. Chciałbym zaproponować współpracę.</p>
+        <p>Pozdrawiam,</p>
+      </div>
+      <hr class="divider">
+      <div class="sig5">
+        <table cellpadding="0" cellspacing="0" border="0">
+          <tr>
+            <td class="left"><img src="logo.png" alt="MapJob"></td>
+            <td class="info">
+              <div class="name">[Imię Nazwisko]</div>
+              <div class="role">CEO · Marketing &amp; Sprzedaż · MapJob</div>
+              <div class="contact">
+                <a href="tel:+48721580611" class="dark">+48 721 580 611</a>
+                <span class="sep">·</span>
+                <a href="mailto:biuro@mapjob.pl">biuro@mapjob.pl</a>
+                <span class="sep">·</span>
+                <a href="https://mapjob.pl">mapjob.pl</a>
+              </div>
+            </td>
+          </tr>
+        </table>
+        <div class="cta">
+          Dodaj ogłoszenie i docieraj do fachowców w swojej okolicy →
+          <a href="https://mapjob.pl/dla-firm">mapjob.pl/dla-firm</a>
+        </div>
+      </div>
+    </div>
+    <div class="note">+ Zawiera CTA — idealna dla sprzedaży i pozyskiwania firm. − Nie do odpowiedzi na maile klientów.</div>
+  </div>
+
+  <!-- KONCEPCJA 6 -->
+  <div class="card">
+    <div class="card-header">
+      <strong>6. Wizytówkowa</strong>
+      <span>w eleganckiej ramce · jak elektroniczna business card</span>
+    </div>
+    <div class="mail-preview">
+      <div class="mail-body">
+        <p>Dzień dobry,</p>
+        <p>w załączeniu materiały, o które Państwo prosili. Pozostaję do dyspozycji.</p>
+        <p>Pozdrawiam,</p>
+      </div>
+      <hr class="divider">
+      <div class="sig6">
+        <div class="top">
+          <img src="logo.png" alt="MapJob">
+          <div class="top-text">
+            <div class="brand">MapJob</div>
+            <div class="tag">Praca na mapie</div>
+          </div>
+        </div>
+        <div class="name">[Imię Nazwisko]</div>
+        <div class="role">CEO · Marketing &amp; Sprzedaż</div>
+        <div class="contact">
+          <a href="tel:+48721580611" class="dark">+48 721 580 611</a><br>
+          <a href="mailto:biuro@mapjob.pl">biuro@mapjob.pl</a><br>
+          <a href="https://mapjob.pl">mapjob.pl</a>
+        </div>
+      </div>
+    </div>
+    <div class="note">+ Wygląda jak prawdziwa wizytówka. − Niektóre klienty mail mogą wyciąć ramkę.</div>
+  </div>
+
+  <!-- KONCEPCJA 7 -->
+  <div class="card">
+    <div class="card-header">
+      <strong>7. Dark stripe</strong>
+      <span>logo eksponowane na ciemnym tle marki</span>
+    </div>
+    <div class="mail-preview">
+      <div class="mail-body">
+        <p>Dzień dobry,</p>
+        <p>w odpowiedzi na zapytanie przesyłam pełną prezentację MapJob.</p>
+        <p>Pozdrawiam,</p>
+      </div>
+      <hr class="divider">
+      <div class="sig7">
+        <div class="left"><img src="logo.png" alt="MapJob"></div>
+        <div class="right">
+          <div class="name">[Imię Nazwisko]</div>
+          <div class="role">CEO · Marketing &amp; Sprzedaż · MapJob</div>
+          <div class="contact">
+            <a href="tel:+48721580611" class="dark">+48 721 580 611</a>
+            <span class="sep">·</span>
+            <a href="mailto:biuro@mapjob.pl">biuro@mapjob.pl</a><br>
+            <a href="https://mapjob.pl">mapjob.pl</a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="note">+ Logo „pop-uje" — najbardziej zapamiętywalne wizualnie. − Najbardziej wymagające jakości logo (musi się dobrze prezentować na ciemnym tle — Twoje TAK).</div>
+  </div>
+
+  <!-- KONCEPCJA 8 -->
+  <div class="card">
+    <div class="card-header">
+      <strong>8. Banner z taglinem</strong>
+      <span>nad podpisem mini-baner z brandem + claim</span>
+    </div>
+    <div class="mail-preview">
+      <div class="mail-body">
+        <p>Dzień dobry,</p>
+        <p>dziękuję za zainteresowanie ofertą. W załączniku szczegółowe warunki.</p>
+        <p>Pozdrawiam,</p>
+      </div>
+      <hr class="divider">
+      <div class="sig8">
+        <div class="banner">
+          <img src="logo.png" alt="MapJob">
+          <div class="banner-text">
+            <div class="brand">MapJob</div>
+            <div class="tag">Praca i fachowcy na mapie Polski</div>
+          </div>
+        </div>
+        <div class="name">[Imię Nazwisko]</div>
+        <div class="role">CEO · Marketing &amp; Sprzedaż</div>
+        <div class="contact">
+          <a href="tel:+48721580611" class="dark">+48 721 580 611</a>
+          <span class="sep">·</span>
+          <a href="mailto:biuro@mapjob.pl">biuro@mapjob.pl</a>
+          <span class="sep">·</span>
+          <a href="https://mapjob.pl">mapjob.pl</a>
+        </div>
+      </div>
+    </div>
+    <div class="note">+ Baner z taglinem — sprzedaje markę w każdym mailu. − Zajmuje więcej miejsca.</div>
+  </div>
+
+  <!-- KONCEPCJA 9 -->
+  <div class="card">
+    <div class="card-header">
+      <strong>9. Inline minimalist</strong>
+      <span>logo w „pigułce" pod kontaktem · subtelne</span>
+    </div>
+    <div class="mail-preview">
+      <div class="mail-body">
+        <p>Cześć,</p>
+        <p>krótka aktualizacja co do projektu. Szczegóły w wątku.</p>
+        <p>Pozdrawiam,</p>
+      </div>
+      <hr class="divider">
+      <div class="sig9">
+        <div class="name">[Imię Nazwisko]</div>
+        <div class="role">CEO · Marketing &amp; Sprzedaż</div>
+        <div class="contact">
+          <a href="tel:+48721580611" class="dark">+48 721 580 611</a>
+          <span class="sep">·</span>
+          <a href="mailto:biuro@mapjob.pl">biuro@mapjob.pl</a>
+          <span class="sep">·</span>
+          <a href="https://mapjob.pl">mapjob.pl</a>
+        </div>
+        <div class="brand-row">
+          <img src="logo.png" alt="MapJob">
+          <div class="brand">MapJob</div>
+        </div>
+      </div>
+    </div>
+    <div class="note">+ Lekka, subtelna obecność marki w „pigułce". − Logo mniej eksponowane.</div>
+  </div>
+
+  <!-- KONCEPCJA 10 -->
+  <div class="card">
+    <div class="card-header">
+      <strong>10. Korporacyjna (z NIP)</strong>
+      <span>do faktur i pism formalnych</span>
+    </div>
+    <div class="mail-preview">
+      <div class="mail-body">
+        <p>Szanowni Państwo,</p>
+        <p>w załączeniu przesyłam fakturę VAT za usługi w bieżącym miesiącu.</p>
+        <p>Z poważaniem,</p>
+      </div>
+      <hr class="divider">
+      <div class="sig10">
+        <table cellpadding="0" cellspacing="0" border="0">
+          <tr>
+            <td class="left">
+              <img src="logo.png" alt="MapJob">
+              <div class="brand">MapJob</div>
+            </td>
+            <td class="right">
+              <div class="name">[Imię Nazwisko]</div>
+              <div class="role">CEO · Marketing &amp; Sprzedaż</div>
+              <div class="contact">
+                tel. <a href="tel:+48721580611" class="dark">+48 721 580 611</a><br>
+                <a href="mailto:biuro@mapjob.pl">biuro@mapjob.pl</a><br>
+                <a href="https://mapjob.pl">mapjob.pl</a>
+              </div>
+              <div class="legal">
+                MapJob · [adres firmy]<br>
+                NIP: [XXXXXXXXXX] · REGON: [XXXXXXXXX]
+              </div>
+            </td>
+          </tr>
+        </table>
+      </div>
+    </div>
+    <div class="note">+ Wymóg dla pism formalnych, NIP buduje wiarygodność. − Dłuższa, ale w pismach formalnych to standard.</div>
+  </div>
+
+</div>
+</body>
+</html>

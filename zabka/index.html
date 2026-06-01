@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>MapJob — podgląd profilu firmy: Żabka (do akceptacji)</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"/>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<style>
+  :root{
+    --bg:#0B0D10;--surf:#15181F;--surf2:#1C2029;--border:rgba(255,255,255,.09);--border2:rgba(255,255,255,.14);
+    --text:#F5F7FA;--text2:#A1A9B8;--text3:#6B7280;--green:#10B981;--gold:#D97706;
+    --brand:#43B649;--brand2:#006420;
+    --ff:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:var(--ff);background:#070809;color:var(--text);-webkit-font-smoothing:antialiased;line-height:1.4}
+  .topbar{display:flex;align-items:center;gap:12px;padding:14px 22px;background:rgba(7,8,9,.9);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:50}
+  .topbar .brand{display:flex;align-items:center;gap:8px;font-size:16px;font-weight:900;letter-spacing:-.3px}
+  .badge-akc{margin-left:auto;font-size:10px;font-weight:800;letter-spacing:.8px;text-transform:uppercase;color:var(--gold);background:rgba(217,119,6,.14);border:1px solid rgba(217,119,6,.35);padding:5px 11px;border-radius:999px}
+
+  .wrap{max-width:560px;margin:0 auto;padding:34px 22px 8px}
+  .wrap h1{font-size:25px;font-weight:900;letter-spacing:-.5px;line-height:1.25;margin-bottom:12px;text-align:center}
+  .wrap h1 .hl{color:#60A5FA}
+  .intro{font-size:14px;color:var(--text2);line-height:1.65;margin:0 auto 24px;text-align:center;max-width:500px}
+  .intro b{color:var(--text)}
+
+  .stage{display:flex;justify-content:center;padding:0 0 6px}
+  .desc{max-width:490px;margin:30px auto 0}
+  .okbox{background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.3);border-left:3px solid var(--green);border-radius:0 12px 12px 0;padding:14px 16px;margin-bottom:18px}
+  .okbox b{color:#34D399}
+  .okbox p{margin:0;font-size:13.5px;color:var(--text2)}
+  .feat{list-style:none}
+  .feat li{font-size:13.5px;color:var(--text2);padding-left:24px;position:relative;margin-bottom:10px;line-height:1.5}
+  .feat li::before{content:'✓';position:absolute;left:0;top:0;color:var(--green);font-weight:900}
+  .feat li b{color:var(--text)}
+  .note{font-size:12px;color:var(--text3);margin-top:18px;line-height:1.6}
+
+  .phone{width:392px;max-width:100%;background:var(--bg);border-radius:36px;border:1px solid var(--border2);box-shadow:0 0 0 9px #121419,0 40px 90px rgba(0,0,0,.6);overflow:hidden}
+  .notch{height:28px;display:flex;align-items:center;justify-content:center}
+  .notch::after{content:'';width:110px;height:6px;border-radius:99px;background:#26292f}
+  .pscroll{height:720px;overflow-y:auto;scrollbar-width:thin}
+  .pscroll::-webkit-scrollbar{width:5px}.pscroll::-webkit-scrollbar-thumb{background:#2a2e36;border-radius:4px}
+  @media(max-width:640px){
+    .pscroll{height:auto;overflow:visible}
+    .phone{box-shadow:0 0 0 6px #121419,0 20px 50px rgba(0,0,0,.5)}
+  }
+  .pbar{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:10px;padding:12px 14px;background:rgba(11,13,16,.92);backdrop-filter:blur(8px)}
+  .pbar .bk{width:32px;height:32px;border-radius:50%;background:var(--surf2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;color:var(--text2);font-size:15px}
+  .pbar .ti{font-size:13px;font-weight:700;color:var(--text2)}
+
+  .cover{height:104px;position:relative;background:linear-gradient(135deg,var(--brand),var(--brand2))}
+  .cover::after{content:'';position:absolute;inset:0;background:radial-gradient(120% 120% at 80% -20%,rgba(255,255,255,.18),transparent 55%)}
+  .logo{position:absolute;left:18px;bottom:-26px;z-index:2;width:150px;height:60px;border-radius:14px;background:#fff;display:flex;align-items:center;justify-content:center;border:4px solid var(--bg);overflow:hidden}
+  .logo img{width:92%;height:92%;object-fit:contain}
+  .head{padding:42px 18px 6px}
+  .name{font-size:21px;font-weight:900;letter-spacing:-.4px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  .verif{font-size:10px;font-weight:800;color:#fff;background:var(--green);border-radius:7px;padding:4px 9px;display:inline-flex;align-items:center;gap:4px}
+  .ind{font-size:13px;color:var(--text2);margin-top:5px;font-weight:600}
+  .loc{font-size:12px;color:var(--text3);margin-top:3px}
+  .descco{font-size:12.5px;color:var(--text2);line-height:1.6;margin-top:11px}
+  .trust{display:flex;flex-wrap:wrap;gap:7px;margin-top:13px}
+  .tchip{font-size:11px;font-weight:700;color:#34D399;background:rgba(16,185,129,.12);border:1px solid rgba(16,185,129,.3);border-radius:999px;padding:6px 11px}
+
+  .stats{display:flex;margin:16px 18px 4px;background:var(--surf);border:1px solid var(--border);border-radius:14px;overflow:hidden}
+  .stats>div{flex:1;text-align:center;padding:13px 6px;border-right:1px solid var(--border)}
+  .stats>div:last-child{border-right:none}
+  .stats .v{font-size:19px;font-weight:900}
+  .stats .v small{font-size:11px;font-weight:800;color:var(--text2)}
+  .stats .k{font-size:9.5px;color:var(--text3);text-transform:uppercase;letter-spacing:.4px;margin-top:2px}
+
+  .sec{font-size:11px;font-weight:800;letter-spacing:.5px;text-transform:uppercase;color:var(--text3);margin:18px 18px 9px}
+  .bens{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:0 18px}
+  .ben{display:flex;align-items:center;gap:9px;background:var(--surf);border:1px solid var(--border);border-radius:11px;padding:10px 11px}
+  .ben .i{width:28px;height:28px;border-radius:8px;background:rgba(16,185,129,.14);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
+  .ben .t{font-size:11.5px;font-weight:700;line-height:1.2}
+
+  .map{height:215px;margin:0 18px;border-radius:14px;overflow:hidden;border:1px solid var(--border)}
+  .map .leaflet-control-zoom a{background:var(--surf2);color:var(--text);border-color:var(--border)}
+  .maphint{font-size:11px;color:var(--text3);margin:7px 18px 0;text-align:center}
+
+  .filters{display:flex;gap:7px;overflow-x:auto;padding:2px 18px 4px;scrollbar-width:none}
+  .filters::-webkit-scrollbar{display:none}
+  .fchip{flex-shrink:0;font-size:12px;font-weight:700;color:var(--text2);background:var(--surf);border:1px solid var(--border);border-radius:999px;padding:7px 13px;cursor:pointer;white-space:nowrap;transition:.12s}
+  .fchip.on{color:#fff;background:var(--brand);border-color:var(--brand)}
+
+  .offers{padding:6px 18px 8px}
+  .offer{background:var(--surf);border:1px solid var(--border);border-radius:14px;padding:13px;margin-bottom:10px;transition:border-color .15s}
+  .offer:hover{border-color:var(--border2)}
+  .offer-top{display:flex;gap:11px;align-items:flex-start}
+  .offer-logo{width:38px;height:38px;border-radius:10px;background:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0;overflow:hidden}
+  .offer-logo img{width:90%;height:90%;object-fit:contain}
+  .offer-t{font-size:14px;font-weight:800;line-height:1.25}
+  .offer-loc{font-size:11.5px;color:var(--text3);margin-top:3px}
+  .obadges{display:flex;flex-wrap:wrap;gap:5px;margin-top:9px}
+  .ob{font-size:9.5px;font-weight:800;padding:3px 7px;border-radius:8px;letter-spacing:.2px}
+  .ob.sup{background:rgba(217,119,6,.16);color:#F59E0B;border:1px solid rgba(217,119,6,.35)}
+  .ob.oz{background:rgba(239,68,68,.13);color:#F87171;border:1px solid rgba(239,68,68,.28)}
+  .ob.ua{background:rgba(56,135,255,.14);color:#7FB0FF;border:1px solid rgba(56,135,255,.32)}
+  .ob.cv{background:rgba(16,185,129,.13);color:#34D399;border:1px solid rgba(16,185,129,.3)}
+  .ob.vac{background:var(--surf2);color:var(--text2);border:1px solid var(--border)}
+  .ob.lvl{background:var(--surf2);color:var(--text2);border:1px solid var(--border)}
+  .offer-bottom{display:flex;align-items:center;gap:10px;margin-top:11px;padding-top:11px;border-top:1px solid var(--border)}
+  .salary{font-size:12.5px;font-weight:900;color:#34D399;flex:1}
+  .salary.none{color:var(--text3);font-weight:700;font-size:11.5px}
+  .date{font-size:10.5px;color:var(--text3);flex-shrink:0}
+  .apply{background:var(--brand);color:#fff;border:none;border-radius:10px;padding:8px 14px;font-family:var(--ff);font-size:12px;font-weight:800;flex-shrink:0}
+  .nores{padding:18px;text-align:center;color:var(--text3);font-size:12.5px}
+  .morebtn{display:block;width:calc(100% - 36px);margin:2px 18px 8px;padding:13px;border-radius:13px;background:var(--surf);border:1px solid var(--border2);color:var(--text);font-family:var(--ff);font-size:13px;font-weight:800;cursor:pointer;transition:.12s}
+  .morebtn:hover{background:var(--surf2);border-color:rgba(67,182,73,.5)}
+  .morebtn .cnt{color:var(--brand)}
+
+  .followbar{display:flex;gap:8px;padding:6px 18px 18px}
+  .followbar .fb{flex:1;padding:12px;border-radius:13px;background:var(--brand);border:none;font-family:var(--ff);font-size:13.5px;font-weight:800;color:#fff}
+  .followbar .ca{padding:12px 15px;border-radius:13px;background:rgba(34,197,94,.14);border:1px solid rgba(34,197,94,.45);font-family:var(--ff);font-size:13px;font-weight:800;color:#22C55E;display:flex;align-items:center;gap:6px}
+
+  .footer{border-top:1px solid var(--border);padding:34px 22px 48px;text-align:center;margin-top:8px}
+  .ob.etat-f{background:rgba(67,182,73,.16);color:#5BD16A;border:1px solid rgba(67,182,73,.55)}
+  .ob.etat-p{background:rgba(245,158,11,.15);color:#FBBF24;border:1px solid rgba(245,158,11,.5)}
+  .bpin .head2{width:36px;height:36px;border-radius:50% 50% 50% 0;background:#fff;transform:rotate(-45deg);box-shadow:0 4px 10px rgba(0,0,0,.4);border:3px solid var(--brand);display:flex;align-items:center;justify-content:center}
+  .bpin .head2 .ic{transform:rotate(45deg);width:24px;height:24px;display:flex;align-items:center;justify-content:center}
+  .bpin .head2 .ic img{width:100%;height:100%;object-fit:contain}
+  .leaflet-popup-content-wrapper{background:var(--surf);color:var(--text);border-radius:10px;border:1px solid var(--border2)}
+  .leaflet-popup-tip{background:var(--surf)}
+  .leaflet-popup-content{margin:9px 12px;font-family:var(--ff)}
+  .leaflet-popup-content b{font-size:13px}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <div class="brand"><svg width="20" height="24" viewBox="0 0 18 22" fill="none"><path d="M9 0C4.03 0 0 4.03 0 9c0 6.75 9 13 9 13s9-6.25 9-13c0-4.97-4.03-9-9-9z" fill="#60A5FA"/><circle cx="9" cy="9" r="3.5" fill="#080D18"/></svg><span><span style="color:#F0F4FF">Map</span><span style="color:#60A5FA">Job</span><span style="color:#F0F4FF">.pl</span></span></div>
+  <span class="badge-akc">Podgląd · do akceptacji</span>
+</div>
+
+<div class="wrap">
+  <h1>Tak będzie wyglądać profil <span style="color:#0A8A33">Żabki</span> na Map<span class="hl">Job</span>.pl</h1>
+  <p class="intro">Przygotowaliśmy kompletny <b>profil firmy</b> wraz ze wszystkimi aktualnymi ogłoszeniami ze strony praca.zabka.pl. Kandydaci znajdą Wasze oferty na mapie i zaaplikują jednym kliknięciem — bez logowania, bez CV, bez zbędnych formularzy.</p>
+
+  <div class="stage">
+    <div class="phone">
+      <div class="notch"></div>
+      <div class="pscroll">
+        <div class="pbar"><div class="bk">←</div><div class="ti">Profil firmy</div></div>
+        <div class="cover"><div class="logo"><img id="hd-logo" alt="Żabka"></div></div>
+        <div class="head">
+          <div class="name">Żabka <span class="verif">✓ Zweryfikowana</span></div>
+          <div class="ind">Handel detaliczny · Sklepy convenience</div>
+          <div class="loc">📍 Cała Polska · <span id="st-ci2">45</span> lokalizacji</div>
+          <div class="descco">Żabka to największa sieć sklepów typu convenience w Polsce — ponad 11 tysięcy sklepów i miliony zadowolonych klientów każdego dnia. Do sklepów w całej Polsce szukamy sprzedawców oraz osób do dokładania towaru. Oferujemy elastyczny grafik, pracę blisko domu i przyjazną atmosferę — również dla osób bez doświadczenia.</div>
+          <div class="trust">
+            <span class="tchip">Największa sieć convenience w PL</span>
+            <span class="tchip">11 000+ sklepów</span>
+            <span class="tchip">Praca w całej Polsce</span>
+            <span class="tchip">Elastyczny grafik</span>
+          </div>
+        </div>
+
+        <div class="stats">
+          <div><div class="v" id="st-count">121</div><div class="k">Aktywnych ofert</div></div>
+          <div><div class="v" id="st-ci">45</div><div class="k">Lokalizacje</div></div>
+          <div><div class="v">11<small> tys.+</small></div><div class="k">Sklepów w PL</div></div>
+        </div>
+
+        <div class="sec">🎁 Co oferuje Żabka</div>
+        <div class="bens">
+          <div class="ben"><div class="i">🕒</div><div class="t">Elastyczny grafik</div></div>
+          <div class="ben"><div class="i">🏠</div><div class="t">Praca blisko domu</div></div>
+          <div class="ben"><div class="i">🎓</div><div class="t">Szkolenia od podstaw</div></div>
+          <div class="ben"><div class="i">🤝</div><div class="t">Stabilne zatrudnienie</div></div>
+          <div class="ben"><div class="i">🛒</div><div class="t">Zniżki pracownicze</div></div>
+          <div class="ben"><div class="i">🌱</div><div class="t">Rozwój i awanse</div></div>
+        </div>
+
+        <div class="sec">🗺️ Oferty na mapie</div>
+        <div class="map" id="z-map"></div>
+        <div class="maphint">✋ Przeciągnij i przybliż mapę · 🟢 <span id="mh-n">121</span> ofert w <span id="mh-c">45</span> miastach</div>
+
+        <div class="sec" data-anchor="oferty" style="margin-bottom:11px">💼 Aktywne ogłoszenia (<span id="sec-count">121</span>)</div>
+        <div class="filters" id="filters">
+          <span class="fchip on" data-f="all">Wszystkie</span>
+          <span class="fchip" data-f="sprzedawca">🛒 Sprzedawca</span>
+          <span class="fchip" data-f="towar">📦 Dokładanie towaru</span>
+          <span class="fchip" data-f="full">⏰ Pełny etat</span>
+          <span class="fchip" data-f="part">🕐 Część etatu</span>
+        </div>
+        <div class="offers" id="offers"></div>
+        <button class="morebtn" id="morebtn" style="display:none"></button>
+
+        <div class="followbar">
+          <button class="fb">🔔 Obserwuj firmę</button>
+          <div class="ca">📞 Kontakt</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="desc">
+    <div class="okbox"><p><b>Nie musicie nic robić ani niczego wypełniać</b> — cały profil i wszystkie ogłoszenia przygotowaliśmy za Was na podstawie Waszych ofert. Wystarczy, że <b>zatwierdzicie</b>, a my opublikujemy. Publikacja jest <b style="color:#F87171">BEZPŁATNA</b>.</p></div>
+    <ul class="feat">
+      <li><b>Jeden profil firmy</b> ze wszystkimi ogłoszeniami — kandydat widzi całą ofertę Żabki w jednym miejscu</li>
+      <li><b>Piny na mapie</b> — oferty w 45 miastach w całej Polsce, od Kołobrzegu po Kraków</li>
+      <li><b>Filtry</b> — sprzedawca, dokładanie towaru, pełny etat i część etatu</li>
+      <li><b>Szybki kontakt</b> — „Aplikuj szybko" przy każdej ofercie, bez logowania i bez CV</li>
+      <li><b>Wasze logo i barwy marki</b> — profil w charakterystycznej zieleni Żabki</li>
+    </ul>
+    <div class="note">To tylko podgląd — nic nie zostało jeszcze opublikowane. Po Waszej akceptacji profil pojawi się na mapjob.pl. W każdej chwili go dla Was zmienimy lub usuniemy.</div>
+  </div>
+</div>
+
+<div class="footer">
+  <div style="font-size:19px;font-weight:900;letter-spacing:-.3px;margin-bottom:8px">Zatwierdzacie profil?</div>
+  <p style="font-size:14px;color:var(--text2);max-width:520px;margin:0 auto 20px;line-height:1.65">Jeśli wszystko się zgadza — <b style="color:var(--text)">odpowiedzcie na wiadomość, w której dostaliście ten link</b>. <b style="color:#34D399">Czekamy na potwierdzenie i działamy</b> — opublikujemy profil od ręki na mapie MapJob. Publikacja jest <b style="color:#F87171">BEZPŁATNA</b>, a profil w każdej chwili dla Was zmienimy lub usuniemy.</p>
+  <div style="font-size:11px;color:var(--text3)">To tylko podgląd — nic nie zostało jeszcze opublikowane na mapjob.pl.</div>
+
+  <div style="margin-top:28px;font-size:14px;color:var(--text);font-weight:700">Wejdźcie na naszą stronę i zobaczcie, jak to działa</div>
+  <div style="margin-top:12px">
+    <a href="https://mapjob.pl" target="_blank" rel="noopener" style="display:inline-block;font-size:14px;font-weight:800;color:#fff;background:var(--surf);border:1px solid var(--border2);padding:13px 24px;border-radius:13px;text-decoration:none">🌐 Wejdź na Map<span style="color:#60A5FA">Job</span>.pl →</a>
+  </div>
+
+  <div style="margin-top:22px;font-size:13px;color:var(--text2);font-weight:600">📱 Już niedługo dostępni także w aplikacji mobilnej</div>
+  <div style="margin-top:10px;display:inline-flex;flex-wrap:wrap;gap:9px;justify-content:center">
+    <span style="display:inline-flex;align-items:center;gap:7px;font-size:12px;font-weight:700;color:var(--text2);background:var(--surf);border:1px solid var(--border);border-radius:10px;padding:9px 15px">▶ Google Play <span style="color:var(--text3);font-weight:600">· wkrótce</span></span>
+    <span style="display:inline-flex;align-items:center;gap:7px;font-size:12px;font-weight:700;color:var(--text2);background:var(--surf);border:1px solid var(--border);border-radius:10px;padding:9px 15px">🍎 App Store <span style="color:var(--text3);font-weight:600">· wkrótce</span></span>
+  </div>
+
+  <div style="margin-top:24px;display:inline-flex;align-items:center;gap:7px;font-size:14px;font-weight:800;opacity:.85"><svg width="16" height="20" viewBox="0 0 18 22" fill="none"><path d="M9 0C4.03 0 0 4.03 0 9c0 6.75 9 13 9 13s9-6.25 9-13c0-4.97-4.03-9-9-9z" fill="#60A5FA"/><circle cx="9" cy="9" r="3.5" fill="#080D18"/></svg><span><span style="color:#F0F4FF">Map</span><span style="color:#60A5FA">Job</span><span style="color:#F0F4FF">.pl</span></span> <span style="font-weight:600;color:var(--text3);font-size:12px">· mapa pracy i fachowców</span></div>
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+var OFFERS=[{"t": "Sprzedawca", "loc": "Poznań · ul. Forteczna 12/14", "city": "Poznań", "lat": 52.4064, "lng": 16.9252, "lvl": "Pełny etat", "cat": "sprzedawca", "etat": "full", "date": "Oferta aktualna"}, {"t": "Sprzedawca", "loc": "Bielawa · ul. Słowiańska 19", "city": "Bielawa", "lat": 50.6905, "lng": 16.6203, "lvl": "Część etatu", "cat": "sprzedawca", "etat": "part", "date": "Oferta aktualna"}, {"t": "Sprzedawca", "loc": "Dopiewiec · ul. Szkolna 13", "city": "Dopiewiec", "lat": 52.376, "lng": 16.751, "lvl": "Pełny etat", "cat": "sprzedawca", "etat": "full", "date": "Oferta aktualna"}, {"t": "Sprzedawca", "loc": "Warszawa · ul. Jana Kazimierza 66", "city": "Warszawa", "lat": 52.2297, "lng": 21.0122, "lvl": "Pełny etat", "cat": "sprzedawca", "etat": "full", "date": "Oferta aktualna"}, {"t": "Sprzedawca", "loc": "Łaziska Górne · ul. Św. Barbary 4", "city": "Łaziska Górne", "lat": 50.153, "lng": 18.846, "lvl": "Część etatu", "cat": "sprzedawca", "etat": "part", "date": "Oferta aktualna"}, {"t": "Sprzedawca", "loc": "Wrocław · ul. Przedmieście Oławskie 99", "city": "Wrocław", "lat": 51.1079, "lng": 17.0385, "lvl": "Pełny etat", "cat": "sprzedawca", "etat": "full", "date": "Oferta aktualna"}, {"t": "Sprzedawca", "loc": "Gdańsk · ul. Kiedrowskiego 6", "city": "Gdańsk", "lat": 54.352, "lng": 18.6466, "lvl": "Pełny etat", "cat": "sprzedawca", "etat": "full", "date": "Oferta aktualna"}, {"t": "Sprzedawca", "loc": "Warszawa · ul. Wilcza 27", "city": "Warszawa", "lat": 52.2297, "lng": 21.0122, "lvl": "Pełny etat", "cat": "sprzedawca", "etat": "full", "date": "Oferta aktualna"}, {"t": "Sprzedawca", "loc": "Działdowo · ul. Chopina 1", "city": "Działdowo", "lat": 53.237, "lng": 20.179, "lvl": "Część etatu", "cat": "sprzedawca", "etat": "part", "date": "Oferta aktualna"}, {"t": "Sprzedawca", "loc": "Wrocław · ul. Cynamonowa 13", "city": "Wrocław", "lat": 51.1079, "lng": 17.0385, "lvl": "Pełny etat", "cat": "sprzedawca", "etat": "full", "date": "Oferta aktualna"}, {"t": "Sprzedawca", "loc": "Warszawa · ul. Teodora Toeplitza 2", "city": "Warszawa", "lat": 52.2297, "lng": 21.0122, "lvl": "Pełny etat", "cat": "sprzedawca", "etat": "full", "date": "Oferta aktualna"}, {"t": "Sprzedawca", "loc": "Wrocław · ul. Miedziana 12", "city": "Wrocław", "lat": 51.1079, "lng": 17.0385, "lvl": "Pełny etat", "cat": "sprzedawca", "etat": "full", "date": "Oferta aktualna"}, {"t": "Sprzedawca", "loc": "Kraków · ul. Wrocławska 48", "city": "Kraków", "lat": 50.0647, "lng": 19.945, "lvl": "Pełny etat", "cat": "sprzedawca", "etat": "full", "date": "Oferta aktualna"}, {"t": "Sprzedawca", "loc": "Kraków · ul. Grzegórzecka 12/1", "city": "Kraków", "lat": 50.0647, "lng": 19.945, "lvl": "Część etatu", "cat": "sprzedawca", "etat": "part", "date": "Oferta aktualna"}, {"t": "Sprzedawca", "loc": "Wrocław · ul. Wyszyńskiego 118", "city": "Wrocław", "lat": 51.1079, "lng": 17.0385, "lvl": "Pełny etat", "cat": "sprzedawca", "etat": "full", "date": "Oferta aktualna"}, {"t": "Sprzedawca", "loc": "Wrocław · ul. Odkrywców 1-3", "city": "Wrocław", "lat": 51.1079, "lng": 17.0385, "lvl": "Pełny etat", "cat": "sprzedawca", "etat": "full", "date": "Oferta aktualna"}, {"t": "Sprzedawca", "loc": "Wrocław · ul. Stalowa 80", "city": "Wrocław", "lat": 51.1079, "lng": 17.0385, "lvl": "Pełny etat", "cat": "sprzedawca", "etat": "full", "date": "Oferta aktualna"}, {"t": "Sprzedawca", "loc": "Wrocław · ul. Uczniowska 1", "city": "Wrocław", "lat": 51.1079, "lng": 17.0385, "lvl": "Pełny etat", "cat": "sprzedawca", "etat": "full", "date": "Oferta aktualna"}, {"t": "Sprzedawca", "loc": "Sosnowiec · ul. Warszawska 10", "city": "Sosnowiec", "lat": 50.2862, "lng": 19.104, "lvl": "Pełny etat", "cat": "sprzedawca", "etat": "full", "date": "Oferta aktualna"}, {"t": "Sprzedawca", "loc": "Warszawa · ul. Garibaldiego 4", "city": "Warszawa", "lat": 52.2297, "lng": 21.0122, "lvl": "Pełny etat", "cat": "sprzedawca", "etat": "full", "date": "Oferta aktualna"}, {"t": "Sprzedawca", "loc": "Pabianice · ul. Wileńska 45a", "city": "Pabianice", "lat": 51.6645, "lng": 19.3546, "lvl": "Część etatu", "cat": "sprzedawca", "etat": "part", "date": "Oferta aktualna"}, {"t": "Sprzedawca", "loc": "Kraków · ul. Grzegórzecka 12/1", "city": "Kraków", "lat": 50.0647, "lng": 19.945, "lvl": "Pełny etat", "cat": "sprzedawca", "etat": "full", "date": "Oferta aktualna"}, {"t": "Sprzedawca", "loc": "Pruszcz Gdański · ul. Kasprowicza 52", "city": "Pruszcz Gdański", "lat": 54.262, "lng": 18.636, "lvl": "Pełny etat", "cat": "sprzedawca", "etat": "full", "date": "Oferta aktualna"}, {"t": "Sprzedawca", "loc": "Warszawa · ul. Puławska 22", "city": "Warszawa", "lat": 52.2297, "lng": 21.0122, "lvl": "Pełny etat", "cat": "sprzedawca", "etat": "full", "date": "Oferta aktualna"}, {"t": "Sprzedawca", "loc": "Wrocław · ul. Ślężna 128A", "city": "Wrocław", "lat": 51.1079, "lng": 17.0385, "lvl": "Część etatu", "cat": "sprzedawca", "etat": "part", "date": "Oferta aktualna"}, {"t": "Sprzedawca", "loc": "Warszawa · ul. Rydygiera 13", "city": "Warszawa", "lat": 52.2297, "lng": 21.0122, "lvl": "Pełny etat", "cat": "sprzedawca", "etat": "full", "date": "Oferta aktualna"}, {"t": "Sprzedawca", "loc": "Łódź · ul. Łanowa 14a", "city": "Łódź", "lat": 51.7592, "lng": 19.456, "lvl": "Pełny etat", "cat": "sprzedawca", "etat": "full", "date": "Oferta aktualna"}, {"t": "Sprzedawca", "loc": "Warszawa · ul. Zgoda 13", "city": "Warszawa", "lat": 52.2297, "lng": 21.0122, "lvl": "Część etatu", "cat": "sprzedawca", "etat": "part", "date": "Oferta aktualna"}, {"t": "Sprzedawca", "loc": "Warszawa · ul. Zgoda 13", "city": "Warszawa", "lat": 52.2297, "lng": 21.0122, "lvl": "Pełny etat", "cat": "sprzedawca", "etat": "full", "date": "Oferta aktualna"}, {"t": "Sprzedawca", "loc": "Warszawa · ul. Wolska 64a", "city": "Warszawa", "lat": 52.2297, "lng": 21.0122, "lvl": "Część etatu", "cat": "sprzedawca", "etat": "part", "date": "Oferta aktualna"}, {"t": "Sprzedawca", "loc": "Warszawa · ul. Wolska 64a", "city": "Warszawa", "lat": 52.2297, "lng": 21.0122, "lvl": "Pełny etat", "cat": "sprzedawca", "etat": "full", "date": "Oferta aktualna"}, {"t": "Sprzedawca", "loc": "Żukowo · ul. Jabłoniowa 7", "city": "Żukowo", "lat": 54.343, "lng": 18.364, "lvl": "Pełny etat", "cat": "sprzedawca", "etat": "full", "date": "Oferta aktualna"}, {"t": "Sprzedawca", "loc": "Dzierżążno · ul. Kartyska 2", "city": "Dzierżążno", "lat": 54.35, "lng": 18.29, "lvl": "Pełny etat", "cat": "sprzedawca", "etat": "full", "date": "Oferta aktualna"}, {"t": "Sprzedawca", "loc": "Poznań · ul. Opolska 94", "city": "Poznań", "lat": 52.4064, "lng": 16.9252, "lvl": "Pełny etat", "cat": "sprzedawca", "etat": "full", "date": "Oferta aktualna"}, {"t": "Sprzedawca", "loc": "Kraków · ul. Krowoderska 23", "city": "Kraków", "lat": 50.0647, "lng": 19.945, "lvl": "Część etatu", "cat": "sprzedawca", "etat": "part", "date": "Oferta aktualna"}, {"t": "Sprzedawca", "loc": "Warszawa · ul. Chrościckiego 25", "city": "Warszawa", "lat": 52.2297, "lng": 21.0122, "lvl": "Pełny etat", "cat": "sprzedawca", "etat": "full", "date": "Oferta aktualna"}, {"t": "Sprzedawca", "loc": "Magdalenka · ul. Lipowa 57", "city": "Magdalenka", "lat": 52.076, "lng": 20.932, "lvl": "Pełny etat", "cat": "sprzedawca", "etat": "full", "date": "Oferta aktualna"}, {"t": "Dokładanie towaru", "loc": "Warszawa · ul. Smulikowskiego 4c", "city": "Warszawa", "lat": 52.2297, "lng": 21.0122, "lvl": "Część etatu", "cat": "towar", "etat": "part", "date": "Oferta aktualna"}, {"t": "Sprzedawca", "loc": "Wrocław · ul. Plac Powstańców Śląskich 1", "city": "Wrocław", "lat": 51.1079, "lng": 17.0385, "lvl": "Pełny etat", "cat": "sprzedawca", "etat": "full", "date": "Oferta aktualna"}, {"t": "Sprzedawca", "loc": "Warszawa · ul. Wita Stwosza 48", "city": "Warszawa", "lat": 52.2297, "lng": 21.0122, "lvl": "Pełny etat", "cat": "sprzedawca", "etat": "full", "date": "Oferta aktualna"}, {"t": "Sprzedawca", "loc": "Wrocław · ul. Jedności Narodowej 146C", "city": "Wrocław", "lat": 51.1079, "lng": 17.0385, "lvl": "Część etatu", "cat": "sprzedawca", "etat": "part", "date": "Oferta aktualna"}, {"t": "Sprzedawca", "loc": "Kraków · ul. Centrum C 6", "city": "Kraków", "lat": 50.0647, "lng": 19.945, "lvl": "Pełny etat", "cat": "sprzedawca", "etat": "full", "date": "Oferta aktualna"}, {"t": "Sprzedawca", "loc": "Pruszków · ul. Pęcicka 13", "city": "Pruszków", "lat": 52.17, "lng": 20.812, "lvl": "Pełny etat", "cat": "sprzedawca", "etat": "full", "date": "Oferta aktualna"}, {"t": "Dokładanie towaru", "loc": "Warszawa · ul. Begonii 5", "city": "Warszawa", "lat": 52.2297, "lng": 21.0122, "lvl": "Pełny etat", "cat": "towar", "etat": "full", "date": "Oferta aktualna"}, {"t": "Dokładanie towaru", "loc": "Warszawa · ul. Begonii 5", "city": "Warszawa", "lat": 52.2297, "lng": 21.0122, "lvl": "Część etatu", "cat": "towar", "etat": "part", "date": "Oferta aktualna"}, {"t": "Sprzedawca", "loc": "Warszawa · ul. Begonii 5", "city": "Warszawa", "lat": 52.2297, "lng": 21.0122, "lvl": "Część etatu", "cat": "sprzedawca", "etat": "part", "date": "Oferta aktualna"}, {"t": "Sprzedawca", "loc": "Warszawa · ul. Begonii 5", "city": "Warszawa", "lat": 52.2297, "lng": 21.0122, "lvl": "Pełny etat", "cat": "sprzedawca", "etat": "full", "date": "Oferta aktualna"}, {"t": "Sprzedawca", "loc": "Wrocław · ul. Plac Grunwaldzki 23-27", "city": "Wrocław", "lat": 51.1079, "lng": 17.0385, "lvl": "Pełny etat", "cat": "sprzedawca", "etat": "full", "date": "Oferta aktualna"}, {"t": "Sprzedawca", "loc": "Kraków · ul. Solskiego 11", "city": "Kraków", "lat": 50.0647, "lng": 19.945, "lvl": "Pełny etat", "cat": "sprzedawca", "etat": "full", "date": "Oferta aktualna"}, {"t": "Sprzedawca", "loc": "Ostrowiec Świętokrzyski · ul. Ogrody 7", "city": "Ostrowiec Świętokrzyski", "lat": 50.929, "lng": 21.385, "lvl": "Część etatu", "cat": "sprzedawca", "etat": "part", "date": "Oferta aktualna"}, {"t": "Sprzedawca", "loc": "Gdynia · ul. Chylońska 26", "city": "Gdynia", "lat": 54.5189, "lng": 18.5305, "lvl": "Pełny etat", "cat": "sprzedawca", "etat": "full", "date": "Oferta aktualna"}, {"t": "Sprzedawca", "loc": "Wrocław · ul. Partynicka 14", "city": "Wrocław", "lat": 51.1079, "lng": 17.0385, "lvl": "Część etatu", "cat": "sprzedawca", "etat": "part", "date": "Oferta aktualna"}, {"t": "Sprzedawca", "loc": "Gdynia · ul. Ignacego Krasickiego 45", "city": "Gdynia", "lat": 54.5189, "lng": 18.5305, "lvl": "Pełny etat", "cat": "sprzedawca", "etat": "full", "date": "Oferta aktualna"}, {"t": "Sprzedawca", "loc": "Częstochowa · ul. Focha 43/45", "city": "Częstochowa", "lat": 50.8118, "lng": 19.1203, "lvl": "Część etatu", "cat": "sprzedawca", "etat": "part", "date": "Oferta aktualna"}, {"t": "Sprzedawca", "loc": "Częstochowa · ul. Wielkoborska 196", "city": "Częstochowa", "lat": 50.8118, "lng": 19.1203, "lvl": "Część etatu", "cat": "sprzedawca", "etat": "part", "date": "Oferta aktualna"}, {"t": "Sprzedawca", "loc": "Warszawa · ul. Obozowa 57", "city": "Warszawa", "lat": 52.2297, "lng": 21.0122, "lvl": "Pełny etat", "cat": "sprzedawca", "etat": "full", "date": "Oferta aktualna"}, {"t": "Sprzedawca", "loc": "Świdnik · ul. Świdnik Duży Pierwszy 9a", "city": "Świdnik", "lat": 51.2197, "lng": 22.696, "lvl": "Pełny etat", "cat": "sprzedawca", "etat": "full", "date": "Oferta aktualna"}, {"t": "Sprzedawca", "loc": "Poznań · ul. Sianowska 98", "city": "Poznań", "lat": 52.4064, "lng": 16.9252, "lvl": "Pełny etat", "cat": "sprzedawca", "etat": "full", "date": "Oferta aktualna"}, {"t": "Sprzedawca", "loc": "Warszawa · ul. Polna 48", "city": "Warszawa", "lat": 52.2297, "lng": 21.0122, "lvl": "Pełny etat", "cat": "sprzedawca", "etat": "full", "date": "Oferta aktualna"}, {"t": "Sprzedawca", "loc": "Sandomierz · ul. Rynek 16/17", "city": "Sandomierz", "lat": 50.682, "lng": 21.749, "lvl": "Pełny etat", "cat": "sprzedawca", "etat": "full", "date": "Oferta aktualna"}, {"t": "Dokładanie towaru", "loc": "Wrocław · ul. Partyzantów 35", "city": "Wrocław", "lat": 51.1079, "lng": 17.0385, "lvl": "Część etatu", "cat": "towar", "etat": "part", "date": "Oferta aktualna"}, {"t": "Sprzedawca", "loc": "Łódź · ul. Więckowskiego 10", "city": "Łódź", "lat": 51.7592, "lng": 19.456, "lvl": "Część etatu", "cat": "sprzedawca", "etat": "part", "date": "Oferta aktualna"}, {"t": "Sprzedawca", "loc": "Malbork · ul. Matejki 9-10", "city": "Malbork", "lat": 54.036, "lng": 19.026, "lvl": "Część etatu", "cat": "sprzedawca", "etat": "part", "date": "Oferta aktualna"}, {"t": "Sprzedawca", "loc": "Kraków · ul. Świętego Tomasza 29", "city": "Kraków", "lat": 50.0647, "lng": 19.945, "lvl": "Pełny etat", "cat": "sprzedawca", "etat": "full", "date": "Oferta aktualna"}, {"t": "Sprzedawca", "loc": "Będzin · ul. Barlickiego 26", "city": "Będzin", "lat": 50.326, "lng": 19.128, "lvl": "Pełny etat", "cat": "sprzedawca", "etat": "full", "date": "Oferta aktualna"}, {"t": "Sprzedawca", "loc": "Tarnowo Podgórne · ul. Poznańska 100B", "city": "Tarnowo Podgórne", "lat": 52.464, "lng": 16.733, "lvl": "Część etatu", "cat": "sprzedawca", "etat": "part", "date": "Oferta aktualna"}, {"t": "Sprzedawca", "loc": "Katowice · ul. Korczaka 41A", "city": "Katowice", "lat": 50.2649, "lng": 19.0238, "lvl": "Pełny etat", "cat": "sprzedawca", "etat": "full", "date": "Oferta aktualna"}, {"t": "Sprzedawca", "loc": "Kołobrzeg · ul. Mazowiecka 4B", "city": "Kołobrzeg", "lat": 54.1758, "lng": 15.583, "lvl": "Pełny etat", "cat": "sprzedawca", "etat": "full", "date": "Oferta aktualna"}, {"t": "Sprzedawca", "loc": "Gdynia · ul. Paderewskiego 46", "city": "Gdynia", "lat": 54.5189, "lng": 18.5305, "lvl": "Część etatu", "cat": "sprzedawca", "etat": "part", "date": "Oferta aktualna"}, {"t": "Sprzedawca", "loc": "Kielce · ul. Herby 1", "city": "Kielce", "lat": 50.8661, "lng": 20.6286, "lvl": "Pełny etat", "cat": "sprzedawca", "etat": "full", "date": "Oferta aktualna"}, {"t": "Sprzedawca", "loc": "Czempiń · ul. Rynek 5", "city": "Czempiń", "lat": 52.154, "lng": 16.766, "lvl": "Część etatu", "cat": "sprzedawca", "etat": "part", "date": "Oferta aktualna"}, {"t": "Dokładanie towaru", "loc": "Gryfino · ul. 11 Listopada 66/68", "city": "Gryfino", "lat": 53.254, "lng": 14.489, "lvl": "Pełny etat", "cat": "towar", "etat": "full", "date": "Oferta aktualna"}, {"t": "Sprzedawca", "loc": "Olsztyn · ul. Wilgi 2A", "city": "Olsztyn", "lat": 53.7784, "lng": 20.4801, "lvl": "Pełny etat", "cat": "sprzedawca", "etat": "full", "date": "Oferta aktualna"}, {"t": "Sprzedawca", "loc": "Gdańsk · ul. Starowiejska 65C", "city": "Gdańsk", "lat": 54.352, "lng": 18.6466, "lvl": "Część etatu", "cat": "sprzedawca", "etat": "part", "date": "Oferta aktualna"}, {"t": "Sprzedawca", "loc": "Gdańsk · ul. Letnicka 1G", "city": "Gdańsk", "lat": 54.352, "lng": 18.6466, "lvl": "Część etatu", "cat": "sprzedawca", "etat": "part", "date": "Oferta aktualna"}, {"t": "Sprzedawca", "loc": "Słupsk · ul. Wiejska 26", "city": "Słupsk", "lat": 54.4641, "lng": 17.0287, "lvl": "Pełny etat", "cat": "sprzedawca", "etat": "full", "date": "Oferta aktualna"}, {"t": "Sprzedawca", "loc": "Sopot · ul. Kościuszki 5", "city": "Sopot", "lat": 54.4418, "lng": 18.5601, "lvl": "Pełny etat", "cat": "sprzedawca", "etat": "full", "date": "Oferta aktualna"}, {"t": "Sprzedawca", "loc": "Warszawa · ul. Emilii Plater 47", "city": "Warszawa", "lat": 52.2297, "lng": 21.0122, "lvl": "Pełny etat", "cat": "sprzedawca", "etat": "full", "date": "Oferta aktualna"}, {"t": "Sprzedawca", "loc": "Sosnowiec · ul. Grota-Roweckiego 136", "city": "Sosnowiec", "lat": 50.2862, "lng": 19.104, "lvl": "Pełny etat", "cat": "sprzedawca", "etat": "full", "date": "Oferta aktualna"}, {"t": "Sprzedawca", "loc": "Zabrze · ul. Jordana 50", "city": "Zabrze", "lat": 50.3249, "lng": 18.7857, "lvl": "Część etatu", "cat": "sprzedawca", "etat": "part", "date": "Oferta aktualna"}, {"t": "Sprzedawca", "loc": "Zabrze · ul. Jordana 50", "city": "Zabrze", "lat": 50.3249, "lng": 18.7857, "lvl": "Pełny etat", "cat": "sprzedawca", "etat": "full", "date": "Oferta aktualna"}, {"t": "Dokładanie towaru", "loc": "Gdynia · ul. Legionów 69", "city": "Gdynia", "lat": 54.5189, "lng": 18.5305, "lvl": "Pełny etat", "cat": "towar", "etat": "full", "date": "Oferta aktualna"}, {"t": "Dokładanie towaru", "loc": "Gdynia · ul. Łużycka 8A", "city": "Gdynia", "lat": 54.5189, "lng": 18.5305, "lvl": "Pełny etat", "cat": "towar", "etat": "full", "date": "Oferta aktualna"}, {"t": "Sprzedawca", "loc": "Kalisz · ul. Lipowa 15/2", "city": "Kalisz", "lat": 51.7611, "lng": 18.091, "lvl": "Pełny etat", "cat": "sprzedawca", "etat": "full", "date": "Oferta aktualna"}, {"t": "Sprzedawca", "loc": "Wrocław · ul. Krzysztofa Komedy 9a", "city": "Wrocław", "lat": 51.1079, "lng": 17.0385, "lvl": "Pełny etat", "cat": "sprzedawca", "etat": "full", "date": "Oferta aktualna"}, {"t": "Sprzedawca", "loc": "Warszawa · ul. Kąty Grodziskie 19", "city": "Warszawa", "lat": 52.2297, "lng": 21.0122, "lvl": "Pełny etat", "cat": "sprzedawca", "etat": "full", "date": "Oferta aktualna"}, {"t": "Sprzedawca", "loc": "Kraków · ul. Armii Krajowej 97", "city": "Kraków", "lat": 50.0647, "lng": 19.945, "lvl": "Pełny etat", "cat": "sprzedawca", "etat": "full", "date": "Oferta aktualna"}, {"t": "Sprzedawca", "loc": "Warszawa · ul. Cybernetyki 17", "city": "Warszawa", "lat": 52.2297, "lng": 21.0122, "lvl": "Część etatu", "cat": "sprzedawca", "etat": "part", "date": "Oferta aktualna"}, {"t": "Sprzedawca", "loc": "Warszawa · ul. Boremlowska 48", "city": "Warszawa", "lat": 52.2297, "lng": 21.0122, "lvl": "Pełny etat", "cat": "sprzedawca", "etat": "full", "date": "Oferta aktualna"}, {"t": "Sprzedawca", "loc": "Warszawa · ul. Grochowska 56", "city": "Warszawa", "lat": 52.2297, "lng": 21.0122, "lvl": "Pełny etat", "cat": "sprzedawca", "etat": "full", "date": "Oferta aktualna"}, {"t": "Sprzedawca", "loc": "Warszawa · ul. Puławska 116", "city": "Warszawa", "lat": 52.2297, "lng": 21.0122, "lvl": "Część etatu", "cat": "sprzedawca", "etat": "part", "date": "Oferta aktualna"}, {"t": "Sprzedawca", "loc": "Warszawa · ul. Gocławska 9B", "city": "Warszawa", "lat": 52.2297, "lng": 21.0122, "lvl": "Pełny etat", "cat": "sprzedawca", "etat": "full", "date": "Oferta aktualna"}, {"t": "Sprzedawca", "loc": "Warszawa · ul. Łopuszańska 55", "city": "Warszawa", "lat": 52.2297, "lng": 21.0122, "lvl": "Część etatu", "cat": "sprzedawca", "etat": "part", "date": "Oferta aktualna"}, {"t": "Sprzedawca", "loc": "Gdańsk · ul. Śląska 39A", "city": "Gdańsk", "lat": 54.352, "lng": 18.6466, "lvl": "Część etatu", "cat": "sprzedawca", "etat": "part", "date": "Oferta aktualna"}, {"t": "Sprzedawca", "loc": "Kiełczów · ul. Wrocławska 35", "city": "Kiełczów", "lat": 51.129, "lng": 17.173, "lvl": "Część etatu", "cat": "sprzedawca", "etat": "part", "date": "Oferta aktualna"}, {"t": "Sprzedawca", "loc": "Gdańsk · ul. Kaprów 3", "city": "Gdańsk", "lat": 54.352, "lng": 18.6466, "lvl": "Część etatu", "cat": "sprzedawca", "etat": "part", "date": "Oferta aktualna"}, {"t": "Sprzedawca", "loc": "Warszawa · ul. Romera 4b", "city": "Warszawa", "lat": 52.2297, "lng": 21.0122, "lvl": "Pełny etat", "cat": "sprzedawca", "etat": "full", "date": "Oferta aktualna"}, {"t": "Sprzedawca", "loc": "Warszawa · ul. Meander 1", "city": "Warszawa", "lat": 52.2297, "lng": 21.0122, "lvl": "Pełny etat", "cat": "sprzedawca", "etat": "full", "date": "Oferta aktualna"}, {"t": "Sprzedawca", "loc": "Mrzeżyno · ul. Tysiąclecia 60", "city": "Mrzeżyno", "lat": 54.143, "lng": 15.288, "lvl": "Pełny etat", "cat": "sprzedawca", "etat": "full", "date": "Oferta aktualna"}, {"t": "Sprzedawca", "loc": "Warszawa · ul. Tunelowa 6", "city": "Warszawa", "lat": 52.2297, "lng": 21.0122, "lvl": "Część etatu", "cat": "sprzedawca", "etat": "part", "date": "Oferta aktualna"}, {"t": "Sprzedawca", "loc": "Radzymin · ul. Juliusza Słowackiego 40", "city": "Radzymin", "lat": 52.415, "lng": 21.193, "lvl": "Pełny etat", "cat": "sprzedawca", "etat": "full", "date": "Oferta aktualna"}, {"t": "Sprzedawca", "loc": "Warszawa · ul. Ogrodowa 31", "city": "Warszawa", "lat": 52.2297, "lng": 21.0122, "lvl": "Pełny etat", "cat": "sprzedawca", "etat": "full", "date": "Oferta aktualna"}, {"t": "Sprzedawca", "loc": "Warszawa · ul. Goławicka 1A", "city": "Warszawa", "lat": 52.2297, "lng": 21.0122, "lvl": "Pełny etat", "cat": "sprzedawca", "etat": "full", "date": "Oferta aktualna"}, {"t": "Sprzedawca", "loc": "Gdynia · ul. Legionów 92", "city": "Gdynia", "lat": 54.5189, "lng": 18.5305, "lvl": "Pełny etat", "cat": "sprzedawca", "etat": "full", "date": "Oferta aktualna"}, {"t": "Sprzedawca", "loc": "Wrocław · ul. Poprzeczna 49", "city": "Wrocław", "lat": 51.1079, "lng": 17.0385, "lvl": "Pełny etat", "cat": "sprzedawca", "etat": "full", "date": "Oferta aktualna"}, {"t": "Sprzedawca", "loc": "Pszczółki · ul. Srebrna 2", "city": "Pszczółki", "lat": 54.166, "lng": 18.694, "lvl": "Pełny etat", "cat": "sprzedawca", "etat": "full", "date": "Oferta aktualna"}, {"t": "Sprzedawca", "loc": "Warszawa · ul. Edwarda Habicha 21", "city": "Warszawa", "lat": 52.2297, "lng": 21.0122, "lvl": "Pełny etat", "cat": "sprzedawca", "etat": "full", "date": "Oferta aktualna"}, {"t": "Sprzedawca", "loc": "Warszawa · ul. Grójecka 72", "city": "Warszawa", "lat": 52.2297, "lng": 21.0122, "lvl": "Część etatu", "cat": "sprzedawca", "etat": "part", "date": "Oferta aktualna"}, {"t": "Sprzedawca", "loc": "Warszawa · ul. Generała Zajączka 25", "city": "Warszawa", "lat": 52.2297, "lng": 21.0122, "lvl": "Pełny etat", "cat": "sprzedawca", "etat": "full", "date": "Oferta aktualna"}, {"t": "Sprzedawca", "loc": "Brwinów · ul. Aladyna 2", "city": "Brwinów", "lat": 52.143, "lng": 20.718, "lvl": "Pełny etat", "cat": "sprzedawca", "etat": "full", "date": "Oferta aktualna"}, {"t": "Sprzedawca", "loc": "Ostrołęka · ul. Starosty Kosa 4", "city": "Ostrołęka", "lat": 53.086, "lng": 21.566, "lvl": "Pełny etat", "cat": "sprzedawca", "etat": "full", "date": "Oferta aktualna"}, {"t": "Sprzedawca", "loc": "Pińczów · ul. Nowowiejska 41", "city": "Pińczów", "lat": 50.52, "lng": 20.523, "lvl": "Część etatu", "cat": "sprzedawca", "etat": "part", "date": "Oferta aktualna"}, {"t": "Sprzedawca", "loc": "Rokietnica · ul. Diamentowa 2", "city": "Rokietnica", "lat": 52.536, "lng": 16.786, "lvl": "Pełny etat", "cat": "sprzedawca", "etat": "full", "date": "Oferta aktualna"}, {"t": "Sprzedawca", "loc": "Bolszewo · ul. Skoneczna 21", "city": "Bolszewo", "lat": 54.602, "lng": 18.186, "lvl": "Pełny etat", "cat": "sprzedawca", "etat": "full", "date": "Oferta aktualna"}, {"t": "Sprzedawca", "loc": "Wrocław · ul. Rodakowskiego 4", "city": "Wrocław", "lat": 51.1079, "lng": 17.0385, "lvl": "Pełny etat", "cat": "sprzedawca", "etat": "full", "date": "Oferta aktualna"}, {"t": "Dokładanie towaru", "loc": "Wrocław · ul. Rodakowskiego 4", "city": "Wrocław", "lat": 51.1079, "lng": 17.0385, "lvl": "Część etatu", "cat": "towar", "etat": "part", "date": "Oferta aktualna"}, {"t": "Sprzedawca", "loc": "Sosnowiec · ul. Kępa 1", "city": "Sosnowiec", "lat": 50.2862, "lng": 19.104, "lvl": "Pełny etat", "cat": "sprzedawca", "etat": "full", "date": "Oferta aktualna"}, {"t": "Sprzedawca", "loc": "Sosnowiec · ul. Dobrzańskiego 120", "city": "Sosnowiec", "lat": 50.2862, "lng": 19.104, "lvl": "Część etatu", "cat": "sprzedawca", "etat": "part", "date": "Oferta aktualna"}, {"t": "Sprzedawca", "loc": "Gdańsk · ul. Juliusza Słowackiego 2a", "city": "Gdańsk", "lat": 54.352, "lng": 18.6466, "lvl": "Pełny etat", "cat": "sprzedawca", "etat": "full", "date": "Oferta aktualna"}, {"t": "Sprzedawca", "loc": "Warszawa · ul. Jana Kazimierza 53a", "city": "Warszawa", "lat": 52.2297, "lng": 21.0122, "lvl": "Pełny etat", "cat": "sprzedawca", "etat": "full", "date": "Oferta aktualna"}, {"t": "Sprzedawca", "loc": "Piaseczno · ul. 1 Maja 17/1", "city": "Piaseczno", "lat": 52.081, "lng": 21.023, "lvl": "Pełny etat", "cat": "sprzedawca", "etat": "full", "date": "Oferta aktualna"}];
+var PINS=[["Warszawa", 52.2297, 21.0122, 36], ["Wrocław", 51.1079, 17.0385, 17], ["Kraków", 50.0647, 19.945, 8], ["Gdańsk", 54.352, 18.6466, 6], ["Gdynia", 54.5189, 18.5305, 6], ["Sosnowiec", 50.2862, 19.104, 4], ["Poznań", 52.4064, 16.9252, 3], ["Łódź", 51.7592, 19.456, 2], ["Częstochowa", 50.8118, 19.1203, 2], ["Zabrze", 50.3249, 18.7857, 2], ["Bielawa", 50.6905, 16.6203, 1], ["Dopiewiec", 52.376, 16.751, 1], ["Łaziska Górne", 50.153, 18.846, 1], ["Działdowo", 53.237, 20.179, 1], ["Pabianice", 51.6645, 19.3546, 1], ["Pruszcz Gdański", 54.262, 18.636, 1], ["Żukowo", 54.343, 18.364, 1], ["Dzierżążno", 54.35, 18.29, 1], ["Magdalenka", 52.076, 20.932, 1], ["Pruszków", 52.17, 20.812, 1], ["Ostrowiec Świętokrzyski", 50.929, 21.385, 1], ["Świdnik", 51.2197, 22.696, 1], ["Sandomierz", 50.682, 21.749, 1], ["Malbork", 54.036, 19.026, 1], ["Będzin", 50.326, 19.128, 1], ["Tarnowo Podgórne", 52.464, 16.733, 1], ["Katowice", 50.2649, 19.0238, 1], ["Kołobrzeg", 54.1758, 15.583, 1], ["Kielce", 50.8661, 20.6286, 1], ["Czempiń", 52.154, 16.766, 1], ["Gryfino", 53.254, 14.489, 1], ["Olsztyn", 53.7784, 20.4801, 1], ["Słupsk", 54.4641, 17.0287, 1], ["Sopot", 54.4418, 18.5601, 1], ["Kalisz", 51.7611, 18.091, 1], ["Kiełczów", 51.129, 17.173, 1], ["Mrzeżyno", 54.143, 15.288, 1], ["Radzymin", 52.415, 21.193, 1], ["Pszczółki", 54.166, 18.694, 1], ["Brwinów", 52.143, 20.718, 1], ["Ostrołęka", 53.086, 21.566, 1], ["Pińczów", 50.52, 20.523, 1], ["Rokietnica", 52.536, 16.786, 1], ["Bolszewo", 54.602, 18.186, 1], ["Piaseczno", 52.081, 21.023, 1]];
+var STATS={"offers": 121, "cities": 45, "pins": 45};
+
+var LOGO="data:image/png;base64,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";
+var LOGO_MARK="data:image/png;base64,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";
+
+document.getElementById('hd-logo').src=LOGO;
+document.getElementById('st-count').textContent=STATS.offers;
+document.getElementById('st-ci').textContent=STATS.cities;
+document.getElementById('st-ci2').textContent=STATS.cities;
+document.getElementById('sec-count').textContent=STATS.offers;
+document.getElementById('mh-n').textContent=STATS.offers;
+document.getElementById('mh-c').textContent=STATS.cities;
+
+function badges(o){
+  var f=o.etat==='full';
+  return '<span class="ob '+(f?'etat-f':'etat-p')+'">'+(f?'⏰ Pełny etat':'🕐 Część etatu')+'</span>';
+}
+function card(o){
+  var sal='<div class="salary none">Wynagrodzenie do uzgodnienia</div>';
+  return '<div class="offer"><div class="offer-top"><div class="offer-logo"><img src="'+LOGO_MARK+'" alt=""></div><div style="flex:1;min-width:0"><div class="offer-t">'+o.t+'</div><div class="offer-loc">📍 '+o.loc+'</div></div></div><div class="obadges">'+badges(o)+'</div><div class="offer-bottom">'+sal+'<div class="date">'+o.date+'</div><button class="apply">Aplikuj szybko</button></div></div>';
+}
+var LIMIT=5, curFilter='all', expanded=false;
+var offersEl=document.getElementById('offers');
+var moreBtn=document.getElementById('morebtn');
+function filtered(){
+  if(curFilter==='all') return OFFERS;
+  if(curFilter==='full'||curFilter==='part') return OFFERS.filter(function(o){return o.etat===curFilter;});
+  return OFFERS.filter(function(o){return o.cat===curFilter;});
+}
+function render(){
+  var list=filtered();
+  var shown=expanded?list:list.slice(0,LIMIT);
+  offersEl.innerHTML=shown.length?shown.map(card).join(''):'<div class="nores">Brak ofert w tej kategorii.</div>';
+  document.getElementById('sec-count').textContent=list.length;
+  if(list.length>LIMIT){
+    moreBtn.style.display='block';
+    moreBtn.innerHTML=expanded?'▴ Zwiń listę':('▾ Pokaż wszystkie ogłoszenia <span class="cnt">('+list.length+')</span>');
+  }else{moreBtn.style.display='none';}
+}
+moreBtn.addEventListener('click',function(){
+  expanded=!expanded; render();
+  if(!expanded){var a=document.querySelector('.sec[data-anchor="oferty"]'); if(a) a.scrollIntoView({behavior:'smooth',block:'start'});}
+});
+document.getElementById('filters').addEventListener('click',function(e){
+  var c=e.target.closest('.fchip'); if(!c) return;
+  document.querySelectorAll('.fchip').forEach(function(x){x.classList.remove('on');});
+  c.classList.add('on'); curFilter=c.dataset.f; expanded=false; render();
+});
+render();
+
+(function(){
+  function pin(){return L.divIcon({className:'',html:'<div class="bpin"><div class="head2"><span class="ic"><img src="'+LOGO_MARK+'"/></span></div></div>',iconSize:[36,42],iconAnchor:[18,42],popupAnchor:[0,-40]});}
+  try{
+    var m=L.map('z-map',{zoomControl:true,attributionControl:false,dragging:true,scrollWheelZoom:false,touchZoom:true,doubleClickZoom:true}).setView([52.0,19.2],6);
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',{maxZoom:19}).addTo(m);
+    var b=[];
+    PINS.forEach(function(p){
+      var mk=L.marker([p[1],p[2]],{icon:pin()}).addTo(m);
+      var word=p[3]===1?'oferta':(p[3]<5?'oferty':'ofert');
+      mk.bindPopup('<b>'+p[0]+'</b><br>'+p[3]+' '+word+' Żabki');
+      b.push([p[1],p[2]]);
+    });
+    if(b.length>1) m.fitBounds(b,{padding:[28,28],maxZoom:7});
+    setTimeout(function(){m.invalidateSize();},200);
+  }catch(e){
+    var el=document.getElementById('z-map');
+    if(el) el.innerHTML='<div style="display:flex;align-items:center;justify-content:center;height:100%;color:#6B7280;font-size:12px;text-align:center;padding:14px">Mapa wczyta się po otwarciu strony z dostępem do internetu.</div>';
+  }
+})();
+</script>
+</body>
+</html>

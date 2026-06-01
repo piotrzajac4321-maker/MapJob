@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>MapJob — podgląd profilu firmy: Tarczyński S.A. (do akceptacji)</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"/>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<style>
+  :root{
+    --bg:#0B0D10;--surf:#15181F;--surf2:#1C2029;--border:rgba(255,255,255,.09);--border2:rgba(255,255,255,.14);
+    --text:#F5F7FA;--text2:#A1A9B8;--text3:#6B7280;--green:#10B981;--gold:#D97706;
+    --brand:#E1251B;--brand2:#B11710;
+    --ff:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:var(--ff);background:#070809;color:var(--text);-webkit-font-smoothing:antialiased;line-height:1.4}
+  .topbar{display:flex;align-items:center;gap:12px;padding:14px 22px;background:rgba(7,8,9,.9);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:50}
+  .topbar .brand{display:flex;align-items:center;gap:8px;font-size:16px;font-weight:900;letter-spacing:-.3px}
+  .badge-akc{margin-left:auto;font-size:10px;font-weight:800;letter-spacing:.8px;text-transform:uppercase;color:var(--gold);background:rgba(217,119,6,.14);border:1px solid rgba(217,119,6,.35);padding:5px 11px;border-radius:999px}
+
+  .wrap{max-width:560px;margin:0 auto;padding:34px 22px 8px}
+  .wrap h1{font-size:25px;font-weight:900;letter-spacing:-.5px;line-height:1.25;margin-bottom:12px;text-align:center}
+  .wrap h1 .hl{color:#60A5FA}
+  .intro{font-size:14px;color:var(--text2);line-height:1.65;margin:0 auto 24px;text-align:center;max-width:500px}
+  .intro b{color:var(--text)}
+
+  .stage{display:flex;justify-content:center;padding:0 0 6px}
+  .desc{max-width:490px;margin:30px auto 0}
+  .okbox{background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.3);border-left:3px solid var(--green);border-radius:0 12px 12px 0;padding:14px 16px;margin-bottom:18px}
+  .okbox b{color:#34D399}
+  .okbox p{margin:0;font-size:13.5px;color:var(--text2)}
+  .feat{list-style:none}
+  .feat li{font-size:13.5px;color:var(--text2);padding-left:24px;position:relative;margin-bottom:10px;line-height:1.5}
+  .feat li::before{content:'✓';position:absolute;left:0;top:0;color:var(--green);font-weight:900}
+  .feat li b{color:var(--text)}
+  .note{font-size:12px;color:var(--text3);margin-top:18px;line-height:1.6}
+
+  .phone{width:392px;max-width:100%;background:var(--bg);border-radius:36px;border:1px solid var(--border2);box-shadow:0 0 0 9px #121419,0 40px 90px rgba(0,0,0,.6);overflow:hidden}
+  .notch{height:28px;display:flex;align-items:center;justify-content:center}
+  .notch::after{content:'';width:110px;height:6px;border-radius:99px;background:#26292f}
+  .pscroll{height:720px;overflow-y:auto;scrollbar-width:thin}
+  .pscroll::-webkit-scrollbar{width:5px}.pscroll::-webkit-scrollbar-thumb{background:#2a2e36;border-radius:4px}
+  @media(max-width:640px){
+    .pscroll{height:auto;overflow:visible}
+    .phone{box-shadow:0 0 0 6px #121419,0 20px 50px rgba(0,0,0,.5)}
+  }
+  .pbar{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:10px;padding:12px 14px;background:rgba(11,13,16,.92);backdrop-filter:blur(8px)}
+  .pbar .bk{width:32px;height:32px;border-radius:50%;background:var(--surf2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;color:var(--text2);font-size:15px}
+  .pbar .ti{font-size:13px;font-weight:700;color:var(--text2)}
+
+  .cover{height:104px;position:relative;background:linear-gradient(135deg,var(--brand),var(--brand2))}
+  .cover::after{content:'';position:absolute;inset:0;background:radial-gradient(120% 120% at 80% -20%,rgba(255,255,255,.18),transparent 55%)}
+  .logo{position:absolute;left:18px;bottom:-30px;z-index:2;width:76px;height:76px;border-radius:18px;background:#fff;display:flex;align-items:center;justify-content:center;border:4px solid var(--bg);overflow:hidden}
+  .logo img{width:92%;height:92%;object-fit:contain}
+  .head{padding:42px 18px 6px}
+  .name{font-size:21px;font-weight:900;letter-spacing:-.4px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  .verif{font-size:10px;font-weight:800;color:#fff;background:var(--green);border-radius:7px;padding:4px 9px;display:inline-flex;align-items:center;gap:4px}
+  .ind{font-size:13px;color:var(--text2);margin-top:5px;font-weight:600}
+  .loc{font-size:12px;color:var(--text3);margin-top:3px}
+  .descco{font-size:12.5px;color:var(--text2);line-height:1.6;margin-top:11px}
+  .trust{display:flex;flex-wrap:wrap;gap:7px;margin-top:13px}
+  .tchip{font-size:11px;font-weight:700;color:#34D399;background:rgba(16,185,129,.12);border:1px solid rgba(16,185,129,.3);border-radius:999px;padding:6px 11px}
+
+  .stats{display:flex;margin:16px 18px 4px;background:var(--surf);border:1px solid var(--border);border-radius:14px;overflow:hidden}
+  .stats>div{flex:1;text-align:center;padding:13px 6px;border-right:1px solid var(--border)}
+  .stats>div:last-child{border-right:none}
+  .stats .v{font-size:19px;font-weight:900}
+  .stats .v small{font-size:11px;font-weight:800;color:var(--text2)}
+  .stats .k{font-size:9.5px;color:var(--text3);text-transform:uppercase;letter-spacing:.4px;margin-top:2px}
+
+  .sec{font-size:11px;font-weight:800;letter-spacing:.5px;text-transform:uppercase;color:var(--text3);margin:18px 18px 9px}
+  .bens{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:0 18px}
+  .ben{display:flex;align-items:center;gap:9px;background:var(--surf);border:1px solid var(--border);border-radius:11px;padding:10px 11px}
+  .ben .i{width:28px;height:28px;border-radius:8px;background:rgba(16,185,129,.14);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
+  .ben .t{font-size:11.5px;font-weight:700;line-height:1.2}
+
+  .map{height:215px;margin:0 18px;border-radius:14px;overflow:hidden;border:1px solid var(--border)}
+  .map .leaflet-control-zoom a{background:var(--surf2);color:var(--text);border-color:var(--border)}
+  .maphint{font-size:11px;color:var(--text3);margin:7px 18px 0;text-align:center}
+
+  .filters{display:flex;gap:7px;overflow-x:auto;padding:2px 18px 4px;scrollbar-width:none}
+  .filters::-webkit-scrollbar{display:none}
+  .fchip{flex-shrink:0;font-size:12px;font-weight:700;color:var(--text2);background:var(--surf);border:1px solid var(--border);border-radius:999px;padding:7px 13px;cursor:pointer;white-space:nowrap;transition:.12s}
+  .fchip.on{color:#fff;background:var(--brand);border-color:var(--brand)}
+
+  .offers{padding:6px 18px 8px}
+  .offer{background:var(--surf);border:1px solid var(--border);border-radius:14px;padding:13px;margin-bottom:10px;transition:border-color .15s}
+  .offer:hover{border-color:var(--border2)}
+  .offer-top{display:flex;gap:11px;align-items:flex-start}
+  .offer-logo{width:38px;height:38px;border-radius:10px;background:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0;overflow:hidden}
+  .offer-logo img{width:90%;height:90%;object-fit:contain}
+  .offer-t{font-size:14px;font-weight:800;line-height:1.25}
+  .offer-loc{font-size:11.5px;color:var(--text3);margin-top:3px}
+  .obadges{display:flex;flex-wrap:wrap;gap:5px;margin-top:9px}
+  .ob{font-size:9.5px;font-weight:800;padding:3px 7px;border-radius:8px;letter-spacing:.2px}
+  .ob.sup{background:rgba(217,119,6,.16);color:#F59E0B;border:1px solid rgba(217,119,6,.35)}
+  .ob.oz{background:rgba(239,68,68,.13);color:#F87171;border:1px solid rgba(239,68,68,.28)}
+  .ob.ua{background:rgba(56,135,255,.14);color:#7FB0FF;border:1px solid rgba(56,135,255,.32)}
+  .ob.cv{background:rgba(16,185,129,.13);color:#34D399;border:1px solid rgba(16,185,129,.3)}
+  .ob.vac{background:var(--surf2);color:var(--text2);border:1px solid var(--border)}
+  .ob.lvl{background:var(--surf2);color:var(--text2);border:1px solid var(--border)}
+  .offer-bottom{display:flex;align-items:center;gap:10px;margin-top:11px;padding-top:11px;border-top:1px solid var(--border)}
+  .salary{font-size:12.5px;font-weight:900;color:#34D399;flex:1}
+  .salary.none{color:var(--text3);font-weight:700;font-size:11.5px}
+  .date{font-size:10.5px;color:var(--text3);flex-shrink:0}
+  .apply{background:var(--brand);color:#fff;border:none;border-radius:10px;padding:8px 14px;font-family:var(--ff);font-size:12px;font-weight:800;flex-shrink:0}
+  .nores{padding:18px;text-align:center;color:var(--text3);font-size:12.5px}
+  .morebtn{display:block;width:calc(100% - 36px);margin:2px 18px 8px;padding:13px;border-radius:13px;background:var(--surf);border:1px solid var(--border2);color:var(--text);font-family:var(--ff);font-size:13px;font-weight:800;cursor:pointer;transition:.12s}
+  .morebtn:hover{background:var(--surf2);border-color:rgba(225,37,27,.5)}
+  .morebtn .cnt{color:var(--brand)}
+
+  .followbar{display:flex;gap:8px;padding:6px 18px 18px}
+  .followbar .fb{flex:1;padding:12px;border-radius:13px;background:var(--brand);border:none;font-family:var(--ff);font-size:13.5px;font-weight:800;color:#fff}
+  .followbar .ca{padding:12px 15px;border-radius:13px;background:rgba(34,197,94,.14);border:1px solid rgba(34,197,94,.45);font-family:var(--ff);font-size:13px;font-weight:800;color:#22C55E;display:flex;align-items:center;gap:6px}
+
+  .footer{border-top:1px solid var(--border);padding:34px 22px 48px;text-align:center;margin-top:8px}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <div class="brand"><svg width="20" height="24" viewBox="0 0 18 22" fill="none"><path d="M9 0C4.03 0 0 4.03 0 9c0 6.75 9 13 9 13s9-6.25 9-13c0-4.97-4.03-9-9-9z" fill="#60A5FA"/><circle cx="9" cy="9" r="3.5" fill="#080D18"/></svg><span><span style="color:#F0F4FF">Map</span><span style="color:#60A5FA">Job</span><span style="color:#F0F4FF">.pl</span></span></div>
+  <span class="badge-akc">Podgląd · do akceptacji</span>
+</div>
+
+<div class="wrap">
+  <h1>Tak będzie wyglądać profil <span style="color:#E1251B">Tarczyński S.A.</span> na Map<span class="hl">Job</span>.pl</h1>
+  <p class="intro">Przygotowaliśmy kompletny <b>profil firmy</b> wraz ze wszystkimi aktualnymi ogłoszeniami. Kandydaci znajdą Wasze zakłady na mapie i zaaplikują jednym kliknięciem — bez logowania, bez CV tam, gdzie go nie wymagacie.</p>
+
+  <div class="stage">
+    <div class="phone">
+      <div class="notch"></div>
+      <div class="pscroll">
+        <div class="pbar"><div class="bk">←</div><div class="ti">Profil firmy</div></div>
+        <div class="cover"><div class="logo"><img src="data:image/webp;base64,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" alt="Tarczyński S.A."></div></div>
+        <div class="head">
+          <div class="name">Tarczyński S.A. <span class="verif">✓ Zweryfikowana</span></div>
+          <div class="ind">Producent wędlin, kabanosów i przekąsek białkowych</div>
+          <div class="loc">📍 Dolny Śląsk i okolice · 6 lokalizacji</div>
+          <div class="descco">Lider rynku kabanosów w Polsce (ponad 78% udziału). Rodzinna firma działająca od ponad 30 lat, z zakładami w Ujeźdźcu Małym, Sowach i Bielsku-Białej oraz eksportem do 30 krajów. „Jesz lepiej, żyjesz lepiej".</div>
+          <div class="trust">
+            <span class="tchip">30+ lat na rynku</span>
+            <span class="tchip">Eksport do 30 krajów</span>
+            <span class="tchip">Lider kabanosów (78%)</span>
+            <span class="tchip">Spółka giełdowa (GPW)</span>
+          </div>
+        </div>
+
+        <div class="stats">
+          <div><div class="v" id="st-count">49</div><div class="k">Aktywnych ofert</div></div>
+          <div><div class="v">6</div><div class="k">Lokalizacji</div></div>
+          <div><div class="v">6 100<small> zł</small></div><div class="k">Staże brutto</div></div>
+        </div>
+
+        <div class="sec">🎁 Co oferuje firma</div>
+        <div class="bens">
+          <div class="ben"><div class="i">🍽️</div><div class="t">Bezpłatna stołówka</div></div>
+          <div class="ben"><div class="i">🏋️</div><div class="t">Karta Multisport</div></div>
+          <div class="ben"><div class="i">🩺</div><div class="t">Opieka Luxmed</div></div>
+          <div class="ben"><div class="i">🛡️</div><div class="t">Ubezpieczenie grupowe</div></div>
+          <div class="ben"><div class="i">🤝</div><div class="t">Polecenia: 3000 zł netto</div></div>
+          <div class="ben"><div class="i">🚌</div><div class="t">Bezpłatny dojazd</div></div>
+        </div>
+
+        <div class="sec">🗺️ Lokalizacje na mapie</div>
+        <div class="map" id="t-map"></div>
+        <div class="maphint">✋ Przeciągnij i przybliż mapę · 🔴 6 zakładów Tarczyński</div>
+
+        <div class="sec" data-anchor="oferty" style="margin-bottom:11px">💼 Aktywne ogłoszenia (<span id="sec-count">49</span>)</div>
+        <div class="filters" id="filters">
+          <span class="fchip on" data-f="all">Wszystkie</span>
+          <span class="fchip" data-f="oz">⚡ Od zaraz</span>
+          <span class="fchip" data-f="stage">🎓 Staże</span>
+          <span class="fchip" data-f="prod">🏭 Produkcja</span>
+          <span class="fchip" data-f="tech">🔧 Inżynieria / UR</span>
+          <span class="fchip" data-f="office">📊 Biuro / specjaliści</span>
+          <span class="fchip" data-f="mgmt">👔 Management</span>
+        </div>
+        <div class="offers" id="offers"></div>
+        <button class="morebtn" id="morebtn" style="display:none"></button>
+
+        <div class="followbar">
+          <button class="fb">🔔 Obserwuj firmę</button>
+          <div class="ca">📞 Kontakt</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="desc">
+    <div class="okbox"><p><b>Nie musicie nic robić ani niczego wypełniać</b> — cały profil i wszystkie ogłoszenia przygotowaliśmy za Was na podstawie Waszej strony rekrutacyjnej. Wystarczy, że <b>zatwierdzicie</b>, a my opublikujemy. Publikacja jest <b style="color:#F87171">BEZPŁATNA</b>.</p></div>
+    <ul class="feat">
+      <li><b>Jeden profil firmy</b> ze wszystkimi ogłoszeniami — kandydat widzi całą ofertę Tarczyński w jednym miejscu</li>
+      <li><b>Piny na mapie</b> dla każdego zakładu (Wrocław, Ujeździec Mały, Trzebnica, Sowy, Rawicz, Bielsko-Biała)</li>
+      <li><b>Filtry</b> — od zaraz, staże, produkcja, inżynieria, biuro, management</li>
+      <li><b>Szybki kontakt</b> — „Aplikuj szybko" i „Zadzwoń" przy każdej ofercie</li>
+      <li><b>Wasze logo i marka</b> — podmienimy na prawdziwe logo, jeśli prześlecie nam plik</li>
+    </ul>
+    <div class="note">To tylko podgląd — nic nie zostało jeszcze opublikowane. Po Waszej akceptacji profil pojawi się na mapjob.pl. W każdej chwili go dla Was zmienimy lub usuniemy.</div>
+  </div>
+</div>
+
+<div class="footer">
+  <div style="font-size:19px;font-weight:900;letter-spacing:-.3px;margin-bottom:8px">Zatwierdzacie profil?</div>
+  <p style="font-size:14px;color:var(--text2);max-width:520px;margin:0 auto 20px;line-height:1.65">Jeśli wszystko się zgadza — <b style="color:var(--text)">odpowiedzcie na wiadomość, w której dostaliście ten link</b>. <b style="color:#34D399">Czekamy na potwierdzenie i działamy</b> — opublikujemy profil od ręki na mapie MapJob. Publikacja jest <b style="color:#F87171">BEZPŁATNA</b>, a profil w każdej chwili dla Was zmienimy lub usuniemy.</p>
+  <div style="font-size:11px;color:var(--text3)">To tylko podgląd — nic nie zostało jeszcze opublikowane na mapjob.pl.</div>
+
+  <div style="margin-top:28px;font-size:14px;color:var(--text);font-weight:700">Wejdźcie na naszą stronę i zobaczcie, jak to działa</div>
+  <div style="margin-top:12px">
+    <a href="https://mapjob.pl" target="_blank" rel="noopener" style="display:inline-block;font-size:14px;font-weight:800;color:#fff;background:var(--surf);border:1px solid var(--border2);padding:13px 24px;border-radius:13px;text-decoration:none">🌐 Wejdź na Map<span style="color:#60A5FA">Job</span>.pl →</a>
+  </div>
+
+  <div style="margin-top:22px;font-size:13px;color:var(--text2);font-weight:600">📱 Już niedługo dostępni także w aplikacji mobilnej</div>
+  <div style="margin-top:10px;display:inline-flex;flex-wrap:wrap;gap:9px;justify-content:center">
+    <span style="display:inline-flex;align-items:center;gap:7px;font-size:12px;font-weight:700;color:var(--text2);background:var(--surf);border:1px solid var(--border);border-radius:10px;padding:9px 15px">▶ Google Play <span style="color:var(--text3);font-weight:600">· wkrótce</span></span>
+    <span style="display:inline-flex;align-items:center;gap:7px;font-size:12px;font-weight:700;color:var(--text2);background:var(--surf);border:1px solid var(--border);border-radius:10px;padding:9px 15px">🍎 App Store <span style="color:var(--text3);font-weight:600">· wkrótce</span></span>
+  </div>
+
+  <div style="margin-top:24px;display:inline-flex;align-items:center;gap:7px;font-size:14px;font-weight:800;opacity:.85"><svg width="16" height="20" viewBox="0 0 18 22" fill="none"><path d="M9 0C4.03 0 0 4.03 0 9c0 6.75 9 13 9 13s9-6.25 9-13c0-4.97-4.03-9-9-9z" fill="#60A5FA"/><circle cx="9" cy="9" r="3.5" fill="#080D18"/></svg><span><span style="color:#F0F4FF">Map</span><span style="color:#60A5FA">Job</span><span style="color:#F0F4FF">.pl</span></span> <span style="font-weight:600;color:var(--text3);font-size:12px">· mapa pracy i fachowców</span></div>
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+const OFFERS=[
+ {t:"Technik Mediów Energetycznych (k/m/x)",loc:"Wrocław",lvl:"Specjalista (mid)",cat:"tech",oz:1,ua:1,date:"24 maja"},
+ {t:"Technik Utrzymania Ruchu (k/m/x)",loc:"Wrocław",lvl:"Junior / Mid",cat:"tech",oz:1,ua:1,vac:"2 wakaty",date:"23 maja"},
+ {t:"Technik Systemów Energetycznych",loc:"Wrocław",lvl:"Specjalista (mid)",cat:"tech",date:"20 maja"},
+ {t:"Trade Marketing Manager",loc:"2 lokalizacje",lvl:"Menedżer",cat:"mgmt",sup:1,oz:1,date:"24 maja"},
+ {t:"Płatny Staż w Dziale Mediów Energetycznych",loc:"3 lokalizacje",lvl:"Stażysta",cat:"stage",sal:"6 100 zł brutto / mies.",oz:1,vac:"2 wakaty",date:"23 maja"},
+ {t:"Elektryk w dziale Utrzymania Ruchu (k/m/x)",loc:"Trzebnica",lvl:"Pracownik fizyczny",cat:"tech",oz:1,ua:1,vac:"wielu kandydatów",date:"23 maja"},
+ {t:"Inżynier / Inżynierka Utrzymania Ruchu",loc:"Wrocław",lvl:"Mid / Senior",cat:"tech",date:"18 maja"},
+ {t:"Event manager / Event managerka",loc:"2 lokalizacje",lvl:"Menedżer",cat:"mgmt",sup:1,oz:1,date:"24 maja"},
+ {t:"Dyrektor Eksportu (k/m/x)",loc:"2 lokalizacje",lvl:"Dyrektor",cat:"mgmt",sup:1,date:"24 maja"},
+ {t:"Specjalista / Specjalistka ds. rekrutacji",loc:"Ujeździec Mały",lvl:"Specjalista (mid)",cat:"office",date:"24 maja"},
+ {t:"Inżynier / Inżynierka Procesu",loc:"2 lokalizacje",lvl:"Specjalista (mid)",cat:"tech",vac:"wielu kandydatów",date:"23 maja"},
+ {t:"Pracownik Grupy Degustacyjnej",loc:"4 lokalizacje",lvl:"Pracownik fizyczny",cat:"prod",oz:1,nodoswiad:1,vac:"wielu kandydatów",date:"23 maja"},
+ {t:"Specjalista / Specjalistka ds. eksportu",loc:"2 lokalizacje",lvl:"Specjalista (mid)",cat:"office",sup:1,oz:1,date:"23 maja"},
+ {t:"Operator procesowy / Operatorka procesowa",loc:"Wrocław",lvl:"Pracownik fizyczny",cat:"prod",oz:1,ua:1,date:"23 maja"},
+ {t:"Płatny staż w dziale Technologii Produkcji",loc:"3 lokalizacje",lvl:"Stażysta",cat:"stage",sal:"6 100 zł brutto / mies.",oz:1,date:"23 maja"},
+ {t:"Zastępca Managera Obszaru Produkcyjnego (k/m/x)",loc:"2 lokalizacje",lvl:"Menedżer",cat:"mgmt",date:"21 maja"},
+ {t:"Kontroler Finansowy (k/m/x)",loc:"2 lokalizacje",lvl:"Specjalista (mid)",cat:"office",date:"21 maja"},
+ {t:"Specjalista / Specjalistka ds. Planowania Produkcji",loc:"Wrocław",lvl:"Specjalista (mid)",cat:"office",oz:1,date:"21 maja"},
+ {t:"Kierownik / Kierowniczka zmiany produkcyjnej",loc:"Wrocław",lvl:"Kierownik / Menedżer",cat:"mgmt",oz:1,date:"21 maja"},
+ {t:"Płatny Staż w Dziale Zapewnienia Jakości",loc:"2 lokalizacje",lvl:"Stażysta / Asystent",cat:"stage",sal:"6 100 zł brutto / mies.",oz:1,vac:"2 wakaty",date:"20 maja"},
+ {t:"Płatny Staż w Dziale Zarządzania Inżynierią Produkcji",loc:"2 lokalizacje",lvl:"Stażysta",cat:"stage",sal:"6 100 zł brutto / mies.",oz:1,date:"20 maja"},
+ {t:"Kupiec Surowca Mięsnego",loc:"Ujeździec Mały",lvl:"Mid / Senior",cat:"office",date:"24 maja"},
+ {t:"Specjalista/Specjalistka ds. Systemów Sprzedaży-Analizy",loc:"Ujeździec Mały",lvl:"Specjalista (mid)",cat:"office",oz:1,date:"24 maja"},
+ {t:"Pracownik Produkcji / Operator Maszyn",loc:"Ujeździec Mały",lvl:"Pracownik fizyczny",cat:"prod",sup:1,cv:1,nodoswiad:1,date:"24 maja"},
+ {t:"Kucharz / Kucharka",loc:"Ujeździec Mały",lvl:"Pracownik fizyczny",cat:"prod",sup:1,date:"24 maja"},
+ {t:"Strażak – Dowódca Zmiany w Zakładowej Straży Pożarnej (k/m/x)",loc:"Ujeździec Mały",lvl:"Senior",cat:"prod",sup:1,date:"23 maja"},
+ {t:"Pracownik Działu Ekspedycji",loc:"Ujeździec Mały",lvl:"Pracownik fizyczny",cat:"prod",sup:1,date:"23 maja"},
+ {t:"Pakowacz / Pakowaczka",loc:"Ujeździec Mały",lvl:"Pracownik fizyczny",cat:"prod",sup:1,date:"23 maja"},
+ {t:"Kierownik / Kierowniczka Sklepów Firmowych",loc:"Ujeździec Mały",lvl:"Kierownik / Koordynator",cat:"mgmt",date:"22 maja"},
+ {t:"Mechanik Maszyn i Urządzeń (zakład w Sowach) (k/m/x)",loc:"Sowy (pow. rawicki)",lvl:"Specjalista (mid)",cat:"tech",sup:1,oz:1,date:"24 maja"},
+ {t:"Manager ds. Outsourcingu (k/m/x)",loc:"Ujeździec Mały",lvl:"Menedżer",cat:"mgmt",date:"21 maja"},
+ {t:"Specjalista/tka ds. Podatkowych",loc:"Ujeździec Mały",lvl:"Specjalista (mid)",cat:"office",oz:1,date:"21 maja"},
+ {t:"Referent / Referentka ds. Obsługi Klienta",loc:"Ujeździec Mały",lvl:"Junior",cat:"office",date:"21 maja"},
+ {t:"Specjalista / Specjalistka ds. administracji",loc:"Ujeździec Mały",lvl:"Specjalista (mid)",cat:"office",vac:"2 wakaty",date:"21 maja"},
+ {t:"Koordynator Ochrony (k/m/n)",loc:"Ujeździec Mały",lvl:"Kierownik / Koordynator",cat:"mgmt",date:"21 maja"},
+ {t:"Manager Obszaru Produkcyjnego (k/m/x)",loc:"Ujeździec Mały",lvl:"Menedżer",cat:"mgmt",vac:"wielu kandydatów",date:"21 maja"},
+ {t:"Referent / Referentka ds. Rozliczeń Produkcyjnych",loc:"Trzebnica",lvl:"Junior",cat:"office",date:"20 maja"},
+ {t:"Przedstawiciel Handlowy ds. Sieci (k/m)",loc:"3 lokalizacje",lvl:"Specjalista (mid)",cat:"office",date:"19 maja"},
+ {t:"Stażysta / Stażystka — automatyka i utrzymanie ruchu",loc:"Bielsko-Biała",lvl:"Stażysta",cat:"stage",sal:"6 100 zł brutto / mies.",oz:1,date:"21 maja"},
+ {t:"Inżynier / Inżynierka Utrzymania Ruchu (WD Foods, Sowy)",loc:"Rawicz",lvl:"Mid / Senior",cat:"tech",date:"20 maja"},
+ {t:"Płatny staż w Dziale Utrzymania Ruchu / Automatyki",loc:"3 lokalizacje",lvl:"Stażysta",cat:"stage",sal:"6 100 zł brutto / mies.",oz:1,nodoswiad:1,vac:"3 wakaty",date:"20 maja"},
+ {t:"Pracownik Ochrony (k/m/x)",loc:"Ujeździec Mały",lvl:"Pracownik fizyczny",cat:"prod",date:"14 maja"},
+ {t:"Specjalista / Specjalistka ds. Obsługi Klienta",loc:"Ujeździec Mały",lvl:"Junior",cat:"office",date:"14 maja"},
+ {t:"Specjalista ds. BHP",loc:"Ujeździec Mały",lvl:"Specjalista (mid)",cat:"office",date:"14 maja"},
+ {t:"Starszy Specjalista / Specjalistka ds. Kadr",loc:"Ujeździec Mały",lvl:"Specjalista (mid)",cat:"office",date:"12 maja"},
+ {t:"Brygadzista zmiany / Brygadzistka zmiany",loc:"Ujeździec Mały",lvl:"Kierownik / Koordynator",cat:"mgmt",vac:"wielu kandydatów",date:"12 maja"},
+ {t:"Zastępca Dyrektora Operacyjnego (k/m/x)",loc:"Ujeździec Mały",lvl:"Dyrektor",cat:"mgmt",date:"10 maja"},
+ {t:"Płatny 6-miesięczny staż w dziale Ochrony",loc:"Bielsko-Biała",lvl:"Pracownik fizyczny",cat:"stage",sal:"5 300 zł brutto / mies.",oz:1,date:"23 maja"},
+ {t:"Referent / Referentka ds. Rozliczeń",loc:"Rawicz",lvl:"Junior",cat:"office",oz:1,cv:1,vac:"wielu kandydatów",date:"23 maja"}
+];
+
+function badges(o){
+  let h='';
+  if(o.sup) h+='<span class="ob sup">★ Superoferta</span>';
+  if(o.oz) h+='<span class="ob oz">⚡ Od zaraz</span>';
+  h+='<span class="ob lvl">'+o.lvl+'</span>';
+  if(o.vac) h+='<span class="ob vac">'+o.vac+'</span>';
+  if(o.ua) h+='<span class="ob ua">🇺🇦 Україна</span>';
+  if(o.nodoswiad) h+='<span class="ob cv">Bez doświadczenia</span>';
+  if(o.cv) h+='<span class="ob cv">CV niewymagane</span>';
+  return h;
+}
+function card(o){
+  const sal=o.sal?'<div class="salary">'+o.sal+'</div>':'<div class="salary none">Wynagrodzenie do uzgodnienia</div>';
+  return '<div class="offer"><div class="offer-top"><div class="offer-logo"><img src="data:image/webp;base64,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" alt=""></div><div style="flex:1;min-width:0"><div class="offer-t">'+o.t+'</div><div class="offer-loc">📍 '+o.loc+'</div></div></div><div class="obadges">'+badges(o)+'</div><div class="offer-bottom">'+sal+'<div class="date">'+o.date+'</div><button class="apply">Aplikuj szybko</button></div></div>';
+}
+const LIMIT=4;
+let curFilter='all', expanded=false;
+const offersEl=document.getElementById('offers');
+const moreBtn=document.getElementById('morebtn');
+function render(){
+  const list=curFilter==='all'?OFFERS:OFFERS.filter(o=>curFilter==='oz'?o.oz:o.cat===curFilter);
+  const shown=expanded?list:list.slice(0,LIMIT);
+  offersEl.innerHTML=shown.length?shown.map(card).join(''):'<div class="nores">Brak ofert w tej kategorii.</div>';
+  document.getElementById('sec-count').textContent=list.length;
+  const rest=list.length-shown.length;
+  if(list.length>LIMIT){
+    moreBtn.style.display='block';
+    moreBtn.innerHTML=expanded?'▴ Zwiń listę':('▾ Pokaż wszystkie ogłoszenia <span class="cnt">('+list.length+')</span>');
+  }else{moreBtn.style.display='none';}
+}
+moreBtn.addEventListener('click',()=>{
+  expanded=!expanded; render();
+  if(!expanded) document.querySelector('.sec[data-anchor="oferty"]')?.scrollIntoView({behavior:'smooth',block:'start'});
+});
+document.getElementById('filters').addEventListener('click',e=>{
+  const c=e.target.closest('.fchip'); if(!c) return;
+  document.querySelectorAll('.fchip').forEach(x=>x.classList.remove('on'));
+  c.classList.add('on'); curFilter=c.dataset.f; expanded=false; render();
+});
+document.getElementById('st-count').textContent=OFFERS.length;
+render();
+
+(function(){
+  const PINS=[
+    ["Wrocław",51.1079,17.0385],
+    ["Ujeździec Mały",51.265,17.115],
+    ["Trzebnica",51.310,17.064],
+    ["Sowy",51.66,16.95],
+    ["Rawicz",51.609,16.858],
+    ["Bielsko-Biała",49.822,19.044]
+  ];
+  try{
+    const m=L.map('t-map',{zoomControl:true,attributionControl:false,dragging:true,scrollWheelZoom:false,touchZoom:true,doubleClickZoom:true});
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',{maxZoom:19}).addTo(m);
+    const mk=PINS.map(p=>{
+      const ic=L.divIcon({className:'',html:'<div style="width:32px;height:32px;border-radius:50% 50% 50% 0;background:#fff;transform:rotate(-45deg);box-shadow:0 4px 10px rgba(0,0,0,.5);border:3px solid #E1251B;display:flex;align-items:center;justify-content:center;overflow:hidden"><img src="data:image/webp;base64,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" style="transform:rotate(45deg);width:80%;height:80%;object-fit:contain" alt=""></div>',iconSize:[32,38],iconAnchor:[16,38]});
+      return L.marker([p[1],p[2]],{icon:ic}).addTo(m).bindTooltip(p[0],{direction:'top'});
+    });
+    m.fitBounds(L.featureGroup(mk).getBounds().pad(0.15));
+    setTimeout(()=>m.invalidateSize(),200);
+  }catch(e){const el=document.getElementById('t-map');if(el)el.innerHTML='<div style="display:flex;align-items:center;justify-content:center;height:100%;color:#6B7280;font-size:12px">📍 Dolny Śląsk · 6 lokalizacji</div>';}
+})();
+</script>
+</body>
+</html>

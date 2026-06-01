@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>MapJob — makieta profilu firmy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@500;700;800&display=swap">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{font-family:'Inter','Plus Jakarta Sans',-apple-system,sans-serif;background:#0a0a0a;color:#e6e6e6;-webkit-font-smoothing:antialiased}
+.shell{max-width:1320px;margin:0 auto;padding:32px 24px 80px}
+.shell-head{margin-bottom:20px}
+.shell-h1{font-size:22px;font-weight:800;letter-spacing:-.02em}
+.shell-sub{font-size:13px;color:#888;margin-top:4px;max-width:760px;line-height:1.5}
+.banner{margin:16px 0 22px;padding:12px 16px;background:rgba(45,127,249,.1);border:1px solid rgba(45,127,249,.3);border-radius:12px;font-size:12.5px;line-height:1.6;color:#cfe0ff}
+.banner b{color:#7fb0ff}
+.shell-mode-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:14px}
+.mode-toggle{appearance:none;background:#161616;border:1px solid #232323;color:#9aa0a8;font-family:inherit;font-size:12px;font-weight:600;padding:8px 14px;border-radius:9px;cursor:pointer;transition:all .15s}
+.mode-toggle:hover{color:#e6e6e6}
+.mode-toggle.on{background:#1f1f1f;color:#fff;border-color:#2f2f2f}
+.shell-grid{display:grid;grid-template-columns:1fr;gap:24px}
+@media(min-width:1040px){.shell-grid.compare{grid-template-columns:1fr 1fr}}
+.frame-wrap{background:#000;border-radius:24px;overflow:hidden;box-shadow:0 24px 60px rgba(0,0,0,.6),0 0 0 1px #1a1a1a}
+.frame-meta{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;background:#0e0e0e;border-bottom:1px solid #1a1a1a}
+.frame-name{font-size:13px;font-weight:700;letter-spacing:-.01em}
+.frame-pill{font-size:10px;font-weight:700;padding:3px 8px;border-radius:6px;background:#1a1a1a;color:#9aa0a8;letter-spacing:.05em;text-transform:uppercase}
+.frame-iframe{display:block;width:100%;height:2680px;border:none;background:#000}
+.shell-foot{margin-top:28px;padding:18px 22px;background:#101010;border:1px solid #1a1a1a;border-radius:14px;font-size:12.5px;line-height:1.7;color:#9aa0a8}
+.shell-foot b{color:#e6e6e6}
+</style>
+</head>
+<body>
+<div class="shell">
+  <div class="shell-head">
+    <div class="shell-h1">MapJob — makieta profilu firmy</div>
+    <div class="shell-sub">Dwa kierunki wizualne na tym samym profilu. Profil łączy <b style="color:#cfd3da">klientów</b> (zakładka Usługi / wycena) i <b style="color:#cfd3da">kandydatów</b> (zakładka Kariera / oferty). Przełączaj zakładki wewnątrz makiety. Dane są przykładowe.</div>
+    <div class="banner"><b>MAKIETA</b> — to nie jest jeszcze wdrożone w aplikacji. Wybierz kierunek (A ciemny / B jasny), a potem zaakceptuj do wdrożenia w index.html. Nazwy/loga/liczby są poglądowe.</div>
+    <div class="shell-mode-row">
+      <button class="mode-toggle on" data-view="compare" onclick="setMode('compare')">Oba obok siebie</button>
+      <button class="mode-toggle" data-view="A" onclick="setMode('A')">Tylko A — Korpo Sober (ciemny)</button>
+      <button class="mode-toggle" data-view="B" onclick="setMode('B')">Tylko B — Premium Light (jasny)</button>
+    </div>
+  </div>
+
+  <div class="shell-grid compare" id="grid">
+    <div class="frame-wrap" data-frame="A">
+      <div class="frame-meta">
+        <div class="frame-name">A · Korpo Sober</div>
+        <div class="frame-pill">Dark · spójny z apką</div>
+      </div>
+      <iframe class="frame-iframe" data-variant="A"></iframe>
+    </div>
+    <div class="frame-wrap" data-frame="B">
+      <div class="frame-meta">
+        <div class="frame-name">B · Premium Light</div>
+        <div class="frame-pill">Light · premium</div>
+      </div>
+      <iframe class="frame-iframe" data-variant="B"></iframe>
+    </div>
+  </div>
+
+  <div class="shell-foot">
+    <b>A · Korpo Sober</b> — głęboka czerń jak w apce (#060912), jasne karty, jeden niebieski akcent #2D7FF9, hairline borders, profesjonalny i gęsty informacyjnie. Domyślny — spójny z resztą aplikacji.<br>
+    <b>B · Premium Light</b> — ciepła biel, miękkie cienie, dużo oddechu, „strona firmy" w stylu premium SaaS. Ten sam układ, inny nastrój.
+  </div>
+</div>
+
+<!-- =================================================================
+     Szablon profilu firmy — wstawiany do iframe przez srcdoc
+     ================================================================= -->
+<template id="mockTpl">
+<!DOCTYPE html><html lang="pl"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@500;700;800&display=swap">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{font-family:'Inter','Plus Jakarta Sans',sans-serif;-webkit-font-smoothing:antialiased;background:var(--page);color:var(--text)}
+body{padding:18px 0 40px;overflow-x:hidden}
+.app{max-width:460px;margin:0 auto;background:var(--bg);border:1px solid var(--border);border-radius:20px;overflow:hidden;box-shadow:var(--app-shadow)}
+
+/* ---- cover + header ---- */
+.cover{height:128px;background:linear-gradient(120deg,var(--accent) 0%,var(--accent-2) 100%);position:relative}
+.cover::after{content:'';position:absolute;inset:0;background:
+  radial-gradient(circle at 18% 30%,rgba(255,255,255,.18) 0,transparent 22%),
+  radial-gradient(circle at 82% 60%,rgba(255,255,255,.12) 0,transparent 22%);opacity:.7}
+.cover-actions{position:absolute;top:12px;right:12px;display:flex;gap:8px;z-index:2}
+.cv-btn{width:34px;height:34px;border-radius:9px;background:rgba(8,12,20,.45);backdrop-filter:blur(6px);border:1px solid rgba(255,255,255,.18);display:flex;align-items:center;justify-content:center;color:#fff;cursor:pointer}
+.cv-btn svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+
+.head{padding:0 18px 16px;position:relative}
+.logo{width:84px;height:84px;border-radius:18px;background:var(--logo-bg);border:3px solid var(--bg);margin-top:-42px;position:relative;display:flex;align-items:center;justify-content:center;font-size:34px;font-weight:800;color:#fff;box-shadow:var(--logo-shadow)}
+.logo span{background:linear-gradient(135deg,var(--accent),var(--accent-2));-webkit-background-clip:text;background-clip:text;color:transparent}
+.name-row{display:flex;align-items:center;gap:8px;margin-top:12px;flex-wrap:wrap}
+.name{font-size:23px;font-weight:800;letter-spacing:-.02em;color:var(--text)}
+.verified{display:inline-flex;align-items:center;gap:5px;padding:4px 9px;border-radius:999px;background:var(--ok-soft);border:1px solid var(--ok-border);color:var(--ok);font-size:11.5px;font-weight:700}
+.verified svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round}
+.legal{font-size:12.5px;color:var(--text3);margin-top:4px}
+.meta{display:flex;flex-wrap:wrap;gap:7px;margin-top:12px}
+.mchip{display:inline-flex;align-items:center;gap:5px;padding:5px 10px;border-radius:8px;background:var(--surf);border:1px solid var(--border);font-size:11.5px;font-weight:600;color:var(--text2)}
+.mchip b{color:var(--text);font-weight:700}
+.stars{color:var(--gold)}
+
+/* accent strip */
+.accentbar{height:4px;margin:14px 0 0;border-radius:99px;background:linear-gradient(90deg,var(--accent),var(--accent-2))}
+
+/* CTA row */
+.cta-row{display:flex;gap:8px;margin-top:14px}
+.cta{flex:1;display:inline-flex;align-items:center;justify-content:center;gap:7px;padding:12px;border-radius:11px;font-family:inherit;font-size:13.5px;font-weight:700;cursor:pointer;border:1px solid transparent}
+.cta svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.cta-primary{flex:1.5;background:var(--accent);color:#fff}
+.cta-ghost{background:var(--surf);border-color:var(--border);color:var(--text)}
+
+/* tabs */
+.tabs{display:flex;gap:4px;margin:18px 14px 0;background:var(--surf);border:1px solid var(--border);border-radius:12px;padding:4px;position:sticky;top:0;z-index:5}
+.tab{flex:1;appearance:none;background:none;border:none;font-family:inherit;font-size:13px;font-weight:700;color:var(--text2);padding:9px;border-radius:9px;cursor:pointer;transition:all .15s}
+.tab.on{background:var(--bg);color:var(--text);box-shadow:0 1px 2px rgba(0,0,0,.15)}
+
+.pane{padding:18px 16px 4px;display:none}
+.pane.on{display:block}
+
+.sec{margin-bottom:24px}
+.sec-h{font-size:12px;font-weight:700;color:var(--text3);letter-spacing:.07em;text-transform:uppercase;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.sec-h::after{content:'';flex:1;height:1px;background:var(--border)}
+.about{font-size:13.5px;line-height:1.6;color:var(--text2)}
+
+/* trust grid */
+.trust{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.trust-i{display:flex;align-items:center;gap:10px;padding:12px;background:var(--surf);border:1px solid var(--border);border-radius:12px}
+.trust-ic{width:34px;height:34px;border-radius:9px;background:var(--ok-soft);color:var(--ok);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.trust-ic svg{width:17px;height:17px;stroke:currentColor;fill:none;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
+.trust-t{font-size:13px;font-weight:700;color:var(--text)}
+.trust-s{font-size:11px;color:var(--text3);margin-top:1px}
+
+/* packages */
+.pkgs{display:flex;flex-direction:column;gap:10px}
+.pkg{padding:16px;background:var(--surf);border:1px solid var(--border);border-radius:14px;position:relative}
+.pkg.feat{border-color:var(--accent);background:var(--accent-soft)}
+.pkg-rib{position:absolute;top:-9px;right:14px;font-size:10px;font-weight:800;letter-spacing:.04em;padding:4px 9px;border-radius:7px;background:var(--accent);color:#fff}
+.pkg-top{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+.pkg-name{font-size:15px;font-weight:800;color:var(--text)}
+.pkg-price{font-size:18px;font-weight:800;color:var(--text);white-space:nowrap}
+.pkg-price small{font-size:11px;font-weight:600;color:var(--text3)}
+.pkg-feats{margin-top:10px;display:flex;flex-direction:column;gap:6px}
+.pkg-f{display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--text2)}
+.pkg-f svg{width:13px;height:13px;color:var(--ok);stroke:currentColor;fill:none;stroke-width:2.6;flex-shrink:0}
+.pkg-btn{margin-top:12px;width:100%;padding:10px;border-radius:9px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-family:inherit;font-size:12.5px;font-weight:700;cursor:pointer}
+.pkg.feat .pkg-btn{background:var(--accent);color:#fff;border-color:var(--accent)}
+
+/* tags */
+.tags{display:flex;flex-wrap:wrap;gap:7px}
+.tag{padding:6px 11px;border-radius:8px;background:var(--surf);border:1px solid var(--border);font-size:12px;font-weight:600;color:var(--text2)}
+
+/* portfolio */
+.gal{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.gal-i{aspect-ratio:1;border-radius:10px;background:var(--surf);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:26px;color:var(--text3)}
+.ba{margin-top:8px;display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.ba-i{aspect-ratio:4/3;border-radius:10px;position:relative;display:flex;align-items:flex-end;padding:8px;background:linear-gradient(135deg,var(--surf2),var(--surf));border:1px solid var(--border)}
+.ba-lbl{font-size:10px;font-weight:800;letter-spacing:.05em;padding:3px 7px;border-radius:6px;background:var(--bg);color:var(--text);border:1px solid var(--border)}
+
+/* map / branches */
+.map{height:150px;border-radius:14px;border:1px solid var(--border);position:relative;overflow:hidden;background:
+  linear-gradient(var(--grid-line) 1px,transparent 1px),
+  linear-gradient(90deg,var(--grid-line) 1px,transparent 1px),var(--surf);background-size:34px 34px,34px 34px,auto}
+.map-pin{position:absolute;width:14px;height:14px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);background:var(--accent);border:2px solid var(--bg);box-shadow:0 2px 6px rgba(0,0,0,.4)}
+.map-pin.b{background:var(--accent-2)}
+.branch{display:flex;align-items:center;gap:10px;padding:11px 12px;background:var(--surf);border:1px solid var(--border);border-radius:11px;margin-top:8px}
+.branch-ic{width:30px;height:30px;border-radius:8px;background:var(--accent-soft);color:var(--accent);display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0}
+.branch-t{font-size:13px;font-weight:700;color:var(--text)}
+.branch-s{font-size:11.5px;color:var(--text3);margin-top:1px}
+
+/* hours */
+.hours{display:flex;flex-direction:column;gap:1px;background:var(--border);border:1px solid var(--border);border-radius:12px;overflow:hidden}
+.hrow{display:flex;justify-content:space-between;padding:10px 14px;background:var(--surf);font-size:12.5px}
+.hrow .d{color:var(--text2);font-weight:600}
+.hrow .h{color:var(--text);font-weight:700;font-variant-numeric:tabular-nums}
+.hrow.today{background:var(--accent-soft)}
+.hrow .now{color:var(--ok);font-weight:700}
+
+/* faq */
+.faq{border:1px solid var(--border);border-radius:12px;overflow:hidden;background:var(--surf)}
+.faq details{border-bottom:1px solid var(--border)}
+.faq details:last-child{border-bottom:none}
+.faq summary{padding:13px 14px;font-size:13px;font-weight:700;color:var(--text);cursor:pointer;list-style:none;display:flex;justify-content:space-between;align-items:center;gap:10px}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary::after{content:'+';color:var(--text3);font-weight:700;font-size:16px}
+.faq details[open] summary::after{content:'−'}
+.faq p{padding:0 14px 13px;font-size:12.5px;line-height:1.55;color:var(--text2)}
+
+/* benefits */
+.bens{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.ben{display:flex;align-items:center;gap:9px;padding:11px;background:var(--surf);border:1px solid var(--border);border-radius:11px;font-size:12.5px;font-weight:600;color:var(--text2)}
+.ben .e{font-size:18px}
+
+/* job offers */
+.jobs{display:flex;flex-direction:column;gap:9px}
+.job{padding:13px 14px;background:var(--surf);border:1px solid var(--border);border-radius:13px}
+.job-top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+.job-t{font-size:14px;font-weight:700;color:var(--text)}
+.job-pay{font-size:13.5px;font-weight:800;color:var(--ok);white-space:nowrap;font-variant-numeric:tabular-nums}
+.job-meta{display:flex;align-items:center;gap:8px;font-size:11.5px;color:var(--text3);margin-top:5px}
+.dot{width:3px;height:3px;border-radius:50%;background:var(--text3)}
+.job-bot{display:flex;justify-content:space-between;align-items:center;margin-top:11px}
+.jtag{font-size:10.5px;font-weight:700;padding:3px 9px;border-radius:6px;background:var(--accent-soft);color:var(--accent)}
+.jtag.b2b{background:var(--purple-soft);color:var(--purple)}
+.jtag.zlc{background:var(--ok-soft);color:var(--ok)}
+.apply{padding:7px 14px;border-radius:8px;background:var(--accent);color:#fff;border:none;font-family:inherit;font-size:12px;font-weight:700;cursor:pointer}
+
+/* team */
+.team{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.tm{padding:13px;background:var(--surf);border:1px solid var(--border);border-radius:13px;text-align:center}
+.tm-av{width:54px;height:54px;border-radius:50%;margin:0 auto 9px;background:linear-gradient(135deg,var(--accent),var(--accent-2));display:flex;align-items:center;justify-content:center;font-size:21px;font-weight:800;color:#fff}
+.tm-n{font-size:13px;font-weight:700;color:var(--text)}
+.tm-r{font-size:11px;color:var(--text3);margin-top:2px}
+
+/* big cta block */
+.cta-block{margin-top:6px;padding:18px;border-radius:16px;background:var(--accent-soft);border:1px solid var(--accent-border);text-align:center}
+.cta-block h4{font-size:16px;font-weight:800;color:var(--text);margin-bottom:5px}
+.cta-block p{font-size:12.5px;color:var(--text2);margin-bottom:13px;line-height:1.5}
+.cta-block button{width:100%;padding:13px;border-radius:11px;background:var(--accent);color:#fff;border:none;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer}
+
+/* reviews */
+.rev-sum{display:flex;align-items:center;gap:16px;padding:16px;background:var(--surf);border:1px solid var(--border);border-radius:14px;margin-bottom:14px}
+.rev-big{font-size:40px;font-weight:800;color:var(--text);line-height:1}
+.rev-sub{font-size:12px;color:var(--text3);margin-top:4px}
+.rev{padding:13px 14px;background:var(--surf);border:1px solid var(--border);border-radius:13px;margin-bottom:9px}
+.rev-h{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.rev-av{width:36px;height:36px;border-radius:50%;background:var(--surf2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:var(--text2)}
+.rev-n{font-size:13px;font-weight:700;color:var(--text)}
+.rev-d{font-size:11px;color:var(--text3)}
+.rev-txt{font-size:12.5px;line-height:1.55;color:var(--text2)}
+</style>
+<style id="variant-css">/* injected per variant */</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- ===== header ===== -->
+  <div class="cover">
+    <div class="cover-actions">
+      <div class="cv-btn" title="Udostępnij"><svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.6 13.5 6.8 4M15.4 6.5 8.6 10.5"/></svg></div>
+      <div class="cv-btn" title="Wizytówka QR"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3v3M21 14v.01M14 21h.01M17 21h4v-4"/></svg></div>
+    </div>
+  </div>
+  <div class="head">
+    <div class="logo"><span>PI</span></div>
+    <div class="name-row">
+      <div class="name">Przykład Instalacje</div>
+      <div class="verified"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg> Firma zweryfikowana</div>
+    </div>
+    <div class="legal">Przykład Instalacje Sp. z o.o. · Elektryka &amp; HVAC</div>
+    <div class="meta">
+      <span class="mchip">⚡ Elektryk · HVAC</span>
+      <span class="mchip">📍 <b>3 oddziały</b></span>
+      <span class="mchip">👥 Zespół <b>12 osób</b></span>
+      <span class="mchip stars">★ <b style="color:inherit">4,9</b> <span style="color:var(--text3);font-weight:600">(48)</span></span>
+      <span class="mchip">na MapJob od <b>2024</b></span>
+    </div>
+    <div class="accentbar"></div>
+    <div class="cta-row">
+      <button class="cta cta-primary"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M9 13h6M9 17h4"/></svg> Poproś o wycenę</button>
+      <button class="cta cta-ghost"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></button>
+      <button class="cta cta-ghost"><svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></svg></button>
+    </div>
+  </div>
+
+  <!-- ===== tabs ===== -->
+  <div class="tabs">
+    <button class="tab on" data-tab="uslugi">Usługi</button>
+    <button class="tab" data-tab="kariera">Kariera</button>
+    <button class="tab" data-tab="opinie">Opinie</button>
+  </div>
+
+  <!-- ===== TAB USŁUGI ===== -->
+  <div class="pane on" data-pane="uslugi">
+
+    <div class="sec">
+      <div class="sec-h">O firmie</div>
+      <p class="about">Kompleksowe instalacje elektryczne i klimatyzacja dla domów, biur i obiektów przemysłowych. Działamy od 2016 r., własny serwis 24/7, gwarancja na usługi. Obsługujemy Warszawę i okolice w promieniu 60 km.</p>
+    </div>
+
+    <div class="sec">
+      <div class="sec-h">Zaufanie</div>
+      <div class="trust">
+        <div class="trust-i"><div class="trust-ic"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></div><div><div class="trust-t">NIP</div><div class="trust-s">Biała lista VAT</div></div></div>
+        <div class="trust-i"><div class="trust-ic"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></div><div><div class="trust-t">REGON</div><div class="trust-s">Zweryfikowany</div></div></div>
+        <div class="trust-i"><div class="trust-ic"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></div><div><div class="trust-t">KRS</div><div class="trust-s">Spółka z o.o.</div></div></div>
+        <div class="trust-i"><div class="trust-ic"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></div><div><div class="trust-t">OC</div><div class="trust-s">Polisa do 1 mln zł</div></div></div>
+        <div class="trust-i"><div class="trust-ic"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></div><div><div class="trust-t">Uprawnienia SEP</div><div class="trust-s">3 certyfikaty</div></div></div>
+        <div class="trust-i"><div class="trust-ic"><svg viewBox="0 0 24 24"><path d="M12 2 4 5v6c0 5 3.4 8.5 8 10 4.6-1.5 8-5 8-10V5z"/></svg></div><div><div class="trust-t">Gwarancja</div><div class="trust-s">24 mies. na usługi</div></div></div>
+      </div>
+    </div>
+
+    <div class="sec">
+      <div class="sec-h">Pakiety / cennik</div>
+      <div class="pkgs">
+        <div class="pkg">
+          <div class="pkg-top"><div class="pkg-name">Przegląd</div><div class="pkg-price">od 199 zł</div></div>
+          <div class="pkg-feats">
+            <div class="pkg-f"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg> Pomiar instalacji</div>
+            <div class="pkg-f"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg> Protokół + zalecenia</div>
+          </div>
+          <button class="pkg-btn">Wybierz</button>
+        </div>
+        <div class="pkg feat">
+          <div class="pkg-rib">⭐ POLECANY</div>
+          <div class="pkg-top"><div class="pkg-name">Instalacja „pod klucz"</div><div class="pkg-price">wycena <small>indywidualna</small></div></div>
+          <div class="pkg-feats">
+            <div class="pkg-f"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg> Projekt + materiały</div>
+            <div class="pkg-f"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg> Montaż + pomiary</div>
+            <div class="pkg-f"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg> Gwarancja 24 mies.</div>
+          </div>
+          <button class="pkg-btn">Poproś o wycenę</button>
+        </div>
+        <div class="pkg">
+          <div class="pkg-top"><div class="pkg-name">Serwis 24/7</div><div class="pkg-price">od 149 zł<small>/h</small></div></div>
+          <div class="pkg-feats">
+            <div class="pkg-f"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg> Dojazd w 2 h</div>
+            <div class="pkg-f"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg> Awarie elektryczne</div>
+          </div>
+          <button class="pkg-btn">Wybierz</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="sec">
+      <div class="sec-h">Zakres usług</div>
+      <div class="tags">
+        <span class="tag">Instalacje elektryczne</span><span class="tag">Klimatyzacja</span><span class="tag">Pompy ciepła</span><span class="tag">Fotowoltaika</span><span class="tag">Pomiary SEP</span><span class="tag">Inteligentny dom</span><span class="tag">Serwis 24/7</span>
+      </div>
+    </div>
+
+    <div class="sec">
+      <div class="sec-h">Realizacje</div>
+      <div class="gal">
+        <div class="gal-i">🏢</div><div class="gal-i">⚡</div><div class="gal-i">❄️</div>
+        <div class="gal-i">🔌</div><div class="gal-i">🏠</div><div class="gal-i">☀️</div>
+      </div>
+      <div class="ba">
+        <div class="ba-i"><span class="ba-lbl">PRZED</span></div>
+        <div class="ba-i" style="background:linear-gradient(135deg,var(--accent-soft),var(--surf))"><span class="ba-lbl">PO</span></div>
+      </div>
+    </div>
+
+    <div class="sec">
+      <div class="sec-h">Obszar działania · oddziały</div>
+      <div class="map">
+        <div class="map-pin" style="left:46%;top:42%"></div>
+        <div class="map-pin b" style="left:30%;top:62%"></div>
+        <div class="map-pin b" style="left:64%;top:55%"></div>
+      </div>
+      <div class="branch"><div class="branch-ic">🏢</div><div><div class="branch-t">Warszawa — Mokotów</div><div class="branch-s">Siedziba · ul. Przykładowa 12</div></div></div>
+      <div class="branch"><div class="branch-ic">📍</div><div><div class="branch-t">Pruszków</div><div class="branch-s">Oddział serwisowy</div></div></div>
+      <div class="branch"><div class="branch-ic">📍</div><div><div class="branch-t">Piaseczno</div><div class="branch-s">Oddział serwisowy</div></div></div>
+    </div>
+
+    <div class="sec">
+      <div class="sec-h">Godziny otwarcia</div>
+      <div class="hours">
+        <div class="hrow today"><span class="d">Poniedziałek <span class="now">· otwarte teraz</span></span><span class="h">7:00 – 18:00</span></div>
+        <div class="hrow"><span class="d">Wtorek – Piątek</span><span class="h">7:00 – 18:00</span></div>
+        <div class="hrow"><span class="d">Sobota</span><span class="h">8:00 – 14:00</span></div>
+        <div class="hrow"><span class="d">Niedziela</span><span class="h">Serwis awaryjny 24/7</span></div>
+      </div>
+    </div>
+
+    <div class="sec">
+      <div class="sec-h">Najczęstsze pytania</div>
+      <div class="faq">
+        <details open><summary>Czy robicie darmową wycenę?</summary><p>Tak — wycena na obiekcie jest bezpłatna i niezobowiązująca. Umawiamy termin przez czat.</p></details>
+        <details><summary>Jak szybko reagujecie na awarie?</summary><p>Serwis 24/7, średni czas dojazdu w Warszawie to 2 godziny.</p></details>
+        <details><summary>Czy wystawiacie fakturę VAT?</summary><p>Tak, jesteśmy płatnikiem VAT (NIP na białej liście). Faktura do każdego zlecenia.</p></details>
+      </div>
+    </div>
+
+    <div class="cta-block">
+      <h4>Potrzebujesz instalacji lub serwisu?</h4>
+      <p>Opisz zlecenie — odpowiadamy zwykle w godzinę.</p>
+      <button>📩 Poproś o wycenę</button>
+    </div>
+  </div>
+
+  <!-- ===== TAB KARIERA ===== -->
+  <div class="pane" data-pane="kariera">
+
+    <div class="sec">
+      <div class="sec-h">Dlaczego my</div>
+      <p class="about">Rosnący zespół z 8-letnim stażem. Stawiamy na rozwój, własne narzędzia i auta służbowe. Szukamy ludzi, którzy lubią konkretną robotę i czystą jakość.</p>
+    </div>
+
+    <div class="sec">
+      <div class="sec-h">Co oferujemy</div>
+      <div class="bens">
+        <div class="ben"><span class="e">💰</span> Stawki powyżej rynku</div>
+        <div class="ben"><span class="e">🚐</span> Auto + narzędzia</div>
+        <div class="ben"><span class="e">📈</span> Szkolenia i SEP</div>
+        <div class="ben"><span class="e">🏥</span> Prywatna opieka</div>
+        <div class="ben"><span class="e">📅</span> Stały grafik</div>
+        <div class="ben"><span class="e">🤝</span> Umowa B2B lub etat</div>
+      </div>
+    </div>
+
+    <div class="sec">
+      <div class="sec-h">Aktualne oferty</div>
+      <div class="jobs">
+        <div class="job">
+          <div class="job-top"><div class="job-t">Elektryk instalacyjny</div><div class="job-pay">7 000–9 500 zł</div></div>
+          <div class="job-meta">📍 Warszawa<span class="dot"></span>pełny etat<span class="dot"></span>2 wolne miejsca</div>
+          <div class="job-bot"><span class="jtag">Etat</span><button class="apply">Aplikuj</button></div>
+        </div>
+        <div class="job">
+          <div class="job-top"><div class="job-t">Monter klimatyzacji</div><div class="job-pay">do 12 000 zł</div></div>
+          <div class="job-meta">📍 Warszawa + okolice<span class="dot"></span>B2B</div>
+          <div class="job-bot"><span class="jtag b2b">B2B</span><button class="apply">Aplikuj</button></div>
+        </div>
+        <div class="job">
+          <div class="job-top"><div class="job-t">Pomocnik / praktykant</div><div class="job-pay">30–38 zł/h</div></div>
+          <div class="job-meta">📍 Pruszków<span class="dot"></span>zlecenie</div>
+          <div class="job-bot"><span class="jtag zlc">Zlecenie</span><button class="apply">Aplikuj</button></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sec">
+      <div class="sec-h">Zespół</div>
+      <div class="team">
+        <div class="tm"><div class="tm-av">MK</div><div class="tm-n">Marek K.</div><div class="tm-r">Właściciel · kierownik</div></div>
+        <div class="tm"><div class="tm-av">AW</div><div class="tm-n">Anna W.</div><div class="tm-r">Biuro · wyceny</div></div>
+        <div class="tm"><div class="tm-av">PZ</div><div class="tm-n">Paweł Z.</div><div class="tm-r">Brygadzista</div></div>
+        <div class="tm"><div class="tm-av">TL</div><div class="tm-n">Tomek L.</div><div class="tm-r">Serwis HVAC</div></div>
+      </div>
+    </div>
+
+    <div class="cta-block">
+      <h4>Chcesz do nas dołączyć?</h4>
+      <p>Wyślij CV w 30 sekund — stwórz je od ręki w AI Kreatorze CV MapJob.</p>
+      <button>📄 Wyślij CV (AI Kreator)</button>
+    </div>
+  </div>
+
+  <!-- ===== TAB OPINIE ===== -->
+  <div class="pane" data-pane="opinie">
+    <div class="rev-sum">
+      <div><div class="rev-big">4,9</div><div class="stars" style="font-size:14px">★★★★★</div></div>
+      <div><div class="rev-n" style="font-size:14px">48 opinii</div><div class="rev-sub">Zweryfikowane zlecenia z MapJob</div></div>
+    </div>
+    <div class="rev">
+      <div class="rev-h"><div class="rev-av">JK</div><div><div class="rev-n">Jan K.</div><div class="rev-d">★★★★★ · 2 tyg. temu</div></div></div>
+      <div class="rev-txt">Pełna instalacja w nowym domu. Terminowo, czysto, faktura bez problemu. Polecam.</div>
+    </div>
+    <div class="rev">
+      <div class="rev-h"><div class="rev-av">MN</div><div><div class="rev-n">Magda N.</div><div class="rev-d">★★★★★ · 1 mies. temu</div></div></div>
+      <div class="rev-txt">Awaria w sobotę — przyjechali w 2 h. Konkret, dobra cena, miła ekipa.</div>
+    </div>
+    <div class="rev">
+      <div class="rev-h"><div class="rev-av">RW</div><div><div class="rev-n">Robert W.</div><div class="rev-d">★★★★☆ · 2 mies. temu</div></div></div>
+      <div class="rev-txt">Montaż klimatyzacji w biurze. Solidnie, drobne opóźnienie z dostawą, ale dograli.</div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+(function(){
+  var tabs=document.querySelectorAll('.tab');
+  var panes=document.querySelectorAll('.pane');
+  tabs.forEach(function(t){
+    t.addEventListener('click',function(){
+      tabs.forEach(function(x){x.classList.remove('on')});
+      t.classList.add('on');
+      var k=t.getAttribute('data-tab');
+      panes.forEach(function(p){p.classList.toggle('on',p.getAttribute('data-pane')===k)});
+    });
+  });
+})();
+</script>
+</body></html>
+</template>
+
+<script>
+const VARIANTS = {
+  /* ===== A · Korpo Sober (dark, spójny z apką) ===== */
+  A: `
+:root{
+  --page:#060912; --bg:#0B1018; --surf:#11161F; --surf2:#161C27;
+  --border:rgba(255,255,255,.08); --app-shadow:0 20px 50px rgba(0,0,0,.5);
+  --text:#EBEDF1; --text2:#9AA1AD; --text3:#626A78;
+  --accent:#2D7FF9; --accent-2:#2BE2C2; --accent-soft:rgba(45,127,249,.12); --accent-border:rgba(45,127,249,.32);
+  --ok:#3DD68C; --ok-soft:rgba(61,214,140,.13); --ok-border:rgba(61,214,140,.3);
+  --gold:#F5C451; --purple:#9B8CFF; --purple-soft:rgba(155,140,255,.14);
+  --grid-line:rgba(255,255,255,.05); --logo-bg:#0E1420; --logo-shadow:0 8px 24px rgba(0,0,0,.5);
+}
+`,
+  /* ===== B · Premium Light ===== */
+  B: `
+:root{
+  --page:#EEF1F6; --bg:#FFFFFF; --surf:#F7F8FB; --surf2:#EEF1F6;
+  --border:rgba(15,23,42,.10); --app-shadow:0 20px 50px rgba(15,23,42,.10);
+  --text:#0F172A; --text2:#516074; --text3:#8A95A6;
+  --accent:#2D7FF9; --accent-2:#15BfA6; --accent-soft:rgba(45,127,249,.08); --accent-border:rgba(45,127,249,.22);
+  --ok:#0F9D6B; --ok-soft:rgba(15,157,107,.10); --ok-border:rgba(15,157,107,.24);
+  --gold:#E0A21A; --purple:#6D5BD6; --purple-soft:rgba(109,91,214,.10);
+  --grid-line:rgba(15,23,42,.045); --logo-bg:#0F172A; --logo-shadow:0 8px 24px rgba(15,23,42,.18);
+}
+`
+};
+
+const tpl = document.getElementById('mockTpl').innerHTML;
+function mount(){
+  document.querySelectorAll('iframe[data-variant]').forEach(f=>{
+    const v = f.dataset.variant;
+    f.srcdoc = tpl.replace('/* injected per variant */', VARIANTS[v] || '');
+  });
+}
+mount();
+
+function setMode(m){
+  const grid = document.getElementById('grid');
+  document.querySelectorAll('.mode-toggle').forEach(b=>b.classList.toggle('on', b.dataset.view===m));
+  if(m==='compare'){
+    grid.classList.add('compare');
+    document.querySelectorAll('.frame-wrap').forEach(w=>w.style.display='block');
+  } else {
+    grid.classList.remove('compare');
+    document.querySelectorAll('.frame-wrap').forEach(w=>{
+      w.style.display = (w.dataset.frame===m) ? 'block' : 'none';
+    });
+  }
+}
+window.setMode = setMode;
+</script>
+</body></html>

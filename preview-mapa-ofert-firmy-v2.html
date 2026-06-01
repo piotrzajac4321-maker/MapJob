@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>MapJob — Mapa ofert firmy v2 (makieta do akceptacji)</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<style>
+  :root{
+    --bg:#0B0D10; --surf:#15181F; --surf2:#1C2029; --surf3:#23272F;
+    --border:rgba(255,255,255,.09); --border2:rgba(255,255,255,.14); --border3:rgba(255,255,255,.12);
+    --text:#F5F7FA; --text2:#A1A9B8; --text3:#6B7280;
+    --blue:#2D7FF9; --blue2:#60A5FA; --bluedim:rgba(45,127,249,.14);
+    --green:#10B981; --greendim:rgba(16,185,129,.14);
+    --gold:#D97706; --red:#EF4444;
+    --brand:#E30613;
+    --ff:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:var(--ff);background:#070809;color:var(--text);-webkit-font-smoothing:antialiased;line-height:1.4}
+
+  .topbar{position:sticky;top:0;z-index:50;display:flex;align-items:center;gap:14px;padding:14px 22px;background:rgba(7,8,9,.85);backdrop-filter:blur(12px);border-bottom:1px solid var(--border)}
+  .topbar h1{font-size:15px;font-weight:800;letter-spacing:-.2px}
+  .topbar .sub{font-size:12px;color:var(--text3);font-weight:500}
+  .badge-makieta{margin-left:auto;font-size:10px;font-weight:800;letter-spacing:.8px;text-transform:uppercase;color:var(--gold);background:rgba(217,119,6,.14);border:1px solid rgba(217,119,6,.35);padding:5px 11px;border-radius:999px}
+
+  .layout{display:grid;grid-template-columns:1fr 400px;min-height:calc(100vh - 53px)}
+  @media(max-width:1100px){.layout{grid-template-columns:1fr}}
+  .stage{padding:28px 22px 70px;display:flex;flex-direction:column;align-items:center}
+
+  .hint{font-size:12px;color:var(--text3);margin-bottom:16px;text-align:center;max-width:420px}
+  .hint b{color:var(--blue2)}
+
+  .phone{position:relative;width:396px;max-width:100%;background:var(--bg);border-radius:38px;border:1px solid var(--border2);box-shadow:0 0 0 9px #121419,0 40px 90px rgba(0,0,0,.6);overflow:hidden}
+  .notch{height:30px;display:flex;align-items:center;justify-content:center;background:var(--bg)}
+  .notch::after{content:'';width:120px;height:7px;border-radius:999px;background:#26292f}
+  .pscroll{height:780px;overflow-y:auto;overflow-x:hidden;scrollbar-width:thin;position:relative}
+  .pscroll::-webkit-scrollbar{width:5px}.pscroll::-webkit-scrollbar-thumb{background:#2a2e36;border-radius:4px}
+
+  .pbar{position:sticky;top:0;z-index:10;display:flex;align-items:center;gap:10px;padding:12px 14px;background:rgba(11,13,16,.92);backdrop-filter:blur(8px)}
+  .pbar .bk{width:34px;height:34px;border-radius:50%;background:var(--surf);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;color:var(--text2);font-size:17px}
+  .pbar .ti{font-size:13px;font-weight:700;color:var(--text2)}
+
+  .cover{height:120px;position:relative;background:#000 center/cover no-repeat}
+  .cover::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(11,13,16,0) 35%,rgba(11,13,16,.7))}
+  .logo{position:absolute;left:18px;bottom:-30px;z-index:2;width:72px;height:72px;border-radius:18px;background:#fff;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:30px;color:var(--brand);border:4px solid var(--bg);overflow:hidden}
+  .head{padding:40px 18px 4px}
+  .name{font-size:20px;font-weight:900;letter-spacing:-.4px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  .verif{font-size:10px;font-weight:800;color:#fff;background:var(--green);border-radius:7px;padding:4px 8px;display:inline-flex;gap:4px;align-items:center}
+  .ind{font-size:12.5px;color:var(--text3);margin-top:4px}
+
+  .sec-h{font-size:11px;font-weight:800;letter-spacing:.5px;text-transform:uppercase;color:var(--text3);margin:20px 18px 10px;display:flex;align-items:center;gap:7px}
+  .sec-h .nb{margin-left:auto;font-size:8.5px;font-weight:900;color:var(--blue2);background:var(--bluedim);border:1px solid rgba(45,127,249,.3);padding:2px 7px;border-radius:6px;letter-spacing:.5px}
+
+  /* mini-map card (v1 — istnieje dziś) */
+  .mapcard{margin:0 18px;border-radius:14px;overflow:hidden;border:1px solid #2563EB;background:#1D2B49}
+  .mapcard .mh{padding:11px 12px;display:flex;align-items:center;gap:8px;border-bottom:1px solid #2563EB;box-shadow:0 2px 8px rgba(0,0,0,.35)}
+  .mapcard .mh .t{font-size:11.5px;font-weight:800;color:#fff}
+  .mapcard .mh .cnt{font-size:10px;padding:3px 9px;background:#FFD700;border-radius:10px;color:#000;font-weight:900}
+  .mapcard .mh .exp{margin-left:auto;padding:6px 12px;border-radius:10px;background:#2563EB;border:1px solid #60A5FA;color:#fff;font-family:var(--ff);font-size:10.5px;font-weight:800;cursor:pointer;display:inline-flex;align-items:center;gap:5px}
+  #mini-map{height:200px;background:#111820;cursor:pointer}
+
+  .offer{background:var(--surf);border:1px solid var(--border);border-radius:14px;padding:14px;margin:0 18px 10px}
+  .offer-t{font-size:14px;font-weight:800;display:flex;align-items:center;gap:7px}
+  .offer-loc{font-size:11.5px;color:var(--text3);margin-top:3px}
+  .offer-bottom{display:flex;align-items:center;gap:10px;margin-top:11px;padding-top:11px;border-top:1px solid var(--border)}
+  .salary{flex:1;font-size:14px;font-weight:900;color:var(--green)}
+  .urg{font-size:9px;font-weight:900;padding:2px 6px;border-radius:10px;background:rgba(239,68,68,.15);color:#F87171;border:1px solid rgba(239,68,68,.3)}
+  .see{font-size:12px;font-weight:800;color:var(--brand)}
+
+  /* ===== BIG MAP OVERLAY (v2) ===== */
+  .fullmap{position:absolute;inset:0;z-index:40;display:none;flex-direction:column;background:var(--bg);animation:mfade .22s ease}
+  .fullmap.on{display:flex}
+  @keyframes mfade{from{opacity:0}to{opacity:1}}
+  .fm-head{display:flex;align-items:center;gap:10px;padding:13px 14px;background:#1D2B49;border-bottom:2px solid #2563EB;flex-shrink:0;position:relative;z-index:3;box-shadow:0 4px 16px rgba(0,0,0,.55)}
+  .fm-head .av{width:38px;height:38px;border-radius:11px;background:#fff;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:17px;color:var(--brand);flex-shrink:0;overflow:hidden}
+  .fm-head .ti{font-size:13.5px;font-weight:900;color:#fff;letter-spacing:-.2px}
+  .fm-head .sb{font-size:11px;color:rgba(255,255,255,.82);margin-top:2px}
+  .fm-head .cl{width:38px;height:38px;border-radius:50%;background:#2563EB;border:1.5px solid #60A5FA;color:#fff;font-size:17px;cursor:pointer;flex-shrink:0}
+
+  .fm-filters{position:absolute;top:10px;left:10px;right:10px;z-index:600;display:flex;gap:7px;overflow-x:auto;scrollbar-width:none;pointer-events:auto}
+  .fm-filters::-webkit-scrollbar{display:none}
+  .chip{flex-shrink:0;font-size:11px;font-weight:800;padding:7px 13px;border-radius:999px;background:rgba(21,24,31,.92);backdrop-filter:blur(6px);border:1px solid var(--border2);color:var(--text2);cursor:pointer;white-space:nowrap}
+  .chip.on{background:var(--brand);border-color:var(--brand);color:#fff}
+  .chip .b{display:inline-block;margin-left:5px;opacity:.7;font-weight:700}
+
+  .fm-body{flex:1;position:relative;background:#111820;overflow:hidden}
+  #big-map{position:absolute;inset:0}
+
+  /* offer card carousel docked at bottom of the map */
+  .fm-cards{position:absolute;left:0;right:0;bottom:0;z-index:600;display:flex;gap:12px;overflow-x:auto;padding:12px 14px 16px;scroll-snap-type:x mandatory;scrollbar-width:none;background:linear-gradient(180deg,transparent,rgba(11,13,16,.55) 55%)}
+  .fm-cards::-webkit-scrollbar{display:none}
+  .ocard{scroll-snap-align:center;flex-shrink:0;width:300px;background:var(--surf2);border:1px solid var(--border2);border-radius:16px;padding:14px;box-shadow:0 10px 30px rgba(0,0,0,.5);cursor:pointer;transition:border-color .15s,transform .15s}
+  .ocard.active{border-color:var(--brand);transform:translateY(-3px);box-shadow:0 14px 34px rgba(227,6,19,.28)}
+  .ocard .ot{font-size:14.5px;font-weight:900;line-height:1.25;display:flex;align-items:flex-start;gap:7px}
+  .ocard .ol{font-size:11.5px;color:var(--text3);margin-top:4px;display:flex;align-items:center;gap:5px}
+  .ocard .facts{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+  .ocard .fact{font-size:10.5px;font-weight:700;color:var(--text2);background:var(--surf);border:1px solid var(--border);border-radius:999px;padding:4px 9px}
+  .ocard .obot{display:flex;align-items:center;gap:10px;margin-top:12px;padding-top:11px;border-top:1px solid var(--border)}
+  .ocard .sal{flex:1;font-size:15px;font-weight:900;color:var(--green)}
+  .ocard .sal.neg{font-size:13px;color:var(--text2)}
+  .ocard .go{font-size:11.5px;font-weight:900;color:#fff;background:var(--brand);border:none;border-radius:11px;padding:9px 14px;font-family:var(--ff);cursor:pointer}
+  .ocard .dist{font-size:10px;font-weight:800;color:var(--blue2);background:var(--bluedim);border:1px solid rgba(45,127,249,.3);border-radius:8px;padding:3px 7px;margin-left:auto}
+
+  .leaflet-container{background:#0a0c10}
+  .pin{width:42px;height:42px;border-radius:50% 50% 50% 0;background:#fff;transform:rotate(-45deg);box-shadow:0 5px 14px rgba(0,0,0,.5);border:3px solid var(--brand);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:transform .15s}
+  .pin>span{transform:rotate(45deg);font-weight:900;font-size:13px;color:var(--brand)}
+  .pin.urgent{border-color:#EF4444;animation:pulse 1.6s infinite}
+  .pin.active{transform:rotate(-45deg) scale(1.28);z-index:1000!important}
+  @keyframes pulse{0%,100%{box-shadow:0 5px 14px rgba(0,0,0,.5)}50%{box-shadow:0 5px 14px rgba(0,0,0,.5),0 0 0 7px rgba(239,68,68,.25)}}
+  .mini-pin{width:32px;height:32px;border-radius:50%;background:#fff;border:2.5px solid var(--brand);display:flex;align-items:center;justify-content:center;font-weight:900;font-size:11px;color:var(--brand);box-shadow:0 3px 10px rgba(0,0,0,.5)}
+
+  /* right rail */
+  .rail{padding:28px 26px 60px;border-left:1px solid var(--border);background:#0a0b0d}
+  @media(max-width:1100px){.rail{border-left:none;border-top:1px solid var(--border)}}
+  .rail h3{font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.6px;color:var(--text3);margin:24px 0 11px}
+  .rail h3:first-child{margin-top:0}
+  .rail ul{list-style:none;display:flex;flex-direction:column;gap:9px}
+  .rail li{font-size:13px;color:var(--text2);line-height:1.5;padding-left:22px;position:relative}
+  .rail li::before{content:'＋';position:absolute;left:0;top:0;color:var(--blue2);font-weight:900}
+  .rail li.have::before{content:'✓';color:var(--green)}
+  .rail li b{color:var(--text)}
+  .rail .why{background:var(--surf);border:1px solid var(--border);border-radius:12px;padding:13px 14px;margin-bottom:9px}
+  .rail .why .wl{font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:.6px;color:var(--brand);margin-bottom:5px}
+  .rail .why p{font-size:12.5px;color:var(--text2);line-height:1.55}
+  .rail code{font-family:ui-monospace,Menlo,monospace;font-size:11.5px;background:var(--surf2);border:1px solid var(--border);border-radius:5px;padding:1px 5px;color:var(--blue2)}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div>
+    <h1>Mapa ofert firmy — v2</h1>
+    <div class="sub">Powiększenie mini-mapy do pełnego ekranu + bogaty podgląd ogłoszeń</div>
+  </div>
+  <span class="badge-makieta">Makieta · do akceptacji</span>
+</div>
+
+<div class="layout">
+  <div class="stage">
+    <div class="hint">Klikaj <b>„⛶ Powiększ mapę"</b> w telefonie → otworzy się duża mapa. Na niej <b>klikaj piny lub przesuwaj karty na dole</b> — synchronizują się.</div>
+
+    <div class="phone">
+      <div class="notch"></div>
+      <div class="pscroll">
+
+        <!-- profil firmy (skrót) -->
+        <div class="pbar"><div class="bk">‹</div><div class="ti">Profil pracodawcy</div></div>
+        <div class="cover" style="background-image:url('https://images.unsplash.com/photo-1556740738-b6a63e27c4df?w=800&q=60')">
+          <div class="logo">B</div>
+        </div>
+        <div class="head">
+          <div class="name">Biedronka <span class="verif">✓ Zweryfikowany</span></div>
+          <div class="ind">Handel detaliczny · sieć sklepów</div>
+        </div>
+
+        <!-- SEKCJA MAPY (v1 mini + przycisk powiększ) -->
+        <div class="sec-h"><span>🗺️</span> Mapa pracy (6) <span class="nb">v2</span></div>
+        <div class="mapcard">
+          <div class="mh">
+            <span class="t">🗺 Mapa ofert</span>
+            <span class="cnt">6 ofert</span>
+            <button class="exp" onclick="openBig()">⛶ Powiększ mapę</button>
+          </div>
+          <div id="mini-map" onclick="openBig()"></div>
+        </div>
+
+        <div class="sec-h"><span>💼</span> Aktywne oferty (6)</div>
+        <div id="offer-list"></div>
+
+        <div style="height:30px"></div>
+      </div>
+
+      <!-- ===== BIG MAP OVERLAY ===== -->
+      <div class="fullmap" id="fullmap">
+        <div class="fm-head">
+          <div class="av">B</div>
+          <div style="flex:1;min-width:0">
+            <div class="ti">🗺 Biedronka — mapa ofert</div>
+            <div class="sb"><span id="fm-count">6</span> aktywnych · dotknij pin lub kartę</div>
+          </div>
+          <button class="cl" onclick="closeBig()">✕</button>
+        </div>
+        <div class="fm-body">
+          <div class="fm-filters" id="fm-filters"></div>
+          <div id="big-map"></div>
+          <div class="fm-cards" id="fm-cards"></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="rail">
+    <h3>Co nowego w v2</h3>
+    <ul>
+      <li><b>„Powiększ mapę"</b> — mini-mapa rozwija się do pełnego ekranu (jak mamy już dla profili osób). Dziś profil firmy ma tylko statyczne 240px.</li>
+      <li><b>Karty ofert zadokowane na mapie</b> — przewijasz poziomo na dole; każda karta = pełen podgląd: stanowisko, lokalizacja, widełki, typ etatu, znacznik PILNE.</li>
+      <li><b>Synchronizacja pin ↔ karta</b> — klik w pin podświetla i przewija do karty; przesunięcie karty „leci" do pinu i go podbija.</li>
+      <li><b>Filtry</b> — „Wszystkie / Pilne / wg kategorii" jako chipy nad mapą (z licznikiem).</li>
+      <li><b>Pin pilnej oferty pulsuje</b> — od razu widać, gdzie firma szuka kogoś szybko.</li>
+    </ul>
+
+    <h3>Co zostaje (już mamy)</h3>
+    <ul>
+      <li class="have">Mini-mapa w profilu firmy (<code>cp-workmap</code>)</li>
+      <li class="have">Markery z logo firmy + popup</li>
+      <li class="have">Lista aktywnych ofert pod mapą</li>
+    </ul>
+
+    <h3>Dane (zero nowych migracji)</h3>
+    <ul>
+      <li class="have">Wszystko z <code>job_offers</code>: <code>title, location, location_lat/lng, category, salary_*, is_urgent, employment_type</code></li>
+    </ul>
+
+    <h3>Po co to kandydatowi</h3>
+    <div class="why"><div class="wl">Kandydat</div><p>Widzi <b>gdzie naprawdę</b> są oferty i klika najbliższą — bez przewijania całej listy. Mapa + bogata karta w jednym miejscu = szybsza decyzja.</p></div>
+    <div class="why"><div class="wl">Firma</div><p>Sieć z wieloma lokalizacjami (Biedronka, Pramer, agencje) pokazuje zasięg wizualnie. Pilne oferty rzucają się w oczy → więcej aplikacji tam, gdzie pali się najbardziej.</p></div>
+
+    <h3>Wdrożenie</h3>
+    <ul>
+      <li><b>1.</b> Przycisk „Powiększ" + overlay (reuse wzorca <code>_mjOpenProfilePinsFullMap</code>).</li>
+      <li><b>2.</b> Karty + sync z markerami.</li>
+      <li><b>3.</b> Filtry (pilne / kategoria).</li>
+    </ul>
+  </div>
+</div>
+
+<script>
+// ---- mock: oferty Biedronki w różnych miastach (jak job_offers) ----
+var OFFERS=[
+  {id:1,title:'Kasjer-sprzedawca',city:'Wrocław, ul. Legnicka',cat:'Handel',type:'Pełny etat',mode:'Stacjonarnie',min:4500,max:5200,urgent:true,lat:51.108,lng:16.985},
+  {id:2,title:'Kierownik zmiany',city:'Kraków, ul. Wielicka',cat:'Handel',type:'Pełny etat',mode:'Stacjonarnie',min:6000,max:7200,urgent:false,lat:50.030,lng:19.967},
+  {id:3,title:'Magazynier',city:'Poznań, ul. Głogowska',cat:'Logistyka',type:'Pełny etat',mode:'Stacjonarnie',min:5000,max:5800,urgent:true,lat:52.394,lng:16.890},
+  {id:4,title:'Sprzedawca-stażysta',city:'Warszawa, ul. Wolska',cat:'Handel',type:'Część etatu',mode:'Stacjonarnie',min:0,max:0,urgent:false,lat:52.235,lng:20.962},
+  {id:5,title:'Zastępca kierownika',city:'Gdańsk, ul. Grunwaldzka',cat:'Handel',type:'Pełny etat',mode:'Stacjonarnie',min:5500,max:6500,urgent:false,lat:54.380,lng:18.600},
+  {id:6,title:'Pracownik świeżych dostaw',city:'Łódź, ul. Piotrkowska',cat:'Logistyka',type:'Pełny etat',mode:'Stacjonarnie',min:4800,max:5400,urgent:true,lat:51.759,lng:19.456}
+];
+var BRAND='#E30613', INITIAL='B';
+
+function salStr(o){ if(!o.min&&!o.max) return null; var f=function(n){return n.toLocaleString('pl-PL');}; return (o.min?f(o.min):'')+(o.max?' – '+f(o.max):'')+' zł'; }
+
+// ---- lista ofert w profilu ----
+(function(){
+  var html='';
+  OFFERS.forEach(function(o){
+    var s=salStr(o);
+    html+='<div class="offer">'
+      +'<div class="offer-t">'+o.title+(o.urgent?' <span class="urg">PILNE</span>':'')+'</div>'
+      +'<div class="offer-loc">📍 '+o.city+' · '+o.cat+'</div>'
+      +'<div class="offer-bottom"><span class="salary">'+(s||'Do uzgodnienia')+'</span><span class="see">Zobacz →</span></div>'
+      +'</div>';
+  });
+  document.getElementById('offer-list').innerHTML=html;
+})();
+
+// ---- mini-mapa (v1) ----
+var miniMap;
+function initMini(){
+  if(miniMap) return;
+  miniMap=L.map('mini-map',{zoomControl:false,attributionControl:false,scrollWheelZoom:false,dragging:false,tap:false});
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',{maxZoom:19}).addTo(miniMap);
+  var b=[];
+  OFFERS.forEach(function(o){
+    var ic=L.divIcon({className:'',html:'<div class="mini-pin">'+INITIAL+'</div>',iconSize:[32,32],iconAnchor:[16,16]});
+    L.marker([o.lat,o.lng],{icon:ic}).addTo(miniMap);
+    b.push([o.lat,o.lng]);
+  });
+  miniMap.fitBounds(b,{padding:[30,30],maxZoom:6});
+  setTimeout(function(){miniMap.invalidateSize();},150);
+}
+
+// ---- BIG MAP (v2) ----
+var bigMap, markers={}, activeId=null, curFilter='all';
+
+function buildFilters(){
+  var cats={};
+  OFFERS.forEach(function(o){cats[o.cat]=(cats[o.cat]||0)+1;});
+  var urg=OFFERS.filter(function(o){return o.urgent;}).length;
+  var f='<div class="chip '+(curFilter==='all'?'on':'')+'" onclick="setFilter(\'all\')">Wszystkie<span class="b">'+OFFERS.length+'</span></div>';
+  f+='<div class="chip '+(curFilter==='urgent'?'on':'')+'" onclick="setFilter(\'urgent\')">🔴 Pilne<span class="b">'+urg+'</span></div>';
+  Object.keys(cats).forEach(function(c){
+    f+='<div class="chip '+(curFilter===c?'on':'')+'" onclick="setFilter(\''+c+'\')">'+c+'<span class="b">'+cats[c]+'</span></div>';
+  });
+  document.getElementById('fm-filters').innerHTML=f;
+}
+function filtered(){
+  return OFFERS.filter(function(o){
+    if(curFilter==='all')return true;
+    if(curFilter==='urgent')return o.urgent;
+    return o.cat===curFilter;
+  });
+}
+function setFilter(f){curFilter=f;buildFilters();renderBig();}
+
+function buildCards(){
+  var list=filtered();
+  document.getElementById('fm-count').textContent=list.length;
+  var html='';
+  list.forEach(function(o){
+    var s=salStr(o);
+    html+='<div class="ocard" id="card-'+o.id+'" onclick="selectOffer('+o.id+',true)">'
+      +'<div class="ot">'+o.title+(o.urgent?' <span class="urg">PILNE</span>':'')+'<span class="dist">~'+(2+o.id*3)+' km</span></div>'
+      +'<div class="ol">📍 '+o.city+'</div>'
+      +'<div class="facts"><span class="fact">'+o.cat+'</span><span class="fact">'+o.type+'</span><span class="fact">'+o.mode+'</span></div>'
+      +'<div class="obot"><span class="sal '+(s?'':'neg')+'">'+(s||'Do uzgodnienia')+'</span><button class="go" onclick="event.stopPropagation();alert(\'→ otwiera ogłoszenie #'+o.id+' (openJobDetail)\')">Zobacz ofertę</button></div>'
+      +'</div>';
+  });
+  document.getElementById('fm-cards').innerHTML=html;
+}
+
+function renderBig(){
+  Object.keys(markers).forEach(function(k){bigMap.removeLayer(markers[k]);});
+  markers={};
+  var list=filtered(), b=[];
+  list.forEach(function(o){
+    var cls='pin'+(o.urgent?' urgent':'');
+    var ic=L.divIcon({className:'',html:'<div class="'+cls+'" id="pin-'+o.id+'"><span>'+INITIAL+'</span></div>',iconSize:[42,48],iconAnchor:[21,46]});
+    var mk=L.marker([o.lat,o.lng],{icon:ic}).addTo(bigMap);
+    mk.on('click',function(){selectOffer(o.id,false);});
+    markers[o.id]=mk;
+    b.push([o.lat,o.lng]);
+  });
+  buildCards();
+  if(b.length>1)bigMap.fitBounds(b,{padding:[60,60],maxZoom:7});
+  else if(b.length===1)bigMap.setView(b[0],11);
+  activeId=null;
+  setTimeout(function(){bigMap.invalidateSize();},120);
+}
+
+function selectOffer(id,fromCard){
+  activeId=id;
+  // markery
+  Object.keys(markers).forEach(function(k){
+    var el=document.getElementById('pin-'+k);
+    if(el)el.classList.toggle('active',String(k)===String(id));
+  });
+  // karty
+  Array.prototype.forEach.call(document.querySelectorAll('.ocard'),function(c){
+    c.classList.toggle('active',c.id==='card-'+id);
+  });
+  var o=OFFERS.find(function(x){return x.id===id;});
+  if(o)bigMap.panTo([o.lat,o.lng],{animate:true});
+  if(!fromCard){
+    var card=document.getElementById('card-'+id);
+    if(card)card.scrollIntoView({behavior:'smooth',inline:'center',block:'nearest'});
+  }
+}
+
+function openBig(){
+  document.getElementById('fullmap').classList.add('on');
+  if(!bigMap){
+    bigMap=L.map('big-map',{zoomControl:true,attributionControl:false,scrollWheelZoom:true});
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',{maxZoom:19}).addTo(bigMap);
+    buildFilters();
+    renderBig();
+  }else{
+    setTimeout(function(){bigMap.invalidateSize();},120);
+  }
+}
+function closeBig(){document.getElementById('fullmap').classList.remove('on');}
+
+window.addEventListener('load',initMini);
+</script>
+</body>
+</html>

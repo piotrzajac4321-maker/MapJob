@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>MapJob — Tryb FIRMA (makieta przed wdrożeniem)</title>
+<style>
+  :root{
+    --bg:#0B0D10; --surf:#15181F; --surf2:#1C2029; --surf3:#23272F;
+    --border:rgba(255,255,255,.09); --border2:rgba(255,255,255,.14);
+    --text:#F5F7FA; --text2:#A1A9B8; --text3:#6B7280;
+    --blue:#2D7FF9; --blue2:#60A5FA; --bluedim:rgba(45,127,249,.14);
+    --green:#10B981; --greendim:rgba(16,185,129,.14);
+    --gold:#D97706; --brand:#E30613;
+    --ff:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:var(--ff);background:#070809;color:var(--text);-webkit-font-smoothing:antialiased;line-height:1.4}
+
+  .topbar{position:sticky;top:0;z-index:50;display:flex;align-items:center;gap:14px;padding:14px 22px;background:rgba(7,8,9,.85);backdrop-filter:blur(12px);border-bottom:1px solid var(--border)}
+  .topbar h1{font-size:15px;font-weight:800;letter-spacing:-.2px}
+  .topbar .sub{font-size:12px;color:var(--text3);font-weight:500}
+  .badge-makieta{margin-left:auto;font-size:10px;font-weight:800;letter-spacing:.8px;text-transform:uppercase;color:var(--gold);background:rgba(217,119,6,.14);border:1px solid rgba(217,119,6,.35);padding:5px 11px;border-radius:999px}
+
+  .layout{display:grid;grid-template-columns:1fr 360px;min-height:calc(100vh - 53px)}
+  @media(max-width:1080px){.layout{grid-template-columns:1fr}}
+  .stage{padding:28px 22px 70px}
+
+  .roleswitch{display:flex;gap:6px;justify-content:center;margin-bottom:22px}
+  .roleswitch button{font-family:var(--ff);font-size:13px;font-weight:700;color:var(--text2);background:var(--surf);border:1px solid var(--border);padding:9px 18px;border-radius:999px;cursor:pointer;transition:.15s;display:flex;align-items:center;gap:7px}
+  .roleswitch button.on{background:var(--bluedim);border-color:var(--blue);color:var(--blue2)}
+
+  /* desktop dialog mock */
+  .dlg{max-width:980px;margin:0 auto;background:var(--bg);border:1px solid var(--border2);border-radius:20px;overflow:hidden;box-shadow:0 40px 90px rgba(0,0,0,.6)}
+  .dlg-head{display:flex;align-items:center;gap:11px;padding:15px 20px;border-bottom:1px solid var(--border)}
+  .dlg-head .ic{width:38px;height:38px;border-radius:11px;background:linear-gradient(135deg,#2D7FF9,#9B8CFF);display:flex;align-items:center;justify-content:center;font-size:19px;flex-shrink:0}
+  .dlg-head .t{font-size:16px;font-weight:900;letter-spacing:-.01em}
+  .dlg-head .s{font-size:11px;color:var(--text3);margin-top:1px}
+  .dlg-head .chg{margin-left:auto;font-size:11px;font-weight:700;color:var(--text2);background:var(--surf2);border:1px solid var(--border);border-radius:9px;padding:7px 12px;cursor:pointer}
+  .dlg-head .x{width:34px;height:34px;border-radius:10px;background:var(--surf2);border:1px solid var(--border);color:var(--text2);display:flex;align-items:center;justify-content:center;font-size:17px;margin-left:8px}
+
+  .cols{display:flex}
+  @media(max-width:720px){.cols{flex-direction:column}}
+  .main{flex:1;padding:16px 18px;min-width:0}
+  .side{width:300px;flex-shrink:0;border-left:1px solid var(--border);background:var(--surf);padding:18px 16px}
+  @media(max-width:720px){.side{width:auto;border-left:none;border-top:1px solid var(--border)}}
+
+  .mode-pill{display:flex;align-items:center;gap:8px;font-size:11.5px;color:var(--text2);background:var(--surf);border:1px solid var(--border);border-radius:10px;padding:9px 12px;margin-bottom:13px}
+  .mode-pill b{color:var(--text)}
+  .mode-pill .e{margin-left:auto;font-size:10.5px;color:var(--blue2);font-weight:700;cursor:pointer}
+
+  .prog{padding:13px 14px;background:var(--surf);border:1px solid var(--border);border-radius:14px;margin-bottom:13px}
+  .prog .r{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+  .prog .l{font-size:12px;font-weight:700}.prog .p{font-size:12px;font-weight:800;color:var(--blue2)}
+  .bar{height:7px;border-radius:99px;background:rgba(255,255,255,.08);overflow:hidden}.bar i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,var(--blue),var(--green));width:55%}
+
+  .card{background:var(--surf);border:1px solid var(--border);border-radius:14px;padding:15px;margin-bottom:11px}
+  .ch{font-size:10.5px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--text2);margin-bottom:13px;display:flex;align-items:center;gap:7px}
+  .new-pill{font-size:9px;font-weight:800;letter-spacing:.05em;color:var(--green);background:var(--greendim);border:1px solid rgba(16,185,129,.3);border-radius:6px;padding:2px 6px;margin-left:auto}
+  .flbl{display:block;font-size:11px;font-weight:700;color:var(--text2);margin:11px 0 6px}
+  .flbl:first-of-type{margin-top:0}
+  .fi{width:100%;background:var(--surf2);border:1.5px solid var(--border);border-radius:11px;padding:11px 13px;color:var(--text);font-family:var(--ff);font-size:13.5px;outline:none}
+  .fi::placeholder{color:var(--text3)}
+  .row2{display:flex;gap:9px}.row2>div{flex:1}
+  .logo-up{display:flex;gap:13px;align-items:center}
+  .logo-box{width:60px;height:60px;border-radius:14px;background:var(--surf2);border:2px dashed var(--border2);display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0;font-weight:900}
+  .up-btn{background:var(--surf2);border:1px solid var(--border);color:var(--text);border-radius:11px;padding:10px 14px;font-family:var(--ff);font-size:12.5px;font-weight:700;cursor:pointer}
+
+  .verif-grid{display:flex;flex-direction:column;gap:8px}
+  .verif{display:flex;align-items:center;gap:11px;padding:11px 13px;background:var(--surf2);border:1px solid var(--border);border-radius:11px}
+  .verif .vi{width:30px;height:30px;border-radius:8px;background:var(--bg);display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0}
+  .verif .vt{flex:1}.verif .vn{font-size:12.5px;font-weight:700}.verif .vd{font-size:10.5px;color:var(--text3);margin-top:1px}
+  .verif input{width:120px;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:7px 10px;color:var(--text);font-family:var(--ff);font-size:12px;text-align:right}
+  .verif-note{display:flex;gap:9px;align-items:center;margin-top:11px;padding:11px 13px;background:var(--greendim);border:1px solid rgba(16,185,129,.3);border-radius:11px;font-size:11.5px;color:var(--text2);line-height:1.5}
+
+  .swatches{display:flex;gap:8px;align-items:center}
+  .sw{width:34px;height:34px;border-radius:9px;cursor:pointer}
+  .sw.on{box-shadow:0 0 0 2px var(--bg),0 0 0 4px #fff}
+
+  .more{margin-top:4px;border:1px solid var(--border);border-radius:12px;background:var(--surf);padding:13px 14px;display:flex;align-items:center;gap:9px;cursor:pointer}
+  .more .mt{font-size:13px;font-weight:800;flex:1}
+  .more .ms{font-size:11px;color:var(--text3)}
+
+  /* live employer-card preview */
+  .pvlbl{font-size:10px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--text3);margin-bottom:11px}
+  .empcard{border:1px solid var(--border);border-radius:16px;overflow:hidden;background:var(--bg)}
+  .empcover{height:62px;position:relative;transition:background .3s}
+  .emplogo{position:absolute;left:14px;bottom:-22px;width:54px;height:54px;border-radius:14px;background:#fff;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:22px;border:3px solid var(--bg)}
+  .empmeta{padding:30px 14px 15px}
+  .empname{font-size:15px;font-weight:800;display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+  .empverif{font-size:9.5px;font-weight:800;color:#fff;background:var(--green);border-radius:6px;padding:3px 7px;display:inline-flex;gap:4px;align-items:center}
+  .empind{font-size:11.5px;color:var(--text3);margin-top:3px}
+  .empstats{display:flex;gap:16px;margin-top:13px;padding-top:13px;border-top:1px solid var(--border)}
+  .empstats .v{font-size:16px;font-weight:900}.empstats .k{font-size:9.5px;color:var(--text3);text-transform:uppercase;letter-spacing:.4px;margin-top:1px}
+  .empbtn{margin-top:13px;width:100%;text-align:center;padding:10px;border-radius:11px;font-size:12.5px;font-weight:800;color:#fff;background:var(--blue)}
+  .pvhint{font-size:10.5px;color:var(--text3);margin-top:11px;text-align:center;line-height:1.5}
+
+  /* offer auto-fill strip */
+  .feed{max-width:980px;margin:18px auto 0;background:var(--surf);border:1px solid var(--border);border-radius:16px;padding:18px}
+  .feed-h{font-size:13px;font-weight:800;margin-bottom:4px;display:flex;align-items:center;gap:8px}
+  .feed-s{font-size:12px;color:var(--text3);margin-bottom:14px;line-height:1.5}
+  .offer-form{display:flex;gap:12px;flex-wrap:wrap}
+  .of-field{flex:1;min-width:180px}
+  .of-lbl{font-size:10.5px;font-weight:700;color:var(--text3);margin-bottom:5px;display:flex;align-items:center;gap:6px}
+  .auto-tag{font-size:9px;font-weight:800;color:var(--blue2);background:var(--bluedim);border-radius:5px;padding:2px 6px}
+  .of-val{background:var(--surf2);border:1.5px solid var(--border);border-radius:10px;padding:10px 12px;font-size:13px;display:flex;align-items:center;gap:9px}
+  .of-val.locked{border-style:dashed;color:var(--text2)}
+  .of-logo{width:24px;height:24px;border-radius:6px;background:#fff;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:12px;flex-shrink:0}
+
+  .rail{background:var(--bg);border-left:1px solid var(--border);padding:28px 24px 60px}
+  @media(max-width:1080px){.rail{border-left:none;border-top:1px solid var(--border)}}
+  .rail h3{font-size:11px;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:var(--blue2);margin-bottom:10px}
+  .rail p{font-size:13.5px;color:var(--text2);line-height:1.65;margin-bottom:13px}
+  .rail strong{color:var(--text);font-weight:700}
+  .rail .why{background:var(--surf);border:1px solid var(--border);border-left:3px solid var(--blue);border-radius:0 12px 12px 0;padding:13px 15px;margin-bottom:13px}
+  .rail .why .wl{font-size:10px;font-weight:800;letter-spacing:.6px;text-transform:uppercase;color:var(--blue2);margin-bottom:5px}
+  .rail .why p{margin:0;font-size:13px}
+  .rail ul{list-style:none;margin-bottom:13px}
+  .rail li{font-size:13px;color:var(--text2);line-height:1.55;padding-left:20px;position:relative;margin-bottom:7px}
+  .rail li::before{content:'→';position:absolute;left:0;color:var(--blue2);font-weight:800}
+  .mig{background:var(--surf);border:1px solid var(--border);border-radius:12px;padding:13px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:11px;color:#9ec3ff;line-height:1.6;overflow-x:auto;white-space:pre;margin-bottom:6px}
+  .hide{display:none!important}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div>
+    <h1>Tryb FIRMA — profil zaawansowany</h1>
+    <div class="sub">Jak będzie wyglądał edytor i karta pracodawcy po wybraniu „Firma" w kreatorze</div>
+  </div>
+  <span class="badge-makieta">Makieta · przed migracją</span>
+</div>
+
+<div class="layout">
+  <div class="stage">
+
+    <div class="roleswitch">
+      <button id="rb-firma" class="on" onclick="setRole('firma')">🏢 Firma (Biedronka)</button>
+      <button id="rb-osoba" onclick="setRole('osoba')">👤 Osoba prywatna</button>
+    </div>
+
+    <!-- ===== EDITOR DIALOG ===== -->
+    <div class="dlg">
+      <div class="dlg-head">
+        <div class="ic">✨</div>
+        <div><div class="t">Profil zaawansowany</div><div class="s" id="dlg-sub">Im pełniejszy profil, tym wyżej w wynikach</div></div>
+        <div class="chg">⚙︎ Zmień</div>
+        <div class="x">✕</div>
+      </div>
+
+      <div class="cols">
+        <div class="main">
+          <div class="mode-pill" id="mode-pill">
+            <span>Tryb:</span> <b id="mode-role">🏢 Firma</b> <span>·</span> <b>⚡ Szybko</b>
+            <span class="e">zmień</span>
+          </div>
+
+          <div class="prog"><div class="r"><span class="l">Uzupełnienie profilu</span><span class="p">55%</span></div><div class="bar"><i></i></div></div>
+
+          <!-- ===== FIRMA fields ===== -->
+          <div id="firma-fields">
+            <div class="card">
+              <div class="ch"><span>🏢</span><span>Dane firmy</span><span class="new-pill">NOWE</span></div>
+              <label class="flbl">Logo firmy</label>
+              <div class="logo-up">
+                <div class="logo-box" style="color:var(--brand)">B</div>
+                <button class="up-btn">📤 Wgraj logo</button>
+              </div>
+              <label class="flbl">Nazwa firmy</label>
+              <input class="fi" value="Biedronka" oninput="pv()"/>
+              <label class="flbl">Branża</label>
+              <input class="fi" value="Handel detaliczny / sieć sklepów" oninput="pv()"/>
+              <label class="flbl">Krótki opis firmy</label>
+              <input class="fi" value="Największa sieć sklepów spożywczych w Polsce."/>
+            </div>
+
+            <div class="card">
+              <div class="ch"><span>✅</span><span>Wiarygodność firmy</span><span class="new-pill">NOWE</span></div>
+              <div class="verif-grid">
+                <div class="verif"><div class="vi">🏢</div><div class="vt"><div class="vn">NIP</div><div class="vd">Weryfikacja przez białą listę VAT</div></div><input value="779-00-00-000"/></div>
+                <div class="verif"><div class="vi">📋</div><div class="vt"><div class="vn">REGON</div><div class="vd">Rejestr REGON (opcjonalnie)</div></div><input placeholder="9 cyfr"/></div>
+                <div class="verif"><div class="vi">⚖️</div><div class="vt"><div class="vn">KRS</div><div class="vd">Krajowy Rejestr Sądowy (opcjonalnie)</div></div><input placeholder="numer KRS"/></div>
+              </div>
+              <div class="verif-note"><span style="font-size:16px">🛡️</span><span>Po weryfikacji NIP Twoje oferty dostają znak <b style="color:var(--green)">„Zweryfikowany pracodawca"</b> — buduje zaufanie kandydatów.</span></div>
+            </div>
+          </div>
+
+          <!-- ===== OSOBA fields ===== -->
+          <div id="osoba-fields" class="hide">
+            <div class="card">
+              <div class="ch"><span>🌍</span><span>Języki w jakich się porozumiewasz</span></div>
+              <div style="display:flex;flex-wrap:wrap;gap:6px">
+                <span style="padding:7px 12px;border-radius:10px;background:var(--bluedim);border:1px solid var(--blue);color:var(--blue2);font-size:12px;font-weight:700">🇵🇱 Polski</span>
+                <span style="padding:7px 12px;border-radius:10px;background:var(--surf2);border:1px solid var(--border);color:var(--text2);font-size:12px;font-weight:700">🇬🇧 Angielski</span>
+                <span style="padding:7px 12px;border-radius:10px;background:var(--surf2);border:1px solid var(--border);color:var(--text2);font-size:12px;font-weight:700">🇩🇪 Niemiecki</span>
+              </div>
+            </div>
+            <div class="card">
+              <div class="ch"><span>🏷</span><span>Specjalizacje i poziom</span></div>
+              <div class="row2"><div><input class="fi" value="Elektryka"/></div><div><input class="fi" value="Senior" style="max-width:110px"/></div></div>
+            </div>
+            <div class="card">
+              <div class="ch"><span>🏢</span><span>NIP (działalność)</span></div>
+              <input class="fi" placeholder="10 cyfr — dla jednoosobowej działalności"/>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="ch"><span>🎨</span><span>Kolor marki</span></div>
+            <div class="swatches">
+              <span class="sw on" style="background:#E30613" onclick="setBrand('#E30613',this)"></span>
+              <span class="sw" style="background:#2D7FF9" onclick="setBrand('#2D7FF9',this)"></span>
+              <span class="sw" style="background:#10B981" onclick="setBrand('#10B981',this)"></span>
+              <span class="sw" style="background:#D97706" onclick="setBrand('#D97706',this)"></span>
+              <span class="sw" style="background:#7C3AED" onclick="setBrand('#7C3AED',this)"></span>
+            </div>
+          </div>
+
+          <div class="more">
+            <span style="font-size:16px">⚙️</span>
+            <div><div class="mt">Pełny profil — więcej opcji</div><div class="ms" id="more-sub">obszar · godziny · cennik · FAQ · widoczność</div></div>
+            <span style="color:var(--text3)">▾</span>
+          </div>
+        </div>
+
+        <!-- live preview -->
+        <div class="side">
+          <div class="pvlbl">Podgląd na żywo</div>
+          <div class="empcard" id="emp">
+            <div class="empcover" id="emp-cover" style="background:linear-gradient(135deg,#E30613,#a30410)"></div>
+            <div class="emplogo" id="emp-logo" style="color:#E30613">B</div>
+            <div class="empmeta">
+              <div class="empname"><span id="emp-name">Biedronka</span> <span class="empverif">✓ Zweryfikowany</span></div>
+              <div class="empind" id="emp-ind">Handel detaliczny / sieć sklepów</div>
+              <div class="empstats">
+                <div><div class="v">12</div><div class="k">oferty</div></div>
+                <div><div class="v">320</div><div class="k">lokalizacje</div></div>
+                <div><div class="v">4.4</div><div class="k">ocena</div></div>
+              </div>
+              <div class="empbtn" id="emp-btn" style="background:#E30613">Zobacz oferty</div>
+            </div>
+          </div>
+          <div class="pvhint">Tak zobaczą Twoją firmę kandydaci ↑<br>Zmiany po lewej widać tu od razu.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- offer auto-fill -->
+    <div class="feed" id="feed-firma">
+      <div class="feed-h"><span>🔗</span> Tak zasili Twoje ogłoszenia</div>
+      <div class="feed-s">Gdy dodajesz ofertę pracy, nazwa i logo firmy wstawiają się automatycznie — nie przepisujesz ich przy każdym ogłoszeniu.</div>
+      <div class="offer-form">
+        <div class="of-field">
+          <div class="of-lbl">Firma <span class="auto-tag">AUTO z profilu</span></div>
+          <div class="of-val locked"><div class="of-logo" style="color:#E30613">B</div> Biedronka 🔒</div>
+        </div>
+        <div class="of-field">
+          <div class="of-lbl">Stanowisko</div>
+          <div class="of-val">Kasjer-sprzedawca</div>
+        </div>
+        <div class="of-field">
+          <div class="of-lbl">Lokalizacja</div>
+          <div class="of-val" style="color:var(--text3)">np. Wrocław, ul. Legnicka</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- annotation rail -->
+  <div class="rail">
+    <h3>Co dokładnie wdrożę</h3>
+    <p><strong>Tryb firmy</strong> uruchamia się po wybraniu „🏢 Firma" w kreatorze, który już zbudowaliśmy. Edytor pokazuje wtedy <strong>dane firmy zamiast pól fachowca</strong> — przełącz u góry „Osoba/Firma", żeby zobaczyć różnicę.</p>
+
+    <div class="why"><div class="wl">Po co</div><p>Firma dziś wygląda jak fachowiec-solo. Osobna tożsamość (logo, nazwa prawna, NIP/REGON/KRS) daje sygnał zaufania B2B i jeden spójny branding na wszystkich ofertach — jak prawdziwy pracodawca, nie ogłoszenie z tablicy.</p></div>
+
+    <p><strong>Prosto „jak Biedronka":</strong> kilka pól na start, weryfikacja opcjonalna. Bez zmuszania do wypełniania wszystkiego.</p>
+
+    <ul>
+      <li><strong>Dane firmy</strong> — logo, nazwa, branża, opis</li>
+      <li><strong>Wiarygodność</strong> — NIP (już jest) + REGON, KRS → znak „Zweryfikowany pracodawca"</li>
+      <li><strong>Kolor marki</strong> na karcie i ofertach (#E30613 dla Biedronki)</li>
+      <li><strong>Auto-zasilanie ofert</strong> nazwą i logo firmy</li>
+    </ul>
+
+    <h3 style="margin-top:22px">Migracja (addytywna, bezpieczna)</h3>
+    <p style="margin-bottom:8px">7 nowych, pustych kolumn na <strong>profiles</strong>. Nic nie usuwa, nie rusza danych:</p>
+    <div class="mig">alter table profiles add:
+  account_type        (domyślnie 'person')
+  company_name
+  company_logo_url
+  industry
+  company_description
+  regon
+  krs</div>
+    <p style="font-size:12px;color:var(--text3)">NIP i weryfikacje już istnieją — nie dublujemy.</p>
+
+    <div class="why" style="border-left-color:var(--gold)"><div class="wl" style="color:var(--gold)">Osobny krok</div><p>Publiczna strona profilu firmy (żeby kandydat z oferty wszedł „O pracodawcy") = Etap 5 — wymaga rozszerzenia widoku publicznego. Tu robimy edytor + zasilanie ofert.</p></div>
+  </div>
+</div>
+
+<script>
+  var brand='#E30613';
+  function setRole(r){
+    var firma=r==='firma';
+    document.getElementById('rb-firma').classList.toggle('on',firma);
+    document.getElementById('rb-osoba').classList.toggle('on',!firma);
+    document.getElementById('firma-fields').classList.toggle('hide',!firma);
+    document.getElementById('osoba-fields').classList.toggle('hide',firma);
+    document.getElementById('feed-firma').style.display=firma?'':'none';
+    document.getElementById('mode-role').textContent=firma?'🏢 Firma':'👤 Osoba prywatna';
+    document.getElementById('dlg-sub').textContent=firma?'Tożsamość firmy zasila Twoje ogłoszenia':'Im pełniejszy profil, tym wyżej w wynikach';
+    document.getElementById('more-sub').textContent=firma?'obszar · godziny · cennik · FAQ · widoczność':'obszar · dostępność · cennik · FAQ · widoczność';
+    // preview swap
+    var emp=document.getElementById('emp');
+    if(!firma){
+      document.getElementById('emp-name').textContent='Marek Kowalski';
+      document.getElementById('emp-ind').textContent='Elektryk · Wrocław';
+      document.getElementById('emp-logo').textContent='M';
+      document.querySelector('.empverif').style.display='none';
+    }else{
+      document.getElementById('emp-name').textContent=document.querySelector('#firma-fields .fi').value||'Twoja firma';
+      document.getElementById('emp-ind').textContent='Handel detaliczny / sieć sklepów';
+      document.getElementById('emp-logo').textContent='B';
+      document.querySelector('.empverif').style.display='';
+    }
+  }
+  function setBrand(c,el){
+    brand=c;
+    document.querySelectorAll('.sw').forEach(function(s){s.classList.remove('on')});el.classList.add('on');
+    document.getElementById('emp-cover').style.background='linear-gradient(135deg,'+c+','+c+'aa)';
+    document.getElementById('emp-logo').style.color=c;
+    document.getElementById('emp-btn').style.background=c;
+    var l=document.querySelector('.logo-box'); if(l)l.style.color=c;
+  }
+  function pv(){
+    var name=document.querySelector('#firma-fields .fi').value||'Twoja firma';
+    document.getElementById('emp-name').textContent=name;
+    var inds=document.querySelectorAll('#firma-fields .fi');
+    if(inds[1])document.getElementById('emp-ind').textContent=inds[1].value||'Branża';
+  }
+</script>
+</body>
+</html>

@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>MapJob — Publiczna strona firmy (makieta)</title>
+<style>
+  :root{
+    --bg:#0B0D10; --surf:#15181F; --surf2:#1C2029; --surf3:#23272F;
+    --border:rgba(255,255,255,.09); --border2:rgba(255,255,255,.14);
+    --text:#F5F7FA; --text2:#A1A9B8; --text3:#6B7280;
+    --blue:#2D7FF9; --blue2:#60A5FA; --bluedim:rgba(45,127,249,.14);
+    --green:#10B981; --greendim:rgba(16,185,129,.14);
+    --gold:#D97706; --brand:#E30613;
+    --ff:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:var(--ff);background:#070809;color:var(--text);-webkit-font-smoothing:antialiased;line-height:1.4}
+
+  .topbar{position:sticky;top:0;z-index:50;display:flex;align-items:center;gap:14px;padding:14px 22px;background:rgba(7,8,9,.85);backdrop-filter:blur(12px);border-bottom:1px solid var(--border)}
+  .topbar h1{font-size:15px;font-weight:800;letter-spacing:-.2px}
+  .topbar .sub{font-size:12px;color:var(--text3);font-weight:500}
+  .badge-makieta{margin-left:auto;font-size:10px;font-weight:800;letter-spacing:.8px;text-transform:uppercase;color:var(--gold);background:rgba(217,119,6,.14);border:1px solid rgba(217,119,6,.35);padding:5px 11px;border-radius:999px}
+
+  .layout{display:grid;grid-template-columns:1fr 360px;min-height:calc(100vh - 53px)}
+  @media(max-width:1080px){.layout{grid-template-columns:1fr}}
+  .stage{padding:28px 22px 70px;display:flex;flex-direction:column;align-items:center}
+
+  .brandswitch{display:flex;gap:6px;justify-content:center;margin-bottom:22px}
+  .brandswitch button{font-family:var(--ff);font-size:12.5px;font-weight:700;color:var(--text2);background:var(--surf);border:1px solid var(--border);padding:8px 14px;border-radius:999px;cursor:pointer;display:flex;align-items:center;gap:7px}
+  .brandswitch button.on{background:var(--bluedim);border-color:var(--blue);color:var(--blue2)}
+  .brandswitch .dot{width:12px;height:12px;border-radius:3px}
+
+  .phone{width:392px;max-width:100%;background:var(--bg);border-radius:38px;border:1px solid var(--border2);box-shadow:0 0 0 9px #121419,0 40px 90px rgba(0,0,0,.6);overflow:hidden}
+  .notch{height:30px;display:flex;align-items:center;justify-content:center;background:var(--bg)}
+  .notch::after{content:'';width:120px;height:7px;border-radius:999px;background:#26292f}
+  .pscroll{height:720px;overflow-y:auto;overflow-x:hidden;scrollbar-width:thin}
+  .pscroll::-webkit-scrollbar{width:5px}.pscroll::-webkit-scrollbar-thumb{background:#2a2e36;border-radius:4px}
+
+  .pbar{position:sticky;top:0;z-index:10;display:flex;align-items:center;gap:10px;padding:12px 14px;background:rgba(11,13,16,.9);backdrop-filter:blur(8px)}
+  .pbar .bk{width:34px;height:34px;border-radius:50%;background:var(--surf);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;color:var(--text2);font-size:17px}
+  .pbar .ti{font-size:13px;font-weight:700;color:var(--text2)}
+
+  .cover{height:96px;position:relative;transition:background .3s}
+  .logo{position:absolute;left:18px;bottom:-30px;width:72px;height:72px;border-radius:18px;background:#fff;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:30px;border:4px solid var(--bg);transition:color .3s}
+  .head{padding:40px 18px 16px}
+  .name{font-size:21px;font-weight:900;letter-spacing:-.4px;display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+  .verif{font-size:10px;font-weight:800;color:#fff;background:var(--green);border-radius:7px;padding:4px 9px;display:inline-flex;gap:4px;align-items:center}
+  .ind{font-size:13px;color:var(--text3);margin-top:5px}
+  .desc{font-size:13.5px;color:var(--text2);line-height:1.6;margin-top:12px}
+
+  .trust{display:flex;flex-wrap:wrap;gap:7px;margin-top:14px}
+  .tchip{font-size:11px;font-weight:700;color:var(--green);background:var(--greendim);border:1px solid rgba(16,185,129,.3);border-radius:999px;padding:6px 11px;display:flex;align-items:center;gap:5px}
+  .tchip.muted{color:var(--text3);background:var(--surf);border-color:var(--border)}
+
+  .stats{display:flex;gap:0;margin:16px 18px;background:var(--surf);border:1px solid var(--border);border-radius:14px;overflow:hidden}
+  .stats>div{flex:1;text-align:center;padding:13px 6px;border-right:1px solid var(--border)}
+  .stats>div:last-child{border-right:none}
+  .stats .v{font-size:19px;font-weight:900}.stats .k{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.4px;margin-top:2px}
+
+  .sec-h{font-size:11px;font-weight:800;letter-spacing:.5px;text-transform:uppercase;color:var(--text3);margin:18px 18px 10px;display:flex;align-items:center;gap:7px}
+  .offers{padding:0 18px}
+  .offer{background:var(--surf);border:1px solid var(--border);border-radius:14px;padding:14px;margin-bottom:10px}
+  .offer-top{display:flex;gap:11px;align-items:flex-start}
+  .offer-logo{width:40px;height:40px;border-radius:10px;background:#fff;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:15px;flex-shrink:0}
+  .offer-t{font-size:14.5px;font-weight:800}
+  .offer-loc{font-size:11.5px;color:var(--text3);margin-top:2px}
+  .offer-urgent{font-size:9px;font-weight:900;padding:2px 6px;border-radius:10px;background:rgba(239,68,68,.15);color:#F87171;border:1px solid rgba(239,68,68,.3)}
+  .offer-facts{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+  .fact{font-size:10.5px;font-weight:600;color:var(--text2);background:var(--surf2);border:1px solid var(--border);border-radius:8px;padding:4px 9px}
+  .offer-bottom{display:flex;align-items:center;gap:10px;margin-top:12px;padding-top:11px;border-top:1px solid var(--border)}
+  .salary{font-size:14px;font-weight:900;color:var(--green);flex:1}
+  .apply{background:var(--blue);color:#fff;border:none;border-radius:10px;padding:9px 16px;font-family:var(--ff);font-size:12.5px;font-weight:800}
+
+  .rail{background:var(--bg);border-left:1px solid var(--border);padding:28px 24px 60px}
+  @media(max-width:1080px){.rail{border-left:none;border-top:1px solid var(--border)}}
+  .rail h3{font-size:11px;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:var(--blue2);margin-bottom:10px}
+  .rail p{font-size:13.5px;color:var(--text2);line-height:1.65;margin-bottom:13px}
+  .rail strong{color:var(--text);font-weight:700}
+  .rail .why{background:var(--surf);border:1px solid var(--border);border-left:3px solid var(--blue);border-radius:0 12px 12px 0;padding:13px 15px;margin-bottom:13px}
+  .rail .why .wl{font-size:10px;font-weight:800;letter-spacing:.6px;text-transform:uppercase;color:var(--blue2);margin-bottom:5px}
+  .rail .why p{margin:0;font-size:13px}
+  .rail ul{list-style:none;margin-bottom:13px}
+  .rail li{font-size:13px;color:var(--text2);line-height:1.55;padding-left:20px;position:relative;margin-bottom:7px}
+  .rail li::before{content:'→';position:absolute;left:0;color:var(--blue2);font-weight:800}
+  .mig{background:var(--surf);border:1px solid var(--border);border-radius:12px;padding:13px;font-family:ui-monospace,Menlo,monospace;font-size:11px;color:#9ec3ff;line-height:1.6;white-space:pre;overflow-x:auto;margin-bottom:6px}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div>
+    <h1>Publiczna strona firmy — widok kandydata</h1>
+    <div class="sub">Co widzi kandydat po kliknięciu „O pracodawcy" w ogłoszeniu</div>
+  </div>
+  <span class="badge-makieta">Makieta · przed wdrożeniem</span>
+</div>
+
+<div class="layout">
+  <div class="stage">
+    <div class="brandswitch">
+      <button class="on" onclick="setCo('biedronka',this)"><span class="dot" style="background:#E30613"></span> Biedronka</button>
+      <button onclick="setCo('elektro',this)"><span class="dot" style="background:#2D7FF9"></span> ElektroMont (niezweryf.)</button>
+    </div>
+
+    <div class="phone">
+      <div class="notch"></div>
+      <div class="pscroll">
+        <div class="pbar"><div class="bk">←</div><div class="ti">Profil pracodawcy</div></div>
+
+        <div class="cover" id="cover" style="background:linear-gradient(135deg,#E30613,#a30410)"></div>
+        <div style="position:relative"><div class="logo" id="logo" style="color:#E30613">B</div></div>
+
+        <div class="head">
+          <div class="name"><span id="co-name">Biedronka</span> <span class="verif" id="co-verif">✓ Zweryfikowany pracodawca</span></div>
+          <div class="ind" id="co-ind">Handel detaliczny / sieć sklepów</div>
+          <div class="trust" id="co-trust">
+            <span class="tchip">✓ NIP</span>
+            <span class="tchip">✓ REGON</span>
+            <span class="tchip">✓ KRS</span>
+          </div>
+          <div class="desc" id="co-desc">Największa sieć sklepów spożywczych w Polsce. Stałe rekrutacje w całym kraju — kasjerzy, kierownicy, magazynierzy.</div>
+        </div>
+
+        <div class="stats">
+          <div><div class="v" id="st-offers">12</div><div class="k">oferty</div></div>
+          <div><div class="v">320</div><div class="k">lokalizacje</div></div>
+          <div><div class="v">4.4</div><div class="k">ocena</div></div>
+        </div>
+
+        <div class="sec-h"><span>💼</span> Aktywne oferty pracy</div>
+        <div class="offers" id="offers"></div>
+        <div style="height:24px"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="rail">
+    <h3>Co wdrożę</h3>
+    <p>Pełnoekranowy <strong>profil pracodawcy</strong>, na który kandydat trafia z ogłoszenia (link „O pracodawcy"). Pokazuje firmę i <strong>wszystkie jej aktywne oferty</strong> w jednym miejscu.</p>
+
+    <div class="why"><div class="wl">Po co</div><p>Kandydat ufa firmie z prawdziwą stroną i znakiem „Zweryfikowany pracodawca" bardziej niż gołemu ogłoszeniu. Zebrane dane firmy w końcu pracują na konwersję — więcej aplikacji.</p></div>
+
+    <p>Przełącz u góry na <strong>ElektroMont</strong> — firma niezweryfikowana: znak znika, a niepotwierdzone rejestry są wyszarzone. Zero fake — pokazujemy tylko to, co realnie potwierdzone.</p>
+
+    <ul>
+      <li>Cover w <strong>kolorze marki</strong> + logo + nazwa</li>
+      <li>Znak „Zweryfikowany pracodawca" (gdy NIP/KRK/konto potwierdzone)</li>
+      <li>Branża, opis, sygnały zaufania (NIP/REGON/KRS)</li>
+      <li><strong>Lista aktywnych ofert</strong> tej firmy → „Aplikuj"</li>
+      <li>Wejście: „O pracodawcy" w widoku oferty</li>
+    </ul>
+
+    <h3 style="margin-top:22px">Migracja (1 widok, bezpieczna)</h3>
+    <p style="margin-bottom:8px">Rozszerzenie widoku publicznego o 5 kolumn (dane już są w profiles):</p>
+    <div class="mig">profiles_public +=
+  account_type
+  company_name
+  company_logo_url
+  industry
+  company_description</div>
+    <p style="font-size:12px;color:var(--text3)">CREATE OR REPLACE VIEW — dokłada kolumny po istniejących, nic nie psuje.</p>
+  </div>
+</div>
+
+<script>
+  var DATA={
+    biedronka:{name:'Biedronka',logo:'B',brand:'#E30613',ind:'Handel detaliczny / sieć sklepów',verified:true,
+      trust:[['NIP',1],['REGON',1],['KRS',1]],
+      desc:'Największa sieć sklepów spożywczych w Polsce. Stałe rekrutacje w całym kraju — kasjerzy, kierownicy, magazynierzy.',
+      offers:[
+        {t:'Kasjer-sprzedawca',loc:'Wrocław, ul. Legnicka',facts:['Pełny etat','Stacjonarnie','1 zmiana'],sal:'4 500 – 5 200 zł',urgent:false},
+        {t:'Kierownik zmiany',loc:'Kraków, ul. Wielicka',facts:['Pełny etat','Stacjonarnie'],sal:'6 000 – 7 200 zł',urgent:true},
+        {t:'Magazynier',loc:'Poznań, ul. Górecka',facts:['Zlecenie','Stacjonarnie'],sal:'Do uzgodnienia',urgent:false}
+      ]},
+    elektro:{name:'ElektroMont Sp. z o.o.',logo:'E',brand:'#2D7FF9',ind:'Instalacje elektryczne',verified:false,
+      trust:[['NIP',1],['REGON',0],['KRS',0]],
+      desc:'Firma instalacyjna z Dolnego Śląska. Szukamy elektryków i pomocników na budowy.',
+      offers:[
+        {t:'Elektryk',loc:'Wrocław',facts:['B2B / Etat','Stacjonarnie'],sal:'45 – 60 zł/h',urgent:false},
+        {t:'Pomocnik elektryka',loc:'Świdnica',facts:['Pełny etat'],sal:'30 zł/h',urgent:false}
+      ]}
+  };
+  function setCo(key,btn){
+    var d=DATA[key];
+    document.querySelectorAll('.brandswitch button').forEach(function(b){b.classList.remove('on')});
+    if(btn)btn.classList.add('on');
+    document.getElementById('cover').style.background='linear-gradient(135deg,'+d.brand+','+d.brand+'aa)';
+    document.getElementById('logo').textContent=d.logo;
+    document.getElementById('logo').style.color=d.brand;
+    document.getElementById('co-name').textContent=d.name;
+    document.getElementById('co-ind').textContent=d.ind;
+    document.getElementById('co-desc').textContent=d.desc;
+    document.getElementById('co-verif').style.display=d.verified?'':'none';
+    document.getElementById('st-offers').textContent=d.offers.length;
+    document.getElementById('co-trust').innerHTML=d.trust.map(function(t){
+      return t[1]?('<span class="tchip">✓ '+t[0]+'</span>'):('<span class="tchip muted">'+t[0]+' — niepotwierdzony</span>');
+    }).join('');
+    document.getElementById('offers').innerHTML=d.offers.map(function(o){
+      return '<div class="offer"><div class="offer-top"><div class="offer-logo" style="color:'+d.brand+'">'+d.logo+'</div>'
+        +'<div style="flex:1;min-width:0"><div class="offer-t">'+o.t+(o.urgent?' <span class="offer-urgent">🔴 PILNE</span>':'')+'</div><div class="offer-loc">'+o.loc+'</div></div></div>'
+        +'<div class="offer-facts">'+o.facts.map(function(f){return '<span class="fact">'+f+'</span>'}).join('')+'</div>'
+        +'<div class="offer-bottom"><span class="salary">'+o.sal+'</span><button class="apply" style="background:'+d.brand+'">Aplikuj</button></div></div>';
+    }).join('');
+  }
+  setCo('biedronka',null);
+</script>
+</body>
+</html>

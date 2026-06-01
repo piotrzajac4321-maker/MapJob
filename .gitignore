@@ -1,0 +1,33 @@
+# Claude Code session data + skills (zawiera narzędzia, sekrety MCP, prywatne logi)
+.claude/
+
+# Tymczasowe pliki
+*.tmp
+.pa_b64.tmp
+
+# Backupy index.html
+index.html.backup
+index.html.cart_backup
+
+# Snapshot/dane wejściowe (generator pobiera świeże z Supabase REST przy każdym buildzie)
+# Zostawiamy w repo dla lokalnego dev, ale ignorujemy zmiany podczas regeneracji
+# oferty-snapshot.json   ← OSTATECZNIE KOMENTUJEMY: niech służy jako fallback offline
+
+# Pliki dokumentacji prywatnej (nie produkcyjne)
+MapJob*.pdf
+MapJob*.txt
+MapJob*.docx
+Biedronka*.pdf
+*.docx
+LAUNCH_*.md
+
+# Cache, log
+*.log
+node_modules/
+.DS_Store
+Thumbs.db
+
+# Python build artifacts
+__pycache__/
+*.pyc
+*.pyo

@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<title>MapJob — Stories dla firm (9:16, 1080×1920)</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap">
+<style>
+:root{
+  --bg:#070B14; --bg2:#0C1322; --surf:rgba(255,255,255,.05); --border:rgba(255,255,255,.10);
+  --accent:#2D7FF9; --mint:#2BE2C2; --ok:#3DD68C; --gold:#F5C451; --red:#F87171;
+  --text:#fff; --text2:rgba(255,255,255,.74); --text3:rgba(255,255,255,.46);
+}
+*{box-sizing:border-box;margin:0;padding:0;font-family:'Plus Jakarta Sans','Inter',system-ui,sans-serif}
+body{background:#15171e;color:#fff;padding:40px 20px}
+.page-header{max-width:1300px;margin:0 auto 28px;text-align:center}
+.page-header h1{font-size:30px;font-weight:800;letter-spacing:-.02em}
+.page-header p{color:#9aa0a8;font-size:14px;margin-top:8px}
+.instructions{max-width:1300px;margin:0 auto 44px;background:rgba(45,127,249,.1);border:1px solid rgba(45,127,249,.3);border-radius:14px;padding:18px 22px;font-size:13px;line-height:1.7;color:#cfe0ff}
+.instructions b{color:#7fb0ff}
+.row{display:flex;flex-wrap:wrap;gap:60px 40px;max-width:1300px;margin:0 auto;justify-content:center}
+.item{width:594px}
+.mockup-label{font-size:16px;font-weight:800;margin-bottom:12px;display:flex;align-items:center;gap:10px}
+.mockup-label .badge{padding:4px 10px;background:rgba(45,127,249,.16);border:1px solid rgba(45,127,249,.34);border-radius:8px;font-size:11px;color:#7fb0ff;font-weight:700}
+.mockup-label .meta{font-size:11px;color:#7c828c;font-weight:500;margin-left:auto}
+
+/* 1080x1920 scaled to 594 wide (0.55) */
+.st{width:1080px;height:1920px;background:var(--bg);overflow:hidden;position:relative;box-shadow:0 20px 60px rgba(0,0,0,.5);transform:scale(.55);transform-origin:top left;margin-bottom:-864px}
+
+/* brand */
+.logo{display:flex;align-items:center;gap:16px;z-index:6}
+.logo-mark{width:62px;height:62px;border-radius:16px;background:var(--accent);display:flex;align-items:center;justify-content:center}
+.logo-mark svg{width:34px;height:34px;stroke:#fff;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.logo-txt{font-size:36px;font-weight:800;letter-spacing:-.5px}
+.logo-txt .j{color:var(--accent)}
+.cta{display:inline-flex;align-items:center;gap:16px;padding:30px 52px;border-radius:20px;background:var(--accent);font-size:38px;font-weight:800;color:#fff}
+.cta.ok{background:var(--ok);color:#052016}
+.cta.mint{background:var(--mint);color:#062018}
+.note{font-size:24px;color:var(--text3);font-weight:600;text-align:center}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(40px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pop{0%{opacity:0;transform:scale(.8)}60%{transform:scale(1.05)}100%{opacity:1;transform:scale(1)}}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.12)}}
+@keyframes slideIn{from{opacity:0;transform:translateX(-30px)}to{opacity:1;transform:translateX(0)}}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+
+/* ===== S1 Twoja firma na mapie ===== */
+.s1{padding:90px 70px;display:flex;flex-direction:column;align-items:center;text-align:center;
+  background:radial-gradient(circle at 50% 30%,#13213f 0%,#070B14 64%)}
+.s1-grid{position:absolute;inset:0;opacity:.5;background:
+  linear-gradient(rgba(255,255,255,.035) 1px,transparent 1px),
+  linear-gradient(90deg,rgba(255,255,255,.035) 1px,transparent 1px);background-size:70px 70px}
+.s1 .h{font-size:92px;font-weight:800;line-height:1.02;letter-spacing:-2px;margin-top:70px;z-index:6;animation:fadeUp .8s both}
+.s1 .h .a{color:var(--accent)}
+.s1 .sub{font-size:34px;color:var(--text2);font-weight:600;margin-top:28px;z-index:6;animation:fadeUp .8s .2s both;line-height:1.4}
+.s1-phone{width:660px;margin-top:60px;background:#0B1018;border:1px solid var(--border);border-radius:34px;overflow:hidden;z-index:6;box-shadow:0 40px 90px rgba(0,0,0,.55);animation:pop .9s .35s both}
+.s1-cover{height:120px;background:linear-gradient(120deg,var(--accent),var(--mint))}
+.s1-pb{padding:0 34px 36px;text-align:left}
+.s1-plogo{width:104px;height:104px;border-radius:26px;background:#0E1420;border:5px solid #0B1018;margin-top:-52px;display:flex;align-items:center;justify-content:center;font-size:42px;font-weight:800;color:var(--accent)}
+.s1-pn{font-size:38px;font-weight:800;margin-top:18px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.s1-vb{display:inline-flex;align-items:center;gap:8px;padding:8px 16px;border-radius:999px;background:rgba(61,214,140,.14);border:1px solid rgba(61,214,140,.34);color:#7eeab4;font-size:20px;font-weight:700}
+.s1-vb svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:3}
+.s1-meta{display:flex;gap:12px;margin-top:18px;flex-wrap:wrap}
+.s1-chip{padding:10px 18px;border-radius:12px;background:var(--surf);border:1px solid var(--border);font-size:20px;font-weight:600;color:var(--text2)}
+.s1 .cta{margin-top:auto;animation:fadeUp .8s .5s both}
+.s1 .note{margin-top:26px;z-index:6}
+
+/* ===== S2 Klienci i kandydaci ===== */
+.s2{display:flex;flex-direction:column}
+.s2-top{padding:90px 70px 50px;text-align:center}
+.s2-top .logo{justify-content:center;margin-bottom:40px}
+.s2-top .h{font-size:84px;font-weight:800;line-height:1.03;letter-spacing:-2px;animation:fadeUp .8s both}
+.s2-top .h .a{color:var(--accent)} .s2-top .h .m{color:var(--mint)}
+.s2-top .sub{font-size:32px;color:var(--text2);font-weight:600;margin-top:24px;animation:fadeUp .8s .2s both}
+.s2-split{flex:1;display:flex;flex-direction:column;gap:3px;background:var(--border)}
+.s2-half{flex:1;padding:60px 64px;display:flex;flex-direction:column;justify-content:center;gap:24px}
+.s2-half.l{background:radial-gradient(circle at 30% 40%,rgba(45,127,249,.18),#070B14 65%);animation:slideIn .7s .3s both}
+.s2-half.r{background:radial-gradient(circle at 70% 40%,rgba(43,226,194,.16),#070B14 65%);animation:slideIn .7s .5s both}
+.s2-tag{font-size:24px;font-weight:800;letter-spacing:2px;text-transform:uppercase}
+.s2-half.l .s2-tag{color:var(--accent)} .s2-half.r .s2-tag{color:var(--mint)}
+.s2-big{font-size:52px;font-weight:800;line-height:1.05;letter-spacing:-1px}
+.s2-li{display:flex;align-items:center;gap:18px;font-size:28px;color:var(--text2);font-weight:600}
+.s2-li .e{font-size:34px}
+
+/* ===== S3 Firma zweryfikowana ===== */
+.s3{padding:90px 70px;display:flex;flex-direction:column;align-items:center;text-align:center;
+  background:radial-gradient(circle at 50% 28%,#10261d 0%,#070B14 62%)}
+.s3 .seal{width:200px;height:200px;border-radius:50%;margin:80px 0 10px;background:rgba(61,214,140,.13);border:3px solid rgba(61,214,140,.4);display:flex;align-items:center;justify-content:center;animation:pulse 2s infinite}
+.s3 .seal svg{width:110px;height:110px;stroke:var(--ok);fill:none;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
+.s3 .h{font-size:90px;font-weight:800;line-height:1.02;letter-spacing:-2px;margin-top:40px;animation:fadeUp .8s .2s both}
+.s3 .h .a{color:var(--ok)}
+.s3 .sub{font-size:32px;color:var(--text2);font-weight:600;margin-top:24px;animation:fadeUp .8s .35s both;line-height:1.4}
+.s3-tags{display:flex;flex-wrap:wrap;gap:16px;justify-content:center;margin-top:48px;animation:fadeUp .8s .5s both}
+.s3-t{padding:16px 28px;border-radius:14px;background:var(--surf);border:1px solid var(--border);font-size:28px;font-weight:700;color:var(--text2);display:flex;align-items:center;gap:12px}
+.s3-t .v{color:var(--ok);font-weight:900}
+.s3 .cta{margin-top:auto;animation:fadeUp .8s .7s both}
+.s3 .note{margin-top:24px}
+
+/* ===== S4 Porównanie ===== */
+.s4{padding:90px 64px;display:flex;flex-direction:column;gap:30px;background:linear-gradient(180deg,#070B14,#0C1322)}
+.s4 .logo{margin-bottom:6px}
+.s4 .h{font-size:80px;font-weight:800;line-height:1.03;letter-spacing:-2px;animation:fadeUp .8s both}
+.s4 .h .a{color:var(--accent)}
+.s4-rows{display:flex;flex-direction:column;gap:20px;margin-top:10px}
+.s4-row{display:flex;justify-content:space-between;align-items:center;padding:36px 40px;border-radius:22px;background:var(--surf);border:1px solid var(--border);animation:fadeUp .7s both}
+.s4-row:nth-child(1){animation-delay:.2s} .s4-row:nth-child(2){animation-delay:.35s} .s4-row:nth-child(3){animation-delay:.5s}
+.s4-row.win{background:rgba(45,127,249,.13);border-color:rgba(45,127,249,.42)}
+.s4-l{font-size:38px;font-weight:800;display:flex;align-items:center;gap:18px}
+.s4-l .x{color:var(--red);font-size:42px} .s4-l .v{color:var(--ok);font-size:42px}
+.s4-sub{font-size:24px;color:var(--text3);font-weight:600;margin-top:8px;margin-left:60px}
+.s4-val{font-size:38px;font-weight:800;color:var(--text3)}
+.s4-row.win .s4-val{color:var(--mint)}
+.s4 .cta{margin-top:auto;align-self:center;animation:fadeUp .8s .65s both}
+.s4 .note{margin-top:22px}
+
+/* ===== S5 Brand spot — Firmy budują Polskę ===== */
+.s5{padding:90px 70px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;
+  background:radial-gradient(circle at 50% 40%,#13213f 0%,#070B14 66%)}
+.s5-pins{position:absolute;inset:0}
+.s5-pin{position:absolute;width:30px;height:30px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);animation:pulse 2.4s infinite}
+.s5-pin.a{background:var(--accent);left:18%;top:22%;animation-delay:0s}
+.s5-pin.b{background:var(--mint);left:74%;top:30%;animation-delay:.5s}
+.s5-pin.c{background:var(--accent);left:28%;top:72%;animation-delay:1s}
+.s5-pin.d{background:var(--ok);left:68%;top:78%;animation-delay:1.5s}
+.s5-pin.e{background:var(--mint);left:50%;top:16%;animation-delay:.8s}
+.s5 .logo{margin-bottom:60px;z-index:6;animation:fadeUp .8s both}
+.s5 .h{font-size:104px;font-weight:800;line-height:1.0;letter-spacing:-3px;z-index:6;animation:fadeUp .9s .2s both}
+.s5 .h .a{color:var(--accent)}
+.s5 .sub{font-size:36px;color:var(--text2);font-weight:600;margin-top:34px;z-index:6;animation:fadeUp .9s .4s both;line-height:1.4;max-width:840px}
+.s5 .cta{margin-top:80px;z-index:6;animation:fadeUp .9s .6s both}
+.s5 .note{margin-top:28px;z-index:6}
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <h1>MapJob — Stories dla firm</h1>
+  <p>5 animowanych kreacji 1080×1920 (Stories / Reels / TikTok). Styl płaski, paleta electric-blue.</p>
+</div>
+
+<div class="instructions">
+  <b>Eksport PNG 1080×1920:</b> F12 → Ctrl+Shift+P → „Capture node screenshot" → kliknij element <b>.st</b>. Do wideo: nagraj ekran (animacje CSS chodzą w pętli ~2 s) albo użyj klatek jako tła pod montaż.
+</div>
+
+<div class="row">
+
+  <!-- S1 -->
+  <div class="item">
+    <div class="mockup-label"><span class="badge">S1</span> Twoja firma na mapie <span class="meta">9:16 · akwizycja</span></div>
+    <div class="st s1">
+      <div class="s1-grid"></div>
+      <div class="logo"><div class="logo-mark"><svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></div><div class="logo-txt">Map<span class="j">Job</span></div></div>
+      <div class="h">Twoja firma<br><span class="a">na mapie Polski.</span></div>
+      <div class="sub">Profesjonalny profil za 0 zł</div>
+      <div class="s1-phone">
+        <div class="s1-cover"></div>
+        <div class="s1-pb">
+          <div class="s1-plogo">PI</div>
+          <div class="s1-pn">Przykład Instalacje <span class="s1-vb"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg> zweryfikowana</span></div>
+          <div class="s1-meta"><span class="s1-chip">⚡ Elektryk · HVAC</span><span class="s1-chip">👥 12 osób</span><span class="s1-chip">★ 4,9</span></div>
+        </div>
+      </div>
+      <div class="cta">Załóż profil firmy →</div>
+      <div class="note">mapjob.pl · logowanie Googlem</div>
+    </div>
+  </div>
+
+  <!-- S2 -->
+  <div class="item">
+    <div class="mockup-label"><span class="badge">S2</span> Klienci i kandydaci <span class="meta">9:16 · USP 2 w 1</span></div>
+    <div class="st s2">
+      <div class="s2-top">
+        <div class="logo"><div class="logo-mark"><svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></div><div class="logo-txt">Map<span class="j">Job</span></div></div>
+        <div class="h">Klienci <span class="a">i</span><br>kandydaci.<br><span class="m">Jeden profil.</span></div>
+        <div class="sub">Sprzedawaj usługi i rekrutuj naraz</div>
+      </div>
+      <div class="s2-split">
+        <div class="s2-half l">
+          <div class="s2-tag">Dla klientów</div>
+          <div class="s2-big">Usługi i wycena</div>
+          <div class="s2-li"><span class="e">📋</span> Pakiety i cennik</div>
+          <div class="s2-li"><span class="e">🖼️</span> Realizacje + opinie</div>
+          <div class="s2-li"><span class="e">💬</span> Wycena na czacie</div>
+        </div>
+        <div class="s2-half r">
+          <div class="s2-tag">Dla kandydatów</div>
+          <div class="s2-big">Kariera i oferty</div>
+          <div class="s2-li"><span class="e">📍</span> Oferty na mapie</div>
+          <div class="s2-li"><span class="e">👥</span> Twój zespół</div>
+          <div class="s2-li"><span class="e">📄</span> CV z AI Kreatora</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- S3 -->
+  <div class="item">
+    <div class="mockup-label"><span class="badge">S3</span> Firma zweryfikowana <span class="meta">9:16 · zaufanie</span></div>
+    <div class="st s3">
+      <div class="logo"><div class="logo-mark" style="background:var(--ok)"><svg viewBox="0 0 24 24"><path d="M12 2 4 5v6c0 5 3.4 8.5 8 10 4.6-1.5 8-5 8-10V5z"/><path d="m9 12 2 2 4-4"/></svg></div><div class="logo-txt">Map<span class="j">Job</span></div></div>
+      <div class="seal"><svg viewBox="0 0 24 24"><path d="M12 2 4 5v6c0 5 3.4 8.5 8 10 4.6-1.5 8-5 8-10V5z"/><path d="m9 12 2 2 4-4"/></svg></div>
+      <div class="h"><span class="a">Firma</span><br>zweryfikowana.</div>
+      <div class="sub">Klient ufa, zanim zadzwoni</div>
+      <div class="s3-tags">
+        <div class="s3-t"><span class="v">✓</span> NIP · VAT</div>
+        <div class="s3-t"><span class="v">✓</span> REGON</div>
+        <div class="s3-t"><span class="v">✓</span> KRS</div>
+        <div class="s3-t"><span class="v">✓</span> OC</div>
+        <div class="s3-t"><span class="v">✓</span> Certyfikaty</div>
+      </div>
+      <div class="cta ok">Zweryfikuj firmę →</div>
+      <div class="note">mapjob.pl · 0 zł</div>
+    </div>
+  </div>
+
+  <!-- S4 -->
+  <div class="item">
+    <div class="mockup-label"><span class="badge">S4</span> MapJob vs portale <span class="meta">9:16 · koszty</span></div>
+    <div class="st s4">
+      <div class="logo"><div class="logo-mark"><svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></div><div class="logo-txt">Map<span class="j">Job</span></div></div>
+      <div class="h">Leady i rekrutacja<br>bez <span class="a">kredytów.</span></div>
+      <div class="s4-rows">
+        <div class="s4-row win">
+          <div><div class="s4-l"><span class="v">✓</span> MapJob</div><div class="s4-sub">Profil + leady + oferty pracy</div></div>
+          <div class="s4-val">0 zł</div>
+        </div>
+        <div class="s4-row">
+          <div><div class="s4-l"><span class="x">✕</span> Portale zleceń</div><div class="s4-sub">Płatny każdy kontakt</div></div>
+          <div class="s4-val">kredyty</div>
+        </div>
+        <div class="s4-row">
+          <div><div class="s4-l"><span class="x">✕</span> Portale pracy</div><div class="s4-sub">Płatne ogłoszenie</div></div>
+          <div class="s4-val">za ofertę</div>
+        </div>
+      </div>
+      <div class="cta">Załóż profil firmy →</div>
+      <div class="note">Zaloguj Googlem · 2 sek.</div>
+    </div>
+  </div>
+
+  <!-- S5 -->
+  <div class="item">
+    <div class="mockup-label"><span class="badge">S5</span> Firmy budują Polskę <span class="meta">9:16 · brand spot</span></div>
+    <div class="st s5">
+      <div class="s5-pins">
+        <div class="s5-pin a"></div><div class="s5-pin b"></div><div class="s5-pin c"></div><div class="s5-pin d"></div><div class="s5-pin e"></div>
+      </div>
+      <div class="logo"><div class="logo-mark"><svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></div><div class="logo-txt">Map<span class="j">Job</span></div></div>
+      <div class="h">Firmy budują<br><span class="a">Polskę.</span></div>
+      <div class="sub">Pokaż swoją na mapie — klienci i fachowcy są obok.</div>
+      <div class="cta">Załóż profil firmy →</div>
+      <div class="note">mapjob.pl · 100% za darmo</div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>
