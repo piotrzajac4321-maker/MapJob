@@ -52,6 +52,7 @@ const MONTHS_MAP: Record<string, number> = {
   pin_highlight_bundle: 0,
   urgent_tender: 0,
   urgent_job: 0,       // jednorazowe — aktywacja przez activate_urgent_job lub formularz
+  boost_job: 0,        // jednorazowe — aktywacja przez webhook (24h od zakupu)
 }
 
 // User-facing product labels — dla powiadomień. Dopasowane do CART_LABELS w index.html.
@@ -74,6 +75,7 @@ const PRODUCT_LABELS: Record<string, string> = {
   pin_highlight_bundle: 'Pin + wyróżnienie',
   urgent_tender: 'Pilne zlecenie',
   urgent_job: 'Pilna oferta pracy',
+  boost_job: 'Boost Dnia (24h)',
 }
 
 function productLabel(key: string): string {
@@ -198,7 +200,11 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session): Promis
 
   if (!paymentRow) {
     // Fallback: uzytkownik zamknal karte przed insertem -> tworzymy rekord od zera
-    const productKey = await resolveProductKeyFromPrice(priceId)
+    const sessionMeta = (session.metadata ?? {}) as Record<string, string>
+    const productKey = sessionMeta.product_key || await resolveProductKeyFromPrice(priceId)
+    const fallbackMeta: Record<string, unknown> = { session_id: session.id, source: 'webhook_fallback' }
+    if (sessionMeta.boost_type) fallbackMeta.boost_type = sessionMeta.boost_type
+    if (sessionMeta.job_id) fallbackMeta.job_id = sessionMeta.job_id
     const { data: inserted, error: insErr } = await supabaseAdmin
       .from('payments')
       .insert([{
@@ -210,7 +216,7 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session): Promis
         stripe_price_id: priceId,
         stripe_session_id: session.id,
         status: 'completed',
-        metadata: { session_id: session.id, source: 'webhook_fallback' },
+        metadata: fallbackMeta,
       }])
       .select()
       .single()
@@ -290,6 +296,40 @@ async function activatePackage(
       body: 'Twoja oferta pracy jest oznaczona jako PILNA — wyróżnia się na liście.',
       icon: '🔴',
       linkData: { job_id: jobId, product_key: productKey },
+    })
+    return
+  }
+
+  if (productKey === 'boost_job') {
+    const meta = (payment.metadata ?? {}) as Record<string, unknown>
+    const boostType = meta.boost_type as string | undefined
+    const jobId = (meta.job_id as string | undefined) || null
+    const expiry = new Date(Date.now() + 86400000).toISOString()
+
+    if (boostType === 'company') {
+      await supabaseAdmin.from('profiles').update({ company_boost_until: expiry }).eq('id', userId)
+    } else if (boostType === 'job' && jobId) {
+      await supabaseAdmin.from('job_offers')
+        .update({ boosted_until: expiry })
+        .eq('id', jobId)
+        .eq('user_id', userId)
+    } else {
+      // brak oferty w chwili zakupu — zapisz jako oczekujący; aktywuje się przy tworzeniu oferty
+      await supabaseAdmin.from('profiles').update({ pending_job_boost_until: expiry }).eq('id', userId)
+    }
+
+    const notifBody = boostType === 'company'
+      ? 'Twój profil firmy jest na szczycie listy przez 24h.'
+      : jobId
+        ? 'Twoje ogłoszenie ma złotą ramkę i oznaczenie TOP DNIA przez 24h.'
+        : 'Boost zostanie aktywowany automatycznie na Twoim pierwszym ogłoszeniu.'
+
+    await notifyUser(userId, {
+      type: 'boost_job_active',
+      title: '🚀 Boost Dnia',
+      body: notifBody,
+      icon: '🚀',
+      linkData: { product_key: productKey, boost_type: boostType, job_id: jobId },
     })
     return
   }
