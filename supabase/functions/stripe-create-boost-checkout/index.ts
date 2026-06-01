@@ -103,7 +103,7 @@ Deno.serve(async (req: Request): Promise<Response> => {
       line_items: [{ price: priceId, quantity: 1 }],
       client_reference_id: userId,
       customer_email: userEmail ?? undefined,
-      payment_method_types: ['card', 'blik', 'p24'],
+      automatic_payment_methods: { enabled: true },
       metadata: {
         product_key: 'boost_job',
         boost_type: boostType,
