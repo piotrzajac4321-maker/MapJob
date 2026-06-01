@@ -12232,7 +12232,7 @@ window._openBoostBuy=async function(jobId){
       _payBtn.disabled=true;_payBtn.textContent='⏳ Przygotowujemy...';
       try{
         var _fcResp=await _sb.functions.invoke('stripe-create-boost-checkout',{body:{boost_type:boostType,job_id:resolvedJobId}});
-        if(_fcResp.error||!_fcResp.data||!_fcResp.data.url){throw new Error((_fcResp.error&&_fcResp.error.message)||'Brak URL płatności');}
+        if(_fcResp.error||!_fcResp.data||!_fcResp.data.url){throw new Error((_fcResp.data&&_fcResp.data.error)||(_fcResp.error&&_fcResp.error.message)||'Brak URL płatności');}
         window.location.href=_fcResp.data.url;
       }catch(_err){_payBtn.disabled=false;_payBtn.textContent='🚀 Zapłać i aktywuj Boost';if(typeof toast==='function')toast('Błąd: '+(_err.message||_err),'err');}
     };}
