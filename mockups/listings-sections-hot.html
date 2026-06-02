@@ -521,7 +521,7 @@ h1{font-size:26px;font-weight:700;letter-spacing:-.02em;margin-bottom:6px}
 
         <div class="scroll-area">
 
-          <!-- [7] GORĄCE DZIŚ -->
+          <!-- [7] GORĄCE DZIŚ — poziomy scroll -->
           <div class="section-label">
             <h3>🔥 Gorące dziś</h3>
             <span class="section-link">Zobacz więcej →</span>
@@ -558,10 +558,10 @@ h1{font-size:26px;font-weight:700;letter-spacing:-.02em;margin-bottom:6px}
             <div class="hot-fade"></div>
           </div>
 
-          <!-- [6] SEKCJA: POLECANE -->
+          <!-- [6] SEKCJA: NAJLEPIEJ PŁATNE (zastępuje "Polecane" — działa bez konta) -->
           <div class="section-label">
-            <h3>⭐ Polecane dla Ciebie <span class="section-count">8</span></h3>
-            <span class="section-link">Dostosuj →</span>
+            <h3>💰 Najlepiej płatne <span class="section-count">12</span></h3>
+            <span class="section-link">Zobacz wszystkie →</span>
           </div>
           <div class="mini-card">
             <div class="mc-top">
@@ -605,7 +605,7 @@ h1{font-size:26px;font-weight:700;letter-spacing:-.02em;margin-bottom:6px}
 
           <div style="height:1px;background:var(--border);margin:4px 16px 12px"></div>
 
-          <!-- [6] SEKCJA: NAJBLIŻEJ -->
+          <!-- [6] SEKCJA: NAJBLIŻEJ CIEBIE -->
           <div class="section-label">
             <h3>📍 Najbliżej Ciebie <span class="section-count">47</span></h3>
             <span class="section-link">Zobacz mapę →</span>
@@ -637,8 +637,8 @@ h1{font-size:26px;font-weight:700;letter-spacing:-.02em;margin-bottom:6px}
       <div class="annotation">
         <div class="ann-ic">🔢</div>
         <div class="ann-body">
-          <h4>Kolejność sekcji ma znaczenie</h4>
-          <p>Zawsze: <code>🔥 Gorące</code> → <code>⭐ Polecane</code> → <code>🆕 Nowe dziś</code> → <code>📍 Najbliżej</code>. Gorące zatrzymują, Polecane personalizują, reszta uzupełnia.</p>
+          <h4>Kolejność sekcji — bez konta</h4>
+          <p>Zawsze: <code>🔥 Gorące</code> → <code>💰 Najlepiej płatne</code> → <code>🆕 Nowe dziś</code> → <code>📍 Najbliżej</code>. Każda sekcja działa dla gościa bez konta — czyste sortowanie po danych.</p>
         </div>
       </div>
 
@@ -662,7 +662,7 @@ h1{font-size:26px;font-weight:700;letter-spacing:-.02em;margin-bottom:6px}
         <div class="ann-ic">⚙️</div>
         <div class="ann-body">
           <h4>Co potrzebuje backend</h4>
-          <p>Sekcje nie wymagają zmian w bazie — to filtrowanie po <code>created_at</code> (Nowe), <code>featured</code> (Polecane) i ewentualnie <code>distance</code> (Najbliżej). Gorące = <code>ORDER BY applications DESC</code> z ostatnich 24h.</p>
+          <p>Zero zmian w bazie. Gorące = <code>ORDER BY applications DESC</code> (24h). Najlepiej płatne = <code>ORDER BY salary_max DESC</code>. Nowe = <code>ORDER BY created_at DESC</code>. Najbliżej = <code>ORDER BY distance ASC</code> (GPS opcjonalny).</p>
         </div>
       </div>
 
