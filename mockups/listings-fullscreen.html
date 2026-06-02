@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MapJob — Lista ogłoszeń · Pełny ekran (V2)</title>
+<style>
+:root{
+  --bg:#0B0D10; --bg2:#101318; --surf:#15181F; --surf2:#1C2029; --surf3:#252A35;
+  --border:rgba(255,255,255,.06); --border3:rgba(255,255,255,.09);
+  --text:#F5F7FA; --text2:#A1A9B8; --text3:#6B7280;
+  --blue:#3B82F6; --blue2:#60A5FA; --blue-dim:rgba(59,130,246,.12);
+  --green:#10B981; --green-dim:rgba(16,185,129,.10);
+  --gold:#D97706; --gold-dim:rgba(217,119,6,.12);
+  --red:#DC2626; --red-dim:rgba(220,38,38,.12);
+  --ff:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:var(--ff);-webkit-font-smoothing:antialiased;
+  display:flex;justify-content:center;padding:48px 16px 80px;gap:64px;flex-wrap:wrap;align-items:flex-start}
+
+/* ============================================================
+   Obwiednia telefonu
+   ============================================================ */
+.phone{
+  width:390px;flex-shrink:0;
+  background:var(--bg);border-radius:44px;
+  box-shadow:0 0 0 10px #1a1d24,0 0 0 12px #0d0f14,0 32px 64px rgba(0,0,0,.6);
+  overflow:hidden;position:relative;
+}
+.phone-inner{height:844px;overflow-y:auto;display:flex;flex-direction:column}
+.phone-inner::-webkit-scrollbar{display:none}
+
+/* Status bar */
+.statusbar{
+  height:44px;background:var(--bg2);display:flex;align-items:center;
+  justify-content:space-between;padding:0 24px;flex-shrink:0;
+  font-size:13px;font-weight:600;
+}
+.statusbar-icons{display:flex;gap:6px;align-items:center;font-size:11px;color:var(--text2)}
+
+/* Topbar */
+.topbar{
+  background:var(--bg2);border-bottom:1px solid var(--border);
+  padding:10px 16px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;
+}
+.logo-wrap{display:flex;align-items:baseline;gap:2px}
+.logo-word{font-size:19px;font-weight:700;letter-spacing:-.02em}
+.logo-dot{font-size:13px;color:var(--blue2);font-weight:600}
+.topbar-right{display:flex;gap:8px}
+.icon-btn{
+  width:34px;height:34px;border-radius:9px;border:1px solid var(--border3);
+  background:var(--surf2);display:flex;align-items:center;justify-content:center;
+  font-size:15px;cursor:pointer;
+}
+
+/* Search */
+.search-wrap{padding:12px 16px 0;flex-shrink:0}
+.search{
+  width:100%;height:42px;background:var(--surf2);border:1px solid var(--border3);
+  border-radius:11px;display:flex;align-items:center;gap:8px;padding:0 14px;
+}
+.search-icon{font-size:15px}
+.search-placeholder{font-size:14px;color:var(--text3)}
+
+/* Chips */
+.chips-wrap{padding:10px 16px 0;flex-shrink:0;overflow-x:auto}
+.chips-wrap::-webkit-scrollbar{display:none}
+.chips{display:flex;gap:8px;width:max-content}
+.chip{
+  height:30px;padding:0 13px;border-radius:8px;border:1px solid var(--border3);
+  background:var(--surf2);font-size:12px;font-weight:600;color:var(--text2);
+  white-space:nowrap;display:flex;align-items:center;gap:5px;cursor:pointer;
+}
+.chip.on{background:var(--blue);border-color:var(--blue);color:#fff}
+.chip .dot{width:6px;height:6px;border-radius:50%;background:currentColor;opacity:.7}
+
+/* Results header */
+.results-head{
+  padding:14px 16px 6px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;
+}
+.results-count{font-size:14px;font-weight:600}
+.sort-btn{font-size:12px;color:var(--blue2);cursor:pointer}
+
+/* Scroll area */
+.feed{flex:1;overflow-y:auto;padding:0 16px 16px;display:flex;flex-direction:column;gap:12px}
+.feed::-webkit-scrollbar{display:none}
+
+/* ============================================================
+   Karta V2 — Stawka jako bohater
+   ============================================================ */
+.card{
+  background:var(--surf);border:1px solid var(--border3);border-radius:16px;
+  padding:18px;transition:border-color .15s,box-shadow .15s;cursor:pointer;
+  position:relative;overflow:hidden;
+}
+.card:hover{border-color:var(--border);box-shadow:0 4px 20px rgba(0,0,0,.35)}
+/* lewy akcent kolorowy */
+.card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;border-radius:16px 0 0 16px;}
+.card.green::before{background:var(--green)}
+.card.blue::before{background:var(--blue)}
+.card.gold::before{background:var(--gold)}
+.card.red::before{background:var(--red)}
+
+.card-top{display:flex;align-items:flex-start;gap:12px;margin-left:10px}
+.logo{
+  width:46px;height:46px;border-radius:12px;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;font-weight:700;font-size:15px;
+}
+.logo.green{background:var(--green-dim);color:var(--green)}
+.logo.blue{background:var(--blue-dim);color:var(--blue2)}
+.logo.gold{background:var(--gold-dim);color:var(--gold)}
+.logo.red{background:var(--red-dim);color:var(--red)}
+.card-head{flex:1}
+.c-company{font-size:11px;color:var(--text3)}
+.c-title{font-size:15px;font-weight:600;letter-spacing:-.01em;margin-top:2px;line-height:1.3}
+.c-meta{font-size:11px;color:var(--text2);margin-top:4px}
+
+.save-btn{font-size:18px;color:var(--text3);line-height:1;cursor:pointer;flex-shrink:0}
+
+/* blok stawki */
+.salary-block{
+  background:var(--green-dim);border-radius:11px;padding:12px 14px;
+  margin:14px 10px 0;
+}
+.salary-num{font-size:20px;font-weight:700;color:var(--green);letter-spacing:-.02em}
+.salary-sub{font-size:11px;color:var(--text3);margin-top:3px}
+
+/* badge */
+.badge{
+  display:inline-flex;align-items:center;gap:4px;
+  height:20px;padding:0 8px;border-radius:6px;font-size:10px;font-weight:600;
+}
+.badge.gold{background:var(--gold-dim);color:var(--gold)}
+.badge.red{background:var(--red-dim);color:var(--red)}
+
+/* pills */
+.pills{display:flex;gap:7px;flex-wrap:wrap;margin:12px 10px 0}
+.pill{
+  display:inline-flex;align-items:center;height:24px;padding:0 10px;
+  border-radius:7px;font-size:11px;font-weight:600;
+}
+.pill.blue{background:var(--blue-dim);color:var(--blue2)}
+.pill.gold{background:var(--gold-dim);color:var(--gold)}
+.pill.green{background:var(--green-dim);color:var(--green)}
+.pill.muted{background:var(--surf2);color:var(--text2);border:1px solid var(--border3)}
+
+/* apply row */
+.apply-row{margin:14px 10px 0;display:flex;gap:8px}
+.apply{
+  flex:1;height:38px;border:none;border-radius:10px;
+  background:var(--blue);color:#fff;font-weight:600;font-size:13px;font-family:var(--ff);
+  cursor:pointer;transition:background .15s;
+}
+.apply:hover{background:#2563EB}
+.apply.ghost{
+  flex:none;width:38px;background:var(--surf2);border:1px solid var(--border3);
+  font-size:16px;
+}
+
+/* Baner polecane */
+.promo-banner{
+  margin:0 10px;padding:10px 14px;border-radius:11px;
+  background:linear-gradient(135deg,rgba(59,130,246,.15),rgba(124,58,237,.12));
+  border:1px solid rgba(59,130,246,.2);
+  display:flex;align-items:center;gap:10px;
+}
+.promo-ic{font-size:20px}
+.promo-text{font-size:12px;color:var(--text2);line-height:1.4}
+.promo-text b{color:var(--text);font-weight:600}
+
+/* Bottom nav */
+.bottomnav{
+  height:68px;background:var(--bg2);border-top:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-around;flex-shrink:0;
+  padding:0 8px 8px;
+}
+.nav-item{display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:6px 12px}
+.nav-icon{font-size:20px;line-height:1}
+.nav-label{font-size:10px;font-weight:600;color:var(--text3)}
+.nav-item.on .nav-icon{filter:none}
+.nav-item.on .nav-label{color:var(--blue2)}
+.nav-dot{width:4px;height:4px;border-radius:50%;background:var(--blue);margin:0 auto}
+
+/* ============================================================
+   Panel opisowy (prawa kolumna)
+   ============================================================ */
+.desc{max-width:400px;padding-top:8px}
+.desc h2{font-size:22px;font-weight:700;letter-spacing:-.02em}
+.desc .sub{color:var(--text2);font-size:14px;margin-top:8px;line-height:1.6}
+.changes{margin-top:32px;display:flex;flex-direction:column;gap:20px}
+.change-item{display:flex;gap:14px}
+.change-ic{
+  width:36px;height:36px;border-radius:10px;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;font-size:16px;
+}
+.change-ic.green{background:var(--green-dim)}
+.change-ic.blue{background:var(--blue-dim)}
+.change-ic.gold{background:var(--gold-dim)}
+.change-ic.red{background:var(--red-dim)}
+.change-body h3{font-size:14px;font-weight:600;margin-bottom:3px}
+.change-body p{font-size:13px;color:var(--text2);line-height:1.5}
+</style>
+</head>
+<body>
+
+<!-- =============== TELEFON =============== -->
+<div class="phone">
+  <div class="phone-inner">
+
+    <!-- Status bar -->
+    <div class="statusbar">
+      <span>9:41</span>
+      <div class="statusbar-icons">
+        <span>●●●</span><span>▲</span><span>■■■</span>
+      </div>
+    </div>
+
+    <!-- Topbar -->
+    <div class="topbar">
+      <div class="logo-wrap">
+        <span class="logo-word">MapJob</span>
+        <span class="logo-dot">.pl</span>
+      </div>
+      <div class="topbar-right">
+        <div class="icon-btn">🔔</div>
+        <div class="icon-btn">⚙</div>
+      </div>
+    </div>
+
+    <!-- Search -->
+    <div class="search-wrap">
+      <div class="search">
+        <span class="search-icon">🔍</span>
+        <span class="search-placeholder">Szukaj stanowiska lub firmy…</span>
+      </div>
+    </div>
+
+    <!-- Chips filtrów -->
+    <div class="chips-wrap">
+      <div class="chips">
+        <div class="chip on"><span class="dot"></span>Wszystkie</div>
+        <div class="chip">Pełny etat</div>
+        <div class="chip">Hybryd</div>
+        <div class="chip">Zdalna</div>
+        <div class="chip">B2B</div>
+        <div class="chip">Zlecenie</div>
+      </div>
+    </div>
+
+    <!-- Results header -->
+    <div class="results-head">
+      <span class="results-count">1 248 ofert</span>
+      <span class="sort-btn">Sortuj: Stawka ↓</span>
+    </div>
+
+    <!-- Feed kart -->
+    <div class="feed">
+
+      <!-- KARTA 1 -->
+      <div class="card blue">
+        <div class="card-top">
+          <div class="logo blue">AL</div>
+          <div class="card-head">
+            <div class="c-company">Allegro</div>
+            <div class="c-title">Senior Frontend Developer</div>
+            <div class="c-meta">Warszawa · Hybryd</div>
+          </div>
+          <div class="save-btn">♡</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;margin:10px 10px 0">
+          <span class="badge gold">⭐ Wyróżnione</span>
+        </div>
+        <div class="salary-block">
+          <div class="salary-num">12 000 – 18 000 zł</div>
+          <div class="salary-sub">brutto / mies. · B2B lub UoP</div>
+        </div>
+        <div class="pills">
+          <span class="pill blue">Pełny etat</span>
+          <span class="pill green">Zdalna opcja</span>
+          <span class="pill gold">Premie</span>
+        </div>
+        <div class="apply-row">
+          <button class="apply">Aplikuj teraz</button>
+          <button class="apply ghost">↗</button>
+        </div>
+      </div>
+
+      <!-- KARTA 2 -->
+      <div class="card green">
+        <div class="card-top">
+          <div class="logo green">IN</div>
+          <div class="card-head">
+            <div class="c-company">InPost</div>
+            <div class="c-title">Kierownik Magazynu</div>
+            <div class="c-meta">Łódź, ul. Północna · Stacjonarna</div>
+          </div>
+          <div class="save-btn">♡</div>
+        </div>
+        <div class="salary-block">
+          <div class="salary-num">5 200 – 7 800 zł</div>
+          <div class="salary-sub">brutto / mies. · Umowa o pracę</div>
+        </div>
+        <div class="pills">
+          <span class="pill muted">Pełny etat</span>
+          <span class="pill muted">Magazyn</span>
+        </div>
+        <div class="apply-row">
+          <button class="apply">Aplikuj teraz</button>
+          <button class="apply ghost">↗</button>
+        </div>
+      </div>
+
+      <!-- BANER / PRZERYWNIK -->
+      <div class="promo-banner">
+        <div class="promo-ic">🗺</div>
+        <div class="promo-text">
+          <b>Filtruj po mapie</b><br>
+          Ustaw obszar i znajdź oferty w swoim sąsiedztwie.
+        </div>
+      </div>
+
+      <!-- KARTA 3 -->
+      <div class="card gold">
+        <div class="card-top">
+          <div class="logo gold">Bi</div>
+          <div class="card-head">
+            <div class="c-company">Biedronka</div>
+            <div class="c-title">Kasjer / Sprzedawca</div>
+            <div class="c-meta">Praga Południe, Warszawa · Stacjonarna</div>
+          </div>
+          <div class="save-btn">♡</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;margin:10px 10px 0">
+          <span class="badge red">🔥 Pilne</span>
+        </div>
+        <div class="salary-block">
+          <div class="salary-num">3 900 – 5 200 zł</div>
+          <div class="salary-sub">brutto / mies. · Umowa o pracę</div>
+        </div>
+        <div class="pills">
+          <span class="pill muted">Pełny etat</span>
+          <span class="pill muted">Handel</span>
+        </div>
+        <div class="apply-row">
+          <button class="apply">Aplikuj teraz</button>
+          <button class="apply ghost">↗</button>
+        </div>
+      </div>
+
+      <!-- KARTA 4 -->
+      <div class="card red">
+        <div class="card-top">
+          <div class="logo red">ZA</div>
+          <div class="card-head">
+            <div class="c-company">Żabka Polska</div>
+            <div class="c-title">Pracownik Sklepu</div>
+            <div class="c-meta">Mokotów, Warszawa · Stacjonarna</div>
+          </div>
+          <div class="save-btn">♡</div>
+        </div>
+        <div class="salary-block">
+          <div class="salary-num">3 600 – 4 400 zł</div>
+          <div class="salary-sub">brutto / mies. · Umowa o pracę</div>
+        </div>
+        <div class="pills">
+          <span class="pill muted">Część etatu</span>
+          <span class="pill muted">Handel</span>
+        </div>
+        <div class="apply-row">
+          <button class="apply">Aplikuj teraz</button>
+          <button class="apply ghost">↗</button>
+        </div>
+      </div>
+
+    </div><!-- /feed -->
+
+    <!-- Bottom nav -->
+    <div class="bottomnav">
+      <div class="nav-item">
+        <div class="nav-icon">🗺</div>
+        <div class="nav-label">Mapa</div>
+      </div>
+      <div class="nav-item on">
+        <div class="nav-icon">📋</div>
+        <div class="nav-label" style="color:var(--blue2)">Lista</div>
+        <div class="nav-dot"></div>
+      </div>
+      <div class="nav-item">
+        <div class="nav-icon">💼</div>
+        <div class="nav-label">Aplikacje</div>
+      </div>
+      <div class="nav-item">
+        <div class="nav-icon">👤</div>
+        <div class="nav-label">Profil</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- =============== OPIS =============== -->
+<div class="desc">
+  <h2>Lista ogłoszeń — V2</h2>
+  <p class="sub">Pełny ekran listy z kartą <b style="color:var(--text)">„Stawka jako bohater"</b>. Tokeny kolorów i typografia zgodne z produkcyjnym <code style="color:var(--blue2)">design_refresh.css</code>.</p>
+
+  <div class="changes">
+    <div class="change-item">
+      <div class="change-ic green">💰</div>
+      <div class="change-body">
+        <h3>Stawka w wyróżnionym bloku</h3>
+        <p>Zielony prostokąt z wynagrodzeniem to pierwszy element, który przykuwa wzrok — w obecnym designie stawka ginie wśród szarego tekstu.</p>
+      </div>
+    </div>
+    <div class="change-item">
+      <div class="change-ic blue">🎨</div>
+      <div class="change-body">
+        <h3>Kolorowy akcent = firma / branża</h3>
+        <p>Cienka lewa belka koduje firmę lub kategorię. Lista przestaje wyglądać jak jednolita szara ściana.</p>
+      </div>
+    </div>
+    <div class="change-item">
+      <div class="change-ic gold">🏷</div>
+      <div class="change-body">
+        <h3>Filtry formy pracy w chipach</h3>
+        <p>Pełny etat / Hybryd / Zdalna / B2B — szybki wybór bez otwierania panelu filtrów. Zastępuje pole dystansu.</p>
+      </div>
+    </div>
+    <div class="change-item">
+      <div class="change-ic red">👆</div>
+      <div class="change-body">
+        <h3>Przycisk Aplikuj w karcie</h3>
+        <p>Nie trzeba wchodzić w szczegóły żeby zaaplikować — oszczędza krok i zwiększa konwersję.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
