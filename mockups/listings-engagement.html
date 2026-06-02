@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MapJob — Engagement mockup</title>
+<style>
+:root{
+  --bg:#0B0D10;--bg2:#101318;--surf:#15181F;--surf2:#1C2029;
+  --border:rgba(255,255,255,.06);--border3:rgba(255,255,255,.09);
+  --text:#F5F7FA;--text2:#A1A9B8;--text3:#6B7280;
+  --blue:#3B82F6;--blue2:#60A5FA;--blue-dim:rgba(59,130,246,.12);
+  --green:#10B981;--green-dim:rgba(16,185,129,.10);
+  --gold:#D97706;--gold-dim:rgba(217,119,6,.12);
+  --red:#DC2626;--red-dim:rgba(220,38,38,.12);
+  --purple:#7C3AED;--purple-dim:rgba(124,58,237,.12);
+  --ff:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  background:#070809;color:var(--text);font-family:var(--ff);
+  -webkit-font-smoothing:antialiased;
+  min-height:100vh;padding:48px 24px 80px;
+  display:flex;gap:56px;flex-wrap:wrap;justify-content:center;align-items:flex-start;
+}
+
+/* ── Telefon ── */
+.phone{
+  width:390px;flex-shrink:0;background:var(--bg);border-radius:44px;
+  box-shadow:0 0 0 10px #1a1d24,0 0 0 12px #0d0f14,0 40px 80px rgba(0,0,0,.7);
+  overflow:hidden;
+}
+.phone-inner{height:844px;overflow-y:auto;display:flex;flex-direction:column}
+.phone-inner::-webkit-scrollbar{display:none}
+
+/* Status */
+.statusbar{height:44px;background:var(--bg2);display:flex;align-items:center;
+  justify-content:space-between;padding:0 24px;flex-shrink:0;font-size:13px;font-weight:600}
+.statusbar-r{display:flex;gap:6px;align-items:center;font-size:11px;color:var(--text2)}
+
+/* Topbar */
+.topbar{background:var(--bg2);border-bottom:1px solid var(--border);
+  padding:10px 16px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.logo{font-size:19px;font-weight:700;letter-spacing:-.02em}
+.logo em{font-style:normal;color:var(--blue2);font-size:13px;font-weight:600}
+.icon-btn{width:34px;height:34px;border-radius:9px;border:1px solid var(--border3);
+  background:var(--surf2);display:flex;align-items:center;justify-content:center;font-size:15px}
+
+/* ── [1] Personalizowany nagłówek ── */
+.pers-header{
+  padding:14px 16px 10px;background:var(--bg);flex-shrink:0;
+}
+.pers-greeting{font-size:13px;color:var(--text3);margin-bottom:4px}
+.pers-headline{font-size:17px;font-weight:700;letter-spacing:-.01em;line-height:1.3}
+.pers-headline em{font-style:normal;color:var(--blue2)}
+.pers-sub{font-size:12px;color:var(--text3);margin-top:4px}
+
+/* Search */
+.search{
+  margin:0 16px 10px;height:42px;background:var(--surf2);border:1px solid var(--border3);
+  border-radius:11px;display:flex;align-items:center;gap:8px;padding:0 14px;flex-shrink:0;
+}
+.search span{font-size:14px;color:var(--text3)}
+
+/* Chips */
+.chips-wrap{padding:0 16px 10px;flex-shrink:0;overflow-x:auto}
+.chips-wrap::-webkit-scrollbar{display:none}
+.chips{display:flex;gap:8px;width:max-content}
+.chip{height:28px;padding:0 12px;border-radius:8px;border:1px solid var(--border3);
+  background:var(--surf2);font-size:11px;font-weight:600;color:var(--text2);
+  white-space:nowrap;display:flex;align-items:center}
+.chip.on{background:var(--blue);border-color:var(--blue);color:#fff}
+
+/* Feed */
+.feed{flex:1;overflow-y:auto;padding:0 16px 16px;display:flex;flex-direction:column;gap:10px}
+.feed::-webkit-scrollbar{display:none}
+
+/* ── Sekcja label ── */
+.section-label{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:4px 0 2px;
+}
+.section-label h3{font-size:13px;font-weight:700;letter-spacing:-.01em}
+.section-label a{font-size:11px;color:var(--blue2)}
+
+/* ── [7] Poziomy scroll "Gorące dziś" ── */
+.hot-scroll{overflow-x:auto;margin:0 -16px;padding:4px 16px 8px}
+.hot-scroll::-webkit-scrollbar{display:none}
+.hot-row{display:flex;gap:10px;width:max-content}
+.hot-card{
+  width:200px;background:var(--surf);border:1px solid var(--border3);border-radius:14px;
+  padding:14px;flex-shrink:0;
+}
+.hot-card-top{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.hot-logo{width:36px;height:36px;border-radius:9px;background:var(--surf2);
+  border:1px solid var(--border3);display:flex;align-items:center;justify-content:center;
+  font-size:12px;font-weight:700;color:var(--text2)}
+.hot-co{font-size:10px;color:var(--text3)}
+.hot-title{font-size:13px;font-weight:600;line-height:1.25}
+.hot-sal{font-size:14px;font-weight:700;color:var(--green);letter-spacing:-.01em}
+/* [2] match score na hot card */
+.match-pill{
+  display:inline-flex;align-items:center;gap:4px;
+  background:var(--purple-dim);color:#a78bfa;
+  border-radius:6px;height:20px;padding:0 8px;font-size:10px;font-weight:700;margin-top:8px;
+}
+
+/* ── Karta główna ── */
+.card{
+  background:var(--surf);border:1px solid var(--border3);border-radius:14px;
+  padding:16px;transition:border-color .15s,box-shadow .15s;position:relative;
+}
+.card:hover{border-color:rgba(255,255,255,.14);box-shadow:0 4px 20px rgba(0,0,0,.3)}
+.card-top{display:flex;align-items:flex-start;gap:12px}
+.logo-sq{width:44px;height:44px;border-radius:10px;flex-shrink:0;background:var(--surf2);
+  border:1px solid var(--border3);display:flex;align-items:center;justify-content:center;
+  font-size:14px;font-weight:700;color:var(--text2)}
+.card-head{flex:1;min-width:0}
+.c-co{font-size:11px;color:var(--text3);margin-bottom:2px}
+.c-title{font-size:15px;font-weight:600;letter-spacing:-.01em;line-height:1.25}
+.save-btn{font-size:18px;color:var(--text3);flex-shrink:0;cursor:pointer;
+  transition:color .15s;line-height:1}
+.save-btn:hover{color:var(--gold)}
+
+/* [2] Match score */
+.match-badge{
+  display:inline-flex;align-items:center;gap:4px;
+  background:var(--purple-dim);color:#a78bfa;
+  border-radius:6px;height:20px;padding:0 8px;font-size:10px;font-weight:700;
+  margin-top:8px;
+}
+.match-bar{height:3px;border-radius:2px;background:var(--surf2);margin-top:5px;overflow:hidden}
+.match-fill{height:100%;border-radius:2px;background:linear-gradient(90deg,#7C3AED,#60A5FA)}
+
+/* Stawka */
+.salary-row{display:flex;align-items:baseline;gap:8px;margin-top:12px}
+.salary-num{font-size:19px;font-weight:700;color:var(--green);letter-spacing:-.02em}
+.salary-sub{font-size:11px;color:var(--text3)}
+
+/* [5] Urgency row */
+.urgency-row{
+  display:flex;align-items:center;gap:10px;margin-top:8px;
+}
+.urgency-item{display:flex;align-items:center;gap:4px;font-size:11px}
+.urgency-item.warn{color:var(--gold)}
+.urgency-item.red{color:var(--red)}
+.urgency-item.neutral{color:var(--text3)}
+
+/* Sep */
+.sep{height:1px;background:var(--border);margin:12px 0}
+
+/* Meta + tags */
+.meta-row{display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+.pill{display:inline-flex;align-items:center;height:22px;padding:0 9px;border-radius:6px;
+  font-size:11px;font-weight:600;background:var(--surf2);color:var(--text2);border:1px solid var(--border3)}
+.pill.feat{background:var(--gold-dim);color:var(--gold);border-color:transparent}
+.pill.urgent{background:var(--red-dim);color:var(--red);border-color:transparent}
+
+/* [3] Aktywność pracodawcy */
+.employer-row{
+  display:flex;align-items:center;gap:6px;margin-top:10px;
+  font-size:11px;color:var(--text3);
+}
+.active-dot{width:6px;height:6px;border-radius:50%;background:var(--green);flex-shrink:0}
+
+/* [4] Apply buttons */
+.apply-row{display:flex;gap:8px;margin-top:12px}
+.apply{
+  flex:1;height:38px;border:none;border-radius:9px;
+  background:var(--blue);color:#fff;font-weight:600;font-size:13px;font-family:var(--ff);
+  cursor:pointer;transition:background .15s;
+}
+.apply:hover{background:#2563EB}
+.apply.instant{background:var(--green)} /* ⚡ Aplikuj profilem */
+.apply.ghost{
+  flex:none;width:38px;background:transparent;border:1px solid var(--border3);
+  color:var(--text2);font-size:16px;
+}
+
+/* [8] Swipe hint */
+.swipe-hint{
+  display:flex;align-items:center;justify-content:center;gap:16px;
+  padding:6px 0 2px;font-size:11px;color:var(--text3);
+}
+.swipe-hint span{display:flex;align-items:center;gap:4px}
+
+/* Baner mapowy */
+.map-banner{
+  padding:12px 14px;border-radius:12px;
+  background:linear-gradient(135deg,rgba(59,130,246,.10),rgba(124,58,237,.08));
+  border:1px solid rgba(59,130,246,.16);
+  display:flex;align-items:center;gap:10px;
+}
+.map-banner p{font-size:12px;color:var(--text2);line-height:1.4}
+.map-banner b{color:var(--text);font-weight:600}
+
+/* Bottom nav */
+.bottomnav{height:68px;background:var(--bg2);border-top:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-around;flex-shrink:0;padding-bottom:8px}
+.nav-item{display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 16px}
+.nav-icon{font-size:20px;line-height:1}
+.nav-label{font-size:10px;font-weight:600;color:var(--text3)}
+.nav-item.on .nav-label{color:var(--blue2)}
+.nav-dot{width:4px;height:4px;border-radius:50%;background:var(--blue);margin:0 auto}
+
+/* ─────────────────────────────────────────
+   Panel legend (prawa kolumna)
+───────────────────────────────────────── */
+.legend{max-width:420px;padding-top:8px}
+.legend h2{font-size:22px;font-weight:700;letter-spacing:-.02em;margin-bottom:6px}
+.legend .sub{font-size:14px;color:var(--text2);line-height:1.6;margin-bottom:32px}
+.feature{
+  display:flex;gap:16px;align-items:flex-start;
+  padding:16px 0;border-bottom:1px solid var(--border);
+}
+.feature:last-child{border-bottom:none}
+.feat-num{
+  width:28px;height:28px;border-radius:8px;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  font-size:13px;font-weight:700;background:var(--surf);border:1px solid var(--border3);
+  color:var(--text2);
+}
+.feat-num.red{background:var(--red-dim);color:var(--red);border-color:transparent}
+.feat-num.yellow{background:var(--gold-dim);color:var(--gold);border-color:transparent}
+.feat-num.green{background:var(--green-dim);color:var(--green);border-color:transparent}
+.feat-body h3{font-size:14px;font-weight:600;margin-bottom:4px}
+.feat-body p{font-size:13px;color:var(--text2);line-height:1.5}
+.feat-body code{
+  font-family:var(--ff);background:var(--surf2);border:1px solid var(--border3);
+  border-radius:5px;padding:1px 6px;font-size:12px;color:var(--blue2);
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════ TELEFON ═══════════════ -->
+<div class="phone">
+<div class="phone-inner">
+
+  <!-- Status -->
+  <div class="statusbar">
+    <span>9:41</span>
+    <div class="statusbar-r"><span>●●●</span><span>▲</span><span>■■■</span></div>
+  </div>
+
+  <!-- Topbar -->
+  <div class="topbar">
+    <div class="logo">MapJob<em>.pl</em></div>
+    <div style="display:flex;gap:8px">
+      <div class="icon-btn">🔔</div>
+      <div class="icon-btn">⚙</div>
+    </div>
+  </div>
+
+  <!-- [1] Personalizowany nagłówek -->
+  <div class="pers-header">
+    <div class="pers-greeting">Cześć, Piotr 👋</div>
+    <div class="pers-headline"><em>23 nowe oferty</em> od Twojej ostatniej wizyty</div>
+    <div class="pers-sub">Dziś aktywnych: 47 firm w pobliżu</div>
+  </div>
+
+  <!-- Search -->
+  <div class="search">
+    <span>🔍</span>
+    <span>Szukaj stanowiska lub firmy…</span>
+  </div>
+
+  <!-- Chips -->
+  <div class="chips-wrap">
+    <div class="chips">
+      <div class="chip on">Wszystkie</div>
+      <div class="chip">Pełny etat</div>
+      <div class="chip">Hybryd</div>
+      <div class="chip">Zdalna</div>
+      <div class="chip">B2B</div>
+    </div>
+  </div>
+
+  <div class="feed">
+
+    <!-- [7] Sekcja: Gorące dziś (poziomy scroll) -->
+    <div class="section-label">
+      <h3>🔥 Gorące dziś</h3>
+      <a href="#">Zobacz więcej</a>
+    </div>
+    <div class="hot-scroll">
+      <div class="hot-row">
+
+        <div class="hot-card">
+          <div class="hot-card-top">
+            <div class="hot-logo">AL</div>
+            <div>
+              <div class="hot-co">Allegro</div>
+              <div class="hot-title">Frontend Dev</div>
+            </div>
+          </div>
+          <div class="hot-sal">12 000 – 18 000 zł</div>
+          <div class="match-pill">🎯 94% dopasowania</div>
+        </div>
+
+        <div class="hot-card">
+          <div class="hot-card-top">
+            <div class="hot-logo">CD</div>
+            <div>
+              <div class="hot-co">CD Projekt</div>
+              <div class="hot-title">Game Designer</div>
+            </div>
+          </div>
+          <div class="hot-sal">8 000 – 12 000 zł</div>
+          <div class="match-pill">🎯 88% dopasowania</div>
+        </div>
+
+        <div class="hot-card">
+          <div class="hot-card-top">
+            <div class="hot-logo">OL</div>
+            <div>
+              <div class="hot-co">OLX Group</div>
+              <div class="hot-title">Data Analyst</div>
+            </div>
+          </div>
+          <div class="hot-sal">9 000 – 13 000 zł</div>
+          <div class="match-pill">🎯 81% dopasowania</div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- [6] Sekcja: Polecane dla Ciebie -->
+    <div class="section-label" style="margin-top:6px">
+      <h3>⭐ Polecane dla Ciebie</h3>
+      <a href="#">Dostosuj</a>
+    </div>
+
+    <!-- KARTA 1 — pełna z wszystkimi funkcjami -->
+    <div class="card">
+      <div class="card-top">
+        <div class="logo-sq">AL</div>
+        <div class="card-head">
+          <div class="c-co">Allegro</div>
+          <div class="c-title">Senior Frontend Developer</div>
+          <!-- [2] Match score -->
+          <div class="match-badge">🎯 94% dopasowania</div>
+          <div class="match-bar"><div class="match-fill" style="width:94%"></div></div>
+        </div>
+        <div class="save-btn">♡</div>
+      </div>
+
+      <div class="salary-row">
+        <span class="salary-num">12 000 – 18 000 zł</span>
+        <span class="salary-sub">brutto / mies.</span>
+      </div>
+
+      <!-- [5] Urgency -->
+      <div class="urgency-row">
+        <div class="urgency-item warn">⏳ Wygasa za 3 dni</div>
+        <div class="urgency-item neutral">·</div>
+        <div class="urgency-item neutral">👥 24 aplikacje</div>
+      </div>
+
+      <div class="sep"></div>
+
+      <div class="meta-row">
+        <span class="pill">Warszawa</span>
+        <span class="pill">Hybryd</span>
+        <span class="pill">Pełny etat</span>
+        <span class="pill feat">⭐ Wyróżnione</span>
+      </div>
+
+      <!-- [3] Aktywność pracodawcy -->
+      <div class="employer-row">
+        <div class="active-dot"></div>
+        Pracodawca aktywny dziś · odpowiada w ciągu 24h
+      </div>
+
+      <!-- [4] Aplikuj 1 kliknięciem -->
+      <div class="apply-row">
+        <button class="apply instant">⚡ Aplikuj profilem</button>
+        <button class="apply ghost">↗</button>
+      </div>
+    </div>
+
+    <!-- KARTA 2 -->
+    <div class="card">
+      <div class="card-top">
+        <div class="logo-sq">IN</div>
+        <div class="card-head">
+          <div class="c-co">InPost</div>
+          <div class="c-title">Kierownik Magazynu</div>
+          <div class="match-badge">🎯 78% dopasowania</div>
+          <div class="match-bar"><div class="match-fill" style="width:78%"></div></div>
+        </div>
+        <div class="save-btn">♡</div>
+      </div>
+
+      <div class="salary-row">
+        <span class="salary-num">5 200 – 7 800 zł</span>
+        <span class="salary-sub">brutto / mies.</span>
+      </div>
+
+      <!-- [5] Urgency — nowa oferta bez presji -->
+      <div class="urgency-row">
+        <div class="urgency-item neutral">🕐 Dodano 2h temu</div>
+        <div class="urgency-item neutral">·</div>
+        <div class="urgency-item neutral">👥 3 aplikacje</div>
+      </div>
+
+      <div class="sep"></div>
+
+      <div class="meta-row">
+        <span class="pill">Łódź</span>
+        <span class="pill">Stacjonarna</span>
+        <span class="pill">Pełny etat</span>
+      </div>
+
+      <div class="employer-row">
+        <div class="active-dot" style="background:var(--gold)"></div>
+        Pracodawca aktywny 3h temu
+      </div>
+
+      <div class="apply-row">
+        <button class="apply instant">⚡ Aplikuj profilem</button>
+        <button class="apply ghost">↗</button>
+      </div>
+    </div>
+
+    <!-- Baner mapowy -->
+    <div class="map-banner">
+      <span style="font-size:20px">🗺</span>
+      <p><b>Filtruj po mapie</b><br>Ustaw obszar i znajdź oferty w swoim sąsiedztwie.</p>
+    </div>
+
+    <!-- [6] Sekcja: Nowe dziś -->
+    <div class="section-label" style="margin-top:6px">
+      <h3>🆕 Nowe dziś</h3>
+      <a href="#">47 ofert</a>
+    </div>
+
+    <!-- KARTA 3 — pilna, brak dopasowania (nowy profil?) -->
+    <div class="card">
+      <div class="card-top">
+        <div class="logo-sq">Bi</div>
+        <div class="card-head">
+          <div class="c-co">Biedronka</div>
+          <div class="c-title">Kasjer / Sprzedawca</div>
+        </div>
+        <div class="save-btn">♡</div>
+      </div>
+
+      <div class="salary-row">
+        <span class="salary-num">3 900 – 5 200 zł</span>
+        <span class="salary-sub">brutto / mies.</span>
+      </div>
+
+      <!-- [5] Urgency — pilne -->
+      <div class="urgency-row">
+        <div class="urgency-item red">🔥 Pilne — wygasa jutro</div>
+        <div class="urgency-item neutral">·</div>
+        <div class="urgency-item neutral">👥 41 aplikacji</div>
+      </div>
+
+      <div class="sep"></div>
+
+      <div class="meta-row">
+        <span class="pill">Praga Południe</span>
+        <span class="pill">Stacjonarna</span>
+        <span class="pill urgent">🔥 Pilne</span>
+      </div>
+
+      <div class="employer-row">
+        <div class="active-dot"></div>
+        Pracodawca aktywny dziś
+      </div>
+
+      <div class="apply-row">
+        <button class="apply">Aplikuj teraz</button>
+        <button class="apply ghost">↗</button>
+      </div>
+    </div>
+
+    <!-- [8] Swipe hint -->
+    <div class="swipe-hint">
+      <span>← przesuń aby pominąć</span>
+      <span>zapisz →</span>
+    </div>
+
+  </div><!-- /feed -->
+
+  <!-- Bottom nav -->
+  <div class="bottomnav">
+    <div class="nav-item">
+      <div class="nav-icon">🗺</div>
+      <div class="nav-label">Mapa</div>
+    </div>
+    <div class="nav-item on">
+      <div class="nav-icon">📋</div>
+      <div class="nav-label" style="color:var(--blue2)">Lista</div>
+      <div class="nav-dot"></div>
+    </div>
+    <div class="nav-item">
+      <div class="nav-icon">💼</div>
+      <div class="nav-label">Aplikacje</div>
+    </div>
+    <div class="nav-item">
+      <div class="nav-icon">👤</div>
+      <div class="nav-label">Profil</div>
+    </div>
+  </div>
+
+</div>
+</div>
+
+<!-- ═══════════════ LEGENDA ═══════════════ -->
+<div class="legend">
+  <h2>8 mechanizmów engagement</h2>
+  <p class="sub">Każdy z nich ma konkretny cel — oznaczone numerami na makiecie.</p>
+
+  <div class="feature">
+    <div class="feat-num red">1</div>
+    <div class="feat-body">
+      <h3>Personalizowany nagłówek</h3>
+      <p>Zamiast zimnego "1 248 ofert" — <code>"23 nowe od ostatniej wizyty"</code>. Tworzy powód do scrollowania zanim użytkownik zdąży się zastanowić czy zostać.</p>
+    </div>
+  </div>
+
+  <div class="feature">
+    <div class="feat-num red">2</div>
+    <div class="feat-body">
+      <h3>Procent dopasowania</h3>
+      <p>Fioletowy pill <code>"🎯 94% dopasowania"</code> z paskiem postępu. Zamienia przeglądanie w grę — użytkownik chce znaleźć ofertę z wyższym wynikiem.</p>
+    </div>
+  </div>
+
+  <div class="feature">
+    <div class="feat-num red">3</div>
+    <div class="feat-body">
+      <h3>Sygnał aktywności pracodawcy</h3>
+      <p>Zielona kropka + <code>"Pracodawca aktywny dziś"</code>. Usuwa lęk przed wysyłaniem CV w próżnię — jeden z głównych powodów porzucenia procesu.</p>
+    </div>
+  </div>
+
+  <div class="feature">
+    <div class="feat-num yellow">4</div>
+    <div class="feat-body">
+      <h3>Aplikuj 1 kliknięciem</h3>
+      <p>Gdy profil jest uzupełniony — zielony przycisk <code>"⚡ Aplikuj profilem"</code>. Zero formularzy, zero pliku CV. Usuwa największy próg tarcia.</p>
+    </div>
+  </div>
+
+  <div class="feature">
+    <div class="feat-num yellow">5</div>
+    <div class="feat-body">
+      <h3>Urgency bez paniki</h3>
+      <p>Trzy poziomy: <code>"Dodano 2h temu"</code> (świeżość), <code>"Wygasa za 3 dni"</code> (presja), <code>"🔥 Pilne — wygasa jutro"</code> (alarm). Dopasowane do kontekstu, nie wszędzie czerwone.</p>
+    </div>
+  </div>
+
+  <div class="feature">
+    <div class="feat-num yellow">6</div>
+    <div class="feat-body">
+      <h3>Sekcje zamiast ściany kart</h3>
+      <p><code>"⭐ Polecane"</code> → <code>"🆕 Nowe dziś"</code> → <code>"📍 Najbliżej"</code>. Przerywniki nadają rytm i dają poczucie postępu — użytkownik wie gdzie jest na liście.</p>
+    </div>
+  </div>
+
+  <div class="feature">
+    <div class="feat-num green">7</div>
+    <div class="feat-body">
+      <h3>Poziomy scroll "Gorące dziś"</h3>
+      <p>Poziomy rząd kart na górze — wzorzec Netflix/Spotify. Zatrzymuje uwagę zanim użytkownik zdecyduje czy scrollować dalej. Match score szczególnie dobrze widoczny w tym formacie.</p>
+    </div>
+  </div>
+
+  <div class="feature">
+    <div class="feat-num green">8</div>
+    <div class="feat-body">
+      <h3>Swipe to save</h3>
+      <p>Subtelna podpowiedź na dole listy. Przesuń w prawo = zapisz, w lewo = ukryj i popraw algorytm. Zmienia scrollowanie w aktywną czynność.</p>
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>
