@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MapJob — Makieta #6 Sekcje + #7 Gorące dziś</title>
+<style>
+:root{
+  --bg:#0B0D10;--bg2:#101318;--surf:#15181F;--surf2:#1C2029;
+  --border:rgba(255,255,255,.06);--border3:rgba(255,255,255,.09);
+  --text:#F5F7FA;--text2:#A1A9B8;--text3:#6B7280;
+  --blue:#3B82F6;--blue2:#60A5FA;--blue-dim:rgba(59,130,246,.12);
+  --green:#10B981;--green-dim:rgba(16,185,129,.10);
+  --gold:#D97706;--gold-dim:rgba(217,119,6,.12);
+  --red:#DC2626;--red-dim:rgba(220,38,38,.12);
+  --purple:#7C3AED;--purple-dim:rgba(124,58,237,.12);
+  --ff:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  background:#070809;color:var(--text);font-family:var(--ff);
+  -webkit-font-smoothing:antialiased;
+  padding:40px 24px 100px;
+}
+
+h1{font-size:26px;font-weight:700;letter-spacing:-.02em;margin-bottom:6px}
+.page-sub{font-size:14px;color:var(--text2);max-width:700px;line-height:1.6;margin-bottom:48px}
+.page-sub b{color:var(--text)}
+
+/* ── Obszary ── */
+.area{margin-bottom:80px}
+.area-title{
+  font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--text3);margin-bottom:24px;padding-bottom:10px;
+  border-bottom:1px solid var(--border);
+}
+.area-title em{font-style:normal;color:var(--blue2)}
+
+/* Siatka wariantów */
+.variants{
+  display:flex;gap:40px;flex-wrap:wrap;align-items:flex-start;
+}
+.variant{flex:1;min-width:340px;max-width:440px}
+.variant-label{
+  font-size:12px;font-weight:600;margin-bottom:12px;display:flex;align-items:center;gap:8px;
+}
+.variant-label .vl-tag{
+  height:20px;padding:0 8px;border-radius:5px;font-size:10px;font-weight:700;
+  display:inline-flex;align-items:center;
+}
+.vl-tag.rec{background:var(--green-dim);color:var(--green)}
+.vl-tag.alt{background:var(--surf2);color:var(--text3);border:1px solid var(--border3)}
+.variant-note{font-size:12px;color:var(--text3);line-height:1.5;margin-top:12px}
+
+/* ── Wspólne tokeny UI ── */
+.bg-panel{background:var(--bg);border-radius:16px;overflow:hidden;border:1px solid var(--border3)}
+
+/* Sekcja label */
+.section-label{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:16px 16px 8px;
+}
+.section-label h3{font-size:13px;font-weight:700;letter-spacing:-.01em;display:flex;align-items:center;gap:6px}
+.section-count{
+  font-size:11px;font-weight:600;color:var(--text3);
+  background:var(--surf2);border:1px solid var(--border3);
+  border-radius:6px;padding:1px 7px;
+}
+.section-link{font-size:11px;color:var(--blue2);font-weight:600}
+
+/* Karta mini (w sekcji) */
+.mini-card{
+  margin:0 16px 10px;background:var(--surf);border:1px solid var(--border3);
+  border-radius:12px;padding:14px;
+}
+.mc-top{display:flex;align-items:flex-start;gap:10px}
+.mc-logo{
+  width:38px;height:38px;border-radius:9px;background:var(--surf2);
+  border:1px solid var(--border3);display:flex;align-items:center;
+  justify-content:center;font-size:12px;font-weight:700;color:var(--text2);flex-shrink:0;
+}
+.mc-co{font-size:10px;color:var(--text3);margin-bottom:2px}
+.mc-title{font-size:14px;font-weight:600;line-height:1.25;letter-spacing:-.01em}
+.mc-sal{font-size:14px;font-weight:700;color:var(--green);margin-top:8px;letter-spacing:-.01em}
+.mc-sal span{font-size:11px;font-weight:400;color:var(--text3)}
+.mc-bottom{display:flex;align-items:center;justify-content:space-between;margin-top:8px}
+.pill-sm{
+  height:20px;padding:0 8px;border-radius:5px;font-size:10px;font-weight:600;
+  background:var(--surf2);color:var(--text2);border:1px solid var(--border3);
+  display:inline-flex;align-items:center;
+}
+.save-sm{font-size:15px;color:var(--text3);cursor:pointer}
+.save-sm:hover{color:var(--gold)}
+
+/* separator sekcji */
+.section-sep{height:1px;background:var(--border);margin:8px 16px 16px}
+
+/* ── HOT SCROLL warianty ── */
+.hot-wrap{
+  padding:0 16px 16px;overflow-x:auto;margin-left:-16px;margin-right:-16px;
+  padding-left:16px;padding-right:16px;
+}
+.hot-wrap::-webkit-scrollbar{display:none}
+.hot-row{display:flex;gap:10px;width:max-content}
+
+/* Wariant A hot-card — kompaktowy */
+.hc-a{
+  width:190px;background:var(--surf);border:1px solid var(--border3);
+  border-radius:13px;padding:14px;flex-shrink:0;
+}
+.hc-a-top{display:flex;align-items:center;gap:9px;margin-bottom:10px}
+.hc-logo{
+  width:34px;height:34px;border-radius:8px;background:var(--surf2);
+  border:1px solid var(--border3);display:flex;align-items:center;justify-content:center;
+  font-size:11px;font-weight:700;color:var(--text2);flex-shrink:0;
+}
+.hc-co{font-size:10px;color:var(--text3)}
+.hc-title{font-size:13px;font-weight:600;line-height:1.25;letter-spacing:-.01em}
+.hc-sal{font-size:15px;font-weight:700;color:var(--green);letter-spacing:-.01em;margin-top:8px}
+.hc-tag{
+  display:inline-flex;align-items:center;gap:3px;margin-top:8px;
+  height:20px;padding:0 8px;border-radius:5px;font-size:10px;font-weight:600;
+  background:var(--surf2);color:var(--text3);border:1px solid var(--border3);
+}
+
+/* Wariant B hot-card — z gradientem kategorii */
+.hc-b{
+  width:190px;background:var(--surf);border:1px solid var(--border3);
+  border-radius:13px;overflow:hidden;flex-shrink:0;
+}
+.hc-b-head{
+  padding:10px 12px 8px;
+  background:linear-gradient(135deg,rgba(59,130,246,.18),rgba(124,58,237,.10));
+  border-bottom:1px solid rgba(255,255,255,.05);
+}
+.hc-b-cat{font-size:9px;font-weight:700;letter-spacing:.05em;color:var(--blue2);margin-bottom:6px}
+.hc-b-body{padding:10px 12px 12px}
+.hc-b-co{font-size:10px;color:var(--text3)}
+.hc-b-title{font-size:13px;font-weight:600;line-height:1.25;margin-top:1px}
+.hc-b-sal{font-size:15px;font-weight:700;color:var(--green);letter-spacing:-.01em;margin-top:8px}
+
+/* Fade overflow indicator */
+.hot-container{position:relative}
+.hot-fade{
+  position:absolute;right:0;top:0;bottom:0;width:40px;
+  background:linear-gradient(90deg,transparent,var(--bg));
+  pointer-events:none;border-radius:0 16px 16px 0;
+}
+
+/* ── Pełny flow ── */
+.flow-phone{
+  width:390px;background:var(--bg);border-radius:40px;flex-shrink:0;
+  box-shadow:0 0 0 10px #1a1d24,0 0 0 12px #0d0f14,0 32px 64px rgba(0,0,0,.7);
+  overflow:hidden;
+}
+.flow-inner{height:760px;overflow-y:auto;display:flex;flex-direction:column}
+.flow-inner::-webkit-scrollbar{display:none}
+
+/* Topbar mini */
+.topbar{background:var(--bg2);border-bottom:1px solid var(--border);
+  padding:10px 16px;display:flex;align-items:center;justify-content:space-between;}
+.logo-txt{font-size:18px;font-weight:700;letter-spacing:-.02em}
+.logo-txt em{font-style:normal;font-size:13px;color:var(--blue2);font-weight:600}
+.icon-btn{width:32px;height:32px;border-radius:8px;border:1px solid var(--border3);
+  background:var(--surf2);display:flex;align-items:center;justify-content:center;font-size:14px}
+
+/* Search mini */
+.search-mini{
+  margin:10px 16px;height:40px;background:var(--surf2);border:1px solid var(--border3);
+  border-radius:10px;display:flex;align-items:center;gap:8px;padding:0 12px;
+  font-size:13px;color:var(--text3);flex-shrink:0;
+}
+
+/* Chips mini */
+.chips{display:flex;gap:7px;padding:0 16px 10px;overflow-x:auto;flex-shrink:0}
+.chips::-webkit-scrollbar{display:none}
+.chip{height:26px;padding:0 11px;border-radius:7px;border:1px solid var(--border3);
+  background:var(--surf2);font-size:11px;font-weight:600;color:var(--text2);white-space:nowrap}
+.chip.on{background:var(--blue);border-color:var(--blue);color:#fff}
+
+/* Scroll area */
+.scroll-area{flex:1;overflow-y:auto;display:flex;flex-direction:column}
+.scroll-area::-webkit-scrollbar{display:none}
+
+/* Apply btn */
+.apply{
+  display:block;width:calc(100% - 32px);margin:0 16px 12px;height:36px;
+  background:var(--blue);border:none;border-radius:9px;color:#fff;
+  font-weight:600;font-size:13px;font-family:var(--ff);cursor:pointer;
+}
+
+/* ── Annotations ── */
+.annotation{
+  display:flex;gap:10px;align-items:flex-start;
+  background:var(--surf);border:1px solid var(--border3);border-radius:12px;
+  padding:14px;margin-bottom:10px;
+}
+.ann-ic{font-size:18px;flex-shrink:0;margin-top:1px}
+.ann-body h4{font-size:13px;font-weight:600;margin-bottom:3px}
+.ann-body p{font-size:12px;color:var(--text2);line-height:1.5}
+.ann-body code{
+  font-family:var(--ff);background:var(--surf2);border:1px solid var(--border3);
+  border-radius:4px;padding:1px 5px;font-size:11px;color:var(--blue2);
+}
+</style>
+</head>
+<body>
+
+<h1>Makieta szczegółowa — #6 Sekcje + #7 Gorące dziś</h1>
+<p class="page-sub">
+  Dwie niezależne funkcje. <b>#6 Sekcje</b> — dzielą listę na logiczne grupy, dają poczucie postępu i struktury.
+  <b>#7 Gorące dziś</b> — poziomy rząd kart na szczycie, zatrzymuje uwagę zanim użytkownik zdecyduje czy scrollować.
+  Poniżej: warianty każdej funkcji osobno, a na końcu pełny złożony widok.
+</p>
+
+<!-- ═══════════════════════════════════════
+     OBSZAR 1 — #6 SEKCJE: WARIANTY HEADERÓW
+═══════════════════════════════════════ -->
+<div class="area">
+  <div class="area-title">FUNKCJA <em>#6</em> — SEKCJE: WARIANTY NAGŁÓWKA SEKCJI</div>
+
+  <div class="variants">
+
+    <!-- Wariant A: prosty tekst + liczba -->
+    <div class="variant">
+      <div class="variant-label">
+        Wariant A — Etykieta + licznik
+        <span class="vl-tag rec">Rekomendowany</span>
+      </div>
+      <div class="bg-panel">
+        <!-- Sekcja 1 -->
+        <div class="section-label">
+          <h3>⭐ Polecane dla Ciebie <span class="section-count">8</span></h3>
+          <span class="section-link">Dostosuj →</span>
+        </div>
+        <div class="mini-card">
+          <div class="mc-top">
+            <div class="mc-logo">AL</div>
+            <div><div class="mc-co">Allegro</div><div class="mc-title">Senior Frontend Dev</div></div>
+            <div class="save-sm" style="margin-left:auto">♡</div>
+          </div>
+          <div class="mc-sal">12 000 – 18 000 zł <span>brutto</span></div>
+          <div class="mc-bottom">
+            <div style="display:flex;gap:6px">
+              <span class="pill-sm">Warszawa</span>
+              <span class="pill-sm">Hybryd</span>
+            </div>
+          </div>
+        </div>
+        <div class="section-sep"></div>
+
+        <!-- Sekcja 2 -->
+        <div class="section-label">
+          <h3>🆕 Nowe dziś <span class="section-count">23</span></h3>
+          <span class="section-link">Zobacz wszystkie →</span>
+        </div>
+        <div class="mini-card">
+          <div class="mc-top">
+            <div class="mc-logo">IN</div>
+            <div><div class="mc-co">InPost</div><div class="mc-title">Kierownik Magazynu</div></div>
+            <div class="save-sm" style="margin-left:auto">♡</div>
+          </div>
+          <div class="mc-sal">5 200 – 7 800 zł <span>brutto</span></div>
+          <div class="mc-bottom">
+            <div style="display:flex;gap:6px">
+              <span class="pill-sm">Łódź</span>
+              <span class="pill-sm">Stacjonarna</span>
+            </div>
+          </div>
+        </div>
+        <div class="section-sep"></div>
+
+        <!-- Sekcja 3 -->
+        <div class="section-label">
+          <h3>📍 Najbliżej Ciebie <span class="section-count">47</span></h3>
+          <span class="section-link">Zobacz mapę →</span>
+        </div>
+        <div class="mini-card" style="margin-bottom:16px">
+          <div class="mc-top">
+            <div class="mc-logo">Bi</div>
+            <div><div class="mc-co">Biedronka</div><div class="mc-title">Kasjer / Sprzedawca</div></div>
+            <div class="save-sm" style="margin-left:auto">♡</div>
+          </div>
+          <div class="mc-sal">3 900 – 5 200 zł <span>brutto</span></div>
+          <div class="mc-bottom">
+            <div style="display:flex;gap:6px">
+              <span class="pill-sm">Praga Poł.</span>
+              <span class="pill-sm">Stacjonarna</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="variant-note">Ikona + nazwa + licznik + akcja. Minimalna, czytelna. Licznik buduje ciekawość ile jest w sekcji.</div>
+    </div>
+
+    <!-- Wariant B: pełny nagłówek z opisem -->
+    <div class="variant">
+      <div class="variant-label">
+        Wariant B — Z podtytułem
+        <span class="vl-tag alt">Alternatywny</span>
+      </div>
+      <div class="bg-panel">
+        <!-- Sekcja 1 -->
+        <div style="padding:16px 16px 0">
+          <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:10px">
+            <div>
+              <div style="font-size:13px;font-weight:700;margin-bottom:2px">⭐ Polecane dla Ciebie</div>
+              <div style="font-size:11px;color:var(--text3)">Na podstawie Twojego profilu</div>
+            </div>
+            <span class="section-link" style="margin-top:2px">8 ofert →</span>
+          </div>
+        </div>
+        <div class="mini-card">
+          <div class="mc-top">
+            <div class="mc-logo">AL</div>
+            <div><div class="mc-co">Allegro</div><div class="mc-title">Senior Frontend Dev</div></div>
+            <div class="save-sm" style="margin-left:auto">♡</div>
+          </div>
+          <div class="mc-sal">12 000 – 18 000 zł <span>brutto</span></div>
+        </div>
+        <div class="section-sep"></div>
+
+        <!-- Sekcja 2 -->
+        <div style="padding:8px 16px 0">
+          <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:10px">
+            <div>
+              <div style="font-size:13px;font-weight:700;margin-bottom:2px">🆕 Nowe dziś</div>
+              <div style="font-size:11px;color:var(--text3)">Dodane w ciągu ostatnich 24h</div>
+            </div>
+            <span class="section-link" style="margin-top:2px">23 ofert →</span>
+          </div>
+        </div>
+        <div class="mini-card">
+          <div class="mc-top">
+            <div class="mc-logo">IN</div>
+            <div><div class="mc-co">InPost</div><div class="mc-title">Kierownik Magazynu</div></div>
+            <div class="save-sm" style="margin-left:auto">♡</div>
+          </div>
+          <div class="mc-sal">5 200 – 7 800 zł <span>brutto</span></div>
+        </div>
+        <div class="section-sep"></div>
+
+        <div style="padding:8px 16px 0">
+          <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:10px">
+            <div>
+              <div style="font-size:13px;font-weight:700;margin-bottom:2px">📍 Najbliżej Ciebie</div>
+              <div style="font-size:11px;color:var(--text3)">Oferty w Twoim rejonie</div>
+            </div>
+            <span class="section-link" style="margin-top:2px">47 ofert →</span>
+          </div>
+        </div>
+        <div class="mini-card" style="margin-bottom:16px">
+          <div class="mc-top">
+            <div class="mc-logo">Bi</div>
+            <div><div class="mc-co">Biedronka</div><div class="mc-title">Kasjer / Sprzedawca</div></div>
+            <div class="save-sm" style="margin-left:auto">♡</div>
+          </div>
+          <div class="mc-sal">3 900 – 5 200 zł <span>brutto</span></div>
+        </div>
+      </div>
+      <div class="variant-note">Podtytuł wyjaśnia skąd pochodzi sekcja. Bardziej informacyjny ale zajmuje więcej miejsca — ryzyko że mniej kart widocznych "above fold".</div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     OBSZAR 2 — #7 GORĄCE DZIŚ: WARIANTY KART POZIOMYCH
+═══════════════════════════════════════ -->
+<div class="area">
+  <div class="area-title">FUNKCJA <em>#7</em> — GORĄCE DZIŚ: WARIANTY KARTY POZIOMEJ</div>
+
+  <div class="variants">
+
+    <!-- Wariant A hot: kompaktowy, tylko essentials -->
+    <div class="variant">
+      <div class="variant-label">
+        Hot Card A — Kompaktowy
+        <span class="vl-tag rec">Rekomendowany</span>
+      </div>
+      <div class="bg-panel" style="padding:14px 0 14px">
+        <div class="section-label" style="padding-bottom:10px">
+          <h3>🔥 Gorące dziś</h3>
+          <span class="section-link">Zobacz więcej →</span>
+        </div>
+        <div class="hot-container">
+          <div class="hot-wrap">
+            <div class="hot-row" style="padding:0 16px 4px">
+              <div class="hc-a">
+                <div class="hc-a-top">
+                  <div class="hc-logo">AL</div>
+                  <div><div class="hc-co">Allegro</div><div class="hc-title">Frontend Developer</div></div>
+                </div>
+                <div class="hc-sal">12 000 – 18 000 zł</div>
+                <div class="hc-tag">Hybryd</div>
+              </div>
+              <div class="hc-a">
+                <div class="hc-a-top">
+                  <div class="hc-logo">CD</div>
+                  <div><div class="hc-co">CD Projekt</div><div class="hc-title">Game Designer</div></div>
+                </div>
+                <div class="hc-sal">8 000 – 12 000 zł</div>
+                <div class="hc-tag">Stacjonarna</div>
+              </div>
+              <div class="hc-a">
+                <div class="hc-a-top">
+                  <div class="hc-logo">OL</div>
+                  <div><div class="hc-co">OLX Group</div><div class="hc-title">Data Analyst</div></div>
+                </div>
+                <div class="hc-sal">9 000 – 13 000 zł</div>
+                <div class="hc-tag">Zdalna</div>
+              </div>
+              <div class="hc-a" style="opacity:.4">
+                <div class="hc-a-top">
+                  <div class="hc-logo">GG</div>
+                  <div><div class="hc-co">Google PL</div><div class="hc-title">Backend Eng.</div></div>
+                </div>
+                <div class="hc-sal">18 000 – 26 000 zł</div>
+                <div class="hc-tag">Hybryd</div>
+              </div>
+            </div>
+          </div>
+          <div class="hot-fade"></div>
+        </div>
+      </div>
+      <div class="variant-note">Prosta karta: logo + firma + tytuł + stawka + tag formy. Fade po prawej sugeruje scrollowanie. 4. karta przyciemniona = jest ich więcej.</div>
+    </div>
+
+    <!-- Wariant B hot: z kolorowym headerem kategorii -->
+    <div class="variant">
+      <div class="variant-label">
+        Hot Card B — Z kategorią branżową
+        <span class="vl-tag alt">Alternatywny</span>
+      </div>
+      <div class="bg-panel" style="padding:14px 0 14px">
+        <div class="section-label" style="padding-bottom:10px">
+          <h3>🔥 Gorące dziś</h3>
+          <span class="section-link">Zobacz więcej →</span>
+        </div>
+        <div class="hot-container">
+          <div class="hot-wrap">
+            <div class="hot-row" style="padding:0 16px 4px">
+              <div class="hc-b">
+                <div class="hc-b-head">
+                  <div class="hc-b-cat">💻 IT / PROGRAMOWANIE</div>
+                  <div class="hc-logo" style="width:32px;height:32px;border-radius:8px">AL</div>
+                </div>
+                <div class="hc-b-body">
+                  <div class="hc-b-co">Allegro</div>
+                  <div class="hc-b-title">Frontend Developer</div>
+                  <div class="hc-b-sal">12 000 – 18 000 zł</div>
+                </div>
+              </div>
+              <div class="hc-b">
+                <div class="hc-b-head" style="background:linear-gradient(135deg,rgba(217,119,6,.18),rgba(220,38,38,.10))">
+                  <div class="hc-b-cat" style="color:var(--gold)">🎮 GAMING / DESIGN</div>
+                  <div class="hc-logo" style="width:32px;height:32px;border-radius:8px">CD</div>
+                </div>
+                <div class="hc-b-body">
+                  <div class="hc-b-co">CD Projekt</div>
+                  <div class="hc-b-title">Game Designer</div>
+                  <div class="hc-b-sal">8 000 – 12 000 zł</div>
+                </div>
+              </div>
+              <div class="hc-b">
+                <div class="hc-b-head" style="background:linear-gradient(135deg,rgba(16,185,129,.15),rgba(59,130,246,.08))">
+                  <div class="hc-b-cat" style="color:var(--green)">📊 DATA / ANALITYKA</div>
+                  <div class="hc-logo" style="width:32px;height:32px;border-radius:8px">OL</div>
+                </div>
+                <div class="hc-b-body">
+                  <div class="hc-b-co">OLX Group</div>
+                  <div class="hc-b-title">Data Analyst</div>
+                  <div class="hc-b-sal">9 000 – 13 000 zł</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="hot-fade"></div>
+        </div>
+      </div>
+      <div class="variant-note">Kolorowy nagłówek kategorii = wizualnie bardziej zróżnicowany. Ale wymaga przypisania branż do ofert w bazie danych.</div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     OBSZAR 3 — PEŁNY WIDOK: #6 + #7 RAZEM
+═══════════════════════════════════════ -->
+<div class="area">
+  <div class="area-title">PEŁNY WIDOK — <em>#7 + #6</em> RAZEM (rekomendowane warianty)</div>
+
+  <div style="display:flex;gap:56px;flex-wrap:wrap;align-items:flex-start">
+
+    <div class="flow-phone">
+      <div class="flow-inner">
+
+        <!-- Topbar -->
+        <div class="topbar" style="flex-shrink:0">
+          <div class="logo-txt">MapJob<em>.pl</em></div>
+          <div style="display:flex;gap:7px">
+            <div class="icon-btn">🔔</div>
+            <div class="icon-btn">⚙</div>
+          </div>
+        </div>
+
+        <!-- Search -->
+        <div class="search-mini" style="flex-shrink:0">
+          <span style="font-size:14px">🔍</span>
+          <span>Szukaj stanowiska lub firmy…</span>
+        </div>
+
+        <!-- Chips -->
+        <div class="chips" style="flex-shrink:0">
+          <div class="chip on">Wszystkie</div>
+          <div class="chip">Pełny etat</div>
+          <div class="chip">Hybryd</div>
+          <div class="chip">Zdalna</div>
+          <div class="chip">B2B</div>
+        </div>
+
+        <div class="scroll-area">
+
+          <!-- [7] GORĄCE DZIŚ -->
+          <div class="section-label">
+            <h3>🔥 Gorące dziś</h3>
+            <span class="section-link">Zobacz więcej →</span>
+          </div>
+          <div class="hot-container" style="margin-bottom:4px">
+            <div class="hot-wrap" style="margin:0;padding:0 16px 8px">
+              <div class="hot-row">
+                <div class="hc-a">
+                  <div class="hc-a-top">
+                    <div class="hc-logo">AL</div>
+                    <div><div class="hc-co">Allegro</div><div class="hc-title">Frontend Dev</div></div>
+                  </div>
+                  <div class="hc-sal">12 000 – 18 000 zł</div>
+                  <div class="hc-tag">Hybryd</div>
+                </div>
+                <div class="hc-a">
+                  <div class="hc-a-top">
+                    <div class="hc-logo">CD</div>
+                    <div><div class="hc-co">CD Projekt</div><div class="hc-title">Game Designer</div></div>
+                  </div>
+                  <div class="hc-sal">8 000 – 12 000 zł</div>
+                  <div class="hc-tag">Kraków</div>
+                </div>
+                <div class="hc-a">
+                  <div class="hc-a-top">
+                    <div class="hc-logo">OL</div>
+                    <div><div class="hc-co">OLX Group</div><div class="hc-title">Data Analyst</div></div>
+                  </div>
+                  <div class="hc-sal">9 000 – 13 000 zł</div>
+                  <div class="hc-tag">Zdalna</div>
+                </div>
+              </div>
+            </div>
+            <div class="hot-fade"></div>
+          </div>
+
+          <!-- [6] SEKCJA: POLECANE -->
+          <div class="section-label">
+            <h3>⭐ Polecane dla Ciebie <span class="section-count">8</span></h3>
+            <span class="section-link">Dostosuj →</span>
+          </div>
+          <div class="mini-card">
+            <div class="mc-top">
+              <div class="mc-logo">AL</div>
+              <div><div class="mc-co">Allegro</div><div class="mc-title">Senior Frontend Developer</div></div>
+              <div class="save-sm" style="margin-left:auto">♡</div>
+            </div>
+            <div class="mc-sal">12 000 – 18 000 zł <span>brutto / mies.</span></div>
+            <div class="mc-bottom" style="margin-top:10px">
+              <div style="display:flex;gap:6px">
+                <span class="pill-sm">Warszawa</span>
+                <span class="pill-sm">Hybryd</span>
+                <span class="pill-sm">Pełny etat</span>
+              </div>
+            </div>
+          </div>
+          <button class="apply">Aplikuj teraz</button>
+
+          <div style="height:1px;background:var(--border);margin:4px 16px 12px"></div>
+
+          <!-- [6] SEKCJA: NOWE DZIŚ -->
+          <div class="section-label">
+            <h3>🆕 Nowe dziś <span class="section-count">23</span></h3>
+            <span class="section-link">Zobacz wszystkie →</span>
+          </div>
+          <div class="mini-card">
+            <div class="mc-top">
+              <div class="mc-logo">IN</div>
+              <div><div class="mc-co">InPost</div><div class="mc-title">Kierownik Magazynu</div></div>
+              <div class="save-sm" style="margin-left:auto">♡</div>
+            </div>
+            <div class="mc-sal">5 200 – 7 800 zł <span>brutto / mies.</span></div>
+            <div class="mc-bottom" style="margin-top:10px">
+              <div style="display:flex;gap:6px">
+                <span class="pill-sm">Łódź</span>
+                <span class="pill-sm">Stacjonarna</span>
+              </div>
+            </div>
+          </div>
+          <button class="apply">Aplikuj teraz</button>
+
+          <div style="height:1px;background:var(--border);margin:4px 16px 12px"></div>
+
+          <!-- [6] SEKCJA: NAJBLIŻEJ -->
+          <div class="section-label">
+            <h3>📍 Najbliżej Ciebie <span class="section-count">47</span></h3>
+            <span class="section-link">Zobacz mapę →</span>
+          </div>
+          <div class="mini-card">
+            <div class="mc-top">
+              <div class="mc-logo">Bi</div>
+              <div><div class="mc-co">Biedronka</div><div class="mc-title">Kasjer / Sprzedawca</div></div>
+              <div class="save-sm" style="margin-left:auto">♡</div>
+            </div>
+            <div class="mc-sal">3 900 – 5 200 zł <span>brutto / mies.</span></div>
+            <div class="mc-bottom" style="margin-top:10px">
+              <div style="display:flex;gap:6px">
+                <span class="pill-sm">Praga Południe</span>
+                <span class="pill-sm">Stacjonarna</span>
+              </div>
+            </div>
+          </div>
+          <button class="apply" style="margin-bottom:24px">Aplikuj teraz</button>
+
+        </div><!-- /scroll-area -->
+      </div>
+    </div>
+
+    <!-- Uwagi projektowe -->
+    <div style="max-width:380px;padding-top:8px">
+      <div style="font-size:14px;font-weight:700;margin-bottom:20px">Uwagi projektowe</div>
+
+      <div class="annotation">
+        <div class="ann-ic">🔢</div>
+        <div class="ann-body">
+          <h4>Kolejność sekcji ma znaczenie</h4>
+          <p>Zawsze: <code>🔥 Gorące</code> → <code>⭐ Polecane</code> → <code>🆕 Nowe dziś</code> → <code>📍 Najbliżej</code>. Gorące zatrzymują, Polecane personalizują, reszta uzupełnia.</p>
+        </div>
+      </div>
+
+      <div class="annotation">
+        <div class="ann-ic">🔢</div>
+        <div class="ann-body">
+          <h4>Liczba kart na sekcję</h4>
+          <p>Pokazujemy <code>1–2 karty</code> + "Zobacz wszystkie →". Nie wylewamy całej sekcji — zmuszamy do kliknięcia, co angażuje bardziej niż pasywny scroll.</p>
+        </div>
+      </div>
+
+      <div class="annotation">
+        <div class="ann-ic">↔️</div>
+        <div class="ann-body">
+          <h4>Gorące dziś — fade i szerokość karty</h4>
+          <p>Karta <code>190px</code> — na ekranie 390px mieszczą się 1,9 karty. Użytkownik od razu widzi że jest więcej. Fade po prawej to dodatkowy sygnał do swipe'a.</p>
+        </div>
+      </div>
+
+      <div class="annotation">
+        <div class="ann-ic">⚙️</div>
+        <div class="ann-body">
+          <h4>Co potrzebuje backend</h4>
+          <p>Sekcje nie wymagają zmian w bazie — to filtrowanie po <code>created_at</code> (Nowe), <code>featured</code> (Polecane) i ewentualnie <code>distance</code> (Najbliżej). Gorące = <code>ORDER BY applications DESC</code> z ostatnich 24h.</p>
+        </div>
+      </div>
+
+      <div class="annotation">
+        <div class="ann-ic">📐</div>
+        <div class="ann-body">
+          <h4>Rekomendacje wariantów</h4>
+          <p>Nagłówek sekcji: <b>Wariant A</b> (prostszy, więcej miejsca na karty).<br>
+          Hot card: <b>Wariant A</b> (nie wymaga danych o kategorii).<br>
+          Wariant B dla obu — do rozważenia gdy pojawią się kategorie branżowe.</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+</body>
+</html>
