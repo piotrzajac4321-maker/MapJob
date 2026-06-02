@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>MapJob — podgląd sekcji + Gorące dziś</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+:root{
+  --bg:#080D18;--bg2:#0D1220;--surf:#131C2D;--surf2:#1A2438;--surf3:#22304A;
+  --border:rgba(255,255,255,.07);--border2:rgba(255,255,255,.04);--border3:rgba(255,255,255,.10);
+  --text:#F0F4FF;--text2:#94A3B8;--text3:#4A5568;
+  --blue:#2563EB;--blue2:#60A5FA;--blue-dim:rgba(37,99,235,.12);
+  --green:#22C55E;--green-dim:rgba(34,197,94,.10);
+  --gold:#F59E0B;--gold-dim:rgba(245,158,11,.12);
+  --red:#EF4444;--red-dim:rgba(239,68,68,.12);
+  --purple:#7C3AED;--purple-dim:rgba(124,58,237,.12);
+  --ff:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--ff);-webkit-font-smoothing:antialiased}
+
+/* ── phone frame ── */
+.phone-wrap{display:flex;justify-content:center;align-items:flex-start;padding:32px 16px 80px;min-height:100vh;background:radial-gradient(ellipse at 50% 0%,#0d1e3a 0%,#080D18 60%)}
+.phone{width:390px;max-width:100%;background:var(--bg);border-radius:40px;box-shadow:0 0 0 10px #131c2d,0 0 0 12px #0d1220,0 40px 80px rgba(0,0,0,.8);overflow:hidden;display:flex;flex-direction:column;height:844px}
+
+/* ── status bar ── */
+.sbar{height:44px;background:var(--bg2);display:flex;align-items:center;justify-content:space-between;padding:0 22px;flex-shrink:0;font-size:14px;font-weight:700}
+.sbar-r{display:flex;align-items:center;gap:5px;font-size:12px;color:var(--text2)}
+
+/* ── topbar ── */
+.topbar{height:52px;background:var(--bg2);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 16px;flex-shrink:0}
+.logo{font-size:20px;font-weight:800;letter-spacing:-.03em}
+.logo em{font-style:normal;color:var(--blue2);font-size:14px;font-weight:700}
+.topbar-btns{display:flex;gap:8px}
+.icon-btn{width:34px;height:34px;border-radius:9px;border:1px solid var(--border3);background:var(--surf2);display:flex;align-items:center;justify-content:center;font-size:15px;cursor:pointer;transition:background .15s}
+.icon-btn:hover{background:var(--surf3)}
+
+/* ── search ── */
+.search-row{padding:11px 14px 0;flex-shrink:0}
+.search{height:42px;background:var(--surf2);border:1px solid var(--border3);border-radius:11px;display:flex;align-items:center;gap:9px;padding:0 13px;cursor:text}
+.search-ph{font-size:14px;color:var(--text3)}
+
+/* ── chips ── */
+.chips-row{padding:9px 14px 0;overflow-x:auto;flex-shrink:0;scrollbar-width:none}
+.chips-row::-webkit-scrollbar{display:none}
+.chips{display:flex;gap:7px;width:max-content}
+.chip{height:28px;padding:0 12px;border-radius:8px;border:1px solid var(--border3);background:var(--surf2);font-size:11px;font-weight:700;color:var(--text2);white-space:nowrap;display:flex;align-items:center;cursor:pointer;transition:all .12s}
+.chip.on{background:var(--blue);border-color:var(--blue);color:#fff}
+.chip:hover:not(.on){background:var(--surf3)}
+
+/* ── scroll area ── */
+.scroll{flex:1;overflow-y:auto;padding:12px 14px 16px;display:flex;flex-direction:column;gap:0}
+.scroll::-webkit-scrollbar{width:3px}
+.scroll::-webkit-scrollbar-thumb{background:var(--border3);border-radius:3px}
+
+/* ── hot row ── */
+.hot-row{margin-bottom:16px}
+.hot-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.hot-hdr-title{font-size:13px;font-weight:700;letter-spacing:-.01em}
+.hot-hdr-link{font-size:11px;color:var(--blue2);font-weight:600;cursor:pointer}
+.hot-scroll-wrap{position:relative}
+.hot-scroll{display:flex;gap:10px;overflow-x:auto;padding-bottom:4px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.hot-scroll::-webkit-scrollbar{display:none}
+.hot-fade{position:absolute;right:0;top:0;bottom:4px;width:40px;background:linear-gradient(90deg,transparent,var(--bg));pointer-events:none}
+.hc{width:185px;flex-shrink:0;background:var(--surf);border:1px solid var(--border3);border-radius:13px;padding:12px 13px;cursor:pointer;transition:border-color .15s,box-shadow .15s}
+.hc:hover{border-color:var(--blue2);box-shadow:0 2px 16px rgba(0,0,0,.3)}
+.hc-top{display:flex;align-items:center;gap:9px;margin-bottom:8px}
+.hc-logo{width:34px;height:34px;border-radius:9px;flex-shrink:0;border:1px solid var(--border3);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#fff;overflow:hidden}
+.hc-logo img{width:100%;height:100%;object-fit:contain;padding:3px}
+.hc-co{font-size:10px;color:var(--text3);margin-bottom:2px}
+.hc-title{font-size:12px;font-weight:700;line-height:1.25;letter-spacing:-.01em;color:var(--text)}
+.hc-sal{font-size:14px;font-weight:800;color:var(--green);letter-spacing:-.02em;margin-top:7px}
+.hc-tag{display:inline-flex;height:18px;padding:0 7px;border-radius:5px;align-items:center;font-size:10px;font-weight:600;background:var(--surf2);color:var(--text3);border:1px solid var(--border3);margin-top:6px}
+.hc-urg{display:inline-flex;height:18px;padding:0 7px;border-radius:5px;align-items:center;font-size:10px;font-weight:700;background:var(--red-dim);color:var(--red);border:1px solid rgba(239,68,68,.2);margin-top:6px}
+
+/* ── section label ── */
+.sec-label{display:flex;align-items:center;justify-content:space-between;padding:14px 0 8px;margin-top:2px}
+.sec-label h3{font-size:13px;font-weight:700;letter-spacing:-.01em;display:flex;align-items:center;gap:6px}
+.sec-count{font-size:11px;font-weight:700;color:var(--text3);background:var(--surf2);border:1px solid var(--border3);border-radius:6px;padding:1px 7px}
+.sec-sep{height:1px;background:var(--border);margin:6px 0 10px}
+
+/* ── job card ── */
+.jcard{background:var(--surf);border:1px solid var(--border3);border-radius:14px;margin-bottom:10px;overflow:hidden;cursor:pointer;transition:border-color .15s,box-shadow .15s;position:relative}
+.jcard:hover{border-color:rgba(255,255,255,.14);box-shadow:0 4px 20px rgba(0,0,0,.35)}
+.jcard-urg-bar{background:var(--red);padding:4px 14px;font-size:10px;font-weight:800;color:#fff;letter-spacing:.5px;display:flex;align-items:center;gap:6px}
+.jcard-body{display:flex}
+.jcard-accent{width:4px;flex-shrink:0}
+.jcard-inner{flex:1;padding:13px 14px}
+.jcard-top{display:flex;align-items:flex-start;gap:11px;margin-bottom:10px}
+.jcard-logo{width:44px;height:44px;border-radius:12px;flex-shrink:0;border:1.5px solid rgba(255,255,255,.08);background:var(--surf2);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;overflow:hidden}
+.jcard-logo img{width:100%;height:100%;object-fit:contain;padding:4px}
+.jcard-info{flex:1;min-width:0}
+.jcard-title{font-size:15px;font-weight:800;color:var(--text);line-height:1.3;margin-bottom:2px;letter-spacing:-.01em}
+.jcard-co{font-size:12px;color:var(--text2);font-weight:600}
+.jcard-time{font-size:10px;color:var(--text3);flex-shrink:0}
+.jcard-tags{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:10px}
+.jtag{display:inline-flex;align-items:center;gap:4px;height:22px;padding:0 9px;border-radius:8px;font-size:11px;font-weight:700;border:1px solid var(--border3)}
+.jtag.loc{background:var(--surf2);color:var(--text2)}
+.jtag.mode{background:var(--surf2);color:var(--text2)}
+.jtag.emp{background:var(--surf2);color:var(--text2)}
+.jcard-bottom{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.jcard-sal{font-size:16px;font-weight:800;color:var(--green);letter-spacing:-.02em}
+.jcard-sal span{font-size:11px;font-weight:500;color:var(--text3)}
+.jcard-apply{height:34px;padding:0 16px;border-radius:10px;background:var(--blue);border:none;font-family:var(--ff);font-size:12px;font-weight:800;color:#fff;cursor:pointer;white-space:nowrap;transition:background .15s}
+.jcard-apply:hover{background:#1D4ED8}
+.jcard-apply.green{background:rgba(34,197,94,.15);color:#4ADE80;border:1px solid rgba(34,197,94,.4)}
+
+/* ── bottom nav ── */
+.bottomnav{height:68px;background:var(--bg2);border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-around;flex-shrink:0;padding-bottom:8px}
+.ni{display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:5px 16px}
+.ni-ic{font-size:21px;line-height:1}
+.ni-lb{font-size:10px;font-weight:700;color:var(--text3)}
+.ni.on .ni-lb{color:var(--blue2)}
+.ni-dot{width:4px;height:4px;border-radius:50%;background:var(--blue);margin:0 auto}
+</style>
+</head>
+<body>
+<div class="phone-wrap">
+<div class="phone">
+
+  <!-- status -->
+  <div class="sbar">
+    <span>9:41</span>
+    <div class="sbar-r">
+      <svg width="16" height="12" fill="currentColor" viewBox="0 0 16 12"><rect x="0" y="3" width="3" height="9" rx="1" opacity=".4"/><rect x="4" y="2" width="3" height="10" rx="1" opacity=".6"/><rect x="8" y="0" width="3" height="12" rx="1" opacity=".8"/><rect x="12" y="0" width="3" height="12" rx="1"/></svg>
+      <span>5G</span>
+      <svg width="25" height="12" viewBox="0 0 25 12" fill="none"><rect x="0.5" y="0.5" width="21" height="11" rx="3.5" stroke="currentColor" opacity=".35"/><rect x="2" y="2" width="16" height="8" rx="2" fill="currentColor" opacity=".9"/><path d="M23 4v4a2 2 0 0 0 0-4z" fill="currentColor" opacity=".4"/></svg>
+    </div>
+  </div>
+
+  <!-- topbar -->
+  <div class="topbar">
+    <div class="logo">MapJob<em>.pl</em></div>
+    <div class="topbar-btns">
+      <div class="icon-btn">🔔</div>
+      <div class="icon-btn">⚙</div>
+    </div>
+  </div>
+
+  <!-- search -->
+  <div class="search-row">
+    <div class="search">
+      <svg width="16" height="16" fill="none" stroke="#4A5568" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      <span class="search-ph">Szukaj stanowiska lub firmy…</span>
+    </div>
+  </div>
+
+  <!-- chips -->
+  <div class="chips-row">
+    <div class="chips">
+      <div class="chip on">Wszystkie</div>
+      <div class="chip">Pełny etat</div>
+      <div class="chip">Hybryd</div>
+      <div class="chip">Zdalna</div>
+      <div class="chip">B2B</div>
+      <div class="chip">Zlecenie</div>
+    </div>
+  </div>
+
+  <!-- FEED -->
+  <div class="scroll" id="feed">
+
+    <!-- #7 GORĄCE DZIŚ -->
+    <div class="hot-row">
+      <div class="hot-hdr">
+        <span class="hot-hdr-title">🔥 Gorące dziś</span>
+        <span class="hot-hdr-link">Zobacz więcej →</span>
+      </div>
+      <div class="hot-scroll-wrap">
+        <div class="hot-scroll" id="hot-cards"></div>
+        <div class="hot-fade"></div>
+      </div>
+    </div>
+
+    <!-- #6 SEKCJA: PILNE -->
+    <div class="sec-label">
+      <h3>🔥 Pilne <span class="sec-count">2</span></h3>
+    </div>
+
+    <!-- Karta: Żabka — PILNA -->
+    <div class="jcard" onclick="void(0)">
+      <div class="jcard-urg-bar">● PILNE — szybka rekrutacja</div>
+      <div class="jcard-body">
+        <div class="jcard-accent" style="background:#EF4444"></div>
+        <div class="jcard-inner">
+          <div class="jcard-top">
+            <div class="jcard-logo" style="background:#1a2f1a">
+              <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a0/%C5%BBabka_logo.svg/200px-%C5%BBabka_logo.svg.png" alt="">
+            </div>
+            <div class="jcard-info">
+              <div class="jcard-title">Pracownik Sklepu</div>
+              <div class="jcard-co">Żabka Polska</div>
+            </div>
+            <div class="jcard-time">2h temu</div>
+          </div>
+          <div class="jcard-tags">
+            <span class="jtag loc">📍 Mokotów, Warszawa</span>
+            <span class="jtag emp">Pełny etat</span>
+          </div>
+          <div class="jcard-bottom">
+            <div>
+              <div class="jcard-sal">3 800 – 4 800 zł <span>brutto</span></div>
+            </div>
+            <button class="jcard-apply">⚡ Aplikuj</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Karta: Biedronka — PILNA -->
+    <div class="jcard" onclick="void(0)">
+      <div class="jcard-urg-bar">● PILNE — szybka rekrutacja</div>
+      <div class="jcard-body">
+        <div class="jcard-accent" style="background:#EF4444"></div>
+        <div class="jcard-inner">
+          <div class="jcard-top">
+            <div class="jcard-logo" style="background:#1e1a10">
+              <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/35/Biedronka_logo.svg/200px-Biedronka_logo.svg.png" alt="">
+            </div>
+            <div class="jcard-info">
+              <div class="jcard-title">Kasjer / Sprzedawca</div>
+              <div class="jcard-co">Jeronimo Martins Polska</div>
+            </div>
+            <div class="jcard-time">3h temu</div>
+          </div>
+          <div class="jcard-tags">
+            <span class="jtag loc">📍 Praga Południe</span>
+            <span class="jtag emp">Pełny etat</span>
+          </div>
+          <div class="jcard-bottom">
+            <div>
+              <div class="jcard-sal">3 900 – 5 200 zł <span>brutto</span></div>
+            </div>
+            <button class="jcard-apply">⚡ Aplikuj</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sec-sep"></div>
+
+    <!-- #6 SEKCJA: NAJLEPIEJ PŁATNE -->
+    <div class="sec-label">
+      <h3>💰 Najlepiej płatne <span class="sec-count">4</span></h3>
+    </div>
+
+    <!-- Karta: Allegro -->
+    <div class="jcard" onclick="void(0)">
+      <div class="jcard-body">
+        <div class="jcard-accent" style="background:#22C55E"></div>
+        <div class="jcard-inner">
+          <div class="jcard-top">
+            <div class="jcard-logo" style="background:#1a1e0d">
+              <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5c/Allegro_logo.svg/200px-Allegro_logo.svg.png" alt="">
+            </div>
+            <div class="jcard-info">
+              <div class="jcard-title">Senior Frontend Developer</div>
+              <div class="jcard-co">Allegro</div>
+            </div>
+            <div class="jcard-time">wczoraj</div>
+          </div>
+          <div class="jcard-tags">
+            <span class="jtag loc">📍 Warszawa</span>
+            <span class="jtag mode">🌍 Hybryd</span>
+            <span class="jtag emp">Pełny etat</span>
+          </div>
+          <div class="jcard-bottom">
+            <div>
+              <div class="jcard-sal">12 000 – 18 000 zł <span>brutto</span></div>
+            </div>
+            <button class="jcard-apply">⚡ Aplikuj</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Karta: CD Projekt -->
+    <div class="jcard" onclick="void(0)">
+      <div class="jcard-body">
+        <div class="jcard-accent" style="background:#22C55E"></div>
+        <div class="jcard-inner">
+          <div class="jcard-top">
+            <div class="jcard-logo" style="background:#1a1010">
+              <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/6a/CD_Projekt_logo.svg/200px-CD_Projekt_logo.svg.png" alt="">
+            </div>
+            <div class="jcard-info">
+              <div class="jcard-title">Game Designer</div>
+              <div class="jcard-co">CD Projekt Red</div>
+            </div>
+            <div class="jcard-time">2 dni temu</div>
+          </div>
+          <div class="jcard-tags">
+            <span class="jtag loc">📍 Kraków</span>
+            <span class="jtag emp">Pełny etat</span>
+          </div>
+          <div class="jcard-bottom">
+            <div>
+              <div class="jcard-sal">8 000 – 14 000 zł <span>brutto</span></div>
+            </div>
+            <button class="jcard-apply">⚡ Aplikuj</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Karta: InPost -->
+    <div class="jcard" onclick="void(0)">
+      <div class="jcard-body">
+        <div class="jcard-accent" style="background:#22C55E"></div>
+        <div class="jcard-inner">
+          <div class="jcard-top">
+            <div class="jcard-logo" style="background:#1c1a0a">
+              <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c0/InPost_logo.svg/200px-InPost_logo.svg.png" alt="">
+            </div>
+            <div class="jcard-info">
+              <div class="jcard-title">Kierownik Magazynu</div>
+              <div class="jcard-co">InPost S.A.</div>
+            </div>
+            <div class="jcard-time">dziś</div>
+          </div>
+          <div class="jcard-tags">
+            <span class="jtag loc">📍 Łódź, Bałuty</span>
+            <span class="jtag emp">Pełny etat</span>
+          </div>
+          <div class="jcard-bottom">
+            <div>
+              <div class="jcard-sal">5 200 – 7 800 zł <span>brutto</span></div>
+            </div>
+            <button class="jcard-apply">⚡ Aplikuj</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Karta: OLX -->
+    <div class="jcard" onclick="void(0)">
+      <div class="jcard-body">
+        <div class="jcard-accent" style="background:#22C55E"></div>
+        <div class="jcard-inner">
+          <div class="jcard-top">
+            <div class="jcard-logo" style="background:#0d1a2a;font-size:16px;font-weight:800;color:#60A5FA">OLX</div>
+            <div class="jcard-info">
+              <div class="jcard-title">Data Analyst</div>
+              <div class="jcard-co">OLX Group</div>
+            </div>
+            <div class="jcard-time">dziś</div>
+          </div>
+          <div class="jcard-tags">
+            <span class="jtag loc">📍 Wrocław</span>
+            <span class="jtag mode">🌍 Zdalna</span>
+            <span class="jtag emp">B2B</span>
+          </div>
+          <div class="jcard-bottom">
+            <div>
+              <div class="jcard-sal">9 000 – 13 000 zł <span>brutto</span></div>
+            </div>
+            <button class="jcard-apply">⚡ Aplikuj</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sec-sep"></div>
+
+    <!-- #6 SEKCJA: NOWE DZIŚ -->
+    <div class="sec-label">
+      <h3>🆕 Nowe dziś <span class="sec-count">3</span></h3>
+    </div>
+
+    <!-- Karta: Lidl -->
+    <div class="jcard" onclick="void(0)">
+      <div class="jcard-body">
+        <div class="jcard-accent" style="background:#2563EB"></div>
+        <div class="jcard-inner">
+          <div class="jcard-top">
+            <div class="jcard-logo" style="background:#0d1220">
+              <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/Lidl-Logo.svg/200px-Lidl-Logo.svg.png" alt="">
+            </div>
+            <div class="jcard-info">
+              <div class="jcard-title">Pracownik Sklepu</div>
+              <div class="jcard-co">Lidl Polska</div>
+            </div>
+            <div class="jcard-time">1h temu</div>
+          </div>
+          <div class="jcard-tags">
+            <span class="jtag loc">📍 Ursynów, Warszawa</span>
+            <span class="jtag emp">Pełny etat</span>
+          </div>
+          <div class="jcard-bottom">
+            <div>
+              <div class="jcard-sal">4 200 – 5 600 zł <span>brutto</span></div>
+            </div>
+            <button class="jcard-apply">⚡ Aplikuj</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Karta: Orlen -->
+    <div class="jcard" onclick="void(0)">
+      <div class="jcard-body">
+        <div class="jcard-accent" style="background:#2563EB"></div>
+        <div class="jcard-inner">
+          <div class="jcard-top">
+            <div class="jcard-logo" style="background:#1a0d0d">
+              <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/6e/PKN_Orlen.svg/200px-PKN_Orlen.svg.png" alt="">
+            </div>
+            <div class="jcard-info">
+              <div class="jcard-title">Operator Stacji Paliw</div>
+              <div class="jcard-co">PKN Orlen S.A.</div>
+            </div>
+            <div class="jcard-time">30 min</div>
+          </div>
+          <div class="jcard-tags">
+            <span class="jtag loc">📍 Bemowo, Warszawa</span>
+            <span class="jtag emp">Pełny etat</span>
+          </div>
+          <div class="jcard-bottom">
+            <div>
+              <div class="jcard-sal">4 000 – 5 400 zł <span>brutto</span></div>
+            </div>
+            <button class="jcard-apply">⚡ Aplikuj</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Karta: Dino -->
+    <div class="jcard" onclick="void(0)">
+      <div class="jcard-body">
+        <div class="jcard-accent" style="background:#2563EB"></div>
+        <div class="jcard-inner">
+          <div class="jcard-top">
+            <div class="jcard-logo" style="background:#1a1a0d">
+              <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/DINO_Polska_S.A._logo.svg/200px-DINO_Polska_S.A._logo.svg.png" alt="">
+            </div>
+            <div class="jcard-info">
+              <div class="jcard-title">Kierownik Zmiany</div>
+              <div class="jcard-co">Dino Polska S.A.</div>
+            </div>
+            <div class="jcard-time">45 min</div>
+          </div>
+          <div class="jcard-tags">
+            <span class="jtag loc">📍 Targówek, Warszawa</span>
+            <span class="jtag emp">Pełny etat</span>
+          </div>
+          <div class="jcard-bottom">
+            <div>
+              <div class="jcard-sal">4 800 – 6 200 zł <span>brutto</span></div>
+            </div>
+            <button class="jcard-apply">⚡ Aplikuj</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sec-sep"></div>
+
+    <!-- #6 SEKCJA: WIĘCEJ OFERT -->
+    <div class="sec-label">
+      <h3>📋 Więcej ofert <span class="sec-count">18</span></h3>
+    </div>
+
+    <!-- Karta: Kaufland -->
+    <div class="jcard" onclick="void(0)">
+      <div class="jcard-body">
+        <div class="jcard-accent" style="background:#4A5568"></div>
+        <div class="jcard-inner">
+          <div class="jcard-top">
+            <div class="jcard-logo" style="background:#1a100d">
+              <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a8/Kaufland_201x_logo.svg/200px-Kaufland_201x_logo.svg.png" alt="">
+            </div>
+            <div class="jcard-info">
+              <div class="jcard-title">Pracownik Działu Mięsnego</div>
+              <div class="jcard-co">Kaufland Polska</div>
+            </div>
+            <div class="jcard-time">3 dni</div>
+          </div>
+          <div class="jcard-tags">
+            <span class="jtag loc">📍 Wola, Warszawa</span>
+            <span class="jtag emp">Pełny etat</span>
+          </div>
+          <div class="jcard-bottom">
+            <div>
+              <div class="jcard-sal">3 600 – 4 800 zł <span>brutto</span></div>
+            </div>
+            <button class="jcard-apply">⚡ Aplikuj</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /scroll -->
+
+  <!-- bottom nav -->
+  <div class="bottomnav">
+    <div class="ni">
+      <div class="ni-ic">🗺</div>
+      <div class="ni-lb">Mapa</div>
+    </div>
+    <div class="ni on">
+      <div class="ni-ic">📋</div>
+      <div class="ni-lb" style="color:var(--blue2)">Lista</div>
+      <div class="ni-dot"></div>
+    </div>
+    <div class="ni">
+      <div class="ni-ic">💼</div>
+      <div class="ni-lb">Aplikacje</div>
+    </div>
+    <div class="ni">
+      <div class="ni-ic">👤</div>
+      <div class="ni-lb">Profil</div>
+    </div>
+  </div>
+
+</div><!-- /phone -->
+</div><!-- /phone-wrap -->
+
+<script>
+// Populate hot scroll cards
+var hotData = [
+  { co:'Allegro', title:'Senior Frontend Dev', sal:'12 000 – 18 000 zł', tag:'Hybryd', bg:'#1a1e0d', img:'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5c/Allegro_logo.svg/200px-Allegro_logo.svg.png' },
+  { co:'CD Projekt', title:'Game Designer', sal:'8 000 – 14 000 zł', tag:'Kraków', bg:'#1a1010', img:'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6a/CD_Projekt_logo.svg/200px-CD_Projekt_logo.svg.png' },
+  { co:'OLX Group', title:'Data Analyst', sal:'9 000 – 13 000 zł', tag:'Zdalna', bg:'#0d1a2a', txt:'OLX', txtColor:'#60A5FA' },
+  { co:'InPost', title:'Kierownik Magazynu', sal:'5 200 – 7 800 zł', tag:'Łódź', urg:true, bg:'#1c1a0a', img:'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c0/InPost_logo.svg/200px-InPost_logo.svg.png' },
+];
+var wrap = document.getElementById('hot-cards');
+hotData.forEach(function(d){
+  var div = document.createElement('div');
+  div.className = 'hc';
+  var logoHtml = d.img
+    ? '<img src="'+d.img+'" alt="" style="width:100%;height:100%;object-fit:contain;padding:3px">'
+    : '<span style="font-size:13px;font-weight:800;color:'+d.txtColor+'">'+d.txt+'</span>';
+  div.innerHTML = '<div class="hc-top">'
+    +'<div class="hc-logo" style="background:'+d.bg+'">'+logoHtml+'</div>'
+    +'<div><div class="hc-co">'+d.co+'</div><div class="hc-title">'+d.title+'</div></div>'
+    +'</div>'
+    +'<div class="hc-sal">'+d.sal+'</div>'
+    +(d.urg ? '<div class="hc-urg">🔥 Pilne</div>' : '<div class="hc-tag">'+d.tag+'</div>');
+  wrap.appendChild(div);
+});
+
+// Chip toggle
+document.querySelectorAll('.chip').forEach(function(c){
+  c.onclick = function(){
+    document.querySelectorAll('.chip').forEach(function(x){ x.classList.remove('on'); });
+    c.classList.add('on');
+  };
+});
+</script>
+</body>
+</html>
