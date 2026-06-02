@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MapJob — Makiety kart ogłoszeń</title>
+<style>
+/* === Tokeny przeniesione 1:1 z design_refresh.css === */
+:root{
+  --bg:#0B0D10; --bg2:#101318; --surf:#15181F; --surf2:#1C2029; --surf3:#252A35;
+  --border:rgba(255,255,255,.06); --border3:rgba(255,255,255,.09);
+  --text:#F5F7FA; --text2:#A1A9B8; --text3:#6B7280;
+  --blue:#3B82F6; --blue2:#60A5FA; --blue-dim:rgba(59,130,246,.12);
+  --green:#10B981; --green-dim:rgba(16,185,129,.10);
+  --gold:#D97706; --gold-dim:rgba(217,119,6,.12);
+  --red:#DC2626;
+  --ff:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  background:var(--bg); color:var(--text); font-family:var(--ff);
+  -webkit-font-smoothing:antialiased; padding:40px 24px 80px;
+}
+.head{max-width:1200px;margin:0 auto 8px}
+.head h1{font-size:24px;letter-spacing:-.02em;font-weight:700}
+.head p{color:var(--text2);font-size:14px;margin-top:8px;max-width:680px;line-height:1.5}
+.legend{color:var(--text3);font-size:12px;margin-top:14px}
+.legend b{color:var(--green)}
+
+.grid{
+  max-width:1200px;margin:48px auto 0;
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));
+  gap:48px 40px;
+}
+.col{display:flex;flex-direction:column;gap:14px}
+.col-label{font-size:12px;font-weight:600;letter-spacing:.02em}
+.col-label.b{color:var(--blue2)} .col-label.g{color:var(--green)} .col-label.o{color:var(--gold)}
+.col-note{font-size:12px;color:var(--text3);line-height:1.5}
+
+/* === Karta bazowa === */
+.card{
+  background:var(--surf); border:1px solid var(--border3);
+  border-radius:16px; padding:20px; transition:border-color .15s, box-shadow .15s;
+}
+.card:hover{border-color:var(--border);box-shadow:0 4px 20px rgba(0,0,0,.3)}
+.row{display:flex;align-items:center;gap:12px}
+.logo{
+  width:48px;height:48px;border-radius:12px;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;font-weight:700;font-size:16px;
+}
+.logo.green{background:var(--green-dim);color:var(--green)}
+.logo.blue{background:var(--blue-dim);color:var(--blue2)}
+.logo.gold{background:var(--gold-dim);color:var(--gold)}
+.company{font-size:11px;color:var(--text3)}
+.title{font-size:16px;font-weight:600;letter-spacing:-.01em;line-height:1.25;margin-top:2px}
+
+/* stawka */
+.salary{color:var(--green);font-weight:700;letter-spacing:-.02em}
+.salary.lg{font-size:20px} .salary.xl{font-size:22px} .salary.md{font-size:17px}
+.salary-sub{color:var(--text3);font-size:11px}
+.salary-block{
+  background:var(--green-dim);border-radius:12px;padding:12px 14px;
+}
+
+/* pill / tag */
+.pill{
+  display:inline-flex;align-items:center;height:24px;padding:0 10px;
+  border-radius:7px;font-size:11px;font-weight:600;
+}
+.pill.blue{background:var(--blue-dim);color:var(--blue2)}
+.pill.gold{background:var(--gold-dim);color:var(--gold)}
+.pills{display:flex;gap:8px;flex-wrap:wrap}
+
+/* przycisk */
+.apply{
+  width:100%;height:38px;border:none;border-radius:10px;
+  background:var(--blue);color:#fff;font-weight:600;font-size:14px;
+  font-family:var(--ff);cursor:pointer;transition:background .15s,transform .1s;
+}
+.apply:hover{background:#2563EB} .apply:active{transform:scale(.985)}
+
+/* === Obecna (referencja) === */
+.card.old{opacity:.85}
+.card.old .title{color:var(--text2);font-weight:600}
+.card.old .meta{font-size:12px;color:var(--text2);margin-top:10px;line-height:1.6}
+.divider{height:1px;background:var(--border);margin:14px 0}
+
+footer{
+  max-width:1200px;margin:64px auto 0;border-top:1px solid var(--border);
+  padding-top:24px;color:var(--text3);font-size:12px;line-height:1.6
+}
+</style>
+</head>
+<body>
+
+<div class="head">
+  <h1>MapJob — makiety kart ogłoszeń</h1>
+  <p>Trzy minimalistyczne warianty karty z naciskiem na stawkę. <b style="color:var(--text2)">Bez pola odległości</b> i bez licznika wyświetleń — w miejscu kilometrów pojawia się forma pracy (etat / B2B).</p>
+  <p class="legend">Najedź na kartę, by zobaczyć stan <b>hover</b>. Styl 1:1 z <code style="color:var(--blue2)">design_refresh.css</code>.</p>
+</div>
+
+<div class="grid">
+
+  <!-- REFERENCJA -->
+  <div class="col">
+    <div class="col-label" style="color:var(--text3)">OBECNA KARTA (referencja)</div>
+    <div class="card old">
+      <div class="row">
+        <div class="logo" style="background:var(--surf2);color:var(--text3)">N</div>
+        <div>
+          <div class="company">Nazwa Firmy Sp. z o.o.</div>
+          <div class="title">Specjalista ds. Sprzedaży</div>
+        </div>
+      </div>
+      <div class="meta">
+        Warszawa · 5 km · Pełny etat<br>
+        4 500 – 7 000 zł
+      </div>
+    </div>
+    <div class="col-note">Płaska, monochromatyczna — stawka ginie, brak CTA, brak hierarchii.</div>
+  </div>
+
+  <!-- V1 -->
+  <div class="col">
+    <div class="col-label b">V1 · Czysty minimal</div>
+    <div class="card">
+      <div class="row">
+        <div class="logo green">IN</div>
+        <div>
+          <div class="company">InPost</div>
+          <div class="title">Kierownik Magazynu</div>
+        </div>
+      </div>
+      <div style="margin-top:18px;display:flex;align-items:baseline;gap:10px">
+        <span class="salary lg">5 200 – 7 800 zł</span>
+        <span class="salary-sub">brutto / mies.</span>
+      </div>
+      <div class="pills" style="margin-top:14px">
+        <span class="pill blue">Pełny etat</span>
+      </div>
+      <button class="apply" style="margin-top:16px">Aplikuj teraz</button>
+    </div>
+    <div class="col-note">Uniwersalny i czysty. Stawka zielona i duża, jeden tag formy, wyraźne CTA.</div>
+  </div>
+
+  <!-- V2 -->
+  <div class="col">
+    <div class="col-label g">V2 · Stawka jako bohater</div>
+    <div class="card">
+      <div class="row">
+        <div class="logo blue">AL</div>
+        <div>
+          <div class="company">Allegro</div>
+          <div class="title">Specjalista ds. Sprzedaży</div>
+        </div>
+      </div>
+      <div class="salary-block" style="margin-top:16px">
+        <div class="salary xl">8 000 – 12 000 zł</div>
+        <div class="salary-sub" style="margin-top:4px">brutto / mies. · B2B lub UoP</div>
+      </div>
+      <div class="pills" style="margin-top:14px">
+        <span class="pill blue">Pełny etat</span>
+        <span class="pill gold">Premie</span>
+      </div>
+      <button class="apply" style="margin-top:16px">Aplikuj teraz</button>
+    </div>
+    <div class="col-note">Gdy stawka to magnes — wyróżniony blok wynagrodzenia przyciąga wzrok jako pierwszy.</div>
+  </div>
+
+  <!-- V3 -->
+  <div class="col">
+    <div class="col-label o">V3 · Kompakt listowy</div>
+    <div class="card">
+      <div class="row">
+        <div class="logo gold" style="width:44px;height:44px">Bi</div>
+        <div style="flex:1">
+          <div class="company">Biedronka</div>
+          <div class="title" style="font-size:15px">Kasjer / Sprzedawca</div>
+          <div class="company" style="margin-top:6px;color:var(--text2)">Warszawa · Pełny etat</div>
+        </div>
+      </div>
+      <div class="divider"></div>
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:12px">
+        <span class="salary md">3 900 – 5 200 zł</span>
+        <button class="apply" style="width:auto;padding:0 20px;height:34px">Aplikuj</button>
+      </div>
+    </div>
+    <div class="col-note">Najgęstszy — najwięcej ofert na ekranie. Meta w jednej linii, stawka i CTA obok siebie.</div>
+  </div>
+
+</div>
+
+<footer>
+  Makieta poglądowa · MapJob.pl · warianty kart ogłoszeń (minimalizm + stawka, bez odległości)<br>
+  Tokeny kolorów i typografia zgodne z produkcyjnym <code>design_refresh.css</code>.
+</footer>
+
+</body>
+</html>
