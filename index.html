@@ -20006,13 +20006,14 @@ window.mjBrowseChooser=function(){
 .mj-hc-sal{font-size:14px;font-weight:700;color:var(--green);letter-spacing:-.01em;margin-top:6px}
 .mj-hc-urg{display:inline-flex;height:18px;padding:0 7px;border-radius:5px;align-items:center;font-size:10px;font-weight:700;background:rgba(239,68,68,.12);color:var(--red);border:1px solid rgba(239,68,68,.25);margin-top:5px}
 .mj-hc-fade{position:absolute;right:0;top:0;bottom:0;width:40px;background:linear-gradient(90deg,transparent,var(--bg));pointer-events:none}
-/* Zobacz więcej button */
-#mj-see-more{margin:4px 0 12px;padding:13px 16px;background:var(--surf);border:1px solid var(--border3);border-radius:13px;font-size:13px;font-weight:700;color:var(--text2);cursor:pointer;display:flex;align-items:center;justify-content:space-between;-webkit-tap-highlight-color:transparent}
 /* Section labels */
 .mj-sec{display:flex;align-items:center;padding:10px 0 6px;margin-top:6px}
 .mj-sec h3{font-size:13px;font-weight:700;display:flex;align-items:center;gap:6px}
 .mj-sec-count{font-size:11px;font-weight:600;color:var(--text3);background:var(--surf2);border:1px solid var(--border3);border-radius:6px;padding:1px 7px}
 .mj-sec-sep{height:1px;background:var(--border);margin:8px 0 14px}
+/* Zobacz więcej per section */
+.mj-sm{margin:4px 0 6px;padding:11px 14px;background:var(--surf);border:1px solid var(--border3);border-radius:11px;font-size:12px;font-weight:700;color:var(--text2);cursor:pointer;display:flex;align-items:center;justify-content:space-between;-webkit-tap-highlight-color:transparent}
+.mj-sm-cnt{color:var(--blue2);font-size:11px;font-weight:700}
 </style>
 
 <script>
@@ -20050,7 +20051,9 @@ window.mjBrowseChooser=function(){
     return hc;
   }
 
-  function _injectNonUrgentSections(list, cards, now){
+  var PREVIEW=2;
+
+  function _injectNonUrgentSections(list,cards,now){
     list.querySelectorAll('[data-mj-sec]').forEach(function(n){n.remove();});
     var buckets=[
       {key:'paid',label:'💰 Najlepiej płatne',fn:function(c){return(parseInt(c.getAttribute('data-salmax'))||0)>=4000;}},
@@ -20067,7 +20070,15 @@ window.mjBrowseChooser=function(){
       var lbl=document.createElement('div');lbl.setAttribute('data-mj-sec',b.key);lbl.className='mj-sec';
       lbl.innerHTML='<h3>'+b.label+' <span class="mj-sec-count">'+items.length+'</span></h3>';
       frag.appendChild(lbl);
-      items.forEach(function(c){frag.appendChild(c);});
+      var preview=items.slice(0,PREVIEW), rest=items.slice(PREVIEW);
+      preview.forEach(function(c){c.style.display='';frag.appendChild(c);});
+      rest.forEach(function(c){c.style.display='none';frag.appendChild(c);});
+      if(rest.length>0){
+        var sm=document.createElement('div');sm.setAttribute('data-mj-sec',b.key+'-sm');sm.className='mj-sm';
+        sm.innerHTML='<span>Zobacz więcej</span><span class="mj-sm-cnt">'+rest.length+' więcej →</span>';
+        (function(_sm,_rest){_sm.addEventListener('click',function(){_rest.forEach(function(c){c.style.display='';});_sm.remove();});})(sm,rest);
+        frag.appendChild(sm);
+      }
       if(si<pop.length-1){var sep=document.createElement('div');sep.setAttribute('data-mj-sec',b.key+'-sep');sep.className='mj-sec-sep';frag.appendChild(sep);}
     });
     list.appendChild(frag);
@@ -20076,10 +20087,8 @@ window.mjBrowseChooser=function(){
   function _injectSections(){
     var list=document.getElementById('jobs-list');
     if(!list)return;
-    /* cleanup */
-    ['mj-urg-row','mj-see-more'].forEach(function(id){var el=document.getElementById(id);if(el)el.remove();});
+    var prevRow=document.getElementById('mj-urg-row');if(prevRow)prevRow.remove();
     list.querySelectorAll('[data-mj-sec]').forEach(function(n){n.remove();});
-    /* reset */
     var all=Array.from(list.querySelectorAll('.job-card-item:not([data-urgent-echo])'));
     all.forEach(function(c){c.style.display='';});
     list.style.display='';
@@ -20088,27 +20097,15 @@ window.mjBrowseChooser=function(){
     var now=Date.now();
     var urgent=all.filter(function(c){return c.getAttribute('data-urgent')==='true';});
     var nonUrg=all.filter(function(c){return c.getAttribute('data-urgent')!=='true';});
-    if(urgent.length===0){_injectNonUrgentSections(list,all,now);return;}
-    /* hide urgent from main list */
-    urgent.forEach(function(c){c.style.display='none';});
-    /* build Pilne scroll row */
-    var row=document.createElement('div');row.id='mj-urg-row';
-    row.innerHTML='<div id="mj-urg-hdr"><span id="mj-urg-hdr-title">🔥 Pilne</span></div>'
-      +'<div id="mj-urg-wrap"><div id="mj-urg-scroll"></div><div class="mj-hc-fade"></div></div>';
-    var scroll=row.querySelector('#mj-urg-scroll');
-    urgent.forEach(function(src){scroll.appendChild(_buildHc(src));});
-    list.parentNode.insertBefore(row,list);
-    /* build Zobacz więcej button */
-    var btn=document.createElement('div');btn.id='mj-see-more';
-    var cnt=nonUrg.length;
-    btn.innerHTML='<span>📋 Zobacz wszystkie oferty</span><span style="color:var(--blue2);font-size:12px">'+cnt+' ofert →</span>';
-    btn.addEventListener('click',function(){
-      list.style.display='';
-      btn.remove();
-      _injectNonUrgentSections(list,nonUrg,now);
-    });
-    list.parentNode.insertBefore(btn,list);
-    list.style.display='none';
+    if(urgent.length>0){
+      urgent.forEach(function(c){c.style.display='none';});
+      var row=document.createElement('div');row.id='mj-urg-row';
+      row.innerHTML='<div id="mj-urg-hdr"><span id="mj-urg-hdr-title">🔥 Pilne</span></div>'
+        +'<div id="mj-urg-wrap"><div id="mj-urg-scroll"></div><div class="mj-hc-fade"></div></div>';
+      urgent.forEach(function(src){row.querySelector('#mj-urg-scroll').appendChild(_buildHc(src));});
+      list.parentNode.insertBefore(row,list);
+    }
+    _injectNonUrgentSections(list,urgent.length>0?nonUrg:all,now);
   }
 
   function _patchApplyFilters(){
