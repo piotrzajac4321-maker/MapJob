@@ -20026,7 +20026,7 @@ window.mjBrowseChooser=function(){
     return false;
   }
 
-  function _cardLogo(c){var img=c.querySelector('img[alt=""]');return img?img.src:null;}
+  function _cardLogo(c){var img=c.querySelector('img');return img?img.src:null;}
   function _cardTitle(c){var el=c.querySelector('[style*="font-weight:800"]');return el?el.textContent.trim():'';}
   function _cardCo(c){var el=c.querySelector('[style*="font-weight:800"]');var s=el&&el.nextElementSibling;return s?s.textContent.trim():'';}
   function _cardSal(c){var el=c.querySelector('[style*="color:var(--green)"]');return el?el.textContent.trim():'';}
