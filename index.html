@@ -20157,8 +20157,8 @@ window.mjBrowseChooser=function(){
     var now=Date.now();
     var urgent=all.filter(function(c){return c.getAttribute('data-urgent')==='true';});
     var nonUrg=all.filter(function(c){return c.getAttribute('data-urgent')!=='true';});
-    var paid=nonUrg.filter(function(c){return(parseInt(c.getAttribute('data-salmax'))||0)>=4000;});
-    var rest=nonUrg.filter(function(c){return(parseInt(c.getAttribute('data-salmax'))||0)<4000;});
+    var paid=nonUrg.filter(function(c){var s=parseInt(c.getAttribute('data-salmax'))||0;var co=c.getAttribute('data-country')||'';return s>=4000||(co&&co!=='PL');});
+    var rest=nonUrg.filter(function(c){var s=parseInt(c.getAttribute('data-salmax'))||0;var co=c.getAttribute('data-country')||'';return!(s>=4000||(co&&co!=='PL'));});
     if(urgent.length>0){
       urgent.forEach(function(c){c.style.display='none';});
       var urgRow=_buildScrollRow('mj-urg-row','🔥 Pilne',urgent,function(src){return _buildHc(src,'',{cls:'urg',txt:'● PILNE'});});
