@@ -20157,6 +20157,7 @@ window.mjBrowseChooser=function(){
     var urgent=all.filter(function(c){return c.getAttribute('data-urgent')==='true';});
     var nonUrg=all.filter(function(c){return c.getAttribute('data-urgent')!=='true';});
     var paidAll=nonUrg.filter(function(c){var s=parseInt(c.getAttribute('data-salmax'))||0;var co=c.getAttribute('data-country')||'';return s>=4000||(co&&co!=='PL');});
+    paidAll.sort(function(a,b){return (parseInt(b.getAttribute('data-salmax'))||0)-(parseInt(a.getAttribute('data-salmax'))||0);});
     var _coCount={};var paid=[];var paidOverflow=[];
     paidAll.forEach(function(c){var co=c.getAttribute('data-country')||'';_coCount[co]=(_coCount[co]||0)+1;if(_coCount[co]<=10)paid.push(c);else paidOverflow.push(c);});
     var rest=nonUrg.filter(function(c){var s=parseInt(c.getAttribute('data-salmax'))||0;var co=c.getAttribute('data-country')||'';return!(s>=4000||(co&&co!=='PL'));}).concat(paidOverflow);
