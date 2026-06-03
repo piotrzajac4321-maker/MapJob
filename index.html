@@ -20055,9 +20055,9 @@ window.mjBrowseChooser=function(){
     var img = card.querySelector('img[alt=""]');
     return img ? img.src : null;
   }
-  function _salStr(salmax){
-    if(!salmax || salmax <= 0) return '';
-    return Number(salmax).toLocaleString('pl-PL') + ' zł';
+  function _getCardSal(card){
+    var el = card.querySelector('[style*="color:var(--green)"]');
+    return el ? el.textContent.trim() : '';
   }
   function _workLabel(card){
     var wm = card.getAttribute('data-workmode') || '';
@@ -20097,7 +20097,7 @@ window.mjBrowseChooser=function(){
       var title = _getCardTitle(src).slice(0, 28) || '–';
       var company = _getCardCompany(src).slice(0, 20);
       var logo = _getCardLogo(src);
-      var sal = _salStr(parseInt(src.getAttribute('data-salmax'))||0);
+      var sal = _getCardSal(src);
       var tag = _workLabel(src);
       var ini = company ? company.replace(/[^A-Za-zĄąĆćĘęŁłŃńÓóŚśŹźŻż]/g,' ')
         .trim().split(/\s+/).map(function(w){return (w[0]||'').toUpperCase();}).join('').slice(0,2) : '?';
@@ -20113,7 +20113,11 @@ window.mjBrowseChooser=function(){
         + '<div class="mj-hc-title">'+title+'</div></div></div>'
         + (sal ? '<div class="mj-hc-sal">'+sal+'</div>' : '')
         + (tag ? '<div class="mj-hc-tag">'+tag+'</div>' : '');
-      if(jid) hc.onclick = function(){ if(typeof openJobDetail==='function') openJobDetail(jid); };
+      var logoImg = hc.querySelector('.mj-hc-logo img');
+      if(logoImg){
+        (function(_img, _ini){ _img.addEventListener('error', function(){ this.parentNode.innerHTML = _ini; }); })(logoImg, ini);
+      }
+      if(jid){ (function(_hc, _src){ _hc.addEventListener('click', function(){ _src.click(); }); })(hc, src); }
       hotCards.appendChild(hc);
     });
     hotRow.classList.add('ready');
