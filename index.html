@@ -20136,15 +20136,7 @@ window.mjBrowseChooser=function(){
       var lbl=document.createElement('div');lbl.setAttribute('data-mj-sec',b.key);lbl.className='mj-sec';
       lbl.innerHTML='<h3>'+b.label+' <span class="mj-sec-count">'+items.length+'</span></h3>';
       frag.appendChild(lbl);
-      var preview=items.slice(0,PREVIEW),rest=items.slice(PREVIEW);
-      preview.forEach(function(c){c.style.display='';frag.appendChild(c);});
-      rest.forEach(function(c){c.style.display='none';frag.appendChild(c);});
-      if(rest.length>0){
-        var sm=document.createElement('div');sm.setAttribute('data-mj-sec',b.key+'-sm');sm.className='mj-sm';
-        sm.innerHTML='<span>Zobacz więcej</span><span class="mj-sm-cnt">'+rest.length+' więcej →</span>';
-        (function(_sm,_r){_sm.addEventListener('click',function(){_r.forEach(function(c){c.style.display='';});_sm.remove();});})(sm,rest);
-        frag.appendChild(sm);
-      }
+      items.forEach(function(c){c.style.display='';frag.appendChild(c);});
       if(si<pop.length-1){var sep=document.createElement('div');sep.setAttribute('data-mj-sec',b.key+'-sep');sep.className='mj-sec-sep';frag.appendChild(sep);}
     });
     list.appendChild(frag);
@@ -20164,8 +20156,9 @@ window.mjBrowseChooser=function(){
     var urgent=all.filter(function(c){return c.getAttribute('data-urgent')==='true';});
     var nonUrg=all.filter(function(c){return c.getAttribute('data-urgent')!=='true';});
     var paidAll=nonUrg.filter(function(c){var s=parseInt(c.getAttribute('data-salmax'))||0;var co=c.getAttribute('data-country')||'';return s>=4000||(co&&co!=='PL');});
-    var paid=paidAll.slice(0,10);
-    var rest=nonUrg.filter(function(c){var s=parseInt(c.getAttribute('data-salmax'))||0;var co=c.getAttribute('data-country')||'';return!(s>=4000||(co&&co!=='PL'));}).concat(paidAll.slice(10));
+    var _coCount={};var paid=[];var paidOverflow=[];
+    paidAll.forEach(function(c){var co=c.getAttribute('data-country')||'';_coCount[co]=(_coCount[co]||0)+1;if(_coCount[co]<=10)paid.push(c);else paidOverflow.push(c);});
+    var rest=nonUrg.filter(function(c){var s=parseInt(c.getAttribute('data-salmax'))||0;var co=c.getAttribute('data-country')||'';return!(s>=4000||(co&&co!=='PL'));}).concat(paidOverflow);
     if(urgent.length>0){
       urgent.forEach(function(c){c.style.display='none';});
       var urgRow=_buildScrollRow('mj-urg-row','🔥 Pilne',urgent,function(src){return _buildHc(src,'',{cls:'urg',txt:'● PILNE'});});
