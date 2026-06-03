@@ -19985,101 +19985,146 @@ window.mjBrowseChooser=function(){
 
 
 <!-- ============================================================
-     MapJob — Sekcje (#6) + Gorące dziś (#7)
+     MapJob — Pilne scroll row + sekcje
      Injection: appended before </body>, nie rusza istniejącego kodu
      ============================================================ -->
 <style id="mj-sections-css">
+/* Pilne scroll row */
+#mj-urg-row{margin:8px 0 12px}
+#mj-urg-hdr{display:flex;align-items:center;padding:4px 0 10px;gap:7px}
+#mj-urg-hdr-title{font-size:13px;font-weight:700}
+#mj-urg-wrap{position:relative}
+#mj-urg-scroll{display:flex;gap:10px;overflow-x:auto;padding-bottom:4px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+#mj-urg-scroll::-webkit-scrollbar{display:none}
+.mj-hc{width:182px;flex-shrink:0;background:var(--surf);border:1px solid rgba(239,68,68,.3);border-radius:13px;padding:12px 13px;cursor:pointer;transition:border-color .15s}
+.mj-hc:active{border-color:var(--red);box-shadow:0 2px 12px rgba(239,68,68,.15)}
+.mj-hc-top{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.mj-hc-logo{width:32px;height:32px;border-radius:8px;flex-shrink:0;background:var(--surf2);border:1px solid var(--border3);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--text2);overflow:hidden}
+.mj-hc-logo img{width:100%;height:100%;object-fit:cover}
+.mj-hc-co{font-size:10px;color:var(--text3);margin-bottom:1px}
+.mj-hc-title{font-size:12px;font-weight:600;line-height:1.25;color:var(--text)}
+.mj-hc-sal{font-size:14px;font-weight:700;color:var(--green);letter-spacing:-.01em;margin-top:6px}
+.mj-hc-urg{display:inline-flex;height:18px;padding:0 7px;border-radius:5px;align-items:center;font-size:10px;font-weight:700;background:rgba(239,68,68,.12);color:var(--red);border:1px solid rgba(239,68,68,.25);margin-top:5px}
+.mj-hc-fade{position:absolute;right:0;top:0;bottom:0;width:40px;background:linear-gradient(90deg,transparent,var(--bg));pointer-events:none}
+/* Zobacz więcej button */
+#mj-see-more{margin:4px 0 12px;padding:13px 16px;background:var(--surf);border:1px solid var(--border3);border-radius:13px;font-size:13px;font-weight:700;color:var(--text2);cursor:pointer;display:flex;align-items:center;justify-content:space-between;-webkit-tap-highlight-color:transparent}
 /* Section labels */
-.mj-sec{display:flex;align-items:center;justify-content:space-between;padding:10px 0 6px;margin-top:6px}
+.mj-sec{display:flex;align-items:center;padding:10px 0 6px;margin-top:6px}
 .mj-sec h3{font-size:13px;font-weight:700;display:flex;align-items:center;gap:6px}
-.mj-sec-count{
-  font-size:11px;font-weight:600;color:var(--text3);background:var(--surf2);
-  border:1px solid var(--border3);border-radius:6px;padding:1px 7px;
-}
+.mj-sec-count{font-size:11px;font-weight:600;color:var(--text3);background:var(--surf2);border:1px solid var(--border3);border-radius:6px;padding:1px 7px}
 .mj-sec-sep{height:1px;background:var(--border);margin:8px 0 14px}
 </style>
 
 <script>
 (function(){
-  /* ── helpers ── */
   function _hasActiveFilter(){
-    try {
-      if(window._jobModeFilter || window._jobWorkFilter || window._jobSearchQuery || window._jobUrgentOnly) return true;
-      if(window._jobMinSalary > 0) return true;
-      if(document.querySelector('#jobs-filters-row .fchip.on[data-cat]')) return true;
-    } catch(e){}
+    try{
+      if(window._jobModeFilter||window._jobWorkFilter||window._jobSearchQuery||window._jobUrgentOnly)return true;
+      if(window._jobMinSalary>0)return true;
+      if(document.querySelector('#jobs-filters-row .fchip.on[data-cat]'))return true;
+    }catch(e){}
     return false;
   }
 
-  /* ── Inject section labels + reorder cards ── */
-  function _injectSections(){
-    var list = document.getElementById('jobs-list');
-    if(!list) return;
-    list.querySelectorAll('[data-mj-sec]').forEach(function(n){ n.remove(); });
-    if(_hasActiveFilter()) return;
-    var visible = Array.from(list.children).filter(function(c){
-      return c.classList && c.classList.contains('job-card-item')
-          && c.style.display !== 'none'
-          && !c.hasAttribute('data-urgent-echo');
-    });
-    if(visible.length < 3) return;
-    var now = Date.now();
-    var buckets = [
-      { key:'urg',  label:'🔥 Pilne',            threshold: function(c){ return c.getAttribute('data-urgent')==='true'; } },
-      { key:'paid', label:'💰 Najlepiej płatne', threshold: function(c){ return (parseInt(c.getAttribute('data-salmax'))||0) >= 4000; } },
-      { key:'new',  label:'🆕 Nowe dziś',        threshold: function(c){ var t=Date.parse(c.getAttribute('data-created')||''); return !isNaN(t)&&(now-t)<86400000; } },
-      { key:'rest', label:'📋 Więcej ofert',     threshold: function(){ return true; } },
+  function _cardLogo(c){var img=c.querySelector('img[alt=""]');return img?img.src:null;}
+  function _cardTitle(c){var el=c.querySelector('[style*="font-weight:800"]');return el?el.textContent.trim():'';}
+  function _cardCo(c){var el=c.querySelector('[style*="font-weight:800"]');var s=el&&el.nextElementSibling;return s?s.textContent.trim():'';}
+  function _cardSal(c){var el=c.querySelector('[style*="color:var(--green)"]');return el?el.textContent.trim():'';}
+  function _cardId(c){var b=c.querySelector('[data-apply-id]');return b?b.getAttribute('data-apply-id'):null;}
+  function _ini(name){return(name||'').replace(/[^A-Za-zĄąĆćĘęŁłŃńÓóŚśŹźŻż]/g,' ').trim().split(/\s+/).map(function(w){return(w[0]||'').toUpperCase();}).join('').slice(0,2)||'?';}
+
+  function _buildHc(src){
+    var jid=_cardId(src), logo=_cardLogo(src), co=_cardCo(src), ini=_ini(co);
+    var hc=document.createElement('div'); hc.className='mj-hc';
+    var logoHtml=logo
+      ?'<div class="mj-hc-logo"><img src="'+logo+'" alt="" loading="lazy"/></div>'
+      :'<div class="mj-hc-logo">'+ini+'</div>';
+    hc.innerHTML='<div class="mj-hc-top">'+logoHtml
+      +'<div><div class="mj-hc-co">'+co+'</div>'
+      +'<div class="mj-hc-title">'+_cardTitle(src).slice(0,28)+'</div></div></div>'
+      +(_cardSal(src)?'<div class="mj-hc-sal">'+_cardSal(src)+'</div>':'')
+      +'<div class="mj-hc-urg">● PILNE</div>';
+    var img=hc.querySelector('.mj-hc-logo img');
+    if(img)(function(_i,_n){_i.addEventListener('error',function(){this.parentNode.innerHTML=_n;});})(img,ini);
+    if(jid)(function(_h,_s){_h.addEventListener('click',function(){_s.click();});})(hc,src);
+    return hc;
+  }
+
+  function _injectNonUrgentSections(list, cards, now){
+    list.querySelectorAll('[data-mj-sec]').forEach(function(n){n.remove();});
+    var buckets=[
+      {key:'paid',label:'💰 Najlepiej płatne',fn:function(c){return(parseInt(c.getAttribute('data-salmax'))||0)>=4000;}},
+      {key:'new', label:'🆕 Nowe dziś',        fn:function(c){var t=Date.parse(c.getAttribute('data-created')||'');return!isNaN(t)&&(now-t)<86400000;}},
+      {key:'rest',label:'📋 Więcej ofert',     fn:function(){return true;}},
     ];
-    var groups = {}; buckets.forEach(function(b){ groups[b.key] = []; });
-    visible.forEach(function(c){
-      for(var i=0; i<buckets.length; i++){
-        if(buckets[i].threshold(c)){ groups[buckets[i].key].push(c); break; }
-      }
-    });
-    var populated = buckets.filter(function(b){ return groups[b.key].length > 0; });
-    if(populated.length < 2) return;
-    /* Build fragment: label → cards, in bucket order (urgent first) */
-    var frag = document.createDocumentFragment();
-    populated.forEach(function(b, si){
-      var items = groups[b.key];
-      var lbl = document.createElement('div');
-      lbl.setAttribute('data-mj-sec', b.key);
-      lbl.className = 'mj-sec';
-      lbl.innerHTML = '<h3>'+b.label+' <span class="mj-sec-count">'+items.length+'</span></h3>';
+    var groups={};buckets.forEach(function(b){groups[b.key]=[];});
+    cards.forEach(function(c){for(var i=0;i<buckets.length;i++){if(buckets[i].fn(c)){groups[buckets[i].key].push(c);break;}}});
+    var pop=buckets.filter(function(b){return groups[b.key].length>0;});
+    if(pop.length<1)return;
+    var frag=document.createDocumentFragment();
+    pop.forEach(function(b,si){
+      var items=groups[b.key];
+      var lbl=document.createElement('div');lbl.setAttribute('data-mj-sec',b.key);lbl.className='mj-sec';
+      lbl.innerHTML='<h3>'+b.label+' <span class="mj-sec-count">'+items.length+'</span></h3>';
       frag.appendChild(lbl);
-      items.forEach(function(c){ frag.appendChild(c); });
-      if(si < populated.length - 1){
-        var sep = document.createElement('div');
-        sep.setAttribute('data-mj-sec', b.key+'-sep');
-        sep.className = 'mj-sec-sep';
-        frag.appendChild(sep);
-      }
+      items.forEach(function(c){frag.appendChild(c);});
+      if(si<pop.length-1){var sep=document.createElement('div');sep.setAttribute('data-mj-sec',b.key+'-sep');sep.className='mj-sec-sep';frag.appendChild(sep);}
     });
     list.appendChild(frag);
   }
 
-  /* ── Wrap _applyJobFilters ── */
+  function _injectSections(){
+    var list=document.getElementById('jobs-list');
+    if(!list)return;
+    /* cleanup */
+    ['mj-urg-row','mj-see-more'].forEach(function(id){var el=document.getElementById(id);if(el)el.remove();});
+    list.querySelectorAll('[data-mj-sec]').forEach(function(n){n.remove();});
+    /* reset */
+    var all=Array.from(list.querySelectorAll('.job-card-item:not([data-urgent-echo])'));
+    all.forEach(function(c){c.style.display='';});
+    list.style.display='';
+    if(_hasActiveFilter())return;
+    if(all.length<2)return;
+    var now=Date.now();
+    var urgent=all.filter(function(c){return c.getAttribute('data-urgent')==='true';});
+    var nonUrg=all.filter(function(c){return c.getAttribute('data-urgent')!=='true';});
+    if(urgent.length===0){_injectNonUrgentSections(list,all,now);return;}
+    /* hide urgent from main list */
+    urgent.forEach(function(c){c.style.display='none';});
+    /* build Pilne scroll row */
+    var row=document.createElement('div');row.id='mj-urg-row';
+    row.innerHTML='<div id="mj-urg-hdr"><span id="mj-urg-hdr-title">🔥 Pilne</span></div>'
+      +'<div id="mj-urg-wrap"><div id="mj-urg-scroll"></div><div class="mj-hc-fade"></div></div>';
+    var scroll=row.querySelector('#mj-urg-scroll');
+    urgent.forEach(function(src){scroll.appendChild(_buildHc(src));});
+    list.parentNode.insertBefore(row,list);
+    /* build Zobacz więcej button */
+    var btn=document.createElement('div');btn.id='mj-see-more';
+    var cnt=nonUrg.length;
+    btn.innerHTML='<span>📋 Zobacz wszystkie oferty</span><span style="color:var(--blue2);font-size:12px">'+cnt+' ofert →</span>';
+    btn.addEventListener('click',function(){
+      list.style.display='';
+      btn.remove();
+      _injectNonUrgentSections(list,nonUrg,now);
+    });
+    list.parentNode.insertBefore(btn,list);
+    list.style.display='none';
+  }
+
   function _patchApplyFilters(){
-    var orig = window._applyJobFilters;
-    if(typeof orig !== 'function') return false;
-    window._applyJobFilters = function(){
-      orig.apply(this, arguments);
-      setTimeout(_injectSections, 0);
-    };
+    var orig=window._applyJobFilters;
+    if(typeof orig!=='function')return false;
+    window._applyJobFilters=function(){orig.apply(this,arguments);setTimeout(_injectSections,0);};
     return true;
   }
 
-  /* ── Init ── */
-  var _tries = 0;
-  var _iv = setInterval(function(){
+  var _tries=0,_iv=setInterval(function(){
     _tries++;
-    if(!_patchApplyFilters() && _tries < 20) return;
-    var cards = document.querySelectorAll('#jobs-list .job-card-item');
-    if(cards.length > 0 || _tries >= 20){
-      clearInterval(_iv);
-      _injectSections();
+    if(!_patchApplyFilters()&&_tries<20)return;
+    if(document.querySelectorAll('#jobs-list .job-card-item').length>0||_tries>=20){
+      clearInterval(_iv);_injectSections();
     }
-  }, 300);
+  },300);
 })();
 </script>
 </body>
