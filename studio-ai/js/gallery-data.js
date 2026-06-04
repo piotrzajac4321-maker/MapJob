@@ -70,6 +70,19 @@ const GALLERY = [
   { f: "hf_20260604_220728_e5c462ec-ca01-4ee2-b405-782e8c895fd4", cat: "tematyczne", title: "Słodki uśmiech — miś" },
   { f: "hf_20260604_220733_25f13464-7a20-49e0-9772-26206b24e913", cat: "klasyczne", title: "Ziewanie — boho" },
   { f: "hf_20260604_220735_6c14b9a3-da74-4785-898a-7acf1b07c100", cat: "tematyczne", title: "Ziewanie — chmurki" },
+
+  // — Bogate, opowiadające sceny (partia 4) —
+  { f: "hf_20260604_221024_a34192a6-95bb-4f70-bdfb-2d6dff6b5eac", cat: "tematyczne", title: "W balonie wśród chmur" },
+  { f: "hf_20260604_221031_a660bb35-29ab-4070-bc8c-158d93c9fa0f", cat: "tematyczne", title: "Mały czytelnik" },
+  { f: "hf_20260604_221034_98c92f50-2615-48a0-906c-6dd3f64ab9b2", cat: "tematyczne", title: "Mały żeglarz" },
+  { f: "hf_20260604_221037_9fa2bcfc-c880-4f94-895d-58a1e8a31031", cat: "tematyczne", title: "Mały muzyk" },
+  { f: "hf_20260604_221041_f2044943-6f18-41a9-a03d-eef68c5bf696", cat: "tematyczne", title: "Mała kwiaciarnia" },
+  { f: "hf_20260604_221044_b3786cff-ac5c-47b1-bd18-079f4f1f4496", cat: "tematyczne", title: "Mały podróżnik" },
+  { f: "hf_20260604_221046_9d2c14ad-bc21-4c4d-90e0-b85a42074265", cat: "tematyczne", title: "Mały piekarz" },
+  { f: "hf_20260604_221049_3081ed0d-4780-4c70-91e8-030fc70f97e6", cat: "tematyczne", title: "Leśna baśń" },
+  { f: "hf_20260604_221051_614e065c-fab3-4c8c-8126-c61a9a2c46b5", cat: "tematyczne", title: "Mały kosmonauta" },
+  { f: "hf_20260604_221026_b554d6c8-d031-4d62-8853-c130a683bb36", cat: "sezonowe", title: "Jesienne zbiory" },
+  { f: "hf_20260604_221039_1d6f7300-b723-45aa-ad71-51638c202a84", cat: "sezonowe", title: "Zimowe sanki" },
 ];
 
 // Pomocnicze URL-e
