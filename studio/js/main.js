@@ -161,23 +161,46 @@ document.addEventListener("DOMContentLoaded", () => {
      Dane zamówienia (zdjęcia + notatki + kontakt) są gotowe w obiekcie `order`.
   */
   const cartForm = document.getElementById("cartForm");
+
+  /* ---- Upload zdjęć klienta (UI; realne wysyłanie wymaga backendu) ---- */
+  const fileInput = document.getElementById("c-foto");
+  const fileText = document.getElementById("fileText");
+  const fileDrop = document.querySelector(".file-drop");
+  if (fileInput) {
+    fileInput.addEventListener("change", () => {
+      const n = fileInput.files.length;
+      if (n === 0) {
+        fileText.textContent = "Kliknij, aby dodać zdjęcie (możesz dodać kilka)";
+        fileDrop.classList.remove("has-file");
+      } else {
+        fileText.textContent = n === 1 ? fileInput.files[0].name : `Dodano ${n} zdjęć`;
+        fileDrop.classList.add("has-file");
+      }
+    });
+  }
+
   if (cartForm) {
     cartForm.addEventListener("submit", (e) => {
       e.preventDefault();
       if (selected.size === 0) { alert("Najpierw wybierz przynajmniej jedno zdjęcie (kliknij ♡ przy zdjęciu)."); return; }
       if (!cartForm.checkValidity()) { cartForm.reportValidity(); return; }
       const fd = Object.fromEntries(new FormData(cartForm).entries());
+      const pliki = fileInput ? [...fileInput.files].map(f => f.name) : [];
       const order = {
-        kontakt: { imie: fd.imie, email: fd.email, pakiet: fd.pakiet },
+        kontakt: { imie: fd.imie, email: fd.email, telefon: fd.telefon || "—", pakiet: fd.pakiet },
+        zgody: { sms: !!fd.zgodaSms, email: !!fd.zgodaEmail, marketing: !!fd.zgodaMarketing },
+        wgranePliki: pliki,
         zdjecia: [...selected.values()].map(({ item, note }) => ({ styl: item.title, plik: item.f, coZmienic: note || "—" })),
       };
+      // TODO (backend): przesłać wgrane pliki (fileInput.files) wraz z zamówieniem.
       console.log("Zamówienie spersonalizowane:", order);
       alert(
         "Dziękujemy, " + (fd.imie || "") + "! 💛\n\n" +
-        "Wybrane zdjęcia: " + order.zdjecia.length + "\n" +
+        "Wgrane zdjęcia: " + (pliki.length || 0) + "\n" +
+        "Wybrane stylizacje: " + order.zdjecia.length + "\n" +
         order.zdjecia.map((z, i) => `${i + 1}. ${z.styl} — ${z.coZmienic}`).join("\n") + "\n\n" +
         "Tu nastąpi przekierowanie do płatności (Przelewy24 / Stripe).\n" +
-        "[Demo] Płatności nie są jeszcze podłączone — patrz README.md."
+        "[Demo] Płatności i wysyłka plików nie są jeszcze podłączone — patrz README.md."
       );
       // window.location.href = PAYMENT_LINKS[fd.pakiet];
     });
@@ -224,15 +247,4 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-  /* ---- Klasyczny formularz kontaktowy (sekcja Kontakt) ---- */
-  const form = document.getElementById("orderForm");
-  if (form) {
-    form.addEventListener("submit", (e) => {
-      e.preventDefault();
-      if (!form.checkValidity()) { form.reportValidity(); return; }
-      const data = Object.fromEntries(new FormData(form).entries());
-      console.log("Zapytanie kontaktowe:", data);
-      alert("Dziękujemy, " + (data.imie || "") + "! Odezwiemy się wkrótce.\n[Demo] Formularz nie jest jeszcze podłączony do wysyłki — patrz README.md.");
-    });
-  }
 });
