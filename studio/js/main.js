@@ -256,6 +256,12 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
+  // pomieszaj kolejność zdjęć przy każdym wejściu (Fisher–Yates)
+  for (let i = GALLERY.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [GALLERY[i], GALLERY[j]] = [GALLERY[j], GALLERY[i]];
+  }
+
   buildFilters();
   renderGallery();
   updateCartBar();
