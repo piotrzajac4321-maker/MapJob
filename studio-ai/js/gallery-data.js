@@ -42,6 +42,20 @@ const GALLERY = [
   { f: "hf_20260604_131111_faf8003f-7001-424a-af1d-0e37bca94eac", cat: "tematyczne", title: "Chmurki i gwiazdki" },
   { f: "hf_20260604_125255_d8aaf8a0-9cde-4e2b-8fe8-d3c0cda186b0", cat: "tematyczne", title: "Mały aniołek" },
   { f: "hf_20260604_125322_10816dec-e562-444e-9bb4-edf6135ba024", cat: "tematyczne", title: "Marynarski" },
+
+  // — Otwarte oczy / różne miny (nowa partia) —
+  { f: "hf_20260604_215500_bcf31546-efd1-4746-b8c8-bdd09d7ec8c7", cat: "klasyczne", title: "Otwarte oczy — studio" },
+  { f: "hf_20260604_215519_b15883ac-9a9c-4c2d-862a-504e4f053091", cat: "klasyczne", title: "Otwarte oczy — minimal" },
+  { f: "hf_20260604_215526_704f5930-c5ed-4b82-a9e1-fb3831693454", cat: "klasyczne", title: "Otwarte oczy — vintage" },
+  { f: "hf_20260604_215530_4c08299d-f847-482c-9c52-30517b60cf0b", cat: "klasyczne", title: "Otwarte oczy — skandynawski" },
+  { f: "hf_20260604_215502_6405fc74-0000-462e-9b86-1c7edd0235e0", cat: "klasyczne", title: "Uśmiech — boho" },
+  { f: "hf_20260604_215523_90e6f5ae-935d-42f9-a33b-67e8a1ac6326", cat: "klasyczne", title: "Uśmiech — szałwia" },
+  { f: "hf_20260604_215508_ea110dad-6b1d-4ba3-90d9-f5e323f4d605", cat: "klasyczne", title: "Ciekawość — terakota" },
+  { f: "hf_20260604_215510_0281802c-1561-4c3f-a35e-b33141c8282f", cat: "sezonowe", title: "Uśmiech — wiosna" },
+  { f: "hf_20260604_215506_74dc04dd-eee6-47e3-949d-995c3a332cea", cat: "sezonowe", title: "Spojrzenie w górę — kwiaty" },
+  { f: "hf_20260604_215521_cba19679-a4be-4efc-80f1-4b109baa627a", cat: "sezonowe", title: "Otwarte oczy — święta" },
+  { f: "hf_20260604_215527_bab46406-7fcb-44d4-be94-d0fc544014fd", cat: "sezonowe", title: "Ziewanie — jesień" },
+  { f: "hf_20260604_215504_049582bd-41eb-41d2-9b2b-368d3ec1013d", cat: "tematyczne", title: "Ziewanie — księżyc" },
 ];
 
 // Pomocnicze URL-e

@@ -194,6 +194,7 @@ document.addEventListener("DOMContentLoaded", () => {
       if (!cartForm.checkValidity()) { cartForm.reportValidity(); return; }
       const fd = Object.fromEntries(new FormData(cartForm).entries());
       const order = {
+        data: new Date().toISOString(),
         kontakt: { imie: fd.imie, email: fd.email, telefon: fd.telefon || "—", pakiet: fd.pakiet },
         zgody: { sms: !!fd.zgodaSms, email: !!fd.zgodaEmail, marketing: !!fd.zgodaMarketing },
         wgranePliki: pliki,
@@ -201,6 +202,14 @@ document.addEventListener("DOMContentLoaded", () => {
         zdjecia: [...selected.values()].map(({ item, note }) => ({ styl: item.title, plik: item.f, coZmienic: note || "—" })),
       };
       // TODO (backend): przesłać wgrane pliki (fileInput.files) wraz z zamówieniem.
+      // Zapis lokalny — żebyś widział, kto co zaznaczył (m.in. zgodę marketingową).
+      // UWAGA: to zapis tylko w tej przeglądarce. Trwały rejestr wymaga backendu (np. Supabase) — patrz README.
+      try {
+        const KEY = "fotomagia_orders";
+        const all = JSON.parse(localStorage.getItem(KEY) || "[]");
+        all.push(order);
+        localStorage.setItem(KEY, JSON.stringify(all));
+      } catch (e) { /* localStorage niedostępny */ }
       console.log("Zamówienie spersonalizowane:", order);
       alert(
         "Dziękujemy, " + (fd.imie || "") + "! 💛\n\n" +
@@ -254,5 +263,33 @@ document.addEventListener("DOMContentLoaded", () => {
       document.querySelectorAll('select[name="pakiet"]').forEach(sel => { sel.value = btn.dataset.plan; });
     });
   });
+
+  /* ---- Przed / Po (suwaki) ---- */
+  document.querySelectorAll("[data-ba]").forEach(ba => {
+    const range = ba.querySelector(".ba-range");
+    const apply = () => ba.style.setProperty("--pos", range.value + "%");
+    range.addEventListener("input", apply);
+    apply();
+  });
+
+  /* ---- Zgody: „zaznacz wszystkie" ---- */
+  const allBox = document.getElementById("c-all");
+  const consentBoxes = ["c-zgoda", "c-sms", "c-zgoda-email", "c-marketing"].map(id => document.getElementById(id)).filter(Boolean);
+  if (allBox) {
+    allBox.addEventListener("change", () => { consentBoxes.forEach(cb => { cb.checked = allBox.checked; }); });
+    consentBoxes.forEach(cb => cb.addEventListener("change", () => {
+      allBox.checked = consentBoxes.every(c => c.checked);
+    }));
+  }
+
+  /* ---- Baner cookies ---- */
+  const cookie = document.getElementById("cookie");
+  if (cookie) {
+    const KEY = "fotomagia_cookie_consent";
+    if (!localStorage.getItem(KEY)) cookie.hidden = false;
+    const choose = (val) => { localStorage.setItem(KEY, val); cookie.hidden = true; };
+    document.getElementById("cookieAccept")?.addEventListener("click", () => choose("all"));
+    document.getElementById("cookieReject")?.addEventListener("click", () => choose("necessary"));
+  }
 
 });
