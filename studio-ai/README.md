@@ -58,7 +58,7 @@ Po podpięciu własnej domeny uzupełnij `og:` w `<head>` (tytuł, opis, docelow
 W `js/main.js` (funkcja obsługi formularza) jest miejsce na integrację:
 
 **Najprościej — Payment Links (bez backendu):**
-1. W panelu Stripe lub Przelewy24 utwórz 3 linki płatności (Mini 20 zł, Standard 49 zł, Premium 79 zł).
+1. W panelu Stripe lub Przelewy24 utwórz 3 linki płatności (Mini 20 zł, Standard 49 zł, Premium 99 zł).
 2. Wklej je do mapy i przekieruj po wysłaniu formularza:
    ```js
    const PAYMENT_LINKS = {

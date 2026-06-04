@@ -4,7 +4,7 @@
 tekst główny, nagłówek, opis, CTA oraz sugestię grafiki z galerii.
 
 **Zasady:** w reklamach używamy wyłącznie **fikcyjnych modeli AI** (sekcja B promptów).
-Ceny: Mini 20 zł · Standard 49 zł · Premium 79 zł. Przewaga: sesja tradycyjna ~500 zł + dojazd.
+Ceny: Mini 20 zł · Standard 49 zł · Premium 99 zł. Przewaga: sesja tradycyjna ~500 zł + dojazd.
 
 ---
 
@@ -80,7 +80,7 @@ a my stworzymy magiczne zdjęcie Twojego dziecka. Idealne na kartki świąteczne
 **Tekst główny:**
 Klasyczne studio, boho, bajkowy księżyc, mały pilot, leśna kraina — w Studio AI wybierasz styl,
 który pasuje do Waszej rodziny. Twarz maluszka zostaje bez zmian, my dokładamy resztę.
-Nie możesz się zdecydować? Pakiet Premium to 6 zdjęć w różnych stylizacjach.
+Nie możesz się zdecydować? Pakiet Premium to 10 zdjęć w różnych stylizacjach.
 
 **Nagłówek:** Wybierz styl — my zrobimy resztę
 **Opis:** 30+ teł, jakość studyjna.
