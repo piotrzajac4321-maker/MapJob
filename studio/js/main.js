@@ -301,10 +301,17 @@ document.addEventListener("DOMContentLoaded", () => {
   const cookie = document.getElementById("cookie");
   if (cookie) {
     const KEY = "fotomagia_cookie_consent";
-    if (!localStorage.getItem(KEY)) cookie.classList.add("show");
-    const choose = (val) => { localStorage.setItem(KEY, val); cookie.classList.remove("show"); };
-    document.getElementById("cookieAccept")?.addEventListener("click", () => choose("all"));
-    document.getElementById("cookieReject")?.addEventListener("click", () => choose("necessary"));
+    let consent = null;
+    try { consent = localStorage.getItem(KEY); } catch (e) {}
+    if (!consent) cookie.classList.add("show");
+    const choose = (val) => {
+      try { localStorage.setItem(KEY, val); } catch (e) {}
+      cookie.classList.remove("show");
+    };
+    const accept = document.getElementById("cookieAccept");
+    const reject = document.getElementById("cookieReject");
+    if (accept) accept.addEventListener("click", () => choose("all"));
+    if (reject) reject.addEventListener("click", () => choose("necessary"));
   }
 
 });
