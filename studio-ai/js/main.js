@@ -153,6 +153,8 @@ document.addEventListener("DOMContentLoaded", () => {
   function closeCart() { cartModal.classList.remove("open"); cartModal.setAttribute("aria-hidden", "true"); document.body.style.overflow = ""; }
 
   document.getElementById("cartOpen").addEventListener("click", openCart);
+  const editOrderBtn = document.getElementById("editOrder");
+  if (editOrderBtn) editOrderBtn.addEventListener("click", openCart);
   document.getElementById("cartClose").addEventListener("click", closeCart);
   cartModal.addEventListener("click", e => { if (e.target === cartModal) closeCart(); });
 
@@ -182,14 +184,20 @@ document.addEventListener("DOMContentLoaded", () => {
   if (cartForm) {
     cartForm.addEventListener("submit", (e) => {
       e.preventDefault();
-      if (selected.size === 0) { alert("Najpierw wybierz przynajmniej jedno zdjęcie (kliknij ♡ przy zdjęciu)."); return; }
+      const pliki = fileInput ? [...fileInput.files].map(f => f.name) : [];
+      const opis = (cartForm.querySelector('[name="opis"]')?.value || "").trim();
+      // można zamówić: stylizacje z galerii LUB własne zdjęcie do obróbki
+      if (selected.size === 0 && pliki.length === 0 && !opis) {
+        alert("Wybierz zdjęcie z galerii (kliknij ♡) albo prześlij własne zdjęcie i opisz, czego potrzebujesz.");
+        return;
+      }
       if (!cartForm.checkValidity()) { cartForm.reportValidity(); return; }
       const fd = Object.fromEntries(new FormData(cartForm).entries());
-      const pliki = fileInput ? [...fileInput.files].map(f => f.name) : [];
       const order = {
         kontakt: { imie: fd.imie, email: fd.email, telefon: fd.telefon || "—", pakiet: fd.pakiet },
         zgody: { sms: !!fd.zgodaSms, email: !!fd.zgodaEmail, marketing: !!fd.zgodaMarketing },
         wgranePliki: pliki,
+        opis: opis || "—",
         zdjecia: [...selected.values()].map(({ item, note }) => ({ styl: item.title, plik: item.f, coZmienic: note || "—" })),
       };
       // TODO (backend): przesłać wgrane pliki (fileInput.files) wraz z zamówieniem.
