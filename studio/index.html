@@ -22,8 +22,9 @@
       <nav class="nav-links" id="navLinks">
         <a href="#jak">Jak to działa</a>
         <a href="#galeria">Galeria</a>
+        <a href="#obrobka">Obróbka</a>
         <a href="#cennik">Cennik</a>
-        <a href="#cennik" class="btn btn-primary">Zamów sesję</a>
+        <a href="#cennik" class="btn btn-primary">Zamów</a>
       </nav>
       <button class="nav-toggle" id="navToggle" aria-label="Menu">☰</button>
     </div>
@@ -172,6 +173,29 @@
     </div>
   </section>
 
+  <!-- ============ OBRÓBKA ZDJĘĆ ============ -->
+  <section class="section section-alt" id="obrobka">
+    <div class="container">
+      <div class="section-head reveal">
+        <span class="eyebrow">Nie tylko noworodki</span>
+        <h2>Obrabiamy każde zdjęcie</h2>
+        <p>Prześlij dowolne zdjęcie i napisz, czego potrzebujesz — Fotomagia zajmie się resztą. Szybko, profesjonalnie, w przystępnej cenie.</p>
+      </div>
+      <div class="edit-grid">
+        <div class="tile reveal"><div class="step">🖼️</div><h3>Zmiana i usuwanie tła</h3><p>Nowe, czyste lub studyjne tło zamiast bałaganu za plecami.</p></div>
+        <div class="tile reveal"><div class="step">🧹</div><h3>Usuwanie obiektów i osób</h3><p>Znikają niechciane przedmioty, przypadkowe osoby, śmieci.</p></div>
+        <div class="tile reveal"><div class="step">✨</div><h3>Retusz i poprawa jakości</h3><p>Wygładzenie, korekta światła, koloru i ostrości — naturalnie.</p></div>
+        <div class="tile reveal"><div class="step">🎞️</div><h3>Koloryzacja starych zdjęć</h3><p>Stare, czarno-białe i zniszczone fotografie jak nowe.</p></div>
+        <div class="tile reveal"><div class="step">👔</div><h3>Portret do CV / LinkedIn</h3><p>Profesjonalne zdjęcie biznesowe z domowej fotki.</p></div>
+        <div class="tile reveal"><div class="step">🛍️</div><h3>Zdjęcia produktowe</h3><p>Czyste, sprzedażowe kadry produktów do sklepu i social mediów.</p></div>
+      </div>
+      <div class="edit-cta reveal">
+        <button class="btn btn-primary" id="editOrder" type="button">Prześlij swoje zdjęcie →</button>
+        <p>Wgrywasz zdjęcie, opisujesz czego potrzebujesz, my odsyłamy gotowy efekt.</p>
+      </div>
+    </div>
+  </section>
+
   <!-- ============ FOOTER ============ -->
   <footer class="footer">
     <div class="container">
@@ -184,6 +208,7 @@
           <h4>Strona</h4>
           <a href="#jak">Jak to działa</a>
           <a href="#galeria">Galeria</a>
+          <a href="#obrobka">Obróbka zdjęć</a>
           <a href="#cennik">Cennik</a>
           </div>
         <div>
@@ -211,7 +236,7 @@
     <div class="cart-panel">
       <button class="cart-close" id="cartClose" type="button" aria-label="Zamknij">✕</button>
       <h3>Twoje wybrane zdjęcia</h3>
-      <p class="cart-sub">Przy każdym napisz, co zmienić — tło, ubranko, kolor, imię, format. Zrobimy je spersonalizowane pod Ciebie.</p>
+      <p class="cart-sub">Wybierz stylizacje z galerii lub prześlij własne zdjęcie do obróbki. Opisz, czego potrzebujesz — zrobimy to pod Ciebie.</p>
 
       <div class="cart-items" id="cartItems"></div>
 
@@ -224,6 +249,9 @@
           <span class="file-text" id="fileText">Kliknij, aby dodać zdjęcie (możesz dodać kilka)</span>
         </label>
         <p class="field-hint">📸 Im więcej zdjęć prześlesz, tym lepszy będzie efekt końcowy.</p>
+
+        <label for="c-opis">Czego potrzebujesz?</label>
+        <textarea id="c-opis" name="opis" rows="2" placeholder="np. usuń tło i wstaw białe, popraw kolory, portret do CV, koloryzacja starego zdjęcia…"></textarea>
 
         <div class="row">
           <div>
