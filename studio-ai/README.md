@@ -31,11 +31,25 @@ python3 -m http.server 8080
 # otwórz http://localhost:8080
 ```
 
-## Hosting (do wyboru)
+## Hosting — Vercel (zalecane, auto-deploy z GitHuba)
 
-- **GitHub Pages** — Settings → Pages → wskaż katalog `studio-ai/` na wybranym branchu.
-- **Netlify / Vercel** — przeciągnij folder `studio-ai/` lub podłącz repo; publish directory: `studio-ai`.
-- Dowolny hosting z FTP — wgraj zawartość `studio-ai/`.
+Strona jest gotowa do publikacji na Vercel. Vercel podpina się pod repo i wdraża
+automatycznie po każdym pushu do GitHuba.
+
+Import (jednorazowo):
+1. Wejdź na https://vercel.com → **Add New… → Project** → **Import** repo `piotrzajac4321-maker/MapJob`.
+2. **Root Directory:** ustaw na **`studio-ai`** (przycisk *Edit* przy Root Directory).
+3. **Framework Preset:** *Other* · **Build Command:** puste · **Output Directory:** puste
+   (to czysta strona statyczna — Vercel serwuje pliki bez budowania).
+4. **Production Branch:** wybierz gałąź, z której publikujesz (np. `claude/blissful-faraday-8aJHZ`).
+5. **Deploy** → dostajesz adres `https://<nazwa>.vercel.app`.
+
+Po imporcie każdy push do tej gałęzi = automatyczny re-deploy. Własną domenę
+podpinasz w *Project → Settings → Domains*. Konfiguracja w `vercel.json`
+(czyste URL-e, nagłówki bezpieczeństwa).
+
+> Alternatywy: **Netlify** (Import repo, base directory `studio-ai`) albo dowolny
+> hosting z FTP — wystarczy wgrać zawartość `studio-ai/`.
 
 Po podpięciu własnej domeny uzupełnij `og:` w `<head>` (tytuł, opis, docelowy adres).
 
