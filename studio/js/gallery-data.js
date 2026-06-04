@@ -56,12 +56,26 @@ const GALLERY = [
   { f: "hf_20260604_215521_cba19679-a4be-4efc-80f1-4b109baa627a", cat: "sezonowe", title: "Otwarte oczy — święta" },
   { f: "hf_20260604_215527_bab46406-7fcb-44d4-be94-d0fc544014fd", cat: "sezonowe", title: "Ziewanie — jesień" },
   { f: "hf_20260604_215504_049582bd-41eb-41d2-9b2b-368d3ec1013d", cat: "tematyczne", title: "Ziewanie — księżyc" },
+
+  // — Realne oczy w różnych kolorach + uśmiechy + ziewanie (partia 3) —
+  { f: "hf_20260604_220713_e579db93-614d-44a8-870c-64b088f4f209", cat: "klasyczne", title: "Niebieskie oczy — studio" },
+  { f: "hf_20260604_220716_f2d5c703-45c5-4f4c-becf-4313c8c964ee", cat: "klasyczne", title: "Brązowe oczy — boho" },
+  { f: "hf_20260604_220717_621928b4-abb2-4f94-b698-7f42b829618d", ext: "jpeg", cat: "klasyczne", title: "Zielone oczy — szałwia" },
+  { f: "hf_20260604_220722_7ffc0b4b-beb5-484e-8fb8-93a508502a68", cat: "klasyczne", title: "Szare oczy — minimal" },
+  { f: "hf_20260604_220724_02f95d95-3a5a-4e9a-b3fc-56d834539ebf", cat: "klasyczne", title: "Ciemne oczy — aksamit" },
+  { f: "hf_20260604_220737_5c992ab2-0874-4234-b0b3-f90297fa33e0", cat: "klasyczne", title: "Niebiesko-szare oczy — vintage" },
+  { f: "hf_20260604_220719_78ee12a6-0a2f-4ef9-8016-f152d24cf373", cat: "sezonowe", title: "Piwne oczy — wiosna" },
+  { f: "hf_20260604_220726_2bdd7aca-58ee-43d9-98c3-07d17169ec3e", cat: "sezonowe", title: "Radosny uśmiech — kwiaty" },
+  { f: "hf_20260604_220731_c5505182-4753-4e62-96c5-2c008b5f9ddf", cat: "sezonowe", title: "Uśmiech — święta" },
+  { f: "hf_20260604_220728_e5c462ec-ca01-4ee2-b405-782e8c895fd4", cat: "tematyczne", title: "Słodki uśmiech — miś" },
+  { f: "hf_20260604_220733_25f13464-7a20-49e0-9772-26206b24e913", cat: "klasyczne", title: "Ziewanie — boho" },
+  { f: "hf_20260604_220735_6c14b9a3-da74-4785-898a-7acf1b07c100", cat: "tematyczne", title: "Ziewanie — chmurki" },
 ];
 
 // Pomocnicze URL-e
 GALLERY.forEach(g => {
   g.thumb = CDN + g.f + "_min.webp";
-  g.full  = CDN + g.f + ".png";
+  g.full  = CDN + g.f + "." + (g.ext || "png");
 });
 
 const CAT_LABELS = {
