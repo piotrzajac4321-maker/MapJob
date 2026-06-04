@@ -46,7 +46,7 @@ async function fetchStats() {
          rJobs, rTenders, rPins,
          rUJob, rUTen, rUPin,
          rPJob, rPTen, rPPin,
-         rU30] = await Promise.all([
+         rU30, rBoost] = await Promise.all([
     sb.rpc('edge_get_kpis'),
     sb.rpc('edge_get_visitor_countries'),
     sb.rpc('edge_get_contact_funnel'),
@@ -60,11 +60,13 @@ async function fetchStats() {
     sb.rpc('edge_get_listing_period_views',   {p_page_type:'tender'}),
     sb.rpc('edge_get_listing_period_views',   {p_page_type:'pin'}),
     sb.from('profiles').select('created_at').gte('created_at', ago30),
+    sb.rpc('edge_get_boost_stats'),
   ])
 
   if (rKpi.error)      console.error('edge_get_kpis:', rKpi.error.message)
   if (rCountries.error) console.error('edge_get_visitor_countries:', rCountries.error.message)
   if (rFunnel.error)   console.error('edge_get_contact_funnel:', rFunnel.error.message)
+  if (rBoost.error)    console.error('edge_get_boost_stats:', rBoost.error.message)
 
   const kpi = rKpi.data ?? {}
   const uJob = byId(rUJob.data), uTen = byId(rUTen.data), uPin = byId(rUPin.data)
@@ -93,6 +95,7 @@ async function fetchStats() {
     kpi,
     countries: rCountries.data ?? [],
     funnel:    rFunnel.data    ?? [],
+    boost:     rBoost.data     ?? {},
     ogl, pins,
     chart30: Object.entries(cm).map(([date,count])=>({date,count})),
     fetched_at: new Date().toISOString(),

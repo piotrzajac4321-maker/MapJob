@@ -45,6 +45,7 @@ h1{font-size:18px;font-weight:900;margin-bottom:2px}
 .loader{text-align:center;padding:18px;color:var(--text3);font-size:13px}
 .err{color:#F87171;font-size:12px;margin-top:6px;min-height:16px}
 .summary{background:linear-gradient(135deg,rgba(96,165,250,.08),rgba(96,165,250,.02));border:1px solid rgba(96,165,250,.2);border-radius:12px;padding:12px 14px;margin-bottom:14px;font-size:12px;line-height:1.7;color:var(--text2)}
+.summary-gold{background:linear-gradient(135deg,rgba(245,158,11,.08),rgba(245,158,11,.02));border:1px solid rgba(245,158,11,.25)}
 .pinrow{font-size:30px;letter-spacing:8px;text-align:center}
 #pin-screen{padding-top:60px}
 .modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:200;display:flex;flex-direction:column;justify-content:flex-end}
@@ -207,6 +208,14 @@ function funnelHtml(rows){
     +'🚪 Odeszło na notatce: <b style="color:#F87171">'+left+'</b> ('+pL+'%)'
 }
 
+function boostHtml(b){
+  function T(x){ return x!=null?x:'—' }
+  b = b || {}
+  return '⚡ <b>Boost dnia (PILNE)</b><br>'
+    +'🔴 Aktywne teraz: <b style="color:var(--gold)">'+T(b.active)+'</b><br>'
+    +'📅 Aktywacje: 24h <b style="color:var(--gold)">'+T(b.h24)+'</b> · 7 dni <b>'+T(b.d7)+'</b> · łącznie: <b>'+T(b.total)+'</b>'
+}
+
 function rowHtml(rank, r){
   var meta = r.meta
   if (r.kind==='job') meta += ' · 📞 '+r.clicks_phone+' · ⚡ '+r.clicks_apply+'→📨 '+r.applications
@@ -244,6 +253,7 @@ function renderDashboard(){
     +'<div class="summary" id="gen-sum">'+genSumHtml(k)+'</div>'
     +'<div class="summary" id="countries">'+countriesHtml(s.countries)+'</div>'
     +'<div class="summary" id="funnel">'+funnelHtml(s.funnel)+'</div>'
+    +'<div class="summary summary-gold" id="boost">'+boostHtml(s.boost)+'</div>'
     +'<button class="more" id="ogl-toggle">📢 Zobacz statystyki ogłoszeń ▾</button>'
     +'<div id="ogl-wrap" style="display:none">'
     +  '<input class="fi" id="q" placeholder="🔎 filtruj po nazwie / tytule / mieście">'
@@ -358,6 +368,7 @@ async function doRefreshSilent(){
     var gs = $$('gen-sum');   if (gs) gs.innerHTML = genSumHtml(k)
     var co = $$('countries'); if (co) co.innerHTML = countriesHtml(d.stats.countries)
     var fu = $$('funnel');    if (fu) fu.innerHTML = funnelHtml(d.stats.funnel)
+    var bo = $$('boost');     if (bo) bo.innerHTML = boostHtml(d.stats.boost)
   } catch(e){}
 }
 
