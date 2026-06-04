@@ -1,3 +1,4 @@
+# Publikuje stronę z katalogu studio-ai na GitHub Pages.
 name: Deploy Studio AI to GitHub Pages
 
 on:
