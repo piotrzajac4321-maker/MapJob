@@ -99,9 +99,9 @@
   <section class="section section-alt" id="galeria">
     <div class="container">
       <div class="section-head reveal">
-        <span class="eyebrow">Inspiracje</span>
+        <span class="eyebrow">Wybierz i spersonalizuj</span>
         <h2>Galeria stylizacji</h2>
-        <p>Przykładowe tła i stylizacje. Prezentowane kadry to modele AI — pokazują efekt, jaki możemy uzyskać na zdjęciu Twojego dziecka.</p>
+        <p>Kliknij <strong>♡</strong> przy zdjęciach, które Ci się podobają — potem przy każdym napiszesz, co zmienić, i zrobimy je <strong>spersonalizowane pod Ciebie</strong>. Prezentowane kadry to modele AI.</p>
       </div>
       <div class="filters" id="filters"></div>
       <div class="gallery" id="gallery"></div>
@@ -236,6 +236,47 @@
       </div>
     </div>
   </footer>
+
+  <!-- ============ PASEK WYBORU ============ -->
+  <div class="cart-bar" id="cartBar" aria-hidden="true">
+    <span class="cart-count">♥ Wybrane: <strong id="cartCount">0</strong></span>
+    <button class="btn btn-primary" id="cartOpen" type="button">Zamów spersonalizowane →</button>
+  </div>
+
+  <!-- ============ MODAL: WYBÓR + PERSONALIZACJA ============ -->
+  <div class="cart-modal" id="cartModal" aria-hidden="true">
+    <div class="cart-panel">
+      <button class="cart-close" id="cartClose" type="button" aria-label="Zamknij">✕</button>
+      <h3>Twoje wybrane zdjęcia</h3>
+      <p class="cart-sub">Przy każdym napisz, co zmienić — tło, ubranko, kolor, imię, format. Zrobimy je spersonalizowane pod Ciebie.</p>
+
+      <div class="cart-items" id="cartItems"></div>
+
+      <form class="cart-form" id="cartForm" novalidate>
+        <div class="row">
+          <div>
+            <label for="c-imie">Imię i nazwisko</label>
+            <input type="text" id="c-imie" name="imie" placeholder="np. Anna Kowalska" required />
+          </div>
+          <div>
+            <label for="c-email">Adres e-mail</label>
+            <input type="email" id="c-email" name="email" placeholder="twoj@email.pl" required />
+          </div>
+        </div>
+        <label for="c-pakiet">Pakiet</label>
+        <select id="c-pakiet" name="pakiet">
+          <option value="mini">Mini — 20 zł (1 zdjęcie)</option>
+          <option value="standard" selected>Standard — 49 zł (3 zdjęcia)</option>
+          <option value="premium">Premium — 79 zł (6 zdjęć)</option>
+        </select>
+        <label class="consent">
+          <input type="checkbox" id="c-zgoda" required />
+          <span>Wyrażam zgodę na przetwarzanie przesłanego wizerunku mojego dziecka w celu realizacji zamówienia. Oświadczam, że jestem rodzicem/opiekunem prawnym i mam prawo udostępnić to zdjęcie.</span>
+        </label>
+        <button type="submit" class="btn btn-primary">Wyślij i przejdź do płatności</button>
+      </form>
+    </div>
+  </div>
 
   <!-- ============ LIGHTBOX ============ -->
   <div class="lightbox" id="lightbox" aria-hidden="true">
