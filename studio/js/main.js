@@ -14,8 +14,17 @@ document.addEventListener("DOMContentLoaded", () => {
   /* ---- Menu mobilne ---- */
   const toggle = document.getElementById("navToggle");
   const links = document.getElementById("navLinks");
-  toggle.addEventListener("click", () => links.classList.toggle("open"));
-  links.querySelectorAll("a").forEach(a => a.addEventListener("click", () => links.classList.remove("open")));
+  const navBackdrop = document.createElement("div");
+  navBackdrop.className = "nav-backdrop";
+  document.body.appendChild(navBackdrop);
+  function setMenu(open) {
+    links.classList.toggle("open", open);
+    navBackdrop.classList.toggle("show", open);
+    document.body.style.overflow = open ? "hidden" : "";
+  }
+  toggle.addEventListener("click", () => setMenu(!links.classList.contains("open")));
+  navBackdrop.addEventListener("click", () => setMenu(false));
+  links.querySelectorAll("a").forEach(a => a.addEventListener("click", () => setMenu(false)));
 
   /* ---- Marquee (przewijany pasek zdjęć) ---- */
   const marquee = document.getElementById("marquee");
