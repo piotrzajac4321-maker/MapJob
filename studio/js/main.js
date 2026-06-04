@@ -295,8 +295,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const cookie = document.getElementById("cookie");
   if (cookie) {
     const KEY = "fotomagia_cookie_consent";
-    if (!localStorage.getItem(KEY)) cookie.hidden = false;
-    const choose = (val) => { localStorage.setItem(KEY, val); cookie.hidden = true; };
+    if (!localStorage.getItem(KEY)) cookie.classList.add("show");
+    const choose = (val) => { localStorage.setItem(KEY, val); cookie.classList.remove("show"); };
     document.getElementById("cookieAccept")?.addEventListener("click", () => choose("all"));
     document.getElementById("cookieReject")?.addEventListener("click", () => choose("necessary"));
   }
