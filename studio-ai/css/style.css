@@ -445,14 +445,14 @@ a { color: inherit; text-decoration: none; }
    Przed / Po (suwak)
    ========================================================= */
 .ba-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 18px; max-width: 980px; margin-inline: auto; }
-.ba { position: relative; aspect-ratio: 3 / 4; border-radius: 14px; overflow: hidden; box-shadow: var(--shadow-sm); user-select: none; touch-action: none; }
+.ba { position: relative; aspect-ratio: 3 / 4; border-radius: 14px; overflow: hidden; box-shadow: var(--shadow-sm); user-select: none; touch-action: pan-y; }
 .ba-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
 .ba-after { clip-path: inset(0 0 0 var(--pos)); }
 .ba-divider { position: absolute; top: 0; bottom: 0; left: var(--pos); width: 2px; background: #fff; transform: translateX(-1px); pointer-events: none; box-shadow: 0 0 0 1px rgba(0,0,0,.08); }
 .ba-divider::after { content: "⇆"; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 36px; height: 36px; border-radius: 50%; background: #fff; color: var(--ink); display: flex; align-items: center; justify-content: center; font-size: 14px; box-shadow: var(--shadow-sm); }
 .ba-tag { position: absolute; bottom: 12px; font-size: 11px; font-weight: 700; letter-spacing: .12em; padding: 5px 10px; border-radius: 999px; color: #fff; background: rgba(40,36,32,.55); pointer-events: none; }
 .ba-tag-before { left: 12px; } .ba-tag-after { right: 12px; }
-.ba-range { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; cursor: ew-resize; margin: 0; }
+.ba-range { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; cursor: ew-resize; margin: 0; touch-action: pan-y; }
 @media (max-width: 560px) { .ba-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; } }
 
 /* =========================================================
