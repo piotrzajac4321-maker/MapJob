@@ -4,20 +4,20 @@
 tekst główny, nagłówek, opis, CTA oraz sugestię grafiki z galerii.
 
 **Zasady:** w reklamach używamy wyłącznie **fikcyjnych modeli AI** (sekcja B promptów).
-Ceny: Mini 20 zł · Standard 49 zł · Premium 99 zł. Przewaga: sesja tradycyjna ~500 zł + dojazd.
+Ceny: Mini 24 zł · Standard 49 zł · Premium 99 zł. Przewaga: sesja tradycyjna ~500 zł + dojazd.
 
 ---
 
 ## 1. Kąt: cena / kontrast z sesją tradycyjną
 
-**Hook (1. linia):** Sesja noworodkowa za 500 zł? My zrobimy ją od **20 zł**. 🍼
+**Hook (1. linia):** Sesja noworodkowa za 500 zł? My zrobimy ją od **24 zł**. 🍼
 
 **Tekst główny:**
 Profesjonalne zdjęcie Twojego maluszka — bez dojazdu, bez stresu, bez czekania tygodniami na efekty.
 Wysyłasz jedno zdjęcie z telefonu, wybierasz tło, a my zamieniamy je w sesję jak ze studia.
 Gotowe nawet w 2 godziny. Twarz dziecka pozostaje bez zmian — dokładamy tylko stylizację i światło.
 
-**Nagłówek:** Sesja noworodkowa od 20 zł — gotowa w 2h
+**Nagłówek:** Sesja noworodkowa od 24 zł — gotowa w 2h
 **Opis:** Bez dojazdu. Bez wychodzenia z domu.
 **CTA:** Zamów teraz
 **Grafika:** „Klasyczne studio" lub „Granatowy aksamit" (elegancko, premium).
@@ -50,7 +50,7 @@ Maluszek rośnie z dnia na dzień. Zanim się obejrzysz, te malutkie rączki bę
 Stwórz pamiątkę, która zostanie na lata — piękną, profesjonalną i gotową do druku (3:4, 2K).
 Idealny prezent na powitanie dziecka, roczek albo dla dziadków.
 
-**Nagłówek:** Pamiątka na całe życie — od 20 zł
+**Nagłówek:** Pamiątka na całe życie — od 24 zł
 **Opis:** Gotowe do druku i oprawienia.
 **CTA:** Zamów sesję
 **Grafika:** „Wiosenne kwiaty" lub „Vintage koronka" (sentymentalnie).
