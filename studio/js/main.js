@@ -58,12 +58,27 @@ document.addEventListener("DOMContentLoaded", () => {
   const planCounterEl = document.getElementById("planCounter");
   const planHidden = document.getElementById("c-pakiet");
 
+  const MAX_PHOTOS = 10;
+  const planFor = (n) => (n <= 1 ? "mini" : n <= 4 ? "standard" : "premium");
+
+  // eleganckie powiadomienie zamiast alert()
+  let toastTimer;
+  function toast(msg) {
+    let t = document.getElementById("mjToast");
+    if (!t) { t = document.createElement("div"); t.id = "mjToast"; t.className = "toast"; document.body.appendChild(t); }
+    t.textContent = msg;
+    t.classList.add("show");
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => t.classList.remove("show"), 2800);
+  }
+  function escapeHtml(s) { return String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c])); }
+
   function setPlan(plan, opts) {
     opts = opts || {};
     // nie pozwól zejść do pakietu mniejszego niż liczba już wybranych zdjęć
     if (!opts.force && PLAN_LIMIT[plan] < selected.size) {
-      alert("Masz już zaznaczone " + selected.size + " zdjęć. Pakiet " + PLAN_NAME[plan] +
-            " obejmuje " + PLAN_LIMIT[plan] + ". Najpierw usuń nadmiar zdjęć.");
+      toast("Masz zaznaczone " + selected.size + " zdjęć — pakiet " + PLAN_NAME[plan] +
+            " obejmuje " + PLAN_LIMIT[plan] + ". Najpierw usuń nadmiar.");
       return false;
     }
     currentPlan = plan;
@@ -134,23 +149,20 @@ document.addEventListener("DOMContentLoaded", () => {
       fig && fig.classList.remove("selected");
       fig && (fig.querySelector(".sel-btn").textContent = "♡");
     } else {
-      // limit pakietu
-      if (selected.size >= planLimit()) {
-        const next = PLAN_NEXT[currentPlan];
-        if (next) {
-          const ok = confirm("Pakiet " + PLAN_NAME[currentPlan] + " obejmuje " + planLimit() +
-            " zdj. Zwiększyć do " + PLAN_NAME[next] + " (" + PLAN_LIMIT[next] + " zdj.), aby dodać kolejne?");
-          if (!ok) return;
-          setPlan(next, { force: true });
-        } else {
-          alert("Pakiet " + PLAN_NAME[currentPlan] + " to maksymalnie " + planLimit() +
-            " zdjęć — to nasz największy pakiet. Usuń jakieś zdjęcie, aby dodać inne.");
-          return;
-        }
+      // maksymalnie 10 zdjęć
+      if (selected.size >= MAX_PHOTOS) {
+        toast("Możesz wybrać maksymalnie " + MAX_PHOTOS + " zdjęć (pakiet Premium).");
+        return;
       }
       selected.set(item.f, { item, note: "" });
       fig && fig.classList.add("selected");
       fig && (fig.querySelector(".sel-btn").textContent = "♥");
+      // pakiet sam dopasowuje się do liczby zdjęć (w górę)
+      if (PLAN_LIMIT[currentPlan] < selected.size) {
+        const np = planFor(selected.size);
+        setPlan(np, { force: true });
+        toast("Pakiet zmieniony na " + PLAN_NAME[np] + " — " + PLAN_LIMIT[np] + " zdjęć.");
+      }
     }
     updateCartBar();
   }
@@ -247,7 +259,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const opis = (cartForm.querySelector('[name="opis"]')?.value || "").trim();
       // można zamówić: stylizacje z galerii LUB własne zdjęcie do obróbki
       if (selected.size === 0 && pliki.length === 0 && !opis) {
-        alert("Wybierz zdjęcie z galerii (kliknij ♡) albo prześlij własne zdjęcie i opisz, czego potrzebujesz.");
+        toast("Wybierz zdjęcie z galerii (kliknij ♡) albo prześlij własne zdjęcie i opisz, czego potrzebujesz.");
         return;
       }
       if (!cartForm.checkValidity()) { cartForm.reportValidity(); return; }
@@ -270,16 +282,34 @@ document.addEventListener("DOMContentLoaded", () => {
         localStorage.setItem(KEY, JSON.stringify(all));
       } catch (e) { /* localStorage niedostępny */ }
       console.log("Zamówienie spersonalizowane:", order);
-      alert(
-        "Dziękujemy, " + (fd.imie || "") + "! 💛\n\n" +
-        "Wgrane zdjęcia: " + (pliki.length || 0) + "\n" +
-        "Wybrane stylizacje: " + order.zdjecia.length + "\n" +
-        order.zdjecia.map((z, i) => `${i + 1}. ${z.styl} — ${z.coZmienic}`).join("\n") + "\n\n" +
-        "Tu nastąpi przekierowanie do płatności (Przelewy24 / Stripe).\n" +
-        "[Demo] Płatności i wysyłka plików nie są jeszcze podłączone — patrz README.md."
-      );
+      showOrderDone(fd, pliki.length, order.zdjecia.length);
       // window.location.href = PAYMENT_LINKS[fd.pakiet];
     });
+  }
+
+  /* ---- Ładne okno potwierdzenia zamówienia ---- */
+  function showOrderDone(fd, fileCount, styleCount) {
+    closeCart();
+    let m = document.getElementById("orderDone");
+    if (!m) { m = document.createElement("div"); m.id = "orderDone"; m.className = "done-modal"; document.body.appendChild(m); }
+    m.innerHTML =
+      '<div class="done-card">' +
+        '<div class="done-ico">✓</div>' +
+        '<h3>Dziękujemy, ' + escapeHtml(fd.imie || "") + '!</h3>' +
+        '<p>Twoje zamówienie zostało przyjęte. Za chwilę przejdziesz do płatności — <b>BLIK</b> lub karta przez Przelewy24.</p>' +
+        '<ul class="done-sum">' +
+          '<li>Pakiet <b>' + (PLAN_NAME[fd.pakiet] || fd.pakiet) + '</b></li>' +
+          '<li>Wgrane zdjęcia: <b>' + (fileCount || 0) + '</b></li>' +
+          '<li>Wybrane stylizacje: <b>' + styleCount + '</b></li>' +
+        '</ul>' +
+        '<button class="btn btn-primary" id="doneClose" type="button">Rozumiem</button>' +
+        '<p class="done-note">[Demo] Płatności i wysyłka plików nie są jeszcze podłączone.</p>' +
+      '</div>';
+    const close = () => { m.classList.remove("open"); document.body.style.overflow = ""; };
+    m.classList.add("open");
+    document.body.style.overflow = "hidden";
+    m.querySelector("#doneClose").addEventListener("click", close);
+    m.addEventListener("click", (e) => { if (e.target === m) close(); });
   }
 
   /* ---- Lightbox ---- */
