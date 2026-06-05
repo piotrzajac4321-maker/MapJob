@@ -348,14 +348,10 @@ document.addEventListener("DOMContentLoaded", () => {
           '<li>Wybrane stylizacje: <b>' + styleCount + '</b></li>' +
         '</ul>' +
         '<a class="btn btn-primary" id="donepay" href="' + (PAYMENT_LINKS[fd.pakiet] || PAYMENT_LINKS.standard) + '">Przejdź do płatności →</a>' +
-        '<button class="btn btn-ghost" id="doneClose" type="button">Zapłacę później</button>' +
         '<p class="done-note">Po opłaceniu zabieramy się do pracy — gotowe zdjęcia wyślemy na Twój e-mail w ~10 godzin.</p>' +
       '</div>';
-    const close = () => { m.classList.remove("open"); document.body.style.overflow = ""; };
     m.classList.add("open");
     document.body.style.overflow = "hidden";
-    m.querySelector("#doneClose").addEventListener("click", close);
-    m.addEventListener("click", (e) => { if (e.target === m) close(); });
   }
 
   /* ---- Lightbox ---- */
