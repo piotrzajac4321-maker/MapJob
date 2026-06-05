@@ -51,6 +51,12 @@ document.addEventListener("DOMContentLoaded", () => {
   const PLAN_LIMIT = { mini: 1, standard: 4, premium: 10 };
   const PLAN_NEXT  = { mini: "standard", standard: "premium" };
   const PLAN_NAME  = { mini: "Mini", standard: "Standard", premium: "Premium" };
+  // Linki płatności Stripe (LIVE) wg pakietu
+  const PAYMENT_LINKS = {
+    mini:     "https://buy.stripe.com/bJe00k0jz3E89C4d3mbjW0g",
+    standard: "https://buy.stripe.com/14A4gA0jz7Uo5lO0gAbjW0h",
+    premium:  "https://buy.stripe.com/dRm14o3vLdeI5lO2oIbjW0i"
+  };
   let currentPlan = "standard";
   const planLimit = () => PLAN_LIMIT[currentPlan];
 
@@ -341,8 +347,9 @@ document.addEventListener("DOMContentLoaded", () => {
           '<li>Wgrane zdjęcia: <b>' + (fileCount || 0) + '</b></li>' +
           '<li>Wybrane stylizacje: <b>' + styleCount + '</b></li>' +
         '</ul>' +
-        '<button class="btn btn-primary" id="doneClose" type="button">Rozumiem</button>' +
-        '<p class="done-note">[Demo] Płatności i wysyłka plików nie są jeszcze podłączone.</p>' +
+        '<a class="btn btn-primary" id="donepay" href="' + (PAYMENT_LINKS[fd.pakiet] || PAYMENT_LINKS.standard) + '">Przejdź do płatności →</a>' +
+        '<button class="btn btn-ghost" id="doneClose" type="button">Zapłacę później</button>' +
+        '<p class="done-note">Po opłaceniu zabieramy się do pracy — gotowe zdjęcia wyślemy na Twój e-mail w ~10 godzin.</p>' +
       '</div>';
     const close = () => { m.classList.remove("open"); document.body.style.overflow = ""; };
     m.classList.add("open");
