@@ -79,9 +79,12 @@ a { color: inherit; text-decoration: none; }
 .btn-light:hover { background: var(--white); transform: translateY(-2px); box-shadow: var(--shadow-sm); }
 
 /* ---------- Navbar ---------- */
+/* ---------- Nagłówek (promo + nav jako jeden blok) ---------- */
+.site-header { position: fixed; top: 0; left: 0; right: 0; z-index: 60; }
+
 /* ---------- Pasek promocji ---------- */
 .promo-bar {
-  position: fixed; top: 0; left: 0; right: 0; z-index: 60;
+  position: relative;
   height: var(--promo-h);
   display: flex; align-items: center; justify-content: center;
   background: linear-gradient(90deg, var(--sage-d), #b07d6b, var(--rose));
@@ -103,9 +106,9 @@ a { color: inherit; text-decoration: none; }
 }
 
 .nav {
-  position: fixed; top: var(--promo-h); left: 0; right: 0; z-index: 50;
+  position: relative; z-index: 1;
   display: flex; align-items: center; justify-content: space-between;
-  padding: 18px 0;
+  padding: 16px 0;
   transition: background .35s ease, box-shadow .35s ease, padding .35s ease;
 }
 .nav .container { display: flex; align-items: center; justify-content: space-between; width: 92%; }
@@ -140,7 +143,7 @@ a { color: inherit; text-decoration: none; }
   position: relative;
   min-height: 100svh;
   display: flex; align-items: center;
-  padding: 130px 0 60px;
+  padding: calc(var(--promo-h) + 96px) 0 60px;
   background:
     radial-gradient(120% 90% at 80% 10%, rgba(216,179,164,.18), transparent 60%),
     linear-gradient(180deg, var(--cream) 0%, var(--cream-2) 100%);
@@ -315,7 +318,7 @@ a { color: inherit; text-decoration: none; }
 /* ---------- Responsive ---------- */
 @media (max-width: 980px) {
   .hero-grid { grid-template-columns: 1fr; gap: 36px; }
-  .hero { padding-top: 96px; }
+  .hero { padding-top: calc(var(--promo-h) + 84px); }
   /* na telefonie zdjęcia jako pierwsze, zaraz po wejściu */
   .hero-photos { order: -1; height: auto; max-width: 420px; width: 100%; margin-inline: auto; }
   .tiles { grid-template-columns: repeat(2, 1fr); }
@@ -330,7 +333,7 @@ a { color: inherit; text-decoration: none; }
     height: 100vh; height: 100dvh; width: min(82vw, 330px);
     background: var(--cream); opacity: 1;
     flex-direction: column; align-items: flex-start; justify-content: flex-start;
-    padding: 92px 30px 32px; gap: 6px; overflow-y: auto;
+    padding: calc(var(--promo-h) + 84px) 30px 32px; gap: 6px; overflow-y: auto;
     transform: translateX(100%); transition: transform .35s ease;
     box-shadow: -14px 0 44px -12px rgba(40, 36, 32, .45);
     z-index: 55;
