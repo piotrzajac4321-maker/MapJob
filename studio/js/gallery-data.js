@@ -83,6 +83,23 @@ const GALLERY = [
   { f: "hf_20260604_221051_614e065c-fab3-4c8c-8126-c61a9a2c46b5", cat: "tematyczne", title: "Mały kosmonauta" },
   { f: "hf_20260604_221026_b554d6c8-d031-4d62-8853-c130a683bb36", cat: "sezonowe", title: "Jesienne zbiory" },
   { f: "hf_20260604_221039_1d6f7300-b723-45aa-ad71-51638c202a84", cat: "sezonowe", title: "Zimowe sanki" },
+
+  // — Uśmiechnięte, jasna karnacja, różne oczy (partia 5) —
+  { f: "hf_20260605_180641_6caaba73-3b03-408b-b0fa-127b907d815e", cat: "klasyczne", title: "Uśmiech — klasyczne studio" },
+  { f: "hf_20260605_180642_23c9a39b-269f-479c-aeaf-fe63b65321d8", cat: "klasyczne", title: "Uśmiech — biel" },
+  { f: "hf_20260605_180645_48d6e4ea-3fbf-4104-bbdd-dcb580b11034", cat: "klasyczne", title: "Uśmiech — minimal beż" },
+  { f: "hf_20260605_180647_17dcc78a-8b3f-4510-bbae-1fa9aa197111", cat: "klasyczne", title: "Uśmiech — boho" },
+  { f: "hf_20260605_180652_f5dbbb72-329c-4a15-99e1-794893563c42", cat: "klasyczne", title: "Uśmiech — szałwia" },
+  { f: "hf_20260605_180656_6417cc5a-83be-47da-93cf-19aeabf9a4f6", cat: "klasyczne", title: "Uśmiech — pudrowy róż" },
+  { f: "hf_20260605_180740_4e434a99-1c49-442e-8f87-14b8cca3d709", cat: "klasyczne", title: "Uśmiech — lawenda" },
+  { f: "hf_20260605_180741_25fcf287-7069-4ac8-b903-6602cece94c6", cat: "klasyczne", title: "Uśmiech — skandynawski" },
+  { f: "hf_20260605_180742_ee965f20-507a-489a-bd80-c884c7298d9f", cat: "klasyczne", title: "Uśmiech — vintage" },
+  { f: "hf_20260605_180749_65f5d559-c5c8-4080-8244-2e624bb74dfb", cat: "klasyczne", title: "Uśmiech — pastelowy błękit" },
+  { f: "hf_20260605_180656_e122a28f-9aa5-4ac4-ae0c-b2042fbe7f79", cat: "tematyczne", title: "Uśmiech — chmurki" },
+  { f: "hf_20260605_180748_c547adb3-9526-4b60-ac9d-697cd44080de", cat: "tematyczne", title: "Uśmiech — miś" },
+  { f: "hf_20260605_180650_116c3222-f110-45e8-b68f-1edd0b3dcf80", cat: "sezonowe", title: "Uśmiech — wiosenne kwiaty" },
+  { f: "hf_20260605_180743_6c81bf69-b62f-4f74-8845-13e8439feffe", cat: "sezonowe", title: "Uśmiech — jesień" },
+  { f: "hf_20260605_180745_87f434f4-4cee-4db9-84c4-efe8b07f5f1e", cat: "sezonowe", title: "Uśmiech — piwonie" },
 ];
 
 // Pomocnicze URL-e
