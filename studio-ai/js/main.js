@@ -279,12 +279,21 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-  /* ---- Przed / Po (suwaki) ---- */
+  /* ---- Przed / Po (przeciąganie; pion = scroll dzięki touch-action: pan-y) ---- */
   document.querySelectorAll("[data-ba]").forEach(ba => {
-    const range = ba.querySelector(".ba-range");
-    const apply = () => ba.style.setProperty("--pos", range.value + "%");
-    range.addEventListener("input", apply);
-    apply();
+    let dragging = false;
+    const setFromX = (clientX) => {
+      const r = ba.getBoundingClientRect();
+      let p = ((clientX - r.left) / r.width) * 100;
+      p = Math.max(0, Math.min(100, p));
+      ba.style.setProperty("--pos", p + "%");
+    };
+    ba.addEventListener("pointerdown", (e) => { dragging = true; setFromX(e.clientX); });
+    ba.addEventListener("pointermove", (e) => { if (dragging) setFromX(e.clientX); });
+    const stop = () => { dragging = false; };
+    ba.addEventListener("pointerup", stop);
+    ba.addEventListener("pointercancel", stop);
+    window.addEventListener("pointerup", stop);
   });
 
   /* ---- Zgody: „zaznacz wszystkie" ---- */
@@ -297,21 +306,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }));
   }
 
-  /* ---- Baner cookies ---- */
-  const cookie = document.getElementById("cookie");
-  if (cookie) {
-    const KEY = "fotomagia_cookie_consent";
-    let consent = null;
-    try { consent = localStorage.getItem(KEY); } catch (e) {}
-    if (!consent) cookie.classList.add("show");
-    const choose = (val) => {
-      try { localStorage.setItem(KEY, val); } catch (e) {}
-      cookie.classList.remove("show");
-    };
-    const accept = document.getElementById("cookieAccept");
-    const reject = document.getElementById("cookieReject");
-    if (accept) accept.addEventListener("click", () => choose("all"));
-    if (reject) reject.addEventListener("click", () => choose("necessary"));
-  }
+  /* Baner cookies obsługiwany jest wbudowanym skryptem w index.html (niezależnym od tego pliku). */
 
 });
