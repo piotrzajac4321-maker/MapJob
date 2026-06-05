@@ -341,7 +341,7 @@ document.addEventListener("DOMContentLoaded", () => {
       '<div class="done-card">' +
         '<div class="done-ico">✓</div>' +
         '<h3>Dziękujemy, ' + escapeHtml(fd.imie || "") + '!</h3>' +
-        '<p>Twoje zamówienie zostało przyjęte. Za chwilę przejdziesz do płatności — <b>BLIK</b> lub karta przez Przelewy24.</p>' +
+        '<p>Twoje zamówienie zostało przyjęte. Za chwilę przejdziesz do płatności — <b>BLIK</b> lub karta.</p>' +
         '<ul class="done-sum">' +
           '<li>Pakiet <b>' + (PLAN_NAME[fd.pakiet] || fd.pakiet) + '</b></li>' +
           '<li>Wgrane zdjęcia: <b>' + (fileCount || 0) + '</b></li>' +
