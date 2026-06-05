@@ -252,38 +252,77 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
+  /* ===========================================================
+     SUPABASE — zapis zamówień + wgrywanie zdjęć (BoboFoto)
+     URL już ustawiony. WKLEJ publishable key poniżej
+     (Supabase → Project Settings → API → Publishable key sb_publishable_...).
+     Gdy KEY jest pusty → działa tryb demo (bez zapisu, nic się nie psuje).
+     =========================================================== */
+  const SUPABASE_URL = "https://juqlhorodqvczoqkvkim.supabase.co";
+  const SUPABASE_KEY = "sb_publishable_noroVF0Q4ktIkPM6lYh95g__WAYsuW5";
+  const SUPA_BUCKET = "zdjecia-klientow";
+  let _sb = null;
+  function getSb() {
+    if (!SUPABASE_URL || !SUPABASE_KEY || !window.supabase) return null;
+    if (!_sb) _sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    return _sb;
+  }
+
   if (cartForm) {
-    cartForm.addEventListener("submit", (e) => {
+    cartForm.addEventListener("submit", async (e) => {
       e.preventDefault();
-      const pliki = fileInput ? [...fileInput.files].map(f => f.name) : [];
+      const files = fileInput ? [...fileInput.files] : [];
       const opis = (cartForm.querySelector('[name="opis"]')?.value || "").trim();
-      // można zamówić: stylizacje z galerii LUB własne zdjęcie do obróbki
-      if (selected.size === 0 && pliki.length === 0 && !opis) {
+      if (selected.size === 0 && files.length === 0 && !opis) {
         toast("Wybierz zdjęcie z galerii (kliknij ♡) albo prześlij własne zdjęcie i opisz, czego potrzebujesz.");
         return;
       }
       if (!cartForm.checkValidity()) { cartForm.reportValidity(); return; }
       const fd = Object.fromEntries(new FormData(cartForm).entries());
-      const order = {
-        data: new Date().toISOString(),
-        kontakt: { imie: fd.imie, email: fd.email, telefon: fd.telefon || "—", pakiet: fd.pakiet },
-        zgody: { sms: !!fd.zgodaSms, email: !!fd.zgodaEmail, marketing: !!fd.zgodaMarketing },
-        wgranePliki: pliki,
-        opis: opis || "—",
-        zdjecia: [...selected.values()].map(({ item, note }) => ({ styl: item.title, plik: item.f, coZmienic: note || "—" })),
-      };
-      // TODO (backend): przesłać wgrane pliki (fileInput.files) wraz z zamówieniem.
-      // Zapis lokalny — żebyś widział, kto co zaznaczył (m.in. zgodę marketingową).
-      // UWAGA: to zapis tylko w tej przeglądarce. Trwały rejestr wymaga backendu (np. Supabase) — patrz README.
+      const stylizacje = [...selected.values()].map(({ item, note }) => ({ styl: item.title, plik: item.f, coZmienic: note || "" }));
+
+      const sb = getSb();
+      if (sb) {
+        const submitBtn = cartForm.querySelector('button[type="submit"]');
+        const oldLabel = submitBtn ? submitBtn.textContent : "";
+        if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = "Wysyłanie…"; }
+        try {
+          const folder = (window.crypto && crypto.randomUUID) ? crypto.randomUUID() : (Date.now() + "-" + Math.random().toString(36).slice(2));
+          const paths = [];
+          for (let i = 0; i < files.length; i++) {
+            const f = files[i];
+            const safe = (f.name || ("zdjecie" + i)).replace(/[^\w.\-]+/g, "_");
+            const path = folder + "/" + i + "-" + safe;
+            const { error: upErr } = await sb.storage.from(SUPA_BUCKET).upload(path, f, { upsert: false });
+            if (upErr) throw upErr;
+            paths.push(path);
+          }
+          const { error: insErr } = await sb.from("zamowienia").insert({
+            imie: fd.imie || null, email: fd.email || null, telefon: fd.telefon || null,
+            pakiet: fd.pakiet || null, opis: opis || null,
+            stylizacje: stylizacje, pliki: paths,
+            zgoda_wizerunek: !!fd.zgodaWizerunek, zgoda_sms: !!fd.zgodaSms,
+            zgoda_email: !!fd.zgodaEmail, zgoda_marketing: !!fd.zgodaMarketing
+          });
+          if (insErr) throw insErr;
+          showOrderDone(fd, paths.length, stylizacje.length);
+        } catch (err) {
+          console.error("Supabase:", err);
+          toast("Nie udało się wysłać zamówienia — spróbuj ponownie za chwilę.");
+        } finally {
+          if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = oldLabel; }
+        }
+        return;
+      }
+
+      // tryb demo (Supabase niewpięty)
       try {
         const KEY = "fotomagia_orders";
         const all = JSON.parse(localStorage.getItem(KEY) || "[]");
-        all.push(order);
+        all.push({ data: new Date().toISOString(), kontakt: { imie: fd.imie, email: fd.email, telefon: fd.telefon || "—", pakiet: fd.pakiet }, zgody: { sms: !!fd.zgodaSms, email: !!fd.zgodaEmail, marketing: !!fd.zgodaMarketing }, opis: opis || "—", zdjecia: stylizacje });
         localStorage.setItem(KEY, JSON.stringify(all));
-      } catch (e) { /* localStorage niedostępny */ }
-      console.log("Zamówienie spersonalizowane:", order);
-      showOrderDone(fd, pliki.length, order.zdjecia.length);
-      // window.location.href = PAYMENT_LINKS[fd.pakiet];
+      } catch (e2) {}
+      showOrderDone(fd, files.length, stylizacje.length);
     });
   }
 
