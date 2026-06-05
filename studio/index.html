@@ -13,9 +13,18 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="css/style.css?v=22" />
+  <link rel="stylesheet" href="css/style.css?v=23" />
 </head>
 <body>
+
+  <!-- ============ PASEK PROMOCJI ============ -->
+  <div class="promo-bar" id="promoBar" role="status">
+    <div class="promo-inner">
+      <span class="promo-emoji">🎁</span>
+      <span class="promo-text"><b>Promocja -50%</b> na wszystkie pakiety<small class="promo-sep">&nbsp;·&nbsp;</small><small>sesja już od <b>24 zł</b></small></span>
+      <span class="promo-timer">⏳ kończy się za <b id="promoTime">--:--:--</b></span>
+    </div>
+  </div>
 
   <!-- ============ NAV ============ -->
   <header class="nav" id="nav">
@@ -43,6 +52,7 @@
           <a href="#cennik" class="btn btn-primary">Zamów swoją sesję →</a>
           <a href="#galeria" class="btn btn-ghost">Zobacz galerię</a>
         </div>
+        <p class="hero-urgency">🔥 <b>-50% tylko teraz</b> &nbsp;·&nbsp; 💝 idealny prezent dla babci i dziadka</p>
         <div class="hero-stats">
           <div class="stat"><strong>od 24 zł</strong><span>zamiast ~500 zł</span></div>
           <div class="stat"><strong>~10 h</strong><span>czas realizacji</span></div>
@@ -161,12 +171,13 @@
       <div class="section-head reveal">
         <span class="eyebrow">Cennik</span>
         <h2>Wybierz swój pakiet</h2>
-        <p>Bez ukrytych kosztów. Płatność online — bezpiecznie przez Przelewy24 lub Stripe.</p>
+        <p>🎁 <strong>Promocja -50%</strong> na wszystkie pakiety — ceny niższe niż zwykle, tylko przez ograniczony czas. Bez ukrytych kosztów, płatność online (BLIK, Przelewy24, karta).</p>
       </div>
       <div class="pricing">
         <div class="plan reveal">
+          <span class="ribbon">-50%</span>
           <h3>Mini</h3>
-          <div class="price">24 <span>zł</span></div>
+          <div class="price"><span class="price-old">zwykle 49 zł</span>24 <span>zł</span></div>
           <p class="desc">Idealne na start i social media.</p>
           <ul>
             <li>1 gotowe zdjęcie</li>
@@ -179,8 +190,9 @@
 
         <div class="plan featured reveal">
           <span class="tag">Najczęściej wybierany</span>
+          <span class="ribbon">-50%</span>
           <h3>Standard</h3>
-          <div class="price">49 <span>zł</span></div>
+          <div class="price"><span class="price-old">zwykle 99 zł</span>49 <span>zł</span></div>
           <p class="desc">Najlepszy stosunek ceny do jakości.</p>
           <ul>
             <li>4 gotowe zdjęcia</li>
@@ -193,8 +205,9 @@
         </div>
 
         <div class="plan reveal">
+          <span class="ribbon">-50%</span>
           <h3>Premium</h3>
-          <div class="price">99 <span>zł</span></div>
+          <div class="price"><span class="price-old">zwykle 199 zł</span>99 <span>zł</span></div>
           <p class="desc">Pełna sesja z kompletem ujęć.</p>
           <ul>
             <li>10 gotowych zdjęć do wyboru</li>
@@ -453,8 +466,27 @@
     <button class="lb-nav lb-next" id="lbNext" aria-label="Następne">›</button>
   </div>
 
+  <!-- Licznik promocji (odlicza do końca dnia) -->
+  <script>
+    (function () {
+      var el = document.getElementById('promoTime');
+      if (!el) return;
+      function tick() {
+        var now = new Date();
+        var end = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 0, 0, 0);
+        var d = Math.max(0, Math.floor((end - now) / 1000));
+        var h = String(Math.floor(d / 3600)).padStart(2, '0');
+        var m = String(Math.floor((d % 3600) / 60)).padStart(2, '0');
+        var s = String(d % 60).padStart(2, '0');
+        el.textContent = h + ':' + m + ':' + s;
+      }
+      tick();
+      setInterval(tick, 1000);
+    })();
+  </script>
+
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="js/gallery-data.js?v=22"></script>
-  <script src="js/main.js?v=22"></script>
+  <script src="js/gallery-data.js?v=23"></script>
+  <script src="js/main.js?v=23"></script>
 </body>
 </html>
