@@ -15,9 +15,9 @@ Ceny: Mini 24 zł · Standard 49 zł · Premium 99 zł. Przewaga: sesja tradycyj
 **Tekst główny:**
 Profesjonalne zdjęcie Twojego maluszka — bez dojazdu, bez stresu, bez czekania tygodniami na efekty.
 Wysyłasz jedno zdjęcie z telefonu, wybierasz tło, a my zamieniamy je w sesję jak ze studia.
-Gotowe nawet w 2 godziny. Twarz dziecka pozostaje bez zmian — dokładamy tylko stylizację i światło.
+Gotowe nawet w 10 godzin. Twarz dziecka pozostaje bez zmian — dokładamy tylko stylizację i światło.
 
-**Nagłówek:** Sesja noworodkowa od 24 zł — gotowa w 2h
+**Nagłówek:** Sesja noworodkowa od 24 zł — gotowa w 10h
 **Opis:** Bez dojazdu. Bez wychodzenia z domu.
 **CTA:** Zamów teraz
 **Grafika:** „Klasyczne studio" lub „Granatowy aksamit" (elegancko, premium).
@@ -31,7 +31,7 @@ Gotowe nawet w 2 godziny. Twarz dziecka pozostaje bez zmian — dokładamy tylko
 **Tekst główny:**
 Pierwsze tygodnie z noworodkiem to nie czas na dojazdy, pakowanie i stres przed obiektywem.
 W Studio AI wszystko robisz z kanapy — w trakcie drzemki maluszka.
-📸 Wyślij zdjęcie → 🎨 wybierz tło → ✨ odbierz piękne kadry w 2 godziny.
+📸 Wyślij zdjęcie → 🎨 wybierz tło → ✨ odbierz piękne kadry w 10 godzin.
 Profesjonalny efekt, zero wychodzenia z domu.
 
 **Nagłówek:** Piękne zdjęcia maluszka — prosto z kanapy
@@ -64,9 +64,9 @@ Idealny prezent na powitanie dziecka, roczek albo dla dziadków.
 **Tekst główny:**
 Świąteczna stylizacja, zimowa kraina, mały elf albo bajkowy księżyc — wybierz tło,
 a my stworzymy magiczne zdjęcie Twojego dziecka. Idealne na kartki świąteczne i prezenty dla rodziny.
-✨ Od 20 zł, gotowe w 2 godziny — zdążysz przed świętami.
+✨ Od 24 zł, gotowe w 10 godzin — zdążysz przed świętami.
 
-**Nagłówek:** Świąteczna sesja maluszka w 2 godziny
+**Nagłówek:** Świąteczna sesja maluszka w 10 godzin
 **Opis:** Idealne na kartki i prezenty.
 **CTA:** Zamów teraz
 **Grafika:** „Święta — elf", „Zimowa kraina" (sezonowo, ciepłe światło).

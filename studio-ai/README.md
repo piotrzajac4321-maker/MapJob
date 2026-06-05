@@ -1,7 +1,7 @@
 # STUDIO AI — strona usługi
 
 Szybkie sesje noworodkowe AI. Klient wysyła zdjęcie dziecka, wybiera tło i dostaje
-profesjonalną wersję — od **24 zł**, realizacja do **~2 h**.
+profesjonalną wersję — od **24 zł**, realizacja do **~10 h**.
 
 Strona statyczna (HTML/CSS/JS, bez build-stepu) — hostowalna wszędzie.
 
