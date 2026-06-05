@@ -48,7 +48,7 @@ document.addEventListener("DOMContentLoaded", () => {
   /* ===========================================================
      PAKIETY — limit liczby zdjęć wg pakietu
      =========================================================== */
-  const PLAN_LIMIT = { mini: 1, standard: 3, premium: 10 };
+  const PLAN_LIMIT = { mini: 1, standard: 4, premium: 10 };
   const PLAN_NEXT  = { mini: "standard", standard: "premium" };
   const PLAN_NAME  = { mini: "Mini", standard: "Standard", premium: "Premium" };
   let currentPlan = "standard";
