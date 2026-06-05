@@ -45,6 +45,41 @@ document.addEventListener("DOMContentLoaded", () => {
      =========================================================== */
   const selected = new Map();
 
+  /* ===========================================================
+     PAKIETY — limit liczby zdjęć wg pakietu
+     =========================================================== */
+  const PLAN_LIMIT = { mini: 1, standard: 3, premium: 10 };
+  const PLAN_NEXT  = { mini: "standard", standard: "premium" };
+  const PLAN_NAME  = { mini: "Mini", standard: "Standard", premium: "Premium" };
+  let currentPlan = "standard";
+  const planLimit = () => PLAN_LIMIT[currentPlan];
+
+  const planPickEl = document.getElementById("planPick");
+  const planCounterEl = document.getElementById("planCounter");
+  const planHidden = document.getElementById("c-pakiet");
+
+  function setPlan(plan, opts) {
+    opts = opts || {};
+    // nie pozwól zejść do pakietu mniejszego niż liczba już wybranych zdjęć
+    if (!opts.force && PLAN_LIMIT[plan] < selected.size) {
+      alert("Masz już zaznaczone " + selected.size + " zdjęć. Pakiet " + PLAN_NAME[plan] +
+            " obejmuje " + PLAN_LIMIT[plan] + ". Najpierw usuń nadmiar zdjęć.");
+      return false;
+    }
+    currentPlan = plan;
+    if (planHidden) planHidden.value = plan;
+    if (planPickEl) planPickEl.querySelectorAll(".plan-opt").forEach(b =>
+      b.classList.toggle("is-active", b.dataset.plan === plan));
+    updateCartBar();
+    return true;
+  }
+
+  if (planPickEl) {
+    planPickEl.querySelectorAll(".plan-opt").forEach(btn => {
+      btn.addEventListener("click", () => setPlan(btn.dataset.plan));
+    });
+  }
+
   /* ---- Galeria + filtry ---- */
   const galleryEl = document.getElementById("gallery");
   const filtersEl = document.getElementById("filters");
@@ -99,6 +134,20 @@ document.addEventListener("DOMContentLoaded", () => {
       fig && fig.classList.remove("selected");
       fig && (fig.querySelector(".sel-btn").textContent = "♡");
     } else {
+      // limit pakietu
+      if (selected.size >= planLimit()) {
+        const next = PLAN_NEXT[currentPlan];
+        if (next) {
+          const ok = confirm("Pakiet " + PLAN_NAME[currentPlan] + " obejmuje " + planLimit() +
+            " zdj. Zwiększyć do " + PLAN_NAME[next] + " (" + PLAN_LIMIT[next] + " zdj.), aby dodać kolejne?");
+          if (!ok) return;
+          setPlan(next, { force: true });
+        } else {
+          alert("Pakiet " + PLAN_NAME[currentPlan] + " to maksymalnie " + planLimit() +
+            " zdjęć — to nasz największy pakiet. Usuń jakieś zdjęcie, aby dodać inne.");
+          return;
+        }
+      }
       selected.set(item.f, { item, note: "" });
       fig && fig.classList.add("selected");
       fig && (fig.querySelector(".sel-btn").textContent = "♥");
@@ -111,8 +160,9 @@ document.addEventListener("DOMContentLoaded", () => {
   const cartCount = document.getElementById("cartCount");
   function updateCartBar() {
     const n = selected.size;
-    if (cartCount) cartCount.textContent = n;
+    if (cartCount) cartCount.textContent = n + " / " + planLimit();
     if (cartBar) cartBar.classList.toggle("show", n > 0);
+    if (planCounterEl) planCounterEl.innerHTML = "Wybrane zdjęcia: <strong>" + n + " / " + planLimit() + "</strong>";
   }
 
   /* ---- Modal koszyka / personalizacji ---- */
@@ -272,11 +322,9 @@ document.addEventListener("DOMContentLoaded", () => {
   }, { threshold: 0.12 });
   document.querySelectorAll(".reveal").forEach(el => io.observe(el));
 
-  /* ---- Wybór pakietu z cennika -> formularze ---- */
-  document.querySelectorAll("[data-plan]").forEach(btn => {
-    btn.addEventListener("click", () => {
-      document.querySelectorAll('select[name="pakiet"]').forEach(sel => { sel.value = btn.dataset.plan; });
-    });
+  /* ---- Wybór pakietu z cennika ("Wybieram…") -> ustaw pakiet ---- */
+  document.querySelectorAll("[data-plan][data-price]").forEach(btn => {
+    btn.addEventListener("click", () => setPlan(btn.dataset.plan, { force: true }));
   });
 
   /* ---- Przed / Po (przeciąganie; pion = scroll dzięki touch-action: pan-y) ---- */
