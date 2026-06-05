@@ -336,7 +336,11 @@ document.addEventListener("DOMContentLoaded", () => {
       p = Math.max(0, Math.min(100, p));
       ba.style.setProperty("--pos", p + "%");
     };
-    ba.addEventListener("pointerdown", (e) => { dragging = true; setFromX(e.clientX); });
+    ba.addEventListener("pointerdown", (e) => {
+      dragging = true;
+      try { ba.setPointerCapture(e.pointerId); } catch (err) {}
+      setFromX(e.clientX);
+    });
     ba.addEventListener("pointermove", (e) => { if (dragging) setFromX(e.clientX); });
     const stop = () => { dragging = false; };
     ba.addEventListener("pointerup", stop);
