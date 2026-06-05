@@ -274,6 +274,33 @@ document.addEventListener("DOMContentLoaded", () => {
     return _sb;
   }
 
+  /* ---- Nakładka z paskiem postępu wysyłki ---- */
+  let progEl = null;
+  function showProgress(label, ratio) {
+    if (!progEl) {
+      progEl = document.createElement("div");
+      progEl.id = "upOverlay";
+      progEl.className = "up-overlay";
+      progEl.innerHTML =
+        '<div class="up-card">' +
+          '<div class="up-spin" aria-hidden="true"></div>' +
+          '<p class="up-text" id="upText">Wysyłanie…</p>' +
+          '<div class="up-bar"><div class="up-fill" id="upFill"></div></div>' +
+        '</div>';
+      document.body.appendChild(progEl);
+    }
+    const t = progEl.querySelector("#upText");
+    const f = progEl.querySelector("#upFill");
+    if (t && label != null) t.textContent = label;
+    if (f) {
+      if (ratio == null) { f.classList.add("indeterminate"); f.style.width = "40%"; }
+      else { f.classList.remove("indeterminate"); f.style.width = Math.round(Math.max(0, Math.min(1, ratio)) * 100) + "%"; }
+    }
+    progEl.classList.add("show");
+    document.body.style.overflow = "hidden";
+  }
+  function hideProgress() { if (progEl) progEl.classList.remove("show"); }
+
   if (cartForm) {
     cartForm.addEventListener("submit", async (e) => {
       e.preventDefault();
@@ -292,6 +319,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const submitBtn = cartForm.querySelector('button[type="submit"]');
         const oldLabel = submitBtn ? submitBtn.textContent : "";
         if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = "Wysyłanie…"; }
+        showProgress(files.length ? ("Wysyłanie zdjęć… (0/" + files.length + ")") : "Zapisywanie zamówienia…", files.length ? 0 : null);
         try {
           const folder = (window.crypto && crypto.randomUUID) ? crypto.randomUUID() : (Date.now() + "-" + Math.random().toString(36).slice(2));
           const paths = [];
@@ -299,10 +327,13 @@ document.addEventListener("DOMContentLoaded", () => {
             const f = files[i];
             const safe = (f.name || ("zdjecie" + i)).replace(/[^\w.\-]+/g, "_");
             const path = folder + "/" + i + "-" + safe;
+            showProgress("Wysyłanie zdjęć… (" + (i + 1) + "/" + files.length + ")", i / files.length);
             const { error: upErr } = await sb.storage.from(SUPA_BUCKET).upload(path, f, { upsert: false });
             if (upErr) throw upErr;
             paths.push(path);
+            showProgress("Wysyłanie zdjęć… (" + (i + 1) + "/" + files.length + ")", (i + 1) / files.length);
           }
+          showProgress("Zapisywanie zamówienia…", null);
           const { error: insErr } = await sb.from("zamowienia").insert({
             imie: fd.imie || null, email: fd.email || null, telefon: fd.telefon || null,
             pakiet: fd.pakiet || null, opis: opis || null,
@@ -311,9 +342,12 @@ document.addEventListener("DOMContentLoaded", () => {
             zgoda_email: !!fd.zgodaEmail, zgoda_marketing: !!fd.zgodaMarketing
           });
           if (insErr) throw insErr;
+          showProgress("Gotowe! Przekierowujemy do płatności…", 1);
+          hideProgress();
           showOrderDone(fd, paths.length, stylizacje.length);
         } catch (err) {
           console.error("Supabase:", err);
+          hideProgress();
           toast("Nie udało się wysłać zamówienia — spróbuj ponownie za chwilę.");
         } finally {
           if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = oldLabel; }
