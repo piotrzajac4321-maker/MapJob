@@ -29,16 +29,20 @@
   <meta name="twitter:description" content="Profesjonalna sesja noworodkowa bez dojazdu i stresu. Od 24 zł, gotowe w ~10 h." />
   <meta name="twitter:image" content="https://bobofoto.pl/og-image.png" />
 
-  <!-- Favicon / ikony -->
+  <!-- Favicon / ikony / PWA -->
   <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
   <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+  <link rel="manifest" href="/manifest.json" />
+
+  <!-- Wydajność: szybsze załadowanie głównego zdjęcia (lepszy wynik Core Web Vitals) -->
+  <link rel="preload" as="image" href="https://d8j0ntlcm91z4.cloudfront.net/user_3EL0T26twgaFdlHuM3eJuT2XjHR/hf_20260605_180748_c547adb3-9526-4b60-ac9d-697cd44080de_min.webp" fetchpriority="high" />
 
   <!-- Google Search Console: po weryfikacji wklej tu swój tag (poproś wykonawcę):
   <meta name="google-site-verification" content="TWÓJ_KOD" /> -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="css/style.css?v=41" />
+  <link rel="stylesheet" href="css/style.css?v=42" />
 
   <!-- Dane strukturalne: marka + firma + oferta (Schema.org) -->
   <script type="application/ld+json">
@@ -75,6 +79,22 @@
     "url": "https://bobofoto.pl/"
   }
   </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      { "@type": "Question", "name": "Ile kosztuje sesja noworodkowa online w BoboFoto?", "acceptedAnswer": { "@type": "Answer", "text": "Sesja zaczyna się już od 24 zł (pakiet Mini). Standard to 49 zł (4 zdjęcia), a Premium 99 zł (10 zdjęć). Obecnie obowiązuje promocja -30% na wszystkie pakiety. Płatność online — BLIK lub karta, bez ukrytych kosztów." } },
+      { "@type": "Question", "name": "Jak zrobić dobre zdjęcie noworodka w domu telefonem?", "acceptedAnswer": { "@type": "Answer", "text": "Wystarczy jedno zdjęcie z telefonu przy naturalnym świetle (najlepiej blisko okna), z góry lub z boku, na gładkim, jasnym tle. Resztę — profesjonalne tło, stylizację i światło jak ze studia — robimy my." } },
+      { "@type": "Question", "name": "Czym różni się sesja online od tradycyjnej sesji noworodkowej w studiu?", "acceptedAnswer": { "@type": "Answer", "text": "Nie musisz wychodzić z domu ani wozić noworodka do studia. Wysyłasz jedno zdjęcie, wybierasz tło, a profesjonalny efekt odbierasz w około 10 godzin — zamiast czekać tygodniami i płacić 400–600 zł za tradycyjną sesję." } },
+      { "@type": "Question", "name": "Jak szybko otrzymam gotowe zdjęcia?", "acceptedAnswer": { "@type": "Answer", "text": "Zazwyczaj w około 10 godzin od przesłania zdjęcia. W pakiecie Premium realizacja jest priorytetowa." } },
+      { "@type": "Question", "name": "Czy zdjęcia zachowują wygląd i rysy mojego dziecka?", "acceptedAnswer": { "@type": "Answer", "text": "Tak. Twarz i rysy Twojego dziecka pozostają bez zmian — zmieniamy wyłącznie tło, stylizację, scenografię i światło." } },
+      { "@type": "Question", "name": "Jakie tła i stylizacje są dostępne?", "acceptedAnswer": { "@type": "Answer", "text": "Ponad 30 stylów i teł: klasyczne studyjne, sezonowe (święta, zima, jesień, Wielkanoc), eleganckie premium i wiele innych. Wszystkie zobaczysz w galerii na stronie." } },
+      { "@type": "Question", "name": "Jak zamówić i jak zapłacić?", "acceptedAnswer": { "@type": "Answer", "text": "Wybierz stylizacje z galerii lub prześlij własne zdjęcie, dodaj krótki opis, podaj kontakt i zapłać online (BLIK lub karta). Resztą zajmujemy się my, a Ty odbierasz gotowe zdjęcia." } },
+      { "@type": "Question", "name": "Czy moje zdjęcia są bezpieczne?", "acceptedAnswer": { "@type": "Answer", "text": "Tak. Zdjęcia przesyłasz bezpiecznie i wykorzystujemy je wyłącznie do realizacji Twojego zamówienia, zgodnie z polityką prywatności i RODO." } }
+    ]
+  }
+  </script>
 </head>
 <body>
 
@@ -98,6 +118,7 @@
           <a href="#galeria">Galeria</a>
           <a href="#obrobka">Obróbka</a>
           <a href="#cennik">Cennik</a>
+          <a href="#faq">FAQ</a>
           <a href="#cennik" class="btn btn-primary nav-cta"><span>Zamów</span></a>
         </nav>
         <button class="nav-toggle" id="navToggle" aria-label="Menu">☰</button>
@@ -374,6 +395,51 @@
     </div>
   </section>
 
+  <!-- ============ FAQ ============ -->
+  <section class="section section-alt" id="faq">
+    <div class="container">
+      <div class="section-head reveal">
+        <span class="eyebrow">FAQ</span>
+        <h2>Najczęstsze pytania</h2>
+        <p>Wszystko, co warto wiedzieć o sesji noworodkowej online w BoboFoto.</p>
+      </div>
+      <div class="faq reveal">
+        <details>
+          <summary>Ile kosztuje sesja noworodkowa online w BoboFoto?</summary>
+          <div class="faq-a">Sesja zaczyna się już od 24 zł (pakiet Mini). Standard to 49 zł (4 zdjęcia), a Premium 99 zł (10 zdjęć). Obecnie obowiązuje promocja -30% na wszystkie pakiety. Płatność online — BLIK lub karta, bez ukrytych kosztów.</div>
+        </details>
+        <details>
+          <summary>Jak zrobić dobre zdjęcie noworodka w domu telefonem?</summary>
+          <div class="faq-a">Wystarczy jedno zdjęcie z telefonu przy naturalnym świetle (najlepiej blisko okna), z góry lub z boku, na gładkim, jasnym tle. Resztę — profesjonalne tło, stylizację i światło jak ze studia — robimy my.</div>
+        </details>
+        <details>
+          <summary>Czym różni się sesja online od tradycyjnej sesji noworodkowej w studiu?</summary>
+          <div class="faq-a">Nie musisz wychodzić z domu ani wozić noworodka do studia. Wysyłasz jedno zdjęcie, wybierasz tło, a profesjonalny efekt odbierasz w około 10 godzin — zamiast czekać tygodniami i płacić 400–600 zł za tradycyjną sesję.</div>
+        </details>
+        <details>
+          <summary>Jak szybko otrzymam gotowe zdjęcia?</summary>
+          <div class="faq-a">Zazwyczaj w około 10 godzin od przesłania zdjęcia. W pakiecie Premium realizacja jest priorytetowa.</div>
+        </details>
+        <details>
+          <summary>Czy zdjęcia zachowują wygląd i rysy mojego dziecka?</summary>
+          <div class="faq-a">Tak. Twarz i rysy Twojego dziecka pozostają bez zmian — zmieniamy wyłącznie tło, stylizację, scenografię i światło.</div>
+        </details>
+        <details>
+          <summary>Jakie tła i stylizacje są dostępne?</summary>
+          <div class="faq-a">Ponad 30 stylów i teł: klasyczne studyjne, sezonowe (święta, zima, jesień, Wielkanoc), eleganckie premium i wiele innych. Wszystkie zobaczysz w galerii na stronie.</div>
+        </details>
+        <details>
+          <summary>Jak zamówić i jak zapłacić?</summary>
+          <div class="faq-a">Wybierz stylizacje z galerii lub prześlij własne zdjęcie, dodaj krótki opis, podaj kontakt i zapłać online (BLIK lub karta). Resztą zajmujemy się my, a Ty odbierasz gotowe zdjęcia.</div>
+        </details>
+        <details>
+          <summary>Czy moje zdjęcia są bezpieczne?</summary>
+          <div class="faq-a">Tak. Zdjęcia przesyłasz bezpiecznie i wykorzystujemy je wyłącznie do realizacji Twojego zamówienia, zgodnie z polityką prywatności i RODO.</div>
+        </details>
+      </div>
+    </div>
+  </section>
+
   <!-- ============ FOOTER ============ -->
   <footer class="footer">
     <div class="container">
@@ -389,6 +455,7 @@
           <a href="#galeria">Galeria</a>
           <a href="#obrobka">Obróbka zdjęć</a>
           <a href="#cennik">Cennik</a>
+          <a href="#faq">FAQ</a>
           </div>
         <div>
           <h4>Informacje</h4>

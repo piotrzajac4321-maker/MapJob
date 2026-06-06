@@ -1,0 +1,14 @@
+{
+  "name": "BoboFoto — zdjęcia noworodkowe online",
+  "short_name": "BoboFoto",
+  "description": "Profesjonalne zdjęcia noworodkowe online — od 24 zł, gotowe w ~10 godzin.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#FBF7F1",
+  "theme_color": "#8E9C82",
+  "lang": "pl",
+  "icons": [
+    { "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml" },
+    { "src": "/apple-touch-icon.png", "sizes": "180x180", "type": "image/png" }
+  ]
+}
