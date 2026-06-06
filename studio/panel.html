@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>BoboFoto — Panel admina</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/panel.css?v=1" />
+</head>
+<body>
+
+  <!-- ===== LOGOWANIE ===== -->
+  <div id="login" class="login-wrap">
+    <form id="loginForm" class="login-card">
+      <div class="login-brand">Bobo<span>Foto</span></div>
+      <p class="login-sub">Panel administracyjny</p>
+      <label>E-mail
+        <input type="email" id="email" autocomplete="username" required />
+      </label>
+      <label>Hasło
+        <input type="password" id="haslo" autocomplete="current-password" required />
+      </label>
+      <button class="btn btn-primary" type="submit" id="loginBtn">Zaloguj się</button>
+      <p class="login-err" id="loginErr"></p>
+    </form>
+  </div>
+
+  <!-- ===== PANEL ===== -->
+  <div id="app" class="app" hidden>
+    <header class="topbar">
+      <div class="topbar-brand">Bobo<span>Foto</span> · panel</div>
+      <nav class="tabs">
+        <button class="tab active" data-tab="zamowienia">📥 Zamówienia</button>
+        <button class="tab" data-tab="statystyki">📊 Statystyki</button>
+      </nav>
+      <div class="topbar-right">
+        <span id="whoami" class="whoami"></span>
+        <button class="btn btn-ghost btn-sm" id="logout">Wyloguj</button>
+      </div>
+    </header>
+
+    <!-- ZAMÓWIENIA -->
+    <section id="view-zamowienia" class="view">
+      <div class="view-head">
+        <div class="kpi-row" id="ordersKpi"></div>
+        <div class="toolbar">
+          <input type="search" id="search" placeholder="Szukaj: imię, e-mail, telefon…" />
+          <select id="statusFilter">
+            <option value="">Wszystkie statusy</option>
+            <option value="nowe">🆕 Nowe</option>
+            <option value="w_toku">⏳ W toku</option>
+            <option value="gotowe">✅ Gotowe</option>
+          </select>
+          <button class="btn btn-ghost btn-sm" id="refreshOrders">↻ Odśwież</button>
+        </div>
+      </div>
+      <div id="ordersList" class="orders"></div>
+      <p id="ordersEmpty" class="empty" hidden>Brak zamówień do wyświetlenia.</p>
+    </section>
+
+    <!-- STATYSTYKI -->
+    <section id="view-statystyki" class="view" hidden>
+      <div class="kpi-row" id="statsKpi"></div>
+      <div class="stats-grid">
+        <div class="card">
+          <h3>Wizyty — ostatnie 14 dni</h3>
+          <div id="chartDays" class="chart"></div>
+        </div>
+        <div class="card">
+          <h3>Najczęściej klikane</h3>
+          <div id="topClicks" class="bars"></div>
+        </div>
+        <div class="card">
+          <h3>Urządzenia</h3>
+          <div id="devices" class="bars"></div>
+        </div>
+        <div class="card">
+          <h3>Źródła wejść</h3>
+          <div id="sources" class="bars"></div>
+        </div>
+      </div>
+      <p class="stats-note">Dane anonimowe (bez danych osobowych). Aktualizują się na żywo przy każdym odświeżeniu.</p>
+    </section>
+  </div>
+
+  <div id="toast" class="toast"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
+  <script src="js/panel.js?v=1"></script>
+</body>
+</html>

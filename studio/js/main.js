@@ -345,6 +345,7 @@ document.addEventListener("DOMContentLoaded", () => {
           if (insErr) throw insErr;
           showProgress("Gotowe! Przekierowujemy do płatności…", 1);
           hideProgress();
+          if (window.bfTrack) window.bfTrack("order", "zamowienie", { pakiet: fd.pakiet || null, zdjec: paths.length, stylizacji: stylizacje.length });
           showOrderDone(fd, paths.length, stylizacje.length);
         } catch (err) {
           console.error("Supabase:", err);
