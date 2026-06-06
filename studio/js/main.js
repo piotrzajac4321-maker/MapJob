@@ -184,6 +184,14 @@ document.addEventListener("DOMContentLoaded", () => {
     if (planCounterEl) planCounterEl.innerHTML = "Wybrane zdjęcia: <strong>" + n + " / " + planLimit() + "</strong>";
   }
 
+  /* ---- Ukryj pasek koszyka, gdy widoczny jest cennik (żeby nie zasłaniał przycisków „Wybieram") ---- */
+  const cennikSection = document.getElementById("cennik");
+  if (cartBar && cennikSection && "IntersectionObserver" in window) {
+    new IntersectionObserver((entries) => {
+      cartBar.classList.toggle("hide-on-pricing", entries[0].isIntersecting);
+    }, { threshold: 0.12 }).observe(cennikSection);
+  }
+
   /* ---- Modal koszyka / personalizacji ---- */
   const cartModal = document.getElementById("cartModal");
   const cartItems = document.getElementById("cartItems");
