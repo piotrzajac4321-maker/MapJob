@@ -6,7 +6,7 @@
   <meta name="robots" content="noindex, nofollow" />
   <title>BoboFoto — Panel admina</title>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="css/panel.css?v=1" />
+  <link rel="stylesheet" href="css/panel.css?v=2" />
 </head>
 <body>
 
@@ -52,6 +52,8 @@
             <option value="w_toku">⏳ W toku</option>
             <option value="gotowe">✅ Gotowe</option>
           </select>
+          <button class="btn btn-ghost btn-sm" id="csvBtn" title="Pobierz listę zamówień jako plik CSV (Excel)">⬇ CSV</button>
+          <button class="btn btn-ghost btn-sm" id="bellBtn" title="Dźwięk przy nowym zamówieniu" aria-pressed="false">🔔 Powiadomienia: wył.</button>
           <button class="btn btn-ghost btn-sm" id="refreshOrders">↻ Odśwież</button>
         </div>
       </div>
@@ -88,6 +90,6 @@
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
-  <script src="js/panel.js?v=1"></script>
+  <script src="js/panel.js?v=2"></script>
 </body>
 </html>

@@ -17,6 +17,7 @@ button{font-family:inherit;cursor:pointer}
 .btn-primary:hover{background:var(--sage-d)}
 .btn-ghost{background:transparent;border-color:var(--taupe);color:var(--ink)}
 .btn-ghost:hover{background:var(--ink);color:var(--cream)}
+.btn-ghost.on{background:var(--sage);color:#fff;border-color:var(--sage)}
 .btn-sm{padding:7px 13px;font-size:13px}
 .btn-mini{padding:4px 11px;font-size:12px;border-radius:999px;background:var(--sage);color:#fff;font-weight:700;border:0}
 .btn-mini:hover{background:var(--sage-d)}
