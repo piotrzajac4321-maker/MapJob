@@ -6,7 +6,7 @@
   <meta name="robots" content="noindex, nofollow" />
   <title>BoboFoto — Panel admina</title>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="css/panel.css?v=3" />
+  <link rel="stylesheet" href="css/panel.css?v=4" />
 </head>
 <body>
 
@@ -63,19 +63,23 @@
 
     <!-- STATYSTYKI -->
     <section id="view-statystyki" class="view" hidden>
-      <h2 class="view-title">💰 Zarobki</h2>
+      <h2 class="view-title">💳 Realne zyski — Stripe</h2>
+      <div class="kpi-row" id="stripeKpi"></div>
+      <p class="stats-note">Tylko faktycznie <strong>opłacone, zatwierdzone</strong> transakcje w Stripe — to realne pieniądze.</p>
+
+      <h2 class="view-title">🧮 Zainteresowanie — rozpoczęte płatności</h2>
       <div class="kpi-row" id="earnKpi"></div>
       <div class="earn-grid">
         <div class="card">
-          <h3>Przychód wg pakietu</h3>
+          <h3>Wybory pakietów</h3>
           <div id="earnDonut" class="donut-wrap"></div>
         </div>
         <div class="card">
-          <h3>Przychód — ostatnie 6 miesięcy</h3>
+          <h3>Rozpoczęte płatności — 6 miesięcy</h3>
           <div id="earnMonths" class="chart"></div>
         </div>
       </div>
-      <p class="stats-note">Przychód szacowany na podstawie złożonych zamówień (Mini 24 zł · Standard 49 zł · Premium 99 zł).</p>
+      <p class="stats-note">Kto wybrał jaki pakiet i przeszedł do płatności. To <strong>nie jest potwierdzony przychód</strong> — pokazuje zainteresowanie i potencjał (Mini 24 zł · Standard 49 zł · Premium 99 zł).</p>
 
       <h2 class="view-title">📊 Ruch na stronie</h2>
       <div class="kpi-row" id="statsKpi"></div>
@@ -105,6 +109,6 @@
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
-  <script src="js/panel.js?v=3"></script>
+  <script src="js/panel.js?v=4"></script>
 </body>
 </html>

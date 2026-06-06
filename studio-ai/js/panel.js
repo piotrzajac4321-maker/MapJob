@@ -62,7 +62,41 @@
       $("#whoami").textContent = user.email || "";
       loadOrders();
       loadStats();
+      loadStripe();
     });
+  }
+
+  /* ===========================================================
+     REALNE ZYSKI — Stripe (przez /api/stripe, tylko dla admina)
+     =========================================================== */
+  function loadStripe() {
+    var box = $("#stripeKpi");
+    if (!box) return;
+    box.innerHTML = '<div class="loading">Łączenie ze Stripe…</div>';
+    sb.auth.getSession().then(function (s) {
+      var tok = s.data && s.data.session && s.data.session.access_token;
+      return fetch("/api/stripe", { headers: tok ? { Authorization: "Bearer " + tok } : {} });
+    }).then(function (r) {
+      if (r.status === 404) throw "noendpoint";
+      return r.json();
+    }).then(function (d) {
+      if (!d || d.configured === false) { box.innerHTML = stripeSetup(); return; }
+      if (d.error) { box.innerHTML = '<div class="loading err">Stripe: ' + esc(d.error) + '</div>'; return; }
+      var avg = d.count ? d.total / d.count : 0;
+      box.innerHTML =
+        kpi("💳", zl(d.total || 0), "realny przychód (opłacone)") +
+        kpi("📅", zl(d.miesiac || 0), "ten miesiąc") +
+        kpi("✅", d.count || 0, "opłacone transakcje") +
+        kpi("📊", zl(avg), "śr. opłacona");
+    }).catch(function (e) {
+      box.innerHTML = (e === "noendpoint") ? stripeSetup()
+        : '<div class="loading err">Nie udało się pobrać danych Stripe (spróbuj odświeżyć).</div>';
+    });
+  }
+  function stripeSetup() {
+    return '<div class="loading">💳 <b>0 zł</b> — nikt jeszcze nie dokonał płatności.<br>' +
+      '<small>Aby pokazywać realny przychód na żywo, dodaj klucz Stripe w Vercel ' +
+      '(jednorazowo — poproś wykonawcę). Do tego czasu liczy się to z faktycznych płatności = 0 zł.</small></div>';
   }
 
   /* ---------- ZAKŁADKI ---------- */
@@ -384,10 +418,10 @@
     var srednia = sztuk ? total / sztuk : 0;
 
     $("#earnKpi").innerHTML =
-      kpi("💰", zl(total), "przychód łącznie") +
-      kpi("📅", zl(miesiac), "ten miesiąc") +
-      kpi("🧾", sztuk, "płatne zamówienia") +
-      kpi("📊", zl(srednia), "średnia wartość");
+      kpi("🧮", zl(total), "wartość rozpoczętych płatności") +
+      kpi("📅", zl(miesiac), "ten miesiąc (rozpoczęte)") +
+      kpi("🧾", sztuk, "zamówienia złożone") +
+      kpi("📊", zl(srednia), "śr. wartość koszyka");
 
     // Donut — udział przychodu wg pakietu
     var segs = ["mini", "standard", "premium"].map(function (k) {
