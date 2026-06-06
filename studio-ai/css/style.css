@@ -521,9 +521,19 @@ body.cart-active .pricebar { transform: translateY(140%); opacity: 0; pointer-ev
   max-width: 92vw;
 }
 .cart-bar.show { transform: translate(-50%, 0); }
+/* schowany, gdy na ekranie jest cennik (nadrzędne nad .show w każdej orientacji) */
+.cart-bar.hide-on-pricing { transform: translateY(220%) !important; }
 .cart-bar .cart-count { font-size: 15px; font-weight: 600; white-space: nowrap; }
 .cart-bar .cart-count strong { color: var(--rose); }
 .cart-bar .btn { padding: 12px 22px; }
+/* poziom / tablet (641–980): kompaktowy koszyk w prawym dolnym rogu — minimum zasłaniania przycisków */
+@media (min-width: 641px) and (max-width: 980px) {
+  .cart-bar { left: auto; right: 16px; bottom: 16px; transform: translateY(180%);
+    padding: 8px 10px; gap: 10px; }
+  .cart-bar.show { transform: translateY(0); }
+  .cart-bar .cart-count { display: none; }      /* licznik jest w oknie koszyka */
+  .cart-bar .btn { padding: 10px 16px; font-size: 13.5px; }
+}
 
 /* modal koszyka / personalizacji */
 .cart-modal {
