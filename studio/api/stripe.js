@@ -31,19 +31,21 @@ module.exports = async (req, res) => {
       pages++;
     } while (after && pages < 10);
 
-    // 4) agregacja (kwoty w groszach; pakiety 24/49/99 zł)
+    // 4) agregacja — TYLKO pakiety BoboFoto (24/49/99 zł).
+    //    Konto Stripe jest wspólne z MapJob, więc inne kwoty pomijamy.
     const PKG = { 2400: "mini", 4900: "standard", 9900: "premium" };
     const now = new Date(), ym = now.getUTCFullYear() + "-" + now.getUTCMonth();
     let total = 0, count = 0, miesiac = 0;
-    const byPkg = { mini: { n: 0, sum: 0 }, standard: { n: 0, sum: 0 }, premium: { n: 0, sum: 0 }, inne: { n: 0, sum: 0 } };
+    const byPkg = { mini: { n: 0, sum: 0 }, standard: { n: 0, sum: 0 }, premium: { n: 0, sum: 0 } };
     for (const c of charges) {
       if (c.status !== "succeeded" || !c.paid) continue;
+      const k = PKG[c.amount];
+      if (!k) continue; // pomijaj płatności spoza pakietów BoboFoto (np. MapJob)
       const net = c.amount - (c.amount_refunded || 0);
       if (net <= 0) continue;
       total += net; count++;
       const d = new Date(c.created * 1000);
       if (d.getUTCFullYear() + "-" + d.getUTCMonth() === ym) miesiac += net;
-      const k = PKG[c.amount] || "inne";
       byPkg[k].n++; byPkg[k].sum += net;
     }
     const z = (g) => Math.round(g) / 100;
