@@ -802,3 +802,31 @@ body.cart-active .pricebar { transform: translateY(140%); opacity: 0; pointer-ev
 .faq details[open] summary::after { transform: rotate(45deg); }
 .faq summary:hover { color: var(--sage-d); }
 .faq-a { padding: 0 22px 20px; color: var(--muted); font-size: 15.5px; line-height: 1.6; }
+
+/* ---------- Poradnik / artykuły ---------- */
+.post-top { position: sticky; top: 0; z-index: 30; background: rgba(251,247,241,.92); backdrop-filter: blur(8px); border-bottom: 1px solid var(--line); padding: 14px 0; }
+.post-top .container { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+.post-top .brand { font-size: 24px; }
+.post-top .btn { padding: 9px 18px; font-size: 14px; }
+.post-hero { background: linear-gradient(180deg, var(--cream-2), var(--cream)); padding: 54px 0 30px; }
+.breadcrumbs { font-size: 13px; color: var(--muted); margin-bottom: 14px; }
+.breadcrumbs a { color: var(--sage-d); text-decoration: none; }
+.breadcrumbs a:hover { text-decoration: underline; }
+.article { max-width: 760px; margin: 0 auto; padding: 36px 20px 10px; }
+.article .lead { font-size: 20px; line-height: 1.6; color: #5d564d; margin-bottom: 8px; }
+.article p, .article li { font-size: 17px; line-height: 1.78; color: #4a443d; }
+.article h2 { font-family: var(--serif); font-size: 30px; font-weight: 600; margin: 38px 0 12px; }
+.article h3 { font-size: 20px; margin: 26px 0 6px; }
+.article ul, .article ol { padding-left: 22px; margin: 12px 0; display: flex; flex-direction: column; gap: 8px; }
+.article strong { color: var(--ink); }
+.article .cta-box { background: var(--cream-2); border: 1px solid var(--line); border-radius: 18px; padding: 26px; margin: 38px 0; text-align: center; }
+.article .cta-box h3 { font-family: var(--serif); font-size: 24px; margin: 0 0 6px; }
+.article .cta-box p { margin-bottom: 16px; color: var(--muted); }
+.post-meta { font-size: 13.5px; color: var(--muted); margin-bottom: 18px; }
+.post-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
+.post-card { background: #fff; border: 1px solid var(--line); border-radius: 16px; padding: 24px; display: flex; flex-direction: column; transition: transform .25s ease, box-shadow .25s ease; }
+.post-card:hover { transform: translateY(-4px); box-shadow: var(--shadow); }
+.post-card h3 { font-family: var(--serif); font-size: 22px; font-weight: 600; margin-bottom: 8px; }
+.post-card p { color: var(--muted); font-size: 15px; flex: 1; }
+.post-card .more { font-weight: 700; color: var(--sage-d); margin-top: 14px; text-decoration: none; }
+.post-card .more:hover { text-decoration: underline; }
