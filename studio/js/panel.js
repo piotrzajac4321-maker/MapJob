@@ -82,6 +82,12 @@
   $("#refreshOrders").addEventListener("click", loadOrders);
   $("#search").addEventListener("input", renderOrders);
   $("#statusFilter").addEventListener("change", renderOrders);
+  $("#csvBtn").addEventListener("click", exportCsv);
+  $("#bellBtn").addEventListener("click", toggleBell);
+
+  var MAX_ID = 0;            // najwyższy znany id zamówienia (wykrywanie nowych)
+  var NOTIFY = false;        // czy dźwięk włączony
+  var pollTimer = null;
 
   function loadOrders() {
     $("#ordersList").innerHTML = '<div class="loading">Wczytywanie zamówień…</div>';
@@ -89,8 +95,10 @@
       .then(function (res) {
         if (res.error) throw res.error;
         ORDERS = res.data || [];
+        MAX_ID = ORDERS.reduce(function (m, o) { return Math.max(m, +o.id || 0); }, MAX_ID);
         renderKpiOrders();
         renderOrders();
+        startPolling();
       })
       .catch(function (err) {
         $("#ordersList").innerHTML = '<div class="loading err">Błąd odczytu: ' + esc(err.message) +
@@ -258,6 +266,88 @@
       }
       toast("Status zmieniony na: " + stLabel(status));
     });
+  }
+
+  /* ---- Eksport CSV (Excel PL: separator ;, BOM UTF-8) ---- */
+  function exportCsv() {
+    if (!ORDERS.length) { toast("Brak zamówień do eksportu"); return; }
+    var cols = ["data", "status", "imie", "email", "telefon", "pakiet", "opis", "zdjec", "stylizacji", "zgody"];
+    var rows = ORDERS.map(function (o) {
+      var zg = [];
+      if (o.zgoda_wizerunek) zg.push("wizerunek");
+      if (o.zgoda_sms) zg.push("SMS");
+      if (o.zgoda_email) zg.push("email");
+      if (o.zgoda_marketing) zg.push("marketing");
+      return [
+        fmtDate(o.created_at), stLabel(o.status || "nowe").replace(/^\S+\s/, ""),
+        o.imie || "", o.email || "", o.telefon || "", o.pakiet || "", o.opis || "",
+        (Array.isArray(o.pliki) ? o.pliki.length : 0),
+        (Array.isArray(o.stylizacje) ? o.stylizacje.length : 0),
+        zg.join(" ")
+      ];
+    });
+    var csv = [cols].concat(rows).map(function (r) {
+      return r.map(function (c) { return '"' + String(c).replace(/"/g, '""') + '"'; }).join(";");
+    }).join("\r\n");
+    var blob = new Blob(["﻿" + csv], { type: "text/csv;charset=utf-8" });
+    var a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "bobofoto_zamowienia_" + new Date().toISOString().slice(0, 10) + ".csv";
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(function () { URL.revokeObjectURL(a.href); }, 4000);
+    toast("Wyeksportowano " + ORDERS.length + " zamówień do CSV");
+  }
+
+  /* ---- Powiadomienia dźwiękowe o nowym zamówieniu ---- */
+  var audioCtx = null;
+  function beep() {
+    try {
+      if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      [0, 0.18].forEach(function (t) {
+        var o = audioCtx.createOscillator(), g = audioCtx.createGain();
+        o.type = "sine"; o.frequency.value = t ? 1175 : 880;
+        g.gain.setValueAtTime(0.001, audioCtx.currentTime + t);
+        g.gain.exponentialRampToValueAtTime(0.25, audioCtx.currentTime + t + 0.02);
+        g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + t + 0.16);
+        o.connect(g); g.connect(audioCtx.destination);
+        o.start(audioCtx.currentTime + t); o.stop(audioCtx.currentTime + t + 0.18);
+      });
+    } catch (e) {}
+  }
+  function toggleBell() {
+    NOTIFY = !NOTIFY;
+    var b = $("#bellBtn");
+    b.setAttribute("aria-pressed", NOTIFY ? "true" : "false");
+    b.textContent = NOTIFY ? "🔔 Powiadomienia: wł." : "🔔 Powiadomienia: wył.";
+    b.classList.toggle("on", NOTIFY);
+    if (NOTIFY) {
+      try { if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)(); audioCtx.resume(); } catch (e) {}
+      beep(); // potwierdzenie, że dźwięk działa
+      if (window.Notification && Notification.permission === "default") Notification.requestPermission();
+      toast("Powiadomienia włączone — usłyszysz dźwięk przy nowym zamówieniu");
+    } else {
+      toast("Powiadomienia wyłączone");
+    }
+  }
+  function startPolling() {
+    if (pollTimer) return;
+    pollTimer = setInterval(function () {
+      sb.from("zamowienia").select("id").order("id", { ascending: false }).limit(1)
+        .then(function (res) {
+          if (res.error || !res.data || !res.data.length) return;
+          var top = +res.data[0].id || 0;
+          if (top > MAX_ID) {
+            MAX_ID = top;
+            loadOrders();
+            if (NOTIFY) {
+              beep();
+              if (window.Notification && Notification.permission === "granted")
+                new Notification("BoboFoto", { body: "Nowe zamówienie! 🎉" });
+            }
+            toast("🎉 Nowe zamówienie!");
+          }
+        });
+    }, 30000);
   }
 
   /* ===========================================================
