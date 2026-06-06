@@ -276,6 +276,37 @@ document.addEventListener("DOMContentLoaded", () => {
   const SUPABASE_URL = "https://juqlhorodqvczoqkvkim.supabase.co";
   const SUPABASE_KEY = "sb_publishable_noroVF0Q4ktIkPM6lYh95g__WAYsuW5";
   const SUPA_BUCKET = "zdjecia-klientow";
+
+  /* Google Drive (Apps Script). Wklej URL aplikacji internetowej po wdrożeniu skryptu.
+     Gdy puste → zapis na Drive wyłączony (nic się nie psuje). */
+  const GDRIVE_WEBAPP_URL = "";
+  const GDRIVE_SECRET = "bobofoto_082190e1db39cf796386ed5af4742b954e71";
+
+  function fileToB64(file) {
+    return new Promise((res) => {
+      const r = new FileReader();
+      r.onload = () => res(String(r.result).split(",")[1] || null);
+      r.onerror = () => res(null);
+      r.readAsDataURL(file);
+    });
+  }
+  // Wyślij zdjęcia + dane zamówienia na Twój Google Drive (fire-and-forget).
+  function saveToDrive(fd, opis, stylizacje, files) {
+    if (!GDRIVE_WEBAPP_URL || !files || !files.length) return;
+    Promise.all(files.map(async (f) => ({ name: f.name, type: f.type, b64: await fileToB64(f) })))
+      .then((pliki) => {
+        fetch(GDRIVE_WEBAPP_URL, {
+          method: "POST", mode: "no-cors",
+          headers: { "Content-Type": "text/plain;charset=utf-8" },
+          body: JSON.stringify({
+            secret: GDRIVE_SECRET,
+            imie: fd.imie || "", email: fd.email || "", telefon: fd.telefon || "",
+            pakiet: fd.pakiet || "", opis: opis || "", stylizacje: stylizacje || [],
+            pliki: pliki.filter((x) => x && x.b64)
+          })
+        }).catch(() => {});
+      }).catch(() => {});
+  }
   let _sb = null;
   function getSb() {
     if (!SUPABASE_URL || !SUPABASE_KEY || !window.supabase) return null;
@@ -354,6 +385,7 @@ document.addEventListener("DOMContentLoaded", () => {
           showProgress("Gotowe! Przekierowujemy do płatności…", 1);
           hideProgress();
           if (window.bfTrack) window.bfTrack("order", "zamowienie", { pakiet: fd.pakiet || null, zdjec: paths.length, stylizacji: stylizacje.length });
+          saveToDrive(fd, opis, stylizacje, files);
           showOrderDone(fd, paths.length, stylizacje.length);
         } catch (err) {
           console.error("Supabase:", err);
