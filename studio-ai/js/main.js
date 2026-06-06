@@ -7,17 +7,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   /* ---- Nawigacja: tło po scrollu ---- */
   const nav = document.getElementById("nav");
-  const pricebar = document.getElementById("pricebar");
-  const cennikSec = document.getElementById("cennik");
-  const onScroll = () => {
-    nav.classList.toggle("scrolled", window.scrollY > 40);
-    /* Pasek cennika: pokaż po wyjściu z hero, schowaj gdy widać sekcję cennika */
-    if (pricebar && cennikSec) {
-      const past = window.scrollY > 520;
-      const cennikVisible = cennikSec.getBoundingClientRect().top < window.innerHeight - 80;
-      pricebar.classList.toggle("show", past && !cennikVisible);
-    }
-  };
+  const onScroll = () => nav.classList.toggle("scrolled", window.scrollY > 40);
   onScroll();
   window.addEventListener("scroll", onScroll, { passive: true });
 
