@@ -7,7 +7,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
   /* ---- Nawigacja: tło po scrollu ---- */
   const nav = document.getElementById("nav");
-  const onScroll = () => nav.classList.toggle("scrolled", window.scrollY > 40);
+  const pricebar = document.getElementById("pricebar");
+  const cennikSec = document.getElementById("cennik");
+  const onScroll = () => {
+    nav.classList.toggle("scrolled", window.scrollY > 40);
+    /* Pasek cennika: pokaż po wyjściu z hero, schowaj gdy widać sekcję cennika */
+    if (pricebar && cennikSec) {
+      const past = window.scrollY > 520;
+      const cennikVisible = cennikSec.getBoundingClientRect().top < window.innerHeight - 80;
+      pricebar.classList.toggle("show", past && !cennikVisible);
+    }
+  };
   onScroll();
   window.addEventListener("scroll", onScroll, { passive: true });
 
@@ -180,6 +190,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const n = selected.size;
     if (cartCount) cartCount.textContent = n + " / " + planLimit();
     if (cartBar) cartBar.classList.toggle("show", n > 0);
+    document.body.classList.toggle("cart-active", n > 0);
     if (planCounterEl) planCounterEl.innerHTML = "Wybrane zdjęcia: <strong>" + n + " / " + planLimit() + "</strong>";
   }
 
