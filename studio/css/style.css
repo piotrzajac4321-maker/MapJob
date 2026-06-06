@@ -326,20 +326,29 @@ a { color: inherit; text-decoration: none; }
   .tiles { grid-template-columns: repeat(2, 1fr); }
   .pricing { grid-template-columns: 1fr; max-width: 480px; margin-inline: auto; gap: 16px; }
   /* telefon: układ wierszowy (nazwa+cena w jednej linii), większe elementy */
-  .plan { padding: 22px 22px; border-radius: 16px; }
-  .plan-head { display: flex; align-items: center; justify-content: space-between; gap: 14px; margin-bottom: 14px; }
-  .plan-name { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
-  .plan-name h3 { font-size: 26px; margin: 0; }
-  /* -30% jako pigułka obok nazwy — nie nachodzi na cenę */
-  .plan .ribbon { position: static; top: auto; right: auto; border-radius: 999px;
-    padding: 4px 11px; font-size: 12.5px; box-shadow: none; }
+  .plan { padding: 22px 22px; border-radius: 18px; }
+  .plan-head { display: flex; align-items: center; justify-content: space-between; gap: 14px;
+    margin-bottom: 16px; padding-bottom: 15px; border-bottom: 1px solid var(--line); }
+  .plan-name { display: flex; align-items: center; gap: 8px; flex-wrap: nowrap; flex: 1; min-width: 0; }
+  .plan-name h3 { font-size: 24px; margin: 0; white-space: nowrap; }
+  /* -30% jako delikatna pigułka obok nazwy — nie nachodzi na cenę */
+  .plan .ribbon { position: static; top: auto; right: auto; border-radius: 999px; flex: 0 0 auto;
+    padding: 3px 9px; font-size: 11.5px; font-weight: 800; letter-spacing: .02em;
+    background: linear-gradient(135deg, #e2c0b2, #cf9a86); box-shadow: 0 4px 12px -5px rgba(176,125,107,.7); }
   .plan .ribbon::after { display: none; }
-  .plan .price { font-size: 44px; margin: 0; line-height: 1; text-align: right; white-space: nowrap; }
-  .plan .price-old { font-size: 13.5px; margin-bottom: 0; }
+  /* cena: liczba i „zł" idealnie na jednej linii bazowej, „zwykle…" nad nią */
+  .plan .price { display: flex; align-items: baseline; justify-content: flex-end;
+    flex-wrap: wrap; column-gap: 5px; font-size: 46px; line-height: 1; margin: 0; }
+  .plan .price > span:last-child { font-size: 17px; color: var(--muted); }
+  .plan .price-old { order: -1; flex-basis: 100%; text-align: right; font-size: 13px; margin: 0 0 4px; }
   .plan .desc { font-size: 14.5px; margin-bottom: 16px; }
-  .plan ul { margin-bottom: 20px; }
+  .plan ul { margin-bottom: 22px; }
   .plan li { padding: 8px 0; font-size: 15px; }
-  .plan .btn { padding: 13px 18px; font-size: 15.5px; }
+  .plan .btn { padding: 14px 18px; font-size: 15.5px; }
+  /* pakiet Standard — subtelne wyróżnienie */
+  .plan.featured { background: linear-gradient(180deg, #FBF6EE 0%, #FFFFFF 60%);
+    border-width: 1.5px; box-shadow: 0 20px 44px -24px rgba(110,125,99,.6); }
+  .plan.featured .tag { top: -14px; box-shadow: 0 8px 18px -8px rgba(111,125,99,.75); }
   .contact-grid { grid-template-columns: 1fr; }
   .footer-grid { grid-template-columns: 1fr 1fr; }
 }
