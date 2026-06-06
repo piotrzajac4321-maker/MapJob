@@ -98,6 +98,7 @@
         MAX_ID = ORDERS.reduce(function (m, o) { return Math.max(m, +o.id || 0); }, MAX_ID);
         renderKpiOrders();
         renderOrders();
+        renderEarnings();
         startPolling();
       })
       .catch(function (err) {
@@ -348,6 +349,88 @@
           }
         });
     }, 30000);
+  }
+
+  /* ===========================================================
+     ZAROBKI
+     =========================================================== */
+  var PRICES = { mini: 24, standard: 49, premium: 99 };
+  var PKG_META = {
+    mini:     { label: "Mini",     color: "#D8B3A4" },
+    standard: { label: "Standard", color: "#8E9C82" },
+    premium:  { label: "Premium",  color: "#B58A3E" }
+  };
+  function orderVal(o) { return PRICES[(o.pakiet || "").toLowerCase()] || 0; }
+  function zl(n) { return Math.round(n).toLocaleString("pl-PL") + " zł"; }
+
+  function renderEarnings() {
+    if (!$("#earnKpi")) return;
+    var now = new Date();
+    var ym = now.getFullYear() + "-" + now.getMonth();
+    var total = 0, miesiac = 0, sztuk = 0;
+    var byPkg = { mini: { n: 0, sum: 0 }, standard: { n: 0, sum: 0 }, premium: { n: 0, sum: 0 } };
+    var months = {};
+
+    ORDERS.forEach(function (o) {
+      var v = orderVal(o); if (!v) return;
+      total += v; sztuk++;
+      var key = (o.pakiet || "").toLowerCase();
+      if (byPkg[key]) { byPkg[key].n++; byPkg[key].sum += v; }
+      var d = new Date(o.created_at);
+      if (d.getFullYear() + "-" + d.getMonth() === ym) miesiac += v;
+      var mk = d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0");
+      months[mk] = (months[mk] || 0) + v;
+    });
+    var srednia = sztuk ? total / sztuk : 0;
+
+    $("#earnKpi").innerHTML =
+      kpi("💰", zl(total), "przychód łącznie") +
+      kpi("📅", zl(miesiac), "ten miesiąc") +
+      kpi("🧾", sztuk, "płatne zamówienia") +
+      kpi("📊", zl(srednia), "średnia wartość");
+
+    // Donut — udział przychodu wg pakietu
+    var segs = ["mini", "standard", "premium"].map(function (k) {
+      return { label: PKG_META[k].label, color: PKG_META[k].color, value: byPkg[k].sum, n: byPkg[k].n };
+    }).filter(function (s) { return s.value > 0; });
+    $("#earnDonut").innerHTML = donut(segs, total);
+
+    // Wykres przychodu — ostatnie 6 miesięcy
+    var cols = [];
+    for (var i = 5; i >= 0; i--) {
+      var dd = new Date(now.getFullYear(), now.getMonth() - i, 1);
+      var mk = dd.getFullYear() + "-" + String(dd.getMonth() + 1).padStart(2, "0");
+      cols.push({ label: dd.toLocaleDateString("pl-PL", { month: "short" }), v: months[mk] || 0 });
+    }
+    var max = Math.max.apply(null, cols.map(function (c) { return c.v; }).concat([1]));
+    $("#earnMonths").innerHTML = cols.map(function (c) {
+      return '<div class="col"><div class="bar gold" style="height:' + Math.round((c.v / max) * 100) + '%"></div>' +
+        '<span class="cnum">' + (c.v ? zl(c.v).replace(" zł", "") : "0") + '</span><span class="clab">' + c.label + '</span></div>';
+    }).join("");
+  }
+
+  // Diagram kołowy (SVG donut) + legenda
+  function donut(segs, total) {
+    if (!total) return '<p class="muted">Brak płatnych zamówień — wykres pojawi się po pierwszej sprzedaży.</p>';
+    var R = 60, C = 2 * Math.PI * R, off = 0;
+    var ring = segs.map(function (s) {
+      var frac = s.value / total, len = frac * C;
+      var seg = '<circle r="' + R + '" cx="80" cy="80" fill="none" stroke="' + s.color + '" stroke-width="22" ' +
+        'stroke-dasharray="' + len + ' ' + (C - len) + '" stroke-dashoffset="' + (-off) + '" transform="rotate(-90 80 80)"></circle>';
+      off += len; return seg;
+    }).join("");
+    var legend = segs.map(function (s) {
+      var pct = Math.round((s.value / total) * 100);
+      return '<li><span class="dot" style="background:' + s.color + '"></span>' +
+        '<b>' + esc(s.label) + '</b> <span class="lg-val">' + zl(s.value) + ' · ' + pct + '% · ' + s.n + ' szt.</span></li>';
+    }).join("");
+    return '<div class="donut">' +
+      '<svg viewBox="0 0 160 160" width="160" height="160">' + ring +
+        '<text x="80" y="74" text-anchor="middle" class="d-tot">' + zl(total) + '</text>' +
+        '<text x="80" y="92" text-anchor="middle" class="d-lab">łącznie</text>' +
+      '</svg>' +
+      '<ul class="donut-legend">' + legend + '</ul>' +
+    '</div>';
   }
 
   /* ===========================================================
