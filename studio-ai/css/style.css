@@ -324,8 +324,14 @@ a { color: inherit; text-decoration: none; }
   /* na telefonie zdjęcia jako pierwsze, zaraz po wejściu */
   .hero-photos { order: -1; height: auto; max-width: 420px; width: 100%; margin-inline: auto; }
   .tiles { grid-template-columns: repeat(2, 1fr); }
+  /* cennik: w poziomie (641–980) zostają 3 kolumny; układ wierszowy telefonu jest niżej (≤640) */
+  .contact-grid { grid-template-columns: 1fr; }
+  .footer-grid { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 640px) {
+  body { font-size: 16px; }
+  /* === CENNIK — telefon pionowo: układ wierszowy, większe elementy === */
   .pricing { grid-template-columns: 1fr; max-width: 480px; margin-inline: auto; gap: 16px; }
-  /* telefon: układ wierszowy (nazwa+cena w jednej linii), większe elementy */
   .plan { padding: 22px 22px; border-radius: 18px; }
   .plan-head { display: flex; align-items: center; justify-content: space-between; gap: 14px;
     margin-bottom: 16px; padding-bottom: 15px; border-bottom: 1px solid var(--line); }
@@ -349,11 +355,6 @@ a { color: inherit; text-decoration: none; }
   .plan.featured { background: linear-gradient(180deg, #FBF6EE 0%, #FFFFFF 60%);
     border-width: 1.5px; box-shadow: 0 20px 44px -24px rgba(110,125,99,.6); }
   .plan.featured .tag { top: -14px; box-shadow: 0 8px 18px -8px rgba(111,125,99,.75); }
-  .contact-grid { grid-template-columns: 1fr; }
-  .footer-grid { grid-template-columns: 1fr 1fr; }
-}
-@media (max-width: 640px) {
-  body { font-size: 16px; }
   .nav-links {
     position: fixed; top: 0; right: 0; bottom: 0;
     height: 100vh; height: 100dvh; width: min(82vw, 330px);
