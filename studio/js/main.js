@@ -180,6 +180,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const n = selected.size;
     if (cartCount) cartCount.textContent = n + " / " + planLimit();
     if (cartBar) cartBar.classList.toggle("show", n > 0);
+    document.body.classList.toggle("cart-active", n > 0);
     if (planCounterEl) planCounterEl.innerHTML = "Wybrane zdjęcia: <strong>" + n + " / " + planLimit() + "</strong>";
   }
 
