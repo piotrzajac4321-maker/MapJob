@@ -161,3 +161,27 @@ button{font-family:inherit;cursor:pointer}
 .sess-acts { margin: 0; padding: 4px 16px 14px 36px; display: flex; flex-direction: column; gap: 5px; }
 .sess-acts li { font-size: 13px; color: #5d564d; }
 .sess-acts .st { color: var(--muted); font-variant-numeric: tabular-nums; margin-right: 6px; }
+
+/* ---- Mobile (telefon) ---- */
+@media (max-width:600px){
+  .topbar-brand{font-size:19px}
+  .whoami{font-size:11px;max-width:42vw;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .topbar .btn-sm{padding:6px 11px;font-size:12px}
+  .view-title{font-size:22px;margin-top:24px;padding-top:18px}
+  .kpi{padding:12px 13px}
+  .kpi b{font-size:22px}
+  .kpi-ico{font-size:16px}
+  .card{padding:14px 14px}
+  .card h3{font-size:18px}
+  .donut{gap:14px}
+  .donut svg{width:140px;height:140px}
+  .donut-legend{min-width:140px}
+  .chart{height:130px}
+  .chart .clab{font-size:8.5px}
+  /* sesje */
+  .sess summary{font-size:12.5px;line-height:1.5;padding:11px 32px 11px 14px;position:relative}
+  .sess summary::after{position:absolute;right:14px;top:12px;float:none}
+  .sess-acts{padding:2px 14px 12px 16px}
+  .sess-acts li{font-size:12.5px;line-height:1.4}
+  .stats-note{font-size:12px}
+}
