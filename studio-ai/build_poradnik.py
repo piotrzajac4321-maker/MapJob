@@ -20,6 +20,7 @@ CATS = [
     ("stylizacje", "Stylizacje i pomysły"),
     ("praktyka", "Praktyczne porady dla rodziców"),
     ("poradnik", "O sesji i cenach"),
+    ("miasta", "Sesja online w Twoim mieście"),
 ]
 CAT_LABEL = dict(CATS)
 
