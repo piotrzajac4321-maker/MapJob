@@ -105,7 +105,7 @@ def render_article(a, arts):
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="facebook-domain-verification" content="dyrtytfse94l6nab1tvz24byua18zn" />
-  <script src="/js/pixel.js?v=2"></script>
+  <script src="/js/pixel.js?v=3"></script>
   <title>%(title)s | BoboFoto</title>
   <meta name="description" content="%(desc)s" />
   <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1" />
@@ -204,7 +204,7 @@ def render_hub(arts):
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="facebook-domain-verification" content="dyrtytfse94l6nab1tvz24byua18zn" />
-  <script src="/js/pixel.js?v=2"></script>
+  <script src="/js/pixel.js?v=3"></script>
   <title>Poradnik BoboFoto — zdjęcia i sesje noworodkowe</title>
   <meta name="description" content="Poradnik BoboFoto: jak zrobić piękne zdjęcia noworodka, ile kosztuje sesja noworodkowa, pomysły na stylizacje i sesje sezonowe. Praktyczne wskazówki dla rodziców." />
   <meta name="robots" content="index, follow, max-image-preview:large" />
