@@ -259,10 +259,10 @@ def render_hub(arts):
     }
 
 def render_sitemap(arts):
-    core = ["/", "/poradnik", "/regulamin", "/polityka-prywatnosci", "/cookies"]
+    core = ["/", "/poradnik", "/konkurs", "/regulamin", "/polityka-prywatnosci", "/cookies"]
     urls = []
     for u in core:
-        pr = "1.0" if u == "/" else ("0.8" if u == "/poradnik" else "0.3")
+        pr = "1.0" if u == "/" else ("0.8" if u in ("/poradnik", "/konkurs") else "0.3")
         urls.append("  <url><loc>%s%s</loc><priority>%s</priority></url>" % (BASE, u, pr))
     for a in arts:
         urls.append("  <url><loc>%s/poradnik/%s</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>" % (BASE, a["slug"]))
