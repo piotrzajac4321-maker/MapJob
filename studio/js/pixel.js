@@ -3,7 +3,7 @@
  * Gdy PIXEL_ID jest pusty → nic się nie ładuje (strona działa normalnie). */
 (function () {
   "use strict";
-  var PIXEL_ID = ""; // <-- WKLEJ TU Meta Pixel ID (same cyfry)
+  var PIXEL_ID = "2611183012610966"; // BoboFoto (pixel „MapJob") — śledzenie ruchu z bobofoto.pl
   if (!PIXEL_ID) return;
 
   // Standardowy kod bazowy Meta Pixel
