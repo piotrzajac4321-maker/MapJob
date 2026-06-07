@@ -475,25 +475,38 @@ document.addEventListener("DOMContentLoaded", () => {
     btn.addEventListener("click", () => setPlan(btn.dataset.plan, { force: true }));
   });
 
-  /* ---- Przed / Po (przeciąganie; pion = scroll dzięki touch-action: pan-y) ---- */
+  /* ---- Przed / Po (poziom = suwak, pion = scroll; blokada gestu „cofnij/zamknij" w in-app browserach np. Messenger) ---- */
   document.querySelectorAll("[data-ba]").forEach(ba => {
-    let dragging = false;
+    let dragging = false, sx = 0, sy = 0, axis = null;
     const setFromX = (clientX) => {
       const r = ba.getBoundingClientRect();
       let p = ((clientX - r.left) / r.width) * 100;
-      p = Math.max(0, Math.min(100, p));
-      ba.style.setProperty("--pos", p + "%");
+      ba.style.setProperty("--pos", Math.max(0, Math.min(100, p)) + "%");
     };
+    // mysz / desktop
     ba.addEventListener("pointerdown", (e) => {
+      if (e.pointerType && e.pointerType !== "mouse") return;
       dragging = true;
       try { ba.setPointerCapture(e.pointerId); } catch (err) {}
       setFromX(e.clientX);
     });
-    ba.addEventListener("pointermove", (e) => { if (dragging) setFromX(e.clientX); });
+    ba.addEventListener("pointermove", (e) => {
+      if (e.pointerType && e.pointerType !== "mouse") return;
+      if (dragging) setFromX(e.clientX);
+    });
     const stop = () => { dragging = false; };
     ba.addEventListener("pointerup", stop);
     ba.addEventListener("pointercancel", stop);
     window.addEventListener("pointerup", stop);
+    // dotyk — rozróżniamy gest poziomy (suwak) od pionowego (scroll strony)
+    ba.addEventListener("touchstart", (e) => {
+      const t = e.touches[0]; sx = t.clientX; sy = t.clientY; axis = null;
+    }, { passive: true });
+    ba.addEventListener("touchmove", (e) => {
+      const t = e.touches[0];
+      if (axis === null) axis = Math.abs(t.clientX - sx) > Math.abs(t.clientY - sy) ? "x" : "y";
+      if (axis === "x") { e.preventDefault(); setFromX(t.clientX); } // blokuje swipe „wstecz" w Messengerze/FB
+    }, { passive: false });
   });
 
   /* ---- Zgody: „zaznacz wszystkie" ---- */
