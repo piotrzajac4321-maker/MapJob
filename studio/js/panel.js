@@ -526,10 +526,14 @@
     var sessions = Object.keys(map).map(function (s) {
       var list = map[s].slice().sort(function (a, b) { return new Date(a.created_at) - new Date(b.created_at); });
       var first = new Date(list[0].created_at), last = new Date(list[list.length - 1].created_at);
+      var sek = 0, scr = 0;
+      list.forEach(function (e) { if (e.typ === "czas" && e.meta) { if ((e.meta.sekundy || 0) > sek) sek = e.meta.sekundy; if ((e.meta.scroll || 0) > scr) scr = e.meta.scroll; } });
+      var acts = list.filter(function (e) { return e.typ !== "czas"; });
+      var durFL = Math.round((last - first) / 1000);
       return {
-        first: first, last: last, dur: Math.round((last - first) / 1000),
-        dev: list[0].urzadzenie, src: list[0].referrer, n: list.length,
-        order: list.some(function (x) { return x.typ === "order"; }), acts: list
+        first: first, last: last, dur: Math.max(sek, durFL), scroll: scr,
+        dev: list[0].urzadzenie, src: list[0].referrer, n: acts.length || list.length,
+        order: list.some(function (x) { return x.typ === "order"; }), acts: acts.length ? acts : list
       };
     }).sort(function (a, b) { return b.last - a.last; }).slice(0, 40);
 
@@ -537,7 +541,8 @@
     box.innerHTML = sessions.map(function (s) {
       var dur = s.dur >= 60 ? (Math.floor(s.dur / 60) + " min " + (s.dur % 60) + " s") : (s.dur > 0 ? s.dur + " s" : "<1 s");
       var head = "🕒 " + fmtDate(s.first.toISOString()) + " · " + (s.dev === "mobile" ? "📱" : "💻") + " " +
-        esc(s.dev || "?") + " · źródło: " + esc(s.src || "—") + " · ⏱ " + dur + " · " + s.n + " akcji" +
+        esc(s.dev || "?") + " · źródło: " + esc(s.src || "—") + " · ⏱ " + dur +
+        (s.scroll ? " · przewinął " + s.scroll + "%" : "") + " · " + s.n + " akcji" +
         (s.order ? " · 🛒 ZAMÓWIENIE" : "");
       var rows = s.acts.map(function (a) {
         var t = new Date(a.created_at).toLocaleTimeString("pl-PL");
