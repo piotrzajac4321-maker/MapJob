@@ -514,6 +514,41 @@
     barsInto("#topClicks", countBy(clicks, "nazwa"), 8);
     barsInto("#devices", countBy(views, "urzadzenie"), 5);
     barsInto("#sources", countBy(views, "referrer"), 8);
+    renderSessions(ev);
+  }
+
+  /* ---- Ostatnie sesje: co kto robił, ile spędził na stronie ---- */
+  function renderSessions(ev) {
+    var box = $("#sessionsList");
+    if (!box) return;
+    var map = {};
+    ev.forEach(function (e) { var s = e.sesja || "?"; (map[s] = map[s] || []).push(e); });
+    var sessions = Object.keys(map).map(function (s) {
+      var list = map[s].slice().sort(function (a, b) { return new Date(a.created_at) - new Date(b.created_at); });
+      var first = new Date(list[0].created_at), last = new Date(list[list.length - 1].created_at);
+      return {
+        first: first, last: last, dur: Math.round((last - first) / 1000),
+        dev: list[0].urzadzenie, src: list[0].referrer, n: list.length,
+        order: list.some(function (x) { return x.typ === "order"; }), acts: list
+      };
+    }).sort(function (a, b) { return b.last - a.last; }).slice(0, 40);
+
+    if (!sessions.length) { box.innerHTML = '<p class="muted">Brak danych o sesjach.</p>'; return; }
+    box.innerHTML = sessions.map(function (s) {
+      var dur = s.dur >= 60 ? (Math.floor(s.dur / 60) + " min " + (s.dur % 60) + " s") : (s.dur > 0 ? s.dur + " s" : "<1 s");
+      var head = "🕒 " + fmtDate(s.first.toISOString()) + " · " + (s.dev === "mobile" ? "📱" : "💻") + " " +
+        esc(s.dev || "?") + " · źródło: " + esc(s.src || "—") + " · ⏱ " + dur + " · " + s.n + " akcji" +
+        (s.order ? " · 🛒 ZAMÓWIENIE" : "");
+      var rows = s.acts.map(function (a) {
+        var t = new Date(a.created_at).toLocaleTimeString("pl-PL");
+        var ico = a.typ === "view" ? "👁️" : (a.typ === "order" ? "🛒" : "👆");
+        var label = a.typ === "view" ? ("wszedł na: " + (a.sciezka || "/"))
+          : (a.typ === "order" ? "złożył zamówienie" : ("kliknął: " + (a.nazwa || "")));
+        return '<li><span class="st">' + t + "</span> " + ico + " " + esc(label) + "</li>";
+      }).join("");
+      return '<details class="sess' + (s.order ? " is-order" : "") + '"><summary>' + head +
+        '</summary><ol class="sess-acts">' + rows + "</ol></details>";
+    }).join("");
   }
 
   function uniq(a) { return a.filter(function (v, i, s) { return v && s.indexOf(v) === i; }); }

@@ -6,7 +6,7 @@
   <meta name="robots" content="noindex, nofollow" />
   <title>BoboFoto — Panel admina</title>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="css/panel.css?v=4" />
+  <link rel="stylesheet" href="css/panel.css?v=5" />
 </head>
 <body>
 
@@ -102,6 +102,10 @@
         </div>
       </div>
       <p class="stats-note">Dane anonimowe (bez danych osobowych). Aktualizują się na żywo przy każdym odświeżeniu.</p>
+
+      <h2 class="view-title">🧑‍💻 Ostatnie sesje — co kto robił</h2>
+      <div id="sessionsList" class="sessions"></div>
+      <p class="stats-note">Każda sesja to jeden anonimowy odwiedzający: kolejność wejść i klików oraz czas na stronie (różnica między pierwszą a ostatnią akcją). Rozwiń sesję, by zobaczyć krok po kroku.</p>
     </section>
   </div>
 
@@ -109,6 +113,6 @@
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
-  <script src="js/panel.js?v=4"></script>
+  <script src="js/panel.js?v=5"></script>
 </body>
 </html>
