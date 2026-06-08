@@ -79,6 +79,29 @@ document.addEventListener("DOMContentLoaded", () => {
   }
   function escapeHtml(s) { return String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c])); }
 
+  // Jednorazowy przewodnik „co dalej" — pokazuje się po wybraniu pierwszego zdjęcia
+  let flowGuideShown = false;
+  function showFlowGuide() {
+    if (flowGuideShown) return;
+    flowGuideShown = true;
+    const g = document.createElement("div");
+    g.className = "flow-guide";
+    g.innerHTML =
+      '<button class="fg-close" type="button" aria-label="Zamknij">✕</button>' +
+      '<h4>♥ Dodano do wyboru! Co dalej?</h4>' +
+      '<ol>' +
+        '<li>Zaznacz <strong>serduszkiem ♥</strong> wszystkie zdjęcia, które Ci się podobają.</li>' +
+        '<li>Kliknij <strong>„Zamów spersonalizowane →"</strong> na dole ekranu.</li>' +
+        '<li>Przy każdym zdjęciu napisz, co zmienić, i <strong>prześlij własne zdjęcie</strong> maluszka.</li>' +
+        '<li>Zapłać online (BLIK lub karta). Gotowe kadry odbierasz <strong>w ~10 godzin</strong>.</li>' +
+      '</ol>';
+    document.body.appendChild(g);
+    requestAnimationFrame(() => g.classList.add("show"));
+    const close = () => { g.classList.remove("show"); setTimeout(() => g.remove(), 320); };
+    g.querySelector(".fg-close").addEventListener("click", close);
+    setTimeout(close, 10000);
+  }
+
   function setPlan(plan, opts) {
     opts = opts || {};
     // nie pozwól zejść do pakietu mniejszego niż liczba już wybranych zdjęć
@@ -163,6 +186,7 @@ document.addEventListener("DOMContentLoaded", () => {
       selected.set(item.f, { item, note: "" });
       fig && fig.classList.add("selected");
       fig && (fig.querySelector(".sel-btn").textContent = "♥");
+      if (selected.size === 1) showFlowGuide();
       // pakiet sam dopasowuje się do liczby zdjęć (w górę)
       if (PLAN_LIMIT[currentPlan] < selected.size) {
         const np = planFor(selected.size);
@@ -472,7 +496,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
   /* ---- Wybór pakietu z cennika ("Wybieram…") -> ustaw pakiet ---- */
   document.querySelectorAll("[data-plan][data-price]").forEach(btn => {
-    btn.addEventListener("click", () => setPlan(btn.dataset.plan, { force: true }));
+    btn.addEventListener("click", () => {
+      setPlan(btn.dataset.plan, { force: true });
+      if (selected.size === 0) {
+        toast("👇 Teraz kliknij serduszko ♥ przy zdjęciach, które Ci się podobają");
+      }
+    });
   });
 
   /* ---- Przed / Po (poziom = suwak, pion = scroll; blokada gestu „cofnij/zamknij" w in-app browserach np. Messenger) ---- */
