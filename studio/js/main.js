@@ -75,7 +75,7 @@ document.addEventListener("DOMContentLoaded", () => {
     t.textContent = msg;
     t.classList.add("show");
     clearTimeout(toastTimer);
-    toastTimer = setTimeout(() => t.classList.remove("show"), 2800);
+    toastTimer = setTimeout(() => t.classList.remove("show"), 3600);
   }
   function escapeHtml(s) { return String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c])); }
 
@@ -166,6 +166,7 @@ document.addEventListener("DOMContentLoaded", () => {
       // klik w serce -> wybór
       fig.querySelector(".sel-btn").addEventListener("click", (e) => {
         e.stopPropagation();
+        e.preventDefault();
         toggleSelect(item, fig);
       });
       galleryEl.appendChild(fig);
