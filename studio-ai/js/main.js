@@ -49,6 +49,7 @@ document.addEventListener("DOMContentLoaded", () => {
      PAKIETY — limit liczby zdjęć wg pakietu
      =========================================================== */
   const PLAN_LIMIT = { mini: 1, standard: 4, premium: 10 };
+  const PLAN_PRICE = { mini: 24, standard: 49, premium: 99 };
   const PLAN_NEXT  = { mini: "standard", standard: "premium" };
   const PLAN_NAME  = { mini: "Mini", standard: "Standard", premium: "Premium" };
   // Linki płatności Stripe (LIVE) wg pakietu
@@ -173,29 +174,73 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
+  // poprawna odmiana: 1 zdjęcie / 2-4 zdjęcia / 5+ zdjęć
+  function photoWord(n) {
+    if (n === 1) return "zdjęcie";
+    const d = n % 10, h = n % 100;
+    return (d >= 2 && d <= 4 && (h < 10 || h >= 20)) ? "zdjęcia" : "zdjęć";
+  }
+
+  // doda zdjęcie do wyboru
+  function doAddPhoto(item, fig) {
+    selected.set(item.f, { item, note: "" });
+    fig && fig.classList.add("selected");
+    fig && (fig.querySelector(".sel-btn").textContent = "♥");
+    if (selected.size === 1) showFlowGuide();
+    updateCartBar();
+  }
+
+  // pyta klienta, czy chce zwiększyć pakiet (bez wciskania na siłę)
+  function askUpgrade(next, onYes) {
+    const pName = PLAN_NAME[currentPlan], pLimit = PLAN_LIMIT[currentPlan];
+    const nName = PLAN_NAME[next], nLimit = PLAN_LIMIT[next], nPrice = PLAN_PRICE[next];
+    const el = document.createElement("div");
+    el.className = "confirm-modal";
+    el.innerHTML =
+      '<div class="cm-box">' +
+        '<h4>Dodać więcej zdjęć?</h4>' +
+        '<p>Twój pakiet <strong>' + pName + '</strong> obejmuje ' + pLimit + ' ' + photoWord(pLimit) + '. ' +
+        'Aby wybrać więcej, przejdziesz na pakiet <strong>' + nName + '</strong> — ' + nLimit + ' ' + photoWord(nLimit) +
+        ' za <strong>' + nPrice + ' zł</strong>. Decyzja należy do Ciebie.</p>' +
+        '<div class="cm-actions">' +
+          '<button type="button" class="btn btn-ghost cm-no">Nie, zostaw ' + pName + '</button>' +
+          '<button type="button" class="btn btn-primary cm-yes">Tak, biorę ' + nName + '</button>' +
+        '</div>' +
+      '</div>';
+    document.body.appendChild(el);
+    requestAnimationFrame(() => el.classList.add("show"));
+    const close = () => { el.classList.remove("show"); setTimeout(() => el.remove(), 250); };
+    el.querySelector(".cm-yes").addEventListener("click", () => { close(); onYes(); });
+    el.querySelector(".cm-no").addEventListener("click", () => {
+      close();
+      toast("Zostajemy przy pakiecie " + pName + " — " + pLimit + " " + photoWord(pLimit) + ".");
+    });
+    el.addEventListener("click", (e) => { if (e.target === el) close(); });
+  }
+
   function toggleSelect(item, fig) {
     if (selected.has(item.f)) {
       selected.delete(item.f);
       fig && fig.classList.remove("selected");
       fig && (fig.querySelector(".sel-btn").textContent = "♡");
-    } else {
-      // maksymalnie 10 zdjęć
-      if (selected.size >= MAX_PHOTOS) {
-        toast("Możesz wybrać maksymalnie " + MAX_PHOTOS + " zdjęć (pakiet Premium).");
-        return;
-      }
-      selected.set(item.f, { item, note: "" });
-      fig && fig.classList.add("selected");
-      fig && (fig.querySelector(".sel-btn").textContent = "♥");
-      if (selected.size === 1) showFlowGuide();
-      // pakiet sam dopasowuje się do liczby zdjęć (w górę)
-      if (PLAN_LIMIT[currentPlan] < selected.size) {
-        const np = planFor(selected.size);
-        setPlan(np, { force: true });
-        toast("Pakiet zmieniony na " + PLAN_NAME[np] + " — " + PLAN_LIMIT[np] + " zdjęć.");
-      }
+      updateCartBar();
+      return;
     }
-    updateCartBar();
+    // maksymalnie 10 zdjęć
+    if (selected.size >= MAX_PHOTOS) {
+      toast("Możesz wybrać maksymalnie " + MAX_PHOTOS + " zdjęć (pakiet Premium).");
+      return;
+    }
+    // jeśli dodanie tego zdjęcia przekroczy obecny pakiet — najpierw zapytaj
+    if (selected.size >= PLAN_LIMIT[currentPlan]) {
+      const np = planFor(selected.size + 1);
+      askUpgrade(np, () => {
+        setPlan(np, { force: true });
+        doAddPhoto(item, fig);
+      });
+      return;
+    }
+    doAddPhoto(item, fig);
   }
 
   /* ---- Pasek koszyka ---- */
