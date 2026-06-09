@@ -16,7 +16,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="css/style.css?v=47" />
-  <link rel="stylesheet" href="css/v2.css?v=8" />
+  <link rel="stylesheet" href="css/v2.css?v=9" />
 </head>
 <body class="v2">
 
@@ -36,7 +36,7 @@
       <div class="container">
         <a href="#start" class="brand">Bobo<span>Foto</span><small>studio zdjęć noworodkowych</small></a>
         <nav class="nav-links" id="navLinks">
-          <a href="#przyklady">Przykłady</a>
+          <a href="#start">Przykłady</a>
           <a href="#jak">Jak to działa</a>
           <a href="#galeria">Stylizacje</a>
           <a href="#cennik">Cennik</a>
@@ -49,55 +49,34 @@
 
   <!-- ============ HERO — od razu jasne, co to jest ============ -->
   <section class="v2-hero" id="start">
-    <div class="container">
-      <div class="v2-hero-grid">
-        <div class="v2-hero-copy">
-          <span class="v2-pill">📷 Sesja noworodka i dziecka online</span>
-          <h1>Zmień zdjęcie w&nbsp;<em>profesjonalną sesję swojego dziecka</em></h1>
-          <p class="v2-lead">Wyślij jedno zdjęcie, wybierz tło — a my przygotujemy zdjęcia jak ze studia. <b>Bez wychodzenia z domu.</b></p>
-          <div class="v2-choice" role="group" aria-label="Wybierz rodzaj sesji">
-            <button type="button" class="v2-choice-btn is-active" data-age="noworodek">👶 Noworodek</button>
-            <button type="button" class="v2-choice-btn" data-age="dziecko">🧒 Starsze dziecko</button>
-          </div>
-          <div class="v2-bullets">
-            <span>✅ Twarz dziecka bez zmian</span>
-            <span>⚡ Gotowe w ~10 h</span>
-            <span>💸 Już od 9,90 zł / zdjęcie</span>
-          </div>
-          <div class="v2-social">
-            <div class="v2-avatars"><span>A</span><span>K</span><span>M</span><span>E</span><span>N</span></div>
-            <div class="v2-social-txt"><span class="v2-stars">★★★★★</span> <b>5,0</b> &nbsp;·&nbsp; zadowolone mamy z całej Polski</div>
-          </div>
-          <div class="hero-cta">
-            <a href="#cennik" class="btn btn-primary btn-lg">Zamów sesję →</a>
-            <a href="#przyklady" class="btn btn-ghost btn-lg">Zobacz przykłady</a>
-          </div>
-          <p class="v2-microcopy">Pakiety 24–99 zł (Premium = 10 zdjęć, czyli 9,90 zł/szt.) · BLIK/karta · gwarancja zwrotu</p>
-        </div>
+    <div class="container v2-hero-stack">
+      <span class="v2-pill">📷 Sesja noworodka i dziecka online</span>
+      <h1>Zmień zdjęcie w&nbsp;<em>profesjonalną sesję zdjęciową</em></h1>
+      <p class="v2-lead">Wyślij jedno zdjęcie, wybierz tło — a my przygotujemy zdjęcia jak ze studia. <b>Bez wychodzenia z domu.</b></p>
 
-        <!-- przykład PRZED/PO od razu w hero -->
-        <div class="v2-hero-demo">
-          <div class="ba" data-ba style="--pos:50%">
-            <img class="ba-img ba-before" src="https://d8j0ntlcm91z4.cloudfront.net/user_3EL0T26twgaFdlHuM3eJuT2XjHR/hf_20260604_222839_89b0e61c-6229-43b8-a1e1-1c73aeb57dec_min.webp" alt="Zdjęcie przed obróbką" />
-            <img class="ba-img ba-after" src="https://d8j0ntlcm91z4.cloudfront.net/user_3EL0T26twgaFdlHuM3eJuT2XjHR/hf_20260604_215500_bcf31546-efd1-4746-b8c8-bdd09d7ec8c7_min.webp" alt="Zdjęcie po obróbce" />
-            <span class="ba-tag ba-tag-before">PRZED</span><span class="ba-tag ba-tag-after">PO</span><span class="ba-divider"></span>
-          </div>
-          <p class="v2-demo-hint">👆 Przeciągnij suwak</p>
-        </div>
-      </div>
-    </div>
-  </section>
+      <!-- PRZYKŁADY od razu pod nagłówkiem -->
+      <div class="bac-grid" id="bacGrid" aria-label="Przykłady przed i po"></div>
+      <p class="v2-examples-note">👆 Tak zwykłe zdjęcie z telefonu (<b>PRZED</b>) zmienia się w profesjonalny kadr (<b>PO</b>) — twarz dziecka bez zmian</p>
 
-  <!-- ============ PRZYKŁADY (od razu, na górze) ============ -->
-  <section class="section section-alt" id="przyklady">
-    <div class="container">
-      <div class="section-head reveal">
-        <span class="eyebrow">Efekty naszych klientów</span>
-        <h2>Zmień zdjęcie w profesjonalną sesję zdjęciową</h2>
-        <p>Zobacz, jak zwykłe zdjęcie z telefonu (<b>PRZED</b>) staje się profesjonalnym kadrem (<b>PO</b>) — bez zmiany twarzy dziecka.</p>
+      <div class="v2-choice" role="group" aria-label="Wybierz rodzaj sesji">
+        <button type="button" class="v2-choice-btn is-active" data-age="noworodek">👶 Noworodek</button>
+        <button type="button" class="v2-choice-btn" data-age="dziecko">🧒 Starsze dziecko</button>
       </div>
+      <div class="v2-bullets">
+        <span>✅ Twarz dziecka bez zmian</span>
+        <span>⚡ Gotowe w ~10 h</span>
+        <span>💸 Już od 9,90 zł / zdjęcie</span>
+      </div>
+      <div class="v2-social">
+        <div class="v2-avatars"><span>A</span><span>K</span><span>M</span><span>E</span><span>N</span></div>
+        <div class="v2-social-txt"><span class="v2-stars">★★★★★</span> <b>5,0</b> &nbsp;·&nbsp; zadowolone mamy z całej Polski</div>
+      </div>
+      <div class="hero-cta">
+        <a href="#cennik" class="btn btn-primary btn-lg">Zamów sesję →</a>
+        <a href="#galeria" class="btn btn-ghost btn-lg">Zobacz stylizacje</a>
+      </div>
+      <p class="v2-microcopy">Pakiety 24–99 zł (Premium = 10 zdjęć, czyli 9,90 zł/szt.) · BLIK/karta · gwarancja zwrotu</p>
     </div>
-    <div class="container"><div class="bac-grid" id="bacGrid"></div></div>
   </section>
 
   <!-- pasmo CTA -->
@@ -229,7 +208,7 @@
         </div>
         <div>
           <h4>Strona</h4>
-          <a href="#przyklady">Przykłady</a>
+          <a href="#start">Przykłady</a>
           <a href="#jak">Jak to działa</a>
           <a href="#galeria">Stylizacje</a>
           <a href="#cennik">Cennik</a>
