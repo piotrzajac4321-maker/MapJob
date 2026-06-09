@@ -121,6 +121,16 @@ body.v2{ padding-bottom:74px; }
 }
 /* gdy mamy aktywny koszyk (wybrane zdjęcia) — chowamy dolny pasek, by nie nakładał się z koszykiem */
 body.v2.cart-active .v2-bottombar{ transform:translateY(130%); }
+/* desktop: nie rozciągaj na całą szerokość — elegancki, wyśrodkowany, zaokrąglony pasek */
+@media (min-width:760px){
+  .v2-bottombar{
+    left:50%; right:auto; transform:translateX(-50%); bottom:18px;
+    width:auto; max-width:740px; border-radius:999px;
+    justify-content:center; gap:26px; padding:12px 16px 12px 26px;
+    box-shadow:0 18px 44px -14px rgba(0,0,0,.5);
+  }
+  body.v2.cart-active .v2-bottombar{ transform:translateX(-50%) translateY(200%); }
+}
 
 /* ===== KAFELKI PRZED→PO (zdjęcie samo się zmienia) ===== */
 .bac-grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:16px; max-width:1000px; margin:0 auto; }
