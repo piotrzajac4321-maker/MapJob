@@ -203,8 +203,8 @@ document.addEventListener("DOMContentLoaded", () => {
         'Aby wybrać więcej, przejdziesz na pakiet <strong>' + nName + '</strong> — ' + nLimit + ' ' + photoWord(nLimit) +
         ' za <strong>' + nPrice + ' zł</strong>. Decyzja należy do Ciebie.</p>' +
         '<div class="cm-actions">' +
-          '<button type="button" class="btn btn-ghost cm-no">Nie, zostaw ' + pName + '</button>' +
-          '<button type="button" class="btn btn-primary cm-yes">Tak, biorę ' + nName + '</button>' +
+          '<button type="button" class="btn btn-ghost cm-yes">Tak, dodaj — ' + nName + ' (' + nPrice + ' zł)</button>' +
+          '<button type="button" class="btn btn-primary cm-no">Zostaję przy ' + pName + '</button>' +
         '</div>' +
       '</div>';
     document.body.appendChild(el);
@@ -223,6 +223,9 @@ document.addEventListener("DOMContentLoaded", () => {
       selected.delete(item.f);
       fig && fig.classList.remove("selected");
       fig && (fig.querySelector(".sel-btn").textContent = "♡");
+      // pakiet schodzi w dół do faktycznej liczby zdjęć (nie zostawiamy zawyżonego)
+      const fit = planFor(selected.size);
+      if (PLAN_LIMIT[fit] < PLAN_LIMIT[currentPlan]) setPlan(fit, { force: true });
       updateCartBar();
       return;
     }
