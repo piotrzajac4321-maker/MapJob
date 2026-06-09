@@ -12,7 +12,7 @@
 .btn-lg{ padding:16px 30px; font-size:16px; }
 
 /* ===== HERO ===== */
-.v2-hero{ padding:46px 0 40px; background:
+.v2-hero{ padding:calc(var(--promo-h,40px) + 92px) 0 40px; background:
   radial-gradient(120% 120% at 85% 0%, var(--cream-2,#f3ece2) 0%, var(--cream,#faf6f0) 55%); }
 .v2-hero-grid{ display:grid; grid-template-columns:1.05fr .95fr; gap:46px; align-items:center; }
 .v2-hero-copy h1{
@@ -92,7 +92,7 @@
   .v2-lead{ max-width:none; }
 }
 @media (max-width:640px){
-  .v2-hero{ padding:30px 0 26px; }
+  .v2-hero{ padding:calc(var(--promo-h,40px) + 76px) 0 26px; }
   .v2-steps{ grid-template-columns:1fr; }
   .v2-bullets{ gap:8px 14px; }
   .v2-bullets span{ font-size:13.5px; }
