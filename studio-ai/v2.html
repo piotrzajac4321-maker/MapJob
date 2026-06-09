@@ -16,7 +16,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="css/style.css?v=47" />
-  <link rel="stylesheet" href="css/v2.css?v=2" />
+  <link rel="stylesheet" href="css/v2.css?v=3" />
 </head>
 <body class="v2">
 
@@ -52,9 +52,13 @@
     <div class="container">
       <div class="v2-hero-grid">
         <div class="v2-hero-copy">
-          <span class="v2-pill">📷 Sesja noworodkowa online</span>
-          <h1>Zwykłe zdjęcie z telefonu zmieniamy w&nbsp;<em>profesjonalną sesję noworodkową</em></h1>
-          <p class="v2-lead">Wyślij jedno zdjęcie maluszka, wybierz tło — a my przygotujemy zdjęcia jak ze studia. <b>Bez wychodzenia z domu.</b></p>
+          <span class="v2-pill">📷 Sesja noworodka i dziecka online</span>
+          <h1>Zwykłe zdjęcie z telefonu zmieniamy w&nbsp;<em>profesjonalną sesję Twojego dziecka</em></h1>
+          <p class="v2-lead">Wyślij jedno zdjęcie, wybierz tło — a my przygotujemy zdjęcia jak ze studia. <b>Bez wychodzenia z domu.</b></p>
+          <div class="v2-choice" role="group" aria-label="Wybierz rodzaj sesji">
+            <button type="button" class="v2-choice-btn is-active" data-age="noworodek">👶 Noworodek</button>
+            <button type="button" class="v2-choice-btn" data-age="dziecko">🧒 Starsze dziecko</button>
+          </div>
           <div class="v2-bullets">
             <span>✅ Twarz dziecka bez zmian</span>
             <span>⚡ Gotowe w ~10 h</span>
@@ -134,41 +138,8 @@
     </div>
   </section>
 
-  <!-- ============ JAKIE ZDJĘCIE WYSŁAĆ (Dobre vs Unikaj) ============ -->
-  <section class="section section-alt" id="jakie-zdjecie">
-    <div class="container">
-      <div class="section-head reveal">
-        <span class="eyebrow">Najlepszy efekt</span>
-        <h2>Jakie zdjęcie maluszka wysłać?</h2>
-        <p>Im lepsze zdjęcie wyjściowe, tym piękniejszy efekt. Wystarczy zwykły telefon.</p>
-      </div>
-      <div class="v2-tips">
-        <div class="v2-tip good reveal">
-          <h3>✅ Dobre</h3>
-          <ul>
-            <li>Tylko maluszek, z bliska</li>
-            <li>Światło dzienne (przy oknie)</li>
-            <li>Wyraźna, ostra twarz</li>
-            <li>Gładkie, jasne tło / kocyk</li>
-            <li>Zdjęcie zrobione z góry lub z boku</li>
-          </ul>
-        </div>
-        <div class="v2-tip bad reveal">
-          <h3>❌ Unikaj</h3>
-          <ul>
-            <li>Ciemnych zdjęć i żółtego światła żarówki</li>
-            <li>Rozmazanych, nieostrych ujęć</li>
-            <li>Lampy / flesza</li>
-            <li>Bałaganu w tle</li>
-            <li>Filtrów z aplikacji</li>
-          </ul>
-        </div>
-      </div>
-    </div>
-  </section>
-
   <!-- ============ GALERIA STYLIZACJI (interaktywna) ============ -->
-  <section class="section" id="galeria">
+  <section class="section section-alt" id="galeria">
     <div class="container">
       <div class="section-head reveal">
         <span class="eyebrow">Wybierz styl</span>
@@ -305,6 +276,12 @@
     <span class="pricebar-cta">Zamów teraz <span class="pb-arrow">→</span></span>
   </a>
 
+  <!-- pełnoszerokowy pasek CTA na dole (kolory BoboFoto) -->
+  <a class="v2-bottombar" href="#cennik" aria-label="Zamów sesję">
+    <span class="v2-bb-info"><b>Sesja już od 9,90 zł / zdjęcie</b><small>⚡ gotowe w ~10 h · gwarancja zwrotu</small></span>
+    <span class="v2-bb-btn">Zamów teraz →</span>
+  </a>
+
   <div class="cart-bar" id="cartBar" aria-hidden="true">
     <span class="cart-count">♥ Wybrane: <strong id="cartCount">0</strong></span>
     <button class="btn btn-primary" id="cartOpen" type="button">Zamów spersonalizowane →</button>
@@ -319,8 +296,12 @@
       <div class="cart-items" id="cartItems"></div>
       <form class="cart-form" id="cartForm" novalidate>
         <div class="retouch-box">
-          <h4>✨ Retusz / przeróbka Twojego zdjęcia</h4>
-          <p class="retouch-sub">Dodaj <b>własne zdjęcie</b> i opisz, co zmienić — zajmiemy się resztą.</p>
+          <h4>✨ Dodaj zdjęcie swojego dziecka</h4>
+          <p class="retouch-sub">Prześlij <b>własne zdjęcie</b> (i opcjonalnie opisz, co zmienić) — zajmiemy się resztą.</p>
+          <div class="v2-tips v2-tips-compact">
+            <div class="v2-tip good"><h3>✅ Dobre zdjęcie</h3><ul><li>Tylko dziecko, z bliska</li><li>Światło dzienne (przy oknie)</li><li>Wyraźna, ostra twarz</li><li>Gładkie, jasne tło</li></ul></div>
+            <div class="v2-tip bad"><h3>❌ Unikaj</h3><ul><li>Ciemnych / żółtych zdjęć</li><li>Rozmazania i flesza</li><li>Bałaganu w tle</li><li>Filtrów z aplikacji</li></ul></div>
+          </div>
           <label class="file-drop" for="c-foto">
             <input type="file" id="c-foto" name="foto" accept="image/*" multiple hidden />
             <span class="file-ico">📷</span>
@@ -385,6 +366,20 @@
     <img id="lbImg" src="" alt="" />
     <button class="lb-nav lb-next" id="lbNext" aria-label="Następne">›</button>
   </div>
+
+  <!-- przełącznik noworodek / dziecko (podgląd) -->
+  <script>
+    (function(){
+      var btns = document.querySelectorAll('.v2-choice-btn');
+      btns.forEach(function(b){
+        b.addEventListener('click', function(){
+          btns.forEach(function(x){ x.classList.remove('is-active'); });
+          b.classList.add('is-active');
+          try { localStorage.setItem('bf_age', b.dataset.age); } catch(e){}
+        });
+      });
+    })();
+  </script>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="js/gallery-data.js?v=34"></script>
