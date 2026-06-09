@@ -16,7 +16,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="css/style.css?v=47" />
-  <link rel="stylesheet" href="css/v2.css?v=6" />
+  <link rel="stylesheet" href="css/v2.css?v=7" />
 </head>
 <body class="v2">
 
@@ -93,8 +93,8 @@
     <div class="container">
       <div class="section-head reveal">
         <span class="eyebrow">Efekty naszych klientów</span>
-        <h2>Zobacz, jak zmieniamy zdjęcia</h2>
-        <p>Zwykłe zdjęcie z telefonu (<b>PRZED</b>) zamieniamy w profesjonalny kadr (<b>PO</b>) — bez zmiany twarzy dziecka.</p>
+        <h2>Zmień zdjęcie w profesjonalną sesję zdjęciową</h2>
+        <p>Zobacz, jak zwykłe zdjęcie z telefonu (<b>PRZED</b>) staje się profesjonalnym kadrem (<b>PO</b>) — bez zmiany twarzy dziecka.</p>
       </div>
     </div>
     <div class="container"><div class="bac-grid" id="bacGrid"></div></div>
@@ -376,8 +376,7 @@
       if (grid) {
         pairs.forEach(function(p, idx){
           var d = document.createElement('div');
-          d.className = 'bac';
-          d.style.setProperty('--delay', (idx * 1.4) + 's');
+          d.className = 'bac bac' + (idx + 1);
           d.innerHTML =
             '<img class="bac-img" src="'+CDN+p[0]+'_min.webp" alt="Zdjęcie przed obróbką" loading="lazy" />' +
             '<img class="bac-img bac-after" src="'+CDN+p[1]+'_min.webp" alt="Zdjęcie po obróbce" loading="lazy" />' +
