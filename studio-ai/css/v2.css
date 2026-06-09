@@ -107,19 +107,27 @@ body.v2{ padding-bottom:74px; }
 /* gdy mamy aktywny koszyk (wybrane zdjęcia) — chowamy dolny pasek, by nie nakładał się z koszykiem */
 body.v2.cart-active .v2-bottombar{ transform:translateY(130%); }
 
-/* ===== KARUZELA PRZED/PO (auto-slide po jednym) ===== */
-.ba-carousel{ position:relative; max-width:1000px; margin:0 auto; }
-.ba-viewport{ overflow:hidden; }
-.ba-track{ display:flex; gap:18px; transition:transform .6s cubic-bezier(.2,.8,.2,1); will-change:transform; }
-.ba-track > .ba{ flex:0 0 100%; }
-@media (min-width:760px){ .ba-track > .ba{ flex:0 0 calc((100% - 36px)/3); } }
-.ba-arrow{
-  position:absolute; top:50%; transform:translateY(-50%); z-index:6;
-  width:40px; height:40px; border-radius:50%; border:0; background:#fff; color:var(--ink);
-  font-size:20px; cursor:pointer; box-shadow:var(--shadow); display:flex; align-items:center; justify-content:center;
+/* ===== CIĄGŁY PASEK PRZED → PO ===== */
+.ba-flow{ position:relative; overflow:hidden; padding:8px 0; }
+.ba-flow-track{ display:flex; gap:16px; width:max-content; animation:baFlowSlide 48s linear infinite; }
+.ba-flow:hover .ba-flow-track{ animation-play-state:paused; }
+.ba-flow-card{
+  position:relative; flex:0 0 auto; width:210px; aspect-ratio:3/4; border-radius:14px; overflow:hidden;
+  box-shadow:var(--shadow-sm); background:var(--sand,#efe7db);
 }
-.ba-prev{ left:-6px; } .ba-next{ right:-6px; }
-@media (max-width:560px){ .ba-arrow{ width:34px; height:34px; font-size:17px; } .ba-prev{ left:2px; } .ba-next{ right:2px; } }
+.ba-flow-card img{ width:100%; height:100%; object-fit:cover; display:block; }
+.ba-flow-card .lbl{
+  position:absolute; left:10px; bottom:10px; z-index:2; font-size:11.5px; font-weight:800; letter-spacing:.04em;
+  padding:5px 11px; border-radius:999px; color:#fff;
+}
+.ba-flow-card.before .lbl{ background:rgba(40,36,32,.72); }
+.ba-flow-card.after .lbl{ background:var(--sage-d,#5c6b50); }
+.ba-flow-divider{
+  position:absolute; top:0; bottom:0; left:50%; width:3px; transform:translateX(-50%); z-index:4;
+  background:var(--sage-d,#5c6b50); box-shadow:0 0 0 4px rgba(140,156,130,.22);
+}
+@keyframes baFlowSlide{ from{ transform:translateX(0); } to{ transform:translateX(-50%); } }
+@media (max-width:560px){ .ba-flow-card{ width:150px; } }
 
 /* ===== DOBRE / UNIKAJ ===== */
 .v2-tips{ display:grid; grid-template-columns:1fr 1fr; gap:20px; max-width:860px; margin:0 auto; }

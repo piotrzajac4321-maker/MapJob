@@ -16,7 +16,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="css/style.css?v=47" />
-  <link rel="stylesheet" href="css/v2.css?v=4" />
+  <link rel="stylesheet" href="css/v2.css?v=5" />
 </head>
 <body class="v2">
 
@@ -93,22 +93,16 @@
     <div class="container">
       <div class="section-head reveal">
         <span class="eyebrow">Efekty naszych klientów</span>
-        <h2>Przeciągnij i zobacz różnicę</h2>
-        <p>Tak zwykłe zdjęcie z telefonu zmienia się w profesjonalny kadr — bez zmiany twarzy dziecka.</p>
+        <h2>Zobacz, jak zmieniamy zdjęcia</h2>
+        <p>Zwykłe zdjęcie z telefonu (<b>PRZED</b>) zamieniamy w profesjonalny kadr (<b>PO</b>) — bez zmiany twarzy dziecka.</p>
       </div>
-      <div class="ba-carousel">
-        <button class="ba-arrow ba-prev" type="button" aria-label="Poprzednie">‹</button>
-        <div class="ba-viewport"><div class="ba-track" id="baTrack"></div></div>
-        <button class="ba-arrow ba-next" type="button" aria-label="Następne">›</button>
-      </div>
-      <p class="v2-demo-hint" style="margin-top:14px">👆 Przeciągnij dowolne zdjęcie, by porównać przed / po</p>
+    </div>
+    <!-- ciągły, powoli płynący pasek PRZED → PO -->
+    <div class="ba-flow">
+      <div class="ba-flow-track" id="baFlow"></div>
+      <span class="ba-flow-divider" aria-hidden="true"></span>
     </div>
   </section>
-
-  <!-- przewijany pasek z przykładami (auto-slide) -->
-  <div class="marquee" aria-hidden="true">
-    <div class="marquee-track" id="marquee"></div>
-  </div>
 
   <!-- pasmo CTA -->
   <section class="section v2-ctaband"><div class="container">
@@ -374,7 +368,7 @@
         });
       });
 
-      // karuzela przed/po — auto-przesuwanie po jednym kadrze, powoli
+      // ciągły pasek PRZED → PO (powoli płynie, pauza po najechaniu)
       var CDN = "https://d8j0ntlcm91z4.cloudfront.net/user_3EL0T26twgaFdlHuM3eJuT2XjHR/";
       var pairs = [
         ["hf_20260604_222839_89b0e61c-6229-43b8-a1e1-1c73aeb57dec","hf_20260604_215500_bcf31546-efd1-4746-b8c8-bdd09d7ec8c7"],
@@ -382,33 +376,21 @@
         ["hf_20260604_222842_574aaf76-926b-4e5b-a7fa-a9434810abdf","hf_20260604_220724_02f95d95-3a5a-4e9a-b3fc-56d834539ebf"],
         ["hf_20260604_222845_d545a4a2-bdea-43f5-8f69-48e47d949dcb","hf_20260604_220726_2bdd7aca-58ee-43d9-98c3-07d17169ec3e"]
       ];
-      var track = document.getElementById('baTrack');
-      if (track) {
-        var seq = pairs.concat(pairs); // podwójnie = więcej przykładów i płynniejszy ruch
-        seq.forEach(function(p){
+      var flow = document.getElementById('baFlow');
+      if (flow) {
+        function card(file, kind){
+          var lbl = kind === 'before' ? 'PRZED' : 'PO';
           var d = document.createElement('div');
-          d.className = 'ba'; d.setAttribute('data-ba',''); d.style.setProperty('--pos','50%');
-          d.innerHTML =
-            '<img class="ba-img ba-before" src="'+CDN+p[0]+'_min.webp" alt="Zdjęcie przed obróbką" loading="lazy" />'+
-            '<img class="ba-img ba-after" src="'+CDN+p[1]+'_min.webp" alt="Zdjęcie po obróbce" loading="lazy" />'+
-            '<span class="ba-tag ba-tag-before">PRZED</span><span class="ba-tag ba-tag-after">PO</span><span class="ba-divider"></span>';
-          track.appendChild(d);
-        });
-        var cards = [].slice.call(track.children), i = 0, dir = 1, timer = null;
-        function pv(){ return window.matchMedia('(min-width:760px)').matches ? 3 : 1; }
-        function maxI(){ return Math.max(0, cards.length - pv()); }
-        function apply(){ var w = cards[0].getBoundingClientRect().width + 18; track.style.transform = 'translateX(' + (-i*w) + 'px)'; }
-        function step(){ var m = maxI(); if (i+dir > m || i+dir < 0) dir = -dir; i += dir; apply(); }
-        function start(){ stop(); timer = setInterval(step, 4000); }
-        function stop(){ if (timer){ clearInterval(timer); timer = null; } }
-        window.addEventListener('resize', function(){ if (i > maxI()) i = maxI(); apply(); });
-        var vp = track.parentNode;
-        vp.addEventListener('mouseenter', stop); vp.addEventListener('mouseleave', start);
-        vp.addEventListener('pointerdown', stop); vp.addEventListener('pointerup', start);
-        var prev = document.querySelector('.ba-prev'), next = document.querySelector('.ba-next');
-        if (prev) prev.addEventListener('click', function(){ i = i<=0 ? maxI() : i-1; apply(); });
-        if (next) next.addEventListener('click', function(){ i = i>=maxI() ? 0 : i+1; apply(); });
-        setTimeout(function(){ apply(); start(); }, 350);
+          d.className = 'ba-flow-card ' + kind;
+          d.innerHTML = '<img src="'+CDN+file+'_min.webp" alt="Przykład '+lbl+'" loading="lazy" />' +
+                        '<span class="lbl">'+lbl+'</span>';
+          return d;
+        }
+        // sekwencja: przed, po, przed, po… (×2 dla płynnej pętli)
+        var seq = [];
+        pairs.forEach(function(p){ seq.push([p[0],'before']); seq.push([p[1],'after']); });
+        seq = seq.concat(seq);
+        seq.forEach(function(s){ flow.appendChild(card(s[0], s[1])); });
       }
     })();
   </script>
