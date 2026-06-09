@@ -14,6 +14,21 @@
 /* ===== HERO ===== */
 .v2-hero{ padding:calc(var(--promo-h,40px) + 92px) 0 40px; background:
   radial-gradient(120% 120% at 85% 0%, var(--cream-2,#f3ece2) 0%, var(--cream,#faf6f0) 55%); }
+
+/* hero wyśrodkowany, jednokolumnowy — przykłady od razu pod nagłówkiem */
+.v2-hero-stack{ display:flex; flex-direction:column; align-items:center; text-align:center; gap:14px; }
+.v2-hero-stack h1{
+  font-family:var(--sans,"Manrope",sans-serif); font-weight:800; letter-spacing:-.01em;
+  font-size:clamp(29px,5vw,48px); line-height:1.07; margin:4px 0 0; max-width:20ch; color:var(--ink);
+}
+.v2-hero-stack h1 em{ font-style:normal; color:var(--sage-d,#5c6b50); }
+.v2-hero-stack .v2-lead{ max-width:48ch; margin:0; font-size:18px; line-height:1.5; color:var(--ink); }
+.v2-hero-stack .bac-grid{ width:100%; margin:8px auto 0; }
+.v2-examples-note{ font-size:13px; color:var(--muted); margin:0 0 4px; max-width:52ch; }
+.v2-hero-stack .v2-bullets{ justify-content:center; }
+.v2-hero-stack .v2-social{ justify-content:center; }
+.v2-hero-stack .hero-cta{ justify-content:center; flex-wrap:wrap; }
+
 .v2-hero-grid{ display:grid; grid-template-columns:1.05fr .95fr; gap:46px; align-items:center; }
 .v2-hero-copy h1{
   font-family:var(--sans,"Manrope",sans-serif); font-weight:800; letter-spacing:-.01em;
