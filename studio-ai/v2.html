@@ -16,7 +16,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="css/style.css?v=47" />
-  <link rel="stylesheet" href="css/v2.css?v=14" />
+  <link rel="stylesheet" href="css/v2.css?v=15" />
 </head>
 <body class="v2">
 
@@ -301,10 +301,16 @@
 
   <!-- COOKIES -->
   <div class="cookie" id="cookie">
-    <p>Używamy plików cookie, aby strona działała poprawnie. Szczegóły w <a href="cookies.html">Polityce cookies</a>.</p>
-    <div class="cookie-btns">
-      <button class="btn btn-ghost" id="cookieReject" type="button">Tylko niezbędne</button>
-      <button class="btn btn-primary" id="cookieAccept" type="button">Akceptuję wszystkie</button>
+    <div class="cookie-box">
+      <span class="cookie-emoji">🍪</span>
+      <h4>Dbamy o Twoją prywatność</h4>
+      <p class="cookie-lead">Używamy plików cookie, żeby strona działała poprawnie i była dla Ciebie jeszcze lepsza.</p>
+      <button class="cookie-more-btn" id="cookieMore" type="button">Zobacz więcej</button>
+      <div class="cookie-more" id="cookieMoreText" hidden>Niezbędne pliki cookie są zawsze aktywne (potrzebne do działania strony). Za Twoją zgodą używamy też cookie analitycznych i marketingowych, aby ulepszać stronę i dopasować ofertę. Szczegóły w <a href="cookies.html">Polityce cookies</a>.</div>
+      <div class="cookie-btns">
+        <button class="btn btn-ghost" id="cookieReject" type="button">Tylko niezbędne</button>
+        <button class="btn btn-primary cookie-accept" id="cookieAccept" type="button">Akceptuję wszystkie ✓</button>
+      </div>
     </div>
   </div>
   <script>
@@ -317,6 +323,8 @@
       var a=document.getElementById('cookieAccept'),r=document.getElementById('cookieReject');
       if(a)a.addEventListener('click',function(){hide('all');});
       if(r)r.addEventListener('click',function(){hide('necessary');});
+      var m=document.getElementById('cookieMore'),mt=document.getElementById('cookieMoreText');
+      if(m&&mt)m.addEventListener('click',function(){ if(mt.hasAttribute('hidden')){mt.removeAttribute('hidden');m.textContent='Ukryj szczegóły';}else{mt.setAttribute('hidden','');m.textContent='Zobacz więcej';} });
       var s=document.getElementById('cookieSettings');
       if(s)s.addEventListener('click',function(e){e.preventDefault();try{localStorage.removeItem(K);}catch(er){}c.classList.add('show');});
     })();
