@@ -113,10 +113,10 @@ body.v2.cart-active .v2-bottombar{ transform:translateY(130%); }
 @media (max-width:460px){ .bac-grid{ gap:10px; } }
 .bac{ position:relative; aspect-ratio:3/4; border-radius:14px; overflow:hidden; box-shadow:var(--shadow-sm); background:var(--sand,#efe7db); }
 .bac-img{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
-.bac-after{ animation:bacReveal 6s ease-in-out infinite; animation-delay:var(--delay,0s); will-change:clip-path; }
+.bac-after{ clip-path:inset(0 0 0 100%); will-change:clip-path; }
 .bac-line{
-  position:absolute; top:0; bottom:0; width:3px; left:100%; z-index:3; background:#fff;
-  box-shadow:0 0 8px rgba(0,0,0,.35); animation:bacLine 6s ease-in-out infinite; animation-delay:var(--delay,0s);
+  position:absolute; top:0; bottom:0; width:3px; left:calc(100% - 3px); z-index:3; background:#fff;
+  box-shadow:0 0 8px rgba(0,0,0,.35);
 }
 .bac-tag{
   position:absolute; bottom:9px; z-index:4; font-size:10.5px; font-weight:800; letter-spacing:.04em;
@@ -124,16 +124,23 @@ body.v2.cart-active .v2-bottombar{ transform:translateY(130%); }
 }
 .bac-l{ left:8px; background:rgba(40,36,32,.72); }
 .bac-r{ right:8px; background:var(--sage-d,#5c6b50); }
-@keyframes bacReveal{
-  0%,10%   { clip-path:inset(0 0 0 100%); }
-  45%,60%  { clip-path:inset(0 0 0 0); }
-  92%,100% { clip-path:inset(0 0 0 100%); }
-}
-@keyframes bacLine{
-  0%,10%   { left:calc(100% - 3px); }
-  45%,60%  { left:0; }
-  92%,100% { left:calc(100% - 3px); }
-}
+
+/* sekwencyjnie: najpierw 1, potem 2, 3, 4 — wszystkie w jednym, wspólnym cyklu */
+.bac-after, .bac-line{ animation-duration:13s; animation-timing-function:ease-in-out; animation-iteration-count:infinite; }
+.bac1 .bac-after{ animation-name:rev1; } .bac1 .bac-line{ animation-name:lin1; }
+.bac2 .bac-after{ animation-name:rev2; } .bac2 .bac-line{ animation-name:lin2; }
+.bac3 .bac-after{ animation-name:rev3; } .bac3 .bac-line{ animation-name:lin3; }
+.bac4 .bac-after{ animation-name:rev4; } .bac4 .bac-line{ animation-name:lin4; }
+
+/* każdy kafelek: czeka na swoją kolej, przeskakuje na PO i zostaje na PO do końca cyklu */
+@keyframes rev1{ 0%{clip-path:inset(0 0 0 100%);} 5%{clip-path:inset(0 0 0 0);} 96%{clip-path:inset(0 0 0 0);} 100%{clip-path:inset(0 0 0 100%);} }
+@keyframes lin1{ 0%{left:calc(100% - 3px);} 5%{left:0;} 96%{left:0;} 100%{left:calc(100% - 3px);} }
+@keyframes rev2{ 0%,20%{clip-path:inset(0 0 0 100%);} 25%{clip-path:inset(0 0 0 0);} 96%{clip-path:inset(0 0 0 0);} 100%{clip-path:inset(0 0 0 100%);} }
+@keyframes lin2{ 0%,20%{left:calc(100% - 3px);} 25%{left:0;} 96%{left:0;} 100%{left:calc(100% - 3px);} }
+@keyframes rev3{ 0%,40%{clip-path:inset(0 0 0 100%);} 45%{clip-path:inset(0 0 0 0);} 96%{clip-path:inset(0 0 0 0);} 100%{clip-path:inset(0 0 0 100%);} }
+@keyframes lin3{ 0%,40%{left:calc(100% - 3px);} 45%{left:0;} 96%{left:0;} 100%{left:calc(100% - 3px);} }
+@keyframes rev4{ 0%,60%{clip-path:inset(0 0 0 100%);} 65%{clip-path:inset(0 0 0 0);} 96%{clip-path:inset(0 0 0 0);} 100%{clip-path:inset(0 0 0 100%);} }
+@keyframes lin4{ 0%,60%{left:calc(100% - 3px);} 65%{left:0;} 96%{left:0;} 100%{left:calc(100% - 3px);} }
 
 /* ===== DOBRE / UNIKAJ ===== */
 .v2-tips{ display:grid; grid-template-columns:1fr 1fr; gap:20px; max-width:860px; margin:0 auto; }
