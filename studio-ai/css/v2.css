@@ -1,0 +1,99 @@
+/* ===== BoboFoto — podgląd v2 (na bazie style.css) ===== */
+
+/* wstążka „podgląd" w rogu */
+.v2-ribbon{
+  position:fixed; top:0; right:0; z-index:2000;
+  background:#ff3b5c; color:#fff; font:700 12px/1 var(--sans);
+  padding:7px 14px; border-bottom-left-radius:12px; letter-spacing:.03em;
+  box-shadow:0 6px 18px rgba(0,0,0,.25); pointer-events:none;
+}
+
+/* przyciski większe w hero */
+.btn-lg{ padding:16px 30px; font-size:16px; }
+
+/* ===== HERO ===== */
+.v2-hero{ padding:46px 0 40px; background:
+  radial-gradient(120% 120% at 85% 0%, var(--cream-2,#f3ece2) 0%, var(--cream,#faf6f0) 55%); }
+.v2-hero-grid{ display:grid; grid-template-columns:1.05fr .95fr; gap:46px; align-items:center; }
+.v2-hero-copy h1{
+  font-family:var(--sans,"Manrope",sans-serif); font-weight:800; letter-spacing:-.01em;
+  font-size:clamp(31px,5.4vw,54px); line-height:1.06; margin:14px 0 0; color:var(--ink);
+}
+.v2-hero-copy h1 em{ font-style:normal; color:var(--sage-d,#5c6b50); }
+
+/* mocniejszy, „mieniący się" przycisk główny w v2 */
+.v2 .btn-primary{
+  background:linear-gradient(135deg,#9aa888 0%,var(--sage-d,#5c6b50) 100%);
+  box-shadow:0 10px 26px -8px rgba(92,107,80,.65);
+}
+.v2 .btn-primary:hover{ filter:brightness(1.05); transform:translateY(-2px); }
+
+/* dowód społeczny w hero */
+.v2-social{ display:flex; align-items:center; gap:12px; margin:18px 0 4px; flex-wrap:wrap; }
+.v2-avatars{ display:flex; }
+.v2-avatars span{
+  width:34px; height:34px; border-radius:50%; margin-left:-9px; border:2px solid #fff;
+  display:flex; align-items:center; justify-content:center; font-weight:700; font-size:13px; color:#fff;
+  background:var(--sage,#8E9C82); box-shadow:var(--shadow-sm);
+}
+.v2-avatars span:first-child{ margin-left:0; }
+.v2-social-txt{ font-size:13.5px; color:var(--ink); line-height:1.3; }
+.v2-social-txt b{ color:var(--ink); }
+.v2-stars{ color:#f2b705; letter-spacing:1px; }
+
+/* powtarzane pasmo CTA z jednozdaniowcem */
+.v2-ctaband{ text-align:center; padding:6px 0 2px; }
+.v2-ctaband p{ font-size:17px; font-weight:700; color:var(--ink); margin:0 0 14px; }
+.v2-pill{
+  display:inline-block; background:#fff; border:1px solid var(--line);
+  color:var(--ink); font-weight:700; font-size:13px; padding:7px 14px; border-radius:999px;
+  box-shadow:var(--shadow-sm);
+}
+.v2-lead{ font-size:18px; line-height:1.55; color:var(--ink); margin:16px 0 18px; max-width:33ch; }
+.v2-bullets{ display:flex; flex-wrap:wrap; gap:10px 18px; margin-bottom:22px; }
+.v2-bullets span{ font-weight:600; font-size:14.5px; color:var(--ink); }
+.v2-microcopy{ margin-top:14px; font-size:13px; color:var(--muted); }
+
+.v2-hero-demo{ position:relative; }
+.v2-hero-demo .ba{
+  position:relative; aspect-ratio:4/5; border-radius:20px; overflow:hidden;
+  box-shadow:0 30px 60px -24px rgba(40,36,32,.5); cursor:ew-resize; user-select:none;
+}
+.v2-demo-hint{ text-align:center; margin-top:10px; font-size:13px; color:var(--muted); font-weight:600; }
+
+/* ===== 3 KROKI ===== */
+.v2-steps{ display:grid; grid-template-columns:repeat(3,1fr); gap:20px; }
+.v2-step{
+  background:#fff; border:1px solid var(--line); border-radius:16px; padding:26px 22px; text-align:center;
+  box-shadow:var(--shadow-sm);
+}
+.v2-num{
+  display:inline-flex; align-items:center; justify-content:center; width:42px; height:42px;
+  border-radius:50%; background:var(--sage,#8E9C82); color:#fff; font-weight:800; font-size:18px; margin-bottom:12px;
+}
+.v2-step h3{ margin:0 0 6px; font-size:18px; }
+.v2-step p{ margin:0; color:var(--muted); font-size:14.5px; line-height:1.5; }
+.v2-center{ text-align:center; margin-top:30px; }
+
+/* ===== DOBRE / UNIKAJ ===== */
+.v2-tips{ display:grid; grid-template-columns:1fr 1fr; gap:20px; max-width:860px; margin:0 auto; }
+.v2-tip{ background:#fff; border:1px solid var(--line); border-radius:16px; padding:22px 22px 18px; box-shadow:var(--shadow-sm); }
+.v2-tip.good{ border-color:#bcdcb6; background:#f4faf2; }
+.v2-tip.bad{ border-color:#f0c9c9; background:#fcf4f4; }
+.v2-tip h3{ margin:0 0 12px; font-size:18px; }
+.v2-tip ul{ list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:9px; }
+.v2-tip li{ font-size:14.5px; line-height:1.4; color:var(--ink); padding-left:4px; }
+@media (max-width:560px){ .v2-tips{ grid-template-columns:1fr; } }
+
+/* ===== RESPONSYWNOŚĆ ===== */
+@media (max-width:900px){
+  .v2-hero-grid{ grid-template-columns:1fr; gap:28px; }
+  .v2-hero-demo{ max-width:420px; margin:0 auto; width:100%; }
+  .v2-lead{ max-width:none; }
+}
+@media (max-width:640px){
+  .v2-hero{ padding:30px 0 26px; }
+  .v2-steps{ grid-template-columns:1fr; }
+  .v2-bullets{ gap:8px 14px; }
+  .v2-bullets span{ font-size:13.5px; }
+}
