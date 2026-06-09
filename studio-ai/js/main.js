@@ -308,10 +308,12 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  function openCart() { renderCart(); cartModal.classList.add("open"); cartModal.setAttribute("aria-hidden", "false"); document.body.style.overflow = "hidden"; }
+  function openCart() { if (cartModal.classList.contains("open")) return; renderCart(); cartModal.classList.add("open"); cartModal.setAttribute("aria-hidden", "false"); document.body.style.overflow = "hidden"; }
   function closeCart() { cartModal.classList.remove("open"); cartModal.setAttribute("aria-hidden", "true"); document.body.style.overflow = ""; }
 
   document.getElementById("cartOpen").addEventListener("click", openCart);
+  // cały pasek koszyka otwiera personalizację (nie tylko przycisk) — eliminuje „martwą strefę"
+  if (cartBar) cartBar.addEventListener("click", openCart);
   const editOrderBtn = document.getElementById("editOrder");
   if (editOrderBtn) editOrderBtn.addEventListener("click", openCart);
   document.getElementById("cartClose").addEventListener("click", closeCart);
