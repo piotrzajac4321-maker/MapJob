@@ -24,6 +24,14 @@ Profesjonalne „trudne" pozy (froggy, tummy, w wiszącym hamaku) w realnej sesj
 - ⚠️ Unikaj sugerowania, że dziecko samo utrzymuje trudną pozę bez podparcia. Jeśli styl tego wymaga (np. „księżyc"), opisz prop jako fizyczne podparcie: `safely nestled and supported on the crescent-moon prop`.
 - To nie tylko realizm — to spójność z obietnicą „profesjonalna, bezpieczna sesja".
 
+## Tryb A — hard identity lock (kanon, gdy zwykły lock zawodzi)
+
+Wklej zamiast standardowego prefiksu Trybu A:
+
+> This is image-to-image editing. The baby in the output MUST be the exact same baby as in the uploaded reference — identical face. Preserve the face, head shape, skull proportions, forehead, eyebrows, eye shape and spacing, eye color, nose, nostrils, lips, philtrum, chin, cheeks, ear shape and skin tone with 100% pixel-level fidelity. Do NOT generate a different child, do NOT beautify, slim, smooth, age or symmetrize the face, do NOT change the expression. Keep the exact same crop, pose and head angle as the reference. Only the outfit, props and background may change — the face stays untouched and identical.
+
+Dodaj do listy „Avoid": `different baby, altered facial features, face swap, idealized face, changed eye shape or spacing`. Generuj `count: 4` i wybierz najlepszy wariant.
+
 ## Wierność twarzy (Tryb A) — protokół
 
 1. Pierwsza generacja: standardowy identity-lock.

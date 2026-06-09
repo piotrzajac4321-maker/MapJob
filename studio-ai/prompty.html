@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>BoboFoto — Panel promptów</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    :root{
+      --krem:#f6f1e9; --bez:#ece3d6; --bez2:#e0d4c2; --tekst:#3a342c;
+      --szalwia:#8a9a82; --szalwia-d:#6f7e68; --linia:#ddd1bf; --biel:#fffdf9;
+    }
+    *{box-sizing:border-box} html,body{margin:0}
+    body{background:var(--krem);color:var(--tekst);font-family:"Manrope",system-ui,sans-serif;line-height:1.5}
+    h1,h2,h3{font-family:"Cormorant Garamond",Georgia,serif;font-weight:600;letter-spacing:.2px;margin:0}
+    a{color:var(--szalwia-d)}
+
+    /* topbar */
+    .topbar{position:sticky;top:0;z-index:20;background:var(--biel);border-bottom:1px solid var(--linia);
+      padding:14px 20px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+    .brand{font-family:"Cormorant Garamond",serif;font-size:1.6rem}
+    .brand span{color:var(--szalwia-d)}
+    .brand small{font-family:"Manrope";font-size:.7rem;letter-spacing:2px;text-transform:uppercase;color:#9a8f7d;display:block;margin-top:-4px}
+    .topbar .spacer{flex:1}
+    .deflist{font-size:.78rem;color:#857a68;background:var(--bez);border:1px solid var(--linia);
+      border-radius:999px;padding:6px 12px}
+    .deflist b{color:var(--tekst)}
+
+    /* controls */
+    .controls{max-width:1180px;margin:18px auto 0;padding:0 20px;display:flex;flex-direction:column;gap:14px}
+    .ctrl-row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+    .ctrl-row .lbl{font-size:.8rem;font-weight:700;color:#7a6f5d;min-width:74px}
+    .seg{display:inline-flex;background:var(--bez);border:1px solid var(--linia);border-radius:10px;padding:3px}
+    .seg button{border:0;background:transparent;color:var(--tekst);font:inherit;font-size:.85rem;
+      padding:6px 12px;border-radius:8px;cursor:pointer}
+    .seg button.active{background:var(--szalwia);color:#fff;font-weight:700}
+    .custom{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+    .custom input{width:100%;padding:9px 11px;border:1px solid var(--linia);border-radius:10px;
+      background:var(--biel);font:inherit;font-size:.85rem;color:var(--tekst)}
+    .custom label{font-size:.72rem;font-weight:700;color:#7a6f5d;display:block;margin:0 0 4px 2px}
+    .hint{font-size:.78rem;color:#9a8f7d;margin:2px 0 0}
+
+    /* grid */
+    .wrap{max-width:1180px;margin:18px auto 60px;padding:0 20px}
+    .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:18px}
+    .pcard{background:var(--biel);border:1px solid var(--linia);border-radius:16px;overflow:hidden;
+      display:flex;flex-direction:column;box-shadow:0 2px 10px rgba(120,100,70,.05)}
+    .pcard-thumb{position:relative;aspect-ratio:3/4;background:var(--bez)}
+    .pcard-thumb img{width:100%;height:100%;object-fit:cover;display:block}
+    .pcard-cat{position:absolute;top:8px;left:8px;background:rgba(58,52,44,.72);color:#fff;
+      font-size:.66rem;letter-spacing:.5px;text-transform:uppercase;padding:3px 8px;border-radius:999px}
+    .pcard-ip{position:absolute;top:8px;right:8px;background:#b4561f;color:#fff;font-size:.66rem;
+      font-weight:700;padding:3px 8px;border-radius:999px}
+    .pcard-body{padding:12px 14px 14px;display:flex;flex-direction:column;gap:8px;flex:1}
+    .pcard-body h3{font-size:1.35rem;line-height:1.1}
+    .pcard-opis{font-size:.82rem;color:#6e6452;margin:0;flex:0}
+    .pcard-set{font-size:.7rem;color:#9a8f7d;background:var(--krem);border:1px dashed var(--linia);
+      border-radius:8px;padding:5px 8px;word-break:break-word}
+    .pcard-actions{display:flex;gap:8px;margin-top:auto}
+    .pcard-prompt{white-space:pre-wrap;font-size:.74rem;color:#5a5142;background:var(--krem);
+      border:1px solid var(--linia);border-radius:10px;padding:10px;max-height:220px;overflow:auto;margin:0}
+
+    .btn{border:0;border-radius:10px;font:inherit;font-size:.85rem;font-weight:700;padding:9px 12px;
+      cursor:pointer;transition:.15s}
+    .btn-primary{background:var(--szalwia);color:#fff;flex:1}
+    .btn-primary:hover{background:var(--szalwia-d)}
+    .btn-ghost{background:var(--bez);color:var(--tekst)}
+    .btn-ghost:hover{background:var(--bez2)}
+
+    .note{max-width:1180px;margin:0 auto;padding:14px 20px;font-size:.8rem;color:#8a7f6d}
+    .note b{color:var(--tekst)}
+
+    /* toast */
+    .toast{position:fixed;left:50%;bottom:26px;transform:translateX(-50%) translateY(20px);
+      background:var(--tekst);color:#fff;padding:11px 18px;border-radius:999px;font-size:.88rem;
+      font-weight:700;opacity:0;pointer-events:none;transition:.2s;z-index:50}
+    .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+    @media(max-width:620px){ .custom{grid-template-columns:1fr} }
+  </style>
+</head>
+<body>
+
+  <header class="topbar">
+    <div class="brand">Bobo<span>Foto</span><small>Panel promptów</small></div>
+    <div class="spacer"></div>
+    <div class="deflist">Model: <b id="defModel">…</b> · Rozdz.: <b id="defRes">…</b> · Warianty: <b id="defCount">…</b></div>
+  </header>
+
+  <div class="controls">
+    <div class="ctrl-row">
+      <span class="lbl">Tryb</span>
+      <div class="seg">
+        <button data-tryb="A" class="active">A — zdjęcie klienta</button>
+        <button data-tryb="B">B — fikcyjny model</button>
+      </div>
+      <span class="lbl">Format</span>
+      <div class="seg">
+        <button data-fmt="3:4" class="active">3:4 wydruk</button>
+        <button data-fmt="1:1">1:1 IG</button>
+        <button data-fmt="9:16">9:16 social</button>
+      </div>
+    </div>
+
+    <div class="ctrl-row">
+      <span class="lbl">Kategoria</span>
+      <div class="seg">
+        <button data-kat="wszystkie" class="active">Wszystkie</button>
+        <button data-kat="klasyczne">Klasyczne</button>
+        <button data-kat="sezonowe">Sezonowe</button>
+        <button data-kat="tematyczne">Tematyczne</button>
+      </div>
+    </div>
+
+    <div class="custom">
+      <div><label>Własne ubranko (opcjonalnie)</label><input id="cOutfit" placeholder="np. soft blue knitted romper with a bonnet" /></div>
+      <div><label>Własne tło (opcjonalnie)</label><input id="cTlo" placeholder="np. starry navy night sky with bokeh" /></div>
+      <div><label>Maskotka / postać (dla kafelka „Maskotka")</label><input id="cMaskotka" placeholder="np. Stitch / teddy bear" /></div>
+    </div>
+    <p class="hint">Pola „własne" nadpisują ubranko/tło wybranego stylu. Tryb A trzyma twarz z referencji (twardy identity-lock). Kopiuj prompt → wklej w Higgsfield + dodaj zdjęcie jako referencję.</p>
+  </div>
+
+  <div class="wrap">
+    <div id="grid" class="grid"></div>
+  </div>
+
+  <p class="note">⚠️ <b>Wizerunek / IP:</b> Tryb A działa wyłącznie na zdjęciach wgranych i zaakceptowanych przez klienta. Kafelki z oznaczeniem <b>⚠ IP</b> (postacie chronione, np. Stitch) używaj tylko do prywatnych pamiątek — nie w ofercie/galerii/reklamach.</p>
+
+  <div id="toast" class="toast"></div>
+
+  <script src="js/prompty-data.js?v=1"></script>
+  <script src="js/prompty.js?v=1"></script>
+</body>
+</html>

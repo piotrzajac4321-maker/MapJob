@@ -18,6 +18,16 @@ BoboFoto.pl: klient wysyła zwykłe zdjęcie z telefonu, wybiera stylizację/tł
 
 Domyślne formaty: **3:4** (wydruk, główny), **1:1** (Instagram), **9:16** (social/telefon).
 
+## ⭐ Zapamiętane ustawienia domyślne (sprawdzone w praktyce)
+
+Stosuj te ustawienia, chyba że użytkownik powie inaczej:
+- **Model:** `nano_banana_pro` (produkcja) · `nano_banana_2` (szybki podgląd)
+- **Format:** `3:4` · **Rozdzielczość:** `2k` · **Warianty:** `count: 4` (twarz „trafia" losowo — generuj 4 i wybierz najlepszy)
+- **Tryb A — używaj TWARDEGO identity-locka** (sekcja „Tryb A — hard identity lock" w `realizm-checklist.md`): trzyma twarz przy zmianie tła/ubranka, gdy zwykły lock zawodzi.
+- **Zmieniaj jedną rzecz naraz:** najpierw tło + props (twarz OK?), potem ubranko — minimalizuje „przemalowanie" twarzy.
+
+Te same ustawienia są w panelu promptów: `studio-ai/prompty.html` (+ `js/prompty-data.js` jako `DEFAULTS`).
+
 ## Zasada nr 1 — najpierw ustal brief (lub zaproponuj założenia)
 
 Zanim zbudujesz prompt, ustal:
