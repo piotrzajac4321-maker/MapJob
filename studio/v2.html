@@ -16,7 +16,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="css/style.css?v=47" />
-  <link rel="stylesheet" href="css/v2.css?v=5" />
+  <link rel="stylesheet" href="css/v2.css?v=6" />
 </head>
 <body class="v2">
 
@@ -97,11 +97,7 @@
         <p>Zwykłe zdjęcie z telefonu (<b>PRZED</b>) zamieniamy w profesjonalny kadr (<b>PO</b>) — bez zmiany twarzy dziecka.</p>
       </div>
     </div>
-    <!-- ciągły, powoli płynący pasek PRZED → PO -->
-    <div class="ba-flow">
-      <div class="ba-flow-track" id="baFlow"></div>
-      <span class="ba-flow-divider" aria-hidden="true"></span>
-    </div>
+    <div class="container"><div class="bac-grid" id="bacGrid"></div></div>
   </section>
 
   <!-- pasmo CTA -->
@@ -376,21 +372,19 @@
         ["hf_20260604_222842_574aaf76-926b-4e5b-a7fa-a9434810abdf","hf_20260604_220724_02f95d95-3a5a-4e9a-b3fc-56d834539ebf"],
         ["hf_20260604_222845_d545a4a2-bdea-43f5-8f69-48e47d949dcb","hf_20260604_220726_2bdd7aca-58ee-43d9-98c3-07d17169ec3e"]
       ];
-      var flow = document.getElementById('baFlow');
-      if (flow) {
-        function card(file, kind){
-          var lbl = kind === 'before' ? 'PRZED' : 'PO';
+      var grid = document.getElementById('bacGrid');
+      if (grid) {
+        pairs.forEach(function(p, idx){
           var d = document.createElement('div');
-          d.className = 'ba-flow-card ' + kind;
-          d.innerHTML = '<img src="'+CDN+file+'_min.webp" alt="Przykład '+lbl+'" loading="lazy" />' +
-                        '<span class="lbl">'+lbl+'</span>';
-          return d;
-        }
-        // sekwencja: przed, po, przed, po… (×2 dla płynnej pętli)
-        var seq = [];
-        pairs.forEach(function(p){ seq.push([p[0],'before']); seq.push([p[1],'after']); });
-        seq = seq.concat(seq);
-        seq.forEach(function(s){ flow.appendChild(card(s[0], s[1])); });
+          d.className = 'bac';
+          d.style.setProperty('--delay', (idx * 1.4) + 's');
+          d.innerHTML =
+            '<img class="bac-img" src="'+CDN+p[0]+'_min.webp" alt="Zdjęcie przed obróbką" loading="lazy" />' +
+            '<img class="bac-img bac-after" src="'+CDN+p[1]+'_min.webp" alt="Zdjęcie po obróbce" loading="lazy" />' +
+            '<span class="bac-line"></span>' +
+            '<span class="bac-tag bac-l">PRZED</span><span class="bac-tag bac-r">PO</span>';
+          grid.appendChild(d);
+        });
       }
     })();
   </script>
