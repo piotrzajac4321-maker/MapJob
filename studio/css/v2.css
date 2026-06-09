@@ -107,6 +107,20 @@ body.v2{ padding-bottom:74px; }
 /* gdy mamy aktywny koszyk (wybrane zdjęcia) — chowamy dolny pasek, by nie nakładał się z koszykiem */
 body.v2.cart-active .v2-bottombar{ transform:translateY(130%); }
 
+/* ===== KARUZELA PRZED/PO (auto-slide po jednym) ===== */
+.ba-carousel{ position:relative; max-width:1000px; margin:0 auto; }
+.ba-viewport{ overflow:hidden; }
+.ba-track{ display:flex; gap:18px; transition:transform .6s cubic-bezier(.2,.8,.2,1); will-change:transform; }
+.ba-track > .ba{ flex:0 0 100%; }
+@media (min-width:760px){ .ba-track > .ba{ flex:0 0 calc((100% - 36px)/3); } }
+.ba-arrow{
+  position:absolute; top:50%; transform:translateY(-50%); z-index:6;
+  width:40px; height:40px; border-radius:50%; border:0; background:#fff; color:var(--ink);
+  font-size:20px; cursor:pointer; box-shadow:var(--shadow); display:flex; align-items:center; justify-content:center;
+}
+.ba-prev{ left:-6px; } .ba-next{ right:-6px; }
+@media (max-width:560px){ .ba-arrow{ width:34px; height:34px; font-size:17px; } .ba-prev{ left:2px; } .ba-next{ right:2px; } }
+
 /* ===== DOBRE / UNIKAJ ===== */
 .v2-tips{ display:grid; grid-template-columns:1fr 1fr; gap:20px; max-width:860px; margin:0 auto; }
 .v2-tip{ background:#fff; border:1px solid var(--line); border-radius:16px; padding:22px 22px 18px; box-shadow:var(--shadow-sm); }
