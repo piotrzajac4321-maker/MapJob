@@ -1,0 +1,18 @@
+{
+  "zlecenie_id": "przyklad-0001",
+  "klient": "PRZYKŁAD — zamówienie #demo (bez danych realnego klienta)",
+  "tryb": "A",
+  "model": "nano_banana_pro",
+  "resolution": "2k",
+  "formaty": ["3:4", "1:1", "9:16"],
+  "warianty_na_styl": 2,
+  "upscale_4k": true,
+  "pozycje": [
+    {
+      "referencja": "automat/zlecenia/przyklad-0001/foto1.jpg",
+      "etap": "newborn",
+      "style": ["Klasyczne studio", "Boho / naturalne"],
+      "uwagi": "dziewczynka, paleta neutralna/róż"
+    }
+  ]
+}

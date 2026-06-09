@@ -1,0 +1,77 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "BoboFoto — manifest zlecenia automatu",
+  "type": "object",
+  "required": ["zlecenie_id", "tryb", "model", "formaty", "pozycje"],
+  "properties": {
+    "zlecenie_id": {
+      "type": "string",
+      "description": "Unikalny identyfikator zlecenia, np. 2026-0001"
+    },
+    "klient": {
+      "type": "string",
+      "description": "Opis/numer zamówienia. NIE wpisuj danych wrażliwych jeśli plik trafia do repo."
+    },
+    "tryb": {
+      "type": "string",
+      "enum": ["A", "B"],
+      "description": "A = na zdjęciu klienta (identity-lock); B = fikcyjny model (reklama/galeria)"
+    },
+    "model": {
+      "type": "string",
+      "enum": ["nano_banana_pro", "nano_banana_2", "gpt_image_2"],
+      "default": "nano_banana_pro"
+    },
+    "resolution": {
+      "type": "string",
+      "enum": ["1k", "2k", "4k"],
+      "default": "2k"
+    },
+    "formaty": {
+      "type": "array",
+      "items": { "type": "string", "enum": ["3:4", "1:1", "9:16"] },
+      "minItems": 1,
+      "default": ["3:4"]
+    },
+    "warianty_na_styl": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 4,
+      "default": 2,
+      "description": "Ile wariantów generować na styl (count w generate_image)"
+    },
+    "upscale_4k": {
+      "type": "boolean",
+      "default": false,
+      "description": "Upscale finalnego ujęcia 3:4 do 4k (druk)"
+    },
+    "pozycje": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["etap", "style"],
+        "properties": {
+          "referencja": {
+            "type": "string",
+            "description": "Ścieżka do pliku lub https URL zdjęcia klienta. Wymagana w trybie A, pomijana w trybie B."
+          },
+          "etap": {
+            "type": "string",
+            "enum": ["newborn", "sitter", "toddler", "cake-smash", "rodzinne"]
+          },
+          "style": {
+            "type": "array",
+            "items": { "type": "string" },
+            "minItems": 1,
+            "description": "Nazwy stylów ze skilla foto-prompt-pro, np. 'Klasyczne studio', 'Boho / naturalne'"
+          },
+          "uwagi": {
+            "type": "string",
+            "description": "Dodatkowe wskazówki: płeć, paleta, props, itp."
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,9 @@
+# Zdjęcia klientów i wyniki — NIE wersjonujemy (wizerunek/PII).
+# Wersjonujemy tylko schemę, README i przykładowy manifest.
+
+output/*
+!output/.gitkeep
+
+# Wszystkie zlecenia poza przykładem + foldery ze zdjęciami klientów
+zlecenia/*
+!zlecenia/przyklad-0001.json
