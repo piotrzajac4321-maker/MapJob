@@ -111,14 +111,14 @@ body.v2{ padding-bottom:74px; }
   background:linear-gradient(135deg,#9aa888 0%,var(--sage-d,#5c6b50) 100%);
   color:#fff; text-decoration:none; box-shadow:0 -8px 24px -10px rgba(0,0,0,.35);
   transition:transform .35s cubic-bezier(.2,.8,.2,1);
-  animation:bbPulse 6.5s ease-in-out infinite;
+  animation:bbPulse 3.5s ease-in-out infinite;
 }
 /* odblask przejeżdżający przez pasek co jakiś czas */
 .v2-bottombar::after{
   content:""; position:absolute; top:0; bottom:0; left:0; width:55%; pointer-events:none; z-index:1;
   background:linear-gradient(100deg, transparent 0%, rgba(255,255,255,.38) 50%, transparent 100%);
   transform:skewX(-20deg) translateX(-220%);
-  animation:bbShine 6.5s ease-in-out infinite;
+  animation:bbShine 3.5s ease-in-out infinite;
 }
 .v2-bb-info, .v2-bb-btn{ position:relative; z-index:2; }
 @keyframes bbPulse{ 0%,86%,100%{ scale:1; } 90%{ scale:1.025; } 94%{ scale:.996; } 98%{ scale:1.01; } }
