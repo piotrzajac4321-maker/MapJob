@@ -147,22 +147,22 @@ body.v2.cart-active .v2-bottombar{ transform:translateY(130%); }
 .bac-r{ right:8px; background:var(--sage-d,#5c6b50); }
 
 /* sekwencyjnie: najpierw 1, potem 2, 3, 4 — wszystkie w jednym, wspólnym cyklu */
-.bac-after, .bac-line{ animation-duration:13s; animation-timing-function:ease-in-out; animation-iteration-count:infinite; }
+.bac-after, .bac-line{ animation-duration:16s; animation-timing-function:ease-in-out; animation-iteration-count:infinite; }
 .bac1 .bac-after{ animation-name:rev1; } .bac1 .bac-line{ animation-name:lin1; }
 .bac2 .bac-after{ animation-name:rev2; } .bac2 .bac-line{ animation-name:lin2; }
 .bac3 .bac-after{ animation-name:rev3; } .bac3 .bac-line{ animation-name:lin3; }
 .bac4 .bac-after{ animation-name:rev4; } .bac4 .bac-line{ animation-name:lin4; }
 
 /* każdy kafelek: czeka na swoją kolej, przeskakuje na PO i zostaje na PO do końca cyklu */
-/* linia jedzie z LEWEJ do PRAWEJ, odsłaniając PO; po swojej kolejce kafelek zostaje na PO */
-@keyframes rev1{ 0%{clip-path:inset(0 100% 0 0);} 5%{clip-path:inset(0 0 0 0);} 96%{clip-path:inset(0 0 0 0);} 100%{clip-path:inset(0 100% 0 0);} }
-@keyframes lin1{ 0%{left:0;} 5%{left:calc(100% - 4px);} 96%{left:calc(100% - 4px);} 100%{left:0;} }
-@keyframes rev2{ 0%,20%{clip-path:inset(0 100% 0 0);} 25%{clip-path:inset(0 0 0 0);} 96%{clip-path:inset(0 0 0 0);} 100%{clip-path:inset(0 100% 0 0);} }
-@keyframes lin2{ 0%,20%{left:0;} 25%{left:calc(100% - 4px);} 96%{left:calc(100% - 4px);} 100%{left:0;} }
-@keyframes rev3{ 0%,40%{clip-path:inset(0 100% 0 0);} 45%{clip-path:inset(0 0 0 0);} 96%{clip-path:inset(0 0 0 0);} 100%{clip-path:inset(0 100% 0 0);} }
-@keyframes lin3{ 0%,40%{left:0;} 45%{left:calc(100% - 4px);} 96%{left:calc(100% - 4px);} 100%{left:0;} }
-@keyframes rev4{ 0%,60%{clip-path:inset(0 100% 0 0);} 65%{clip-path:inset(0 0 0 0);} 96%{clip-path:inset(0 0 0 0);} 100%{clip-path:inset(0 100% 0 0);} }
-@keyframes lin4{ 0%,60%{left:0;} 65%{left:calc(100% - 4px);} 96%{left:calc(100% - 4px);} 100%{left:0;} }
+/* fala: kolejno 1→2→3→4 na PO, potem kolejno z powrotem — ciągle zmienia się jedno po drugim */
+@keyframes rev1{ 0%{clip-path:inset(0 100% 0 0);} 12.5%{clip-path:inset(0 0 0 0);} 50%{clip-path:inset(0 0 0 0);} 62.5%{clip-path:inset(0 100% 0 0);} 100%{clip-path:inset(0 100% 0 0);} }
+@keyframes lin1{ 0%{left:0;} 12.5%{left:calc(100% - 4px);} 50%{left:calc(100% - 4px);} 62.5%{left:0;} 100%{left:0;} }
+@keyframes rev2{ 0%,12.5%{clip-path:inset(0 100% 0 0);} 25%{clip-path:inset(0 0 0 0);} 62.5%{clip-path:inset(0 0 0 0);} 75%{clip-path:inset(0 100% 0 0);} 100%{clip-path:inset(0 100% 0 0);} }
+@keyframes lin2{ 0%,12.5%{left:0;} 25%{left:calc(100% - 4px);} 62.5%{left:calc(100% - 4px);} 75%{left:0;} 100%{left:0;} }
+@keyframes rev3{ 0%,25%{clip-path:inset(0 100% 0 0);} 37.5%{clip-path:inset(0 0 0 0);} 75%{clip-path:inset(0 0 0 0);} 87.5%{clip-path:inset(0 100% 0 0);} 100%{clip-path:inset(0 100% 0 0);} }
+@keyframes lin3{ 0%,25%{left:0;} 37.5%{left:calc(100% - 4px);} 75%{left:calc(100% - 4px);} 87.5%{left:0;} 100%{left:0;} }
+@keyframes rev4{ 0%,37.5%{clip-path:inset(0 100% 0 0);} 50%{clip-path:inset(0 0 0 0);} 87.5%{clip-path:inset(0 0 0 0);} 100%{clip-path:inset(0 100% 0 0);} }
+@keyframes lin4{ 0%,37.5%{left:0;} 50%{left:calc(100% - 4px);} 87.5%{left:calc(100% - 4px);} 100%{left:0;} }
 
 /* ===== DOBRE / UNIKAJ ===== */
 .v2-tips{ display:grid; grid-template-columns:1fr 1fr; gap:20px; max-width:860px; margin:0 auto; }
