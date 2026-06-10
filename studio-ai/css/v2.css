@@ -235,3 +235,33 @@ body.v2.cart-active .v2-bottombar{ transform:translateY(130%); }
 .v2 .cookie .cookie-btns .btn-ghost{ flex:0 1 auto; color:var(--ink); border-color:var(--taupe,#c9bfb2); background:transparent; }
 .v2 .cookie .cookie-accept{ flex:1 1 auto; font-size:15px; padding:14px 22px; box-shadow:0 10px 26px -6px rgba(92,107,80,.65); }
 @media (max-width:460px){ .v2 .cookie .cookie-btns{ flex-direction:column-reverse; } }
+
+/* ===== DOPRACOWANIE KONWERSJI (v2) ===== */
+
+/* mieniący się główny przycisk — przejeżdżający odblask */
+.btn-shine{ position:relative; overflow:hidden; }
+.btn-shine::after{
+  content:""; position:absolute; top:0; bottom:0; left:0; width:60%; pointer-events:none;
+  background:linear-gradient(100deg, transparent 0%, rgba(255,255,255,.45) 50%, transparent 100%);
+  transform:skewX(-20deg) translateX(-220%);
+  animation:btnShine 4.2s ease-in-out infinite;
+}
+@keyframes btnShine{ 0%,70%{ transform:skewX(-20deg) translateX(-220%);} 88%{ transform:skewX(-20deg) translateX(300%);} 100%{ transform:skewX(-20deg) translateX(300%);} }
+
+/* kotwica cenowa nad cennikiem */
+.price-anchor{ font-size:15.5px; line-height:1.55; }
+.price-anchor s{ color:#b3543f; text-decoration-thickness:2px; }
+.price-anchor strong{ color:var(--sage-d,#5c6b50); }
+
+/* notka pod krokami */
+.v2-steps-note{ text-align:center; margin:18px 0 4px; font-size:14.5px; color:var(--muted); font-weight:600; }
+
+/* sekcja „idealny prezent" */
+.v2-gift{ text-align:center; }
+.v2-gift-inner{ max-width:620px; }
+.v2-gift-ico{ font-size:44px; display:block; margin-bottom:8px; }
+.v2-gift h2{ margin:0 0 10px; }
+.v2-gift p{ font-size:16px; line-height:1.6; color:var(--ink); margin:0 0 20px; }
+
+/* opinie — lekka korekta pod jasne tło sekcji */
+.v2 .reviews{ margin-top:6px; }
