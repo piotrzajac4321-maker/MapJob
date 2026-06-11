@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="robots" content="noindex, nofollow" />
+<title>BoboFoto — reklama (cennik)</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --krem:#f6f1e9; --bez:#ece3d6; --tekst:#3a342c; --szalwia:#8a9a82;
+    --szalwia-d:#6f7e68; --linia:#ddd1bf; --biel:#fffdf9; --akcent:#b4561f;
+  }
+  *{box-sizing:border-box;margin:0}
+  body{background:#cabfae;display:flex;flex-direction:column;align-items:center;
+    gap:18px;padding:24px;font-family:"Manrope",system-ui,sans-serif}
+
+  /* === CREATIVE 1080x1350 (4:5 — feed FB/IG) === */
+  .creative{width:1080px;height:1350px;background:var(--krem);position:relative;
+    overflow:hidden;color:var(--tekst);display:flex;flex-direction:column;
+    transform-origin:top center}
+  .pad{padding:52px 56px}
+
+  /* nagłówek */
+  .head{display:flex;align-items:center;justify-content:space-between}
+  .brand{font-family:"Cormorant Garamond",serif;font-weight:700;font-size:46px;line-height:1}
+  .brand span{color:var(--szalwia-d)}
+  .brand small{display:block;font-family:"Manrope";font-size:15px;letter-spacing:4px;
+    text-transform:uppercase;color:#9a8f7d;margin-top:4px;font-weight:600}
+  .promo{background:var(--akcent);color:#fff;font-weight:800;font-size:30px;
+    padding:14px 22px;border-radius:16px;transform:rotate(3deg);box-shadow:0 8px 20px rgba(180,86,31,.3)}
+  .promo small{display:block;font-size:13px;font-weight:600;letter-spacing:1px;opacity:.9;transform:none}
+
+  /* hasło */
+  .hook{font-family:"Cormorant Garamond",serif;font-weight:700;font-size:62px;line-height:1.04;
+    margin:30px 0 8px;letter-spacing:.3px}
+  .hook em{color:var(--szalwia-d);font-style:normal}
+  .sub{font-size:25px;color:#6e6452;font-weight:500}
+
+  /* kolaż zdjęć */
+  .collage{display:grid;grid-template-columns:1.4fr 1fr;grid-template-rows:1fr 1fr;
+    gap:12px;height:430px;margin:30px 0 8px}
+  .collage figure{margin:0;overflow:hidden;border-radius:20px;background:var(--bez)}
+  .collage figure:first-child{grid-row:span 2}
+  .collage img{width:100%;height:100%;object-fit:cover;display:block}
+
+  /* cennik */
+  .tiers{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:auto}
+  .tier{background:var(--biel);border:1px solid var(--linia);border-radius:22px;
+    padding:26px 18px 24px;text-align:center;position:relative}
+  .tier.best{border:2px solid var(--szalwia);box-shadow:0 14px 30px rgba(120,140,110,.22)}
+  .tier .badge{position:absolute;top:-15px;left:50%;transform:translateX(-50%);
+    background:var(--szalwia);color:#fff;font-size:14px;font-weight:800;letter-spacing:.5px;
+    padding:6px 16px;border-radius:999px;white-space:nowrap}
+  .tier .name{font-size:22px;font-weight:800;letter-spacing:.5px}
+  .tier .price{font-family:"Cormorant Garamond",serif;font-weight:700;font-size:58px;line-height:1;margin:8px 0 2px}
+  .tier .price span{font-size:26px}
+  .tier .qty{font-size:19px;color:#6e6452;font-weight:600}
+  .tier .per{font-size:15px;color:var(--akcent);font-weight:800;margin-top:6px}
+
+  /* stopka */
+  .foot{display:flex;align-items:center;justify-content:space-between;margin-top:26px;gap:16px}
+  .trust{font-size:18px;color:#6e6452;font-weight:600;line-height:1.5}
+  .trust b{color:var(--tekst)}
+  .cta{background:var(--szalwia);color:#fff;font-size:27px;font-weight:800;
+    padding:20px 30px;border-radius:18px;white-space:nowrap;box-shadow:0 10px 24px rgba(111,126,104,.35)}
+  .ribbon{position:absolute;bottom:0;left:0;right:0;background:var(--tekst);color:#f6f1e9;
+    text-align:center;font-size:17px;font-weight:600;padding:12px;letter-spacing:.3px}
+  .ribbon b{color:#fff}
+
+  .note{color:#5a5142;font-size:14px;max-width:1080px;text-align:center;line-height:1.6}
+  .note b{color:#2c271f}
+</style>
+</head>
+<body>
+
+  <div class="creative" id="creative">
+    <div class="pad" style="display:flex;flex-direction:column;flex:1;padding-bottom:88px">
+      <div class="head">
+        <div class="brand">Bobo<span>Foto</span><small>sesje noworodkowe online</small></div>
+        <div class="promo">−30%<small>PROMOCJA</small></div>
+      </div>
+
+      <h1 class="hook">Sesja jak ze studia —<br><em>bez wychodzenia z domu</em></h1>
+      <p class="sub">Wyślij jedno zdjęcie z telefonu, wybierz tło, odbierz efekt w ~10 h.</p>
+
+      <div class="collage">
+        <figure><img src="https://d8j0ntlcm91z4.cloudfront.net/user_3EL0T26twgaFdlHuM3eJuT2XjHR/hf_20260604_124634_1e966137-7010-4a48-b5c8-08e03f5a4f2c.png" alt="" /></figure>
+        <figure><img src="https://d8j0ntlcm91z4.cloudfront.net/user_3EL0T26twgaFdlHuM3eJuT2XjHR/hf_20260604_124639_c8bc012b-880f-4d60-9cbd-f8568bb7b212.png" alt="" /></figure>
+        <figure><img src="https://d8j0ntlcm91z4.cloudfront.net/user_3EL0T26twgaFdlHuM3eJuT2XjHR/hf_20260604_131111_faf8003f-7001-424a-af1d-0e37bca94eac.png" alt="" /></figure>
+      </div>
+
+      <div class="tiers">
+        <div class="tier">
+          <div class="name">MINI</div>
+          <div class="price"><span>zł</span>24</div>
+          <div class="qty">1 zdjęcie</div>
+          <div class="per">na próbę</div>
+        </div>
+        <div class="tier best">
+          <div class="badge">★ NAJCZĘŚCIEJ WYBIERANY</div>
+          <div class="name">STANDARD</div>
+          <div class="price"><span>zł</span>49</div>
+          <div class="qty">4 zdjęcia</div>
+          <div class="per">≈ 12,25 zł / szt.</div>
+        </div>
+        <div class="tier">
+          <div class="name">PREMIUM</div>
+          <div class="price"><span>zł</span>99</div>
+          <div class="qty">10 zdjęć</div>
+          <div class="per">tylko 9,90 zł / szt.</div>
+        </div>
+      </div>
+
+      <div class="foot">
+        <div class="trust">✓ BLIK / karta · gotowe w <b>~10 h</b><br>✓ <b>Gwarancja zwrotu</b> — nie spodoba się, oddajemy kasę</div>
+        <div class="cta">Zamów → bobofoto.pl</div>
+      </div>
+    </div>
+    <div class="ribbon">Tradycyjna sesja w studiu: <b>400–600 zł</b> i tygodnie czekania. U nas od <b>9,90 zł / zdjęcie</b>.</div>
+  </div>
+
+  <p class="note"><b>Eksport jako obraz:</b> otwórz w przeglądarce → zrób zrzut elementu <b>1080×1350</b> (np. w DevTools: zaznacz <code>#creative</code> → „Capture node screenshot"), albo screenshot na 100% zoomu. Plik wrzucasz jako single image do FB/IG. Zdjęcia: modele AI (galeria), żadne nie przedstawia realnego dziecka.</p>
+
+</body>
+</html>
