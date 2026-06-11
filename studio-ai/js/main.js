@@ -115,6 +115,9 @@ document.addEventListener("DOMContentLoaded", () => {
     if (planHidden) planHidden.value = plan;
     if (planPickEl) planPickEl.querySelectorAll(".plan-opt").forEach(b =>
       b.classList.toggle("is-active", b.dataset.plan === plan));
+    // przycisk płatności zawsze pokazuje aktualną cenę
+    const payBtn = document.getElementById("paySubmit");
+    if (payBtn && !payBtn.disabled) payBtn.textContent = "Zapłać " + PLAN_PRICE[plan] + " zł →";
     updateCartBar();
     return true;
   }
@@ -507,14 +510,14 @@ document.addEventListener("DOMContentLoaded", () => {
           '<li>Wybrane stylizacje: <b>' + styleCount + '</b></li>' +
         '</ul>' +
         '<a class="btn btn-primary btn-shine" id="donepay" href="' + payUrl + '">Zapłać ' + price + ' zł — BLIK / karta →</a>' +
-        '<p class="done-note" id="doneCount">Przeniesiemy Cię do bezpiecznej płatności za <b>5</b> s…</p>' +
+        '<p class="done-note" id="doneCount">Przeniesiemy Cię do bezpiecznej płatności za <b>3</b> s…</p>' +
         '<p class="done-note">🔒 Stripe — BLIK lub karta. Gotowe zdjęcia wyślemy na e-mail w ~10 godzin.</p>' +
       '</div>';
     m.classList.add("open");
     document.body.style.overflow = "hidden";
 
     // automatyczne przekierowanie z odliczaniem (klik w przycisk = od razu)
-    let left = 5;
+    let left = 3;
     const cnt = document.getElementById("doneCount");
     const tick = setInterval(() => {
       left--;

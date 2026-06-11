@@ -265,3 +265,12 @@ body.v2.cart-active .v2-bottombar{ transform:translateY(130%); }
 
 /* opinie — lekka korekta pod jasne tło sekcji */
 .v2 .reviews{ margin-top:6px; }
+
+/* zwijane wskazówki w formularzu (krótszy formularz) */
+.tips-toggle{ margin:10px 0 12px; }
+.tips-toggle summary{
+  cursor:pointer; font-size:13.5px; font-weight:700; color:var(--sage-d,#5c6b50);
+  padding:8px 0; list-style:none;
+}
+.tips-toggle summary::-webkit-details-marker{ display:none; }
+.tips-toggle[open] summary{ margin-bottom:8px; }
