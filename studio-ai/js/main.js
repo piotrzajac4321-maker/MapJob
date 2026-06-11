@@ -483,26 +483,53 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  /* ---- Ładne okno potwierdzenia zamówienia ---- */
+  /* ---- Okno „ostatni krok" + AUTOMATYCZNE przejście do płatności ----
+     (kluczowe dla konwersji: bez tego część klientów myślała, że zamówienie
+     jest gotowe, i nigdy nie klikała płatności) */
   function showOrderDone(fd, fileCount, styleCount) {
     closeCart();
+    const payUrl = PAYMENT_LINKS[fd.pakiet] || PAYMENT_LINKS.standard;
+    const price = PLAN_PRICE[fd.pakiet] || PLAN_PRICE.standard;
+    // śledzenie lejka: zamówienie zapisane → przechodzi do płatności
+    if (window.bfTrack) window.bfTrack("platnosc", "redirect_auto", { pakiet: fd.pakiet || null, cena: price });
+    if (window.fbq) { try { fbq("track", "AddPaymentInfo", { value: price, currency: "PLN" }); } catch (e) {} }
+
     let m = document.getElementById("orderDone");
     if (!m) { m = document.createElement("div"); m.id = "orderDone"; m.className = "done-modal"; document.body.appendChild(m); }
     m.innerHTML =
       '<div class="done-card">' +
         '<div class="done-ico">✓</div>' +
-        '<h3>Dziękujemy, ' + escapeHtml(fd.imie || "") + '!</h3>' +
-        '<p>Twoje zamówienie zostało przyjęte. Za chwilę przejdziesz do płatności — <b>BLIK</b> lub karta.</p>' +
+        '<h3>Ostatni krok, ' + escapeHtml(fd.imie || "") + '!</h3>' +
+        '<p>Twoje zdjęcia są już u nas. <b>Zamówienie czeka na opłacenie</b> — pracę zaczynamy zaraz po płatności.</p>' +
         '<ul class="done-sum">' +
-          '<li>Pakiet <b>' + (PLAN_NAME[fd.pakiet] || fd.pakiet) + '</b></li>' +
+          '<li>Pakiet <b>' + (PLAN_NAME[fd.pakiet] || fd.pakiet) + '</b> — <b>' + price + ' zł</b></li>' +
           '<li>Wgrane zdjęcia: <b>' + (fileCount || 0) + '</b></li>' +
           '<li>Wybrane stylizacje: <b>' + styleCount + '</b></li>' +
         '</ul>' +
-        '<a class="btn btn-primary" id="donepay" href="' + (PAYMENT_LINKS[fd.pakiet] || PAYMENT_LINKS.standard) + '">Przejdź do płatności →</a>' +
-        '<p class="done-note">Po opłaceniu zabieramy się do pracy — gotowe zdjęcia wyślemy na Twój e-mail w ~10 godzin.</p>' +
+        '<a class="btn btn-primary btn-shine" id="donepay" href="' + payUrl + '">Zapłać ' + price + ' zł — BLIK / karta →</a>' +
+        '<p class="done-note" id="doneCount">Przeniesiemy Cię do bezpiecznej płatności za <b>5</b> s…</p>' +
+        '<p class="done-note">🔒 Stripe — BLIK lub karta. Gotowe zdjęcia wyślemy na e-mail w ~10 godzin.</p>' +
       '</div>';
     m.classList.add("open");
     document.body.style.overflow = "hidden";
+
+    // automatyczne przekierowanie z odliczaniem (klik w przycisk = od razu)
+    let left = 5;
+    const cnt = document.getElementById("doneCount");
+    const tick = setInterval(() => {
+      left--;
+      if (cnt) cnt.innerHTML = "Przeniesiemy Cię do bezpiecznej płatności za <b>" + left + "</b> s…";
+      if (left <= 0) {
+        clearInterval(tick);
+        if (window.bfTrack) window.bfTrack("platnosc", "auto_go", { pakiet: fd.pakiet || null });
+        window.location.href = payUrl;
+      }
+    }, 1000);
+    const payBtn = document.getElementById("donepay");
+    if (payBtn) payBtn.addEventListener("click", () => {
+      clearInterval(tick);
+      if (window.bfTrack) window.bfTrack("platnosc", "click_go", { pakiet: fd.pakiet || null });
+    });
   }
 
   /* ---- Lightbox ---- */
