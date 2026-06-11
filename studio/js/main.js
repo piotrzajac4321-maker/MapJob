@@ -49,14 +49,15 @@ document.addEventListener("DOMContentLoaded", () => {
      PAKIETY — limit liczby zdjęć wg pakietu
      =========================================================== */
   const PLAN_LIMIT = { mini: 1, standard: 4, premium: 10 };
-  const PLAN_PRICE = { mini: 24, standard: 49, premium: 99 };
+  const PLAN_PRICE = { mini: "9,90", standard: "29", premium: "49" };      // do wyświetlania
+  const PLAN_PRICE_NUM = { mini: 9.90, standard: 29, premium: 49 };        // do analityki/piksela
   const PLAN_NEXT  = { mini: "standard", standard: "premium" };
   const PLAN_NAME  = { mini: "Mini", standard: "Standard", premium: "Premium" };
   // Linki płatności Stripe (LIVE) wg pakietu
   const PAYMENT_LINKS = {
-    mini:     "https://buy.stripe.com/bJe00k0jz3E89C4d3mbjW0g",
-    standard: "https://buy.stripe.com/14A4gA0jz7Uo5lO0gAbjW0h",
-    premium:  "https://buy.stripe.com/dRm14o3vLdeI5lO2oIbjW0i"
+    mini:     "https://buy.stripe.com/bJe7sMd6lcaEeWofbubjW0j",
+    standard: "https://buy.stripe.com/bJe3cw3vL7Uo7tW7J2bjW0k",
+    premium:  "https://buy.stripe.com/bJeaEYfet6QkcOgfbubjW0l"
   };
   let currentPlan = "standard";
   const planLimit = () => PLAN_LIMIT[currentPlan];
@@ -493,9 +494,10 @@ document.addEventListener("DOMContentLoaded", () => {
     closeCart();
     const payUrl = PAYMENT_LINKS[fd.pakiet] || PAYMENT_LINKS.standard;
     const price = PLAN_PRICE[fd.pakiet] || PLAN_PRICE.standard;
+    const priceNum = PLAN_PRICE_NUM[fd.pakiet] || PLAN_PRICE_NUM.standard;
     // śledzenie lejka: zamówienie zapisane → przechodzi do płatności
-    if (window.bfTrack) window.bfTrack("platnosc", "redirect_auto", { pakiet: fd.pakiet || null, cena: price });
-    if (window.fbq) { try { fbq("track", "AddPaymentInfo", { value: price, currency: "PLN" }); } catch (e) {} }
+    if (window.bfTrack) window.bfTrack("platnosc", "redirect_auto", { pakiet: fd.pakiet || null, cena: priceNum });
+    if (window.fbq) { try { fbq("track", "AddPaymentInfo", { value: priceNum, currency: "PLN" }); } catch (e) {} }
 
     let m = document.getElementById("orderDone");
     if (!m) { m = document.createElement("div"); m.id = "orderDone"; m.className = "done-modal"; document.body.appendChild(m); }
