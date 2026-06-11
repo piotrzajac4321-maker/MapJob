@@ -274,3 +274,4 @@ body.v2.cart-active .v2-bottombar{ transform:translateY(130%); }
 }
 .tips-toggle summary::-webkit-details-marker{ display:none; }
 .tips-toggle[open] summary{ margin-bottom:8px; }
+.price-human{ display:inline-block; margin-top:6px; font-size:14px; font-weight:700; color:var(--ink); }
