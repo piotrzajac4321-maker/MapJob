@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Generator poradnika BoboFoto.
+Generator poradnika BoboFoto.pl.
 Czyta artykuły z plików poradnik_data_*.py (każdy definiuje ITEMS = [...])
 i renderuje:
   - poradnik/<slug>.html  (artykuł + Article/Breadcrumb schema)
@@ -86,8 +86,8 @@ def render_article(a, arts):
         "@context": "https://schema.org", "@type": "Article",
         "headline": a["title"], "description": a["desc"],
         "image": BASE + "/og-image.png",
-        "author": {"@type": "Organization", "name": "BoboFoto"},
-        "publisher": {"@type": "Organization", "name": "BoboFoto",
+        "author": {"@type": "Organization", "name": "BoboFoto.pl"},
+        "publisher": {"@type": "Organization", "name": "BoboFoto.pl",
                       "logo": {"@type": "ImageObject", "url": BASE + "/favicon.svg"}},
         "mainEntityOfPage": url, "inLanguage": "pl-PL",
     }
@@ -107,7 +107,7 @@ def render_article(a, arts):
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="facebook-domain-verification" content="dyrtytfse94l6nab1tvz24byua18zn" />
   <script src="/js/pixel.js?v=3"></script>
-  <title>%(title)s | BoboFoto</title>
+  <title>%(title)s | BoboFoto.pl</title>
   <meta name="description" content="%(desc)s" />
   <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1" />
   <link rel="canonical" href="%(url)s" />
@@ -139,7 +139,7 @@ def render_article(a, arts):
   <article class="article">
     <p class="breadcrumbs"><a href="/">Strona główna</a> &rsaquo; <a href="/poradnik">Poradnik</a> &rsaquo; %(h1)s</p>
     <h1 style="font-family:var(--serif);font-size:clamp(30px,5.5vw,46px);font-weight:600;line-height:1.12">%(h1)s</h1>
-    <p class="post-meta">Poradnik BoboFoto · %(read)s</p>
+    <p class="post-meta">Poradnik BoboFoto.pl · %(read)s</p>
 
     <p class="lead">%(lead)s</p>
 
@@ -157,7 +157,7 @@ def render_article(a, arts):
   <footer class="footer" style="margin-top:30px">
     <div class="container">
       <div class="footer-bottom" style="border:0">
-        <span>&copy; <span id="y"></span> BoboFoto · <a href="/">Strona główna</a> · <a href="/poradnik">Poradnik</a> · <a href="/#cennik">Cennik</a></span>
+        <span>&copy; <span id="y"></span> BoboFoto.pl · <a href="/">Strona główna</a> · <a href="/poradnik">Poradnik</a> · <a href="/#cennik">Cennik</a></span>
       </div>
     </div>
   </footer>
@@ -196,8 +196,8 @@ def render_hub(arts):
             '<div class="post-grid">%s</div>' % (esc(label), "".join(cards)))
     blog_ld = {
         "@context": "https://schema.org", "@type": "Blog",
-        "name": "Poradnik BoboFoto", "url": BASE + "/poradnik",
-        "publisher": {"@type": "Organization", "name": "BoboFoto", "url": BASE + "/"},
+        "name": "Poradnik BoboFoto.pl", "url": BASE + "/poradnik",
+        "publisher": {"@type": "Organization", "name": "BoboFoto.pl", "url": BASE + "/"},
     }
     return """<!DOCTYPE html>
 <html lang="pl">
@@ -206,12 +206,12 @@ def render_hub(arts):
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="facebook-domain-verification" content="dyrtytfse94l6nab1tvz24byua18zn" />
   <script src="/js/pixel.js?v=3"></script>
-  <title>Poradnik BoboFoto — zdjęcia i sesje noworodkowe</title>
-  <meta name="description" content="Poradnik BoboFoto: jak zrobić piękne zdjęcia noworodka, ile kosztuje sesja noworodkowa, pomysły na stylizacje i sesje sezonowe. Praktyczne wskazówki dla rodziców." />
+  <title>Poradnik BoboFoto.pl — zdjęcia i sesje noworodkowe</title>
+  <meta name="description" content="Poradnik BoboFoto.pl: jak zrobić piękne zdjęcia noworodka, ile kosztuje sesja noworodkowa, pomysły na stylizacje i sesje sezonowe. Praktyczne wskazówki dla rodziców." />
   <meta name="robots" content="index, follow, max-image-preview:large" />
   <link rel="canonical" href="%(base)s/poradnik" />
   <meta property="og:type" content="website" />
-  <meta property="og:title" content="Poradnik BoboFoto — zdjęcia i sesje noworodkowe" />
+  <meta property="og:title" content="Poradnik BoboFoto.pl — zdjęcia i sesje noworodkowe" />
   <meta property="og:description" content="Praktyczne wskazówki o zdjęciach i sesjach noworodkowych." />
   <meta property="og:url" content="%(base)s/poradnik" />
   <meta property="og:image" content="%(base)s/og-image.png" />
@@ -250,7 +250,7 @@ def render_hub(arts):
   <footer class="footer">
     <div class="container">
       <div class="footer-bottom" style="border:0">
-        <span>&copy; <span id="y"></span> BoboFoto · <a href="/">Strona główna</a> · <a href="/#cennik">Cennik</a> · <a href="/#faq">FAQ</a></span>
+        <span>&copy; <span id="y"></span> BoboFoto.pl · <a href="/">Strona główna</a> · <a href="/#cennik">Cennik</a> · <a href="/#faq">FAQ</a></span>
       </div>
     </div>
   </footer>

@@ -11,7 +11,7 @@ ITEMS = [
    {"h2": "Klasycznie: pierwsze 5–14 dni", "ps": ["W tym czasie noworodki dużo śpią i łatwo układają się w „zwinięte” pozy z brzuszka. Dlatego studia polecają ten okres na klasyczną sesję."]},
    {"h2": "Ale później też jest pięknie", "ps": ["Po 2–3 tygodniach maluszek bywa bardziej wybudzony, ale zdjęcia wcale nie są gorsze — łapiesz więcej mimiki i otwarte oczka."]},
    {"h2": "Gdy moment minął", "ps": ["Nie martw się, jeśli pierwsze dni przeleciały. Każdy etap jest wyjątkowy, a piękne zdjęcie zrobisz w dowolnym momencie."]},
-   {"h2": "Sesja online bez presji czasu", "ps": ["W <strong>BoboFoto</strong> nie musisz łapać konkretnego dnia ani umawiać terminu — robisz zdjęcie w domu, kiedy maluszek jest spokojny, a my robimy resztę."]},
+   {"h2": "Sesja online bez presji czasu", "ps": ["W <strong>BoboFoto.pl</strong> nie musisz łapać konkretnego dnia ani umawiać terminu — robisz zdjęcie w domu, kiedy maluszek jest spokojny, a my robimy resztę."]},
  ],
 },
 {
@@ -39,7 +39,7 @@ ITEMS = [
    {"h2": "Tradycyjna sesja: 2–4 godziny", "ps": ["W studiu sesja trwa zwykle kilka godzin, bo trzeba robić przerwy na karmienie, przewijanie i uspokajanie dziecka."]},
    {"h2": "Od czego zależy czas", "ps": ["Im spokojniejszy maluszek i im mniej zmian stylizacji, tym szybciej. Płacz i głód potrafią wydłużyć sesję."]},
    {"h2": "Sesja online: kilka minut Twojego czasu", "ps": ["Wysłanie zdjęcia i wybór tła zajmuje dosłownie chwilę — bez wielogodzinnego siedzenia z dzieckiem w studiu."]},
-   {"h2": "Realizacja w ~10 godzin", "ps": ["W <strong>BoboFoto</strong> gotowe zdjęcia odbierasz zwykle w około 10 godzin od wysłania, a w pakiecie Premium priorytetowo."]},
+   {"h2": "Realizacja w ~10 godzin", "ps": ["W <strong>BoboFoto.pl</strong> gotowe zdjęcia odbierasz zwykle w około 10 godzin od wysłania, a w pakiecie Premium priorytetowo."]},
  ],
 },
 {
@@ -81,7 +81,7 @@ ITEMS = [
    {"h2": "Wspólna, stonowana paleta", "ps": ["Wybierzcie 2–3 spójne kolory (np. beż, biel, szałwia) i trzymajcie się ich — unikajcie mocnych wzorów i napisów."]},
    {"h2": "Komfort i naturalność", "ps": ["Wygodne ubrania, w których czujecie się dobrze, dają najbardziej naturalne kadry. Sztywne, nowe stroje krępują."]},
    {"h2": "Maluszek w centrum", "ps": ["Stroje rodziców powinny być tłem dla dziecka — stonowane, by uwaga skupiła się na noworodku."]},
-   {"h2": "Spójna oprawa kadru", "ps": ["W BoboFoto dopasujemy tło do Waszych strojów, by całość wyglądała jak profesjonalna sesja rodzinna."]},
+   {"h2": "Spójna oprawa kadru", "ps": ["W BoboFoto.pl dopasujemy tło do Waszych strojów, by całość wyglądała jak profesjonalna sesja rodzinna."]},
  ],
 },
 {
@@ -123,7 +123,7 @@ ITEMS = [
    {"h2": "Wybierz najlepsze kadry", "ps": ["Postaw na jakość, nie ilość — 20–40 naprawdę dobrych zdjęć zrobi większe wrażenie niż setki podobnych."]},
    {"h2": "Opowiedz historię", "ps": ["Ułóż zdjęcia chronologicznie: przyjazd do domu, detale, sen, pierwsze chwile z rodziną. To tworzy narrację."]},
    {"h2": "Zadbaj o spójność", "ps": ["Spójna stylizacja i kolorystyka zdjęć sprawiają, że album wygląda profesjonalnie i elegancko."]},
-   {"h2": "Dobre zdjęcia to podstawa", "ps": ["Im lepsze kadry, tym piękniejsza książka. Profesjonalne wersje przygotujesz szybko w BoboFoto."]},
+   {"h2": "Dobre zdjęcia to podstawa", "ps": ["Im lepsze kadry, tym piękniejsza książka. Profesjonalne wersje przygotujesz szybko w BoboFoto.pl."]},
  ],
 },
 {
@@ -137,7 +137,7 @@ ITEMS = [
    {"h2": "Stawiaj na różnorodność", "ps": ["Wybierz kilka typów kadrów: portret, detale (dłonie, stópki), zdjęcie z rodzicem, ujęcie całej sylwetki. Album będzie ciekawszy."]},
    {"h2": "Jakość ponad ilość", "ps": ["Lepiej mieć 15 doskonałych zdjęć niż 100 podobnych. Odrzuć rozmyte i powtarzające się ujęcia."]},
    {"h2": "Pomyśl o przeznaczeniu", "ps": ["Inne kadry sprawdzą się na ścianę (pionowe portrety), inne do albumu czy na kartki dla rodziny."]},
-   {"h2": "Dopasuj pakiet do potrzeb", "ps": ["Jeśli chcesz więcej wariantów, w BoboFoto pakiet Premium daje 10 gotowych zdjęć w różnych stylizacjach."]},
+   {"h2": "Dopasuj pakiet do potrzeb", "ps": ["Jeśli chcesz więcej wariantów, w BoboFoto.pl pakiet Premium daje 10 gotowych zdjęć w różnych stylizacjach."]},
  ],
 },
 ]

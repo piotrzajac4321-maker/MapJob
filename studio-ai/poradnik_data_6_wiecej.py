@@ -11,7 +11,7 @@ ITEMS = [
    {"h2": "Krok 1: wybierz spokojną porę", "ps": ["Najedzony i wyspany maluszek to podstawa. Zaplanuj sesję na porę, gdy dziecko zwykle jest pogodne (często przedpołudnie)."]},
    {"h2": "Krok 2: przygotuj scenę", "ps": ["Ciepły pokój, gładki koc przy oknie, usunięty bałagan z tła. Miej pod ręką chusteczki i zapasowe ubranko."]},
    {"h2": "Krok 3: zrób zdjęcie", "ps": ["Wystarczy jedno dobre ujęcie z telefonu w naturalnym świetle. Rób serię — z kilkudziesięciu kadrów wybierzesz najlepszy."]},
-   {"h2": "Krok 4: wyślij i odbierz efekt", "ps": ["W <strong>BoboFoto</strong> przesyłasz zdjęcie, wybierasz tło i pakiet, płacisz online, a gotową sesję odbierasz zwykle w ~10 godzin."]},
+   {"h2": "Krok 4: wyślij i odbierz efekt", "ps": ["W <strong>BoboFoto.pl</strong> przesyłasz zdjęcie, wybierasz tło i pakiet, płacisz online, a gotową sesję odbierasz zwykle w ~10 godzin."]},
  ],
 },
 {
@@ -25,7 +25,7 @@ ITEMS = [
    {"h2": "Ułóż maluszki blisko siebie", "ps": ["Najpiękniejsze są kadry, gdy bliźnięta się stykają — główka przy główce lub rączka na rączce. Asekuruj obie pociechy."]},
    {"h2": "Działaj, gdy oboje śpią", "ps": ["Najłatwiej złapać spokojny kadr, gdy obie pociechy są najedzone i senne w tym samym czasie."]},
    {"h2": "Spójna stylizacja", "ps": ["Identyczne lub komplementarne otulacze podkreślają, że to bliźnięta, i ładnie komponują kadr."]},
-   {"h2": "Dopracuj efekt", "ps": ["W BoboFoto dobierzesz wspólne tło i stylizację dla obojga, zachowując ich naturalny wygląd."]},
+   {"h2": "Dopracuj efekt", "ps": ["W BoboFoto.pl dobierzesz wspólne tło i stylizację dla obojga, zachowując ich naturalny wygląd."]},
  ],
 },
 {
@@ -39,7 +39,7 @@ ITEMS = [
    {"h2": "Bezpieczeństwo ponad wszystko", "ps": ["Jeśli maluszek jest pod opieką medyczną, zawsze stosuj się do zaleceń personelu. Rób zdjęcia spokojnie, bez przemęczania dziecka."]},
    {"h2": "Łap detale i skalę", "ps": ["Maleńka dłoń w palcach rodzica wyjątkowo wzruszająco oddaje, jak malutki jest wcześniak."]},
    {"h2": "Delikatne, ciepłe światło", "ps": ["Miękkie światło z okna i ciepły pokój to komfort dla dziecka i piękny efekt na zdjęciu."]},
-   {"h2": "Pamiątka na lata", "ps": ["Nawet zwykłe zdjęcie z domu czy szpitala możemy w BoboFoto przekształcić w delikatny, pamiątkowy portret."]},
+   {"h2": "Pamiątka na lata", "ps": ["Nawet zwykłe zdjęcie z domu czy szpitala możemy w BoboFoto.pl przekształcić w delikatny, pamiątkowy portret."]},
  ],
 },
 {
@@ -53,7 +53,7 @@ ITEMS = [
    {"h2": "Bezpieczeństwo przede wszystkim", "ps": ["Jedna osoba zawsze trzyma dziecko, druga robi zdjęcia. Nigdy nie zostawiaj maluszka samego przy wodzie."]},
    {"h2": "Łap emocje, nie pozy", "ps": ["Mina zdziwienia, rączki w wodzie, ręcznik z kapturkiem po kąpieli — to najbardziej urocze kadry."]},
    {"h2": "Uważaj na światło i parę", "ps": ["W łazience bywa ciemno i parno — przetrzyj obiektyw i wpuść jak najwięcej światła."]},
-   {"h2": "Zrób z tego pamiątkę", "ps": ["Najlepszy kadr po kąpieli (maluszek w ręczniku) świetnie nadaje się na profesjonalny portret w BoboFoto."]},
+   {"h2": "Zrób z tego pamiątkę", "ps": ["Najlepszy kadr po kąpieli (maluszek w ręczniku) świetnie nadaje się na profesjonalny portret w BoboFoto.pl."]},
  ],
 },
 {
@@ -67,7 +67,7 @@ ITEMS = [
    {"h2": "Maluszek w centrum", "ps": ["Ustawcie się blisko siebie, z dzieckiem pośrodku lub na rękach rodzica — bliskość buduje ciepło kadru."]},
    {"h2": "Spójne, stonowane stroje", "ps": ["Wybierzcie 2–3 wspólne kolory bez mocnych wzorów — wtedy uwaga skupia się na Was, nie na ubraniach."]},
    {"h2": "Naturalność zamiast sztywnych póz", "ps": ["Najlepsze kadry powstają w ruchu: przytulenie, buziak, spojrzenie na dziecko."]},
-   {"h2": "Profesjonalna oprawa", "ps": ["W BoboFoto dopasujemy tło i światło do wspólnego zdjęcia, by wyglądało jak z rodzinnej sesji studyjnej."]},
+   {"h2": "Profesjonalna oprawa", "ps": ["W BoboFoto.pl dopasujemy tło i światło do wspólnego zdjęcia, by wyglądało jak z rodzinnej sesji studyjnej."]},
  ],
 },
 {
@@ -81,7 +81,7 @@ ITEMS = [
    {"h2": "Dodaj metryczkę", "ps": ["Imię, data urodzenia, waga i wzrost obok maluszka tworzą czytelne, urocze ogłoszenie."]},
    {"h2": "Prosty, czysty kadr", "ps": ["Stonowane tło i delikatne dodatki sprawią, że tekst i dziecko będą dobrze widoczne."]},
    {"h2": "Dopasuj format", "ps": ["Kwadrat sprawdzi się na Instagramie i Facebooku, format pionowy — na kartkę lub wydruk."]},
-   {"h2": "Gotowe w jeden dzień", "ps": ["W BoboFoto przygotujesz elegancki kadr z miejscem na metryczkę z domowego zdjęcia."]},
+   {"h2": "Gotowe w jeden dzień", "ps": ["W BoboFoto.pl przygotujesz elegancki kadr z miejscem na metryczkę z domowego zdjęcia."]},
  ],
 },
 {
@@ -95,7 +95,7 @@ ITEMS = [
    {"h2": "Współczesny telefon w zupełności wystarczy", "ps": ["Aparaty w smartfonach robią zdjęcia w jakości, która spokojnie nadaje się na wydruk i social media — pod warunkiem dobrego światła."]},
    {"h2": "Kiedy aparat ma przewagę", "ps": ["Lustrzanka/bezlusterkowiec daje lepsze rozmycie tła i więcej swobody przy słabym świetle — ale wymaga umiejętności."]},
    {"h2": "Klucz to światło, nie sprzęt", "ps": ["Nawet najlepszy aparat nie pomoże w ciemnym pokoju. Dobre światło z okna ma większe znaczenie niż cena sprzętu."]},
-   {"h2": "Resztę dopracujemy my", "ps": ["Wyślij zdjęcie z telefonu do BoboFoto — profesjonalne tło, światło i stylizację dołożymy za Ciebie."]},
+   {"h2": "Resztę dopracujemy my", "ps": ["Wyślij zdjęcie z telefonu do BoboFoto.pl — profesjonalne tło, światło i stylizację dołożymy za Ciebie."]},
  ],
 },
 {
@@ -123,7 +123,7 @@ ITEMS = [
    {"h2": "Postaw na spójną kolorystykę", "ps": ["Trzymaj się jednej palety (np. ciepłe beże) — feed wygląda wtedy profesjonalnie i przyjemnie."]},
    {"h2": "Format kwadrat lub 4:5", "ps": ["Kwadrat i format pionowy 4:5 zajmują najwięcej miejsca w aplikacji i najlepiej się prezentują."]},
    {"h2": "Mniej znaczy więcej", "ps": ["Czyste tła i jeden bohater kadru (maluszek) działają lepiej niż przeładowane sceny."]},
-   {"h2": "Gotowe, estetyczne kadry", "ps": ["W BoboFoto dostaniesz spójne stylistycznie zdjęcia, które od razu pasują na Instagram."]},
+   {"h2": "Gotowe, estetyczne kadry", "ps": ["W BoboFoto.pl dostaniesz spójne stylistycznie zdjęcia, które od razu pasują na Instagram."]},
  ],
 },
 {
@@ -151,7 +151,7 @@ ITEMS = [
    {"h2": "Co umieścić na metryczce", "ps": ["Najczęściej: imię, data i godzina urodzenia, waga i wzrost. Czasem też dzień tygodnia lub znak zodiaku."]},
    {"h2": "Czytelna, elegancka typografia", "ps": ["Delikatny, prosty font w stonowanym kolorze wygląda najlepiej i nie odciąga uwagi od dziecka."]},
    {"h2": "Zostaw miejsce w kadrze", "ps": ["Przy robieniu zdjęcia zostaw trochę pustej przestrzeni obok maluszka — tam wpadnie tekst."]},
-   {"h2": "Gotowy projekt", "ps": ["W BoboFoto przygotujemy elegancki kadr z metryczką z Twojego domowego zdjęcia."]},
+   {"h2": "Gotowy projekt", "ps": ["W BoboFoto.pl przygotujemy elegancki kadr z metryczką z Twojego domowego zdjęcia."]},
  ],
 },
 {
@@ -165,7 +165,7 @@ ITEMS = [
    {"h2": "Praktyczne", "ps": ["Kosz wyprawkowy, kocyki, otulacze, kosmetyki dla maluszka — zawsze się przydają."]},
    {"h2": "Pamiątkowe", "ps": ["Pierwsza pościel, ramka na zdjęcie, pudełko na pierwsze pamiątki czy odcisk stópki po narodzinach."]},
    {"h2": "Oryginalne", "ps": ["Voucher na profesjonalną sesję noworodkową to prezent, który zostaje na lata — i nie zajmuje miejsca w szafie."]},
-   {"h2": "Voucher BoboFoto", "ps": ["Sesja online od 24 zł to niedrogi, a wzruszający pomysł — rodzice sami wybiorą stylizację po narodzinach."]},
+   {"h2": "Voucher BoboFoto.pl", "ps": ["Sesja online od 24 zł to niedrogi, a wzruszający pomysł — rodzice sami wybiorą stylizację po narodzinach."]},
  ],
 },
 {
@@ -174,7 +174,7 @@ ITEMS = [
  "title": "Sesja noworodkowa online — Warszawa",
  "desc": "Sesja noworodkowa online dla rodziców z Warszawy. Bez dojazdu przez korki, bez wożenia noworodka do studia — profesjonalne zdjęcia od 24 zł.",
  "card": "Dla rodziców z Warszawy — bez korków i dojazdu, profesjonalne zdjęcia od 24 zł.",
- "lead": "Mieszkasz w Warszawie i nie chcesz wozić noworodka przez korki do studia? Sesja online BoboFoto powstaje u Ciebie w domu.",
+ "lead": "Mieszkasz w Warszawie i nie chcesz wozić noworodka przez korki do studia? Sesja online BoboFoto.pl powstaje u Ciebie w domu.",
  "secs": [
    {"h2": "Bez dojazdu przez całą Warszawę", "ps": ["Z Białołęki, Mokotowa, Ursynowa czy Pragi — nie tracisz godziny w korkach z maluszkiem. Robisz zdjęcie w domu, my robimy resztę."]},
    {"h2": "Jak to działa", "ps": ["Wysyłasz jedno zdjęcie z telefonu, wybierasz tło, płacisz online (BLIK/karta), a gotowe kadry odbierasz zwykle w ~10 godzin."]},

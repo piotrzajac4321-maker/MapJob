@@ -12,7 +12,7 @@ ITEMS = [
    {"h2": "Ustaw maluszka blisko okna", "ps": ["Światło z okna to Twój najlepszy „softbox”. Ułóż dziecko tak, aby światło padało <strong>z boku</strong> — to nadaje zdjęciu głębi. Mocne słońce złagodź cienką firanką."]},
    {"h2": "Postaw na proste, jasne tło", "ps": ["Gładki koc lub prześcieradło w stonowanym kolorze (beż, biel, szałwiowa zieleń) sprawią, że uwaga skupi się na dziecku. Usuń z kadru zabawki, kable i bałagan."]},
    {"h2": "Łap detale i rób dużo ujęć", "ps": ["Maleńkie dłonie, stópki, rzęsy, dłoń rodzica trzymająca rączkę — to kadry, które wzruszają najbardziej. Rób serie zdjęć; z kilkudziesięciu zawsze znajdzie się to jedno wyjątkowe."]},
-   {"h2": "Resztę zostaw profesjonalistom", "ps": ["Nawet zwykłe domowe zdjęcie można zamienić w kadr jak ze studia. W <strong>BoboFoto</strong> wysyłasz jedno zdjęcie, wybierasz tło, a gotową sesję odbierasz w ~10 godzin. Twarz i rysy dziecka pozostają bez zmian."]},
+   {"h2": "Resztę zostaw profesjonalistom", "ps": ["Nawet zwykłe domowe zdjęcie można zamienić w kadr jak ze studia. W <strong>BoboFoto.pl</strong> wysyłasz jedno zdjęcie, wybierasz tło, a gotową sesję odbierasz w ~10 godzin. Twarz i rysy dziecka pozostają bez zmian."]},
  ],
 },
 {
@@ -54,7 +54,7 @@ ITEMS = [
    {"h2": "Złe światło", "ps": ["Zdjęcia robione wieczorem przy żarówce mają żółtą, nienaturalną skórę. Rozwiązanie: fotografuj w dzień, przy oknie."]},
    {"h2": "Bałagan w tle", "ps": ["Kable, pilot, pranie w tle odciągają uwagę. Przed zdjęciem rozejrzyj się po kadrze i usuń wszystko zbędne."]},
    {"h2": "Poruszone, nieostre kadry", "ps": ["Przy słabym świetle telefon wydłuża czas naświetlania i łapie poruszenie. Dodaj światła (okno) i dotknij ekranu, by ustawić ostrość."]},
-   {"h2": "Zbyt duży dystans", "ps": ["Maluszek ginie w kadrze. Podejdź bliżej i kadruj ciasno — twarz, dłonie, detale. Resztę (tło, stylizację) możesz dopracować z <a href=\"/poradnik/jak-edytowac-zdjecia-noworodka\">edycją</a> lub w BoboFoto."]},
+   {"h2": "Zbyt duży dystans", "ps": ["Maluszek ginie w kadrze. Podejdź bliżej i kadruj ciasno — twarz, dłonie, detale. Resztę (tło, stylizację) możesz dopracować z <a href=\"/poradnik/jak-edytowac-zdjecia-noworodka\">edycją</a> lub w BoboFoto.pl."]},
  ],
 },
 {
@@ -96,7 +96,7 @@ ITEMS = [
    {"h2": "Kiedy czerń i biel działa najlepiej", "ps": ["Gdy chcesz podkreślić <strong>emocje, światło i fakturę</strong> zamiast koloru — np. śpiący maluszek, detale dłoni, zdjęcia z rodzicem."]},
    {"h2": "Dbaj o kontrast i światło", "ps": ["Czarno-białe zdjęcie żyje światłem. Miękkie światło z okna z boku daje piękne przejścia tonalne i głębię."]},
    {"h2": "Ratuje trudne kolory", "ps": ["Jeśli skóra wyszła zaczerwieniona lub tło ma przypadkowe barwy, konwersja na czerń i biel często „naprawia” zdjęcie."]},
-   {"h2": "Jak przerobić zdjęcie", "ps": ["W telefonie wystarczy filtr „mono/noir”, a potem lekkie podniesienie kontrastu. W BoboFoto możesz też poprosić o wersję czarno-białą jako jedną ze stylizacji."]},
+   {"h2": "Jak przerobić zdjęcie", "ps": ["W telefonie wystarczy filtr „mono/noir”, a potem lekkie podniesienie kontrastu. W BoboFoto.pl możesz też poprosić o wersję czarno-białą jako jedną ze stylizacji."]},
  ],
 },
 {
@@ -124,7 +124,7 @@ ITEMS = [
    {"h2": "Stawiaj na stonowane kolory", "ps": ["Beż, biel, kremowy, szałwiowa zieleń, pudrowy róż — neutralne barwy nie rywalizują z dzieckiem i pasują do każdego wnętrza."]},
    {"h2": "Wybieraj gładkie materiały", "ps": ["Jednolity koc, prześcieradło czy narzuta bez wzorów wyglądają najczyściej. Delikatna faktura (bouclé, dzianina) dodaje przytulności."]},
    {"h2": "Unikaj mocnych wzorów", "ps": ["Kolorowe motywy i napisy odciągają wzrok od maluszka i szybko się „starzeją”. Lepiej postawić na ponadczasową prostotę."]},
-   {"h2": "Chcesz więcej teł?", "ps": ["W BoboFoto masz do wyboru ponad 30 profesjonalnych teł — od klasyki po sezonowe. Zobacz <a href=\"/poradnik/pomysly-na-stylizacje-zdjec-noworodka\">pomysły na stylizacje</a>."]},
+   {"h2": "Chcesz więcej teł?", "ps": ["W BoboFoto.pl masz do wyboru ponad 30 profesjonalnych teł — od klasyki po sezonowe. Zobacz <a href=\"/poradnik/pomysly-na-stylizacje-zdjec-noworodka\">pomysły na stylizacje</a>."]},
  ],
 },
 {
@@ -138,7 +138,7 @@ ITEMS = [
    {"h2": "Najpierw wyrównaj kolor skóry", "ps": ["Noworodki bywają zaczerwienione lub mają żółtawy odcień. Lekko obniż nasycenie czerwieni i ustaw naturalny balans bieli, by skóra była zdrowa, nie różowa."]},
    {"h2": "Dopracuj jasność i kadr", "ps": ["Delikatnie rozjaśnij zdjęcie, dodaj odrobinę kontrastu i przytnij kadr, by maluszek był w centrum uwagi."]},
    {"h2": "Nie przesadzaj z wygładzaniem", "ps": ["Meszek i drobne niedoskonałości skóry to urok noworodka. Agresywne wygładzanie wygląda sztucznie — zachowaj naturalność."]},
-   {"h2": "Gdy chcesz efekt studyjny", "ps": ["Profesjonalna zmiana tła, stylizacji i światła to coś więcej niż filtr. W <strong>BoboFoto</strong> robimy to za Ciebie, zachowując twarz i rysy dziecka bez zmian."]},
+   {"h2": "Gdy chcesz efekt studyjny", "ps": ["Profesjonalna zmiana tła, stylizacji i światła to coś więcej niż filtr. W <strong>BoboFoto.pl</strong> robimy to za Ciebie, zachowując twarz i rysy dziecka bez zmian."]},
  ],
 },
 ]

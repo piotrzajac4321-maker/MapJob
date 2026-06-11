@@ -11,7 +11,7 @@ ITEMS = [
    {"h2": "Klasyka, która nigdy się nie nudzi", "ps": ["Stonowane tła w beżach, bieli i szałwiowej zieleni sprawiają, że cała uwaga skupia się na dziecku. To wybór ponadczasowy."]},
    {"h2": "Motywy świąteczne i sezonowe", "ps": ["Mały elf, zimowa kraina, wielkanocne pastele czy jesienne dynie tworzą wzruszające, okolicznościowe pamiątki."]},
    {"h2": "Elegancja premium", "ps": ["Szmaragd i złoto, granatowy aksamit czy stylizacje vintage dają efekt „jak z okładki” dla wyjątkowych kadrów."]},
-   {"h2": "Jak wybrać stylizację", "ps": ["Dopasuj kolory do karnacji dziecka, postaw na stonowane odcienie i nie bój się zamówić kilku wersji. W <strong>BoboFoto</strong> masz do wyboru ponad 30 teł."]},
+   {"h2": "Jak wybrać stylizację", "ps": ["Dopasuj kolory do karnacji dziecka, postaw na stonowane odcienie i nie bój się zamówić kilku wersji. W <strong>BoboFoto.pl</strong> masz do wyboru ponad 30 teł."]},
  ],
 },
 {
@@ -67,7 +67,7 @@ ITEMS = [
    {"h2": "Maluszek na piersi rodzica", "ps": ["Śpiące dziecko na klatce mamy lub taty to bezpieczny, wzruszający i bardzo naturalny kadr."]},
    {"h2": "Dłonie i skala", "ps": ["Maleńka rączka w dłoni rodzica pięknie oddaje, jak malutkie jest dziecko."]},
    {"h2": "Postaw na prostotę", "ps": ["Jednolite, jasne ubrania rodziców i spokojne tło sprawią, że uwaga skupi się na emocjach, nie na strojach."]},
-   {"h2": "Wspólny portret bez wychodzenia z domu", "ps": ["W BoboFoto z domowego zdjęcia stworzysz elegancki, wspólny kadr w pięknej stylizacji."]},
+   {"h2": "Wspólny portret bez wychodzenia z domu", "ps": ["W BoboFoto.pl z domowego zdjęcia stworzysz elegancki, wspólny kadr w pięknej stylizacji."]},
  ],
 },
 {
@@ -81,7 +81,7 @@ ITEMS = [
    {"h2": "Bezpieczeństwo przede wszystkim", "ps": ["Starsze dziecko niech siedzi oparte, a noworodka ułóż na jego kolanach z asekuracją dorosłego tuż obok kadru."]},
    {"h2": "Łap naturalne emocje", "ps": ["Buziak w czółko, wspólne przytulanie — najlepsze kadry powstają, gdy starszak jest zrelaksowany, a nie „ustawiany”."]},
    {"h2": "Działaj szybko", "ps": ["Cierpliwość małych dzieci jest krótka — przygotuj scenę wcześniej i rób dużo zdjęć w krótkim czasie."]},
-   {"h2": "Spójna stylizacja", "ps": ["Ubierz dzieci w zbliżone, stonowane kolory. W BoboFoto dopasujesz tło, by wspólny kadr wyglądał profesjonalnie."]},
+   {"h2": "Spójna stylizacja", "ps": ["Ubierz dzieci w zbliżone, stonowane kolory. W BoboFoto.pl dopasujesz tło, by wspólny kadr wyglądał profesjonalnie."]},
  ],
 },
 {
@@ -95,7 +95,7 @@ ITEMS = [
    {"h2": "Jedno tło, jeden nastrój", "ps": ["Gładkie, neutralne tło i brak zbędnych dodatków dają elegancki, ponadczasowy efekt."]},
    {"h2": "Naturalne światło", "ps": ["Miękkie światło z okna to cała „dekoracja”, jakiej potrzebujesz w minimalistycznym kadrze."]},
    {"h2": "Detale zamiast dodatków", "ps": ["Zamiast rekwizytów postaw na detale ciała: rzęsy, dłonie, usta. To one budują emocje."]},
-   {"h2": "Czysty, studyjny efekt", "ps": ["W BoboFoto stworzysz minimalistyczny portret z domowego zdjęcia — bez bałaganu, z profesjonalnym światłem."]},
+   {"h2": "Czysty, studyjny efekt", "ps": ["W BoboFoto.pl stworzysz minimalistyczny portret z domowego zdjęcia — bez bałaganu, z profesjonalnym światłem."]},
  ],
 },
 {
@@ -109,7 +109,7 @@ ITEMS = [
    {"h2": "Miękkie, bezpieczne wyściełanie", "ps": ["Wyłóż kosz grubym kocem i zwiniętymi ręcznikami, by maluszek leżał stabilnie i wygodnie."]},
    {"h2": "Otulenie dla spokoju", "ps": ["Lekko otulony noworodek czuje się jak w brzuszku — częściej śpi spokojnie i ładnie wygląda na zdjęciu."]},
    {"h2": "Asekuracja w każdej chwili", "ps": ["Przy zdjęciach w koszu zawsze trzymaj rękę w pobliżu dziecka — bezpieczeństwo jest ważniejsze niż kadr."]},
-   {"h2": "Dopracuj tło", "ps": ["Neutralne tło wokół kosza wzmacnia przytulny klimat. W BoboFoto dobierzesz pasujące, profesjonalne tło online."]},
+   {"h2": "Dopracuj tło", "ps": ["Neutralne tło wokół kosza wzmacnia przytulny klimat. W BoboFoto.pl dobierzesz pasujące, profesjonalne tło online."]},
  ],
 },
 {
@@ -123,7 +123,7 @@ ITEMS = [
    {"h2": "Miś pokazuje skalę", "ps": ["Pluszak ułożony obok dziecka świetnie oddaje jego maleńki rozmiar — szczególnie, gdy powtórzysz kadr po roku."]},
    {"h2": "Wybierz stonowaną przytulankę", "ps": ["Miś w neutralnym kolorze pasuje do każdej stylizacji i nie odciąga uwagi od maluszka."]},
    {"h2": "Naturalne ułożenie", "ps": ["Połóż przytulankę tak, jakby „spała” obok dziecka — wygląda to naturalnie i wzruszająco."]},
-   {"h2": "Tradycja na lata", "ps": ["Rób takie zdjęcie co roku z tym samym misiem. W BoboFoto przygotujesz spójną, ładną oprawę każdego kadru."]},
+   {"h2": "Tradycja na lata", "ps": ["Rób takie zdjęcie co roku z tym samym misiem. W BoboFoto.pl przygotujesz spójną, ładną oprawę każdego kadru."]},
  ],
 },
 {
@@ -137,7 +137,7 @@ ITEMS = [
    {"h2": "Bezpieczeństwo to podstawa", "ps": ["Nigdy nie zostawiaj psa sam na sam z noworodkiem. Dorosły powinien kontrolować zwierzaka przez cały czas."]},
    {"h2": "Wybierz spokojny moment", "ps": ["Zmęczony, najedzony i wyspacerowany pies będzie spokojniejszy i łatwiej uchwycisz zgrany kadr."]},
    {"h2": "Łap krótkie chwile", "ps": ["Pies nie pozuje długo — przygotuj scenę i rób serie zdjęć, by złapać ten jeden idealny moment."]},
-   {"h2": "Dopracuj efekt", "ps": ["Spokojne tło wyróżni dwójkę bohaterów. W BoboFoto poprawisz oprawę wspólnego zdjęcia, zachowując naturalność."]},
+   {"h2": "Dopracuj efekt", "ps": ["Spokojne tło wyróżni dwójkę bohaterów. W BoboFoto.pl poprawisz oprawę wspólnego zdjęcia, zachowując naturalność."]},
  ],
 },
 ]

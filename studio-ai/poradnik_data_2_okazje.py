@@ -11,7 +11,7 @@ ITEMS = [
    {"h2": "Stylizacja małego elfa lub aniołka", "ps": ["Czapeczka elfa, miękki kocyk w świątecznych barwach albo delikatne skrzydełka aniołka tworzą urocze, ciepłe kadry."]},
    {"h2": "Ciepłe, świąteczne tła", "ps": ["Stonowana zieleń, złoto i czerwień, miękkie światełka w tle (bokeh) budują magiczny, świąteczny nastrój bez przesady."]},
    {"h2": "Zrób kadr na kartkę świąteczną", "ps": ["Zostaw w kadrze trochę miejsca na życzenia — taką kartkę z maluszkiem rodzina będzie przechowywać latami."]},
-   {"h2": "Nie masz czasu na sesję w studiu?", "ps": ["W <strong>BoboFoto</strong> wyślesz jedno domowe zdjęcie i wybierzesz świąteczną stylizację — gotowe w ~10 godzin, w sam raz przed świętami."]},
+   {"h2": "Nie masz czasu na sesję w studiu?", "ps": ["W <strong>BoboFoto.pl</strong> wyślesz jedno domowe zdjęcie i wybierzesz świąteczną stylizację — gotowe w ~10 godzin, w sam raz przed świętami."]},
  ],
 },
 {
@@ -25,7 +25,7 @@ ITEMS = [
    {"h2": "Postaw na przytulność", "ps": ["Miękkie dzianiny, futrzane kocyki i czapeczki z uszkami budują ciepły, zimowy klimat i podkreślają kruchość noworodka."]},
    {"h2": "Zimowa kolorystyka", "ps": ["Biel, szarości, srebro i chłodne błękity świetnie oddają zimową aurę, a jednocześnie pozostają eleganckie i ponadczasowe."]},
    {"h2": "Ciepło i bezpieczeństwo", "ps": ["W domu zadbaj o ciepło w pokoju — maluszek szybko się wychładza. Zdjęcia rób krótko i z przerwami."]},
-   {"h2": "Zimowa stylizacja bez wychodzenia z domu", "ps": ["Nie musisz wozić noworodka w mróz do studia — w BoboFoto wybierzesz zimowe tło online, a efekt odbierzesz tego samego dnia."]},
+   {"h2": "Zimowa stylizacja bez wychodzenia z domu", "ps": ["Nie musisz wozić noworodka w mróz do studia — w BoboFoto.pl wybierzesz zimowe tło online, a efekt odbierzesz tego samego dnia."]},
  ],
 },
 {
@@ -39,7 +39,7 @@ ITEMS = [
    {"h2": "Pastelowa kolorystyka", "ps": ["Pudrowy róż, miętowa zieleń, kremowa biel i delikatny żółty budują lekki, wiosenny nastrój."]},
    {"h2": "Wiosenne motywy", "ps": ["Delikatne kwiaty, miękkie kocyki i naturalne, jasne światło tworzą świeży, radosny klimat Wielkanocy."]},
    {"h2": "Kadr dla rodziny", "ps": ["Wielkanocne zdjęcie maluszka to piękny akcent na świątecznym stole i miły gest dla bliskich."]},
-   {"h2": "Gotowe na święta w jeden dzień", "ps": ["W BoboFoto wybierzesz wielkanocną stylizację online i odbierzesz gotowe zdjęcia w ~10 godzin."]},
+   {"h2": "Gotowe na święta w jeden dzień", "ps": ["W BoboFoto.pl wybierzesz wielkanocną stylizację online i odbierzesz gotowe zdjęcia w ~10 godzin."]},
  ],
 },
 {
@@ -53,7 +53,7 @@ ITEMS = [
    {"h2": "Ziemista paleta", "ps": ["Rdzawe pomarańcze, musztarda, brąz i ciepła biel oddają jesienny klimat i pięknie współgrają z delikatną skórą."]},
    {"h2": "Motyw dyni i natury", "ps": ["Delikatny akcent dyni czy suszonych liści dodaje sezonowego charakteru — w wersji minimalistycznej, by nie przytłoczyć maluszka."]},
    {"h2": "Ciepłe, miękkie światło", "ps": ["Jesienne, niskie słońce daje piękne, złote światło — fotografuj przy oknie w godzinach przedpołudniowych."]},
-   {"h2": "Jesienna stylizacja online", "ps": ["W BoboFoto dobierzesz jesienne tło do domowego zdjęcia i odbierzesz profesjonalny efekt tego samego dnia."]},
+   {"h2": "Jesienna stylizacja online", "ps": ["W BoboFoto.pl dobierzesz jesienne tło do domowego zdjęcia i odbierzesz profesjonalny efekt tego samego dnia."]},
  ],
 },
 {
@@ -67,7 +67,7 @@ ITEMS = [
    {"h2": "Jasna, świeża paleta", "ps": ["Biel, pastele i delikatna zieleń budują lekki, wiosenny klimat pełen świeżości."]},
    {"h2": "Kwiatowe akcenty", "ps": ["Drobne kwiaty czy delikatne wianki to urocze dodatki — w subtelnej ilości, by maluszek pozostał w centrum."]},
    {"h2": "Naturalne światło", "ps": ["Wiosenne światło jest jasne i miękkie — ustaw dziecko przy oknie i unikaj sztucznych lamp."]},
-   {"h2": "Wiosenny efekt bez studia", "ps": ["W BoboFoto wybierzesz wiosenne tło online i odbierzesz gotowe zdjęcia w ~10 godzin."]},
+   {"h2": "Wiosenny efekt bez studia", "ps": ["W BoboFoto.pl wybierzesz wiosenne tło online i odbierzesz gotowe zdjęcia w ~10 godzin."]},
  ],
 },
 {
@@ -81,7 +81,7 @@ ITEMS = [
    {"h2": "Lekkie, przewiewne stylizacje", "ps": ["Cienka bawełna, len i jasne barwy oddają letni, naturalny klimat i nie przegrzewają maluszka."]},
    {"h2": "Uważaj na mocne słońce", "ps": ["Latem słońce bywa ostre — fotografuj przy oknie z firanką lub w cieniu, by uniknąć twardych cieni i przegrzania dziecka."]},
    {"h2": "Naturalne, świetliste kadry", "ps": ["Jasne, przewiewne tła i delikatne światło dają radosny, wakacyjny nastrój."]},
-   {"h2": "Letnia stylizacja w jeden dzień", "ps": ["W BoboFoto dobierzesz letnie tło do domowego zdjęcia i odbierzesz efekt tego samego dnia."]},
+   {"h2": "Letnia stylizacja w jeden dzień", "ps": ["W BoboFoto.pl dobierzesz letnie tło do domowego zdjęcia i odbierzesz efekt tego samego dnia."]},
  ],
 },
 {
@@ -95,7 +95,7 @@ ITEMS = [
    {"h2": "Klasyczna sesja roczkowa", "ps": ["Proste tło, ulubiona zabawka i naturalne kadry uśmiechu — to przepis na ponadczasowe zdjęcia z roczku."]},
    {"h2": "Motyw tortu (smash the cake)", "ps": ["Zdjęcia z małym tortem, który dziecko z radością rozgniata, to świetna zabawa i mnóstwo emocji w kadrze."]},
    {"h2": "Porównanie z noworodkiem", "ps": ["Zestaw zdjęcie z roczku z fotografią z pierwszych dni — pokazuje, jak bardzo dziecko urosło."]},
-   {"h2": "Stylizacje na roczek online", "ps": ["W BoboFoto przygotujesz piękne, urodzinowe kadry na podstawie domowego zdjęcia, bez stresu sesji w studiu."]},
+   {"h2": "Stylizacje na roczek online", "ps": ["W BoboFoto.pl przygotujesz piękne, urodzinowe kadry na podstawie domowego zdjęcia, bez stresu sesji w studiu."]},
  ],
 },
 {
@@ -109,7 +109,7 @@ ITEMS = [
    {"h2": "Elegancka, jasna stylizacja", "ps": ["Biel i delikatne, kremowe odcienie podkreślają uroczysty charakter dnia i pięknie wyglądają na pamiątkowych zdjęciach."]},
    {"h2": "Detale ubranka", "ps": ["Sfotografuj haftowaną szatkę, czepek czy świecę chrzcielną — te detale tworzą wzruszającą pamiątkę."]},
    {"h2": "Kadr z rodzicami i chrzestnymi", "ps": ["Wspólne, spokojne ujęcie z najbliższymi to zdjęcie, które trafi do rodzinnego albumu na lata."]},
-   {"h2": "Pamiątkowy portret maluszka", "ps": ["Z domowego zdjęcia w eleganckiej stylizacji stworzysz w BoboFoto portret idealny na pamiątkę chrztu."]},
+   {"h2": "Pamiątkowy portret maluszka", "ps": ["Z domowego zdjęcia w eleganckiej stylizacji stworzysz w BoboFoto.pl portret idealny na pamiątkę chrztu."]},
  ],
 },
 {
@@ -123,7 +123,7 @@ ITEMS = [
    {"h2": "Czerwień i róż w tle", "ps": ["Delikatne odcienie czerwieni i różu oraz motyw serc budują ciepły, walentynkowy nastrój."]},
    {"h2": "Motyw serca i czułości", "ps": ["Dłonie rodziców układające serce wokół maluszka albo kocyk z serduszkami to urocze, symboliczne kadry."]},
    {"h2": "Stawiaj na delikatność", "ps": ["Mniej znaczy więcej — subtelne akcenty wyglądają lepiej niż przeładowana dekoracja."]},
-   {"h2": "Walentynkowa stylizacja online", "ps": ["W BoboFoto przygotujesz słodką, walentynkową wersję domowego zdjęcia w ~10 godzin."]},
+   {"h2": "Walentynkowa stylizacja online", "ps": ["W BoboFoto.pl przygotujesz słodką, walentynkową wersję domowego zdjęcia w ~10 godzin."]},
  ],
 },
 {
@@ -137,7 +137,7 @@ ITEMS = [
    {"h2": "Słodkie kostiumy zamiast straszaków", "ps": ["Mała dynia, delikatny duszek czy kostium zwierzątka wyglądają uroczo i nie przestraszą dziecka."]},
    {"h2": "Ciepła, jesienna paleta", "ps": ["Pomarańcz, brąz i ciepła biel pasują do Halloween i jednocześnie pozostają delikatne."]},
    {"h2": "Zachowaj umiar", "ps": ["Jeden wyrazisty akcent (np. czapeczka-dynia) wystarczy — maluszek powinien pozostać w centrum kadru."]},
-   {"h2": "Halloweenowy kadr online", "ps": ["W BoboFoto dobierzesz sezonową stylizację do domowego zdjęcia i odbierzesz efekt tego samego dnia."]},
+   {"h2": "Halloweenowy kadr online", "ps": ["W BoboFoto.pl dobierzesz sezonową stylizację do domowego zdjęcia i odbierzesz efekt tego samego dnia."]},
  ],
 },
 ]

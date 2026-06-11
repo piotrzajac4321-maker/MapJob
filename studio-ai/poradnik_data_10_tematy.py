@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# BoboFoto — artykuły tematyczne, część 2.
+# BoboFoto.pl — artykuły tematyczne, część 2.
 # Pod kolejne realne wyszukiwania rodziców.
 
 ITEMS = [
@@ -151,7 +151,7 @@ ITEMS = [
         "cat": "technika",
         "slug": "retusz-zdjec-noworodka",
         "title": "Retusz zdjęć noworodka — co wolno poprawić, a czego nie ruszać",
-        "desc": "Retusz zdjęć noworodka: jak delikatnie poprawić skórę i tło, zachowując naturalny wygląd maluszka. Co retuszujemy w BoboFoto.",
+        "desc": "Retusz zdjęć noworodka: jak delikatnie poprawić skórę i tło, zachowując naturalny wygląd maluszka. Co retuszujemy w BoboFoto.pl.",
         "card": "Delikatna korekta skóry i tła z zachowaniem naturalnego wyglądu maluszka.",
         "lead": "Dobry retusz noworodka jest niewidoczny — poprawia to, co przejściowe, a zostawia to, co naturalne i prawdziwe.",
         "secs": [

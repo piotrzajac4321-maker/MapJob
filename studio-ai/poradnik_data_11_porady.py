@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# BoboFoto — artykuły poradnikowe, część 3.
+# BoboFoto.pl — artykuły poradnikowe, część 3.
 # Mocne tematy long-tail: realne pytania rodziców przed sesją.
 
 ITEMS = [
@@ -133,7 +133,7 @@ ITEMS = [
         "cat": "technika",
         "slug": "jak-wybrac-tlo-do-zdjec-noworodka",
         "title": "Jak wybrać tło do zdjęć noworodka",
-        "desc": "Jak wybrać tło do zdjęć noworodka: stonowane, jednolite kolory, które nie odciągają uwagi od maluszka. Pomysły i tła w BoboFoto.",
+        "desc": "Jak wybrać tło do zdjęć noworodka: stonowane, jednolite kolory, które nie odciągają uwagi od maluszka. Pomysły i tła w BoboFoto.pl.",
         "card": "Stonowane, jednolite tła, które nie odciągają uwagi od maluszka.",
         "lead": "Tło potrafi zrobić albo zepsuć zdjęcie. Dobra wiadomość: u nas to my dobieramy tło — Ty wybierasz z gotowych propozycji.",
         "secs": [
@@ -142,7 +142,7 @@ ITEMS = [
             {"h2": "Dopasuj do stylizacji", "ps": [
                 "Ciepłe tło do dzianin i jesiennych kolorów, jasne i pastelowe do wiosennych. Spójność robi profesjonalny efekt."]},
             {"h2": "Gotowe tła u nas", "ps": [
-                "W BoboFoto dobierasz tło z naszej kolekcji — my zadbamy, żeby idealnie pasowało do zdjęcia i kolorów skóry."]},
+                "W BoboFoto.pl dobierasz tło z naszej kolekcji — my zadbamy, żeby idealnie pasowało do zdjęcia i kolorów skóry."]},
             {"h2": "Cena", "ps": [
                 "Od 24 zł. W pakietach wyższych dostajesz ten sam kadr na kilku tłach do wyboru."]},
         ],
@@ -204,8 +204,8 @@ ITEMS = [
     {
         "cat": "poradnik",
         "slug": "ile-trwa-realizacja-zdjec-bobofoto",
-        "title": "Ile trwa realizacja zdjęć w BoboFoto",
-        "desc": "Ile czeka się na gotowe zdjęcia w BoboFoto: zwykle około 10 godzin od przesłania zdjęcia i opłacenia zamówienia. Jak wygląda proces.",
+        "title": "Ile trwa realizacja zdjęć w BoboFoto.pl",
+        "desc": "Ile czeka się na gotowe zdjęcia w BoboFoto.pl: zwykle około 10 godzin od przesłania zdjęcia i opłacenia zamówienia. Jak wygląda proces.",
         "card": "Zwykle około 10 godzin od przesłania zdjęcia — bez tygodni czekania.",
         "lead": "W tradycyjnej sesji na gotowe zdjęcia czeka się tygodniami. U nas zwykle to kwestia godzin.",
         "secs": [
@@ -266,7 +266,7 @@ ITEMS = [
             {"h2": "Dlaczego nie kolejne ubranka", "ps": [
                 "Młodzi rodzice dostają mnóstwo ubranek i kocyków. Pamiątkowe zdjęcia to coś, o czym sami rzadko pomyślą, a będą wdzięczni latami."]},
             {"h2": "Voucher na sesję online", "ps": [
-                "Voucher na sesję BoboFoto to prezent bez wychodzenia z domu — rodzice wykorzystają go w spokoju, gdy maluszek będzie gotowy."]},
+                "Voucher na sesję BoboFoto.pl to prezent bez wychodzenia z domu — rodzice wykorzystają go w spokoju, gdy maluszek będzie gotowy."]},
             {"h2": "Prosty i bezpieczny", "ps": [
                 "Nie trzeba nigdzie jechać ani umawiać terminu w studiu. Wystarczy jedno zdjęcie z telefonu, a my robimy resztę."]},
             {"h2": "Cena", "ps": [

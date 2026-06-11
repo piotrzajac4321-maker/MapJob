@@ -9,7 +9,7 @@ ITEMS = [
  "lead": "Sesja noworodkowa to piękna pamiątka, ale tradycyjnie potrafi sporo kosztować. Sprawdź, ile naprawdę kosztuje i czym różni się od wersji online.",
  "secs": [
    {"h2": "Ile kosztuje tradycyjna sesja", "ps": ["W większości studiów to wydatek <strong>400–600 zł</strong> lub więcej, plus dojazd z noworodkiem i kilka tygodni oczekiwania na zdjęcia."]},
-   {"h2": "Ile kosztuje sesja online", "ps": ["W <strong>BoboFoto</strong> ceny zaczynają się od 24 zł: Mini 24 zł, Standard 49 zł (4 zdjęcia), Premium 99 zł (10 zdjęć). Bez ukrytych kosztów, płatność BLIK lub kartą."]},
+   {"h2": "Ile kosztuje sesja online", "ps": ["W <strong>BoboFoto.pl</strong> ceny zaczynają się od 24 zł: Mini 24 zł, Standard 49 zł (4 zdjęcia), Premium 99 zł (10 zdjęć). Bez ukrytych kosztów, płatność BLIK lub kartą."]},
    {"h2": "Jak to działa krok po kroku", "ps": ["Robisz w domu jedno zdjęcie, wybierasz tło, płacisz online i odbierasz gotowe zdjęcia — zwykle w około 10 godzin."]},
    {"h2": "Czy wygląda naturalnie", "ps": ["Tak — twarz i rysy dziecka pozostają bez zmian; zmieniamy wyłącznie tło, stylizację i światło, by efekt przypominał sesję studyjną."]},
  ],
@@ -25,7 +25,7 @@ ITEMS = [
    {"h2": "Portfolio i spójny styl", "ps": ["Sprawdź, czy styl zdjęć Ci odpowiada i czy jest spójny — to lepszy wyznacznik niż pojedyncze efektowne kadry."]},
    {"h2": "Bezpieczeństwo dziecka", "ps": ["Upewnij się, że fotograf stawia bezpieczeństwo ponad efektowne pozy i pracuje z asekuracją."]},
    {"h2": "Cena i co obejmuje", "ps": ["Dopytaj, ile zdjęć dostaniesz, czy obróbka jest w cenie i czy nie ma ukrytych opłat za dodatkowe kadry."]},
-   {"h2": "Alternatywa: sesja online", "ps": ["Jeśli zależy Ci na wygodzie i niższej cenie, rozważ sesję online — w BoboFoto wiesz z góry, ile zapłacisz i co dostaniesz."]},
+   {"h2": "Alternatywa: sesja online", "ps": ["Jeśli zależy Ci na wygodzie i niższej cenie, rozważ sesję online — w BoboFoto.pl wiesz z góry, ile zapłacisz i co dostaniesz."]},
  ],
 },
 {
@@ -67,14 +67,14 @@ ITEMS = [
    {"h2": "Sesja ciążowa", "ps": ["Najlepiej robić ją w 7.–8. miesiącu, gdy brzuszek jest okrągły, a mama wciąż czuje się komfortowo."]},
    {"h2": "Sesja noworodkowa", "ps": ["Powstaje po narodzinach i skupia się na maluszku — jego rysach, detalach i pierwszych chwilach z rodziną."]},
    {"h2": "Spójna stylizacja", "ps": ["Zachowanie podobnej kolorystyki i klimatu sprawi, że obie sesje będą tworzyć jedną, ładną opowieść."]},
-   {"h2": "Połącz je w album", "ps": ["Zestawienie brzuszka i noworodka w jednej fotoksiążce to wzruszająca pamiątka. Spójne kadry przygotujesz w BoboFoto."]},
+   {"h2": "Połącz je w album", "ps": ["Zestawienie brzuszka i noworodka w jednej fotoksiążce to wzruszająca pamiątka. Spójne kadry przygotujesz w BoboFoto.pl."]},
  ],
 },
 {
  "cat": "poradnik",
  "slug": "jak-zamowic-sesje-noworodkowa-online",
  "title": "Jak zamówić sesję noworodkową online — krok po kroku",
- "desc": "Jak zamówić sesję noworodkową online w BoboFoto? Prosty proces krok po kroku: zdjęcie, wybór tła, płatność i odbiór gotowych zdjęć.",
+ "desc": "Jak zamówić sesję noworodkową online w BoboFoto.pl? Prosty proces krok po kroku: zdjęcie, wybór tła, płatność i odbiór gotowych zdjęć.",
  "card": "Prosty proces krok po kroku: zdjęcie, tło, płatność i odbiór zdjęć.",
  "lead": "Zamówienie sesji online jest banalnie proste i zajmuje kilka minut. Oto cały proces krok po kroku.",
  "secs": [
@@ -93,7 +93,7 @@ ITEMS = [
  "lead": "Prywatność dziecka jest najważniejsza. Wyjaśniamy, jak bezpiecznie korzystać z sesji online i o co warto pytać.",
  "secs": [
    {"h2": "Sprawdź politykę prywatności", "ps": ["Rzetelna firma jasno opisuje, jak przetwarza zdjęcia i dane — zgodnie z RODO. Zobacz naszą <a href=\"/polityka-prywatnosci\">politykę prywatności</a>."]},
-   {"h2": "Zdjęcia tylko do realizacji", "ps": ["W BoboFoto przesłane zdjęcia wykorzystujemy wyłącznie do przygotowania Twojego zamówienia."]},
+   {"h2": "Zdjęcia tylko do realizacji", "ps": ["W BoboFoto.pl przesłane zdjęcia wykorzystujemy wyłącznie do przygotowania Twojego zamówienia."]},
    {"h2": "Bezpieczne przesyłanie i płatność", "ps": ["Dane przesyłane są bezpiecznym połączeniem, a płatności obsługuje zaufany operator (BLIK, karta)."]},
    {"h2": "Twoja kontrola", "ps": ["Decydujesz, jakie zdjęcie wysyłasz, a my zmieniamy tylko tło i stylizację — twarz i rysy dziecka pozostają bez zmian."]},
  ],
@@ -109,7 +109,7 @@ ITEMS = [
    {"h2": "Portret w eleganckiej ramce", "ps": ["Klasyczny, stonowany portret maluszka w ramce to ozdoba salonu i prezent na lata."]},
    {"h2": "Mała fotoksiążka", "ps": ["Album z pierwszych tygodni to wzruszająca pamiątka, do której dziadkowie będą wracać."]},
    {"h2": "Kadr okolicznościowy", "ps": ["Świąteczna lub urodzinowa stylizacja sprawi, że prezent będzie pasował do konkretnej okazji."]},
-   {"h2": "Szybko i bez wychodzenia z domu", "ps": ["W BoboFoto z domowego zdjęcia przygotujesz piękny portret do druku — w ~10 godzin."]},
+   {"h2": "Szybko i bez wychodzenia z domu", "ps": ["W BoboFoto.pl z domowego zdjęcia przygotujesz piękny portret do druku — w ~10 godzin."]},
  ],
 },
 {
@@ -123,7 +123,7 @@ ITEMS = [
    {"h2": "Profesjonalne zdjęcia", "ps": ["To najważniejsza pamiątka — uwieczniają, jak malutkie i kruche było dziecko na samym początku."]},
    {"h2": "Odcisk stópki i dłoni", "ps": ["Gipsowy lub tuszowy odcisk maleńkiej stópki to wzruszający, trójwymiarowy ślad pierwszych dni."]},
    {"h2": "Pamiątki ze szpitala", "ps": ["Opaska identyfikacyjna, pierwszy czepek czy metryczka — drobiazgi, które nabierają ogromnej wartości."]},
-   {"h2": "Fotoksiążka łącząca wszystko", "ps": ["Album z najlepszymi zdjęciami spina pierwsze tygodnie w jedną, trwałą opowieść. Dobre kadry przygotujesz w BoboFoto."]},
+   {"h2": "Fotoksiążka łącząca wszystko", "ps": ["Album z najlepszymi zdjęciami spina pierwsze tygodnie w jedną, trwałą opowieść. Dobre kadry przygotujesz w BoboFoto.pl."]},
  ],
 },
 {
@@ -136,7 +136,7 @@ ITEMS = [
  "secs": [
    {"h2": "Typowe ceny w studiu", "ps": ["Sesja noworodkowa w Polsce to najczęściej <strong>400–600 zł</strong>, a w dużych miastach i u znanych fotografów nawet więcej."]},
    {"h2": "Co wpływa na cenę", "ps": ["Liczba gotowych zdjęć, czas obróbki, dodatkowe stylizacje, dojazd i renoma fotografa — to wszystko podnosi koszt."]},
-   {"h2": "Tańsza alternatywa", "ps": ["Sesja online w BoboFoto zaczyna się od 24 zł, bez dojazdu i ukrytych opłat — znasz cenę z góry."]},
+   {"h2": "Tańsza alternatywa", "ps": ["Sesja online w BoboFoto.pl zaczyna się od 24 zł, bez dojazdu i ukrytych opłat — znasz cenę z góry."]},
    {"h2": "Na co zwrócić uwagę", "ps": ["Zawsze sprawdź, ile zdjęć i jaka obróbka są w cenie. Zobacz też, <a href=\"/poradnik/jak-wybrac-fotografa-noworodkowego\">jak wybrać fotografa</a>."]},
  ],
 },

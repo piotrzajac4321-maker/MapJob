@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# BoboFoto — strony lokalne (miasta), część 2.
+# BoboFoto.pl — strony lokalne (miasta), część 2.
 # Każde miasto = osobna podstrona pod lokalne wyszukiwania
 # "sesja noworodkowa online <miasto>".
 
@@ -77,7 +77,7 @@ for c in _CITIES:
         "card": "Dla rodziców z " + c["dop"] +
                 " — bez dojazdu i stresu, profesjonalne zdjęcia noworodka od 24 zł.",
         "lead": "Mieszkasz w " + c["dop"] +
-                " i nie chcesz wozić kilkudniowego noworodka do studia? Sesja online BoboFoto powstaje u Ciebie w domu — wystarczy jedno zdjęcie z telefonu.",
+                " i nie chcesz wozić kilkudniowego noworodka do studia? Sesja online BoboFoto.pl powstaje u Ciebie w domu — wystarczy jedno zdjęcie z telefonu.",
         "secs": [
             {"h2": "Bez dojazdu przez całe miasto", "ps": [
                 "Z " + c["dzielnice"] + " — nie tracisz czasu w korkach z maluszkiem. "
