@@ -3,6 +3,7 @@
   <url><loc>https://bobofoto.pl/</loc><priority>1.0</priority></url>
   <url><loc>https://bobofoto.pl/poradnik</loc><priority>0.8</priority></url>
   <url><loc>https://bobofoto.pl/konkurs</loc><priority>0.8</priority></url>
+  <url><loc>https://bobofoto.pl/regulamin</loc><priority>0.3</priority></url>
   <url><loc>https://bobofoto.pl/polityka-prywatnosci</loc><priority>0.3</priority></url>
   <url><loc>https://bobofoto.pl/cookies</loc><priority>0.3</priority></url>
   <url><loc>https://bobofoto.pl/poradnik/sesja-ciazowa-online</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
