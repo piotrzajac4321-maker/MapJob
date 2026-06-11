@@ -94,7 +94,7 @@ ITEMS = [
  "secs": [
    {"h2": "Sesja w studiu", "ps": ["Profesjonalne tła i światło, ale dojazd z noworodkiem, wyższy koszt (zwykle 400–600 zł) i obce otoczenie dla dziecka."]},
    {"h2": "Sesja w domu", "ps": ["Komfort i spokój maluszka oraz brak dojazdu, ale trudniej o studyjne tło i profesjonalne światło."]},
-   {"h2": "Trzecia opcja: sesja online", "ps": ["Robisz zdjęcie w domu, a profesjonalne tło i światło dokładamy my. Łączysz wygodę domu z efektem studia — od 24 zł."]},
+   {"h2": "Trzecia opcja: sesja online", "ps": ["Robisz zdjęcie w domu, a profesjonalne tło i światło dokładamy my. Łączysz wygodę domu z efektem studia — od 9,90 zł."]},
    {"h2": "Co wybrać", "ps": ["Jeśli zależy Ci na świętym spokoju, niskim koszcie i szybkim efekcie — sprawdź <a href=\"/poradnik/sesja-noworodkowa-online-ile-kosztuje\">sesję noworodkową online</a>."]},
  ],
 },

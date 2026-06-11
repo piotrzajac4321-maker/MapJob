@@ -7,7 +7,7 @@ ITEMS = [
         "cat": "poradnik",
         "slug": "sesja-ciazowa-online",
         "title": "Sesja ciążowa online — piękne zdjęcia brzuszka bez wychodzenia z domu",
-        "desc": "Sesja ciążowa online: robisz zdjęcie brzuszka w domu, my dodajemy tło, światło i delikatny retusz. Profesjonalna pamiątka z ciąży od 24 zł.",
+        "desc": "Sesja ciążowa online: robisz zdjęcie brzuszka w domu, my dodajemy tło, światło i delikatny retusz. Profesjonalna pamiątka z ciąży od 9,90 zł.",
         "card": "Zdjęcia brzuszka prosto z domu — bez krępującej sesji w studiu, gotowe w ~10 godzin.",
         "lead": "Chcesz uwiecznić ciążowy brzuszek, ale nie czujesz się komfortowo na sesji w studiu? Zrób zdjęcie w domu, a my zamienimy je w piękną pamiątkę.",
         "secs": [
@@ -18,7 +18,7 @@ ITEMS = [
             {"h2": "Co robimy my", "ps": [
                 "Dodajemy spójne tło, wyrównujemy światło, wygładzamy skórę i nadajemy zdjęciu ciepły, pastelowy klimat — tak, by wyglądało jak z profesjonalnej sesji."]},
             {"h2": "Cena i czas", "ps": [
-                "Od 24 zł, gotowe kadry odbierasz zwykle w ~10 godzin. Idealne też jako zapowiedź narodzin albo prezent dla przyszłego taty."]},
+                "Od 9,90 zł, gotowe kadry odbierasz zwykle w ~10 godzin. Idealne też jako zapowiedź narodzin albo prezent dla przyszłego taty."]},
         ],
     },
     {
@@ -36,7 +36,7 @@ ITEMS = [
             {"h2": "Jeden spójny klimat", "ps": [
                 "Ubierz oba maluszki w podobnej tonacji (np. dwa beże albo biel i szarość). My zadbamy o jednolite tło i kolory, żeby kadr wyglądał jak jedna sesja."]},
             {"h2": "Cena", "ps": [
-                "Od 24 zł za pakiet Mini. Bliźnięta to świetny motyw na kartkę z ogłoszeniem narodzin — dwa imiona, jedno zdjęcie."]},
+                "Od 9,90 zł za pakiet Mini. Bliźnięta to świetny motyw na kartkę z ogłoszeniem narodzin — dwa imiona, jedno zdjęcie."]},
         ],
     },
     {
@@ -54,14 +54,14 @@ ITEMS = [
             {"h2": "Co możemy poprawić", "ps": [
                 "Z jednego ujęcia zrobimy dopracowany kadr: wyrównamy światło, ujednolicimy kolory i delikatnie wygładzimy tło, jeśli było zabałaganione."]},
             {"h2": "Cena", "ps": [
-                "Od 24 zł. Gotową pamiątkę z baby shower możesz wydrukować albo wstawić jako pierwszą stronę albumu dziecka."]},
+                "Od 9,90 zł. Gotową pamiątkę z baby shower możesz wydrukować albo wstawić jako pierwszą stronę albumu dziecka."]},
         ],
     },
     {
         "cat": "stylizacje",
         "slug": "zdjecia-rodzinne-z-noworodkiem-online",
         "title": "Zdjęcia rodzinne z noworodkiem — cała rodzina w jednym kadrze",
-        "desc": "Sesja rodzinna z noworodkiem online: mama, tata i maluch w jednym kadrze, bez wychodzenia z domu. Pomysły na ułożenie i obróbka od 24 zł.",
+        "desc": "Sesja rodzinna z noworodkiem online: mama, tata i maluch w jednym kadrze, bez wychodzenia z domu. Pomysły na ułożenie i obróbka od 9,90 zł.",
         "card": "Mama, tata i maluch w jednym ciepłym kadrze — prosto z domu.",
         "lead": "Pierwsze wspólne zdjęcie całej rodziny to pamiątka na lata. Nie musisz iść do studia — wystarczy jedno zdjęcie zrobione w domu.",
         "secs": [
@@ -72,7 +72,7 @@ ITEMS = [
             {"h2": "Co robimy my", "ps": [
                 "Dodajemy spójne tło, wyrównujemy światło na wszystkich twarzach i nadajemy całości ciepły, naturalny klimat."]},
             {"h2": "Cena", "ps": [
-                "Od 24 zł. Świetny pomysł na pierwszą wspólną pamiątkę i prezent dla dziadków."]},
+                "Od 9,90 zł. Świetny pomysł na pierwszą wspólną pamiątkę i prezent dla dziadków."]},
         ],
     },
     {
@@ -90,14 +90,14 @@ ITEMS = [
             {"h2": "Co robimy my", "ps": [
                 "Ujednolicamy tło i kolory, wyrównujemy światło i delikatnie retuszujemy, zachowując naturalny charakter sceny."]},
             {"h2": "Cena", "ps": [
-                "Od 24 zł. Uroczy kadr, który po latach przypomni pierwszego towarzysza Twojego dziecka."]},
+                "Od 9,90 zł. Uroczy kadr, który po latach przypomni pierwszego towarzysza Twojego dziecka."]},
         ],
     },
     {
         "cat": "stylizacje",
         "slug": "zdjecia-noworodka-dla-dziadkow",
         "title": "Zdjęcia noworodka dla dziadków — najlepszy prezent",
-        "desc": "Zdjęcia noworodka jako prezent dla dziadków: jak przygotować kadr do druku i ramki. Pomysły na wzruszającą pamiątkę od 24 zł.",
+        "desc": "Zdjęcia noworodka jako prezent dla dziadków: jak przygotować kadr do druku i ramki. Pomysły na wzruszającą pamiątkę od 9,90 zł.",
         "card": "Najpiękniejszy prezent dla babci i dziadka — kadr gotowy do ramki.",
         "lead": "Dla dziadków nie ma lepszego prezentu niż zdjęcie wnuka. Podpowiadamy, jak przygotować kadr, który trafi prosto na komodę albo ścianę.",
         "secs": [
@@ -108,14 +108,14 @@ ITEMS = [
             {"h2": "Co robimy my", "ps": [
                 "Przygotujemy dopracowany kadr w wysokiej jakości — gotowy do druku w dowolnym formacie, z ciepłą, naturalną tonacją."]},
             {"h2": "Cena", "ps": [
-                "Od 24 zł. Możesz zamówić ten sam kadr w kilku wersjach — dla obojga dziadków."]},
+                "Od 9,90 zł. Możesz zamówić ten sam kadr w kilku wersjach — dla obojga dziadków."]},
         ],
     },
     {
         "cat": "okazje",
         "slug": "zdjecia-noworodka-jesienia",
         "title": "Jesienne zdjęcia noworodka — ciepłe kolory i przytulny klimat",
-        "desc": "Jesienne zdjęcia noworodka: ciepłe, przytulne kadry w barwach jesieni. Pomysły na stylizacje i tła, obróbka online od 24 zł.",
+        "desc": "Jesienne zdjęcia noworodka: ciepłe, przytulne kadry w barwach jesieni. Pomysły na stylizacje i tła, obróbka online od 9,90 zł.",
         "card": "Ciepłe, przytulne kadry w barwach jesieni — bez wychodzenia z domu.",
         "lead": "Jesień to idealna pora na przytulne, ciepłe zdjęcia noworodka. Miękkie koce, dzianiny i ciepłe światło tworzą kojący klimat.",
         "secs": [
@@ -126,7 +126,7 @@ ITEMS = [
             {"h2": "Co robimy my", "ps": [
                 "Dodajemy ciepłe, jesienne tło i tonację, która pasuje do pory roku, oraz delikatny retusz skóry."]},
             {"h2": "Cena", "ps": [
-                "Od 24 zł. Jesienna sesja online to pomysł na zdjęcie idealne też na kartkę na nadchodzące święta."]},
+                "Od 9,90 zł. Jesienna sesja online to pomysł na zdjęcie idealne też na kartkę na nadchodzące święta."]},
         ],
     },
     {
@@ -144,7 +144,7 @@ ITEMS = [
             {"h2": "Co robimy my", "ps": [
                 "Rozjaśniamy kadr, dodajemy świeże, letnie tło i utrzymujemy naturalne, ciepłe kolory skóry."]},
             {"h2": "Cena", "ps": [
-                "Od 24 zł. Gotowe kadry odbierasz zwykle w ~10 godzin."]},
+                "Od 9,90 zł. Gotowe kadry odbierasz zwykle w ~10 godzin."]},
         ],
     },
     {
@@ -162,7 +162,7 @@ ITEMS = [
             {"h2": "Tło i kolory", "ps": [
                 "Ujednolicamy tło, wyrównujemy światło i nadajemy ciepłą, naturalną tonację skóry — bez przesadnego wygładzania."]},
             {"h2": "Cena", "ps": [
-                "Profesjonalny retusz jest w cenie każdego pakietu — już od 24 zł."]},
+                "Profesjonalny retusz jest w cenie każdego pakietu — już od 9,90 zł."]},
         ],
     },
     {
@@ -180,7 +180,7 @@ ITEMS = [
             {"h2": "Co robimy my", "ps": [
                 "Przygotujemy dopracowany kadr i, jeśli chcesz, dodamy delikatny podpis z imieniem i danymi — gotowy do wysłania lub druku."]},
             {"h2": "Cena", "ps": [
-                "Od 24 zł. Gotowe ogłoszenie wyślesz przez telefon albo wydrukujesz jako kartkę."]},
+                "Od 9,90 zł. Gotowe ogłoszenie wyślesz przez telefon albo wydrukujesz jako kartkę."]},
         ],
     },
     {
@@ -198,7 +198,7 @@ ITEMS = [
             {"h2": "Co robimy my", "ps": [
                 "Ujednolicamy tło i kolory oraz delikatnie retuszujemy, zostawiając naturalny, ciepły klimat."]},
             {"h2": "Cena", "ps": [
-                "Od 24 zł. Świetny pomysł na początek serii zdjęć rok po roku."]},
+                "Od 9,90 zł. Świetny pomysł na początek serii zdjęć rok po roku."]},
         ],
     },
     {
@@ -216,7 +216,7 @@ ITEMS = [
             {"h2": "Spójny styl", "ps": [
                 "Album wygląda najlepiej, gdy zdjęcia mają spójną tonację. Dlatego warto, żeby pochodziły z jednej, dopracowanej obróbki."]},
             {"h2": "Jak pomagamy", "ps": [
-                "Przygotujemy zestaw zdjęć w jednolitym, ciepłym stylu — gotowych do wrzucenia do dowolnej drukarni fotoksiążek. Pakiety od 24 zł."]},
+                "Przygotujemy zestaw zdjęć w jednolitym, ciepłym stylu — gotowych do wrzucenia do dowolnej drukarni fotoksiążek. Pakiety od 9,90 zł."]},
         ],
     },
     {
@@ -234,14 +234,14 @@ ITEMS = [
             {"h2": "Co robimy my", "ps": [
                 "Dodajemy spójne tło wokół kosza, wyrównujemy światło i kolory oraz delikatnie retuszujemy skórę."]},
             {"h2": "Cena", "ps": [
-                "Od 24 zł. Klasyczny kadr, który zawsze dobrze wygląda na ścianie."]},
+                "Od 9,90 zł. Klasyczny kadr, który zawsze dobrze wygląda na ścianie."]},
         ],
     },
     {
         "cat": "okazje",
         "slug": "zdjecia-chrztu-online",
         "title": "Zdjęcia z chrztu online — pamiątka z wyjątkowego dnia",
-        "desc": "Zdjęcia z chrztu online: jak uwiecznić ten dzień i zamienić najlepsze ujęcie w dopracowaną pamiątkę. Porady i obróbka od 24 zł.",
+        "desc": "Zdjęcia z chrztu online: jak uwiecznić ten dzień i zamienić najlepsze ujęcie w dopracowaną pamiątkę. Porady i obróbka od 9,90 zł.",
         "card": "Uwiecznij dzień chrztu i zamień najlepsze ujęcie w piękną pamiątkę.",
         "lead": "Chrzest to dzień pełen emocji i gości. Podpowiadamy, jak zadbać o kilka ładnych kadrów mimo zamieszania.",
         "secs": [
@@ -252,14 +252,14 @@ ITEMS = [
             {"h2": "Co robimy my", "ps": [
                 "Z najlepszego ujęcia zrobimy dopracowany kadr: wyrównamy światło, ujednolicimy kolory i delikatnie poprawimy tło."]},
             {"h2": "Cena", "ps": [
-                "Od 24 zł. Gotowa pamiątka pasuje do ramki obok zdjęć z innych ważnych dni."]},
+                "Od 9,90 zł. Gotowa pamiątka pasuje do ramki obok zdjęć z innych ważnych dni."]},
         ],
     },
     {
         "cat": "okazje",
         "slug": "zdjecia-noworodka-wiosna",
         "title": "Wiosenne zdjęcia noworodka — świeżość i pastelowe barwy",
-        "desc": "Wiosenne zdjęcia noworodka: świeże, pastelowe kadry i pomysły na delikatne stylizacje. Obróbka online od 24 zł.",
+        "desc": "Wiosenne zdjęcia noworodka: świeże, pastelowe kadry i pomysły na delikatne stylizacje. Obróbka online od 9,90 zł.",
         "card": "Świeże, pastelowe kadry pełne wiosennej lekkości — prosto z domu.",
         "lead": "Wiosna kojarzy się z nowym życiem, więc pasuje do zdjęć noworodka jak żadna inna pora roku. Postaw na pastele i delikatność.",
         "secs": [
@@ -270,14 +270,14 @@ ITEMS = [
             {"h2": "Co robimy my", "ps": [
                 "Dodajemy świeże, jasne tło i pastelową tonację oraz delikatny retusz skóry."]},
             {"h2": "Cena", "ps": [
-                "Od 24 zł. Wiosenny kadr świetnie sprawdza się też jako kartka wielkanocna ze zdjęciem maluszka."]},
+                "Od 9,90 zł. Wiosenny kadr świetnie sprawdza się też jako kartka wielkanocna ze zdjęciem maluszka."]},
         ],
     },
     {
         "cat": "stylizacje",
         "slug": "zdjecia-noworodka-z-mama",
         "title": "Zdjęcia noworodka z mamą — bliskość w jednym kadrze",
-        "desc": "Zdjęcia noworodka z mamą: jak uchwycić bliskość pierwszych dni bez sesji w studiu. Pomysły na ułożenie i obróbka online od 24 zł.",
+        "desc": "Zdjęcia noworodka z mamą: jak uchwycić bliskość pierwszych dni bez sesji w studiu. Pomysły na ułożenie i obróbka online od 9,90 zł.",
         "card": "Bliskość pierwszych dni — Ty i maluszek w jednym, ciepłym kadrze.",
         "lead": "Zdjęcia mamy z noworodkiem to jedne z najbardziej wzruszających kadrów. Nie musisz iść do studia, żeby je mieć.",
         "secs": [
@@ -288,7 +288,7 @@ ITEMS = [
             {"h2": "Co robimy my", "ps": [
                 "Dodajemy spójne tło, wyrównujemy światło na obu twarzach i nadajemy ciepły, naturalny klimat."]},
             {"h2": "Cena", "ps": [
-                "Od 24 zł. Idealny prezent dla siebie i wzruszająca pamiątka na Dzień Matki."]},
+                "Od 9,90 zł. Idealny prezent dla siebie i wzruszająca pamiątka na Dzień Matki."]},
         ],
     },
 ]

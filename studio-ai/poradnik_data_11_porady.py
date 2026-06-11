@@ -18,7 +18,7 @@ ITEMS = [
             {"h2": "Biały szum i kołysanie", "ps": [
                 "Cichy biały szum albo delikatne kołysanie pomaga zasnąć. Działaj spokojnie i bez pośpiechu — maluch wyczuwa nerwy."]},
             {"h2": "Nie zmuszaj", "ps": [
-                "Jeśli maluszek marudzi, zrób przerwę. Lepiej kilka spokojnych minut niż walka o ujęcie. Resztę dopracujemy w obróbce — od 24 zł."]},
+                "Jeśli maluszek marudzi, zrób przerwę. Lepiej kilka spokojnych minut niż walka o ujęcie. Resztę dopracujemy w obróbce — od 9,90 zł."]},
         ],
     },
     {
@@ -36,7 +36,7 @@ ITEMS = [
             {"h2": "Dopasuj do rytmu malucha", "ps": [
                 "Połącz dobrą porę światła z momentem po karmieniu, gdy maluszek jest senny — to złoty strzał."]},
             {"h2": "Resztę wyrównamy my", "ps": [
-                "Nawet jeśli światło nie było idealne, wyrównamy ekspozycję i kolory. Pakiety od 24 zł."]},
+                "Nawet jeśli światło nie było idealne, wyrównamy ekspozycję i kolory. Pakiety od 9,90 zł."]},
         ],
     },
     {
@@ -54,7 +54,7 @@ ITEMS = [
             {"h2": "Co robimy my", "ps": [
                 "Wyrównujemy balans bieli i delikatnie korygujemy ton skóry, by była ciepła i naturalna — bez sztucznego wybielania."]},
             {"h2": "Cena", "ps": [
-                "Od 24 zł. Naturalny, zdrowy kolor skóry to podstawa dobrego zdjęcia noworodka."]},
+                "Od 9,90 zł. Naturalny, zdrowy kolor skóry to podstawa dobrego zdjęcia noworodka."]},
         ],
     },
     {
@@ -72,7 +72,7 @@ ITEMS = [
             {"h2": "Najważniejszy jest spokój", "ps": [
                 "Lepsze jest spokojne zdjęcie miesięcznego dziecka niż wymęczone ujęcie w pierwszym tygodniu. Rób je, gdy maluch jest najedzony i wyspany."]},
             {"h2": "Cena", "ps": [
-                "Od 24 zł. Niezależnie od wieku maluszka dopracujemy tło, światło i kolory."]},
+                "Od 9,90 zł. Niezależnie od wieku maluszka dopracujemy tło, światło i kolory."]},
         ],
     },
     {
@@ -90,7 +90,7 @@ ITEMS = [
             {"h2": "Detale zawsze działają", "ps": [
                 "Zbliżenia na dłonie, stópki i rzęsy są bezpieczne i zawsze wzruszają. Nie potrzebują żadnych akrobacji."]},
             {"h2": "Cena", "ps": [
-                "Od 24 zł. Prosta, bezpieczna poza plus nasza obróbka to gotowy, profesjonalny kadr."]},
+                "Od 9,90 zł. Prosta, bezpieczna poza plus nasza obróbka to gotowy, profesjonalny kadr."]},
         ],
     },
     {
@@ -108,7 +108,7 @@ ITEMS = [
             {"h2": "Bez lampy", "ps": [
                 "Wyłącz flesz — daje ostre cienie i razi maluszka. Korzystaj ze światła z okna."]},
             {"h2": "Resztę zrobimy my", "ps": [
-                "Z dobrego zdjęcia z telefonu zrobimy profesjonalny kadr z tłem i retuszem — od 24 zł."]},
+                "Z dobrego zdjęcia z telefonu zrobimy profesjonalny kadr z tłem i retuszem — od 9,90 zł."]},
         ],
     },
     {
@@ -126,7 +126,7 @@ ITEMS = [
             {"h2": "Bałagan w tle", "ps": [
                 "Rozrzucone rzeczy odciągają uwagę. Uprzątnij kadr albo zrób zdjęcie na gładkim kocu — tło i tak ujednolicimy."]},
             {"h2": "Za daleko i nieostro", "ps": [
-                "Podejdź bliżej zamiast przybliżać cyfrowo i ustaw ostrość na twarzy. Resztę dopracujemy — pakiety od 24 zł."]},
+                "Podejdź bliżej zamiast przybliżać cyfrowo i ustaw ostrość na twarzy. Resztę dopracujemy — pakiety od 9,90 zł."]},
         ],
     },
     {
@@ -144,7 +144,7 @@ ITEMS = [
             {"h2": "Gotowe tła u nas", "ps": [
                 "W BoboFoto dobierasz tło z naszej kolekcji — my zadbamy, żeby idealnie pasowało do zdjęcia i kolorów skóry."]},
             {"h2": "Cena", "ps": [
-                "Od 24 zł. W pakietach wyższych dostajesz ten sam kadr na kilku tłach do wyboru."]},
+                "Od 9,90 zł. W pakietach wyższych dostajesz ten sam kadr na kilku tłach do wyboru."]},
         ],
     },
     {
@@ -162,7 +162,7 @@ ITEMS = [
             {"h2": "Co robimy my", "ps": [
                 "Przygotujemy dopracowany kadr i, jeśli chcesz, dodamy gustowny napis z imieniem i danymi — gotowy do druku."]},
             {"h2": "Cena", "ps": [
-                "Od 24 zł. Spersonalizowane zdjęcie to świetny prezent dla dziadków i chrzestnych."]},
+                "Od 9,90 zł. Spersonalizowane zdjęcie to świetny prezent dla dziadków i chrzestnych."]},
         ],
     },
     {
@@ -180,7 +180,7 @@ ITEMS = [
             {"h2": "Co robimy my", "ps": [
                 "Przygotujemy dopracowane zdjęcie i ułożymy je z danymi w gustowną metryczkę gotową do druku i ramki."]},
             {"h2": "Cena", "ps": [
-                "Od 24 zł. Idealne na ścianę w pokoju dziecka i jako prezent."]},
+                "Od 9,90 zł. Idealne na ścianę w pokoju dziecka i jako prezent."]},
         ],
     },
     {
@@ -198,7 +198,7 @@ ITEMS = [
             {"h2": "Co robimy my", "ps": [
                 "Ujednolicamy tło i kolory, podbijamy delikatność kadru i retuszujemy skórę, zachowując naturalność."]},
             {"h2": "Cena", "ps": [
-                "Od 24 zł. Kwiatowy kadr świetnie sprawdza się wiosną i jako pamiątka dla mamy."]},
+                "Od 9,90 zł. Kwiatowy kadr świetnie sprawdza się wiosną i jako pamiątka dla mamy."]},
         ],
     },
     {
@@ -216,7 +216,7 @@ ITEMS = [
             {"h2": "Jak przyspieszyć", "ps": [
                 "Prześlij od razu ostre, dobrze doświetlone zdjęcie z okna — im lepszy materiał, tym szybciej i lepiej wyjdzie efekt."]},
             {"h2": "Cena", "ps": [
-                "Od 24 zł. Bez dojazdów, bez czekania tygodniami na efekt."]},
+                "Od 9,90 zł. Bez dojazdów, bez czekania tygodniami na efekt."]},
         ],
     },
     {
@@ -234,7 +234,7 @@ ITEMS = [
             {"h2": "Co robimy my", "ps": [
                 "Przygotowujemy czyste tło i spójną, stonowaną tonację oraz delikatny retusz — bez przekombinowania."]},
             {"h2": "Cena", "ps": [
-                "Od 24 zł. Minimalistyczny kadr pasuje do każdego nowoczesnego wnętrza."]},
+                "Od 9,90 zł. Minimalistyczny kadr pasuje do każdego nowoczesnego wnętrza."]},
         ],
     },
     {
@@ -252,7 +252,7 @@ ITEMS = [
             {"h2": "Co robimy my", "ps": [
                 "Dodajemy świąteczne tło i ciepłą tonację, możemy też dopisać życzenia z imieniem — gotowe na kartkę."]},
             {"h2": "Cena", "ps": [
-                "Od 24 zł. Zamów wcześniej, żeby zdążyć z wydrukiem kartek przed świętami."]},
+                "Od 9,90 zł. Zamów wcześniej, żeby zdążyć z wydrukiem kartek przed świętami."]},
         ],
     },
     {
@@ -270,7 +270,7 @@ ITEMS = [
             {"h2": "Prosty i bezpieczny", "ps": [
                 "Nie trzeba nigdzie jechać ani umawiać terminu w studiu. Wystarczy jedno zdjęcie z telefonu, a my robimy resztę."]},
             {"h2": "Cena", "ps": [
-                "Pakiety od 24 zł. Idealny prezent na powitanie dziecka, chrzciny albo baby shower."]},
+                "Pakiety od 9,90 zł. Idealny prezent na powitanie dziecka, chrzciny albo baby shower."]},
         ],
     },
     {
@@ -282,13 +282,13 @@ ITEMS = [
         "lead": "Zastanawiasz się, czy wybrać sesję online, czy klasyczną w studiu? Oto uczciwe porównanie obu rozwiązań.",
         "secs": [
             {"h2": "Cena", "ps": [
-                "Sesja tradycyjna to zwykle 400–600 zł. Sesja online zaczyna się od 24 zł, bo nie płacisz za studio, dojazd i godziny pracy na miejscu."]},
+                "Sesja tradycyjna to zwykle 400–600 zł. Sesja online zaczyna się od 9,90 zł, bo nie płacisz za studio, dojazd i godziny pracy na miejscu."]},
             {"h2": "Czas i wygoda", "ps": [
                 "W studiu rezerwujesz termin, dojeżdżasz i czekasz tygodniami na efekt. Online robisz zdjęcie w domu, a gotowe kadry masz zwykle w ~10 godzin."]},
             {"h2": "Bezpieczeństwo", "ps": [
                 "Maluszek przez cały czas jest w domu, bez kontaktu z obcymi i bez wychodzenia w pierwszych tygodniach."]},
             {"h2": "Co tracisz", "ps": [
-                "Online nie zrobisz skomplikowanych poz studyjnych z asekuracją fotografa. Jeśli zależy Ci na prostej, pięknej pamiątce — online wygrywa wygodą i ceną. Od 24 zł."]},
+                "Online nie zrobisz skomplikowanych poz studyjnych z asekuracją fotografa. Jeśli zależy Ci na prostej, pięknej pamiątce — online wygrywa wygodą i ceną. Od 9,90 zł."]},
         ],
     },
 ]

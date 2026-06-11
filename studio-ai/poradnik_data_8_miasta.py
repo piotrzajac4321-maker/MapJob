@@ -73,9 +73,9 @@ for c in _CITIES:
         "slug": "sesja-noworodkowa-online-" + c["slug"],
         "title": "Sesja noworodkowa online — " + c["miasto"],
         "desc": "Sesja noworodkowa online dla rodziców z " + c["dop"] +
-                ". Bez dojazdu do studia, bez wożenia noworodka — profesjonalne zdjęcia od 24 zł, gotowe w ~10 godzin.",
+                ". Bez dojazdu do studia, bez wożenia noworodka — profesjonalne zdjęcia od 9,90 zł, gotowe w ~10 godzin.",
         "card": "Dla rodziców z " + c["dop"] +
-                " — bez dojazdu i stresu, profesjonalne zdjęcia noworodka od 24 zł.",
+                " — bez dojazdu i stresu, profesjonalne zdjęcia noworodka od 9,90 zł.",
         "lead": "Mieszkasz w " + c["dop"] +
                 " i nie chcesz wozić kilkudniowego noworodka do studia? Sesja online BoboFoto powstaje u Ciebie w domu — wystarczy jedno zdjęcie z telefonu.",
         "secs": [
@@ -86,7 +86,7 @@ for c in _CITIES:
                 "Wysyłasz jedno zdjęcie z telefonu, wybierasz tło, płacisz online (BLIK lub karta), "
                 "a gotowe kadry odbierasz zwykle w ~10 godzin — bez wychodzenia z domu."]},
             {"h2": "Cena", "ps": [
-                "Od 24 zł (Mini), 49 zł (Standard), 99 zł (Premium) — wyraźnie taniej niż tradycyjna sesja "
+                "Od 9,90 zł (Mini), 29 zł (Standard), 49 zł (Premium) — wyraźnie taniej niż tradycyjna sesja "
                 "w " + c["studio"] + " studiu (zwykle 400–600 zł), a bez stresu związanego z dojazdem."]},
             {"h2": "Dla kogo", "ps": [
                 "Dla zabieganych rodziców z " + c["dop"] + ", którzy chcą piękną pamiątkę z pierwszych dni "

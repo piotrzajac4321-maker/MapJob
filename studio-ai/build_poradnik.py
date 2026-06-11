@@ -26,7 +26,7 @@ CAT_LABEL = dict(CATS)
 
 DEFAULT_CTA = {
     "title": "Zamień domowe zdjęcie w profesjonalną sesję",
-    "sub": "Bez dojazdu i stresu — gotowe w ~10 godzin, od 24 zł.",
+    "sub": "Bez dojazdu i stresu — gotowe w ~10 godzin, od 9,90 zł.",
     "href": "/#cennik",
     "label": "Zobacz pakiety i zamów →",
 }
