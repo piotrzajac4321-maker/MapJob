@@ -55,9 +55,9 @@ document.addEventListener("DOMContentLoaded", () => {
   const PLAN_NAME  = { mini: "Mini", standard: "Standard", premium: "Premium" };
   // Linki płatności Stripe (LIVE) wg pakietu
   const PAYMENT_LINKS = {
-    mini:     "https://buy.stripe.com/bJe00k0jz3E89C4d3mbjW0g",
-    standard: "https://buy.stripe.com/14A4gA0jz7Uo5lO0gAbjW0h",
-    premium:  "https://buy.stripe.com/dRm14o3vLdeI5lO2oIbjW0i"
+    mini:     "https://buy.stripe.com/bJe7sMd6lcaEeWofbubjW0j",
+    standard: "https://buy.stripe.com/bJe3cw3vL7Uo7tW7J2bjW0k",
+    premium:  "https://buy.stripe.com/bJeaEYfet6QkcOgfbubjW0l"
   };
   let currentPlan = "standard";
   const planLimit = () => PLAN_LIMIT[currentPlan];
