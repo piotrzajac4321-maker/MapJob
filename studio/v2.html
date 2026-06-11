@@ -17,7 +17,7 @@
   <link rel="preconnect" href="https://d8j0ntlcm91z4.cloudfront.net" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="css/style.css?v=47" />
-  <link rel="stylesheet" href="css/v2.css?v=16" />
+  <link rel="stylesheet" href="css/v2.css?v=17" />
   <!-- szybsze ładowanie pierwszych kafelków przed/po -->
   <link rel="preload" as="image" href="https://d8j0ntlcm91z4.cloudfront.net/user_3EL0T26twgaFdlHuM3eJuT2XjHR/hf_20260604_222839_89b0e61c-6229-43b8-a1e1-1c73aeb57dec_min.webp" fetchpriority="high" />
   <link rel="preload" as="image" href="https://d8j0ntlcm91z4.cloudfront.net/user_3EL0T26twgaFdlHuM3eJuT2XjHR/hf_20260604_215500_bcf31546-efd1-4746-b8c8-bdd09d7ec8c7_min.webp" fetchpriority="high" />
@@ -321,24 +321,25 @@
       <form class="cart-form" id="cartForm" novalidate>
         <div class="retouch-box">
           <h4>✨ Dodaj zdjęcie swojego dziecka</h4>
-          <p class="retouch-sub">Prześlij <b>własne zdjęcie</b> (i opcjonalnie opisz, co zmienić) — zajmiemy się resztą.</p>
-          <div class="v2-tips v2-tips-compact">
-            <div class="v2-tip good"><h3>✅ Dobre zdjęcie</h3><ul><li>Tylko dziecko, z bliska</li><li>Światło dzienne (przy oknie)</li><li>Wyraźna, ostra twarz</li><li>Gładkie, jasne tło</li></ul></div>
-            <div class="v2-tip bad"><h3>❌ Unikaj</h3><ul><li>Ciemnych / żółtych zdjęć</li><li>Rozmazania i flesza</li><li>Bałaganu w tle</li><li>Filtrów z aplikacji</li></ul></div>
-          </div>
           <label class="file-drop" for="c-foto">
             <input type="file" id="c-foto" name="foto" accept="image/*" multiple hidden />
             <span class="file-ico">📷</span>
-            <span class="file-text" id="fileText">Kliknij, aby dodać własne zdjęcie (możesz dodać kilka)</span>
+            <span class="file-text" id="fileText">Kliknij, aby dodać zdjęcie (możesz dodać kilka)</span>
           </label>
-          <label for="c-opis">Opisz, co poprawić / zmienić</label>
-          <textarea id="c-opis" name="opis" rows="4" placeholder="np. inne tło, kolor ubranka, dopisek z imieniem…"></textarea>
+          <details class="tips-toggle">
+            <summary>📸 Jak zrobić dobre zdjęcie? — szybkie wskazówki</summary>
+            <div class="v2-tips v2-tips-compact">
+              <div class="v2-tip good"><h3>✅ Dobre zdjęcie</h3><ul><li>Tylko dziecko, z bliska</li><li>Światło dzienne (przy oknie)</li><li>Wyraźna, ostra twarz</li><li>Gładkie, jasne tło</li></ul></div>
+              <div class="v2-tip bad"><h3>❌ Unikaj</h3><ul><li>Ciemnych / żółtych zdjęć</li><li>Rozmazania i flesza</li><li>Bałaganu w tle</li><li>Filtrów z aplikacji</li></ul></div>
+            </div>
+          </details>
+          <textarea id="c-opis" name="opis" rows="3" placeholder="Co zmienić? (opcjonalnie) — np. inne tło, kolor ubranka, dopisek z imieniem…"></textarea>
         </div>
         <div class="row">
-          <div><label for="c-imie">Imię i nazwisko</label><input type="text" id="c-imie" name="imie" placeholder="np. Anna Kowalska" required /></div>
-          <div><label for="c-email">Adres e-mail</label><input type="email" id="c-email" name="email" placeholder="twoj@email.pl" required /></div>
+          <div><label for="c-imie">Imię</label><input type="text" id="c-imie" name="imie" placeholder="np. Anna" required /></div>
+          <div><label for="c-email">E-mail (tu wyślemy zdjęcia)</label><input type="email" id="c-email" name="email" placeholder="twoj@email.pl" required /></div>
         </div>
-        <label for="c-tel">Numer telefonu</label>
+        <label for="c-tel">Telefon (opcjonalnie)</label>
         <input type="tel" id="c-tel" name="telefon" placeholder="np. 600 100 200" />
         <label>Wybierz pakiet</label>
         <div class="plan-pick" id="planPick">
@@ -348,12 +349,9 @@
         </div>
         <input type="hidden" id="c-pakiet" name="pakiet" value="standard" />
         <p class="plan-counter" id="planCounter">Wybrane zdjęcia: <strong>0 / 4</strong></p>
-        <label class="consent consent-all"><input type="checkbox" id="c-all" /><span><strong>Zaznacz wszystkie zgody</strong></span></label>
-        <label class="consent"><input type="checkbox" id="c-zgoda" name="zgodaWizerunek" required /><span>Wyrażam zgodę na przetwarzanie przesłanego wizerunku mojego dziecka w celu realizacji zamówienia. Oświadczam, że jestem rodzicem/opiekunem prawnym. <em>(wymagane)</em></span></label>
-        <label class="consent"><input type="checkbox" id="c-sms" name="zgodaSms" /><span>Zgadzam się na kontakt SMS w sprawie zamówienia.</span></label>
-        <label class="consent"><input type="checkbox" id="c-zgoda-email" name="zgodaEmail" /><span>Zgadzam się na kontakt e-mailowy w sprawie zamówienia.</span></label>
-        <label class="consent"><input type="checkbox" id="c-marketing" name="zgodaMarketing" /><span>Chcę otrzymywać informacje o promocjach (marketing).</span></label>
-        <button type="submit" class="btn btn-primary btn-shine">Wyślij i przejdź do płatności</button>
+        <label class="consent"><input type="checkbox" id="c-zgoda" name="zgodaWizerunek" required /><span>Akceptuję <a href="regulamin.html" target="_blank">regulamin</a> i wyrażam zgodę na przetwarzanie przesłanego wizerunku mojego dziecka w celu realizacji zamówienia — jestem rodzicem/opiekunem prawnym. <em>(wymagane)</em></span></label>
+        <label class="consent"><input type="checkbox" id="c-marketing" name="zgodaMarketing" /><span>Chcę otrzymywać informacje o promocjach (opcjonalnie).</span></label>
+        <button type="submit" class="btn btn-primary btn-shine" id="paySubmit">Zapłać 49 zł →</button>
         <div class="pay-badges"><span class="pay-badge pay-blik">BLIK</span><span class="pay-badge">Visa</span><span class="pay-badge">Mastercard</span></div>
         <p class="cart-reassure">🔒 Bezpieczna płatność BLIK / karta. &nbsp;🛡️ Zwrot, jeśli zdjęcie nieostre lub twarz zmieniona.</p>
       </form>
@@ -448,6 +446,6 @@
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="js/gallery-data.js?v=34"></script>
-  <script src="js/main.js?v=48"></script>
+  <script src="js/main.js?v=49"></script>
 </body>
 </html>
