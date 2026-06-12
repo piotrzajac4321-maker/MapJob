@@ -144,8 +144,8 @@ body.v2.cart-active .v2-bottombar{ transform:translateY(130%); }
 }
 
 /* ===== KAFELKI PRZED→PO (zdjęcie samo się zmienia) ===== */
-.bac-grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:16px; max-width:1000px; margin:0 auto; }
-@media (max-width:860px){ .bac-grid{ grid-template-columns:repeat(2,1fr); } }
+.bac-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:16px; max-width:840px; margin:0 auto; }
+@media (max-width:860px){ .bac-grid{ grid-template-columns:repeat(2,1fr); } .bac:last-child{ grid-column:1 / -1; max-width:60%; margin:0 auto; } }
 @media (max-width:460px){ .bac-grid{ gap:10px; } }
 .bac{ position:relative; aspect-ratio:3/4; border-radius:14px; overflow:hidden; box-shadow:var(--shadow-sm); background:var(--sand,#efe7db); }
 .bac-img{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
