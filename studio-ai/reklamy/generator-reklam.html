@@ -6,6 +6,7 @@
 <meta name="robots" content="noindex, nofollow" />
 <title>BoboFoto.pl — generator reklam (tekst w HTML)</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <style>
   :root{ --size:360px; }
   *{box-sizing:border-box;margin:0}
@@ -44,6 +45,12 @@
     text-shadow:0 .3cqw 1.2cqw rgba(0,0,0,.6)}
   .tag{position:absolute;top:6px;left:6px;z-index:5;background:#3a3327;color:#fff;font-size:11px;
     font-weight:700;padding:2px 8px;border-radius:7px;opacity:.8}
+  .wrap{width:var(--size);display:flex;flex-direction:column;gap:8px}
+  .wrap .card{width:100%}
+  .dl{background:#7d9b6f;color:#fff;border:0;border-radius:9px;padding:9px 12px;font:inherit;
+    font-weight:800;font-size:13px;cursor:pointer;box-shadow:0 3px 10px rgba(0,0,0,.15)}
+  .dl:hover{filter:brightness(1.08)}
+  .dl[disabled]{opacity:.6;cursor:wait}
 </style>
 </head>
 <body>
@@ -82,7 +89,7 @@ const COLORS = {
 const ADS = [
  ["pink","-30%","Pamiątka na całe życie","Zamów teraz","Gotowe w ~10 h · bobofoto.pl","hf_20260605_180641_6caaba73-3b03-408b-b0fa-127b907d815e"],
  ["pink","★ 5,0","Te chwile nie wracają","Stwórz pamiątkę","Pamiątka na całe życie · bobofoto.pl","hf_20260605_180742_ee965f20-507a-489a-bd80-c884c7298d9f"],
- ["pink","od 24 zł","Sesja jak ze studia","Zamów teraz","Wyślij 1 zdjęcie · bobofoto.pl","hf_20260605_180645_48d6e4ea-3fbf-4104-bbdd-dcb580b11034"],
+ ["pink","od 9,90 zł","Sesja jak ze studia","Zamów teraz","Wyślij 1 zdjęcie · bobofoto.pl","hf_20260605_180645_48d6e4ea-3fbf-4104-bbdd-dcb580b11034"],
  ["pink","-30%","Dla Twojej księżniczki","Zamów teraz","Gotowe w ~10 h · bobofoto.pl","hf_20260605_180656_6417cc5a-83be-47da-93cf-19aeabf9a4f6"],
  ["blue","-30%","Dla Twojego synka","Zamów teraz","Gotowe w ~10 h · bobofoto.pl","hf_20260605_180749_65f5d559-c5c8-4080-8244-2e624bb74dfb"],
  ["red","-30%","Świąteczna pamiątka","Zamów na Święta","Gotowe w ~10 h · bobofoto.pl","hf_20260604_220731_c5505182-4753-4e62-96c5-2c008b5f9ddf"],
@@ -120,6 +127,32 @@ const ADS = [
  ["blue","NIEBO","Śpi jak aniołek","Stwórz pamiątkę","bobofoto.pl","hf_20260604_125255_d8aaf8a0-9cde-4e2b-8fe8-d3c0cda186b0"],
  ["pink","PŁÓTNO","Pamiątka na płótnie","Zamów obraz","bobofoto.pl","hf_20260605_180745_87f434f4-4cee-4db9-84c4-efe8b07f5f1e"],
  ["mint","GWARANCJA","Poprawki gratis","Zamów bez ryzyka","bobofoto.pl","hf_20260605_180641_6caaba73-3b03-408b-b0fa-127b907d815e"],
+ // — Tematyczne sceny (partia 2) —
+ ["mint","ZAWODY","Kim zostanie Twój maluch?","Zobacz stylizacje","Sesje tematyczne · bobofoto.pl","hf_20260604_131526_84fa11ef-79dc-492b-8da1-526a228bb023"],
+ ["navy","KOSMOS","Sięgnij gwiazd z maluchem","Zamów teraz","Sesje tematyczne · bobofoto.pl","hf_20260604_131537_93262e19-14fe-407c-83b7-a0bbc538f5dd"],
+ ["pink","ARTYSTA","Małe dzieło sztuki","Stwórz teraz","Sesje tematyczne · bobofoto.pl","hf_20260604_131547_a4c9e9db-cf57-4daf-88e2-0001315ec610"],
+ ["orange","KUCHARZ","Słodki jak bułeczka","Zamów teraz","Sesje tematyczne · bobofoto.pl","hf_20260604_131558_b648bd8b-a2a2-49e1-95b8-8bea675623d7"],
+ ["blue","PILOT","Głowa w chmurach","Zamów teraz","Sesje tematyczne · bobofoto.pl","hf_20260604_131609_ea22071c-fa14-4c96-8d2e-bcb06ff7f243"],
+ ["gold","KRÓL","Twój mały król","Zamów teraz","Pamiątka na całe życie · bobofoto.pl","hf_20260604_131121_37f7a0d4-de86-4241-9097-978006ccad03"],
+ ["green","BAJKA","Sesja jak z bajki","Zobacz efekty","Sesje tematyczne · bobofoto.pl","hf_20260604_131127_386d400b-53e8-4414-9b5d-b42ab3ab03fc"],
+ ["blue","CHMURKI","Sen słodki jak chmurka","Stwórz pamiątkę","bobofoto.pl","hf_20260604_131111_faf8003f-7001-424a-af1d-0e37bca94eac"],
+ ["white","ANIOŁEK","Nasz mały aniołek","Zamów teraz","Pamiątka na całe życie · bobofoto.pl","hf_20260604_125255_d8aaf8a0-9cde-4e2b-8fe8-d3c0cda186b0"],
+ ["navy","AHOJ","Ahoj, przygodo!","Zamów teraz","Sesje tematyczne · bobofoto.pl","hf_20260604_125322_10816dec-e562-444e-9bb4-edf6135ba024"],
+ ["pink","MARZENIA","W świat marzeń","Stwórz teraz","Sesje tematyczne · bobofoto.pl","hf_20260604_221024_a34192a6-95bb-4f70-bdfb-2d6dff6b5eac"],
+ ["brown","BAJKI","Bajka na dobranoc","Zamów teraz","Sesje tematyczne · bobofoto.pl","hf_20260604_221031_a660bb35-29ab-4070-bc8c-158d93c9fa0f"],
+ ["navy","KAPITAN","Kapitan rodzinnej załogi","Zamów teraz","Sesje tematyczne · bobofoto.pl","hf_20260604_221034_98c92f50-2615-48a0-906c-6dd3f64ab9b2"],
+ ["gold","MUZYK","Pierwsze takty życia","Stwórz teraz","Sesje tematyczne · bobofoto.pl","hf_20260604_221037_9fa2bcfc-c880-4f94-895d-58a1e8a31031"],
+ ["pink","KWIATY","Najpiękniejszy kwiat","Zamów teraz","Sesje tematyczne · bobofoto.pl","hf_20260604_221041_f2044943-6f18-41a9-a03d-eef68c5bf696"],
+ ["green","PODRÓŻ","Wielka podróż się zaczyna","Zamów teraz","Sesje tematyczne · bobofoto.pl","hf_20260604_221044_b3786cff-ac5c-47b1-bd18-079f4f1f4496"],
+ ["orange","PIEKARZ","Nasz mały piekarczyk","Zamów teraz","Sesje tematyczne · bobofoto.pl","hf_20260604_221046_9d2c14ad-bc21-4c4d-90e0-b85a42074265"],
+ ["green","LAS","Leśna baśń Twojego malucha","Stwórz teraz","Sesje tematyczne · bobofoto.pl","hf_20260604_221049_3081ed0d-4780-4c70-91e8-030fc70f97e6"],
+ ["orange","JESIEŃ","Najsłodszy zbiór jesieni","Zamów teraz","Sesje sezonowe · bobofoto.pl","hf_20260604_221026_b554d6c8-d031-4d62-8853-c130a683bb36"],
+ ["white","ZIMA","Pierwsza zima maleństwa","Zamów teraz","Sesje sezonowe · bobofoto.pl","hf_20260604_221039_1d6f7300-b723-45aa-ad71-51638c202a84"],
+ ["green","WIELKANOC","Wielkanocna sesja malucha","Zamów teraz","Sesje sezonowe · bobofoto.pl","hf_20260604_131100_b1a59cb6-e8a9-404b-ac20-e6535b64ef6c"],
+ ["red","WALENTYNKI","Nasza największa miłość","Stwórz pamiątkę","Sesje sezonowe · bobofoto.pl","hf_20260604_131603_4fef4490-b90f-4c5c-a38f-029b07fe98ff"],
+ ["pink","PIWONIE","Rozkwita miłość","Zamów teraz","Sesje sezonowe · bobofoto.pl","hf_20260604_131049_8f6d841a-b104-4d1e-95c7-d1cb01af7337"],
+ ["navy","LAWENDA","Lawendowy spokój","Zamów teraz","Sesje klasyczne · bobofoto.pl","hf_20260604_125316_5bb47a83-eaa6-4fb9-b3ec-5128ba3d9724"],
+ ["white","BIEL","Czysta miłość od pierwszych dni","Stwórz teraz","Sesje klasyczne · bobofoto.pl","hf_20260604_131133_6d7750b5-f4dd-4610-ae97-94ba9c66e7f4"],
 ];
 
 const grid = document.getElementById('grid');
@@ -132,22 +165,41 @@ function render(){
     const [theme,badge,head,cta,sub,img] = a;
     const foto = override || (img ? CDN + img + ".png" : DEFAULT_FOTO);
     const [bg,fg] = COLORS[theme] || COLORS.pink;
-    const brandColor = theme==='white' ? '#161310' : '#161310';
-    return `<div class="card">
-      <span class="tag">#${i+1}</span>
-      <img class="photo" src="${foto}" alt="" />
-      <div class="frame"></div>
-      <div class="brand" style="color:${brandColor}">BoboFoto.pl</div>
-      <div class="badge" style="background:${bg};color:${fg}">${badge}</div>
-      <div class="bottom">
-        <div class="headline">${head}</div>
-        <div class="cta">${cta}</div>
-        <div class="sub">${sub}</div>
+    return `<div class="wrap">
+      <div class="card" id="card${i}">
+        <span class="tag">#${i+1}</span>
+        <img class="photo" crossorigin="anonymous" src="${foto}" alt="" />
+        <div class="frame"></div>
+        <div class="brand" style="color:#161310">BoboFoto.pl</div>
+        <div class="badge" style="background:${bg};color:${fg}">${badge}</div>
+        <div class="bottom">
+          <div class="headline">${head}</div>
+          <div class="cta">${cta}</div>
+          <div class="sub">${sub}</div>
+        </div>
       </div>
+      <button class="dl" data-i="${i}">⬇ Pobierz PNG (1080×1080)</button>
     </div>`;
   }).join('');
 }
 fotoInput.addEventListener('input', render);
+
+// Pobieranie PNG jednym klikiem (html2canvas, skala do 1080 px)
+grid.addEventListener('click', async (e)=>{
+  const btn = e.target.closest('button.dl'); if(!btn) return;
+  const i = btn.dataset.i, card = document.getElementById('card'+i);
+  const tag = card.querySelector('.tag'); const old = btn.textContent;
+  btn.disabled = true; btn.textContent = 'Renderuję…'; tag.style.display = 'none';
+  try{
+    const canvas = await html2canvas(card, {useCORS:true, allowTaint:false,
+      backgroundColor:null, scale: 1080 / card.clientWidth});
+    const a = document.createElement('a');
+    a.download = 'bobofoto-reklama-' + (Number(i)+1) + '.png';
+    a.href = canvas.toDataURL('image/png'); a.click();
+  }catch(err){
+    alert('Przeglądarka zablokowała obraz z CDN (CORS).\nPlan B: ustaw rozmiar 1080 → prawy klik na kafelku → „Zbadaj" → element .card → „Capture node screenshot".');
+  }finally{ tag.style.display = ''; btn.disabled = false; btn.textContent = old; }
+});
 sizeInput.addEventListener('input', e=>{
   document.documentElement.style.setProperty('--size', (e.target.value||360)+'px');
 });
