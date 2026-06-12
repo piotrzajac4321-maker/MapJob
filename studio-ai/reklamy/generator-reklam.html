@@ -52,6 +52,15 @@
   .dl:hover{filter:brightness(1.08)}
   .dl[disabled]{opacity:.6;cursor:wait}
   .card .photo{transform-origin:center;will-change:transform}
+  /* — kolaże — */
+  .coll{position:absolute;inset:0;display:grid;gap:1cqw;background:#f5edde}
+  .coll img{width:100%;height:100%;object-fit:cover;display:block}
+  .coll.duo{grid-template-columns:1fr 1fr}
+  .coll.trio{grid-template-columns:1.35fr 1fr;grid-template-rows:1fr 1fr}
+  .coll.trio img:first-child{grid-row:1/3}
+  .coll.quad{grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr}
+  .chip{position:absolute;z-index:4;background:rgba(22,19,16,.78);color:#fff;font-weight:800;
+    font-size:3.4cqw;padding:1.2cqw 3cqw;border-radius:50cqw;letter-spacing:.5px}
   .tools{display:flex;gap:6px;align-items:center}
   .tools .dl{flex:1}
   .zoom{background:#fffdf8;border:1px solid #cdbfa6;color:#3a3327;border-radius:9px;width:38px;
@@ -160,6 +169,29 @@ const ADS = [
  ["pink","PIWONIE","Rozkwita miłość","Zamów teraz","Sesje sezonowe · bobofoto.pl","hf_20260604_131049_8f6d841a-b104-4d1e-95c7-d1cb01af7337"],
  ["navy","LAWENDA","Lawendowy spokój","Zamów teraz","Sesje klasyczne · bobofoto.pl","hf_20260604_125316_5bb47a83-eaa6-4fb9-b3ec-5128ba3d9724"],
  ["white","BIEL","Czysta miłość od pierwszych dni","Stwórz teraz","Sesje klasyczne · bobofoto.pl","hf_20260604_131133_6d7750b5-f4dd-4610-ae97-94ba9c66e7f4"],
+ // — KOLAŻE (img = tablica, ostatni element = układ: duo/trio/quad) —
+ ["pink","49 zł","4 stylizacje w pakiecie","Wybieram pakiet","Pakiet Standard · bobofoto.pl",
+   ["hf_20260605_180641_6caaba73-3b03-408b-b0fa-127b907d815e","hf_20260605_180656_6417cc5a-83be-47da-93cf-19aeabf9a4f6",
+    "hf_20260605_180652_f5dbbb72-329c-4a15-99e1-794893563c42","hf_20260605_180749_65f5d559-c5c8-4080-8244-2e624bb74dfb"],"quad"],
+ ["gold","9,90 zł/szt","Cały album wspomnień","Wybieram Premium","10 zdjęć w pakiecie Premium · bobofoto.pl",
+   ["hf_20260605_180647_17dcc78a-8b3f-4510-bbae-1fa9aa197111","hf_20260605_180742_ee965f20-507a-489a-bd80-c884c7298d9f",
+    "hf_20260605_180745_87f434f4-4cee-4db9-84c4-efe8b07f5f1e"],"trio"],
+ ["mint","TY WYBIERASZ","Jedno zdjęcie, wiele stylizacji","Zobacz wszystkie","Wyślij 1 zdjęcie · bobofoto.pl",
+   ["hf_20260604_131537_93262e19-14fe-407c-83b7-a0bbc538f5dd","hf_20260604_131526_84fa11ef-79dc-492b-8da1-526a228bb023"],"duo"],
+ ["red","SEZONY","Sesja na każdą porę roku","Zamów teraz","Wiosna · lato · jesień · zima · bobofoto.pl",
+   ["hf_20260605_180650_116c3222-f110-45e8-b68f-1edd0b3dcf80","hf_20260605_180743_6c81bf69-b62f-4f74-8845-13e8439feffe",
+    "hf_20260604_131552_215d35e3-14b5-4de2-8ccf-44c6f5ef08e8","hf_20260604_220731_c5505182-4753-4e62-96c5-2c008b5f9ddf"],"quad"],
+ ["pink","DLA NIEJ","Księżniczka w trzech odsłonach","Zamów teraz","Pakiet Standard · bobofoto.pl",
+   ["hf_20260605_180656_6417cc5a-83be-47da-93cf-19aeabf9a4f6","hf_20260604_125300_cb537f2e-3fe5-4d7b-afe4-986d43543d26",
+    "hf_20260605_180740_4e434a99-1c49-442e-8f87-14b8cca3d709"],"trio"],
+ ["blue","DLA NIEGO","Mały bohater w akcji","Zamów teraz","Pakiet Standard · bobofoto.pl",
+   ["hf_20260604_131609_ea22071c-fa14-4c96-8d2e-bcb06ff7f243","hf_20260604_125322_10816dec-e562-444e-9bb4-edf6135ba024",
+    "hf_20260604_221034_98c92f50-2615-48a0-906c-6dd3f64ab9b2"],"trio"],
+ ["gold","GALERIA","Zobacz, co potrafimy","Zobacz galerię","60+ stylizacji · bobofoto.pl",
+   ["hf_20260604_221024_a34192a6-95bb-4f70-bdfb-2d6dff6b5eac","hf_20260604_131121_37f7a0d4-de86-4241-9097-978006ccad03",
+    "hf_20260604_221049_3081ed0d-4780-4c70-91e8-030fc70f97e6","hf_20260604_125255_d8aaf8a0-9cde-4e2b-8fe8-d3c0cda186b0"],"quad"],
+ ["mint","2 STYLE","Spokój czy przygoda?","Ty decydujesz","Każdy pakiet, inne tło · bobofoto.pl",
+   ["hf_20260604_124644_aed99c6a-00d9-4649-94c3-9cbccee8bcdc","hf_20260604_131127_386d400b-53e8-4414-9b5d-b42ab3ab03fc"],"duo"],
 ];
 
 const grid = document.getElementById('grid');
@@ -169,13 +201,20 @@ const sizeInput = document.getElementById('size');
 function render(){
   const override = fotoInput.value.trim();
   grid.innerHTML = ADS.map((a,i)=>{
-    const [theme,badge,head,cta,sub,img] = a;
-    const foto = override || (img ? CDN + img + ".png" : DEFAULT_FOTO);
+    const [theme,badge,head,cta,sub,img,layout] = a;
     const [bg,fg] = COLORS[theme] || COLORS.pink;
+    let photoHtml, isColl = Array.isArray(img);
+    if (isColl) {
+      photoHtml = `<div class="coll ${layout}">` +
+        img.map(f => `<img crossorigin="anonymous" src="${CDN+f}.png" alt="" />`).join('') + `</div>`;
+    } else {
+      const foto = override || (img ? CDN + img + ".png" : DEFAULT_FOTO);
+      photoHtml = `<img class="photo" crossorigin="anonymous" src="${foto}" alt="" />`;
+    }
     return `<div class="wrap">
       <div class="card" id="card${i}">
         <span class="tag">#${i+1}</span>
-        <img class="photo" crossorigin="anonymous" src="${foto}" alt="" />
+        ${photoHtml}
         <div class="frame"></div>
         <div class="brand" style="color:#161310">BoboFoto.pl</div>
         <div class="badge" style="background:${bg};color:${fg}">${badge}</div>
@@ -186,9 +225,9 @@ function render(){
         </div>
       </div>
       <div class="tools">
-        <button class="zoom" data-i="${i}" data-d="-1" title="Pomniejsz zdjęcie">−</button>
+        ${isColl ? '' : `<button class="zoom" data-i="${i}" data-d="-1" title="Pomniejsz zdjęcie">−</button>
         <span class="zlvl" id="zlvl${i}">100%</span>
-        <button class="zoom" data-i="${i}" data-d="1" title="Powiększ zdjęcie">+</button>
+        <button class="zoom" data-i="${i}" data-d="1" title="Powiększ zdjęcie">+</button>`}
         <button class="dl" data-i="${i}">⬇ Pobierz PNG (1080×1080)</button>
       </div>
     </div>`;
