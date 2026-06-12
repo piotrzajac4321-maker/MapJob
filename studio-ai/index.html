@@ -298,7 +298,23 @@
         <span class="eyebrow">Cennik</span>
         <h2>Wybierz pakiet</h2>
         <p>🎁 <strong>-30%</strong> na wszystkie pakiety — kończy się dziś za <b class="js-countdown" style="color:#c0463a;font-variant-numeric:tabular-nums">--:--:--</b>. Bez ukrytych kosztów, płatność BLIK lub karta.</p>
+        <p id="cennikToday" style="display:none;margin-top:10px;font-weight:700;color:#5a7a52;background:#eef3ea;border-radius:12px;padding:10px 16px;display:inline-block"></p>
       </div>
+      <script>
+        /* Uczciwa pilność: jeśli zamówisz przed 13:00, zdjęcia odbierzesz jeszcze dziś (~10 h). */
+        (function () {
+          function upd() {
+            var el = document.getElementById("cennikToday"); if (!el) return;
+            var now = new Date(), cut = new Date(now); cut.setHours(13, 0, 0, 0);
+            if (now < cut) {
+              var mins = Math.floor((cut - now) / 60000), h = Math.floor(mins / 60), m = mins % 60;
+              el.textContent = "✅ Zamów w ciągu " + (h > 0 ? h + " h " : "") + m + " min, a odbierzesz zdjęcia jeszcze dziś";
+              el.style.display = "inline-block";
+            } else { el.style.display = "none"; }
+          }
+          document.addEventListener("DOMContentLoaded", function () { upd(); setInterval(upd, 30000); });
+        })();
+      </script>
       <div class="pricing">
         <div class="plan reveal">
           <div class="plan-head">
@@ -360,10 +376,14 @@
     <div class="container">
       <div class="section-head reveal"><span class="eyebrow">FAQ</span><h2>Najczęstsze pytania</h2></div>
       <div class="faq reveal">
-        <details><summary>Czy twarz mojego dziecka się zmieni?</summary><div class="faq-a">Nie. Twarz i rysy dziecka zostają bez zmian — zmieniamy wyłącznie tło, stylizację, scenografię i światło.</div></details>
-        <details><summary>Ile to kosztuje i jak płacę?</summary><div class="faq-a">Od 24 zł (Mini), 49 zł (Standard), 99 zł (Premium). Płatność online — BLIK lub karta, bez ukrytych kosztów.</div></details>
+        <details><summary>Czy twarz mojego dziecka się zmieni?</summary><div class="faq-a">Nie. Twarz i rysy dziecka zostają bez zmian — zmieniamy wyłącznie tło, stylizację, scenografię i światło. To wciąż Twoje dziecko, tylko w pięknej, studyjnej oprawie.</div></details>
+        <details><summary>Czy to bezpieczne? Co się dzieje z moim zdjęciem?</summary><div class="faq-a">Tak. Zdjęcie wykorzystujemy wyłącznie do realizacji Twojego zamówienia i nie udostępniamy go nikomu. Na życzenie usuwamy oryginał po realizacji.</div></details>
+        <details><summary>A jeśli efekt mi się nie spodoba?</summary><div class="faq-a">Masz <strong>gwarancję zwrotu</strong> — jeśli zdjęcie wyjdzie nieostre lub twarz zostanie zmieniona, oddajemy 100% pieniędzy. W pakietach Standard i Premium dorzucamy też poprawki w cenie.</div></details>
+        <details><summary>Ile to kosztuje i jak płacę?</summary><div class="faq-a">Od 24 zł (Mini), 49 zł (Standard), 99 zł (Premium — czyli 9,90 zł za zdjęcie). Płatność online — BLIK lub karta, bez ukrytych kosztów.</div></details>
         <details><summary>Jak szybko dostanę zdjęcia?</summary><div class="faq-a">Zwykle w około 10 godzin od przesłania zdjęcia. W pakiecie Premium realizacja jest priorytetowa.</div></details>
         <details><summary>Jakie zdjęcie mam wysłać?</summary><div class="faq-a">Jedno wyraźne zdjęcie z telefonu, najlepiej przy świetle z okna, na gładkim tle. Resztę robimy my.</div></details>
+        <details><summary>Czy nadaje się na prezent (chrzciny, roczek, dla babci)?</summary><div class="faq-a">Jak najbardziej! To wzruszająca pamiątka i świetny prezent. Możesz zamówić wydruk z wysyłką albo wersję cyfrową do samodzielnego druku.</div></details>
+        <details><summary>Mam bliźnięta / kilkoro dzieci — dacie radę?</summary><div class="faq-a">Tak. Napisz nam przy zamówieniu, ile dzieci jest na zdjęciu — przygotujemy stylizację dopasowaną do Waszej rodziny.</div></details>
       </div>
     </div>
   </section>
