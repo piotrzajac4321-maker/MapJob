@@ -422,12 +422,50 @@ grid.addEventListener('change', (e)=>{
   if (ph) ph.src = IMG(sel.value);
 });
 
-// Pobranie obrazka jako data: URL (przez proxy z CORS) — data: nigdy nie blokuje canvasu.
+// htmlpreview.github.io potrafi nie załadować <script src> z nagłówka,
+// dlatego bibliotekę renderującą ładujemy dynamicznie przy pierwszym kliknięciu.
+function loadScript(src){ return new Promise((res, rej)=>{
+  const s = document.createElement('script'); s.src = src;
+  s.onload = res; s.onerror = ()=>rej(new Error('nie wczytano: '+src));
+  document.head.appendChild(s);
+});}
+async function ensureH2C(){
+  if (window.html2canvas) return;
+  const urls = [
+    'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js',
+    'https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js',
+    'https://unpkg.com/html2canvas@1.4.1/dist/html2canvas.min.js'
+  ];
+  for (const u of urls){ try { await loadScript(u); if (window.html2canvas) return; } catch(e){} }
+  throw new Error('nie udało się załadować biblioteki renderującej (sprawdź internet/adblock)');
+}
+
+// Pobranie obrazka jako data: URL — próbuje kolejno kilku źródeł (CORS), aż któreś zadziała.
 async function toDataURL(url){
-  const r = await fetch(url, {mode:'cors', cache:'force-cache'});
-  if(!r.ok) throw new Error('HTTP '+r.status);
-  const b = await r.blob();
-  return await new Promise((res,rej)=>{ const fr=new FileReader(); fr.onload=()=>res(fr.result); fr.onerror=rej; fr.readAsDataURL(b); });
+  // odtwórz oryginalny URL CDN, jeśli src idzie przez proxy weserv
+  let orig = url;
+  const m = url.match(/[?&]url=([^&]+)/);
+  if (m) orig = 'https://' + decodeURIComponent(m[1]);
+  const enc = encodeURIComponent(orig.replace(/^https?:\/\//,''));
+  const candidates = [
+    url,                                                              // 1) proxy weserv (jak w podglądzie)
+    'https://wsrv.nl/?url=' + enc + '&w=1600&output=png',             // 2) mirror weserv
+    orig,                                                             // 3) CDN bezpośrednio (jeśli ma CORS)
+    'https://corsproxy.io/?url=' + encodeURIComponent(orig)           // 4) proxy awaryjne
+  ];
+  let lastErr;
+  for (const u of candidates){
+    try{
+      const ctl = new AbortController(); const t = setTimeout(()=>ctl.abort(), 15000);
+      const r = await fetch(u, {mode:'cors', cache:'force-cache', signal: ctl.signal});
+      clearTimeout(t);
+      if(!r.ok) throw new Error('HTTP '+r.status);
+      const b = await r.blob();
+      if(!b.type.startsWith('image')) throw new Error('nie-obraz: '+b.type);
+      return await new Promise((res,rej)=>{ const fr=new FileReader(); fr.onload=()=>res(fr.result); fr.onerror=rej; fr.readAsDataURL(b); });
+    }catch(e){ lastErr = e; }
+  }
+  throw lastErr || new Error('wszystkie źródła zawiodły');
 }
 
 // Pobieranie PNG w pełnej jakości (2160×2160).
@@ -435,7 +473,9 @@ grid.addEventListener('click', async (e)=>{
   const btn = e.target.closest('button.dl'); if(!btn) return;
   const i = btn.dataset.i, card = document.getElementById('card'+i);
   const tag = card.querySelector('.tag'); const old = btn.textContent;
-  btn.disabled = true; btn.textContent = 'Pobieram zdjęcie…';
+  btn.disabled = true; btn.textContent = 'Ładuję silnik…';
+  try { await ensureH2C(); } catch(e){ alert(e.message); btn.disabled=false; btn.textContent=old; return; }
+  btn.textContent = 'Pobieram zdjęcie…';
   const imgs = [...card.querySelectorAll('img')];
   const origSrc = imgs.map(im => im.src);
   try{
@@ -457,9 +497,7 @@ grid.addEventListener('click', async (e)=>{
     a.href = canvas.toDataURL('image/png'); a.click();
   }catch(err){
     console.error(err);
-    alert('Nie udało się pobrać zdjęcia (' + (err.message||err) + ').\n'+
-          'Najczęstsza przyczyna: Brave/Adblock blokuje proxy obrazków. '+
-          'Wyłącz „Shields" (lwica w pasku adresu) na tej stronie i kliknij ponownie.');
+    alert('Nie udało się pobrać zdjęcia: ' + (err.message||err) + '\n\nSpróbuj:\n1) wyłącz Adblock/Shields dla tej strony,\n2) odśwież (Ctrl+Shift+R) i kliknij ponownie,\n3) chwilę odczekaj — proxy mogło się dławić.');
   }finally{
     imgs.forEach((im,k)=> im.src = origSrc[k]);  // przywróć lekkie wersje
     btn.disabled = false; btn.textContent = old;
