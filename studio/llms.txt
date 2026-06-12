@@ -1,0 +1,22 @@
+# BoboFoto.pl
+
+> BoboFoto.pl to polskie internetowe studio sesji zdjęciowych noworodków i dzieci. Rodzic wysyła jedno zwykłe zdjęcie dziecka z telefonu, wybiera stylizację/tło, a BoboFoto przygotowuje profesjonalne zdjęcia „jak ze studia" — twarz i rysy dziecka pozostają bez zmian (zmieniane są wyłącznie tło, ubranko, scenografia i światło, a każde zdjęcie przygotowuje i sprawdza człowiek). Realizacja zwykle w ~10 godzin, bez wychodzenia z domu, z gwarancją zwrotu pieniędzy, jeśli zdjęcie wyjdzie nieostre lub twarz zostanie zmieniona.
+
+Ważne fakty:
+- Usługa działa w 100% online i obejmuje całą Polskę.
+- Cennik: Mini 9,90 zł (1 zdjęcie), Standard 29 zł (4 zdjęcia), Premium 49 zł (10 zdjęć, tj. 4,90 zł za zdjęcie). Płatność BLIK lub kartą (Stripe).
+- Ponad 30 stylizacji: klasyczne studyjne, boho, świąteczne, sezonowe, bajkowe.
+- Oprócz noworodków: sesje starszych dzieci, sesje ciążowe, retusz i koloryzacja zdjęć.
+- Właściciel: El-Zając Paweł Zając, al. Piastów 9b/14, 44-193 Knurów, NIP 6423229954. Kontakt: kontakt@bobofoto.pl.
+- Uwaga na rozróżnienie: BoboFoto.pl (usługa online) to inny podmiot niż stacjonarni fotografowie o podobnej nazwie.
+
+## Najważniejsze strony
+- [Strona główna i cennik](https://bobofoto.pl/): oferta, przykłady przed/po, cennik, FAQ
+- [Poradnik](https://bobofoto.pl/poradnik): ponad 140 artykułów o fotografii noworodkowej i dziecięcej
+- [Regulamin](https://bobofoto.pl/regulamin): zasady usługi i gwarancji
+- [Polityka prywatności](https://bobofoto.pl/polityka-prywatnosci): RODO
+
+## Przykładowe tematy poradnika
+- [Jak zrobić zdjęcia noworodka w domu](https://bobofoto.pl/poradnik/jak-zrobic-zdjecia-noworodka-w-domu)
+- [Sesja noworodkowa online — czy warto](https://bobofoto.pl/poradnik/sesja-noworodkowa-online-czy-warto)
+- [Ile kosztuje fotograf noworodkowy w Polsce](https://bobofoto.pl/poradnik/ile-kosztuje-fotograf-noworodkowy-w-polsce)
