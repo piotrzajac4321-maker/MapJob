@@ -335,35 +335,30 @@ grid.addEventListener('change', (e)=>{
   if (ph) ph.src = CDN + sel.value + '.png';
 });
 
-// Pobieranie PNG jednym klikiem (html2canvas).
-// UWAGA: napisy są skalowane jednostkami cqw, których html2canvas nie liczy —
-// dlatego w onclone wstrzykujemy każdemu elementowi style obliczone w px.
+// Pobieranie PNG w pełnej jakości (2160×2160).
+// Trik: kafelek to layout na jednostkach cqw — przed zrzutem powiększamy go
+// do natywnych 1080px (offscreen), dzięki czemu napisy są ostre, a html2canvas
+// renderuje wszystko 1:1. scale:2 => 2160px do druku/FB.
 grid.addEventListener('click', async (e)=>{
   const btn = e.target.closest('button.dl'); if(!btn) return;
   const i = btn.dataset.i, card = document.getElementById('card'+i);
   const tag = card.querySelector('.tag'); const old = btn.textContent;
-  btn.disabled = true; btn.textContent = 'Renderuję…'; tag.style.display = 'none';
-  const srcEls = [card, ...card.querySelectorAll('*')];
+  btn.disabled = true; btn.textContent = 'Renderuję…';
+  const prev = card.style.cssText; tag.style.display = 'none';
+  card.style.cssText = prev + ';width:1080px;height:1080px;position:fixed;left:-12000px;top:0;z-index:-1;border-radius:0';
+  // poczekaj na reflow + dociągnięcie obrazów
+  await new Promise(r => requestAnimationFrame(()=>requestAnimationFrame(r)));
+  await Promise.all([...card.querySelectorAll('img')].map(im =>
+    im.complete ? Promise.resolve() : new Promise(res=>{im.onload=im.onerror=res;})));
   try{
     const canvas = await html2canvas(card, {useCORS:true, allowTaint:false,
-      backgroundColor:null, scale: 1080 / card.clientWidth,
-      onclone: (doc)=>{
-        const c = doc.getElementById('card'+i);
-        const dstEls = [c, ...c.querySelectorAll('*')];
-        srcEls.forEach((el,k)=>{
-          const d = dstEls[k]; if(!d) return;
-          const cs = getComputedStyle(el); let css = '';
-          for (const p of cs) css += p + ':' + cs.getPropertyValue(p) + ';';
-          d.style.cssText = css;
-        });
-        c.style.containerType = 'normal';
-      }});
+      backgroundColor:null, scale:2, width:1080, height:1080, windowWidth:1080, windowHeight:1080});
     const a = document.createElement('a');
     a.download = 'bobofoto-reklama-' + (Number(i)+1) + '.png';
     a.href = canvas.toDataURL('image/png'); a.click();
   }catch(err){
     alert('Przeglądarka zablokowała obraz z CDN (CORS).\nPlan B: ustaw rozmiar 1080 → prawy klik na kafelku → „Zbadaj" → element .card → „Capture node screenshot".');
-  }finally{ tag.style.display = ''; btn.disabled = false; btn.textContent = old; }
+  }finally{ card.style.cssText = prev; tag.style.display = ''; btn.disabled = false; btn.textContent = old; }
 });
 sizeInput.addEventListener('input', e=>{
   document.documentElement.style.setProperty('--size', (e.target.value||360)+'px');
