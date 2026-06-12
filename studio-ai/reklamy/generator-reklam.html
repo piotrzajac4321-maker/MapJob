@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="robots" content="noindex, nofollow" />
+<title>BoboFoto.pl — generator reklam (tekst w HTML)</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet" />
+<style>
+  :root{ --size:360px; }
+  *{box-sizing:border-box;margin:0}
+  body{background:#e7ddcd;font-family:"Manrope",system-ui,sans-serif;color:#3a3327;padding:22px}
+  h1{font-family:"Playfair Display",serif;font-size:26px;margin-bottom:4px}
+  .lead{font-size:14px;color:#6b6353;max-width:760px;line-height:1.55;margin-bottom:16px}
+  .bar{position:sticky;top:0;z-index:50;background:#fffdf8;border:1px solid #d9cdb8;border-radius:14px;
+    padding:14px 16px;display:flex;flex-wrap:wrap;gap:14px;align-items:flex-end;
+    box-shadow:0 6px 18px rgba(0,0,0,.08);margin-bottom:22px}
+  .bar label{display:block;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#8a7f6a;margin-bottom:5px}
+  .bar input{font:inherit;padding:9px 11px;border:1px solid #cdbfa6;border-radius:9px;background:#fff}
+  .bar input[type=text]{width:min(460px,70vw)}
+  .bar input[type=number]{width:100px}
+  .hint{font-size:12px;color:#8a7f6a;line-height:1.5}
+  .hint b{color:#5a5142}
+
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,var(--size));gap:22px;justify-content:center}
+
+  .card{width:var(--size);aspect-ratio:1/1;position:relative;overflow:hidden;border-radius:3cqw;
+    container-type:inline-size;background:#cfc4b2 center/cover no-repeat;box-shadow:0 8px 22px rgba(0,0,0,.18)}
+  .card .photo{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+  .frame{position:absolute;inset:2.6cqw;border:.65cqw solid rgba(180,205,190,.9);border-radius:4cqw;
+    pointer-events:none;z-index:3}
+  .brand{position:absolute;top:5cqw;left:6.2cqw;z-index:4;font-family:"Playfair Display",serif;
+    font-weight:700;font-size:6.6cqw;color:#161310;text-shadow:0 1px 6px rgba(255,255,255,.45)}
+  .badge{position:absolute;top:5cqw;right:6.2cqw;z-index:4;width:18cqw;height:18cqw;border-radius:50%;
+    display:flex;align-items:center;justify-content:center;text-align:center;padding:1cqw;
+    color:#fff;font-weight:800;font-size:5cqw;line-height:1.05;box-shadow:0 .8cqw 2.4cqw rgba(0,0,0,.3)}
+  .bottom{position:absolute;left:0;right:0;bottom:0;z-index:4;padding:0 7cqw 7cqw;text-align:center;
+    background:linear-gradient(180deg,rgba(20,18,15,0) 0%,rgba(20,18,15,.55) 38%,rgba(20,18,15,.9) 100%);
+    padding-top:14cqw}
+  .headline{color:#fff;font-weight:800;font-size:8.2cqw;line-height:1.08;text-shadow:0 .4cqw 2cqw rgba(0,0,0,.55)}
+  .cta{display:inline-block;margin-top:4cqw;background:#f5edde;color:#2a2620;font-weight:800;
+    font-size:4.6cqw;padding:2.6cqw 5.5cqw;border-radius:50cqw;box-shadow:0 .6cqw 2cqw rgba(0,0,0,.35)}
+  .sub{color:rgba(255,255,255,.92);font-weight:600;font-size:3cqw;margin-top:3.4cqw;
+    text-shadow:0 .3cqw 1.2cqw rgba(0,0,0,.6)}
+  .tag{position:absolute;top:6px;left:6px;z-index:5;background:#3a3327;color:#fff;font-size:11px;
+    font-weight:700;padding:2px 8px;border-radius:7px;opacity:.8}
+</style>
+</head>
+<body>
+  <h1>BoboFoto.pl — generator reklam</h1>
+  <p class="lead">Tekst renderuje przeglądarka, więc <b>polskie znaki są zawsze idealne</b>. W Nano Banana wygeneruj jedno <b>czyste zdjęcie BEZ napisów</b> (z miejscem na tekst), wklej jego URL niżej — i masz 40 gotowych reklam. Każdą zapiszesz: prawy klik na kafelku → „Zbadaj" → na elemencie <code>.card</code> → „Capture node screenshot" (najpierw ustaw rozmiar na 1080).</p>
+
+  <div class="bar">
+    <div>
+      <label>URL czystego zdjęcia (bez napisów)</label>
+      <input type="text" id="foto" placeholder="https://...png  — wklej tu link do wygenerowanego zdjęcia" />
+    </div>
+    <div>
+      <label>Rozmiar kafelka (px)</label>
+      <input type="number" id="size" value="360" min="180" max="1080" step="20" />
+    </div>
+    <div class="hint">
+      <b>Eksport 1:1 do FB:</b> ustaw rozmiar <b>1080</b>,<br>potem „Capture node screenshot" na <code>.card</code>.
+    </div>
+  </div>
+
+  <div class="grid" id="grid"></div>
+
+<script>
+const DEFAULT_FOTO = "https://d8j0ntlcm91z4.cloudfront.net/user_3EL0T26twgaFdlHuM3eJuT2XjHR/hf_20260612_161456_c4fda6ab-371c-4c26-aacd-26eb13de9288.png";
+
+// kolory badge wg motywu  [tło, kolor tekstu]
+const COLORS = {
+  pink:["#e3829f","#fff"], blue:["#6f9fd8","#fff"], red:["#c0463a","#fff"],
+  gold:["#c5a24c","#fff"], green:["#7d9b6f","#fff"], navy:["#33415c","#fff"],
+  white:["#ffffff","#2a2620"], brown:["#8a6b52","#fff"], mint:["#8fc0ad","#163a2c"],
+  orange:["#d8884a","#fff"]
+};
+
+const ADS = [
+ ["pink","-30%","Pamiątka na całe życie","Zamów teraz","Gotowe w ~10 h · bobofoto.pl"],
+ ["pink","★ 5,0","Te chwile nie wracają","Stwórz pamiątkę","Pamiątka na całe życie · bobofoto.pl"],
+ ["pink","od 24 zł","Sesja jak ze studia","Zamów teraz","Wyślij 1 zdjęcie · bobofoto.pl"],
+ ["pink","-30%","Dla Twojej księżniczki","Zamów teraz","Gotowe w ~10 h · bobofoto.pl"],
+ ["blue","-30%","Dla Twojego synka","Zamów teraz","Gotowe w ~10 h · bobofoto.pl"],
+ ["red","-30%","Świąteczna pamiątka","Zamów na Święta","Gotowe w ~10 h · bobofoto.pl"],
+ ["pink","NOWOŚĆ","Gotowe w 24h","Sprawdź","Wyślij 1 zdjęcie · bobofoto.pl"],
+ ["gold","PREMIUM","Ekskluzywna pamiątka","Zamów","Sesja noworodkowa online · bobofoto.pl"],
+ ["pink","★ 5,0","Mama poleca mamie","Zobacz efekty","Pamiątka na całe życie · bobofoto.pl"],
+ ["pink","-50% dziś","Tylko dziś","Łapię okazję","Oferta ograniczona · bobofoto.pl"],
+ ["green","Z DOMU","Bez wożenia noworodka","Zamów z domu","Bezpiecznie i wygodnie · bobofoto.pl"],
+ ["navy","SEN","Pamiątka snu na zawsze","Stwórz teraz","bobofoto.pl"],
+ ["pink","2+1","Trzecie zdjęcie gratis","Wybieram pakiet","Pamiątka na całe życie · bobofoto.pl"],
+ ["white","❄","Zimowa pamiątka","Zamów teraz","Gotowe w ~10 h · bobofoto.pl"],
+ ["pink","PREZENT","Prezent na baby shower","Kup prezent","Voucher online · bobofoto.pl"],
+ ["brown","VINTAGE","Ponadczasowa pamiątka","Stwórz","bobofoto.pl"],
+ ["pink","WOW","Z telefonu do ramki","Zobacz jak","Wyślij zdjęcie · bobofoto.pl"],
+ ["pink","HIT","Radosna pamiątka","Sprawdź","bobofoto.pl"],
+ ["pink","DLA BABCI","Podaruj dziadkom radość","Zamów wydruk","Wysyłka do domu · bobofoto.pl"],
+ ["mint","24h","Dziś zdjęcie, jutro pamiątka","Zaczynam","Od 9,90 zł · bobofoto.pl"],
+ ["pink","TOP","Najpiękniejsza pamiątka","Zamów teraz","bobofoto.pl"],
+ ["pink","1 FOTO","Wystarczy jedno zdjęcie","Wyślij teraz","bobofoto.pl"],
+ ["mint","ŁATWE","Trzy proste kroki","Zobacz jak","bobofoto.pl"],
+ ["pink","MAMA","Prezent dla mamy","Kup teraz","bobofoto.pl"],
+ ["gold","GLAMOUR","Sesja jak z magazynu","Zamów","bobofoto.pl"],
+ ["pink","LOVE","Miłość od pierwszego dnia","Stwórz pamiątkę","bobofoto.pl"],
+ ["blue","BLIŹNIĘTA","Sesja dla bliźniąt","Zamów teraz","bobofoto.pl"],
+ ["pink","ALBUM","Cały album wspomnień","Wybieram album","bobofoto.pl"],
+ ["green","WIOSNA","Wiosenna sesja malucha","Zamów teraz","bobofoto.pl"],
+ ["orange","JESIEŃ","Jesienna pamiątka","Zamów teraz","bobofoto.pl"],
+ ["pink","SERCE","Zatrzymaj ten moment","Stwórz teraz","bobofoto.pl"],
+ ["navy","TATA","Duma każdego taty","Zamów teraz","bobofoto.pl"],
+ ["pink","METRYCZKA","Imię, data, waga","Zamów metryczkę","bobofoto.pl"],
+ ["mint","OPINIE","Setki szczęśliwych mam","Dołącz do nich","bobofoto.pl"],
+ ["pink","RATY 0%","Pamiątka bez wydatku","Sprawdź ofertę","bobofoto.pl"],
+ ["gold","LIMITED","Edycja limitowana","Rezerwuję","bobofoto.pl"],
+ ["pink","SIOSTRA","Sesja z rodzeństwem","Zamów teraz","bobofoto.pl"],
+ ["blue","NIEBO","Śpi jak aniołek","Stwórz pamiątkę","bobofoto.pl"],
+ ["pink","PŁÓTNO","Pamiątka na płótnie","Zamów obraz","bobofoto.pl"],
+ ["mint","GWARANCJA","Poprawki gratis","Zamów bez ryzyka","bobofoto.pl"],
+];
+
+const grid = document.getElementById('grid');
+const fotoInput = document.getElementById('foto');
+const sizeInput = document.getElementById('size');
+
+function render(){
+  const foto = fotoInput.value.trim() || DEFAULT_FOTO;
+  grid.innerHTML = ADS.map((a,i)=>{
+    const [theme,badge,head,cta,sub] = a;
+    const [bg,fg] = COLORS[theme] || COLORS.pink;
+    const brandColor = theme==='white' ? '#161310' : '#161310';
+    return `<div class="card">
+      <span class="tag">#${i+1}</span>
+      <img class="photo" src="${foto}" alt="" />
+      <div class="frame"></div>
+      <div class="brand" style="color:${brandColor}">BoboFoto.pl</div>
+      <div class="badge" style="background:${bg};color:${fg}">${badge}</div>
+      <div class="bottom">
+        <div class="headline">${head}</div>
+        <div class="cta">${cta}</div>
+        <div class="sub">${sub}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+fotoInput.addEventListener('input', render);
+sizeInput.addEventListener('input', e=>{
+  document.documentElement.style.setProperty('--size', (e.target.value||360)+'px');
+});
+render();
+</script>
+</body>
+</html>
