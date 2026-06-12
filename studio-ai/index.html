@@ -107,9 +107,30 @@
       <div class="promo-inner">
         <span class="promo-emoji">🎁</span>
         <span class="promo-text"><b>-30%</b><span class="promo-sep">&nbsp;·&nbsp;</span>sesja już od <b>9,90 zł / zdjęcie</b></span>
-        <span class="promo-timer">promocja ograniczona czasowo</span>
+        <span class="promo-timer">kończy się dziś za <b id="promoCountdown">--:--:--</b></span>
       </div>
     </div>
+    <script>
+      /* Licznik pilności — odlicza do końca bieżącego dnia (promocja dzienna). */
+      (function () {
+        var els = [];
+        function tick() {
+          var now = new Date(), end = new Date(now); end.setHours(23, 59, 59, 999);
+          var d = Math.max(0, Math.floor((end - now) / 1000));
+          var h = String(Math.floor(d / 3600)).padStart(2, "0");
+          var m = String(Math.floor((d % 3600) / 60)).padStart(2, "0");
+          var s = String(d % 60).padStart(2, "0");
+          var t = h + ":" + m + ":" + s;
+          if (!els.length) els = [].slice.call(document.querySelectorAll(".js-countdown"));
+          els.forEach(function (e) { e.textContent = t; });
+        }
+        document.addEventListener("DOMContentLoaded", function () {
+          var pc = document.getElementById("promoCountdown");
+          if (pc) pc.classList.add("js-countdown");
+          tick(); setInterval(tick, 1000);
+        });
+      })();
+    </script>
     <header class="nav" id="nav">
       <div class="container">
         <a href="#start" class="brand">Bobo<span>Foto</span>.pl<small>studio zdjęć noworodkowych</small></a>
@@ -276,7 +297,7 @@
       <div class="section-head reveal">
         <span class="eyebrow">Cennik</span>
         <h2>Wybierz pakiet</h2>
-        <p>🎁 <strong>-30%</strong> na wszystkie pakiety — promocja ograniczona czasowo. Bez ukrytych kosztów, płatność BLIK lub karta.</p>
+        <p>🎁 <strong>-30%</strong> na wszystkie pakiety — kończy się dziś za <b class="js-countdown" style="color:#c0463a;font-variant-numeric:tabular-nums">--:--:--</b>. Bez ukrytych kosztów, płatność BLIK lub karta.</p>
       </div>
       <div class="pricing">
         <div class="plan reveal">
