@@ -117,6 +117,7 @@
           <a href="#start">Przykłady</a>
           <a href="#jak">Jak to działa</a>
           <a href="#galeria">Stylizacje</a>
+          <a href="#opinie">Opinie</a>
           <a href="#cennik">Cennik</a>
           <a href="#cennik" class="btn btn-primary nav-cta"><span>Zamów</span></a>
         </nav>
@@ -197,6 +198,77 @@
     <p>Pamiątka, do której będziesz wracać przez całe życie — już od 24 zł.</p>
     <a href="#cennik" class="btn btn-primary btn-lg">Wybieram pakiet →</a>
   </div></section>
+
+  <!-- ============ OPINIE ============ -->
+  <!-- ⚠️ PODMIEŃ poniższe opinie na PRAWDZIWE (cytaty/screeny od klientek).
+       Wymyślone opinie podawane jako prawdziwe są niezgodne z prawem (UOKiK). -->
+  <section class="section section-alt" id="opinie">
+    <style>
+      .op-head{text-align:center;margin-bottom:8px}
+      .op-rate{display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;margin:14px 0 30px}
+      .op-rate .op-stars{color:#e0b454;font-size:24px;letter-spacing:2px}
+      .op-rate b{font-size:22px}
+      .op-rate span{color:#6b6353;font-size:15px}
+      .op-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px;max-width:1040px;margin:0 auto}
+      .op-card{background:#fffdf8;border:1px solid #ece2d0;border-radius:18px;padding:24px 22px;
+        box-shadow:0 8px 22px rgba(60,50,35,.07);display:flex;flex-direction:column;gap:14px}
+      .op-card .op-s{color:#e0b454;font-size:16px;letter-spacing:1px}
+      .op-card p{font-size:15.5px;line-height:1.6;color:#3a3327;margin:0;flex:1}
+      .op-who{display:flex;align-items:center;gap:11px}
+      .op-av{width:42px;height:42px;border-radius:50%;background:#8a9a82;color:#fff;font-weight:800;
+        display:flex;align-items:center;justify-content:center;font-size:16px}
+      .op-who b{display:block;font-size:14.5px}
+      .op-who small{color:#8a7f6a;font-size:12.5px}
+      .op-verif{margin-left:auto;font-size:11.5px;color:#7d9b6f;font-weight:700}
+      /* pasek zaufania / gwarancji */
+      .trust{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:16px;
+        max-width:1040px;margin:38px auto 0}
+      .trust div{background:#fffdf8;border:1px solid #ece2d0;border-radius:14px;padding:18px;text-align:center}
+      .trust .ic{font-size:26px;display:block;margin-bottom:8px}
+      .trust b{display:block;font-size:15px;margin-bottom:3px}
+      .trust small{color:#6b6353;font-size:12.8px;line-height:1.4;display:block}
+    </style>
+    <div class="container">
+      <div class="section-head op-head reveal">
+        <span class="eyebrow">Opinie mam</span>
+        <h2>Mamy z całej Polski nam zaufały</h2>
+      </div>
+      <div class="op-rate reveal">
+        <span class="op-stars">★★★★★</span><b>5,0</b>
+        <span>· na podstawie opinii zadowolonych rodziców</span>
+      </div>
+
+      <div class="op-grid reveal">
+        <!-- OPINIA 1 — podmień na prawdziwą -->
+        <div class="op-card">
+          <div class="op-s">★★★★★</div>
+          <p>„Wysłałam jedno zdjęcie z telefonu i nie mogłam uwierzyć w efekt — wygląda jak z prawdziwego studia! Twarz synka bez zmian, a tło bajkowe. Zdjęcia miałam tego samego dnia.”</p>
+          <div class="op-who"><span class="op-av">K</span><div><b>Karolina M.</b><small>mama Antka, Warszawa</small></div><span class="op-verif">✓ zakup</span></div>
+        </div>
+        <!-- OPINIA 2 — podmień na prawdziwą -->
+        <div class="op-card">
+          <div class="op-s">★★★★★</div>
+          <p>„Bałam się, że to będzie sztuczne, ale wyszło przepięknie i naturalnie. Bez wożenia maluszka, bez stresu — wszystko z kanapy. Babcia popłakała się ze wzruszenia.”</p>
+          <div class="op-who"><span class="op-av">M</span><div><b>Magda W.</b><small>mama Zosi, Kraków</small></div><span class="op-verif">✓ zakup</span></div>
+        </div>
+        <!-- OPINIA 3 — podmień na prawdziwą -->
+        <div class="op-card">
+          <div class="op-s">★★★★★</div>
+          <p>„Cena nie do pobicia, a jakość jak u fotografa za kilkaset złotych. Zamówiłam pakiet Premium i mam 10 cudownych kadrów na całe życie. Polecam każdej mamie!”</p>
+          <div class="op-who"><span class="op-av">A</span><div><b>Aleksandra T.</b><small>mama Leona, Gdańsk</small></div><span class="op-verif">✓ zakup</span></div>
+        </div>
+      </div>
+
+      <div class="trust reveal">
+        <div><span class="ic">🛡️</span><b>Gwarancja zwrotu</b><small>Nie spodoba się? Oddajemy 100% pieniędzy.</small></div>
+        <div><span class="ic">👶</span><b>Twarz bez zmian</b><small>Zmieniamy tylko tło, scenę i światło.</small></div>
+        <div><span class="ic">⚡</span><b>Gotowe w ~10 h</b><small>Bez czekania tygodniami i bez dojazdów.</small></div>
+        <div><span class="ic">🔒</span><b>Bezpieczna płatność</b><small>BLIK lub karta — bez ukrytych kosztów.</small></div>
+      </div>
+
+      <div class="v2-center" style="margin-top:30px"><a href="#cennik" class="btn btn-primary btn-lg">Chcę takie zdjęcia →</a></div>
+    </div>
+  </section>
 
   <!-- ============ CENNIK ============ -->
   <section class="section" id="cennik">
