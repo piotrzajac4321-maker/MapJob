@@ -30,18 +30,19 @@
   .card .photo{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
   .frame{position:absolute;inset:2.6cqw;border:.65cqw solid rgba(180,205,190,.9);border-radius:4cqw;
     pointer-events:none;z-index:3}
+  .card{--tscale:1}
   .brand{position:absolute;top:5cqw;left:6.2cqw;z-index:4;font-family:"Playfair Display",serif;
-    font-weight:700;font-size:6.6cqw;color:#161310;text-shadow:0 1px 6px rgba(255,255,255,.45)}
+    font-weight:700;font-size:calc(6.6cqw * var(--tscale));color:#161310;text-shadow:0 1px 6px rgba(255,255,255,.45)}
   .badge{position:absolute;top:5cqw;right:6.2cqw;z-index:4;width:18cqw;height:18cqw;border-radius:50%;
     display:flex;align-items:center;justify-content:center;text-align:center;padding:1cqw;
-    color:#fff;font-weight:800;font-size:5cqw;line-height:1.05;box-shadow:0 .8cqw 2.4cqw rgba(0,0,0,.3)}
+    color:#fff;font-weight:800;font-size:calc(5cqw * var(--tscale));line-height:1.05;box-shadow:0 .8cqw 2.4cqw rgba(0,0,0,.3)}
   .bottom{position:absolute;left:0;right:0;bottom:0;z-index:4;padding:0 7cqw 7cqw;text-align:center;
     background:linear-gradient(180deg,rgba(20,18,15,0) 0%,rgba(20,18,15,.55) 38%,rgba(20,18,15,.9) 100%);
     padding-top:14cqw}
-  .headline{color:#fff;font-weight:800;font-size:8.2cqw;line-height:1.08;text-shadow:0 .4cqw 2cqw rgba(0,0,0,.55)}
+  .headline{color:#fff;font-weight:800;font-size:calc(8.2cqw * var(--tscale));line-height:1.08;text-shadow:0 .4cqw 2cqw rgba(0,0,0,.55)}
   .cta{display:inline-block;margin-top:4cqw;background:#f5edde;color:#2a2620;font-weight:800;
-    font-size:4.6cqw;padding:2.6cqw 5.5cqw;border-radius:50cqw;box-shadow:0 .6cqw 2cqw rgba(0,0,0,.35)}
-  .sub{color:rgba(255,255,255,.92);font-weight:600;font-size:3cqw;margin-top:3.4cqw;
+    font-size:calc(4.6cqw * var(--tscale));padding:2.6cqw 5.5cqw;border-radius:50cqw;box-shadow:0 .6cqw 2cqw rgba(0,0,0,.35)}
+  .sub{color:rgba(255,255,255,.92);font-weight:600;font-size:calc(3cqw * var(--tscale));margin-top:3.4cqw;
     text-shadow:0 .3cqw 1.2cqw rgba(0,0,0,.6)}
   .tag{position:absolute;top:6px;left:6px;z-index:5;background:#3a3327;color:#fff;font-size:11px;
     font-weight:700;padding:2px 8px;border-radius:7px;opacity:.8}
@@ -368,6 +369,9 @@ function render(){
         ${isColl ? '' : `<button class="zoom" data-i="${i}" data-d="-1" title="Pomniejsz zdjęcie">−</button>
         <span class="zlvl" id="zlvl${i}">100%</span>
         <button class="zoom" data-i="${i}" data-d="1" title="Powiększ zdjęcie">+</button>`}
+        <button class="zoom tsz" data-i="${i}" data-d="-1" title="Mniejszy tekst">A−</button>
+        <span class="zlvl" id="tlvl${i}">100%</span>
+        <button class="zoom tsz" data-i="${i}" data-d="1" title="Większy tekst">A+</button>
         <button class="dl" data-i="${i}">⬇ Pobierz PNG (1080×1080)</button>
       </div>
     </div>`;
@@ -375,9 +379,18 @@ function render(){
 }
 fotoInput.addEventListener('input', render);
 
-// Zoom zdjęcia w kafelku (50%–250%, krok 10%) — wlicza się do pobranego PNG
-const zooms = {};
+// Zoom zdjęcia (50–250%) oraz rozmiar tekstu (60–180%) — krok 10%, wliczane do PNG
+const zooms = {}, tsizes = {};
 grid.addEventListener('click', (e)=>{
+  const tb = e.target.closest('button.tsz');
+  if(tb){
+    const i = tb.dataset.i, d = Number(tb.dataset.d);
+    const t = Math.min(1.8, Math.max(0.6, (tsizes[i] ?? 1) + d*0.1));
+    tsizes[i] = t;
+    document.getElementById('card'+i).style.setProperty('--tscale', t.toFixed(2));
+    document.getElementById('tlvl'+i).textContent = Math.round(t*100) + '%';
+    return;
+  }
   const zb = e.target.closest('button.zoom'); if(!zb) return;
   const i = zb.dataset.i, d = Number(zb.dataset.d);
   const z = Math.min(2.5, Math.max(0.5, (zooms[i] ?? 1) + d*0.1));
