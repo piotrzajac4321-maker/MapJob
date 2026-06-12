@@ -48,12 +48,12 @@
 </head>
 <body>
   <h1>BoboFoto.pl — generator reklam</h1>
-  <p class="lead">Tekst renderuje przeglądarka, więc <b>polskie znaki są zawsze idealne</b>. W Nano Banana wygeneruj jedno <b>czyste zdjęcie BEZ napisów</b> (z miejscem na tekst), wklej jego URL niżej — i masz 40 gotowych reklam. Każdą zapiszesz: prawy klik na kafelku → „Zbadaj" → na elemencie <code>.card</code> → „Capture node screenshot" (najpierw ustaw rozmiar na 1080).</p>
+  <p class="lead">Tekst renderuje przeglądarka, więc <b>polskie znaki są zawsze idealne</b>. Każda z 40 reklam ma już <b>przypisane inne, najładniejsze zdjęcie z galerii</b> (uśmiechy, otwarte oczka). Chcesz podmienić wszystkie na jedno własne — wklej URL niżej (puste = zdjęcia z galerii). Eksport: prawy klik na kafelku → „Zbadaj" → element <code>.card</code> → „Capture node screenshot" (najpierw ustaw rozmiar na 1080).</p>
 
   <div class="bar">
     <div>
-      <label>URL czystego zdjęcia (bez napisów)</label>
-      <input type="text" id="foto" placeholder="https://...png  — wklej tu link do wygenerowanego zdjęcia" />
+      <label>URL zdjęcia — nadpisuje wszystkie (puste = galeria)</label>
+      <input type="text" id="foto" placeholder="puste = każda reklama używa swojego zdjęcia z galerii" />
     </div>
     <div>
       <label>Rozmiar kafelka (px)</label>
@@ -67,7 +67,8 @@
   <div class="grid" id="grid"></div>
 
 <script>
-const DEFAULT_FOTO = "https://d8j0ntlcm91z4.cloudfront.net/user_3EL0T26twgaFdlHuM3eJuT2XjHR/hf_20260612_161456_c4fda6ab-371c-4c26-aacd-26eb13de9288.png";
+const CDN = "https://d8j0ntlcm91z4.cloudfront.net/user_3EL0T26twgaFdlHuM3eJuT2XjHR/";
+const DEFAULT_FOTO = CDN + "hf_20260612_161456_c4fda6ab-371c-4c26-aacd-26eb13de9288.png";
 
 // kolory badge wg motywu  [tło, kolor tekstu]
 const COLORS = {
@@ -77,47 +78,48 @@ const COLORS = {
   orange:["#d8884a","#fff"]
 };
 
+// [motyw badge, badge, nagłówek, CTA, podpis, ZDJĘCIE z galerii (bez rozszerzenia)]
 const ADS = [
- ["pink","-30%","Pamiątka na całe życie","Zamów teraz","Gotowe w ~10 h · bobofoto.pl"],
- ["pink","★ 5,0","Te chwile nie wracają","Stwórz pamiątkę","Pamiątka na całe życie · bobofoto.pl"],
- ["pink","od 24 zł","Sesja jak ze studia","Zamów teraz","Wyślij 1 zdjęcie · bobofoto.pl"],
- ["pink","-30%","Dla Twojej księżniczki","Zamów teraz","Gotowe w ~10 h · bobofoto.pl"],
- ["blue","-30%","Dla Twojego synka","Zamów teraz","Gotowe w ~10 h · bobofoto.pl"],
- ["red","-30%","Świąteczna pamiątka","Zamów na Święta","Gotowe w ~10 h · bobofoto.pl"],
- ["pink","NOWOŚĆ","Gotowe w 24h","Sprawdź","Wyślij 1 zdjęcie · bobofoto.pl"],
- ["gold","PREMIUM","Ekskluzywna pamiątka","Zamów","Sesja noworodkowa online · bobofoto.pl"],
- ["pink","★ 5,0","Mama poleca mamie","Zobacz efekty","Pamiątka na całe życie · bobofoto.pl"],
- ["pink","-50% dziś","Tylko dziś","Łapię okazję","Oferta ograniczona · bobofoto.pl"],
- ["green","Z DOMU","Bez wożenia noworodka","Zamów z domu","Bezpiecznie i wygodnie · bobofoto.pl"],
- ["navy","SEN","Pamiątka snu na zawsze","Stwórz teraz","bobofoto.pl"],
- ["pink","2+1","Trzecie zdjęcie gratis","Wybieram pakiet","Pamiątka na całe życie · bobofoto.pl"],
- ["white","❄","Zimowa pamiątka","Zamów teraz","Gotowe w ~10 h · bobofoto.pl"],
- ["pink","PREZENT","Prezent na baby shower","Kup prezent","Voucher online · bobofoto.pl"],
- ["brown","VINTAGE","Ponadczasowa pamiątka","Stwórz","bobofoto.pl"],
- ["pink","WOW","Z telefonu do ramki","Zobacz jak","Wyślij zdjęcie · bobofoto.pl"],
- ["pink","HIT","Radosna pamiątka","Sprawdź","bobofoto.pl"],
- ["pink","DLA BABCI","Podaruj dziadkom radość","Zamów wydruk","Wysyłka do domu · bobofoto.pl"],
- ["mint","24h","Dziś zdjęcie, jutro pamiątka","Zaczynam","Od 9,90 zł · bobofoto.pl"],
- ["pink","TOP","Najpiękniejsza pamiątka","Zamów teraz","bobofoto.pl"],
- ["pink","1 FOTO","Wystarczy jedno zdjęcie","Wyślij teraz","bobofoto.pl"],
- ["mint","ŁATWE","Trzy proste kroki","Zobacz jak","bobofoto.pl"],
- ["pink","MAMA","Prezent dla mamy","Kup teraz","bobofoto.pl"],
- ["gold","GLAMOUR","Sesja jak z magazynu","Zamów","bobofoto.pl"],
- ["pink","LOVE","Miłość od pierwszego dnia","Stwórz pamiątkę","bobofoto.pl"],
- ["blue","BLIŹNIĘTA","Sesja dla bliźniąt","Zamów teraz","bobofoto.pl"],
- ["pink","ALBUM","Cały album wspomnień","Wybieram album","bobofoto.pl"],
- ["green","WIOSNA","Wiosenna sesja malucha","Zamów teraz","bobofoto.pl"],
- ["orange","JESIEŃ","Jesienna pamiątka","Zamów teraz","bobofoto.pl"],
- ["pink","SERCE","Zatrzymaj ten moment","Stwórz teraz","bobofoto.pl"],
- ["navy","TATA","Duma każdego taty","Zamów teraz","bobofoto.pl"],
- ["pink","METRYCZKA","Imię, data, waga","Zamów metryczkę","bobofoto.pl"],
- ["mint","OPINIE","Setki szczęśliwych mam","Dołącz do nich","bobofoto.pl"],
- ["pink","RATY 0%","Pamiątka bez wydatku","Sprawdź ofertę","bobofoto.pl"],
- ["gold","LIMITED","Edycja limitowana","Rezerwuję","bobofoto.pl"],
- ["pink","SIOSTRA","Sesja z rodzeństwem","Zamów teraz","bobofoto.pl"],
- ["blue","NIEBO","Śpi jak aniołek","Stwórz pamiątkę","bobofoto.pl"],
- ["pink","PŁÓTNO","Pamiątka na płótnie","Zamów obraz","bobofoto.pl"],
- ["mint","GWARANCJA","Poprawki gratis","Zamów bez ryzyka","bobofoto.pl"],
+ ["pink","-30%","Pamiątka na całe życie","Zamów teraz","Gotowe w ~10 h · bobofoto.pl","hf_20260605_180641_6caaba73-3b03-408b-b0fa-127b907d815e"],
+ ["pink","★ 5,0","Te chwile nie wracają","Stwórz pamiątkę","Pamiątka na całe życie · bobofoto.pl","hf_20260605_180742_ee965f20-507a-489a-bd80-c884c7298d9f"],
+ ["pink","od 24 zł","Sesja jak ze studia","Zamów teraz","Wyślij 1 zdjęcie · bobofoto.pl","hf_20260605_180645_48d6e4ea-3fbf-4104-bbdd-dcb580b11034"],
+ ["pink","-30%","Dla Twojej księżniczki","Zamów teraz","Gotowe w ~10 h · bobofoto.pl","hf_20260605_180656_6417cc5a-83be-47da-93cf-19aeabf9a4f6"],
+ ["blue","-30%","Dla Twojego synka","Zamów teraz","Gotowe w ~10 h · bobofoto.pl","hf_20260605_180749_65f5d559-c5c8-4080-8244-2e624bb74dfb"],
+ ["red","-30%","Świąteczna pamiątka","Zamów na Święta","Gotowe w ~10 h · bobofoto.pl","hf_20260604_220731_c5505182-4753-4e62-96c5-2c008b5f9ddf"],
+ ["pink","NOWOŚĆ","Gotowe w 24h","Sprawdź","Wyślij 1 zdjęcie · bobofoto.pl","hf_20260604_215500_bcf31546-efd1-4746-b8c8-bdd09d7ec8c7"],
+ ["gold","PREMIUM","Ekskluzywna pamiątka","Zamów","Sesja noworodkowa online · bobofoto.pl","hf_20260604_220724_02f95d95-3a5a-4e9a-b3fc-56d834539ebf"],
+ ["pink","★ 5,0","Mama poleca mamie","Zobacz efekty","Pamiątka na całe życie · bobofoto.pl","hf_20260605_180647_17dcc78a-8b3f-4510-bbae-1fa9aa197111"],
+ ["pink","-50% dziś","Tylko dziś","Łapię okazję","Oferta ograniczona · bobofoto.pl","hf_20260605_180642_23c9a39b-269f-479c-aeaf-fe63b65321d8"],
+ ["green","Z DOMU","Bez wożenia noworodka","Zamów z domu","Bezpiecznie i wygodnie · bobofoto.pl","hf_20260605_180652_f5dbbb72-329c-4a15-99e1-794893563c42"],
+ ["navy","SEN","Pamiątka snu na zawsze","Stwórz teraz","bobofoto.pl","hf_20260605_180740_4e434a99-1c49-442e-8f87-14b8cca3d709"],
+ ["pink","2+1","Trzecie zdjęcie gratis","Wybieram pakiet","Pamiątka na całe życie · bobofoto.pl","hf_20260604_220726_2bdd7aca-58ee-43d9-98c3-07d17169ec3e"],
+ ["white","❄","Zimowa pamiątka","Zamów teraz","Gotowe w ~10 h · bobofoto.pl","hf_20260604_131552_215d35e3-14b5-4de2-8ccf-44c6f5ef08e8"],
+ ["pink","PREZENT","Prezent na baby shower","Kup prezent","Voucher online · bobofoto.pl","hf_20260605_180748_c547adb3-9526-4b60-ac9d-697cd44080de"],
+ ["brown","VINTAGE","Ponadczasowa pamiątka","Stwórz","bobofoto.pl","hf_20260604_220737_5c992ab2-0874-4234-b0b3-f90297fa33e0"],
+ ["pink","WOW","Z telefonu do ramki","Zobacz jak","Wyślij zdjęcie · bobofoto.pl","hf_20260604_215502_6405fc74-0000-462e-9b86-1c7edd0235e0"],
+ ["pink","HIT","Radosna pamiątka","Sprawdź","bobofoto.pl","hf_20260605_180656_e122a28f-9aa5-4ac4-ae0c-b2042fbe7f79"],
+ ["pink","DLA BABCI","Podaruj dziadkom radość","Zamów wydruk","Wysyłka do domu · bobofoto.pl","hf_20260604_220713_e579db93-614d-44a8-870c-64b088f4f209"],
+ ["mint","24h","Dziś zdjęcie, jutro pamiątka","Zaczynam","Od 9,90 zł · bobofoto.pl","hf_20260605_180741_25fcf287-7069-4ac8-b903-6602cece94c6"],
+ ["pink","TOP","Najpiękniejsza pamiątka","Zamów teraz","bobofoto.pl","hf_20260605_180745_87f434f4-4cee-4db9-84c4-efe8b07f5f1e"],
+ ["pink","1 FOTO","Wystarczy jedno zdjęcie","Wyślij teraz","bobofoto.pl","hf_20260604_220722_7ffc0b4b-beb5-484e-8fb8-93a508502a68"],
+ ["mint","ŁATWE","Trzy proste kroki","Zobacz jak","bobofoto.pl","hf_20260604_215523_90e6f5ae-935d-42f9-a33b-67e8a1ac6326"],
+ ["pink","MAMA","Prezent dla mamy","Kup teraz","bobofoto.pl","hf_20260604_220719_78ee12a6-0a2f-4ef9-8016-f152d24cf373"],
+ ["gold","GLAMOUR","Sesja jak z magazynu","Zamów","bobofoto.pl","hf_20260604_131105_2c187dfe-00ce-47e5-b7c3-7e11f24990ba"],
+ ["pink","LOVE","Miłość od pierwszego dnia","Stwórz pamiątkę","bobofoto.pl","hf_20260604_131603_4fef4490-b90f-4c5c-a38f-029b07fe98ff"],
+ ["blue","RODZEŃSTWO","Sesja z rodzeństwem","Zamów teraz","bobofoto.pl","hf_20260604_215510_0281802c-1561-4c3f-a35e-b33141c8282f"],
+ ["pink","ALBUM","Cały album wspomnień","Wybieram album","bobofoto.pl","hf_20260604_220716_f2d5c703-45c5-4f4c-becf-4313c8c964ee"],
+ ["green","WIOSNA","Wiosenna sesja malucha","Zamów teraz","bobofoto.pl","hf_20260605_180650_116c3222-f110-45e8-b68f-1edd0b3dcf80"],
+ ["orange","JESIEŃ","Jesienna pamiątka","Zamów teraz","bobofoto.pl","hf_20260605_180743_6c81bf69-b62f-4f74-8845-13e8439feffe"],
+ ["pink","SERCE","Zatrzymaj ten moment","Stwórz teraz","bobofoto.pl","hf_20260604_220728_e5c462ec-ca01-4ee2-b405-782e8c895fd4"],
+ ["navy","TATA","Duma każdego taty","Zamów teraz","bobofoto.pl","hf_20260604_125322_10816dec-e562-444e-9bb4-edf6135ba024"],
+ ["pink","METRYCZKA","Imię, data, waga","Zamów metryczkę","bobofoto.pl","hf_20260604_124644_aed99c6a-00d9-4649-94c3-9cbccee8bcdc"],
+ ["mint","OPINIE","Setki szczęśliwych mam","Dołącz do nich","bobofoto.pl","hf_20260604_215521_cba19679-a4be-4efc-80f1-4b109baa627a"],
+ ["pink","RATY 0%","Pamiątka bez wydatku","Sprawdź ofertę","bobofoto.pl","hf_20260605_180645_48d6e4ea-3fbf-4104-bbdd-dcb580b11034"],
+ ["gold","LIMITED","Edycja limitowana","Rezerwuję","bobofoto.pl","hf_20260604_124654_e0c783e0-3197-450b-87e0-10da4e5c3aae"],
+ ["pink","RODZINA","Cała rodzina na zdjęciu","Zamów teraz","bobofoto.pl","hf_20260605_180647_17dcc78a-8b3f-4510-bbae-1fa9aa197111"],
+ ["blue","NIEBO","Śpi jak aniołek","Stwórz pamiątkę","bobofoto.pl","hf_20260604_125255_d8aaf8a0-9cde-4e2b-8fe8-d3c0cda186b0"],
+ ["pink","PŁÓTNO","Pamiątka na płótnie","Zamów obraz","bobofoto.pl","hf_20260605_180745_87f434f4-4cee-4db9-84c4-efe8b07f5f1e"],
+ ["mint","GWARANCJA","Poprawki gratis","Zamów bez ryzyka","bobofoto.pl","hf_20260605_180641_6caaba73-3b03-408b-b0fa-127b907d815e"],
 ];
 
 const grid = document.getElementById('grid');
@@ -125,9 +127,10 @@ const fotoInput = document.getElementById('foto');
 const sizeInput = document.getElementById('size');
 
 function render(){
-  const foto = fotoInput.value.trim() || DEFAULT_FOTO;
+  const override = fotoInput.value.trim();
   grid.innerHTML = ADS.map((a,i)=>{
-    const [theme,badge,head,cta,sub] = a;
+    const [theme,badge,head,cta,sub,img] = a;
+    const foto = override || (img ? CDN + img + ".png" : DEFAULT_FOTO);
     const [bg,fg] = COLORS[theme] || COLORS.pink;
     const brandColor = theme==='white' ? '#161310' : '#161310';
     return `<div class="card">
