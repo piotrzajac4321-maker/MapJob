@@ -339,30 +339,48 @@ grid.addEventListener('change', (e)=>{
   if (ph) ph.src = IMG(sel.value);
 });
 
+// Pobranie obrazka jako data: URL (przez proxy z CORS) — data: nigdy nie blokuje canvasu.
+async function toDataURL(url){
+  const r = await fetch(url, {mode:'cors', cache:'force-cache'});
+  if(!r.ok) throw new Error('HTTP '+r.status);
+  const b = await r.blob();
+  return await new Promise((res,rej)=>{ const fr=new FileReader(); fr.onload=()=>res(fr.result); fr.onerror=rej; fr.readAsDataURL(b); });
+}
+
 // Pobieranie PNG w pełnej jakości (2160×2160).
-// Trik: kafelek to layout na jednostkach cqw — przed zrzutem powiększamy go
-// do natywnych 1080px (offscreen), dzięki czemu napisy są ostre, a html2canvas
-// renderuje wszystko 1:1. scale:2 => 2160px do druku/FB.
 grid.addEventListener('click', async (e)=>{
   const btn = e.target.closest('button.dl'); if(!btn) return;
   const i = btn.dataset.i, card = document.getElementById('card'+i);
   const tag = card.querySelector('.tag'); const old = btn.textContent;
-  btn.disabled = true; btn.textContent = 'Renderuję…';
-  const prev = card.style.cssText; tag.style.display = 'none';
-  card.style.cssText = prev + ';width:1080px;height:1080px;position:fixed;left:-12000px;top:0;z-index:-1;border-radius:0';
-  // poczekaj na reflow + dociągnięcie obrazów
-  await new Promise(r => requestAnimationFrame(()=>requestAnimationFrame(r)));
-  await Promise.all([...card.querySelectorAll('img')].map(im =>
-    im.complete ? Promise.resolve() : new Promise(res=>{im.onload=im.onerror=res;})));
+  btn.disabled = true; btn.textContent = 'Pobieram zdjęcie…';
+  const imgs = [...card.querySelectorAll('img')];
+  const origSrc = imgs.map(im => im.src);
   try{
-    const canvas = await html2canvas(card, {useCORS:true, allowTaint:false,
-      backgroundColor:null, scale:2, width:1080, height:1080, windowWidth:1080, windowHeight:1080});
+    // 1) zamień każde zdjęcie na data: URL (omija blokadę CORS na zapisie)
+    for(const im of imgs){ im.src = await toDataURL(im.src); }
+    await Promise.all(imgs.map(im => im.complete ? 0 : new Promise(res=>{im.onload=im.onerror=res;})));
+    // 2) powiększ kafelek do natywnych 1080px (offscreen) dla ostrości napisów
+    btn.textContent = 'Renderuję…'; tag.style.display = 'none';
+    const prev = card.style.cssText;
+    card.style.cssText = prev + ';width:1080px;height:1080px;position:fixed;left:-12000px;top:0;z-index:-1;border-radius:0';
+    await new Promise(r => requestAnimationFrame(()=>requestAnimationFrame(r)));
+    let canvas;
+    try{
+      canvas = await html2canvas(card, {backgroundColor:null, scale:2, width:1080, height:1080,
+        windowWidth:1080, windowHeight:1080, logging:false});
+    } finally { card.style.cssText = prev; tag.style.display = ''; }
     const a = document.createElement('a');
     a.download = 'bobofoto-reklama-' + (Number(i)+1) + '.png';
     a.href = canvas.toDataURL('image/png'); a.click();
   }catch(err){
-    alert('Przeglądarka zablokowała obraz z CDN (CORS).\nPlan B: ustaw rozmiar 1080 → prawy klik na kafelku → „Zbadaj" → element .card → „Capture node screenshot".');
-  }finally{ card.style.cssText = prev; tag.style.display = ''; btn.disabled = false; btn.textContent = old; }
+    console.error(err);
+    alert('Nie udało się pobrać zdjęcia (' + (err.message||err) + ').\n'+
+          'Najczęstsza przyczyna: Brave/Adblock blokuje proxy obrazków. '+
+          'Wyłącz „Shields" (lwica w pasku adresu) na tej stronie i kliknij ponownie.');
+  }finally{
+    imgs.forEach((im,k)=> im.src = origSrc[k]);  // przywróć lekkie wersje
+    btn.disabled = false; btn.textContent = old;
+  }
 });
 sizeInput.addEventListener('input', e=>{
   document.documentElement.style.setProperty('--size', (e.target.value||360)+'px');
