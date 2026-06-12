@@ -4,7 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <meta name="robots" content="noindex, nofollow" />
-<title>BoboFoto.pl — generator reklam (tekst w HTML)</title>
+<title>BoboFoto.pl — generator Reels/Stories 9:16</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet" />
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <style>
@@ -25,7 +25,7 @@
 
   .grid{display:grid;grid-template-columns:repeat(auto-fill,var(--size));gap:22px;justify-content:center}
 
-  .card{width:var(--size);aspect-ratio:1/1;position:relative;overflow:hidden;border-radius:3cqw;
+  .card{width:var(--size);aspect-ratio:9/16;position:relative;overflow:hidden;border-radius:3cqw;
     container-type:inline-size;background:#cfc4b2 center/cover no-repeat;box-shadow:0 8px 22px rgba(0,0,0,.18)}
   .card .photo{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
   .frame{position:absolute;inset:2.6cqw;border:.65cqw solid rgba(180,205,190,.9);border-radius:4cqw;
@@ -38,7 +38,7 @@
     color:#fff;font-weight:800;font-size:calc(5cqw * var(--tscale));line-height:1.05;box-shadow:0 .8cqw 2.4cqw rgba(0,0,0,.3)}
   .bottom{position:absolute;left:0;right:0;bottom:0;z-index:4;padding:0 7cqw 7cqw;text-align:center;
     background:linear-gradient(180deg,rgba(20,18,15,0) 0%,rgba(20,18,15,.55) 38%,rgba(20,18,15,.9) 100%);
-    padding-top:14cqw}
+    padding-top:26cqw}
   .headline{color:#fff;font-weight:800;font-size:calc(8.2cqw * var(--tscale));line-height:1.08;text-shadow:0 .4cqw 2cqw rgba(0,0,0,.55)}
   .cta{display:inline-block;margin-top:4cqw;background:#f5edde;color:#2a2620;font-weight:800;
     font-size:calc(4.6cqw * var(--tscale));padding:2.6cqw 5.5cqw;border-radius:50cqw;box-shadow:0 .6cqw 2cqw rgba(0,0,0,.35)}
@@ -78,7 +78,7 @@
 </style>
 </head>
 <body>
-  <h1>BoboFoto.pl — generator reklam</h1>
+  <h1>BoboFoto.pl — generator Reels / Stories (9:16)</h1>
   <p class="lead"><b>Kliknij w dowolny tekst na kafelku, żeby go edytować</b> (nagłówek, CTA, badge, podpis — polskie znaki zawsze idealne). Pod każdą kreacją: <b>lista wyboru zdjęcia</b> z galerii, zoom <b>−/+</b> i przycisk <b>⬇ Pobierz PNG</b> (1080×1080, z napisami). Pole URL niżej podmienia zdjęcie we wszystkich pojedynczych kreacjach naraz.</p>
 
   <div class="bar">
@@ -91,7 +91,7 @@
       <input type="number" id="size" value="360" min="180" max="1080" step="20" />
     </div>
     <div class="hint">
-      <b>Eksport 1:1 do FB:</b> ustaw rozmiar <b>1080</b>,<br>potem „Capture node screenshot" na <code>.card</code>.
+      <b>Eksport 9:16 do Reels/Stories:</b> ustaw rozmiar <b>1080</b>,<br>potem „Capture node screenshot" na <code>.card</code>.
     </div>
   </div>
 
@@ -388,7 +388,7 @@ function render(){
         <button class="zoom tsz" data-i="${i}" data-d="-1" title="Mniejszy tekst">A−</button>
         <span class="zlvl" id="tlvl${i}">100%</span>
         <button class="zoom tsz" data-i="${i}" data-d="1" title="Większy tekst">A+</button>
-        <button class="dl" data-i="${i}">⬇ Pobierz PNG (1080×1080)</button>
+        <button class="dl" data-i="${i}">⬇ Pobierz PNG (1080×1920)</button>
       </div>
     </div>`;
   }).join('');
@@ -445,15 +445,15 @@ grid.addEventListener('click', async (e)=>{
     // 2) powiększ kafelek do natywnych 1080px (offscreen) dla ostrości napisów
     btn.textContent = 'Renderuję…'; tag.style.display = 'none';
     const prev = card.style.cssText;
-    card.style.cssText = prev + ';width:1080px;height:1080px;position:fixed;left:-12000px;top:0;z-index:-1;border-radius:0';
+    card.style.cssText = prev + ';width:1080px;height:1920px;position:fixed;left:-12000px;top:0;z-index:-1;border-radius:0';
     await new Promise(r => requestAnimationFrame(()=>requestAnimationFrame(r)));
     let canvas;
     try{
-      canvas = await html2canvas(card, {backgroundColor:null, scale:2, width:1080, height:1080,
-        windowWidth:1080, windowHeight:1080, logging:false});
+      canvas = await html2canvas(card, {backgroundColor:null, scale:2, width:1080, height:1920,
+        windowWidth:1080, windowHeight:1920, logging:false});
     } finally { card.style.cssText = prev; tag.style.display = ''; }
     const a = document.createElement('a');
-    a.download = 'bobofoto-reklama-' + (Number(i)+1) + '.png';
+    a.download = 'bobofoto-reels-' + (Number(i)+1) + '.png';
     a.href = canvas.toDataURL('image/png'); a.click();
   }catch(err){
     console.error(err);
