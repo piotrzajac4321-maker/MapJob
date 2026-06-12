@@ -112,9 +112,24 @@
       <div class="promo-inner">
         <span class="promo-emoji">🎁</span>
         <span class="promo-text"><b>-30%</b><span class="promo-sep">&nbsp;·&nbsp;</span>10 zdjęć już od <b>49 zł</b><span class="promo-hide-sm">&nbsp;·&nbsp;sesja od 9,90 zł</span></span>
-        <span class="promo-timer">promocja ograniczona czasowo</span>
+        <span class="promo-timer">kończy się dziś za <b class="js-countdown">--:--:--</b></span>
       </div>
     </div>
+    <script>
+      /* Licznik pilności — odlicza do końca bieżącego dnia (promocja dzienna). */
+      (function () {
+        function tick() {
+          var els = document.querySelectorAll(".js-countdown"); if (!els.length) return;
+          var now = new Date(), end = new Date(now); end.setHours(23, 59, 59, 999);
+          var d = Math.max(0, Math.floor((end - now) / 1000));
+          var t = String(Math.floor(d / 3600)).padStart(2, "0") + ":" +
+                  String(Math.floor((d % 3600) / 60)).padStart(2, "0") + ":" +
+                  String(d % 60).padStart(2, "0");
+          els.forEach(function (e) { e.textContent = t; });
+        }
+        document.addEventListener("DOMContentLoaded", function () { tick(); setInterval(tick, 1000); });
+      })();
+    </script>
     <header class="nav" id="nav">
       <div class="container">
         <a href="#start" class="brand">Bobo<span>Foto</span><small>studio zdjęć noworodkowych</small></a>
@@ -252,7 +267,7 @@
         <span class="eyebrow">Cennik</span>
         <h2>Wybierz pakiet</h2>
         <p class="price-anchor">Tradycyjna sesja w studiu to <s>400–600 zł</s>, dojazd i tygodnie czekania.<br>U nas: <strong>od 9,90 zł, bez wychodzenia z domu, gotowe w ~10 h.</strong><br><span class="price-human">🧑‍🎨 To nie automat — każde zdjęcie przygotowuje i sprawdza człowiek.</span></p>
-        <p>🎁 <strong>-30%</strong> na wszystkie pakiety — promocja ograniczona czasowo. Bez ukrytych kosztów, płatność BLIK lub karta.</p>
+        <p>🎁 <strong>-30%</strong> na wszystkie pakiety — kończy się dziś za <b class="js-countdown" style="color:#c0463a;font-variant-numeric:tabular-nums">--:--:--</b>. Bez ukrytych kosztów, płatność BLIK lub karta.</p>
       </div>
       <div class="pricing">
         <div class="plan reveal">
