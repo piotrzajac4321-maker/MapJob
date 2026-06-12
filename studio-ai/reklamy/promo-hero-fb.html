@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="robots" content="noindex, nofollow" />
+<title>BoboFoto.pl — reklama FB (hero)</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    /* PODMIANA ZDJĘCIA: wklej tu URL wybranego wariantu (1/2/3) */
+    --foto:url("https://d8j0ntlcm91z4.cloudfront.net/user_3EL0T26twgaFdlHuM3eJuT2XjHR/hf_20260612_161456_c4fda6ab-371c-4c26-aacd-26eb13de9288.png");
+    --szalwia:#8a9a82;--krem:#f6f1e9;--akcent:#b4561f;--zloto:#e0b85f
+  }
+  *{box-sizing:border-box;margin:0}
+  body{background:#cabfae;display:flex;flex-direction:column;align-items:center;gap:18px;
+    padding:24px;font-family:"Manrope",system-ui,sans-serif}
+  .creative{width:1080px;height:1350px;position:relative;overflow:hidden;color:#fff;
+    background:#2a2620 var(--foto) center/cover no-repeat}
+  /* gradienty: górny dla marki, dolny dla tekstu */
+  .creative::before{content:"";position:absolute;inset:0;
+    background:linear-gradient(180deg,rgba(20,16,12,.45) 0%,rgba(20,16,12,0) 22%,
+      rgba(20,16,12,0) 45%,rgba(20,16,12,.55) 74%,rgba(20,16,12,.86) 100%)}
+  .creative>*{position:relative;z-index:1}
+  .top{display:flex;justify-content:space-between;align-items:flex-start;padding:42px 46px}
+  .brand{font-family:"Cormorant Garamond",serif;font-weight:700;font-size:46px;line-height:1;
+    text-shadow:0 2px 14px rgba(0,0,0,.45)}
+  .brand small{display:block;font-family:"Manrope";font-size:13px;letter-spacing:5px;
+    text-transform:uppercase;font-weight:600;margin-top:6px;opacity:.92}
+  .badge{background:var(--akcent);border-radius:16px;padding:12px 18px;text-align:center;
+    box-shadow:0 8px 22px rgba(0,0,0,.35)}
+  .badge b{font-size:30px;font-weight:800;line-height:1;display:block}
+  .badge span{font-size:12px;letter-spacing:2px;font-weight:700;text-transform:uppercase}
+  .stars{position:absolute;top:118px;right:46px;font-size:20px;color:var(--zloto);
+    text-shadow:0 2px 10px rgba(0,0,0,.5);font-weight:700}
+  .stars b{color:#fff}
+  .bottom{position:absolute;left:0;right:0;bottom:0;padding:0 50px 50px}
+  .kicker{font-size:20px;font-weight:700;letter-spacing:1px;opacity:.95;margin-bottom:10px}
+  h1{font-family:"Cormorant Garamond",serif;font-weight:700;font-size:66px;line-height:1.04;
+    text-shadow:0 3px 20px rgba(0,0,0,.5)}
+  h1 em{font-style:normal;color:#f0ddb6}
+  .sub{font-size:24px;font-weight:600;margin-top:16px;opacity:.97;
+    text-shadow:0 2px 12px rgba(0,0,0,.5)}
+  .cta{display:inline-block;margin-top:26px;background:var(--szalwia);color:#fff;
+    font-size:27px;font-weight:800;padding:20px 34px;border-radius:18px;
+    box-shadow:0 12px 30px rgba(0,0,0,.4)}
+  .note{color:#5a5142;font-size:14px;max-width:1080px;text-align:center;line-height:1.6}
+  .note b{color:#2c271f}
+</style>
+</head>
+<body>
+  <div class="creative" id="creative">
+    <div class="top">
+      <div class="brand">Bobo<span style="color:#cde0c2">Foto</span>.pl<small>sesje noworodkowe online</small></div>
+      <div class="badge"><b>-30%</b><span>promocja</span></div>
+    </div>
+    <div class="stars">★★★★★ <b>5,0</b></div>
+
+    <div class="bottom">
+      <div class="kicker">FOTOGRAFIA NOWORODKOWA ONLINE</div>
+      <h1>Sesja jak ze studia —<br><em>bez wychodzenia z domu</em></h1>
+      <div class="sub">Wyślij 1 zdjęcie · gotowe w ~10 h · już od 9,90 zł</div>
+      <div class="cta">Zamów → bobofoto.pl</div>
+    </div>
+  </div>
+
+  <p class="note"><b>Zdjęcie:</b> model AI (nie przedstawia realnego dziecka). <b>Podmiana wariantu:</b> w CSS, w zmiennej <code>--foto</code>, wklej URL wariantu 2 lub 3. <b>Eksport:</b> DevTools → element <code>#creative</code> → „Capture node screenshot" (1080×1350).</p>
+</body>
+</html>
