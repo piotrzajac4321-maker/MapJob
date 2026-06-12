@@ -51,6 +51,13 @@
     font-weight:800;font-size:13px;cursor:pointer;box-shadow:0 3px 10px rgba(0,0,0,.15)}
   .dl:hover{filter:brightness(1.08)}
   .dl[disabled]{opacity:.6;cursor:wait}
+  .card .photo{transform-origin:center;will-change:transform}
+  .tools{display:flex;gap:6px;align-items:center}
+  .tools .dl{flex:1}
+  .zoom{background:#fffdf8;border:1px solid #cdbfa6;color:#3a3327;border-radius:9px;width:38px;
+    padding:8px 0;font-weight:800;font-size:15px;cursor:pointer;line-height:1}
+  .zoom:hover{background:#f1e8d6}
+  .zlvl{font-size:11.5px;font-weight:700;color:#8a7f6a;min-width:38px;text-align:center}
 </style>
 </head>
 <body>
@@ -178,11 +185,27 @@ function render(){
           <div class="sub">${sub}</div>
         </div>
       </div>
-      <button class="dl" data-i="${i}">⬇ Pobierz PNG (1080×1080)</button>
+      <div class="tools">
+        <button class="zoom" data-i="${i}" data-d="-1" title="Pomniejsz zdjęcie">−</button>
+        <span class="zlvl" id="zlvl${i}">100%</span>
+        <button class="zoom" data-i="${i}" data-d="1" title="Powiększ zdjęcie">+</button>
+        <button class="dl" data-i="${i}">⬇ Pobierz PNG (1080×1080)</button>
+      </div>
     </div>`;
   }).join('');
 }
 fotoInput.addEventListener('input', render);
+
+// Zoom zdjęcia w kafelku (50%–250%, krok 10%) — wlicza się do pobranego PNG
+const zooms = {};
+grid.addEventListener('click', (e)=>{
+  const zb = e.target.closest('button.zoom'); if(!zb) return;
+  const i = zb.dataset.i, d = Number(zb.dataset.d);
+  const z = Math.min(2.5, Math.max(0.5, (zooms[i] ?? 1) + d*0.1));
+  zooms[i] = z;
+  document.querySelector('#card'+i+' .photo').style.transform = 'scale(' + z.toFixed(2) + ')';
+  document.getElementById('zlvl'+i).textContent = Math.round(z*100) + '%';
+});
 
 // Pobieranie PNG jednym klikiem (html2canvas, skala do 1080 px)
 grid.addEventListener('click', async (e)=>{
