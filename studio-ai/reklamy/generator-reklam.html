@@ -98,7 +98,11 @@
 
 <script>
 const CDN = "https://d8j0ntlcm91z4.cloudfront.net/user_3EL0T26twgaFdlHuM3eJuT2XjHR/";
-const DEFAULT_FOTO = CDN + "hf_20260612_161456_c4fda6ab-371c-4c26-aacd-26eb13de9288.png";
+// CDN Higgsfield nie wysyła nagłówków CORS, więc eksport do PNG byłby zablokowany.
+// Przepuszczamy zdjęcia przez images.weserv.nl (proxy z CORS: *), co odblokowuje canvas.
+const prox = u => "https://images.weserv.nl/?url=" + encodeURIComponent(u.replace(/^https?:\/\//,"")) + "&w=1600&output=png";
+const IMG = f => prox(CDN + f + ".png");
+const DEFAULT_FOTO = IMG("hf_20260612_161456_c4fda6ab-371c-4c26-aacd-26eb13de9288");
 
 // kolory badge wg motywu  [tło, kolor tekstu]
 const COLORS = {
@@ -287,9 +291,9 @@ function render(){
     let photoHtml, isColl = Array.isArray(img);
     if (isColl) {
       photoHtml = `<div class="coll ${layout}">` +
-        img.map(f => `<img crossorigin="anonymous" src="${CDN+f}.png" alt="" />`).join('') + `</div>`;
+        img.map(f => `<img crossorigin="anonymous" src="${IMG(f)}" alt="" />`).join('') + `</div>`;
     } else {
-      const foto = override || (img ? CDN + img + ".png" : DEFAULT_FOTO);
+      const foto = override ? prox(override) : (img ? IMG(img) : DEFAULT_FOTO);
       photoHtml = `<img class="photo" crossorigin="anonymous" src="${foto}" alt="" />`;
     }
     return `<div class="wrap">
@@ -332,7 +336,7 @@ grid.addEventListener('click', (e)=>{
 grid.addEventListener('change', (e)=>{
   const sel = e.target.closest('select.pick'); if(!sel || !sel.value) return;
   const ph = document.querySelector('#card'+sel.dataset.i+' .photo');
-  if (ph) ph.src = CDN + sel.value + '.png';
+  if (ph) ph.src = IMG(sel.value);
 });
 
 // Pobieranie PNG w pełnej jakości (2160×2160).
