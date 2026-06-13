@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="robots" content="noindex, nofollow" />
+<title>BoboFoto.pl — grafika konkursowa</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet" />
+<style>
+  :root{ --size:460px; }
+  *{box-sizing:border-box;margin:0}
+  body{background:#e7ddcd;font-family:"Manrope",system-ui,sans-serif;color:#3a3327;padding:22px}
+  h1{font-family:"Playfair Display",serif;font-size:26px;margin-bottom:4px}
+  .lead{font-size:14px;color:#6b6353;max-width:760px;line-height:1.55;margin-bottom:16px}
+  .bar{position:sticky;top:0;z-index:50;background:#fffdf8;border:1px solid #d9cdb8;border-radius:14px;
+    padding:14px 16px;display:flex;flex-wrap:wrap;gap:14px;align-items:center;
+    box-shadow:0 6px 18px rgba(0,0,0,.08);margin-bottom:22px}
+  .bar label{font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;color:#8a7f6a;margin-right:6px}
+  .bar select,.bar button{font:inherit;padding:9px 12px;border:1px solid #cdbfa6;border-radius:9px;background:#fffdf8;cursor:pointer;font-weight:700}
+  .seg button{margin-right:4px}
+  .seg button.on{background:#7d9b6f;color:#fff;border-color:#7d9b6f}
+  .dl{background:#7d9b6f;color:#fff;border:0!important;padding:11px 18px;border-radius:10px;font-weight:800;box-shadow:0 3px 10px rgba(0,0,0,.15)}
+  .dl[disabled]{opacity:.6;cursor:wait}
+  .stage{display:flex;justify-content:center}
+
+  .card{width:var(--size);aspect-ratio:1/1;position:relative;overflow:hidden;border-radius:3cqw;
+    container-type:inline-size;background:#cfc4b2 center/cover no-repeat;box-shadow:0 10px 30px rgba(0,0,0,.22);
+    --tscale:1}
+  .card.v916{aspect-ratio:9/16}
+  .photo{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transform-origin:center}
+  .veil{position:absolute;inset:0;background:linear-gradient(180deg,rgba(20,18,15,.66) 0%,rgba(20,18,15,.28) 32%,rgba(20,18,15,.42) 62%,rgba(20,18,15,.86) 100%)}
+  .frame{position:absolute;inset:3cqw;border:.7cqw solid rgba(245,237,222,.85);border-radius:4cqw;z-index:3;pointer-events:none}
+  .in{position:absolute;inset:0;z-index:4;display:flex;flex-direction:column;align-items:center;text-align:center;
+    color:#fff;padding:9cqw 8cqw}
+  .ribbon{font-weight:800;letter-spacing:3px;font-size:calc(4cqw*var(--tscale));text-transform:uppercase;
+    background:#c0463a;padding:1.6cqw 4cqw;border-radius:50cqw;box-shadow:0 .6cqw 2cqw rgba(0,0,0,.35)}
+  .title{font-family:"Playfair Display",serif;font-weight:800;line-height:1.02;margin-top:3.5cqw;
+    font-size:calc(10cqw*var(--tscale));text-shadow:0 .4cqw 2.2cqw rgba(0,0,0,.55)}
+  .title em{font-style:normal;color:#f0ddb6}
+  .prizes{margin-top:auto;display:flex;gap:2cqw;justify-content:center;width:100%}
+  .pz{flex:1;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);border-radius:3cqw;
+    padding:2.6cqw 1cqw;backdrop-filter:blur(2px)}
+  .pz b{display:block;font-size:calc(4.6cqw*var(--tscale));line-height:1}
+  .pz span{font-size:calc(2.7cqw*var(--tscale));opacity:.92;font-weight:600}
+  .steps{margin-top:3.2cqw;font-weight:700;font-size:calc(3.1cqw*var(--tscale));
+    text-shadow:0 .3cqw 1.4cqw rgba(0,0,0,.6)}
+  .site{margin-top:1.6cqw;font-weight:800;font-size:calc(3.4cqw*var(--tscale));color:#f0ddb6}
+  .badge40{position:absolute;top:7cqw;right:7cqw;z-index:5;width:23cqw;height:23cqw;border-radius:50%;
+    background:#8a9a82;display:flex;flex-direction:column;align-items:center;justify-content:center;
+    text-align:center;box-shadow:0 1cqw 3cqw rgba(0,0,0,.4);transform:rotate(8deg)}
+  .badge40 b{font-size:calc(7cqw*var(--tscale));font-weight:800;line-height:1}
+  .badge40 span{font-size:calc(2.2cqw*var(--tscale));font-weight:700;letter-spacing:.5px}
+  [contenteditable]:hover{outline:2px dashed rgba(255,255,255,.6);outline-offset:2px}
+  [contenteditable]:focus{outline:2px solid #8fc0ad;outline-offset:2px}
+  .hint{font-size:12.5px;color:#6b6353;margin-top:16px;max-width:760px;line-height:1.55}
+</style>
+</head>
+<body>
+  <h1>BoboFoto.pl — grafika konkursowa</h1>
+  <p class="lead"><b>Kliknij w dowolny tekst, żeby go zmienić.</b> Wybierz format, zdjęcie i pobierz gotowy obrazek na post konkursowy.</p>
+
+  <div class="bar">
+    <span><label>Format</label>
+      <span class="seg">
+        <button id="f11" class="on" type="button">Kwadrat 1:1</button>
+        <button id="f916" type="button">Pion 9:16</button>
+      </span></span>
+    <span><label>Zdjęcie</label><select id="pick"></select></span>
+    <span><label>Zoom</label><button id="zin" type="button">+</button> <button id="zout" type="button">−</button></span>
+    <span><label>Napisy</label><button id="tin" type="button">A+</button> <button id="tout" type="button">A−</button></span>
+    <button class="dl" id="dl" type="button">⬇ Pobierz PNG</button>
+  </div>
+
+  <div class="stage">
+    <div class="card" id="card">
+      <img class="photo" id="photo" alt="" />
+      <div class="veil"></div>
+      <div class="frame"></div>
+      <div class="badge40"><b contenteditable="true" spellcheck="false">-40%</b><span contenteditable="true" spellcheck="false">dla każdego</span></div>
+      <div class="in">
+        <div class="ribbon" contenteditable="true" spellcheck="false">🎁 KONKURS</div>
+        <div class="title" contenteditable="true" spellcheck="false">Wygraj <em>darmową</em> sesję noworodkową</div>
+        <div class="prizes">
+          <div class="pz"><b contenteditable="true" spellcheck="false">🥇 Premium</b><span contenteditable="true" spellcheck="false">10 zdjęć</span></div>
+          <div class="pz"><b contenteditable="true" spellcheck="false">🥈 Standard</b><span contenteditable="true" spellcheck="false">4 zdjęcia</span></div>
+          <div class="pz"><b contenteditable="true" spellcheck="false">🥉 Mini</b><span contenteditable="true" spellcheck="false">1 zdjęcie</span></div>
+        </div>
+        <div class="steps" contenteditable="true" spellcheck="false">❤ Polub · 💬 Skomentuj · ↗ Udostępnij</div>
+        <div class="site" contenteditable="true" spellcheck="false">bobofoto.pl</div>
+      </div>
+    </div>
+  </div>
+
+  <p class="hint">💡 Najlepiej działa, gdy w polu <b>Zoom</b> ustawisz kadr tak, by twarz dziecka była widoczna obok tekstu. Po pobraniu wstaw obrazek do posta konkursowego na Facebooku (tekst posta masz w czacie).</p>
+
+<script>
+const CDN = "https://d8j0ntlcm91z4.cloudfront.net/user_3EL0T26twgaFdlHuM3eJuT2XjHR/";
+const IMG = f => CDN + f + ".png";
+const PHOTOS = [
+ ["hf_20260605_180641_6caaba73-3b03-408b-b0fa-127b907d815e","Uśmiech — klasyczne"],
+ ["hf_20260605_180647_17dcc78a-8b3f-4510-bbae-1fa9aa197111","Uśmiech — boho"],
+ ["hf_20260605_180652_f5dbbb72-329c-4a15-99e1-794893563c42","Uśmiech — szałwia"],
+ ["hf_20260605_180656_6417cc5a-83be-47da-93cf-19aeabf9a4f6","Uśmiech — pudrowy róż"],
+ ["hf_20260605_180749_65f5d559-c5c8-4080-8244-2e624bb74dfb","Uśmiech — błękit"],
+ ["hf_20260605_180748_c547adb3-9526-4b60-ac9d-697cd44080de","Uśmiech — miś"],
+ ["hf_20260604_220728_e5c462ec-ca01-4ee2-b405-782e8c895fd4","Słodki uśmiech — miś"],
+ ["hf_20260604_220713_e579db93-614d-44a8-870c-64b088f4f209","Niebieskie oczy — studio"],
+ ["hf_20260604_220726_2bdd7aca-58ee-43d9-98c3-07d17169ec3e","Radosny uśmiech — kwiaty"],
+ ["hf_20260605_180743_6c81bf69-b62f-4f74-8845-13e8439feffe","Uśmiech — jesień"],
+ ["hf_20260605_180650_116c3222-f110-45e8-b68f-1edd0b3dcf80","Uśmiech — wiosna"],
+ ["hf_20260604_131121_37f7a0d4-de86-4241-9097-978006ccad03","Mały król"],
+];
+const card = document.getElementById('card'), photo = document.getElementById('photo'), pick = document.getElementById('pick');
+pick.innerHTML = PHOTOS.map((p,i)=>`<option value="${p[0]}">${p[1]}</option>`).join('');
+function setPhoto(f){ photo.src = IMG(f); }
+setPhoto(PHOTOS[0][0]);
+pick.onchange = e => setPhoto(e.target.value);
+
+// format
+document.getElementById('f11').onclick = function(){ card.classList.remove('v916'); this.classList.add('on'); document.getElementById('f916').classList.remove('on'); };
+document.getElementById('f916').onclick = function(){ card.classList.add('v916'); this.classList.add('on'); document.getElementById('f11').classList.remove('on'); };
+
+// zoom + rozmiar tekstu
+let z=1, t=1;
+const zoom = d => { z=Math.min(2.5,Math.max(.6,z+d)); photo.style.transform='scale('+z.toFixed(2)+')'; };
+const tsz  = d => { t=Math.min(1.6,Math.max(.7,t+d)); card.style.setProperty('--tscale',t.toFixed(2)); };
+document.getElementById('zin').onclick=()=>zoom(.1);
+document.getElementById('zout').onclick=()=>zoom(-.1);
+document.getElementById('tin').onclick=()=>tsz(.1);
+document.getElementById('tout').onclick=()=>tsz(-.1);
+
+// ładowanie biblioteki renderującej (z kilku CDN)
+function loadScript(src){return new Promise((res,rej)=>{const s=document.createElement('script');s.src=src;s.onload=res;s.onerror=()=>rej(new Error('x'));document.head.appendChild(s);});}
+async function ensureH2C(){ if(window.html2canvas)return;
+  for(const u of ['https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js','https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js','https://unpkg.com/html2canvas@1.4.1/dist/html2canvas.min.js']){ try{await loadScript(u); if(window.html2canvas)return;}catch(e){} }
+  throw new Error('nie udało się załadować biblioteki renderującej'); }
+async function toDataURL(url){
+  const orig = url.replace(/^https?:\/\//,'');
+  const cands = [url, 'https://corsproxy.io/?url='+encodeURIComponent(url), 'https://api.allorigins.win/raw?url='+encodeURIComponent(url),
+    'https://images.weserv.nl/?url='+encodeURIComponent(orig), 'https://wsrv.nl/?url='+encodeURIComponent(orig)];
+  let err; for(const u of cands){ try{
+    const c=new AbortController(), t=setTimeout(()=>c.abort(),12000);
+    const r=await fetch(u,{mode:'cors',cache:'force-cache',signal:c.signal}); clearTimeout(t);
+    if(!r.ok) throw new Error('HTTP '+r.status); const b=await r.blob();
+    if(!b.type.startsWith('image')) throw new Error('nie-obraz');
+    return await new Promise((res,rej)=>{const fr=new FileReader();fr.onload=()=>res(fr.result);fr.onerror=rej;fr.readAsDataURL(b);});
+  }catch(e){ err=e; } } throw err||new Error('brak źródła');
+}
+
+document.getElementById('dl').onclick = async function(){
+  const btn=this, old=btn.textContent; btn.disabled=true; btn.textContent='Ładuję…';
+  const W=1080, H=card.classList.contains('v916')?1920:1080;
+  const orig = photo.src;
+  try{
+    await ensureH2C();
+    btn.textContent='Pobieram zdjęcie…';
+    photo.src = await toDataURL(photo.src);
+    await new Promise(r=>{ photo.complete?r():(photo.onload=photo.onerror=r); });
+    btn.textContent='Renderuję…';
+    const prev=card.style.cssText;
+    card.style.cssText = prev+';width:'+W+'px;height:'+H+'px;position:fixed;left:-12000px;top:0;z-index:-1;border-radius:0';
+    await new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)));
+    let canvas;
+    try{ canvas = await html2canvas(card,{backgroundColor:null,scale:2,width:W,height:H,windowWidth:W,windowHeight:H,logging:false}); }
+    finally{ card.style.cssText=prev; }
+    await new Promise(res=>canvas.toBlob(b=>{ const u=URL.createObjectURL(b); const a=document.createElement('a');
+      a.download='bobofoto-konkurs-'+(H===1920?'9x16':'1x1')+'.png'; a.href=u; document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(()=>URL.revokeObjectURL(u),5000); res(); },'image/png'));
+  }catch(e){ alert('Nie udało się pobrać: '+(e.message||e)+'\n\nUżyj DevTools → klik na .card → „Capture node screenshot".'); }
+  finally{ photo.src=orig; btn.disabled=false; btn.textContent=old; }
+};
+</script>
+</body>
+</html>
