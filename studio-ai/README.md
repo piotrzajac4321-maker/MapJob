@@ -15,7 +15,7 @@ realizacja do **~10 h**. Strona statyczna (HTML/CSS/JS), hostowana na **Vercel**
 studio-ai/
 ├── index.html                  # STRONA GŁÓWNA (układ „v2": hero z przykładami przed/po, galeria, cennik, FAQ)
 ├── v2.html                     # podgląd/wersja robocza (noindex) — można usunąć
-├── konkurs.html                # strona konkursu (3 nagrody, kod -40%)
+├── konkurs.html                # strona konkursu (20 nagród: 5× Premium, 5× Standard, 10× Mini)
 ├── regulamin.html              # WZÓR — wymaga uzupełnienia danych sprzedawcy (NIP, adres…)
 ├── polityka-prywatnosci.html   # RODO
 ├── cookies.html                # polityka cookies
@@ -85,7 +85,6 @@ python3 build_poradnik.py     # tworzy poradnik/*.html, poradnik.html, sitemap.x
 | **Supabase** (Auth + Storage `zdjecia-klientow` + tabele `zamowienia`, `zdarzenia`) | konto `juqlhorodqvczoqkvkim` | działa; SQL w `docs/panel-setup.sql` |
 | **Stripe** Payment Links (Mini/Standard/Premium) | w `js/main.js` (PAYMENT_LINKS) | działa |
 | **Stripe** realne zarobki w panelu | `api/stripe.js` | wymaga `STRIPE_SECRET_KEY` w Vercel |
-| Kod rabatowy **BOBO40** (-40%) | Stripe Dashboard | do dodania |
 | **Meta Pixel** `1320762476176589` | `js/pixel.js` | działa |
 | **Google Search Console** | meta w `index.html` | zweryfikowane |
 | **Facebook domain verification** | meta w `index.html` | zweryfikowane |
@@ -97,7 +96,7 @@ python3 build_poradnik.py     # tworzy poradnik/*.html, poradnik.html, sitemap.x
 - [ ] **Więcej par PRZED→PO** do kafelków w hero (lista `pairs` w inline-script `index.html`).
 - [ ] **Uzupełnić `regulamin.html`** (dane sprzedawcy) i włączyć link w stopce + dopisać do sitemap.
 - [ ] Zrównać **schema FAQ** (w `<head>` jest 7 pytań, widoczne 4).
-- [ ] Ustawić `STRIPE_SECRET_KEY` w Vercel + kod **BOBO40**.
+- [ ] Ustawić `STRIPE_SECRET_KEY` w Vercel.
 - [ ] **Profil Firmy Google** (instrukcja: `docs/wizytowka-google.md`) — kluczowe dla frazy „bobofoto".
 
 ## 7. Ważna uwaga o marce/SEO
