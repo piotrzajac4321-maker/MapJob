@@ -46,11 +46,13 @@
   .steps{margin-top:3.2cqw;font-weight:700;font-size:calc(3.1cqw*var(--tscale));
     text-shadow:0 .3cqw 1.4cqw rgba(0,0,0,.6)}
   .site{margin-top:1.6cqw;font-weight:800;font-size:calc(3.4cqw*var(--tscale));color:#f0ddb6}
-  .badge40{position:absolute;top:5cqw;right:5cqw;z-index:5;width:11cqw;height:11cqw;border-radius:50%;
+  .badge40{position:absolute;top:5cqw;right:5cqw;z-index:5;
+    width:calc(11cqw*var(--bscale,1));height:calc(11cqw*var(--bscale,1));border-radius:50%;
     background:#8a9a82;display:flex;flex-direction:column;align-items:center;justify-content:center;
     text-align:center;box-shadow:0 .8cqw 2.4cqw rgba(0,0,0,.4);transform:rotate(8deg)}
-  .badge40 b{font-size:calc(4cqw*var(--tscale));font-weight:800;line-height:1}
-  .badge40 span{font-size:calc(1.5cqw*var(--tscale));font-weight:700;letter-spacing:.2px}
+  .badge40 b{font-size:calc(4cqw*var(--bscale,1)*var(--tscale));font-weight:800;line-height:1}
+  .badge40 span{font-size:calc(1.5cqw*var(--bscale,1)*var(--tscale));font-weight:700;letter-spacing:.2px}
+  .card.nobadge .badge40{display:none}
   [contenteditable]:hover{outline:2px dashed rgba(255,255,255,.6);outline-offset:2px}
   [contenteditable]:focus{outline:2px solid #8fc0ad;outline-offset:2px}
   .hint{font-size:12.5px;color:#6b6353;margin-top:16px;max-width:760px;line-height:1.55}
@@ -69,6 +71,7 @@
     <span><label>Zdjęcie</label><select id="pick"></select></span>
     <span><label>Zoom</label><button id="zin" type="button">+</button> <button id="zout" type="button">−</button></span>
     <span><label>Napisy</label><button id="tin" type="button">A+</button> <button id="tout" type="button">A−</button></span>
+    <span><label>Kółko</label><button id="bin" type="button">+</button> <button id="bout" type="button">−</button> <button id="btog" type="button">Ukryj</button></span>
     <button class="dl" id="dl" type="button">⬇ Pobierz PNG</button>
   </div>
 
@@ -129,6 +132,13 @@ document.getElementById('zin').onclick=()=>zoom(.1);
 document.getElementById('zout').onclick=()=>zoom(-.1);
 document.getElementById('tin').onclick=()=>tsz(.1);
 document.getElementById('tout').onclick=()=>tsz(-.1);
+
+// rozmiar kółka „20 nagród" + ukryj
+let b=1;
+const bsz = d => { b=Math.min(2,Math.max(.4,b+d)); card.style.setProperty('--bscale',b.toFixed(2)); };
+document.getElementById('bin').onclick=()=>bsz(.1);
+document.getElementById('bout').onclick=()=>bsz(-.1);
+document.getElementById('btog').onclick=function(){ const h=card.classList.toggle('nobadge'); this.textContent=h?'Pokaż':'Ukryj'; };
 
 // ładowanie biblioteki renderującej (z kilku CDN)
 function loadScript(src){return new Promise((res,rej)=>{const s=document.createElement('script');s.src=src;s.onload=res;s.onerror=()=>rej(new Error('x'));document.head.appendChild(s);});}
