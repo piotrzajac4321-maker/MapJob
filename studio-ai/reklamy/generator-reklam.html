@@ -99,10 +99,8 @@
 
 <script>
 const CDN = "https://d8j0ntlcm91z4.cloudfront.net/user_3EL0T26twgaFdlHuM3eJuT2XjHR/";
-// CDN Higgsfield nie wysyła nagłówków CORS, więc eksport do PNG byłby zablokowany.
-// Przepuszczamy zdjęcia przez images.weserv.nl (proxy z CORS: *), co odblokowuje canvas.
-const prox = u => "https://images.weserv.nl/?url=" + encodeURIComponent(u.replace(/^https?:\/\//,"")) + "&w=1600&output=png";
-const IMG = f => prox(CDN + f + ".png");
+// Wyświetlanie: bezpośrednio z CDN (najpewniejsze — tak działa cała strona).
+const IMG = f => CDN + f + ".png";
 const DEFAULT_FOTO = IMG("hf_20260612_161456_c4fda6ab-371c-4c26-aacd-26eb13de9288");
 
 // kolory badge wg motywu  [tło, kolor tekstu]
@@ -442,21 +440,18 @@ async function ensureH2C(){
 
 // Pobranie obrazka jako data: URL — próbuje kolejno kilku źródeł (CORS), aż któreś zadziała.
 async function toDataURL(url){
-  // odtwórz oryginalny URL CDN, jeśli src idzie przez proxy weserv
-  let orig = url;
-  const m = url.match(/[?&]url=([^&]+)/);
-  if (m) orig = 'https://' + decodeURIComponent(m[1]);
-  const enc = encodeURIComponent(orig.replace(/^https?:\/\//,''));
+  const orig = url.replace(/^https?:\/\//,'');
   const candidates = [
-    url,                                                              // 1) proxy weserv (jak w podglądzie)
-    'https://wsrv.nl/?url=' + enc + '&w=1600&output=png',             // 2) mirror weserv
-    orig,                                                             // 3) CDN bezpośrednio (jeśli ma CORS)
-    'https://corsproxy.io/?url=' + encodeURIComponent(orig)           // 4) proxy awaryjne
+    url,                                                                 // 1) CDN bezpośrednio (jeśli ma CORS)
+    'https://corsproxy.io/?url=' + encodeURIComponent(url),              // 2) proxy
+    'https://api.allorigins.win/raw?url=' + encodeURIComponent(url),     // 3) proxy
+    'https://images.weserv.nl/?url=' + encodeURIComponent(orig),        // 4) proxy
+    'https://wsrv.nl/?url=' + encodeURIComponent(orig)                  // 5) proxy
   ];
   let lastErr;
   for (const u of candidates){
     try{
-      const ctl = new AbortController(); const t = setTimeout(()=>ctl.abort(), 15000);
+      const ctl = new AbortController(); const t = setTimeout(()=>ctl.abort(), 12000);
       const r = await fetch(u, {mode:'cors', cache:'force-cache', signal: ctl.signal});
       clearTimeout(t);
       if(!r.ok) throw new Error('HTTP '+r.status);
