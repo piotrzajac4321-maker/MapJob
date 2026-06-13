@@ -492,9 +492,16 @@ grid.addEventListener('click', async (e)=>{
       canvas = await html2canvas(card, {backgroundColor:null, scale:2, width:1080, height:1080,
         windowWidth:1080, windowHeight:1080, logging:false});
     } finally { card.style.cssText = prev; tag.style.display = ''; }
-    const a = document.createElement('a');
-    a.download = 'bobofoto-reklama-' + (Number(i)+1) + '.png';
-    a.href = canvas.toDataURL('image/png'); a.click();
+    await new Promise(function(res){
+      canvas.toBlob(function(blob){
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.download = 'bobofoto-reklama-' + (Number(i)+1) + '.png';
+        a.href = url; document.body.appendChild(a); a.click(); a.remove();
+        setTimeout(function(){ URL.revokeObjectURL(url); }, 5000);
+        res();
+      }, 'image/png');
+    });
   }catch(err){
     console.error(err);
     alert('Nie udało się pobrać zdjęcia: ' + (err.message||err) + '\n\nSpróbuj:\n1) wyłącz Adblock/Shields dla tej strony,\n2) odśwież (Ctrl+Shift+R) i kliknij ponownie,\n3) chwilę odczekaj — proxy mogło się dławić.');
