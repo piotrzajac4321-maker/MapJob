@@ -180,6 +180,64 @@
         <h2>Zdjęcia do wyboru</h2>
         <p>Kliknij czerwone <strong style="color:#ff3b5c">♥</strong> przy zdjęciach, które Ci się podobają, a potem <strong>„Zamów"</strong> na dole. Przy każdym napiszesz, co zmienić i prześlesz własne zdjęcie.</p>
       </div>
+
+      <!-- 🎲 LOSOWANIE STYLIZACJI -->
+      <style>
+        .roulette{background:#fffdf8;border:1px solid #e7dcc8;border-radius:18px;padding:20px 18px;margin:0 0 26px;
+          box-shadow:0 8px 22px rgba(60,50,35,.07);text-align:center}
+        .rl-head{font-weight:800;font-size:17px;margin-bottom:4px}
+        .rl-sub{color:#8a7f6a;font-size:13.5px;margin-bottom:14px}
+        .rl-controls{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:center}
+        .rl-lbl{font-weight:700;color:#6b6353;font-size:14px;margin-right:2px}
+        .rl-n{font:inherit;font-weight:800;border:1px solid #cdbfa6;background:#fff;color:#3a3327;
+          width:46px;height:42px;border-radius:10px;cursor:pointer}
+        .rl-n.on{background:#8a9a82;color:#fff;border-color:#8a9a82}
+        .rl-go{font:inherit;font-weight:800;border:0;background:#c0463a;color:#fff;height:42px;padding:0 20px;
+          border-radius:10px;cursor:pointer;box-shadow:0 4px 12px rgba(192,70,58,.3)}
+        .rl-go:hover{filter:brightness(1.07)}
+        .rl-result{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:12px;margin:18px 0 6px}
+        .rl-card{border-radius:12px;overflow:hidden;background:#efe7db;box-shadow:0 4px 12px rgba(0,0,0,.1)}
+        .rl-card img{width:100%;aspect-ratio:3/4;object-fit:cover;display:block}
+        .rl-card span{display:block;font-size:12px;font-weight:600;padding:6px 8px;color:#3a3327}
+        .rl-cta{margin-top:14px}
+        @media(max-width:520px){ .rl-result{grid-template-columns:repeat(2,1fr)} }
+      </style>
+      <div class="roulette reveal">
+        <div class="rl-head">🎲 Nie wiesz, co wybrać? Wylosujemy za Ciebie!</div>
+        <div class="rl-sub">Wybierz, ile zdjęć chcesz, a my podpowiemy gotowy zestaw stylizacji.</div>
+        <div class="rl-controls">
+          <span class="rl-lbl">Ile zdjęć?</span>
+          <button class="rl-n" data-n="1">1</button>
+          <button class="rl-n on" data-n="4">4</button>
+          <button class="rl-n" data-n="10">10</button>
+          <button class="rl-go" id="rlGo">🎲 Losuj zestaw</button>
+        </div>
+        <div class="rl-result" id="rlResult"></div>
+        <a href="#cennik" class="btn btn-primary rl-cta" id="rlCta" style="display:none">Zamów ten zestaw →</a>
+      </div>
+      <script>
+        document.addEventListener('DOMContentLoaded', function(){
+          var n = 4, res = document.getElementById('rlResult'), cta = document.getElementById('rlCta');
+          document.querySelectorAll('.rl-n').forEach(function(b){
+            b.addEventListener('click', function(){
+              document.querySelectorAll('.rl-n').forEach(function(x){ x.classList.remove('on'); });
+              b.classList.add('on'); n = +b.dataset.n;
+            });
+          });
+          document.getElementById('rlGo').addEventListener('click', function(){
+            if (typeof GALLERY === 'undefined' || !GALLERY.length) return;
+            var pool = GALLERY.slice(), pick = [];
+            for (var i = 0; i < n && pool.length; i++){ pick.push(pool.splice(Math.floor(Math.random()*pool.length), 1)[0]); }
+            res.innerHTML = pick.map(function(g){
+              return '<div class="rl-card"><img loading="lazy" src="'+g.thumb+'" alt="'+g.title+'" /><span>'+g.title+'</span></div>';
+            }).join('');
+            cta.style.display = 'inline-flex';
+            cta.textContent = 'Zamów ten zestaw ('+n+' '+(n===1?'zdjęcie':'zdjęć')+') →';
+            res.scrollIntoView({ behavior:'smooth', block:'nearest' });
+          });
+        });
+      </script>
+
       <div class="filters" id="filters"></div>
       <div class="gallery" id="gallery"></div>
     </div>
