@@ -157,7 +157,7 @@ LIGHTING: warm soft daylight from the left window, golden cozy tone, soft rim li
 AUDIO: a quick comedic "ding!" chime and a playful whoosh at the very start, then soft warm ambient nursery tone + light gentle background music low in the mix, a small cheerful cue at the end, no other voices.
 MOOD: charming, wise, slightly funny, attention-grabbing, heart-melting, premium, clean.`;
 
-const NEG = `Negative: landscape, horizontal, 16:9, widescreen, square, black bars, letterbox, pillarbox, photorealistic, real human baby, realistic infant, deformed face, extra fingers, distorted mouth, creepy, uncanny valley, harsh lighting, dark, low quality, any on-screen text, captions, subtitles, garbled text, fake logo, watermark, mispronounced Polish, wrong language, English accent, mumbling, cut-off speech, repeated words, robotic voice.`;
+const NEG = `Negative: multiple background characters, two or more animals, extra creatures, several gags at once, second mascot, landscape, horizontal, 16:9, widescreen, square, black bars, letterbox, pillarbox, photorealistic, real human baby, realistic infant, deformed face, extra fingers, distorted mouth, creepy, uncanny valley, harsh lighting, dark, low quality, any on-screen text, captions, subtitles, garbled text, fake logo, watermark, mispronounced Polish, wrong language, English accent, mumbling, cut-off speech, repeated words, robotic voice.`;
 
 const HOOK = `- 0–2s (HOOK): a fast playful whip-pan snaps onto Bobo, who turns to camera and raises one tiny index finger like a wise professor, eyebrows up, cheeky confident spark.`;
 
@@ -288,7 +288,7 @@ function makePrompt(t,advice,gagEn,outro,dur){
 ${CHARACTER}
 
 ${SCENES[t.scene]}
-BACKGROUND GAG: throughout, in the blurred background directly behind Bobo and centered in the frame (not off to the side), ${gagEn}, deadpan, never acknowledged by Bobo.
+BACKGROUND GAG: throughout, in the blurred background directly behind Bobo and centered in the frame (not off to the side), ${gagEn}, deadpan, never acknowledged by Bobo. IMPORTANT: there is EXACTLY ONE background character total — this one and nothing else. No other animals, creatures or moving characters anywhere in the scene (the teddy bear is just a static plush toy).
 
 ACTION:
 ${action}
