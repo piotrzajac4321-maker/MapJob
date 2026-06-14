@@ -145,9 +145,9 @@
 const CHARACTER = `CHARACTER "Bobo": an exceptionally cute cartoon baby mascot, chubby 6-month-old proportions, big round head, huge sparkling dark-brown eyes with bright catchlights, full rosy cheeks, small button nose, one little curl of light-brown hair on top, soft double chin, one faint cheek dimple, warm lovable face. Wearing a cozy cream ribbed onesie.`;
 
 const SCENES = {
-  nursery: `SCENE: a bright airy beige-and-cream cartoon nursery — soft cream rug, a cozy cushion, a big window with warm soft daylight on the left. On the wall behind Bobo a cute framed nursery poster and a round wooden wall plaque left blank/plain. A blurred wooden shelf with a little teddy bear. Wide framing with room around Bobo.`,
-  bubble: `SCENE: a bright airy beige-and-cream cartoon nursery — soft cream rug, a cozy cushion, a big window with warm soft daylight on the left. On the wall behind Bobo a cute framed nursery poster and a round wooden wall plaque left blank/plain. A blurred wooden shelf with a little teddy bear. A single soap bubble gently floats in the air. Wide framing with room around Bobo.`,
-  living: `SCENE: a bright airy beige-and-cream cartoon living room — soft cream rug, a low soft sofa to hold onto, a big window with warm soft daylight on the left. On the wall a cute framed poster and a round wooden wall plaque left blank/plain. A blurred shelf with a little teddy bear. Wide framing with room around Bobo.`
+  nursery: `SCENE: a bright airy beige-and-cream cartoon nursery — soft cream rug, a cozy cushion, a big window with warm soft daylight on the left. On the wall behind Bobo a cute framed nursery poster and a round wooden wall plaque left blank/plain. A blurred wooden shelf with a little teddy bear. Tall vertical 9:16 portrait framing, Bobo centred, with headroom above and floor visible below.`,
+  bubble: `SCENE: a bright airy beige-and-cream cartoon nursery — soft cream rug, a cozy cushion, a big window with warm soft daylight on the left. On the wall behind Bobo a cute framed nursery poster and a round wooden wall plaque left blank/plain. A blurred wooden shelf with a little teddy bear. A single soap bubble gently floats in the air. Tall vertical 9:16 portrait framing, Bobo centred, with headroom above and floor visible below.`,
+  living: `SCENE: a bright airy beige-and-cream cartoon living room — soft cream rug, a low soft sofa to hold onto, a big window with warm soft daylight on the left. On the wall a cute framed poster and a round wooden wall plaque left blank/plain. A blurred shelf with a little teddy bear. Tall vertical 9:16 portrait framing, Bobo centred, with headroom above and floor visible below.`
 };
 
 const VOICE = `VOICE: native fluent Polish, a cute high-pitched toddler voice, soft with a slight lisp but every word crisp and fully articulated. Lively, energetic and FAST on the opening line, then a touch calmer but still upbeat for the advice, warm and friendly on the closing line. Correct natural Polish pronunciation; finish every word; no mumbling, no cut-off words, no repeated words, no English accent. Natural breaths and light playful intonation.`;
@@ -157,7 +157,7 @@ LIGHTING: warm soft daylight from the left window, golden cozy tone, soft rim li
 AUDIO: a quick comedic "ding!" chime and a playful whoosh at the very start, then soft warm ambient nursery tone + light gentle background music low in the mix, a small cheerful cue at the end, no other voices.
 MOOD: charming, wise, slightly funny, attention-grabbing, heart-melting, premium, clean.`;
 
-const NEG = `Negative: photorealistic, real human baby, realistic infant, deformed face, extra fingers, distorted mouth, creepy, uncanny valley, harsh lighting, dark, low quality, any on-screen text, captions, subtitles, garbled text, fake logo, watermark, mispronounced Polish, wrong language, English accent, mumbling, cut-off speech, repeated words, robotic voice.`;
+const NEG = `Negative: landscape, horizontal, 16:9, widescreen, square, black bars, letterbox, pillarbox, photorealistic, real human baby, realistic infant, deformed face, extra fingers, distorted mouth, creepy, uncanny valley, harsh lighting, dark, low quality, any on-screen text, captions, subtitles, garbled text, fake logo, watermark, mispronounced Polish, wrong language, English accent, mumbling, cut-off speech, repeated words, robotic voice.`;
 
 const HOOK = `- 0–2s (HOOK): a fast playful whip-pan snaps onto Bobo, who turns to camera and raises one tiny index finger like a wise professor, eyebrows up, cheeky confident spark.`;
 
@@ -283,12 +283,12 @@ function makePrompt(t,advice,gagEn,outro,dur){
   const speak=makeSpeak(advice,outro);
   const action=HOOK+"\n- 2–"+mid+"s (ADVICE): "+t.act+
     "\n- "+mid+"–"+dur+"s (OUTRO): a warm encouraging smile, raises the tiny finger again and gives a friendly little wave.";
-  return `3D animated Pixar/Illumination-style video, vertical 9:16 aspect ratio, 1080x1920 resolution, 30 fps, optimized for TikTok / Instagram Reels / YouTube Shorts, full-frame vertical composition with the subject centered and safe margins top and bottom, ${dur} seconds, family-friendly, high-end glossy feature-film render.
+  return `VERTICAL 9:16 PORTRAIT VIDEO (taller than it is wide), portrait orientation, 1080x1920 resolution, full vertical frame edge to edge, NO black bars, NO letterbox. Strictly 9:16 aspect ratio — do NOT render in 16:9, landscape, widescreen or square. 3D animated Pixar/Illumination-style, 30 fps, optimized for TikTok / Instagram Reels / YouTube Shorts, ${dur} seconds, family-friendly, high-end glossy feature-film render.
 
 ${CHARACTER}
 
 ${SCENES[t.scene]}
-BACKGROUND GAG: throughout, far in the blurred background, ${gagEn}, deadpan, never acknowledged by Bobo.
+BACKGROUND GAG: throughout, in the blurred background directly behind Bobo and centered in the frame (not off to the side), ${gagEn}, deadpan, never acknowledged by Bobo.
 
 ACTION:
 ${action}
