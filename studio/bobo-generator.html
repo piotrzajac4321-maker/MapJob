@@ -27,6 +27,11 @@
   textarea{min-height:70px;resize:vertical}
   .row{margin-bottom:14px}
   .hint{font-size:12px;color:#8a8676;margin-top:4px}
+  .preview{background:#f3f1e8;border:1px solid var(--line);border-radius:12px;padding:14px;margin-top:4px}
+  .preview .pv{margin:0 0 8px;font-size:14px}
+  .preview .pv:last-child{margin-bottom:0}
+  .preview b{color:var(--sage-d)}
+  .quote{font-style:italic}
   .out{white-space:pre-wrap;background:#1f211c;color:#e9e7df;border-radius:12px;
     padding:16px;font-size:12.5px;font-family:ui-monospace,Menlo,Consolas,monospace;
     max-height:420px;overflow:auto}
@@ -42,6 +47,20 @@
   .toast.show{opacity:1}
   .tag{display:inline-block;background:#eef0e8;color:var(--sage-d);border-radius:6px;
     padding:2px 8px;font-size:11px;font-weight:700;margin-bottom:8px}
+  details{margin-top:10px}
+  summary{cursor:pointer;font-size:13px;color:var(--sage-d);font-weight:600}
+  .item{border:1px solid var(--line);border-radius:12px;padding:12px;margin-bottom:10px;background:#fff}
+  .item.done{background:#eef3e7;border-color:#cdd9bf;opacity:.75}
+  .item h4{margin:0 0 6px;font-size:14px;display:flex;align-items:center;gap:8px}
+  .item .num{background:var(--sage);color:#fff;border-radius:6px;font-size:11px;padding:2px 7px}
+  .item p{margin:4px 0;font-size:13px}
+  .item .q{font-style:italic;color:#46483f}
+  .item .bg{color:var(--sage-d)}
+  .item .actions{display:flex;align-items:center;gap:12px;margin-top:8px;flex-wrap:wrap}
+  .item button{padding:8px 16px;font-size:13px}
+  .chk{display:flex;align-items:center;gap:6px;font-size:13px;font-weight:600;cursor:pointer;user-select:none}
+  .chk input{width:18px;height:18px;accent-color:var(--sage)}
+  .progress{font-size:13px;color:#8a8676;margin-bottom:10px}
 </style>
 </head>
 <body>
@@ -64,7 +83,7 @@
         <div class="hint">Wybierz gotowy albo „✍️ Własny tekst".</div>
       </div>
       <div class="row">
-        <label>🎭 Dziwny gag w tle</label>
+        <label>🎭 Co jest w tle</label>
         <select id="gag"></select>
         <div class="hint">„🎲 Losowy" wybierze inny za każdym razem.</div>
       </div>
@@ -94,6 +113,8 @@
         </select>
       </div>
     </div>
+
+    <div class="preview" id="preview"></div>
   </div>
 
   <div class="btns">
@@ -102,8 +123,18 @@
   </div>
 
   <div class="card">
-    <span class="tag">GOTOWY PROMPT</span>
-    <div class="out" id="out"></div>
+    <span class="tag">GOTOWY PROMPT (do Veo)</span>
+    <details><summary>Pokaż / ukryj pełny prompt po angielsku</summary>
+      <div class="out" id="out" style="margin-top:10px"></div>
+    </details>
+  </div>
+
+  <div class="card">
+    <span class="tag">20 GOTOWYCH FILMIKÓW</span>
+    <p style="margin:4px 0 10px;font-size:13px">Gotowe zestawy (temat + gag) — kliknij „Kopiuj" i odhacz, gdy wrzucisz. Postęp zapisuje się w telefonie.</p>
+    <div class="progress" id="progress"></div>
+    <div id="ready"></div>
+    <button class="ghost" onclick="resetDone()" style="font-size:13px;padding:8px 16px">♻️ Wyzeruj odhaczenia</button>
   </div>
 </div>
 
@@ -178,64 +209,51 @@ const THEMES = [
 ];
 
 const GAGS = [
-  "a chubby grumpy cartoon cat slowly slides across the floor on a tiny skateboard",
-  "a chubby cat does slow upside-down yoga against the wall",
-  "a chubby cat moonwalks backwards across the room in slow motion",
-  "a chubby cat slowly falls off the shelf and lands perfectly fine",
-  "a chubby cat takes selfies with a tiny phone",
-  "a tiny pug in sunglasses slowly rides a robot vacuum like a surfboard",
-  "a small duck waddles across carrying a tiny umbrella",
-  "a sleepy sloth very slowly climbs up the curtain",
-  "a hamster slowly lifts a tiny dumbbell, struggling",
-  "a corgi slowly does a dramatic catwalk strut",
-  "a parrot slowly hangs upside-down from the lamp, swinging",
-  "a turtle slowly speed-walks with a tiny cape like a hero",
-  "a teddy bear slowly does push-ups on the rug",
-  "a line of rubber ducks slowly marches across the floor",
-  "a small robot vacuum slowly spins in confused circles",
-  "a wind-up toy dinosaur slowly stomps across in slow motion",
-  "a dog-shaped balloon slowly drifts past upside down",
-  "a stack of building blocks slowly topples in extreme slow motion",
-  "a tiny astronaut floats slowly across the background",
-  "a small ghost in a bedsheet slowly vacuums the rug",
-  "a cucumber slowly slides across the shelf on its own",
-  "a mouse slowly does a single disco dance move under a tiny disco ball",
-  "a potted plant slowly turns to watch the camera",
-  "a goldfish in a bowl slowly does laps wearing tiny sunglasses"
+  {pl:"Gruby zrzędliwy kot jedzie na deskorolce", en:"a chubby grumpy cartoon cat slowly slides across the floor on a tiny skateboard"},
+  {pl:"Gruby kot robi jogę do góry nogami", en:"a chubby cat does slow upside-down yoga against the wall"},
+  {pl:"Gruby kot robi moonwalk w tył", en:"a chubby cat moonwalks backwards across the room in slow motion"},
+  {pl:"Gruby kot spada z półki i ląduje bez szwanku", en:"a chubby cat slowly falls off the shelf and lands perfectly fine"},
+  {pl:"Gruby kot robi sobie selfie telefonem", en:"a chubby cat takes selfies with a tiny phone"},
+  {pl:"Mops w okularach jedzie na robocie sprzątającym", en:"a tiny pug in sunglasses slowly rides a robot vacuum like a surfboard"},
+  {pl:"Kaczka przechodzi z malutkim parasolem", en:"a small duck waddles across carrying a tiny umbrella"},
+  {pl:"Śpiący leniwiec wspina się po firance", en:"a sleepy sloth very slowly climbs up the curtain"},
+  {pl:"Chomik podnosi malutki hantel, męcząc się", en:"a hamster slowly lifts a tiny dumbbell, struggling"},
+  {pl:"Corgi kroczy jak po wybiegu", en:"a corgi slowly does a dramatic catwalk strut"},
+  {pl:"Papuga wisi głową w dół na lampie", en:"a parrot slowly hangs upside-down from the lamp, swinging"},
+  {pl:"Żółw „pędzi" w malutkiej pelerynie bohatera", en:"a turtle slowly speed-walks with a tiny cape like a hero"},
+  {pl:"Pluszowy miś robi pompki na dywanie", en:"a teddy bear slowly does push-ups on the rug"},
+  {pl:"Rządek gumowych kaczek maszeruje", en:"a line of rubber ducks slowly marches across the floor"},
+  {pl:"Robot sprzątający kręci się zdezorientowany", en:"a small robot vacuum slowly spins in confused circles"},
+  {pl:"Nakręcany dinozaur tupie w zwolnionym tempie", en:"a wind-up toy dinosaur slowly stomps across in slow motion"},
+  {pl:"Balon-piesek przepływa do góry nogami", en:"a dog-shaped balloon slowly drifts past upside down"},
+  {pl:"Wieża z klocków powoli się przewraca", en:"a stack of building blocks slowly topples in extreme slow motion"},
+  {pl:"Malutki astronauta przepływa w tle", en:"a tiny astronaut floats slowly across the background"},
+  {pl:"Duszek w prześcieradle odkurza dywan", en:"a small ghost in a bedsheet slowly vacuums the rug"},
+  {pl:"Ogórek sam zsuwa się z półki", en:"a cucumber slowly slides across the shelf on its own"},
+  {pl:"Myszka tańczy pod małą kulą disco", en:"a mouse slowly does a single disco dance move under a tiny disco ball"},
+  {pl:"Roślina w doniczce odwraca się do kamery", en:"a potted plant slowly turns to watch the camera"},
+  {pl:"Złota rybka pływa w malutkich okularach", en:"a goldfish in a bowl slowly does laps wearing tiny sunglasses"}
 ];
 
-// init selects
 const themeSel=document.getElementById('theme');
 THEMES.forEach((t,i)=>{const o=document.createElement('option');o.value=i;o.textContent=t.name;themeSel.appendChild(o);});
 const gagSel=document.getElementById('gag');
 const rnd=document.createElement('option');rnd.value="random";rnd.textContent="🎲 Losowy";gagSel.appendChild(rnd);
-GAGS.forEach((g,i)=>{const o=document.createElement('option');o.value=i;o.textContent=g.slice(0,42)+"…";gagSel.appendChild(o);});
+GAGS.forEach((g,i)=>{const o=document.createElement('option');o.value=i;o.textContent=g.pl;gagSel.appendChild(o);});
 
-function currentGag(){
-  const v=gagSel.value;
-  if(v==="random")return GAGS[Math.floor(Math.random()*GAGS.length)];
-  return GAGS[+v];
-}
+function makeSpeak(advice,outro){return "„Słuchaj, dorosły! "+advice+(outro?(" "+outro):"")+"”";}
 
-function build(){
-  const t=THEMES[+themeSel.value];
-  document.getElementById('customRow').style.display = t.custom ? "block":"none";
-  let advice = t.custom ? (document.getElementById('customText').value.trim()||"[wpisz swój tekst rady]") : t.txt;
-  const outro=document.getElementById('outro').value;
-  const dur=document.getElementById('dur').value;
-  const gag=currentGag();
-  const speak = "„Słuchaj, dorosły! "+advice+(outro?(" "+outro):"")+"”";
-
-  let action = HOOK+"\n- 2–"+(dur-5>2?(dur-5):6)+"s (ADVICE): "+t.act+
-    "\n- "+(dur-5>2?(dur-5):6)+"–"+dur+"s (OUTRO): a warm encouraging smile, raises the tiny finger again and gives a friendly little wave.";
-
-  const p =
-`3D animated Pixar/Illumination-style video, vertical 9:16 aspect ratio, 1080x1920 resolution, 30 fps, optimized for TikTok / Instagram Reels / YouTube Shorts, full-frame vertical composition with the subject centered and safe margins top and bottom, ${dur} seconds, family-friendly, high-end glossy feature-film render.
+function makePrompt(t,advice,gagEn,outro,dur){
+  const mid=(dur-5>2)?(dur-5):6;
+  const speak=makeSpeak(advice,outro);
+  const action=HOOK+"\n- 2–"+mid+"s (ADVICE): "+t.act+
+    "\n- "+mid+"–"+dur+"s (OUTRO): a warm encouraging smile, raises the tiny finger again and gives a friendly little wave.";
+  return `3D animated Pixar/Illumination-style video, vertical 9:16 aspect ratio, 1080x1920 resolution, 30 fps, optimized for TikTok / Instagram Reels / YouTube Shorts, full-frame vertical composition with the subject centered and safe margins top and bottom, ${dur} seconds, family-friendly, high-end glossy feature-film render.
 
 ${CHARACTER}
 
 ${SCENES[t.scene]}
-BACKGROUND GAG: throughout, far in the blurred background, ${gag}, deadpan, never acknowledged by Bobo.
+BACKGROUND GAG: throughout, far in the blurred background, ${gagEn}, deadpan, never acknowledged by Bobo.
 
 ACTION:
 ${action}
@@ -248,22 +266,94 @@ ${VOICE}
 ${TECH}
 
 ${NEG}`;
-  document.getElementById('out').textContent=p;
+}
+
+function toast(){const t=document.getElementById('toast');t.classList.add('show');setTimeout(()=>t.classList.remove('show'),1600);}
+
+let lastRandom=null;
+function currentGag(reroll){
+  const v=gagSel.value;
+  if(v==="random"){
+    if(reroll||lastRandom===null)lastRandom=GAGS[Math.floor(Math.random()*GAGS.length)];
+    return lastRandom;
+  }
+  return GAGS[+v];
+}
+
+function build(reroll){
+  const t=THEMES[+themeSel.value];
+  document.getElementById('customRow').style.display = t.custom ? "block":"none";
+  let advice = t.custom ? (document.getElementById('customText').value.trim()||"[wpisz swój tekst rady]") : t.txt;
+  const outro=document.getElementById('outro').value;
+  const dur=document.getElementById('dur').value;
+  const gag=currentGag(reroll);
+
+  document.getElementById('preview').innerHTML =
+    '<p class="pv">🎙️ <b>Bobo powie:</b><br><span class="quote">'+makeSpeak(advice,outro)+'</span></p>'+
+    '<p class="pv">🎭 <b>W tle:</b> '+gag.pl+'</p>'+
+    '<p class="pv">⏱️ <b>Długość:</b> '+dur+' s</p>';
+
+  document.getElementById('out').textContent=makePrompt(t,advice,gag.en,outro,dur);
 }
 
 function copyPrompt(){
   build();
-  navigator.clipboard.writeText(document.getElementById('out').textContent).then(()=>{
-    const t=document.getElementById('toast');t.classList.add('show');
-    setTimeout(()=>t.classList.remove('show'),1600);
-  });
+  navigator.clipboard.writeText(document.getElementById('out').textContent).then(toast);
 }
 
-themeSel.addEventListener('change',build);
-gagSel.addEventListener('change',build);
-document.getElementById('outro').addEventListener('change',build);
-document.getElementById('dur').addEventListener('change',build);
-document.getElementById('customText').addEventListener('input',build);
+/* ===== 20 GOTOWYCH FILMIKÓW ===== */
+const READY = [
+  [0,0],[5,5],[6,9],[1,1],[12,22],
+  [2,3],[7,18],[8,6],[9,7],[13,4],
+  [3,21],[10,2],[11,11],[4,15],[13,19],
+  [1,12],[6,23],[5,13],[2,17],[12,8]
+];
+const DEF_OUTRO="Zaobserwuj mój kanał, żeby niczego nie przegapić!";
+const DONE_KEY="boboDone";
+function getDone(){try{return JSON.parse(localStorage.getItem(DONE_KEY)||"{}");}catch(e){return {};}}
+function setDone(d){localStorage.setItem(DONE_KEY,JSON.stringify(d));}
+
+function renderReady(){
+  const done=getDone();
+  const box=document.getElementById('ready');
+  box.innerHTML="";
+  let cnt=0;
+  READY.forEach((combo,i)=>{
+    const t=THEMES[combo[0]], gag=GAGS[combo[1]];
+    const isDone=!!done[i];
+    if(isDone)cnt++;
+    const div=document.createElement('div');
+    div.className="item"+(isDone?" done":"");
+    div.innerHTML=
+      '<h4><span class="num">#'+(i+1)+'</span> '+t.name+'</h4>'+
+      '<p class="q">🎙️ '+makeSpeak(t.txt,DEF_OUTRO)+'</p>'+
+      '<p class="bg">🎭 W tle: '+gag.pl+'</p>'+
+      '<div class="actions">'+
+        '<button class="primary" data-i="'+i+'">📋 Kopiuj</button>'+
+        '<label class="chk"><input type="checkbox" data-c="'+i+'" '+(isDone?'checked':'')+'> wrzucone ✅</label>'+
+      '</div>';
+    box.appendChild(div);
+  });
+  document.getElementById('progress').textContent="Wrzucone: "+cnt+" / "+READY.length;
+  box.querySelectorAll('button[data-i]').forEach(b=>{
+    b.onclick=()=>{
+      const combo=READY[+b.dataset.i];
+      const t=THEMES[combo[0]], gag=GAGS[combo[1]];
+      navigator.clipboard.writeText(makePrompt(t,t.txt,gag.en,DEF_OUTRO,14)).then(toast);
+    };
+  });
+  box.querySelectorAll('input[data-c]').forEach(c=>{
+    c.onchange=()=>{const d=getDone();d[+c.dataset.c]=c.checked;setDone(d);renderReady();};
+  });
+}
+function resetDone(){if(confirm("Wyzerować wszystkie odhaczenia?")){setDone({});renderReady();}}
+renderReady();
+
+themeSel.addEventListener('change',()=>build());
+gagSel.addEventListener('change',()=>build(true));
+document.getElementById('outro').addEventListener('change',()=>build());
+document.getElementById('dur').addEventListener('change',()=>build());
+document.getElementById('customText').addEventListener('input',()=>build());
 build();
 </script>
 </body>
