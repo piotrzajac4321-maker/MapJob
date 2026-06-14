@@ -119,6 +119,7 @@
 
   <div class="btns">
     <button class="primary" onclick="copyPrompt()">📋 Kopiuj prompt</button>
+    <button class="primary" onclick="copyCaption()">📝 Kopiuj opis + #</button>
     <button class="ghost" onclick="build()">🔄 Odśwież</button>
   </div>
 
@@ -208,6 +209,40 @@ const THEMES = [
    txt:"", custom:true}
 ];
 
+/* opisy + hashtagi (indeks zgodny z THEMES) — popularne PL dla mam/noworodków */
+const CAP = [
+  {d:"Mam pół roku i już wiem o życiu więcej niż niejeden dorosły 😎 Nowa seria: Bobo radzi! A widzieliście kota z tyłu? 👀",
+   t:"#BoboRadzi #bobofoto #niemowlę #noworodek #mama #macierzyństwo #rodzicielstwo #poradyzyciowe #polskamama #fyp #dlaciebie #viral"},
+  {d:"Odpoczynek to nie lenistwo — to inwestycja 😴 Mamo, śpij gdy dziecko śpi 💛",
+   t:"#BoboRadzi #bobofoto #mama #macierzyństwo #niemowlę #świeżoupieczonamama #mamanaurlopie #selfcare #polskamama #fyp #dlaciebie #maluch"},
+  {d:"Chce ci się płakać? To płacz ❤️ Wypuść emocje i idź dalej. (kot z tyłu znowu coś knuje 👀)",
+   t:"#BoboRadzi #bobofoto #mama #macierzyństwo #emocje #zdrowiepsychiczne #niemowlę #rodzicielstwo #polskamama #fyp #dlaciebie #maluch"},
+  {d:"Szczęście jest w małych rzeczach — jak jedna bańka mydlana 🫧 Doceniaj te chwile, mamo 💛",
+   t:"#BoboRadzi #bobofoto #mama #macierzyństwo #niemowlę #dziecko #wdzięczność #szczęście #polskamama #fyp #dlaciebie #rodzina"},
+  {d:"Boisz się zacząć? Wystarczy jeden krok. Dziś 👣 Co dziś zrobisz? Napisz 💬",
+   t:"#BoboRadzi #bobofoto #motywacja #mama #macierzyństwo #niemowlę #pierwszekroki #rozwój #polskamama #fyp #dlaciebie #maluch"},
+  {d:"Idealny moment nie istnieje. Jest tylko teraz 💪 Co dziś zaczniesz?",
+   t:"#BoboRadzi #bobofoto #motywacja #mama #macierzyństwo #cytaty #rozwójosobisty #niemowlę #polskamama #fyp #dlaciebie #mindset"},
+  {d:"Kto tu naprawdę rządzi w domu? 😏 Otaguj rodzica, który to zna 👶",
+   t:"#BoboRadzi #bobofoto #mama #tata #macierzyństwo #rodzicielstwo #humor #niemowlę #polskamama #fyp #dlaciebie #śmieszne"},
+  {d:"Bogactwo to nie to, co masz — to czego nie potrzebujesz 💛",
+   t:"#BoboRadzi #bobofoto #mama #macierzyństwo #wdzięczność #cytaty #poradyzyciowe #niemowlę #polskamama #fyp #dlaciebie #mindset"},
+  {d:"Zadzwoń dziś do mamy ❤️ Otaguj ją 👇",
+   t:"#BoboRadzi #bobofoto #mama #rodzina #macierzyństwo #relacje #niemowlę #wzruszające #polskamama #fyp #dlaciebie #miłość"},
+  {d:"Jeden problem na raz. Tyle 🧘 Uprość sobie życie, mamo.",
+   t:"#BoboRadzi #bobofoto #mama #macierzyństwo #spokój #selfcare #niemowlę #poradyzyciowe #polskamama #fyp #dlaciebie #stres"},
+  {d:"Wstań o jeden raz więcej niż upadłeś 💪 To cały sekret.",
+   t:"#BoboRadzi #bobofoto #motywacja #mama #macierzyństwo #nigdyniezrezygnuj #niemowlę #rozwój #polskamama #fyp #dlaciebie #mindset"},
+  {d:"Ileż można robić zdjęć? 😏 (no dobra, rozumiem) Otaguj winowajcę 📸",
+   t:"#BoboRadzi #bobofoto #mama #macierzyństwo #humor #niemowlę #rodzicielstwo #fotografia #polskamama #fyp #dlaciebie #śmieszne"},
+  {d:"Te chwile nie wrócą 🍼 Zamień jedno zdjęcie z telefonu w profesjonalną sesję — bez wychodzenia z domu. 👉 bobofoto.pl",
+   t:"#BoboRadzi #bobofoto #sesjanoworodkowa #noworodek #zdjęcianoworodka #mama #macierzyństwo #pamiątka #niemowlę #polskamama #fyp #dlaciebie"},
+  {d:"Masz mnóstwo zdjęć, ale żadne nie jest „jak ze studia\"? 🍼 Wyślij jedno — zrobimy z niego profesjonalną sesję. 👉 bobofoto.pl",
+   t:"#BoboRadzi #bobofoto #sesjanoworodkowa #zdjęcianoworodka #noworodek #mama #macierzyństwo #niemowlę #prezent #polskamama #fyp #dlaciebie"},
+  {d:"Mądrość dnia od Bobo 🍼 A Ty jak masz? Napisz w komentarzu 💬",
+   t:"#BoboRadzi #bobofoto #mama #macierzyństwo #niemowlę #poradyzyciowe #rodzicielstwo #polskamama #fyp #dlaciebie #viral #maluch"}
+];
+
 const GAGS = [
   {pl:"Gruby zrzędliwy kot jedzie na deskorolce", en:"a chubby grumpy cartoon cat slowly slides across the floor on a tiny skateboard"},
   {pl:"Gruby kot robi jogę do góry nogami", en:"a chubby cat does slow upside-down yoga against the wall"},
@@ -288,12 +323,21 @@ function build(reroll){
   const dur=document.getElementById('dur').value;
   const gag=currentGag(reroll);
 
+  const cap=CAP[+themeSel.value]||CAP[CAP.length-1];
   document.getElementById('preview').innerHTML =
     '<p class="pv">🎙️ <b>Bobo powie:</b><br><span class="quote">'+makeSpeak(advice,outro)+'</span></p>'+
     '<p class="pv">🎭 <b>W tle:</b> '+gag.pl+'</p>'+
-    '<p class="pv">⏱️ <b>Długość:</b> '+dur+' s</p>';
+    '<p class="pv">⏱️ <b>Długość:</b> '+dur+' s</p>'+
+    '<hr style="border:none;border-top:1px solid #ddd6c7;margin:10px 0">'+
+    '<p class="pv">📝 <b>Opis:</b> '+cap.d+'</p>'+
+    '<p class="pv">#️⃣ <b>Hashtagi:</b> '+cap.t+'</p>';
 
   document.getElementById('out').textContent=makePrompt(t,advice,gag.en,outro,dur);
+}
+
+function copyCaption(){
+  const cap=CAP[+themeSel.value]||CAP[CAP.length-1];
+  navigator.clipboard.writeText(cap.d+"\n\n"+cap.t).then(toast);
 }
 
 function copyPrompt(){
@@ -322,14 +366,18 @@ function renderReady(){
     const t=THEMES[combo[0]], gag=GAGS[combo[1]];
     const isDone=!!done[i];
     if(isDone)cnt++;
+    const cap=CAP[combo[0]]||CAP[CAP.length-1];
     const div=document.createElement('div');
     div.className="item"+(isDone?" done":"");
     div.innerHTML=
       '<h4><span class="num">#'+(i+1)+'</span> '+t.name+'</h4>'+
       '<p class="q">🎙️ '+makeSpeak(t.txt,DEF_OUTRO)+'</p>'+
       '<p class="bg">🎭 W tle: '+gag.pl+'</p>'+
+      '<p style="font-size:12.5px;margin:6px 0 2px">📝 '+cap.d+'</p>'+
+      '<p style="font-size:12px;color:#8a8676;margin:2px 0">#️⃣ '+cap.t+'</p>'+
       '<div class="actions">'+
-        '<button class="primary" data-i="'+i+'">📋 Kopiuj</button>'+
+        '<button class="primary" data-i="'+i+'">📋 Prompt</button>'+
+        '<button class="ghost" data-cap="'+i+'">📝 Opis + #</button>'+
         '<label class="chk"><input type="checkbox" data-c="'+i+'" '+(isDone?'checked':'')+'> wrzucone ✅</label>'+
       '</div>';
     box.appendChild(div);
@@ -340,6 +388,12 @@ function renderReady(){
       const combo=READY[+b.dataset.i];
       const t=THEMES[combo[0]], gag=GAGS[combo[1]];
       navigator.clipboard.writeText(makePrompt(t,t.txt,gag.en,DEF_OUTRO,14)).then(toast);
+    };
+  });
+  box.querySelectorAll('button[data-cap]').forEach(b=>{
+    b.onclick=()=>{
+      const cap=CAP[READY[+b.dataset.cap][0]]||CAP[CAP.length-1];
+      navigator.clipboard.writeText(cap.d+"\n\n"+cap.t).then(toast);
     };
   });
   box.querySelectorAll('input[data-c]').forEach(c=>{
