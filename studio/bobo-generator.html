@@ -93,6 +93,10 @@
   <div class="card">
     <span class="tag">📚 BIBLIOTEKA SKRYPTÓW</span>
     <p style="margin:4px 0 10px;font-size:13px">Oceń (❤️ = ulubiony, na górze), usuń 🗑️ (wskoczy nowy z puli) i kopiuj. „wrzucone ✅" odhaczasz po publikacji.</p>
+    <div class="actions" style="margin-bottom:12px">
+      <button class="primary" onclick="setOfDay()">🎲 Zestaw dnia (3 filmy)</button>
+    </div>
+    <div id="setBox"></div>
     <div class="filters" id="filters"></div>
     <div class="progress" id="progress"></div>
     <div id="lib"></div>
@@ -142,6 +146,8 @@ const CATS = {
   w:{name:"Wdzięczność",col:"#c9a247",close:"Doceniaj małe rzeczy 💛",ht:"#wdzięczność #szczęście #cytaty"},
   a:{name:"Mądrość",col:"#7c8a6e",close:"Zapisz sobie 🤍",ht:"#poradyzyciowe #cytaty #rozwójosobisty"},
   k:{name:"Kawał",col:"#e0913c",close:"Śmieszne? Otaguj kogoś 😂",ht:"#kawał #żart #humor #śmieszne"},
+  x:{name:"Roast",col:"#b03a3a",close:"Powiedz szczerze — trafione? 😬",ht:"#humor #rodzice #relatable #śmieszne"},
+  o:{name:"Okazje",col:"#2f9e8f",close:"Otaguj kogoś na tę okazję 🎉",ht:"#święta #rodzina #sezon"},
   c:{name:"BoboFoto",col:"#33352f",close:"👉 bobofoto.pl",ht:"#sesjanoworodkowa #noworodek #zdjęcianoworodka #pamiątka"}
 };
 const BASE_HT="#BoboRadzi #bobofoto #mama #macierzyństwo #niemowlę #polskamama #fyp #dlaciebie";
@@ -227,6 +233,22 @@ const POOL = [
   {c:"k",t:"Dlaczego jestem najlepszym budzikiem? Bo nie mam przycisku drzemki."},
   {c:"k",t:"Czemu nie boję się żadnego szefa? Sam rządzę firmą o nazwie Dom, całą dobę."},
   {c:"k",t:"Pielucha codziennie powtarza, że na mnie liczy. I nigdy się nie zawodzi."},
+  {c:"x",t:"Kupiłeś mi pięćdziesiąt zabawek. Bawię się kartonem. Kto tu nie umie zarządzać budżetem?"},
+  {c:"x",t:"Mówisz, że dużo płaczę. Słyszałeś siebie przy składaniu wózka?"},
+  {c:"x",t:"Obiecałeś, że dziecko nie zmieni Twojego życia. Spójrz na siebie o szóstej rano."},
+  {c:"x",t:"Robisz mi zdjęcie do każdego posiłku. To ja tu jestem influencerem, nie ty."},
+  {c:"x",t:"Mówisz: zaraz idziemy spać. Oboje wiemy, że to nieprawda."},
+  {c:"x",t:"Masz aplikację, która liczy moje drzemki. A swój sen liczysz na palcach jednej ręki."},
+  {c:"x",t:"Narzekasz na bałagan. To Ty kupiłeś te wszystkie grzechotki."},
+  {c:"x",t:"Mówisz do mnie jak do dorosłego, a potem robisz aguuu. Zdecyduj się."},
+  {c:"o",t:"Pierwsza Gwiazdka? I tak prześpię najważniejszy moment. Taka tradycja."},
+  {c:"o",t:"Mówią, że Mikołaj patrzy, czy jestem grzeczny. Mikołaju, mamy do pogadania."},
+  {c:"o",t:"Postanowienie noworoczne? Spać dłużej niż cztery godziny. Ambitnie."},
+  {c:"o",t:"Pierwsze lato. Plan: leżeć w cieniu i jeść. Czyli jak zawsze."},
+  {c:"o",t:"Mamo, nie umiem jeszcze mówić. Ale gdybym umiał, powiedziałbym: dziękuję."},
+  {c:"o",t:"Dziś moje święto? U mnie każdy dzień jest moje święto. Ale i tak dziękuję."},
+  {c:"o",t:"Słońce wyszło, więc i ja wyjdę… jak tylko skończę drzemkę."},
+  {c:"o",t:"Mówią, że zajączek chowa jajka. Ja chowam smoczek i nikt go nie znajdzie."},
   {c:"c",t:"Te policzki znikną. Ten zapach noworodka też. Zatrzymaj to, póki możesz."},
   {c:"c",t:"Robisz mi tysiąc zdjęć, a żadne nie jest jak ze studia? Wyślij jedno do BoboFoto."},
   {c:"c",t:"Za rok mnie nie poznasz. Masz jedną szansę, żeby to zatrzymać."},
@@ -335,6 +357,24 @@ function renderLib(){
   box.querySelectorAll('[data-done]').forEach(c=>c.onchange=()=>{const d=ls(K_DONE);d[+c.dataset.done]=c.checked;save(K_DONE,d);renderLib();});
 }
 function resetAll(){if(confirm("Przywrócić usunięte i wyzerować odhaczenia/ulubione?")){save(K_REM,{});save(K_DONE,{});save(K_FAV,{});renderLib();}}
+
+function pickFrom(cats){const opts=POOL.map((it,i)=>({...it,i})).filter(o=>cats.includes(o.c));return opts[Math.floor(Math.random()*opts.length)];}
+function setOfDay(){
+  const funny=pickFrom(["h","k","x"]);
+  const value=pickFrom(["m","a","w","s","e","r","o"]);
+  const cta=pickFrom(["c"]);
+  const items=[["😂 Na zasięg",funny],["💛 Wartość",value],["🍼 Sprzedaż",cta]];
+  const box=document.getElementById('setBox');
+  box.innerHTML='<div class="card" style="background:#f3f1e8;margin:0 0 14px"><span class="tag">🎲 ZESTAW NA DZIŚ</span>'+
+    items.map(([lab,o])=>{const cat=CATS[o.c];
+      return '<div class="item" style="margin-top:8px"><span class="cat" style="background:'+cat.col+'">'+lab+' · '+cat.name+'</span>'+
+        '<p class="q">🎙️ '+makeSpeak(o.t)+'</p>'+
+        '<div class="actions"><button class="primary" data-sp="'+o.i+'">📋 Prompt</button>'+
+        '<button class="ghost" data-sc="'+o.i+'">📝 Opis+#</button></div></div>';
+    }).join('')+'</div>';
+  box.querySelectorAll('[data-sp]').forEach(b=>b.onclick=()=>{navigator.clipboard.writeText(makePrompt(POOL[+b.dataset.sp].t,pickGag().en)).then(toast);});
+  box.querySelectorAll('[data-sc]').forEach(b=>b.onclick=()=>{const o=POOL[+b.dataset.sc];navigator.clipboard.writeText(caption(o)+"\n\n"+hashtags(o)).then(toast);});
+}
 
 gagSel.addEventListener('change',renderLib);
 document.getElementById('outro').addEventListener('change',renderLib);
