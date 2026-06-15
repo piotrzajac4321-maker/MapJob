@@ -6,136 +6,97 @@
 <meta name="robots" content="noindex, nofollow">
 <title>Generator promptów „Bobo radzi" — BoboFoto.pl</title>
 <style>
-  :root{
-    --sage:#7c8a6e; --sage-d:#5f6c54; --cream:#faf7f0; --ink:#33352f;
-    --line:#e6e0d4; --card:#fff; --accent:#c9a86a;
-  }
+  :root{--sage:#7c8a6e;--sage-d:#5f6c54;--cream:#faf7f0;--ink:#33352f;--line:#e6e0d4;--card:#fff;}
   *{box-sizing:border-box}
-  body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
-    background:var(--cream);color:var(--ink);line-height:1.5}
-  header{background:var(--sage);color:#fff;padding:22px 18px;text-align:center}
-  header h1{margin:0 0 4px;font-size:22px}
-  header p{margin:0;opacity:.9;font-size:14px}
-  .wrap{max-width:880px;margin:0 auto;padding:18px}
-  .grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:var(--cream);color:var(--ink);line-height:1.5}
+  header{background:var(--sage);color:#fff;padding:20px 18px;text-align:center}
+  header h1{margin:0 0 4px;font-size:21px}
+  header p{margin:0;opacity:.9;font-size:13px}
+  .wrap{max-width:900px;margin:0 auto;padding:16px}
+  .grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
   @media(max-width:720px){.grid{grid-template-columns:1fr}}
-  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;
-    padding:16px;margin-bottom:16px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:16px}
   label{display:block;font-weight:600;font-size:13px;margin:0 0 6px}
-  select,textarea,input[type=text]{width:100%;padding:10px;border:1px solid var(--line);
-    border-radius:10px;font-size:14px;font-family:inherit;background:#fff;color:var(--ink)}
-  textarea{min-height:70px;resize:vertical}
-  .row{margin-bottom:14px}
+  select,textarea,input[type=text]{width:100%;padding:10px;border:1px solid var(--line);border-radius:10px;font-size:14px;font-family:inherit;background:#fff;color:var(--ink)}
+  textarea{min-height:60px;resize:vertical}
   .hint{font-size:12px;color:#8a8676;margin-top:4px}
-  .preview{background:#f3f1e8;border:1px solid var(--line);border-radius:12px;padding:14px;margin-top:4px}
-  .preview .pv{margin:0 0 8px;font-size:14px}
-  .preview .pv:last-child{margin-bottom:0}
-  .preview b{color:var(--sage-d)}
-  .quote{font-style:italic}
-  .out{white-space:pre-wrap;background:#1f211c;color:#e9e7df;border-radius:12px;
-    padding:16px;font-size:12.5px;font-family:ui-monospace,Menlo,Consolas,monospace;
-    max-height:420px;overflow:auto}
-  .btns{display:flex;gap:10px;flex-wrap:wrap;margin:14px 0}
-  button{cursor:pointer;border:none;border-radius:999px;padding:12px 20px;font-size:15px;
-    font-weight:600}
-  .primary{background:var(--sage);color:#fff}
-  .primary:hover{background:var(--sage-d)}
+  .tag{display:inline-block;background:#eef0e8;color:var(--sage-d);border-radius:6px;padding:2px 8px;font-size:11px;font-weight:700;margin-bottom:8px}
+  .out{white-space:pre-wrap;background:#1f211c;color:#e9e7df;border-radius:12px;padding:14px;font-size:12px;font-family:ui-monospace,Menlo,Consolas,monospace;max-height:360px;overflow:auto}
+  button{cursor:pointer;border:none;border-radius:999px;padding:9px 16px;font-size:13px;font-weight:600}
+  .primary{background:var(--sage);color:#fff}.primary:hover{background:var(--sage-d)}
   .ghost{background:#efe9dc;color:var(--ink)}
-  .toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);
-    background:var(--ink);color:#fff;padding:12px 20px;border-radius:999px;
-    opacity:0;transition:.25s;pointer-events:none;font-size:14px}
+  .toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--ink);color:#fff;padding:12px 20px;border-radius:999px;opacity:0;transition:.25s;pointer-events:none;font-size:14px}
   .toast.show{opacity:1}
-  .tag{display:inline-block;background:#eef0e8;color:var(--sage-d);border-radius:6px;
-    padding:2px 8px;font-size:11px;font-weight:700;margin-bottom:8px}
-  details{margin-top:10px}
-  summary{cursor:pointer;font-size:13px;color:var(--sage-d);font-weight:600}
   .item{border:1px solid var(--line);border-radius:12px;padding:12px;margin-bottom:10px;background:#fff}
-  .item.done{background:#eef3e7;border-color:#cdd9bf;opacity:.75}
-  .item h4{margin:0 0 6px;font-size:14px;display:flex;align-items:center;gap:8px}
-  .item .num{background:var(--sage);color:#fff;border-radius:6px;font-size:11px;padding:2px 7px}
-  .item p{margin:4px 0;font-size:13px}
-  .item .q{font-style:italic;color:#46483f}
-  .item .bg{color:var(--sage-d)}
-  .item .actions{display:flex;align-items:center;gap:12px;margin-top:8px;flex-wrap:wrap}
-  .item button{padding:8px 16px;font-size:13px}
-  .chk{display:flex;align-items:center;gap:6px;font-size:13px;font-weight:600;cursor:pointer;user-select:none}
-  .chk input{width:18px;height:18px;accent-color:var(--sage)}
-  .progress{font-size:13px;color:#8a8676;margin-bottom:10px}
+  .item.done{background:#eef3e7;border-color:#cdd9bf}
+  .item.fav{border-color:#e0b3b3;background:#fdf4f4}
+  .cat{display:inline-block;border-radius:6px;padding:1px 8px;font-size:10.5px;font-weight:700;color:#fff;margin-bottom:6px;text-transform:uppercase;letter-spacing:.3px}
+  .item .q{font-size:14px;margin:4px 0;font-weight:600}
+  .item .op{font-size:12.5px;color:#46483f;margin:4px 0 2px}
+  .item .ht{font-size:11.5px;color:#8a8676;margin:2px 0 8px}
+  .actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  .actions button{padding:7px 13px;font-size:12.5px}
+  .icon{background:#efe9dc}
+  .chk{display:flex;align-items:center;gap:5px;font-size:12.5px;font-weight:600;cursor:pointer;user-select:none}
+  .chk input{width:17px;height:17px;accent-color:var(--sage)}
+  .progress{font-size:13px;color:var(--sage-d);font-weight:600;margin-bottom:10px}
+  details{margin-top:8px}summary{cursor:pointer;font-size:13px;color:var(--sage-d);font-weight:600}
+  .filters{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+  .filters button{padding:6px 12px;font-size:12px;background:#efe9dc;color:var(--ink)}
+  .filters button.on{background:var(--sage);color:#fff}
 </style>
 </head>
 <body>
 <header>
   <h1>🍼 Generator promptów „Bobo radzi"</h1>
-  <p>Wybierz opcje → kliknij „Kopiuj". Bez sklejania ręcznie.</p>
+  <p>Biblioteka skryptów · oceniaj, usuwaj, kopiuj. Po usunięciu wskakuje nowy.</p>
 </header>
 
 <div class="wrap">
   <div class="card">
-    <span class="tag">JAK TO DZIAŁA</span>
-    <p style="margin:0;font-size:14px">Postać <b>Bobo zawsze taka sama</b> (nie zmieniaj jej — to znak rozpoznawczy serii). Zmieniasz tylko <b>temat rady</b>, <b>dziwny gag w tle</b>, <b>końcówkę</b> i <b>długość</b>. Prompt wklejasz do Veo (Gemini). Napisy i logo dodajesz w CapCut.</p>
-  </div>
-
-  <div class="card">
+    <span class="tag">USTAWIENIA (działają dla wszystkich)</span>
     <div class="grid">
-      <div class="row">
-        <label>🎯 Temat rady</label>
-        <select id="theme"></select>
-        <div class="hint">Wybierz gotowy albo „✍️ Własny tekst".</div>
-      </div>
-      <div class="row">
-        <label>🎭 Co jest w tle</label>
+      <div>
+        <label>🎭 Co w tle</label>
         <select id="gag"></select>
-        <div class="hint">„🎲 Losowy" wybierze inny za każdym razem.</div>
       </div>
-    </div>
-
-    <div class="row" id="customRow" style="display:none">
-      <label>✍️ Twój tekst rady (bez „Słuchaj, dorosły!" — dodamy automatycznie)</label>
-      <textarea id="customText" placeholder="np. Nie porównuj się z innymi. Każdy ma swoje tempo."></textarea>
-    </div>
-
-    <div class="grid">
-      <div class="row">
-        <label>👋 Końcówka (CTA)</label>
+      <div>
+        <label>👋 Końcówka</label>
         <select id="outro">
           <option value="Zaobserwuj mój kanał, żeby niczego nie przegapić!">Zaobserwuj mój kanał…</option>
-          <option value="Kliknij obserwuj, żeby być na bieżąco!">Kliknij obserwuj, żeby być na bieżąco!</option>
-          <option value="Polub i obserwuj… albo Bobo będzie smutne!">Polub i obserwuj… albo Bobo będzie smutne!</option>
+          <option value="Kliknij obserwuj, żeby być na bieżąco!">Kliknij obserwuj…</option>
+          <option value="Polub i obserwuj… albo Bobo będzie smutne!">Polub… albo Bobo smutne</option>
           <option value="">— bez końcówki —</option>
         </select>
       </div>
-      <div class="row">
+      <div>
         <label>⏱️ Długość</label>
         <select id="dur">
-          <option value="14">14 s (hook + rada + outro)</option>
-          <option value="10">10 s (krótsza)</option>
-          <option value="8">8 s (limit Veo)</option>
+          <option value="14">14 s</option>
+          <option value="10">10 s</option>
+          <option value="8">8 s</option>
         </select>
       </div>
     </div>
-
-    <div class="preview" id="preview"></div>
-  </div>
-
-  <div class="btns">
-    <button class="primary" onclick="copyPrompt()">📋 Kopiuj prompt</button>
-    <button class="primary" onclick="copyCaption()">📝 Kopiuj opis + #</button>
-    <button class="ghost" onclick="build()">🔄 Odśwież</button>
+    <div class="hint">⚠️ Veo Flash generuje poziomo — pion ustaw w Gemini (proporcje 9:16) albo dotnij w CapCut. Napisy i logo dodajesz w CapCut.</div>
   </div>
 
   <div class="card">
-    <span class="tag">GOTOWY PROMPT (do Veo)</span>
-    <details><summary>Pokaż / ukryj pełny prompt po angielsku</summary>
-      <div class="out" id="out" style="margin-top:10px"></div>
-    </details>
+    <span class="tag">✍️ WŁASNY TEKST</span>
+    <textarea id="customText" placeholder="np. Nie porównuj się z innymi. Każdy ma swoje tempo."></textarea>
+    <div class="actions" style="margin-top:10px">
+      <button class="primary" onclick="copyCustom()">📋 Kopiuj prompt z moim tekstem</button>
+    </div>
+    <details><summary>Podgląd promptu</summary><div class="out" id="customOut" style="margin-top:8px"></div></details>
   </div>
 
   <div class="card">
-    <span class="tag">20 GOTOWYCH FILMIKÓW</span>
-    <p style="margin:4px 0 10px;font-size:13px">Gotowe zestawy (temat + gag) — kliknij „Kopiuj" i odhacz, gdy wrzucisz. Postęp zapisuje się w telefonie.</p>
+    <span class="tag">📚 BIBLIOTEKA SKRYPTÓW</span>
+    <p style="margin:4px 0 10px;font-size:13px">Oceń (❤️ = ulubiony, na górze), usuń 🗑️ (wskoczy nowy z puli) i kopiuj. „wrzucone ✅" odhaczasz po publikacji.</p>
+    <div class="filters" id="filters"></div>
     <div class="progress" id="progress"></div>
-    <div id="ready"></div>
-    <button class="ghost" onclick="resetDone()" style="font-size:13px;padding:8px 16px">♻️ Wyzeruj odhaczenia</button>
+    <div id="lib"></div>
+    <button class="ghost" onclick="resetAll()" style="margin-top:6px">♻️ Przywróć usunięte i wyzeruj</button>
   </div>
 </div>
 
@@ -143,158 +104,152 @@
 
 <script>
 const CHARACTER = `CHARACTER "Bobo": an adorable stylized 3D baby character (semi-realistic animation, NOT a real human infant), chubby 6-month-old proportions, big round head, large expressive dark-brown eyes with bright catchlights, full rosy cheeks, small button nose, one little curl of light-brown hair on top, soft double chin, one faint cheek dimple, warm lovable face. Soft natural detailed skin texture with subtle realistic shading (not plastic, not glossy). Wearing a cozy cream ribbed onesie with realistic fabric detail.`;
-
-const SCENES = {
-  nursery: `SCENE: a bright airy beige-and-cream cartoon nursery — soft cream rug, a cozy cushion, a big window with warm soft daylight on the left. On the wall behind Bobo a cute framed nursery poster and a round wooden wall plaque left blank/plain. A blurred wooden shelf with small plain decor (no toys, no animals). Tall vertical 9:16 portrait framing showing Bobo's WHOLE body from head to toe (full body in shot, not cropped), Bobo sitting centred in the lower-middle, with clear empty open space in the frame (behind and to one side) left free for the single background character. Medium-wide shot, not a close-up.`,
-  bubble: `SCENE: a bright airy beige-and-cream cartoon nursery — soft cream rug, a cozy cushion, a big window with warm soft daylight on the left. On the wall behind Bobo a cute framed nursery poster and a round wooden wall plaque left blank/plain. A blurred wooden shelf with a little teddy bear. A single soap bubble gently floats in the air. Tall vertical 9:16 portrait framing showing Bobo's WHOLE body from head to toe (full body in shot, not cropped), Bobo sitting centred in the lower-middle, with clear empty open space in the frame (behind and to one side) left free for the single background character. Medium-wide shot, not a close-up.`,
-  living: `SCENE: a bright airy beige-and-cream cartoon living room — soft cream rug, a low soft sofa to hold onto, a big window with warm soft daylight on the left. On the wall a cute framed poster and a round wooden wall plaque left blank/plain. A blurred shelf with small plain decor (no toys, no animals). Tall vertical 9:16 portrait framing showing Bobo's WHOLE body from head to toe (full body in shot, not cropped), Bobo sitting centred in the lower-middle, with clear empty open space in the frame (behind and to one side) left free for the single background character. Medium-wide shot, not a close-up.`
-};
-
+const SCENE = `SCENE: a bright airy beige-and-cream cartoon nursery — soft cream rug, a cozy cushion, a big window with warm soft daylight on the left, a framed nursery poster on the wall, a blurred shelf with small plain decor (no toys, no animals). Tall vertical 9:16 portrait framing showing Bobo's WHOLE body from head to toe (full body in shot, not cropped), Bobo sitting centred in the lower-middle, with clear empty open space in the frame (behind and to one side) left free for the single background character. Medium-wide shot, not a close-up.`;
 const VOICE = `VOICE: native fluent Polish, a cute high-pitched toddler voice, soft with a slight lisp but every word crisp and fully articulated. Lively, energetic and FAST on the opening line, then a touch calmer but still upbeat for the advice, warm and friendly on the closing line. Correct natural Polish pronunciation; finish every word; no mumbling, no cut-off words, no repeated words, no English accent. Natural breaths and light playful intonation.`;
-
 const TECH = `CAMERA: fast whip-pan into a snappy stop, then static eye-level with a very subtle slow push-in, 35mm lens look, gentle cinematic bokeh.
 LIGHTING: warm soft daylight from the left window, golden cozy tone, soft rim light, bright.
 AUDIO: a quick comedic "ding!" chime and a playful whoosh at the very start, then soft warm ambient nursery tone + light gentle background music low in the mix, a small cheerful cue at the end, no other voices.
 MOOD: charming, wise, slightly funny, attention-grabbing, heart-melting, premium, clean.`;
-
-const NEG = `Negative: multiple background characters, two or more animals, extra creatures, several gags at once, second mascot, close-up, extreme close-up, cropped body, only head and shoulders, baby too close to camera, landscape, horizontal, 16:9, widescreen, square, black bars, letterbox, pillarbox, photorealistic, real human baby, realistic infant, deformed face, extra fingers, distorted mouth, creepy, uncanny valley, harsh lighting, dark, low quality, any on-screen text, captions, subtitles, garbled text, fake logo, watermark, mispronounced Polish, wrong language, English accent, mumbling, cut-off speech, repeated words, robotic voice.`;
-
-const HOOK = `- 0–2s (HOOK): a fast playful whip-pan snaps onto Bobo, who turns to camera and raises one tiny index finger like a wise professor, eyebrows up, cheeky confident spark.`;
-
-const THEMES = [
-  {name:"#1 Intro serii", scene:"nursery",
-   act:"Bobo settles into a calm wise expression, a small knowing shrug and hand gesture, head slightly tilted.",
-   txt:"Mam pół roku, nie umiem chodzić ani mówić. Ale wy za bardzo komplikujecie sobie życie. Od dziś będę wam radził!"},
-  {name:"Odpoczynek", scene:"nursery",
-   act:"Bobo gives a big satisfied yawn, stretches both arms up, rubs one eye with a tiny fist, then a relaxed knowing smile.",
-   txt:"Czujesz się winny, że odpoczywasz? Ja śpię szesnaście godzin i wyglądam świetnie. Odpoczynek to nie lenistwo — to inwestycja!"},
-  {name:"Emocje", scene:"nursery",
-   act:"Bobo scrunches its face into a dramatic pretend-pout with a wobbly lip, then instantly switches to a bright relieved giggling smile.",
-   txt:"Chce ci się płakać? To płacz! Ja ryczę na całego, a chwilę później jest już dobrze. Wypuść emocje i idź dalej!"},
-  {name:"Małe rzeczy (bańka)", scene:"bubble",
-   act:"Bobo stares in pure wonder at the floating soap bubble, eyes wide, then bursts into a joyful open-mouth laugh and reaches up with both hands.",
-   txt:"Szukasz wielkiego szczęścia? Mnie cieszy jedna bańka mydlana. Szczęście jest w małych rzeczach — zauważaj je!"},
-  {name:"Pierwszy krok", scene:"living",
-   act:"Bobo holds the sofa edge, concentrates hard with a determined face, wobbles, then lets go for a split second and balances on its own.",
-   txt:"Boisz się zacząć? Ja codziennie stawiam jeden krok. Nie musisz biec maratonu — wystarczy jeden krok. Dziś!"},
-  {name:"Idealny moment (motywacja)", scene:"nursery",
-   act:"Bobo gives a confident determined nod and a small fist-pump.",
-   txt:"Czekasz na idealny moment? Ja nie czekałem, aż będę gotowy, żeby się urodzić. Po prostu przyszedłem. Ty też zacznij — dziś!"},
-  {name:"Kto rządzi (humor)", scene:"nursery",
-   act:"Bobo smirks cheekily, raises an eyebrow and crosses its little arms like a tiny boss.",
-   txt:"Myślisz, że to ty mnie wychowujesz? Urocze. Jeden płacz w nocy i już biegniesz. Kto tu jest szefem?"},
-  {name:"Pieniądze / wdzięczność", scene:"nursery",
-   act:"Bobo spreads its little arms wide as if showing it owns the whole world, content smile.",
-   txt:"Jestem najbogatszy na świecie. Nie mam nic, nic mi nie trzeba i nikt nie wystawił mi rachunku. Doceniaj, co masz."},
-  {name:"Zadzwoń do mamy (relacje)", scene:"nursery",
-   act:"Bobo playfully mimics holding a phone to its ear with a warm smile.",
-   txt:"Dzwoń do mamy. Ja płaczę i ona przybiega w sekundę. Ty masz telefon — to żaden wysiłek."},
-  {name:"Jeden problem na raz (spokój)", scene:"nursery",
-   act:"Bobo takes a calm deep breath, shoulders relaxing, a serene little smile.",
-   txt:"Masz sto problemów naraz? Ja mam jeden: jestem głodny albo nie. Uprość sobie życie, a od razu lżej."},
-  {name:"Wstań o raz więcej (motywacja)", scene:"living",
-   act:"Bobo pretends to wobble and fall, then springs back up with a triumphant grin.",
-   txt:"Upadłem dziś czterdzieści razy próbując chodzić. I co? Wstałem czterdzieści jeden. Tyle wystarczy."},
-  {name:"Tysiąc zdjęć (humor)", scene:"nursery",
-   act:"Bobo strikes a tiny playful model pose and winks at the camera.",
-   txt:"Robisz mi tysiąc zdjęć dziennie. Spokojnie — rozumiem. Też bym się sobą zachwycał."},
-  {name:"★ CTA: Zatrzymaj te chwile", scene:"nursery",
-   act:"Bobo touches its own cheek, looks a little wistful, then gestures warmly toward the camera, sincere and gentle.",
-   txt:"Te policzki znikną. Ten zapach noworodka — też. Zatrzymaj to, póki możesz. Profesjonalne zdjęcia z jednego zdjęcia z telefonu — BoboFoto!"},
-  {name:"★ CTA: Jedno zdjęcie wystarczy", scene:"nursery",
-   act:"Bobo playfully mimics holding a phone and shrugs, then gives a confident reassuring nod toward the camera.",
-   txt:"Robisz mi tysiąc zdjęć, a żadne nie jest jak ze studia? Wyślij jedno do BoboFoto, resztę zrobią oni. Bez wychodzenia z domu!"},
-  {name:"✍️ Własny tekst", scene:"nursery",
-   act:"Bobo gestures naturally and expressively while making its point, warm and lively.",
-   txt:"", custom:true}
-];
-
-/* opisy + hashtagi (indeks zgodny z THEMES) — popularne PL dla mam/noworodków */
-const CAP = [
-  {d:"Mam pół roku i już wiem o życiu więcej niż niejeden dorosły 😎 Nowa seria: Bobo radzi! A widzieliście kota z tyłu? 👀",
-   t:"#BoboRadzi #bobofoto #niemowlę #noworodek #mama #macierzyństwo #rodzicielstwo #poradyzyciowe #polskamama #fyp #dlaciebie #viral"},
-  {d:"Odpoczynek to nie lenistwo — to inwestycja 😴 Mamo, śpij gdy dziecko śpi 💛",
-   t:"#BoboRadzi #bobofoto #mama #macierzyństwo #niemowlę #świeżoupieczonamama #mamanaurlopie #selfcare #polskamama #fyp #dlaciebie #maluch"},
-  {d:"Chce ci się płakać? To płacz ❤️ Wypuść emocje i idź dalej. (kot z tyłu znowu coś knuje 👀)",
-   t:"#BoboRadzi #bobofoto #mama #macierzyństwo #emocje #zdrowiepsychiczne #niemowlę #rodzicielstwo #polskamama #fyp #dlaciebie #maluch"},
-  {d:"Szczęście jest w małych rzeczach — jak jedna bańka mydlana 🫧 Doceniaj te chwile, mamo 💛",
-   t:"#BoboRadzi #bobofoto #mama #macierzyństwo #niemowlę #dziecko #wdzięczność #szczęście #polskamama #fyp #dlaciebie #rodzina"},
-  {d:"Boisz się zacząć? Wystarczy jeden krok. Dziś 👣 Co dziś zrobisz? Napisz 💬",
-   t:"#BoboRadzi #bobofoto #motywacja #mama #macierzyństwo #niemowlę #pierwszekroki #rozwój #polskamama #fyp #dlaciebie #maluch"},
-  {d:"Idealny moment nie istnieje. Jest tylko teraz 💪 Co dziś zaczniesz?",
-   t:"#BoboRadzi #bobofoto #motywacja #mama #macierzyństwo #cytaty #rozwójosobisty #niemowlę #polskamama #fyp #dlaciebie #mindset"},
-  {d:"Kto tu naprawdę rządzi w domu? 😏 Otaguj rodzica, który to zna 👶",
-   t:"#BoboRadzi #bobofoto #mama #tata #macierzyństwo #rodzicielstwo #humor #niemowlę #polskamama #fyp #dlaciebie #śmieszne"},
-  {d:"Bogactwo to nie to, co masz — to czego nie potrzebujesz 💛",
-   t:"#BoboRadzi #bobofoto #mama #macierzyństwo #wdzięczność #cytaty #poradyzyciowe #niemowlę #polskamama #fyp #dlaciebie #mindset"},
-  {d:"Zadzwoń dziś do mamy ❤️ Otaguj ją 👇",
-   t:"#BoboRadzi #bobofoto #mama #rodzina #macierzyństwo #relacje #niemowlę #wzruszające #polskamama #fyp #dlaciebie #miłość"},
-  {d:"Jeden problem na raz. Tyle 🧘 Uprość sobie życie, mamo.",
-   t:"#BoboRadzi #bobofoto #mama #macierzyństwo #spokój #selfcare #niemowlę #poradyzyciowe #polskamama #fyp #dlaciebie #stres"},
-  {d:"Wstań o jeden raz więcej niż upadłeś 💪 To cały sekret.",
-   t:"#BoboRadzi #bobofoto #motywacja #mama #macierzyństwo #nigdyniezrezygnuj #niemowlę #rozwój #polskamama #fyp #dlaciebie #mindset"},
-  {d:"Ileż można robić zdjęć? 😏 (no dobra, rozumiem) Otaguj winowajcę 📸",
-   t:"#BoboRadzi #bobofoto #mama #macierzyństwo #humor #niemowlę #rodzicielstwo #fotografia #polskamama #fyp #dlaciebie #śmieszne"},
-  {d:"Te chwile nie wrócą 🍼 Zamień jedno zdjęcie z telefonu w profesjonalną sesję — bez wychodzenia z domu. 👉 bobofoto.pl",
-   t:"#BoboRadzi #bobofoto #sesjanoworodkowa #noworodek #zdjęcianoworodka #mama #macierzyństwo #pamiątka #niemowlę #polskamama #fyp #dlaciebie"},
-  {d:"Masz mnóstwo zdjęć, ale żadne nie jest „jak ze studia\"? 🍼 Wyślij jedno — zrobimy z niego profesjonalną sesję. 👉 bobofoto.pl",
-   t:"#BoboRadzi #bobofoto #sesjanoworodkowa #zdjęcianoworodka #noworodek #mama #macierzyństwo #niemowlę #prezent #polskamama #fyp #dlaciebie"},
-  {d:"Mądrość dnia od Bobo 🍼 A Ty jak masz? Napisz w komentarzu 💬",
-   t:"#BoboRadzi #bobofoto #mama #macierzyństwo #niemowlę #poradyzyciowe #rodzicielstwo #polskamama #fyp #dlaciebie #viral #maluch"}
-];
+const NEG = `Negative: multiple background characters, two or more animals, extra creatures, several gags at once, second mascot, close-up, extreme close-up, cropped body, only head and shoulders, baby too close to camera, landscape, horizontal, 16:9, widescreen, square, black bars, letterbox, photorealistic, real human baby, deformed face, extra fingers, distorted mouth, creepy, uncanny valley, harsh lighting, dark, low quality, any on-screen text, captions, subtitles, garbled text, fake logo, watermark, mispronounced Polish, wrong language, English accent, mumbling, cut-off speech, repeated words, robotic voice.`;
 
 const GAGS = [
-  {pl:"Gruby zrzędliwy kot jedzie na deskorolce", en:"a chubby grumpy cartoon cat slowly slides across the floor on a tiny skateboard"},
+  {pl:"Gruby zrzędliwy kot na deskorolce", en:"a chubby grumpy cartoon cat slowly slides across on a tiny skateboard"},
   {pl:"Gruby kot robi jogę do góry nogami", en:"a chubby cat does slow upside-down yoga against the wall"},
-  {pl:"Gruby kot robi moonwalk w tył", en:"a chubby cat moonwalks backwards across the room in slow motion"},
-  {pl:"Gruby kot spada z półki i ląduje bez szwanku", en:"a chubby cat slowly falls off the shelf and lands perfectly fine"},
-  {pl:"Gruby kot robi sobie selfie telefonem", en:"a chubby cat takes selfies with a tiny phone"},
-  {pl:"Mops w okularach jedzie na robocie sprzątającym", en:"a tiny pug in sunglasses slowly rides a robot vacuum like a surfboard"},
-  {pl:"Kaczka przechodzi z malutkim parasolem", en:"a small duck waddles across carrying a tiny umbrella"},
-  {pl:"Śpiący leniwiec wspina się po firance", en:"a sleepy sloth very slowly climbs up the curtain"},
-  {pl:"Chomik podnosi malutki hantel, męcząc się", en:"a hamster slowly lifts a tiny dumbbell, struggling"},
+  {pl:"Gruby kot robi moonwalk w tył", en:"a chubby cat moonwalks backwards in slow motion"},
+  {pl:"Mops w okularach na robocie sprzątającym", en:"a tiny pug in sunglasses slowly rides a robot vacuum like a surfboard"},
+  {pl:"Kaczka z malutkim parasolem", en:"a small duck waddles across carrying a tiny umbrella"},
+  {pl:"Śpiący leniwiec na firance", en:"a sleepy sloth very slowly climbs up the curtain"},
+  {pl:"Chomik podnosi malutki hantel", en:"a hamster slowly lifts a tiny dumbbell, struggling"},
   {pl:"Corgi kroczy jak po wybiegu", en:"a corgi slowly does a dramatic catwalk strut"},
   {pl:"Papuga wisi głową w dół na lampie", en:"a parrot slowly hangs upside-down from the lamp, swinging"},
-  {pl:"Żółw pędzi w malutkiej pelerynie bohatera", en:"a turtle slowly speed-walks with a tiny cape like a hero"},
-  {pl:"Pluszowy miś robi pompki na dywanie", en:"a teddy bear slowly does push-ups on the rug"},
+  {pl:"Żółw w pelerynie bohatera", en:"a turtle slowly speed-walks with a tiny hero cape"},
   {pl:"Rządek gumowych kaczek maszeruje", en:"a line of rubber ducks slowly marches across the floor"},
-  {pl:"Robot sprzątający kręci się zdezorientowany", en:"a small robot vacuum slowly spins in confused circles"},
-  {pl:"Nakręcany dinozaur tupie w zwolnionym tempie", en:"a wind-up toy dinosaur slowly stomps across in slow motion"},
-  {pl:"Balon-piesek przepływa do góry nogami", en:"a dog-shaped balloon slowly drifts past upside down"},
-  {pl:"Wieża z klocków powoli się przewraca", en:"a stack of building blocks slowly topples in extreme slow motion"},
-  {pl:"Malutki astronauta przepływa w tle", en:"a tiny astronaut floats slowly across the background"},
-  {pl:"Duszek w prześcieradle odkurza dywan", en:"a small ghost in a bedsheet slowly vacuums the rug"},
-  {pl:"Ogórek sam zsuwa się z półki", en:"a cucumber slowly slides across the shelf on its own"},
-  {pl:"Myszka tańczy pod małą kulą disco", en:"a mouse slowly does a single disco dance move under a tiny disco ball"},
-  {pl:"Roślina w doniczce odwraca się do kamery", en:"a potted plant slowly turns to watch the camera"},
-  {pl:"Złota rybka pływa w malutkich okularach", en:"a goldfish in a bowl slowly does laps wearing tiny sunglasses"}
+  {pl:"Robot sprzątający kręci się w kółko", en:"a small robot vacuum slowly spins in confused circles"},
+  {pl:"Nakręcany dinozaur tupie", en:"a wind-up toy dinosaur slowly stomps across in slow motion"},
+  {pl:"Balon-piesek do góry nogami", en:"a dog-shaped balloon slowly drifts past upside down"},
+  {pl:"Malutki astronauta przepływa", en:"a tiny astronaut floats slowly across the background"},
+  {pl:"Myszka tańczy pod kulą disco", en:"a mouse slowly does a single disco dance move under a tiny disco ball"},
+  {pl:"Roślina odwraca się do kamery", en:"a potted plant slowly turns to watch the camera"},
+  {pl:"Złota rybka w okularach", en:"a goldfish in a bowl slowly does laps wearing tiny sunglasses"}
 ];
 
-const themeSel=document.getElementById('theme');
-THEMES.forEach((t,i)=>{const o=document.createElement('option');o.value=i;o.textContent=t.name;themeSel.appendChild(o);});
+const CATS = {
+  m:{name:"Motywacja",col:"#c97c4a",close:"Co dziś zrobisz? 💬",ht:"#motywacja #rozwój #mindset"},
+  h:{name:"Humor",col:"#a45db0",close:"Otaguj kogoś, kto to zna 😏",ht:"#humor #rodzicielstwo #śmieszne"},
+  s:{name:"Spokój",col:"#5a9aa8",close:"Weź dziś oddech 🧘",ht:"#spokój #selfcare #stres"},
+  e:{name:"Emocje",col:"#cc6b86",close:"❤️",ht:"#emocje #zdrowiepsychiczne #uczucia"},
+  r:{name:"Relacje",col:"#cf5a5a",close:"Otaguj tę osobę 👇",ht:"#rodzina #relacje #miłość"},
+  w:{name:"Wdzięczność",col:"#c9a247",close:"Doceniaj małe rzeczy 💛",ht:"#wdzięczność #szczęście #cytaty"},
+  a:{name:"Mądrość",col:"#7c8a6e",close:"Zapisz sobie 🤍",ht:"#poradyzyciowe #cytaty #rozwójosobisty"},
+  c:{name:"BoboFoto",col:"#33352f",close:"👉 bobofoto.pl",ht:"#sesjanoworodkowa #noworodek #zdjęcianoworodka #pamiątka"}
+};
+const BASE_HT="#BoboRadzi #bobofoto #mama #macierzyństwo #niemowlę #polskamama #fyp #dlaciebie";
+
+const POOL = [
+  {c:"m",t:"Czekasz na idealny moment? Ja nie czekałem, żeby się urodzić. Po prostu przyszedłem."},
+  {c:"m",t:"Upadłem dziś czterdzieści razy. Wstałem czterdzieści jeden. Tyle wystarczy."},
+  {c:"m",t:"Nie umiesz? Ja wczoraj nie umiałem nic. Dziś umiem trochę więcej."},
+  {c:"m",t:"Każdy ekspert był kiedyś leżącym noworodkiem. Daj sobie czas."},
+  {c:"m",t:"Mały krok to wciąż krok. A ja nawet jeszcze nie chodzę."},
+  {c:"m",t:"Boisz się porażki? Ja przewracam się publicznie codziennie i nikt się nie śmieje."},
+  {c:"m",t:"Marzysz po cichu? Ja krzyczę o swoich potrzebach na cały dom. I działa."},
+  {c:"m",t:"Nie poddawaj się po pierwszej próbie. Ja uczę się jednej rzeczy tygodniami."},
+  {c:"m",t:"Zacznij dziś, choćby na chwilę. Jutro będziesz o krok dalej."},
+  {c:"m",t:"Porównujesz swój start z czyjąś metą? Każdy zaczyna od leżenia."},
+  {c:"m",t:"Nie czekaj na pozwolenie. Ja po prostu zacząłem rosnąć i nikt mnie nie pytał."},
+  {c:"h",t:"Myślisz, że to ty mnie wychowujesz? Jeden płacz w nocy i biegniesz. Kto tu rządzi?"},
+  {c:"h",t:"Robisz mi tysiąc zdjęć dziennie. Rozumiem. Też bym się sobą zachwycał."},
+  {c:"h",t:"Wmawiasz sobie, że dziecko śpi smacznie? Ja budzę się osiem razy. Wybierz lepszy przykład."},
+  {c:"h",t:"Wydałeś fortunę na zabawki, a ja bawię się pudełkiem. Pomyśl o tym."},
+  {c:"h",t:"Negocjujesz w pracy? Ja wynegocjowałem nocne karmienie samym płaczem."},
+  {c:"h",t:"Mówisz, że jesteś zmęczony? Uroczo. Ja dopiero uczę się trzymać głowę."},
+  {c:"h",t:"Masz zły dzień? Ja zgubiłem smoczek. Pogadajmy o prawdziwych problemach."},
+  {c:"h",t:"Dieta? Ja jem co dwie godziny i mam idealną figurę. Pozdrawiam."},
+  {c:"h",t:"Wiecznie nie masz czasu? Ja całymi dniami patrzę w sufit i też jestem zajęty."},
+  {c:"h",t:"Stresujesz się opinią innych? Ja siedzę w pielusze i mam to całkowicie gdzieś."},
+  {c:"s",t:"Czujesz się winny, że odpoczywasz? Ja śpię szesnaście godzin i wyglądam świetnie."},
+  {c:"s",t:"Masz sto problemów naraz? Ja mam jeden: głodny albo nie. Uprość sobie życie."},
+  {c:"s",t:"Nie zjadłeś dziś spokojnie? Ja robię z posiłku półgodzinne wydarzenie. Zwolnij."},
+  {c:"s",t:"Drzemka to nie lenistwo. To restart. Ja robię trzy dziennie."},
+  {c:"s",t:"Martwisz się jutrem? Ja nie wiem nawet, co było wczoraj. I jest mi dobrze."},
+  {c:"s",t:"Złość Cię zżera? Wykrzycz to i idź dalej. Mnie zajmuje to pięć minut."},
+  {c:"s",t:"Spiesz się wolno. Ja na jeden ząbek czekam miesiącami i nie panikuję."},
+  {c:"s",t:"Wszystko Cię irytuje? Może po prostu jesteś głodny. Na mnie zawsze działa."},
+  {c:"e",t:"Chce ci się płakać? To płacz. Stłumione emocje nie znikają."},
+  {c:"e",t:"Nie udawaj, że wszystko gra. Ja jak płaczę, to cała ulica wie."},
+  {c:"e",t:"Czujesz za dużo? To znaczy, że żyjesz. Ja czuję wszystko na maksa."},
+  {c:"e",t:"Nie wstydź się łez. Ja płaczę i pięć minut później znów się śmieję."},
+  {c:"r",t:"Zadzwoń do mamy. Ja płaczę i przybiega w sekundę. Ty masz telefon."},
+  {c:"r",t:"Przytul kogoś dziś. Mnie przytulanie rozwiązuje dosłownie każdy problem."},
+  {c:"r",t:"Nie umiesz prosić o pomoc? Ja krzyczę i nie wstydzę się ani trochę."},
+  {c:"r",t:"Chcesz, żeby Cię kochali bez powodu? Sekret: po prostu bądź sobą."},
+  {c:"r",t:"Tęsknisz? Powiedz to. Ja robię to, gdy tylko mama wyjdzie z pokoju."},
+  {c:"r",t:"Otaczaj się ludźmi, przy których możesz być sobą. Jak ja przy rodzicach."},
+  {c:"w",t:"Jestem najbogatszy na świecie. Nie mam nic i nic mi nie trzeba."},
+  {c:"w",t:"Szukasz wielkiego szczęścia? Mnie cieszy jedna bańka mydlana."},
+  {c:"w",t:"Masz ciepłe łóżko i kogoś, kto Cię kocha? To więcej, niż myślisz."},
+  {c:"w",t:"Gonisz za rzeczami? Ja mam grzechotkę i jestem w pełni szczęśliwy."},
+  {c:"w",t:"Doceniaj drobiazgi. Ja odkryłem własną stopę i był to najlepszy dzień."},
+  {c:"w",t:"Zatrzymaj się i popatrz. Ja godzinami wpatruję się w zwykłą lampę."},
+  {c:"a",t:"Nie porównuj się z innymi. Kolega z wózka już siedzi, ja leżę. I co z tego."},
+  {c:"a",t:"Każdy ma swoje tempo. Ja nauczę się chodzić, gdy będę gotowy. Ty też."},
+  {c:"a",t:"Bądź dla siebie cierpliwy. Próbowałem chwycić zabawkę osiemnaście razy."},
+  {c:"a",t:"Żyj teraz. Ja nie znam słowa później i świetnie sobie radzę."},
+  {c:"a",t:"Śmiej się bez powodu. Ja chichoczę z bańki, z miny taty, z niczego."},
+  {c:"a",t:"Mów, co czujesz. Ja nie umiem kłamać i moje życie jest prostsze."},
+  {c:"a",t:"Ciekawość to siła. Ja wkładam wszystko do buzi, żeby zrozumieć świat."},
+  {c:"a",t:"Nie bój się być początkującym. Ja jestem nim w każdej dziedzinie."},
+  {c:"a",t:"Najpierw raczkuj, potem biegnij. Pomijanie kroków się nie opłaca."},
+  {c:"a",t:"Odpuść kontrolę. Ja nie kontroluję niczego i jakoś wszystko działa."},
+  {c:"h",t:"Płaczę bez powodu o trzeciej w nocy. Ty nazywasz to kryzysem. Ja to nazywam wtorek."},
+  {c:"h",t:"Mama mówi, że jestem aniołkiem. Tata widział, co robię o czwartej rano. Prawda leży pośrodku."},
+  {c:"h",t:"Nauczyłem się sztuczki: płaczę, dostaję jedzenie. Polecam w każdej sytuacji."},
+  {c:"h",t:"Babcia daje mi wszystko, na co rodzice nie pozwalają. Babcie znają życie."},
+  {c:"h",t:"Ludzie płacą za spa. Ja dostaję masaż, kąpiel i drzemkę za darmo. Kto tu wygrywa?"},
+  {c:"h",t:"Mówisz, że nic nie robię cały dzień? Rosną mi zęby. Ucz się szanować."},
+  {c:"h",t:"Nie lubię warzyw. Mam pół roku i już mam zasady."},
+  {c:"h",t:"Tata myślał, że szybko przewija. Zrobiłem niespodziankę. Teraz wie."},
+  {c:"h",t:"Założyłaś mi piękną stylizację. Pobrudziłem ją w trzy minuty. Sztuka jest ulotna."},
+  {c:"h",t:"Wszyscy robią do mnie aguuu. Nie rozumiem ani słowa, ale kiwam głową grzecznie."},
+  {c:"h",t:"Mam dwa tryby: aniołek i syrena alarmowa. Przełączam bez ostrzeżenia."},
+  {c:"h",t:"Mówisz, że masz korek w pracy? Ja utknąłem na dywanie i nie umiem się obrócić."},
+  {c:"e",t:"Pewnego dnia przestanę się mieścić w Twoich ramionach. Przytul mnie dziś dłużej."},
+  {c:"e",t:"Nie będę mały na zawsze. Zostaw telefon na chwilę i po prostu popatrz."},
+  {c:"e",t:"Wiem, że jesteś zmęczona, mamo. Ale dla mnie jesteś całym światem."},
+  {c:"c",t:"Te policzki znikną. Ten zapach noworodka też. Zatrzymaj to, póki możesz."},
+  {c:"c",t:"Robisz mi tysiąc zdjęć, a żadne nie jest jak ze studia? Wyślij jedno do BoboFoto."},
+  {c:"c",t:"Za rok mnie nie poznasz. Masz jedną szansę, żeby to zatrzymać."},
+  {c:"c",t:"Profesjonalna sesja bez wychodzenia z domu? Jedno zdjęcie z telefonu wystarczy."}
+];
+
+/* ---- helpers ---- */
 const gagSel=document.getElementById('gag');
 const rnd=document.createElement('option');rnd.value="random";rnd.textContent="🎲 Losowy";gagSel.appendChild(rnd);
 GAGS.forEach((g,i)=>{const o=document.createElement('option');o.value=i;o.textContent=g.pl;gagSel.appendChild(o);});
 
-function makeSpeak(advice,outro){return "„Słuchaj, dorosły! "+advice+(outro?(" "+outro):"")+"”";}
+function pickGag(){const v=gagSel.value;return v==="random"?GAGS[Math.floor(Math.random()*GAGS.length)]:GAGS[+v];}
+function gagLabel(){const v=gagSel.value;return v==="random"?"🎲 losowy (przy kopiowaniu)":GAGS[+v].pl;}
+function makeSpeak(txt){const o=document.getElementById('outro').value;return "„Słuchaj, dorosły! "+txt+(o?(" "+o):"")+"”";}
+function caption(it){const cat=CATS[it.c];return it.t+"\n\n"+cat.close;}
+function hashtags(it){return BASE_HT+" "+CATS[it.c].ht;}
+function toast(){const t=document.getElementById('toast');t.classList.add('show');setTimeout(()=>t.classList.remove('show'),1500);}
 
-function makePrompt(t,advice,gagEn,outro,dur){
+function makePrompt(txt,gagEn){
+  const dur=document.getElementById('dur').value;
   const mid=(dur-5>2)?(dur-5):6;
-  const speak=makeSpeak(advice,outro);
-  const action=HOOK+"\n- 2–"+mid+"s (ADVICE): "+t.act+
-    "\n- "+mid+"–"+dur+"s (OUTRO): a warm encouraging smile, raises the tiny finger again and gives a friendly little wave.";
+  const action="- 0–2s (HOOK): a fast playful whip-pan snaps onto Bobo, who turns to camera and raises one tiny index finger like a wise professor, eyebrows up, cheeky confident spark.\n- 2–"+mid+"s (ADVICE): Bobo gestures naturally and expressively while making its point, lively and warm.\n- "+mid+"–"+dur+"s (OUTRO): a warm encouraging smile, raises the tiny finger again and gives a friendly little wave.";
   return `VERTICAL 9:16 PORTRAIT VIDEO (taller than it is wide), portrait orientation, 1080x1920 resolution, full vertical frame edge to edge, NO black bars, NO letterbox. Strictly 9:16 aspect ratio — do NOT render in 16:9, landscape, widescreen or square. Premium semi-realistic 3D animation (stylized, highly detailed, cinematic, NOT photorealistic and not a real child), realistic soft cinematic lighting and natural detailed skin and fabric texture, 30 fps, optimized for TikTok / Instagram Reels / YouTube Shorts, ${dur} seconds, family-friendly.
 
 ${CHARACTER}
 
-${SCENES[t.scene]}
+${SCENE}
 BACKGROUND GAG: throughout, in the blurred background directly behind Bobo and centered in the frame (not off to the side), ${gagEn}, deadpan, never acknowledged by Bobo. IMPORTANT: there is EXACTLY ONE background character total — this one and nothing else. No other animals, creatures, toys or moving characters anywhere in the scene.
 
 ACTION:
 ${action}
 
 THE BABY SPEAKS (Polish, lip-synced, one continuous take):
-${speak}
+${makeSpeak(txt)}
 
 ${VOICE}
 
@@ -303,112 +258,77 @@ ${TECH}
 ${NEG}`;
 }
 
-function toast(){const t=document.getElementById('toast');t.classList.add('show');setTimeout(()=>t.classList.remove('show'),1600);}
+function copyCustom(){
+  const txt=(document.getElementById('customText').value.trim()||"[wpisz swój tekst]");
+  const p=makePrompt(txt,pickGag().en);
+  document.getElementById('customOut').textContent=p;
+  navigator.clipboard.writeText(p).then(toast);
+}
+document.getElementById('customText').addEventListener('input',()=>{
+  const txt=(document.getElementById('customText').value.trim()||"[wpisz swój tekst]");
+  document.getElementById('customOut').textContent=makePrompt(txt,pickGag().en);
+});
 
-let lastRandom=null;
-function currentGag(reroll){
-  const v=gagSel.value;
-  if(v==="random"){
-    if(reroll||lastRandom===null)lastRandom=GAGS[Math.floor(Math.random()*GAGS.length)];
-    return lastRandom;
-  }
-  return GAGS[+v];
+/* ---- biblioteka z usuwaniem / ulubionymi ---- */
+const QSIZE=24;
+const K_REM="boboRemoved",K_FAV="boboFav",K_DONE="boboDone2";
+function ls(k){try{return JSON.parse(localStorage.getItem(k)||"{}");}catch(e){return {};}}
+function save(k,v){localStorage.setItem(k,JSON.stringify(v));}
+let filter="all";
+
+function renderFilters(){
+  const box=document.getElementById('filters');box.innerHTML="";
+  const opts=[["all","Wszystkie"],["fav","❤️ Ulubione"]];
+  Object.keys(CATS).forEach(k=>opts.push([k,CATS[k].name]));
+  opts.forEach(([v,n])=>{const b=document.createElement('button');b.textContent=n;if(v===filter)b.className="on";b.onclick=()=>{filter=v;renderFilters();renderLib();};box.appendChild(b);});
 }
 
-function build(reroll){
-  const t=THEMES[+themeSel.value];
-  document.getElementById('customRow').style.display = t.custom ? "block":"none";
-  let advice = t.custom ? (document.getElementById('customText').value.trim()||"[wpisz swój tekst rady]") : t.txt;
-  const outro=document.getElementById('outro').value;
-  const dur=document.getElementById('dur').value;
-  const gag=currentGag(reroll);
-
-  const cap=CAP[+themeSel.value]||CAP[CAP.length-1];
-  document.getElementById('preview').innerHTML =
-    '<p class="pv">🎙️ <b>Bobo powie:</b><br><span class="quote">'+makeSpeak(advice,outro)+'</span></p>'+
-    '<p class="pv">🎭 <b>W tle:</b> '+gag.pl+'</p>'+
-    '<p class="pv">⏱️ <b>Długość:</b> '+dur+' s</p>'+
-    '<hr style="border:none;border-top:1px solid #ddd6c7;margin:10px 0">'+
-    '<p class="pv">📝 <b>Opis:</b> '+cap.d+'</p>'+
-    '<p class="pv">#️⃣ <b>Hashtagi:</b> '+cap.t+'</p>';
-
-  document.getElementById('out').textContent=makePrompt(t,advice,gag.en,outro,dur);
+function visibleList(){
+  const rem=ls(K_REM),fav=ls(K_FAV);
+  let list=POOL.map((it,i)=>({...it,i})).filter(o=>!rem[o.i]);
+  if(filter==="fav")return list.filter(o=>fav[o.i]);
+  if(filter!=="all")list=list.filter(o=>o.c===filter);
+  // ulubione na górze, reszta w kolejności
+  const f=list.filter(o=>fav[o.i]), nf=list.filter(o=>!fav[o.i]);
+  return f.concat(nf).slice(0,QSIZE);
 }
 
-function copyCaption(){
-  const cap=CAP[+themeSel.value]||CAP[CAP.length-1];
-  navigator.clipboard.writeText(cap.d+"\n\n"+cap.t).then(toast);
-}
-
-function copyPrompt(){
-  build();
-  navigator.clipboard.writeText(document.getElementById('out').textContent).then(toast);
-}
-
-/* ===== 20 GOTOWYCH FILMIKÓW ===== */
-const READY = [
-  [0,0],[5,5],[6,9],[1,1],[12,22],
-  [2,3],[7,18],[8,6],[9,7],[13,4],
-  [3,21],[10,2],[11,11],[4,15],[13,19],
-  [1,12],[6,23],[5,13],[2,17],[12,8]
-];
-const DEF_OUTRO="Zaobserwuj mój kanał, żeby niczego nie przegapić!";
-const DONE_KEY="boboDone";
-function getDone(){try{return JSON.parse(localStorage.getItem(DONE_KEY)||"{}");}catch(e){return {};}}
-function setDone(d){localStorage.setItem(DONE_KEY,JSON.stringify(d));}
-
-function renderReady(){
-  const done=getDone();
-  const box=document.getElementById('ready');
-  box.innerHTML="";
-  let cnt=0;
-  READY.forEach((combo,i)=>{
-    const t=THEMES[combo[0]], gag=GAGS[combo[1]];
-    const isDone=!!done[i];
-    if(isDone)cnt++;
-    const cap=CAP[combo[0]]||CAP[CAP.length-1];
+function renderLib(){
+  const fav=ls(K_FAV),done=ls(K_DONE),rem=ls(K_REM);
+  const box=document.getElementById('lib');box.innerHTML="";
+  const list=visibleList();
+  list.forEach(o=>{
+    const cat=CATS[o.c];
     const div=document.createElement('div');
-    div.className="item"+(isDone?" done":"");
+    div.className="item"+(done[o.i]?" done":"")+(fav[o.i]?" fav":"");
     div.innerHTML=
-      '<h4><span class="num">#'+(i+1)+'</span> '+t.name+'</h4>'+
-      '<p class="q">🎙️ '+makeSpeak(t.txt,DEF_OUTRO)+'</p>'+
-      '<p class="bg">🎭 W tle: '+gag.pl+'</p>'+
-      '<p style="font-size:12.5px;margin:6px 0 2px">📝 '+cap.d+'</p>'+
-      '<p style="font-size:12px;color:#8a8676;margin:2px 0">#️⃣ '+cap.t+'</p>'+
+      '<span class="cat" style="background:'+cat.col+'">'+cat.name+'</span>'+
+      '<p class="q">🎙️ '+makeSpeak(o.t)+'</p>'+
+      '<p class="op">📝 '+caption(o).replace("\n\n"," · ")+'</p>'+
+      '<p class="ht">#️⃣ '+hashtags(o)+'</p>'+
       '<div class="actions">'+
-        '<button class="primary" data-i="'+i+'">📋 Prompt</button>'+
-        '<button class="ghost" data-cap="'+i+'">📝 Opis + #</button>'+
-        '<label class="chk"><input type="checkbox" data-c="'+i+'" '+(isDone?'checked':'')+'> wrzucone ✅</label>'+
+        '<button class="primary" data-p="'+o.i+'">📋 Prompt</button>'+
+        '<button class="ghost" data-cap="'+o.i+'">📝 Opis+#</button>'+
+        '<button class="icon" data-fav="'+o.i+'">'+(fav[o.i]?"❤️":"🤍")+'</button>'+
+        '<button class="icon" data-del="'+o.i+'">🗑️</button>'+
+        '<label class="chk"><input type="checkbox" data-done="'+o.i+'" '+(done[o.i]?'checked':'')+'> wrzucone ✅</label>'+
       '</div>';
     box.appendChild(div);
   });
-  document.getElementById('progress').textContent="Wrzucone: "+cnt+" / "+READY.length;
-  box.querySelectorAll('button[data-i]').forEach(b=>{
-    b.onclick=()=>{
-      const combo=READY[+b.dataset.i];
-      const t=THEMES[combo[0]], gag=GAGS[combo[1]];
-      navigator.clipboard.writeText(makePrompt(t,t.txt,gag.en,DEF_OUTRO,14)).then(toast);
-    };
-  });
-  box.querySelectorAll('button[data-cap]').forEach(b=>{
-    b.onclick=()=>{
-      const cap=CAP[READY[+b.dataset.cap][0]]||CAP[CAP.length-1];
-      navigator.clipboard.writeText(cap.d+"\n\n"+cap.t).then(toast);
-    };
-  });
-  box.querySelectorAll('input[data-c]').forEach(c=>{
-    c.onchange=()=>{const d=getDone();d[+c.dataset.c]=c.checked;setDone(d);renderReady();};
-  });
+  const total=POOL.length, left=POOL.length-Object.values(rem).filter(Boolean).length;
+  document.getElementById('progress').textContent="W puli: "+left+" / "+total+"  ·  Pokazuję: "+list.length;
+  box.querySelectorAll('[data-p]').forEach(b=>b.onclick=()=>{navigator.clipboard.writeText(makePrompt(POOL[+b.dataset.p].t,pickGag().en)).then(toast);});
+  box.querySelectorAll('[data-cap]').forEach(b=>b.onclick=()=>{const o=POOL[+b.dataset.cap];navigator.clipboard.writeText(caption(o)+"\n\n"+hashtags(o)).then(toast);});
+  box.querySelectorAll('[data-fav]').forEach(b=>b.onclick=()=>{const f=ls(K_FAV);f[+b.dataset.fav]=!f[+b.dataset.fav];save(K_FAV,f);renderLib();});
+  box.querySelectorAll('[data-del]').forEach(b=>b.onclick=()=>{const r=ls(K_REM);r[+b.dataset.del]=true;save(K_REM,r);renderLib();});
+  box.querySelectorAll('[data-done]').forEach(c=>c.onchange=()=>{const d=ls(K_DONE);d[+c.dataset.done]=c.checked;save(K_DONE,d);renderLib();});
 }
-function resetDone(){if(confirm("Wyzerować wszystkie odhaczenia?")){setDone({});renderReady();}}
-renderReady();
+function resetAll(){if(confirm("Przywrócić usunięte i wyzerować odhaczenia/ulubione?")){save(K_REM,{});save(K_DONE,{});save(K_FAV,{});renderLib();}}
 
-themeSel.addEventListener('change',()=>build());
-gagSel.addEventListener('change',()=>build(true));
-document.getElementById('outro').addEventListener('change',()=>build());
-document.getElementById('dur').addEventListener('change',()=>build());
-document.getElementById('customText').addEventListener('input',()=>build());
-build();
+gagSel.addEventListener('change',renderLib);
+document.getElementById('outro').addEventListener('change',renderLib);
+document.getElementById('dur').addEventListener('change',renderLib);
+renderFilters();renderLib();
 </script>
 </body>
 </html>
