@@ -178,7 +178,7 @@ const CATS = {
   f:{name:"Dla mam",col:"#a0628f",close:"Napisz szczerze w komentarzu 💬",ht:"#mama #macierzyństwo #motywacja #refleksja #rozwój"},
   c:{name:"BoboFoto",col:"#33352f",close:"👉 bobofoto.pl",ht:"#sesjanoworodkowa #noworodek #zdjęcianoworodka #pamiątka"}
 };
-const BASE_HT="#BoboRadzi #bobofoto #mama #macierzyństwo #niemowlę #polskamama #fyp #dlaciebie";
+const BASE_HT="#BoboRadzi #bobofoto #mama #macierzyństwo #dziecko #rodzicielstwo #niemowlę #noworodek #polskamama #maluch #rodzina #instamama #fyp #dlaciebie";
 
 const POOL = [
   {c:"m",t:"Czekasz na idealny moment? Ja nie czekałem, żeby się urodzić. Po prostu przyszedłem."},
@@ -346,7 +346,7 @@ function pickGag(){const v=gagSel.value;return v==="random"?GAGS[Math.floor(Math
 function gagLabel(){const v=gagSel.value;return v==="random"?"🎲 losowy (przy kopiowaniu)":GAGS[+v].pl;}
 function makeSpeak(txt){const o=document.getElementById('outro').value;return "„Słuchaj, dorosły! "+txt+(o?(" "+o):"")+"”";}
 function caption(it){const cat=CATS[it.c];return it.t+"\n\n"+cat.close;}
-function hashtags(it){return BASE_HT+" "+CATS[it.c].ht;}
+function hashtags(it){return BASE_HT+(it.c==="c"?" #sesjanoworodkowa #zdjęcianoworodka":"");}
 function toast(){const t=document.getElementById('toast');t.classList.add('show');setTimeout(()=>t.classList.remove('show'),1500);}
 
 function makePrompt(txt,gagEn){
