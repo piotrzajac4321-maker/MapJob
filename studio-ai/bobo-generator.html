@@ -108,6 +108,16 @@
   </div>
 
   <div class="card">
+    <span class="tag">✅ CHECKLISTA VIRALOWA</span>
+    <details>
+      <summary>Sprawdź przed publikacją (klikalne ✓)</summary>
+      <div id="viralCheck" style="font-size:13px;margin-top:8px"></div>
+      <p class="hint" id="viralScore" style="margin-top:8px"></p>
+      <button class="ghost" onclick="resetCheck()" style="margin-top:4px;padding:6px 12px">Wyczyść ✓</button>
+    </details>
+  </div>
+
+  <div class="card">
     <span class="tag">✍️ WŁASNY TEKST</span>
     <textarea id="customText" placeholder="np. Nie porównuj się z innymi. Każdy ma swoje tempo."></textarea>
     <div class="actions" style="margin-top:10px">
@@ -179,6 +189,24 @@ const CATS = {
   c:{name:"BoboFoto",col:"#33352f",close:"👉 bobofoto.pl",ht:"#sesjanoworodkowa #noworodek #zdjęcianoworodka #pamiątka"}
 };
 const BASE_HT="#fyp #dlaciebie #mama #dziecko #rodzina #macierzyństwo #rodzicielstwo #niemowlę #noworodek #maluch #polskamama #instamama";
+
+/* DODATEK: napisy-hooki (ekranowy tekst na start, INNY niż głos) wg kategorii */
+const HOOKS={
+  m:["Przeczytaj, jeśli chcesz dziś coś zmienić","Zatrzymaj się na 8 sekund","To Cię ruszy z miejsca"],
+  h:["Nie mów, że to nie Ty 😂","Każdy rodzic to zna","Otaguj, kto musi to zobaczyć"],
+  s:["Mamo, weź oddech","To dla Ciebie, jeśli masz dość","Zatrzymaj się na chwilę"],
+  e:["Nie oglądaj, jeśli nie chcesz się wzruszyć","Poczujesz to"],
+  r:["Wyślij to komuś ważnemu","Pomyśl o tej jednej osobie"],
+  w:["Przypomnienie, którego dziś potrzebujesz","Doceń to, zanim minie"],
+  a:["Zapisz to sobie","Mądrość, którą zignorujesz i pożałujesz"],
+  k:["Nie śmiej się… no dobra, śmiej 😂","Kawał od bobasa"],
+  x:["Powiedz, że to nie Ty 😬","Zaboli, ale to prawda"],
+  o:["Zapisz na tę okazję","Idealne na dziś"],
+  d:["Zrób swoją wersję 🔥","Twój ruch"],
+  f:["Mamo, to musisz zobaczyć","Przeczytaj, zanim znów się obwinisz","Jeśli jesteś zmęczona — to dla Ciebie","To zatrzyma Cię na chwilę"],
+  c:["Za rok tego nie cofniesz","Nie przegap tej chwili"]
+};
+function pickHook(c){const a=HOOKS[c]||HOOKS.a;return a[Math.floor(Math.random()*a.length)];}
 
 const POOL = [
   {c:"m",t:"Czekasz na idealny moment? Ja nie czekałem, żeby się urodzić. Po prostu przyszedłem."},
@@ -416,14 +444,17 @@ function renderLib(){
     const cat=CATS[o.c];
     const div=document.createElement('div');
     div.className="item"+(done[o.i]?" done":"")+(fav[o.i]?" fav":"");
+    const hk=pickHook(o.c);
     div.innerHTML=
       '<span class="cat" style="background:'+cat.col+'">'+cat.name+'</span>'+
       '<p class="q">🎙️ '+makeSpeak(o.t)+'</p>'+
+      '<p class="op" style="color:#b06a2c">🪝 Napis-hook (na ekran): '+hk+'</p>'+
       '<p class="op">📝 '+caption(o).replace("\n\n"," · ")+'</p>'+
       '<p class="ht">#️⃣ '+hashtags(o)+'</p>'+
       '<div class="actions">'+
         '<button class="primary" data-p="'+o.i+'">📋 Prompt</button>'+
         '<button class="ghost" data-cap="'+o.i+'">📝 Opis+#</button>'+
+        '<button class="ghost" data-hk="'+encodeURIComponent(hk)+'">🪝 Hook</button>'+
         '<button class="icon" data-fav="'+o.i+'">'+(fav[o.i]?"❤️":"🤍")+'</button>'+
         '<button class="icon" data-del="'+o.i+'">🗑️</button>'+
         '<label class="chk"><input type="checkbox" data-done="'+o.i+'" '+(done[o.i]?'checked':'')+'> wrzucone ✅</label>'+
@@ -434,6 +465,7 @@ function renderLib(){
   document.getElementById('progress').textContent="W puli: "+left+" / "+total+"  ·  Pokazuję: "+list.length;
   box.querySelectorAll('[data-p]').forEach(b=>b.onclick=()=>{navigator.clipboard.writeText(makePrompt(POOL[+b.dataset.p].t,pickGag().en)).then(toast);});
   box.querySelectorAll('[data-cap]').forEach(b=>b.onclick=()=>{const o=POOL[+b.dataset.cap];navigator.clipboard.writeText(caption(o)+"\n\n"+hashtags(o)).then(toast);});
+  box.querySelectorAll('[data-hk]').forEach(b=>b.onclick=()=>{navigator.clipboard.writeText(decodeURIComponent(b.dataset.hk)).then(toast);});
   box.querySelectorAll('[data-fav]').forEach(b=>b.onclick=()=>{const f=ls(K_FAV);f[+b.dataset.fav]=!f[+b.dataset.fav];save(K_FAV,f);renderLib();});
   box.querySelectorAll('[data-del]').forEach(b=>b.onclick=()=>{const r=ls(K_REM);r[+b.dataset.del]=true;save(K_REM,r);renderLib();});
   box.querySelectorAll('[data-done]').forEach(c=>c.onchange=()=>{const d=ls(K_DONE);d[+c.dataset.done]=c.checked;save(K_DONE,d);renderLib();});
@@ -457,6 +489,29 @@ function setOfDay(){
   box.querySelectorAll('[data-sp]').forEach(b=>b.onclick=()=>{navigator.clipboard.writeText(makePrompt(POOL[+b.dataset.sp].t,pickGag().en)).then(toast);});
   box.querySelectorAll('[data-sc]').forEach(b=>b.onclick=()=>{const o=POOL[+b.dataset.sc];navigator.clipboard.writeText(caption(o)+"\n\n"+hashtags(o)).then(toast);});
 }
+
+/* DODATEK: checklista viralowa */
+const CHECK=[
+  "🪝 Hook w 1,5 s — napis-szok INNY niż głos",
+  "⏱️ Długość 8–12 s (krótko = wyższy % obejrzenia)",
+  "📝 Napisy słowo-po-słowie, nad środkiem (safe zone)",
+  "🐱 Kot/gag w tle (powód do powtórki)",
+  "🎵 Trendujący dźwięk ścichniony pod głosem",
+  "🔁 Loop — ostatnia klatka wraca do pierwszej",
+  "💬 Pytanie albo otaguj kogoś (komentarze/udostępnienia)",
+  "📱 Pion 9:16, Bobo wyśrodkowany",
+  "🍼 Logo Bobo radzi · bobofoto.pl w rogu"
+];
+const K_CHK="boboCheck";
+function renderCheck(){
+  const st=ls(K_CHK);const box=document.getElementById('viralCheck');if(!box)return;
+  box.innerHTML=CHECK.map((c,i)=>'<label class="chk" style="margin:6px 0"><input type="checkbox" data-vc="'+i+'" '+(st[i]?'checked':'')+'> '+c+'</label>').join('');
+  const done=CHECK.filter((_,i)=>st[i]).length;
+  document.getElementById('viralScore').textContent="Gotowość: "+done+" / "+CHECK.length+(done===CHECK.length?"  ✅ Wrzucaj!":"");
+  box.querySelectorAll('[data-vc]').forEach(c=>c.onchange=()=>{const s=ls(K_CHK);s[+c.dataset.vc]=c.checked;save(K_CHK,s);renderCheck();});
+}
+function resetCheck(){save(K_CHK,{});renderCheck();}
+renderCheck();
 
 gagSel.addEventListener('change',renderLib);
 document.getElementById('outro').addEventListener('change',renderLib);
