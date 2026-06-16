@@ -84,8 +84,8 @@
     <div class="row" style="margin-top:12px">
       <label>🎙️ Mowa Bobo</label>
       <select id="speech">
-        <option value="mute">🔇 Bez mowy — głos dodaję w CapCut (zalecane, czysty polski)</option>
-        <option value="veo">🗣️ Mówi w Veo (tylko krótkie teksty; długie się ucinają)</option>
+        <option value="veo">🗣️ Mówi w Veo (najlepiej krótkie teksty)</option>
+        <option value="mute">🔇 Bez mowy — głos dodaję w CapCut (do długich/list)</option>
       </select>
     </div>
     <div class="hint">👋 Końcówka: domyślnie film kończy się <b>samą puentą</b> (mocniej!). Follow-CTA dawaj tylko co kilka filmów, nie za każdym razem.<br>🎙️ <b>Mowa:</b> Veo źle mówi po polsku — przy dłuższych tekstach ucina/przekręca słowa. Tryb <b>„bez mowy"</b> = Bobo rusza ustami, a Ty dokładasz głos (np. ElevenLabs / własny) w CapCut → polski zawsze idealny.<br>⚠️ Veo Flash generuje poziomo — pion ustaw w Gemini (proporcje 9:16) albo dotnij w CapCut.</div>
@@ -446,7 +446,7 @@ function toast(){const t=document.getElementById('toast');t.classList.add('show'
 function makePrompt(txt,gagEn){
   const dur=document.getElementById('dur').value;
   const mid=(dur-5>2)?(dur-5):6;
-  const mode=(document.getElementById('speech')||{}).value||"mute";
+  const mode=(document.getElementById('speech')||{}).value||"veo";
   const action="- 0–2s (HOOK): a fast playful whip-pan snaps onto Bobo, who turns to camera and raises one tiny index finger like a wise professor, eyebrows up, cheeky confident spark.\n- 2–"+mid+"s (ADVICE): Bobo gestures naturally and expressively while making its point, lively and warm.\n- "+mid+"–"+dur+"s (OUTRO): a warm encouraging smile, raises the tiny finger again and gives a friendly little wave.";
   let speech,voice,negExtra="";
   if(mode==="mute"){
