@@ -186,7 +186,9 @@ const CATS = {
   o:{name:"Okazje",col:"#2f9e8f",close:"Otaguj kogoś na tę okazję 🎉",ht:"#święta #rodzina #sezon"},
   d:{name:"Trend",col:"#5b6cff",close:"Zrób swoją wersję 🔥",ht:"#trend #viral #fyp #relatable"},
   f:{name:"Dla mam",col:"#a0628f",close:"Napisz szczerze w komentarzu 💬",ht:"#mama #macierzyństwo #motywacja #refleksja #rozwój"},
-  l:{name:"Listy",col:"#d2691e",close:"Która najbardziej Twoja? 💬",ht:"#humor #rodzicielstwo #relatable"},
+  l:{name:"Listy 😂",col:"#d2691e",close:"Która najbardziej Twoja? 💬",ht:"#humor #rodzicielstwo #relatable"},
+  g:{name:"Listy ❤️",col:"#c98aa8",close:"Zapisz, jeśli też tak masz 💛",ht:"#mama #macierzyństwo #wzruszające"},
+  tt:{name:"Tato radzi",col:"#3d6e8a",close:"Otaguj tatę 👨",ht:"#tata #rodzicielstwo #rodzina"},
   c:{name:"BoboFoto",col:"#33352f",close:"👉 bobofoto.pl",ht:"#sesjanoworodkowa #noworodek #zdjęcianoworodka #pamiątka"}
 };
 const BASE_HT="#fyp #dlaciebie #mama #dziecko #rodzina #macierzyństwo #rodzicielstwo #niemowlę #noworodek #maluch #polskamama #instamama";
@@ -205,6 +207,8 @@ const HOOKS={
   o:["Zapisz na tę okazję","Idealne na dziś"],
   d:["Zrób swoją wersję 🔥","Twój ruch"],
   f:["Mamo, to musisz zobaczyć","Przeczytaj, zanim znów się obwinisz","Jeśli jesteś zmęczona — to dla Ciebie","To zatrzyma Cię na chwilę"],
+  g:["Zapisz to, mamo","To Cię wzruszy","Nie oglądaj bez chusteczek"],
+  tt:["Otaguj tatę 👨","Tato, to do Ciebie","Każdy tata to zna"],
   c:["Za rok tego nie cofniesz","Nie przegap tej chwili"]
 };
 function pickHook(c){const a=HOOKS[c]||HOOKS.a;return a[Math.floor(Math.random()*a.length)];}
@@ -387,6 +391,23 @@ const POOL = [
   {c:"l",t:"Trzy rzeczy, które robię punktualnie: budzę się o piątej, jem co dwie godziny i psuję każde Wasze plany."},
   {c:"l",t:"Pięć rzeczy, które dostaję bez proszenia, a Wy o nich marzycie: drzemki, masaże, jedzenie do łóżka, bezwarunkową miłość i brak rachunków."},
   {c:"l",t:"Cztery dźwięki, które uwielbiam: szum suszarki, bicie serca mamy, szelest folii i własne gaworzenie."},
+  {c:"g",t:"Pięć rzeczy, których nigdy nie zapomnę, choć jestem mały: Twój głos, zapach mamy, ciepło ramion, bicie serca i to, że jestem bezpieczny."},
+  {c:"g",t:"Trzy rzeczy, które dajesz mi każdego dnia, nawet zmęczona: cierpliwość, czułość i całą siebie."},
+  {c:"g",t:"Pięć powodów, dla których jesteś moją bohaterką: wstajesz w nocy, nie poddajesz się, uśmiechasz mimo zmęczenia, kochasz bez warunków i jesteś zawsze."},
+  {c:"g",t:"Cztery rzeczy, które kiedyś sobie przypomnę: jak mnie tuliłaś, jak śpiewałaś, jak czekałaś przy łóżeczku i jak bardzo mnie kochałaś."},
+  {c:"g",t:"Pięć chwil, które miną szybciej, niż myślisz: pierwszy uśmiech, pierwszy ząbek, pierwsze kroki, pierwsze słowo i to, że mieszczę się w Twoich ramionach."},
+  {c:"g",t:"Cztery rzeczy, których uczysz mnie bez słów: że jestem ważny, że jestem kochany, że jestem bezpieczny i że nie jestem sam."},
+  {c:"g",t:"Trzy rzeczy, za które kiedyś Ci podziękuję: że byłaś, że się nie poddałaś i że dałaś mi dom."},
+  {c:"g",t:"Pięć rzeczy, które znaczą dla mnie więcej niż prezenty: Twój czas, Twój głos, Twoja obecność, Twój uśmiech i Twoje ramiona."},
+  {c:"g",t:"Trzy rzeczy, które chciałbym, żebyś wiedziała: jesteś wystarczająca, robisz świetną robotę i jesteś moim całym światem."},
+  {c:"tt",t:"Tata mówi, że ogarnia. Trzyma mnie, butelkę i telefon, a pilota szuka od godziny."},
+  {c:"tt",t:"Słuchaj, tato. Mecz się powtórzy. Ja będę mały tylko raz. Wybierz mądrze."},
+  {c:"tt",t:"Tata twierdzi, że zmienia pieluchę szybciej niż mama. Statystyki mówią co innego."},
+  {c:"tt",t:"Tato, nie musisz wszystkiego umieć. Wystarczy, że jesteś. Reszty nauczymy się razem."},
+  {c:"tt",t:"Tata uczy mnie rzucać piłką. Ja uczę tatę wstawać pięć razy w nocy. Remis."},
+  {c:"tt",t:"Słuchaj, tato. Twoja broda to moja ulubiona zabawka. Przyzwyczaj się."},
+  {c:"tt",t:"Tata mówi, że jest twardy. Rozkleja się za każdym razem, gdy się uśmiecham."},
+  {c:"tt",t:"Tato, praca poczeka. Najlepszy projekt to ja. Poświęć mi chwilę."},
   {c:"c",t:"Te policzki znikną. Ten zapach noworodka też. Zatrzymaj to, póki możesz."},
   {c:"c",t:"Robisz mi tysiąc zdjęć, a żadne nie jest jak ze studia? Wyślij jedno do BoboFoto."},
   {c:"c",t:"Za rok mnie nie poznasz. Masz jedną szansę, żeby to zatrzymać."},
