@@ -81,7 +81,14 @@
         </select>
       </div>
     </div>
-    <div class="hint">👋 Końcówka: domyślnie film kończy się <b>samą puentą</b> (mocniej!). Follow-CTA dawaj tylko co kilka filmów, nie za każdym razem.<br>⚠️ Veo Flash generuje poziomo — pion ustaw w Gemini (proporcje 9:16) albo dotnij w CapCut. Napisy i logo dodajesz w CapCut.</div>
+    <div class="row" style="margin-top:12px">
+      <label>🎙️ Mowa Bobo</label>
+      <select id="speech">
+        <option value="mute">🔇 Bez mowy — głos dodaję w CapCut (zalecane, czysty polski)</option>
+        <option value="veo">🗣️ Mówi w Veo (tylko krótkie teksty; długie się ucinają)</option>
+      </select>
+    </div>
+    <div class="hint">👋 Końcówka: domyślnie film kończy się <b>samą puentą</b> (mocniej!). Follow-CTA dawaj tylko co kilka filmów, nie za każdym razem.<br>🎙️ <b>Mowa:</b> Veo źle mówi po polsku — przy dłuższych tekstach ucina/przekręca słowa. Tryb <b>„bez mowy"</b> = Bobo rusza ustami, a Ty dokładasz głos (np. ElevenLabs / własny) w CapCut → polski zawsze idealny.<br>⚠️ Veo Flash generuje poziomo — pion ustaw w Gemini (proporcje 9:16) albo dotnij w CapCut.</div>
   </div>
 
   <div class="card">
@@ -439,7 +446,17 @@ function toast(){const t=document.getElementById('toast');t.classList.add('show'
 function makePrompt(txt,gagEn){
   const dur=document.getElementById('dur').value;
   const mid=(dur-5>2)?(dur-5):6;
+  const mode=(document.getElementById('speech')||{}).value||"mute";
   const action="- 0–2s (HOOK): a fast playful whip-pan snaps onto Bobo, who turns to camera and raises one tiny index finger like a wise professor, eyebrows up, cheeky confident spark.\n- 2–"+mid+"s (ADVICE): Bobo gestures naturally and expressively while making its point, lively and warm.\n- "+mid+"–"+dur+"s (OUTRO): a warm encouraging smile, raises the tiny finger again and gives a friendly little wave.";
+  let speech,voice,negExtra="";
+  if(mode==="mute"){
+    speech="NO SPOKEN DIALOGUE: Bobo opens and moves its mouth and gestures expressively as if cheerfully talking, with natural lively lip movement, but produces NO voice and NO words — silent character animation only (the Polish voice-over is added later in editing). Reference line to match the lip movement to (do NOT generate it as audio): "+makeSpeak(txt);
+    voice="AUDIO: only ambient room tone and light gentle background music — absolutely NO voice, NO speech, NO talking.";
+    negExtra=" spoken words, dialogue, voice, talking audio, speech, narration, singing, gibberish,";
+  }else{
+    speech="THE BABY SPEAKS (Polish, lip-synced) — say this WHOLE short line clearly from the first to the last word:\n"+makeSpeak(txt);
+    voice="VOICE: native fluent Polish, a cute high-pitched toddler voice, soft with a slight lisp but every word crisp. Speak SLOWLY and CLEARLY, pronounce and FINISH every single word and the entire line — do not cut off, do not rush, do not stop early, do not skip words. Correct natural Polish pronunciation, no English accent.";
+  }
   return `VERTICAL 9:16 PORTRAIT VIDEO (taller than it is wide), portrait orientation, 1080x1920 resolution, full vertical frame edge to edge, NO black bars, NO letterbox. Strictly 9:16 aspect ratio — do NOT render in 16:9, landscape, widescreen or square. Premium 3D animated cartoon (stylized, polished, clearly fictional and wholesome), soft cinematic lighting, 30 fps, optimized for TikTok / Instagram Reels / YouTube Shorts, ${dur} seconds, happy and family-friendly.
 
 ${CHARACTER}
@@ -450,14 +467,13 @@ BACKGROUND GAG: throughout, in the blurred background directly behind Bobo and c
 ACTION:
 ${action}
 
-THE BABY SPEAKS (Polish, lip-synced, one continuous take):
-${makeSpeak(txt)}
+${speech}
 
-${VOICE}
+${voice}
 
 ${TECH}
 
-${NEG}`;
+${NEG}${negExtra?(" Avoid:"+negExtra+" cut-off speech."):""}`;
 }
 
 function copyCustom(){
@@ -575,6 +591,7 @@ renderCheck();
 gagSel.addEventListener('change',renderLib);
 document.getElementById('outro').addEventListener('change',renderLib);
 document.getElementById('dur').addEventListener('change',renderLib);
+document.getElementById('speech').addEventListener('change',renderLib);
 renderFilters();renderLib();
 </script>
 </body>
