@@ -197,6 +197,7 @@ const CATS = {
   g:{name:"Listy ❤️",col:"#c98aa8",close:"Zapisz, jeśli też tak masz 💛",ht:"#mama #macierzyństwo #wzruszające"},
   tt:{name:"Tato radzi",col:"#3d6e8a",close:"Otaguj tatę 👨",ht:"#tata #rodzicielstwo #rodzina"},
   p:{name:"Kamienie milowe",col:"#4a9d7f",close:"Pamiętasz ten moment? 💬",ht:"#niemowlę #rozwójdziecka #pierwszyraz"},
+  q:{name:"Pytanie za milion",col:"#2d6cdf",close:"A, B, C czy D? Pisz w komentarzu 💬",ht:"#humor #rodzicielstwo #zgadnij"},
   c:{name:"BoboFoto",col:"#33352f",close:"👉 bobofoto.pl",ht:"#sesjanoworodkowa #noworodek #zdjęcianoworodka #pamiątka"}
 };
 const BASE_HT="#fyp #dlaciebie #mama #dziecko #rodzina #macierzyństwo #rodzicielstwo #niemowlę #noworodek #maluch #polskamama #instamama";
@@ -218,6 +219,7 @@ const HOOKS={
   g:["Zapisz to, mamo","To Cię wzruszy","Nie oglądaj bez chusteczek"],
   tt:["Otaguj tatę 👨","Tato, to do Ciebie","Każdy tata to zna"],
   p:["Pamiętasz ten moment?","To mija w sekundę","Zatrzymaj to"],
+  q:["Pytanie za milion! 🤔","Tylko jedna jest prawidłowa","Którą wybierasz?"],
   c:["Za rok tego nie cofniesz","Nie przegap tej chwili"]
 };
 function pickHook(c){const a=HOOKS[c]||HOOKS.a;return a[Math.floor(Math.random()*a.length)];}
@@ -425,6 +427,18 @@ const POOL = [
   {c:"p",t:"Dziś pierwsze aguuu. Tłumaczę: znaczyło zmień mnie, jestem głodny i kocham was."},
   {c:"p",t:"Pierwsze kroki coraz bliżej. Ostrzegam — gdy ruszę, nic nie będzie bezpieczne."},
   {c:"p",t:"Dziś mija mój pierwszy miesiąc. Bilans: zero słów, sto skradzionych serc."},
+  {c:"q",t:"Pytanie za milion! Rodzice idą spać. Powinienem: A) narobić do świeżej pieluchy, B) nie zasnąć do wpół do piątej bez powodu, C) zażądać kolejnej godziny przy piersi, D) spać, ale wydawać dziwne odgłosy. Prawidłowa? D."},
+  {c:"q",t:"Pytanie za milion! Mama właśnie usiadła z gorącą kawą. Powinienem: A) zacząć płakać teraz, B) poczekać na pierwszy łyk, C) narobić w pieluchę, D) wszystko naraz, jestem profesjonalistą. Oczywiście D."},
+  {c:"q",t:"Pytanie za milion! Jest trzecia w nocy. Czas na: A) płacz bez powodu, B) gaworzenie na całego, C) wielki głód, D) imprezę, kto śpi ten przegrywa. Poprawna? D."},
+  {c:"q",t:"Pytanie za milion! Babcia w odwiedzinach. Powinienem: A) być słodki tylko przy niej, B) płakać gdy weźmie mnie mama, C) zjeść wszystko od babci, D) zostać u babci na zawsze, tam nie ma zasad. D."},
+  {c:"q",t:"Pytanie za milion! Tata zmienia mi pieluchę. Idealny moment, żeby: A) zrobić niespodziankę, B) złapać się za stópki, C) zrobić fontannę, D) wszystko po kolei. Prawidłowa? D."},
+  {c:"q",t:"Pytanie za milion! Mama robi mi tysięczne zdjęcie. Powinienem: A) odwrócić głowę, B) zrobić dziwną minę, C) zamknąć oczy w tym momencie, D) wyglądać idealnie, ale gdy odłoży telefon. D."},
+  {c:"q",t:"Pytanie za milion! Dostałem drogą zabawkę. Wybieram: A) pudełko, B) folię, C) metkę, D) pilot od telewizora, klasyka. Poprawna? D."},
+  {c:"q",t:"Pytanie za milion! Mama wreszcie zasnęła. Powinienem: A) też spać, B) zapłakać, C) zgłodnieć, D) poczekać siedem minut i uderzyć. D."},
+  {c:"q",t:"Pytanie za milion! Goście chcą mnie potrzymać. Plan: A) płakać u każdego, B) być słodkim dziesięć sekund, potem płakać, C) zasnąć żeby mnie nie oddali, D) patrzeć groźnie aż oddadzą mnie mamie. D."},
+  {c:"q",t:"Pytanie za milion! Mama mówi: już prawie śpi. Powinienem: A) udowodnić, że się myli, B) otworzyć szeroko oczy, C) uśmiechnąć się słodko, D) zrobić to wszystko i zażądać noszenia. D."},
+  {c:"q",t:"Pytanie za milion! Zostawili mnie samego na minutę. Reaguję: A) bawię się sam, B) rozglądam się, C) płaczę jakby świat się kończył, D) cisza, dopóki nie wejdą, wtedy dramat. D."},
+  {c:"q",t:"Pytanie za milion! Pora na drzemkę. Wybieram miejsce: A) łóżeczko, B) wózek, C) ramiona mamy, D) ramiona mamy, ale tylko gdy stoi, nie siedzi. Prawidłowa? D."},
   {c:"c",t:"Te policzki znikną. Ten zapach noworodka też. Zatrzymaj to, póki możesz."},
   {c:"c",t:"Robisz mi tysiąc zdjęć, a żadne nie jest jak ze studia? Wyślij jedno do BoboFoto."},
   {c:"c",t:"Za rok mnie nie poznasz. Masz jedną szansę, żeby to zatrzymać."},
