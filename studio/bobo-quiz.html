@@ -66,6 +66,9 @@
     <select id="uklad" style="width:100%;padding:10px;border:1px solid var(--line);border-radius:10px;font-size:14px">
       <option value="lista">Lista (kółko + tekst)</option>
       <option value="przyciski">Przyciski (boxy)</option>
+      <option value="siatka">Siatka 2×2 (A B / C D)</option>
+      <option value="pasy">Paski (pełna szerokość)</option>
+      <option value="numerki">Numerki (duże litery)</option>
     </select>
   </div>
 
@@ -194,19 +197,33 @@ function layout(){
   const A=[val('a'),val('b'),val('c'),val('d')];
   const ok=correct();
   const qFont="bold 50px system-ui,Segoe UI,Roboto,sans-serif";
-  const aFont="38px system-ui,Segoe UI,Roboto,sans-serif";
   const innerW=CARDW-PAD*2;
   const qLines=wrap(Q,qFont,innerW);
-  const ansTextW=innerW-(mode==="przyciski"?150:86);
+  let aFont,lineH,ansTextW,colW=0;
+  if(mode==="siatka"){aFont="34px system-ui,Segoe UI,Roboto,sans-serif";lineH=44;colW=(innerW-24)/2;ansTextW=colW-48;}
+  else{aFont="38px system-ui,Segoe UI,Roboto,sans-serif";lineH=50;
+    ansTextW=innerW-(mode==="przyciski"?150:mode==="pasy"?150:mode==="numerki"?110:86);}
   const ansLines=A.map(t=>wrap(t||"...",aFont,ansTextW));
-  let y=40;
-  const headH=82; y+=headH+34;
+  let y=40; const headH=82; y+=headH+34;
   const qLH=62; y+=qLines.length*qLH+30;
-  const rowGap=mode==="przyciski"?18:26, lineH=50;
-  const rowHs=ansLines.map(ls=> mode==="przyciski" ? Math.max(96, ls.length*lineH+44) : Math.max(70, ls.length*lineH+18));
-  rowHs.forEach(h=>y+=h+rowGap);
+  let rowGap,rowHs=[],gridRowHs=[];
+  if(mode==="siatka"){
+    rowGap=22;
+    const cellHs=ansLines.map(ls=>Math.max(124, ls.length*lineH+58));
+    gridRowHs=[Math.max(cellHs[0],cellHs[1]),Math.max(cellHs[2],cellHs[3])];
+    gridRowHs.forEach(h=>y+=h+rowGap); rowHs=cellHs;
+  }else{
+    rowGap=mode==="przyciski"?18:mode==="pasy"?14:mode==="numerki"?16:26;
+    rowHs=ansLines.map(ls=>{
+      if(mode==="przyciski")return Math.max(96, ls.length*lineH+44);
+      if(mode==="pasy")return Math.max(92, ls.length*lineH+36);
+      if(mode==="numerki")return Math.max(82, ls.length*lineH+26);
+      return Math.max(70, ls.length*lineH+18);
+    });
+    rowHs.forEach(h=>y+=h+rowGap);
+  }
   y+=14;
-  return {mode,Q,A,ok,qFont,aFont,innerW,qLines,ansLines,qLH,rowGap,lineH,rowHs,headH,total:y};
+  return {mode,Q,A,ok,qFont,aFont,innerW,colW,qLines,ansLines,qLH,rowGap,lineH,rowHs,gridRowHs,headH,total:y};
 }
 
 function draw(){
@@ -234,33 +251,73 @@ function draw(){
   // odpowiedzi
   const letters=["A","B","C","D"];
   const cx=CARDX+PAD, circleD=64, innerW=CARDW-PAD*2;
+  const bf="bold 36px system-ui,Segoe UI,Roboto,sans-serif";
+
+  if(L.mode==="siatka"){
+    const colGap=24, colW=L.colW, cD=52, xs=[cx, cx+colW+colGap];
+    for(let r=0;r<2;r++){
+      const rowH=L.gridRowHs[r];
+      for(let c=0;c<2;c++){
+        const i=r*2+c, isOk=L.ok===i, bx=xs[c];
+        ctx.fillStyle=isOk?S.okBg:S.box; ctx.strokeStyle=isOk?S.okBg:S.boxBorder; ctx.lineWidth=3;
+        roundRect(bx, y, colW, rowH, 22); ctx.fill(); ctx.stroke();
+        const ccx=bx+24+cD/2, ccy=y+26+cD/2;
+        ctx.beginPath(); ctx.arc(ccx, ccy, cD/2, 0, Math.PI*2);
+        ctx.fillStyle=isOk?S.okText:S.circleBg; ctx.fill();
+        ctx.fillStyle=isOk?S.okBg:S.circleText; ctx.font="bold 30px system-ui,Segoe UI,Roboto,sans-serif";
+        ctx.textAlign="center"; ctx.textBaseline="middle"; ctx.fillText(letters[i], ccx, ccy+1);
+        ctx.fillStyle=isOk?S.okText:S.ansText; ctx.font=L.aFont; ctx.textAlign="left"; ctx.textBaseline="alphabetic";
+        let ty=y+26+cD+38;
+        L.ansLines[i].forEach(line=>{ctx.fillText(line, bx+24, ty); ty+=L.lineH;});
+      }
+      y+=rowH+L.rowGap;
+    }
+    return;
+  }
+
   for(let i=0;i<4;i++){
-    const rowH=L.rowHs[i];
-    const isOk=L.ok===i;
+    const rowH=L.rowHs[i], isOk=L.ok===i;
     if(L.mode==="przyciski"){
-      // box
       ctx.fillStyle=isOk?S.okBg:S.box; ctx.strokeStyle=isOk?S.okBg:S.boxBorder; ctx.lineWidth=3;
       roundRect(cx, y, innerW, rowH, 26); ctx.fill(); ctx.stroke();
       const cyc=y+rowH/2, ccx=cx+24+circleD/2;
       ctx.beginPath(); ctx.arc(ccx, cyc, circleD/2, 0, Math.PI*2);
       ctx.fillStyle=isOk?S.okText:S.circleBg; ctx.fill();
-      ctx.fillStyle=isOk?S.okBg:S.circleText; ctx.font="bold 36px system-ui,Segoe UI,Roboto,sans-serif";
-      ctx.textAlign="center"; ctx.textBaseline="middle";
+      ctx.fillStyle=isOk?S.okBg:S.circleText; ctx.font=bf; ctx.textAlign="center"; ctx.textBaseline="middle";
       ctx.fillText(letters[i], ccx, cyc+2);
       ctx.fillStyle=isOk?S.okText:S.ansText; ctx.font=L.aFont; ctx.textAlign="left"; ctx.textBaseline="middle";
-      const tx=ccx+circleD/2+22, lines=L.ansLines[i];
-      let ty=cyc-(lines.length-1)*L.lineH/2;
+      const tx=ccx+circleD/2+22, lines=L.ansLines[i]; let ty=cyc-(lines.length-1)*L.lineH/2;
+      lines.forEach(line=>{ctx.fillText(line, tx, ty); ty+=L.lineH;}); ctx.textBaseline="alphabetic";
+    }
+    else if(L.mode==="pasy"){
+      const barX=CARDX+16, barW=CARDW-32;
+      ctx.fillStyle=isOk?S.okBg:S.box; ctx.strokeStyle=isOk?S.okBg:S.boxBorder; ctx.lineWidth=3;
+      roundRect(barX, y, barW, rowH, 16); ctx.fill(); ctx.stroke();
+      const badge=rowH-24, bxx=barX+12, byy=y+12;
+      ctx.fillStyle=isOk?S.okText:S.circleBg; roundRect(bxx, byy, badge, badge, 12); ctx.fill();
+      ctx.fillStyle=isOk?S.okBg:S.circleText; ctx.font="bold 42px system-ui,Segoe UI,Roboto,sans-serif";
+      ctx.textAlign="center"; ctx.textBaseline="middle"; ctx.fillText(letters[i], bxx+badge/2, byy+badge/2+1);
+      ctx.fillStyle=isOk?S.okText:S.ansText; ctx.font=L.aFont; ctx.textAlign="left"; ctx.textBaseline="middle";
+      const tx=bxx+badge+24, lines=L.ansLines[i]; let ty=y+rowH/2-(lines.length-1)*L.lineH/2;
+      lines.forEach(line=>{ctx.fillText(line, tx, ty); ty+=L.lineH;}); ctx.textBaseline="alphabetic";
+    }
+    else if(L.mode==="numerki"){
+      ctx.fillStyle=isOk?S.okBg:S.circleBg; ctx.font="bold 66px system-ui,Segoe UI,Roboto,sans-serif";
+      ctx.textAlign="left"; ctx.textBaseline="middle"; ctx.fillText(letters[i], cx, y+rowH/2);
+      ctx.fillStyle=isOk?S.okAns:S.ansText; ctx.font=L.aFont; ctx.textBaseline="middle";
+      const tx=cx+96, lines=L.ansLines[i]; let ty=y+rowH/2-(lines.length-1)*L.lineH/2;
       lines.forEach(line=>{ctx.fillText(line, tx, ty); ty+=L.lineH;});
+      ctx.strokeStyle=S.boxBorder; ctx.lineWidth=2; ctx.beginPath();
+      ctx.moveTo(cx, y+rowH+L.rowGap/2-2); ctx.lineTo(cx+innerW, y+rowH+L.rowGap/2-2); ctx.stroke();
       ctx.textBaseline="alphabetic";
-    } else {
+    }
+    else {
       const cyc=y+34;
       ctx.beginPath(); ctx.arc(cx+circleD/2, cyc, circleD/2, 0, Math.PI*2);
       ctx.fillStyle=isOk?S.okBg:S.circleBg; ctx.fill();
-      ctx.fillStyle=isOk?S.okText:S.circleText; ctx.font="bold 36px system-ui,Segoe UI,Roboto,sans-serif";
-      ctx.textAlign="center"; ctx.textBaseline="middle";
+      ctx.fillStyle=isOk?S.okText:S.circleText; ctx.font=bf; ctx.textAlign="center"; ctx.textBaseline="middle";
       ctx.fillText(letters[i], cx+circleD/2, cyc+2);
-      ctx.fillStyle=isOk?S.okAns:S.ansText;
-      ctx.font=L.aFont; ctx.textAlign="left"; ctx.textBaseline="alphabetic";
+      ctx.fillStyle=isOk?S.okAns:S.ansText; ctx.font=L.aFont; ctx.textAlign="left"; ctx.textBaseline="alphabetic";
       let ty=y+ (L.ansLines[i].length===1?44:30);
       L.ansLines[i].forEach(line=>{ctx.fillText(line, cx+circleD+22, ty); ty+=L.lineH;});
     }
