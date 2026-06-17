@@ -60,6 +60,8 @@
     <div class="hint">Kropka = zaznacz poprawną (podświetli się na zielono). Możesz odznaczyć, klikając ponownie.</div>
     <label style="margin-top:12px">Nagłówek</label>
     <input type="text" id="title" value="PYTANIE ZA MILION">
+    <label style="margin-top:12px">🎨 Styl ramki</label>
+    <select id="style" style="width:100%;padding:10px;border:1px solid var(--line);border-radius:10px;font-size:14px"></select>
   </div>
 
   <div class="btns">
@@ -155,6 +157,16 @@ presetSel.addEventListener('change',()=>{
 });
 
 const cv=document.getElementById('cv'),ctx=cv.getContext('2d');
+const STYLES={
+  krem:{name:"Kremowa (delikatna)",cardBg:"rgba(250,247,240,0.97)",cardBorder:"#cdbf9f",pillBg:"#7c8a6e",pillText:"#ffffff",qText:"#33352f",circleBg:"#7c8a6e",circleText:"#ffffff",ansText:"#33352f",okBg:"#3a9d5d",okText:"#ffffff",okAns:"#2c7a47"},
+  teleturniej:{name:"Teleturniej (granat + złoto)",cardBg:"rgba(11,18,46,0.96)",cardBorder:"#d4af37",pillBg:"#d4af37",pillText:"#0b122e",qText:"#ffffff",circleBg:"#d4af37",circleText:"#0b122e",ansText:"#f3f3f3",okBg:"#2ecc71",okText:"#06351b",okAns:"#7cf0a8"},
+  tiktok:{name:"TikTok pop (żółta)",cardBg:"rgba(255,221,51,0.97)",cardBorder:"#111111",pillBg:"#111111",pillText:"#ffd900",qText:"#111111",circleBg:"#111111",circleText:"#ffd900",ansText:"#111111",okBg:"#e8492b",okText:"#ffffff",okAns:"#b5301a"},
+  roz:{name:"Cukierkowa (róż)",cardBg:"rgba(255,240,246,0.97)",cardBorder:"#e58aa8",pillBg:"#e0608f",pillText:"#ffffff",qText:"#4a2230",circleBg:"#e0608f",circleText:"#ffffff",ansText:"#4a2230",okBg:"#3a9d5d",okText:"#ffffff",okAns:"#2c7a47"},
+  czarna:{name:"Czarna elegancka",cardBg:"rgba(18,18,20,0.93)",cardBorder:"#ffffff",pillBg:"#ffffff",pillText:"#111111",qText:"#ffffff",circleBg:"#ffffff",circleText:"#111111",ansText:"#f0f0f0",okBg:"#5ad17a",okText:"#06351b",okAns:"#9af0b5"}
+};
+const styleSel=document.getElementById('style');
+Object.keys(STYLES).forEach(k=>{const o=document.createElement('option');o.value=k;o.textContent=STYLES[k].name;styleSel.appendChild(o);});
+styleSel.addEventListener('change',draw);
 const W=1080, PAD=56, CARDX=24, CARDW=W-48;
 function val(id){return document.getElementById(id).value.trim();}
 function correct(){const r=document.querySelector('input[name=ok]:checked');return r?+r.value:-1;}
@@ -189,24 +201,25 @@ function layout(){
 }
 
 function draw(){
+  const S=STYLES[(document.getElementById('style')||{}).value]||STYLES.krem;
   const L=layout();
   cv.width=W; cv.height=L.total;
   ctx.clearRect(0,0,W,cv.height);
   // karta
-  ctx.fillStyle="rgba(250,247,240,0.97)";
-  ctx.strokeStyle="#cdbf9f"; ctx.lineWidth=4;
+  ctx.fillStyle=S.cardBg;
+  ctx.strokeStyle=S.cardBorder; ctx.lineWidth=5;
   roundRect(CARDX,12,CARDW,cv.height-24,40); ctx.fill(); ctx.stroke();
   // nagłówek (pill)
   ctx.font="bold 34px system-ui,Segoe UI,Roboto,sans-serif";
   const title=(val('title')||"PYTANIE ZA MILION");
   const tw=ctx.measureText(title).width;
-  const pillW=tw+72, pillH=L.headH, pillX=(W-pillW)/2, pillY=34;
-  ctx.fillStyle="#7c8a6e"; roundRect(pillX,pillY,pillW,pillH,pillH/2); ctx.fill();
-  ctx.fillStyle="#fff"; ctx.textAlign="center"; ctx.textBaseline="middle";
+  const pillW=tw+96, pillH=L.headH, pillX=(W-pillW)/2, pillY=34;
+  ctx.fillStyle=S.pillBg; roundRect(pillX,pillY,pillW,pillH,pillH/2); ctx.fill();
+  ctx.fillStyle=S.pillText; ctx.textAlign="center"; ctx.textBaseline="middle";
   ctx.fillText("⭐ "+title, W/2, pillY+pillH/2+2);
   // pytanie
   let y=34+L.headH+34;
-  ctx.fillStyle="#33352f"; ctx.font=L.qFont; ctx.textAlign="center"; ctx.textBaseline="alphabetic";
+  ctx.fillStyle=S.qText; ctx.font=L.qFont; ctx.textAlign="center"; ctx.textBaseline="alphabetic";
   L.qLines.forEach(line=>{ctx.fillText(line,W/2,y+44); y+=L.qLH;});
   y+=30;
   // odpowiedzi
@@ -215,15 +228,13 @@ function draw(){
   for(let i=0;i<4;i++){
     const rowH=L.rowHs[i];
     const isOk=L.ok===i;
-    // kółko z literą
     const cyc=y+34;
     ctx.beginPath(); ctx.arc(cx+circleD/2, cyc, circleD/2, 0, Math.PI*2);
-    ctx.fillStyle=isOk?"#3a9d5d":"#7c8a6e"; ctx.fill();
-    ctx.fillStyle="#fff"; ctx.font="bold 36px system-ui,Segoe UI,Roboto,sans-serif";
+    ctx.fillStyle=isOk?S.okBg:S.circleBg; ctx.fill();
+    ctx.fillStyle=isOk?S.okText:S.circleText; ctx.font="bold 36px system-ui,Segoe UI,Roboto,sans-serif";
     ctx.textAlign="center"; ctx.textBaseline="middle";
     ctx.fillText(letters[i], cx+circleD/2, cyc+2);
-    // tekst odpowiedzi
-    ctx.fillStyle=isOk?"#2c7a47":"#33352f";
+    ctx.fillStyle=isOk?S.okAns:S.ansText;
     ctx.font=L.aFont; ctx.textAlign="left"; ctx.textBaseline="alphabetic";
     let ty=y+ (L.ansLines[i].length===1?44:30);
     L.ansLines[i].forEach(line=>{ctx.fillText(line, cx+circleD+22, ty); ty+=L.lineH;});
