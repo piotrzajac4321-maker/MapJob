@@ -62,6 +62,11 @@
     <input type="text" id="title" value="PYTANIE ZA MILION">
     <label style="margin-top:12px">🎨 Styl ramki</label>
     <select id="style" style="width:100%;padding:10px;border:1px solid var(--line);border-radius:10px;font-size:14px"></select>
+    <label style="margin-top:12px">🧩 Układ odpowiedzi</label>
+    <select id="uklad" style="width:100%;padding:10px;border:1px solid var(--line);border-radius:10px;font-size:14px">
+      <option value="lista">Lista (kółko + tekst)</option>
+      <option value="przyciski">Przyciski (boxy)</option>
+    </select>
   </div>
 
   <div class="btns">
@@ -158,11 +163,15 @@ presetSel.addEventListener('change',()=>{
 
 const cv=document.getElementById('cv'),ctx=cv.getContext('2d');
 const STYLES={
-  krem:{name:"Kremowa (delikatna)",cardBg:"rgba(250,247,240,0.97)",cardBorder:"#cdbf9f",pillBg:"#7c8a6e",pillText:"#ffffff",qText:"#33352f",circleBg:"#7c8a6e",circleText:"#ffffff",ansText:"#33352f",okBg:"#3a9d5d",okText:"#ffffff",okAns:"#2c7a47"},
-  teleturniej:{name:"Teleturniej (granat + złoto)",cardBg:"rgba(11,18,46,0.96)",cardBorder:"#d4af37",pillBg:"#d4af37",pillText:"#0b122e",qText:"#ffffff",circleBg:"#d4af37",circleText:"#0b122e",ansText:"#f3f3f3",okBg:"#2ecc71",okText:"#06351b",okAns:"#7cf0a8"},
-  tiktok:{name:"TikTok pop (żółta)",cardBg:"rgba(255,221,51,0.97)",cardBorder:"#111111",pillBg:"#111111",pillText:"#ffd900",qText:"#111111",circleBg:"#111111",circleText:"#ffd900",ansText:"#111111",okBg:"#e8492b",okText:"#ffffff",okAns:"#b5301a"},
-  roz:{name:"Cukierkowa (róż)",cardBg:"rgba(255,240,246,0.97)",cardBorder:"#e58aa8",pillBg:"#e0608f",pillText:"#ffffff",qText:"#4a2230",circleBg:"#e0608f",circleText:"#ffffff",ansText:"#4a2230",okBg:"#3a9d5d",okText:"#ffffff",okAns:"#2c7a47"},
-  czarna:{name:"Czarna elegancka",cardBg:"rgba(18,18,20,0.93)",cardBorder:"#ffffff",pillBg:"#ffffff",pillText:"#111111",qText:"#ffffff",circleBg:"#ffffff",circleText:"#111111",ansText:"#f0f0f0",okBg:"#5ad17a",okText:"#06351b",okAns:"#9af0b5"}
+  krem:{name:"Kremowa (delikatna)",cardBg:"rgba(250,247,240,0.97)",cardBorder:"#cdbf9f",pillBg:"#7c8a6e",pillText:"#ffffff",qText:"#33352f",circleBg:"#7c8a6e",circleText:"#ffffff",ansText:"#33352f",okBg:"#3a9d5d",okText:"#ffffff",okAns:"#2c7a47",box:"#f1ede3",boxBorder:"#ddd3bf"},
+  teleturniej:{name:"Teleturniej (granat + złoto)",cardBg:"rgba(11,18,46,0.96)",cardBorder:"#d4af37",pillBg:"#d4af37",pillText:"#0b122e",qText:"#ffffff",circleBg:"#d4af37",circleText:"#0b122e",ansText:"#f3f3f3",okBg:"#2ecc71",okText:"#06351b",okAns:"#7cf0a8",box:"rgba(255,255,255,0.08)",boxBorder:"#d4af37"},
+  tiktok:{name:"TikTok pop (żółta)",cardBg:"rgba(255,221,51,0.97)",cardBorder:"#111111",pillBg:"#111111",pillText:"#ffd900",qText:"#111111",circleBg:"#111111",circleText:"#ffd900",ansText:"#111111",okBg:"#e8492b",okText:"#ffffff",okAns:"#b5301a",box:"rgba(0,0,0,0.07)",boxBorder:"#111111"},
+  roz:{name:"Cukierkowa (róż)",cardBg:"rgba(255,240,246,0.97)",cardBorder:"#e58aa8",pillBg:"#e0608f",pillText:"#ffffff",qText:"#4a2230",circleBg:"#e0608f",circleText:"#ffffff",ansText:"#4a2230",okBg:"#3a9d5d",okText:"#ffffff",okAns:"#2c7a47",box:"#fde6ee",boxBorder:"#e8a8c0"},
+  czarna:{name:"Czarna elegancka",cardBg:"rgba(18,18,20,0.93)",cardBorder:"#ffffff",pillBg:"#ffffff",pillText:"#111111",qText:"#ffffff",circleBg:"#ffffff",circleText:"#111111",ansText:"#f0f0f0",okBg:"#5ad17a",okText:"#06351b",okAns:"#9af0b5",box:"rgba(255,255,255,0.09)",boxBorder:"#888888"},
+  niebieska:{name:"Niebieska (chłodna)",cardBg:"rgba(232,243,255,0.97)",cardBorder:"#5b8fd6",pillBg:"#3a6fb0",pillText:"#ffffff",qText:"#15314f",circleBg:"#3a6fb0",circleText:"#ffffff",ansText:"#15314f",okBg:"#3a9d5d",okText:"#ffffff",okAns:"#2c7a47",box:"#dbe9fb",boxBorder:"#b6d0f0"},
+  mieta:{name:"Miętowa (świeża)",cardBg:"rgba(230,248,242,0.97)",cardBorder:"#4bbf9a",pillBg:"#2f9e8f",pillText:"#ffffff",qText:"#1d3b34",circleBg:"#2f9e8f",circleText:"#ffffff",ansText:"#1d3b34",okBg:"#e8902b",okText:"#ffffff",okAns:"#b56a18",box:"#d6f1e8",boxBorder:"#aed8cb"},
+  pomarancz:{name:"Pomarańczowa (energia)",cardBg:"rgba(255,238,224,0.97)",cardBorder:"#e8762b",pillBg:"#e8762b",pillText:"#ffffff",qText:"#3a1f0c",circleBg:"#e8762b",circleText:"#ffffff",ansText:"#3a1f0c",okBg:"#3a9d5d",okText:"#ffffff",okAns:"#2c7a47",box:"#ffe2cc",boxBorder:"#f0c29a"},
+  fiolet:{name:"Fioletowa (bajkowa)",cardBg:"rgba(243,235,255,0.97)",cardBorder:"#8a63c0",pillBg:"#7a4fbf",pillText:"#ffffff",qText:"#2e1d4a",circleBg:"#7a4fbf",circleText:"#ffffff",ansText:"#2e1d4a",okBg:"#3a9d5d",okText:"#ffffff",okAns:"#2c7a47",box:"#ebe0fb",boxBorder:"#cbb6ec"}
 };
 const styleSel=document.getElementById('style');
 Object.keys(STYLES).forEach(k=>{const o=document.createElement('option');o.value=k;o.textContent=STYLES[k].name;styleSel.appendChild(o);});
@@ -180,6 +189,7 @@ function wrap(text,font,maxW){
 function roundRect(x,y,w,h,r){ctx.beginPath();ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath();}
 
 function layout(){
+  const mode=(document.getElementById('uklad')||{}).value||"lista";
   const Q=val('q')||"Pytanie...";
   const A=[val('a'),val('b'),val('c'),val('d')];
   const ok=correct();
@@ -187,17 +197,16 @@ function layout(){
   const aFont="38px system-ui,Segoe UI,Roboto,sans-serif";
   const innerW=CARDW-PAD*2;
   const qLines=wrap(Q,qFont,innerW);
-  const ansTextW=innerW-86; // miejsce na kółko z literą
+  const ansTextW=innerW-(mode==="przyciski"?150:86);
   const ansLines=A.map(t=>wrap(t||"...",aFont,ansTextW));
-  // wysokości
-  let y=40; // top
+  let y=40;
   const headH=82; y+=headH+34;
   const qLH=62; y+=qLines.length*qLH+30;
-  const rowGap=26, lineH=50;
-  const rowHs=ansLines.map(ls=>Math.max(70, ls.length*lineH+18));
+  const rowGap=mode==="przyciski"?18:26, lineH=50;
+  const rowHs=ansLines.map(ls=> mode==="przyciski" ? Math.max(96, ls.length*lineH+44) : Math.max(70, ls.length*lineH+18));
   rowHs.forEach(h=>y+=h+rowGap);
-  y+=14; // bottom
-  return {Q,A,ok,qFont,aFont,innerW,qLines,ansLines,qLH,rowGap,lineH,rowHs,headH,total:y};
+  y+=14;
+  return {mode,Q,A,ok,qFont,aFont,innerW,qLines,ansLines,qLH,rowGap,lineH,rowHs,headH,total:y};
 }
 
 function draw(){
@@ -224,23 +233,41 @@ function draw(){
   y+=30;
   // odpowiedzi
   const letters=["A","B","C","D"];
-  const cx=CARDX+PAD, circleD=64;
+  const cx=CARDX+PAD, circleD=64, innerW=CARDW-PAD*2;
   for(let i=0;i<4;i++){
     const rowH=L.rowHs[i];
     const isOk=L.ok===i;
-    const cyc=y+34;
-    ctx.beginPath(); ctx.arc(cx+circleD/2, cyc, circleD/2, 0, Math.PI*2);
-    ctx.fillStyle=isOk?S.okBg:S.circleBg; ctx.fill();
-    ctx.fillStyle=isOk?S.okText:S.circleText; ctx.font="bold 36px system-ui,Segoe UI,Roboto,sans-serif";
-    ctx.textAlign="center"; ctx.textBaseline="middle";
-    ctx.fillText(letters[i], cx+circleD/2, cyc+2);
-    ctx.fillStyle=isOk?S.okAns:S.ansText;
-    ctx.font=L.aFont; ctx.textAlign="left"; ctx.textBaseline="alphabetic";
-    let ty=y+ (L.ansLines[i].length===1?44:30);
-    L.ansLines[i].forEach(line=>{ctx.fillText(line, cx+circleD+22, ty); ty+=L.lineH;});
+    if(L.mode==="przyciski"){
+      // box
+      ctx.fillStyle=isOk?S.okBg:S.box; ctx.strokeStyle=isOk?S.okBg:S.boxBorder; ctx.lineWidth=3;
+      roundRect(cx, y, innerW, rowH, 26); ctx.fill(); ctx.stroke();
+      const cyc=y+rowH/2, ccx=cx+24+circleD/2;
+      ctx.beginPath(); ctx.arc(ccx, cyc, circleD/2, 0, Math.PI*2);
+      ctx.fillStyle=isOk?S.okText:S.circleBg; ctx.fill();
+      ctx.fillStyle=isOk?S.okBg:S.circleText; ctx.font="bold 36px system-ui,Segoe UI,Roboto,sans-serif";
+      ctx.textAlign="center"; ctx.textBaseline="middle";
+      ctx.fillText(letters[i], ccx, cyc+2);
+      ctx.fillStyle=isOk?S.okText:S.ansText; ctx.font=L.aFont; ctx.textAlign="left"; ctx.textBaseline="middle";
+      const tx=ccx+circleD/2+22, lines=L.ansLines[i];
+      let ty=cyc-(lines.length-1)*L.lineH/2;
+      lines.forEach(line=>{ctx.fillText(line, tx, ty); ty+=L.lineH;});
+      ctx.textBaseline="alphabetic";
+    } else {
+      const cyc=y+34;
+      ctx.beginPath(); ctx.arc(cx+circleD/2, cyc, circleD/2, 0, Math.PI*2);
+      ctx.fillStyle=isOk?S.okBg:S.circleBg; ctx.fill();
+      ctx.fillStyle=isOk?S.okText:S.circleText; ctx.font="bold 36px system-ui,Segoe UI,Roboto,sans-serif";
+      ctx.textAlign="center"; ctx.textBaseline="middle";
+      ctx.fillText(letters[i], cx+circleD/2, cyc+2);
+      ctx.fillStyle=isOk?S.okAns:S.ansText;
+      ctx.font=L.aFont; ctx.textAlign="left"; ctx.textBaseline="alphabetic";
+      let ty=y+ (L.ansLines[i].length===1?44:30);
+      L.ansLines[i].forEach(line=>{ctx.fillText(line, cx+circleD+22, ty); ty+=L.lineH;});
+    }
     y+=rowH+L.rowGap;
   }
 }
+document.getElementById('uklad').addEventListener('change',draw);
 
 function dl(){
   draw();
