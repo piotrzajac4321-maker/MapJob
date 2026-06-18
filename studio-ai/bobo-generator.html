@@ -92,7 +92,7 @@
         <option value="mute">🔇 Bez mowy — głos dodaję w CapCut (do długich/list)</option>
       </select>
     </div>
-    <div class="hint">👋 Końcówka: domyślnie film kończy się <b>samą puentą</b> (mocniej!). Follow-CTA dawaj tylko co kilka filmów, nie za każdym razem.<br>🎙️ <b>Mowa:</b> Veo źle mówi po polsku — przy dłuższych tekstach ucina/przekręca słowa. Tryb <b>„bez mowy"</b> = Bobo rusza ustami, a Ty dokładasz głos (np. ElevenLabs / własny) w CapCut → polski zawsze idealny.<br>⚠️ Veo Flash generuje poziomo — pion ustaw w Gemini (proporcje 9:16) albo dotnij w CapCut.</div>
+    <div class="hint">👋 Końcówka: domyślnie film kończy się <b>samą puentą</b> (mocniej!). Follow-CTA dawaj tylko co kilka filmów, nie za każdym razem.<br>🎙️ <b>Mowa:</b> Bobo mówi <b>szybko</b>, żeby zmieścić cały tekst (szybkie tempo = lepsze wyniki!). Veo bywa słaby w polskim — przy długich tekstach przełącz na „bez mowy" i dograj głos w CapCut.<br>⚠️ Veo Flash generuje poziomo — pion ustaw w Gemini (proporcje 9:16) albo dotnij w CapCut.</div>
   </div>
 
   <div class="card">
@@ -502,8 +502,8 @@ function makePrompt(txt,gagEn){
     voice="AUDIO: only ambient room tone and light gentle background music — absolutely NO voice, NO speech, NO talking.";
     negExtra=" spoken words, dialogue, voice, talking audio, speech, narration, singing, gibberish,";
   }else{
-    speech="THE BABY SPEAKS (Polish, lip-synced) — say this WHOLE short line clearly from the first to the last word:\n"+makeSpeak(txt);
-    voice="VOICE: native fluent Polish, a cute high-pitched toddler voice, soft with a slight lisp but every word crisp. Speak SLOWLY and CLEARLY, pronounce and FINISH every single word and the entire line — do not cut off, do not rush, do not stop early, do not skip words. Correct natural Polish pronunciation, no English accent.";
+    speech="THE BABY SPEAKS (Polish, lip-synced) — say this WHOLE line at a FAST, energetic pace, fitting every word into the clip from the first word to the last:\n"+makeSpeak(txt);
+    voice="VOICE: native fluent Polish, a cute high-pitched toddler voice, soft with a slight lisp but every word crisp. Speak FAST and energetically the WHOLE time, like an excited game-show host — talk quickly so the ENTIRE line fits inside the clip; pronounce and FINISH every single word, do not cut off, do not stop early, do not skip words, do not pause too long. Correct natural Polish pronunciation, no English accent.";
   }
   return `VERTICAL 9:16 PORTRAIT VIDEO (taller than it is wide), portrait orientation, 1080x1920 resolution, full vertical frame edge to edge, NO black bars, NO letterbox. Strictly 9:16 aspect ratio — do NOT render in 16:9, landscape, widescreen or square. Premium 3D animated cartoon (stylized, polished, clearly fictional and wholesome), soft cinematic lighting, 30 fps, optimized for TikTok / Instagram Reels / YouTube Shorts, ${dur} seconds, happy and family-friendly.
 
