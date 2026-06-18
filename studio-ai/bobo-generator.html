@@ -92,6 +92,13 @@
         <option value="mute">🔇 Bez mowy — głos dodaję w CapCut (do długich/list)</option>
       </select>
     </div>
+    <div class="row" style="margin-top:12px">
+      <label>🗣️ Początek „Słuchaj, dorosły!"</label>
+      <select id="intro">
+        <option value="tak">Tak — z hookiem „Słuchaj, dorosły!"</option>
+        <option value="nie">Nie — bez tego początku</option>
+      </select>
+    </div>
     <div class="hint">👋 Końcówka: domyślnie film kończy się <b>samą puentą</b> (mocniej!). Follow-CTA dawaj tylko co kilka filmów, nie za każdym razem.<br>🎙️ <b>Mowa:</b> Bobo mówi <b>szybko</b>, żeby zmieścić cały tekst (szybkie tempo = lepsze wyniki!). Veo bywa słaby w polskim — przy długich tekstach przełącz na „bez mowy" i dograj głos w CapCut.<br>⚠️ Veo Flash generuje poziomo — pion ustaw w Gemini (proporcje 9:16) albo dotnij w CapCut.</div>
   </div>
 
@@ -242,7 +249,7 @@ const POOL = [
   {c:"m",t:"Nie czekaj na pozwolenie. Ja po prostu zacząłem rosnąć i nikt mnie nie pytał."},
   {c:"h",t:"Myślisz, że to ty mnie wychowujesz? Jeden płacz w nocy i biegniesz. Kto tu rządzi?"},
   {c:"h",t:"Robisz mi tysiąc zdjęć dziennie. Rozumiem. Też bym się sobą zachwycał."},
-  {c:"h",t:"Wmawiasz sobie, że dziecko śpi smacznie? Ja budzę się osiem razy. Wybierz lepszy przykład."},
+  {c:"h",t:"Wmawiasz sobie, że dziecko śpi smacznie? Ja budzę się osiem razy. Tata to najlepszy przykład — oznaczcie go 😂"},
   {c:"h",t:"Wydałeś fortunę na zabawki, a ja bawię się pudełkiem. Pomyśl o tym."},
   {c:"h",t:"Negocjujesz w pracy? Ja wynegocjowałem nocne karmienie samym płaczem."},
   {c:"h",t:"Mówisz, że jesteś zmęczony? Uroczo. Ja dopiero uczę się trzymać głowę."},
@@ -486,7 +493,7 @@ GAGS.forEach((g,i)=>{const o=document.createElement('option');o.value=i;o.textCo
 
 function pickGag(){const v=gagSel.value;return v==="random"?GAGS[Math.floor(Math.random()*GAGS.length)]:GAGS[+v];}
 function gagLabel(){const v=gagSel.value;return v==="random"?"🎲 losowy (przy kopiowaniu)":GAGS[+v].pl;}
-function makeSpeak(txt){const o=document.getElementById('outro').value;return "„Słuchaj, dorosły! "+txt+(o?(" "+o):"")+"”";}
+function makeSpeak(txt){const o=document.getElementById('outro').value;const intro=((document.getElementById('intro')||{}).value!=="nie");return "„"+(intro?"Słuchaj, dorosły! ":"")+txt+(o?(" "+o):"")+"”";}
 function caption(it){const cat=CATS[it.c];return it.t+"\n\n"+cat.close;}
 function hashtags(it){return BASE_HT+(it.c==="c"?" #sesjanoworodkowa #zdjęcianoworodka":"");}
 function toast(){const t=document.getElementById('toast');t.classList.add('show');setTimeout(()=>t.classList.remove('show'),1500);}
@@ -640,6 +647,7 @@ gagSel.addEventListener('change',renderLib);
 document.getElementById('outro').addEventListener('change',renderLib);
 document.getElementById('dur').addEventListener('change',renderLib);
 document.getElementById('speech').addEventListener('change',renderLib);
+document.getElementById('intro').addEventListener('change',renderLib);
 renderFilters();renderLib();
 </script>
 </body>
