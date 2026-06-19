@@ -565,6 +565,14 @@ function recSec(txt){const words=makeSpeak(txt).split(/\s+/).filter(Boolean).len
 function caption(it){const cat=CATS[it.c];return it.t+"\n\n"+cat.close;}
 function ytTitle(it){let t=it.t.split(/[?.!]/)[0].trim(); if(t.length>72)t=t.slice(0,69)+"…"; return t+" 🍼 #shorts";}
 function ytPack(it){return "TYTUŁ:\n"+ytTitle(it)+"\n\nOPIS:\n"+caption(it)+"\n\n"+hashtags(it)+" #shorts\n\nTAGI: bobo radzi, porady dla mam, niemowlak, śmieszne dziecko, rodzicielstwo";}
+function fullPack(it){
+  const cap=caption(it), base=hashtags(it);
+  const tt="#dlaciebie #fyp #mama #niemowlak #dziecko #rodzicielstwo #polskamama";
+  const ig=base+" #mamamałegodziecka #świeżoupieczonamama #reels";
+  return "===== TIKTOK =====\n"+cap+"\n\n"+tt+
+    "\n\n===== INSTAGRAM =====\n"+cap+"\n\n"+ig+
+    "\n\n===== YOUTUBE =====\nTYTUŁ: "+ytTitle(it)+"\nOPIS: "+cap+"\n"+base+" #shorts\nTAGI: bobo radzi, porady dla mam, niemowlak, śmieszne dziecko, rodzicielstwo";
+}
 function hashtags(it){return BASE_HT+(it.c==="c"?" #sesjanoworodkowa #zdjęcianoworodka":"");}
 function toast(){const t=document.getElementById('toast');t.classList.add('show');setTimeout(()=>t.classList.remove('show'),1500);}
 function copyTxt(id){navigator.clipboard.writeText(document.getElementById(id).innerText).then(toast);}
@@ -658,8 +666,7 @@ function renderLib(){
       '<p class="ht">#️⃣ '+hashtags(o)+'</p>'+
       '<div class="actions">'+
         '<button class="primary" data-p="'+o.i+'">📋 Prompt</button>'+
-        '<button class="ghost" data-cap="'+o.i+'">📝 Opis+#</button>'+
-        '<button class="ghost" data-yt="'+o.i+'">📺 YT</button>'+
+        '<button class="ghost" data-cap="'+o.i+'">📋 Opisy (TT/IG/YT)</button>'+
         '<button class="ghost" data-hk="'+encodeURIComponent(hk)+'">🪝 Hook</button>'+
         '<button class="icon" data-fav="'+o.i+'">'+(fav[o.i]?"❤️":"🤍")+'</button>'+
         '<button class="icon" data-del="'+o.i+'">🗑️</button>'+
@@ -670,8 +677,7 @@ function renderLib(){
   const total=POOL.length, left=POOL.length-Object.values(rem).filter(Boolean).length;
   document.getElementById('progress').textContent="W puli: "+left+" / "+total+"  ·  Pokazuję: "+list.length;
   box.querySelectorAll('[data-p]').forEach(b=>b.onclick=()=>{navigator.clipboard.writeText(makePrompt(POOL[+b.dataset.p].t,pickGag().en)).then(toast);});
-  box.querySelectorAll('[data-cap]').forEach(b=>b.onclick=()=>{const o=POOL[+b.dataset.cap];navigator.clipboard.writeText(caption(o)+"\n\n"+hashtags(o)).then(toast);});
-  box.querySelectorAll('[data-yt]').forEach(b=>b.onclick=()=>{navigator.clipboard.writeText(ytPack(POOL[+b.dataset.yt])).then(toast);});
+  box.querySelectorAll('[data-cap]').forEach(b=>b.onclick=()=>{navigator.clipboard.writeText(fullPack(POOL[+b.dataset.cap])).then(toast);});
   box.querySelectorAll('[data-hk]').forEach(b=>b.onclick=()=>{navigator.clipboard.writeText(decodeURIComponent(b.dataset.hk)).then(toast);});
   box.querySelectorAll('[data-fav]').forEach(b=>b.onclick=()=>{const f=ls(K_FAV);f[+b.dataset.fav]=!f[+b.dataset.fav];save(K_FAV,f);renderLib();});
   box.querySelectorAll('[data-del]').forEach(b=>b.onclick=()=>{const r=ls(K_REM);r[+b.dataset.del]=true;save(K_REM,r);renderLib();});
