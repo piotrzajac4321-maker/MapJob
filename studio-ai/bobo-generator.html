@@ -567,11 +567,12 @@ function ytTitle(it){let t=it.t.split(/[?.!]/)[0].trim(); if(t.length>72)t=t.sli
 function ytPack(it){return "TYTUŁ:\n"+ytTitle(it)+"\n\nOPIS:\n"+caption(it)+"\n\n"+hashtags(it)+" #shorts\n\nTAGI: bobo radzi, porady dla mam, niemowlak, śmieszne dziecko, rodzicielstwo";}
 function fullPack(it){
   const cap=caption(it), base=hashtags(it);
+  const seo="Bobo radzi 🍼 śmieszne porady dla mam i zmęczonych rodziców — humor i mądrości o życiu z niemowlakiem 👶";
   const tt="#dlaciebie #fyp #mama #niemowlak #dziecko #rodzicielstwo #polskamama";
   const ig=base+" #mamamałegodziecka #świeżoupieczonamama #reels";
-  return "===== TIKTOK =====\n"+cap+"\n\n"+tt+
-    "\n\n===== INSTAGRAM =====\n"+cap+"\n\n"+ig+
-    "\n\n===== YOUTUBE =====\nTYTUŁ: "+ytTitle(it)+"\nOPIS: "+cap+"\n"+base+" #shorts\nTAGI: bobo radzi, porady dla mam, niemowlak, śmieszne dziecko, rodzicielstwo";
+  return "===== TIKTOK =====\n"+seo+"\n"+cap+"\n\n"+tt+
+    "\n\n===== INSTAGRAM =====\n"+seo+"\n"+cap+"\n\n"+ig+
+    "\n\n===== YOUTUBE =====\nTYTUŁ: "+ytTitle(it)+"\nOPIS: "+seo+" "+cap+"\n"+base+" #shorts\nTAGI: bobo radzi, porady dla mam, niemowlak, śmieszne dziecko, rodzicielstwo";
 }
 function hashtags(it){return BASE_HT+(it.c==="c"?" #sesjanoworodkowa #zdjęcianoworodka":"");}
 function toast(){const t=document.getElementById('toast');t.classList.add('show');setTimeout(()=>t.classList.remove('show'),1500);}
