@@ -495,6 +495,8 @@ function pickGag(){const v=gagSel.value;return v==="random"?GAGS[Math.floor(Math
 function gagLabel(){const v=gagSel.value;return v==="random"?"🎲 losowy (przy kopiowaniu)":GAGS[+v].pl;}
 function makeSpeak(txt){const o=document.getElementById('outro').value;const intro=((document.getElementById('intro')||{}).value!=="nie");return "„"+(intro?"Słuchaj, dorosły! ":"")+txt+(o?(" "+o):"")+"”";}
 function caption(it){const cat=CATS[it.c];return it.t+"\n\n"+cat.close;}
+function ytTitle(it){let t=it.t.split(/[?.!]/)[0].trim(); if(t.length>72)t=t.slice(0,69)+"…"; return t+" 🍼 #shorts";}
+function ytPack(it){return "TYTUŁ:\n"+ytTitle(it)+"\n\nOPIS:\n"+caption(it)+"\n\n"+hashtags(it)+" #shorts\n\nTAGI: bobo radzi, porady dla mam, niemowlak, śmieszne dziecko, rodzicielstwo";}
 function hashtags(it){return BASE_HT+(it.c==="c"?" #sesjanoworodkowa #zdjęcianoworodka":"");}
 function toast(){const t=document.getElementById('toast');t.classList.add('show');setTimeout(()=>t.classList.remove('show'),1500);}
 
@@ -584,6 +586,7 @@ function renderLib(){
       '<div class="actions">'+
         '<button class="primary" data-p="'+o.i+'">📋 Prompt</button>'+
         '<button class="ghost" data-cap="'+o.i+'">📝 Opis+#</button>'+
+        '<button class="ghost" data-yt="'+o.i+'">📺 YT</button>'+
         '<button class="ghost" data-hk="'+encodeURIComponent(hk)+'">🪝 Hook</button>'+
         '<button class="icon" data-fav="'+o.i+'">'+(fav[o.i]?"❤️":"🤍")+'</button>'+
         '<button class="icon" data-del="'+o.i+'">🗑️</button>'+
@@ -595,6 +598,7 @@ function renderLib(){
   document.getElementById('progress').textContent="W puli: "+left+" / "+total+"  ·  Pokazuję: "+list.length;
   box.querySelectorAll('[data-p]').forEach(b=>b.onclick=()=>{navigator.clipboard.writeText(makePrompt(POOL[+b.dataset.p].t,pickGag().en)).then(toast);});
   box.querySelectorAll('[data-cap]').forEach(b=>b.onclick=()=>{const o=POOL[+b.dataset.cap];navigator.clipboard.writeText(caption(o)+"\n\n"+hashtags(o)).then(toast);});
+  box.querySelectorAll('[data-yt]').forEach(b=>b.onclick=()=>{navigator.clipboard.writeText(ytPack(POOL[+b.dataset.yt])).then(toast);});
   box.querySelectorAll('[data-hk]').forEach(b=>b.onclick=()=>{navigator.clipboard.writeText(decodeURIComponent(b.dataset.hk)).then(toast);});
   box.querySelectorAll('[data-fav]').forEach(b=>b.onclick=()=>{const f=ls(K_FAV);f[+b.dataset.fav]=!f[+b.dataset.fav];save(K_FAV,f);renderLib();});
   box.querySelectorAll('[data-del]').forEach(b=>b.onclick=()=>{const r=ls(K_REM);r[+b.dataset.del]=true;save(K_REM,r);renderLib();});
