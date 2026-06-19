@@ -281,22 +281,22 @@ const BASE_HT="#fyp #dlaciebie #mama #dziecko #rodzina #macierzyństwo #rodzicie
 
 /* DODATEK: napisy-hooki (ekranowy tekst na start, INNY niż głos) wg kategorii */
 const HOOKS={
-  m:["Przeczytaj, jeśli chcesz dziś coś zmienić","Zatrzymaj się na 8 sekund","To Cię ruszy z miejsca"],
-  h:["Nie mów, że to nie Ty 😂","Każdy rodzic to zna","Otaguj, kto musi to zobaczyć"],
-  s:["Mamo, weź oddech","To dla Ciebie, jeśli masz dość","Zatrzymaj się na chwilę"],
-  e:["Nie oglądaj, jeśli nie chcesz się wzruszyć","Poczujesz to"],
-  r:["Wyślij to komuś ważnemu","Pomyśl o tej jednej osobie"],
-  w:["Przypomnienie, którego dziś potrzebujesz","Doceń to, zanim minie"],
-  a:["Zapisz to sobie","Mądrość, którą zignorujesz i pożałujesz"],
-  k:["Nie śmiej się… no dobra, śmiej 😂","Kawał od bobasa"],
-  x:["Powiedz, że to nie Ty 😬","Zaboli, ale to prawda"],
-  o:["Zapisz na tę okazję","Idealne na dziś"],
-  d:["Zrób swoją wersję 🔥","Twój ruch"],
-  f:["Mamo, to musisz zobaczyć","Przeczytaj, zanim znów się obwinisz","Jeśli jesteś zmęczona — to dla Ciebie","To zatrzyma Cię na chwilę"],
-  g:["Zapisz to, mamo","To Cię wzruszy","Nie oglądaj bez chusteczek"],
+  m:["Nikt Ci tego nie powie","Obejrzyj, zanim się poddasz","To zmieni Twój dzień","Czytaj, jeśli masz dość"],
+  h:["Powiedz, że to nie Ty 😭","Nie tylko u Ciebie tak jest","Każda mama to zna","Otaguj, kto musi to zobaczyć"],
+  s:["Mamo, to dla Ciebie","Przeczytaj, gdy masz dość","Zatrzymaj się na 8 sekund","Nikt o tym nie mówi"],
+  e:["Nie oglądaj bez chusteczek","To Cię ruszy","Poczujesz to"],
+  r:["Wyślij to tej jednej osobie","Pomyśl, do kogo zadzwonisz","Otaguj ją 👇"],
+  w:["Tego dziś potrzebujesz","Przeczytaj, zanim zaśniesz","Doceń to, zanim minie"],
+  a:["Zapisz, zanim zniknie","Mądrość, którą ignorujesz","Nikt Ci tego nie powiedział"],
+  k:["Nie pokazuj mężowi 😂","Ostrzegam: zaśmiejesz się","Czekaj na puentę 😭"],
+  x:["Powiedz, że kłamię 😬","Zaboli, ale to prawda","To jesteś Ty, przyznaj"],
+  o:["Zapisz na tę okazję","Idealne na dziś","Otaguj kogoś 🎉"],
+  d:["Wszyscy to robią 🔥","Twój ruch","Zrób swoją wersję"],
+  f:["Mamo, to musisz usłyszeć","Jeśli jesteś zmęczona — zatrzymaj się","Nikt Ci tego nie mówi, a powinien","Przeczytaj, zanim znów się obwinisz"],
+  g:["Nie oglądaj bez chusteczek","Zapisz, póki jest mały","To mija szybciej, niż myślisz"],
   tt:["Otaguj tatę 👨","Tato, to do Ciebie","Każdy tata to zna"],
-  p:["Pamiętasz ten moment?","To mija w sekundę","Zatrzymaj to"],
-  q:["Pytanie za milion! 🤔","Tylko jedna jest prawidłowa"],
+  p:["Za rok tego nie cofniesz","To mija w sekundę","Zatrzymaj to, póki możesz"],
+  q:["Tylko 1 na 10 zgadnie 🤔","Komentuj A, B, C czy D 👇","Pytanie za milion!"],
   c:["Za rok tego nie cofniesz","Nie przegap tej chwili"]
 };
 function pickHook(c){const a=HOOKS[c]||HOOKS.a;return a[Math.floor(Math.random()*a.length)];}
