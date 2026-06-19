@@ -126,6 +126,34 @@
   </div>
 
   <div class="card">
+    <span class="tag">📈 STRATEGIA + YOUTUBE SEO</span>
+    <details>
+      <summary>📺 YouTube — ustawienia kanału (kopiuj)</summary>
+      <div style="font-size:13px;margin-top:8px">
+        <p style="margin:6px 0 2px"><b>Słowa kluczowe kanału</b> (Studio → Ustawienia → Kanał):</p>
+        <div id="ytkw" style="background:#f3f1e8;border:1px solid var(--line);border-radius:8px;padding:8px;font-size:12.5px">bobo radzi, porady dla mam, mama, macierzyństwo, niemowlak, noworodek, rodzicielstwo, śmieszne dziecko, polska mama, bobofoto</div>
+        <button class="ghost" style="margin:6px 0;padding:7px 13px;font-size:12.5px" onclick="copyTxt('ytkw')">📋 Kopiuj słowa kluczowe</button>
+        <p style="margin:10px 0 2px"><b>Opis kanału</b> (Dostosuj kanał → Informacje):</p>
+        <div id="ytdesc" style="background:#f3f1e8;border:1px solid var(--line);border-radius:8px;padding:8px;font-size:12.5px">Bobo radzi 🍼 Codzienna dawka uśmiechu i mądrości prosto od bobasa — humor, porady i ciepłe chwile dla mam i całych rodzin. Subskrybuj, żeby nic nie przegapić! 👶</div>
+        <button class="ghost" style="margin:6px 0;padding:7px 13px;font-size:12.5px" onclick="copyTxt('ytdesc')">📋 Kopiuj opis kanału</button>
+        <p class="hint" style="margin-top:4px">Ustaw też kraj: Polska, język: polski. Przy każdym filmie tytuł/opis/tagi → przycisk „📺 YT" niżej.</p>
+      </div>
+    </details>
+    <details>
+      <summary>🎯 Strategia w skrócie (faza 1: zasięgi)</summary>
+      <div style="font-size:13px;margin-top:8px;line-height:1.7">
+        <p style="margin:4px 0"><b>Cel teraz:</b> zasięgi i obserwacje. Sprzedaż później. Bobo = maskotka, nie reklama.</p>
+        <p style="margin:4px 0"><b>Dla kogo:</b> mamy 25–38, ciężarne, młodzi rodzice, babcie. Oglądają wieczorem i przy karmieniach.</p>
+        <p style="margin:4px 0"><b>Filary (na tydzień):</b> 40% humor (Roast/Listy/Kawały/Milionery) · 25% Dla mam · 15% wzruszające · 10% trendy · 10% marka.</p>
+        <p style="margin:4px 0"><b>Plan:</b> 2–3 filmy/dzień przez 30 dni. Pory ~9:00 humor, ~14:00 lista/quiz, ~20:00 wzruszające.</p>
+        <p style="margin:4px 0"><b>Wzrost:</b> giveaway co 3–4 tyg. · odpisuj w 1. godzinie (wideo-odpowiedzi) · duety · trendujące dźwięki · ten sam film na TikTok+Reels+Shorts+FB.</p>
+        <p style="margin:4px 0"><b>Technika:</b> hook w 1,5 s · szybkie tempo mowy · napisy wypalone · loop · pion 9:16.</p>
+        <p style="margin:4px 0"><b>Mierz:</b> obserwacje, % obejrzeń, udostępnienia/zapisy, komentarze → rób więcej tego, co działa.</p>
+      </div>
+    </details>
+  </div>
+
+  <div class="card">
     <span class="tag">✅ CHECKLISTA VIRALOWA</span>
     <details>
       <summary>Sprawdź przed publikacją (klikalne ✓)</summary>
@@ -499,6 +527,7 @@ function ytTitle(it){let t=it.t.split(/[?.!]/)[0].trim(); if(t.length>72)t=t.sli
 function ytPack(it){return "TYTUŁ:\n"+ytTitle(it)+"\n\nOPIS:\n"+caption(it)+"\n\n"+hashtags(it)+" #shorts\n\nTAGI: bobo radzi, porady dla mam, niemowlak, śmieszne dziecko, rodzicielstwo";}
 function hashtags(it){return BASE_HT+(it.c==="c"?" #sesjanoworodkowa #zdjęcianoworodka":"");}
 function toast(){const t=document.getElementById('toast');t.classList.add('show');setTimeout(()=>t.classList.remove('show'),1500);}
+function copyTxt(id){navigator.clipboard.writeText(document.getElementById(id).innerText).then(toast);}
 
 function makePrompt(txt,gagEn){
   const dur=document.getElementById('dur').value;
