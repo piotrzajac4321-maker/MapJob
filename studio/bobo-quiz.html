@@ -85,7 +85,8 @@
 </div>
 
 <script>
-const PROMPT=`VERTICAL 9:16 PORTRAIT VIDEO, 1080x1920, full vertical frame, NO black bars. Strictly 9:16 — do NOT render 16:9 or landscape. Premium 3D animated cartoon (stylized, polished, clearly fictional and wholesome), soft cinematic lighting, 30 fps, optimized for TikTok / Reels / Shorts, 6 seconds, happy and family-friendly.
+function quizSecs(){const t=[val('q'),val('a'),val('b'),val('c'),val('d')].join(' ');const w=t.split(/\s+/).filter(Boolean).length;return Math.max(6,Math.min(15,Math.ceil(w/3)+3));}
+function makeQuizPrompt(){const secs=quizSecs();return `VERTICAL 9:16 PORTRAIT VIDEO, 1080x1920, full vertical frame, NO black bars. Strictly 9:16 — do NOT render 16:9 or landscape. Premium 3D animated cartoon (stylized, polished, clearly fictional and wholesome), soft cinematic lighting, 30 fps, optimized for TikTok / Reels / Shorts, ${secs} seconds, happy and family-friendly.
 
 CHARACTER "Bobo": an adorable friendly cartoon baby mascot — a clearly fictional wholesome animated character (stylized 3D). Chubby cheerful proportions, big round head, large expressive dark-brown eyes with bright catchlights, full rosy cheeks, small button nose, one little curl of light-brown hair on top, warm face. Wearing a cozy cream ribbed onesie.
 
@@ -95,7 +96,7 @@ SCENE: a bright airy beige-and-cream cartoon nursery, soft daylight from the lef
 
 ACTION:
 - 0–2s: a fast playful whip-pan onto Bobo at the top; he raises one tiny index finger like a wise professor and says the line below.
-- 2–6s: Bobo stops talking (mouth closed) and just THINKS — a little hand on the chin, eyes looking up and to the side, pondering hard, eyebrows moving, then a cheeky knowing smile and a tiny nod. No more speaking.
+- 2–${secs}s: Bobo stops talking (mouth closed) and just THINKS — a little hand on the chin, eyes looking up and to the side, pondering hard, eyebrows moving, then a cheeky knowing smile and a tiny nod. No more speaking.
 
 THE BABY SPEAKS EXACTLY ONCE, only the two words below, at the very start (0–2s), and then is COMPLETELY SILENT for the rest of the clip: „Pytanie za milion!”
 Do NOT add any other words, no question, no „którą wybierasz”, no „hmm”, no follow-up — after these two words the mouth stays closed and Bobo only thinks.
@@ -106,9 +107,10 @@ LIGHTING: warm bright daylight. AUDIO: a quick "ding!" chime at the start, then 
 MOOD: fun energetic intro, then curious silent pondering, cute.
 RETENTION & LOOP: high energy, no static dead moments; the final frame visually matches the first frame so the clip loops seamlessly.
 
-Negative: any extra words, talking after the first two words, asking a question, „którą wybierasz”, „która wybierasz”, „które wybierasz”, „hmm”, follow-up dialogue, landscape, horizontal, 16:9, black bars, baby centered, baby in the middle, baby at the bottom, full body, multiple background characters, on-screen text, captions, watermark, English accent, mispronounced Polish.`;
-document.getElementById('prompt').value=PROMPT;
-function copyPrompt(){navigator.clipboard.writeText(PROMPT);}
+Negative: any extra words, talking after the first two words, asking a question, „którą wybierasz”, „która wybierasz”, „które wybierasz”, „hmm”, follow-up dialogue, landscape, horizontal, 16:9, black bars, baby centered, baby in the middle, baby at the bottom, full body, multiple background characters, on-screen text, captions, watermark, English accent, mispronounced Polish.`;}
+function refreshPrompt(){document.getElementById('prompt').value=makeQuizPrompt();}
+function copyPrompt(){refreshPrompt();navigator.clipboard.writeText(document.getElementById('prompt').value);}
+refreshPrompt();
 
 const QUIZZES=[
  ["Rodzice idą spać. Powinienem:","Narobić do świeżej pieluchy","Nie zasnąć do 4:30 bez powodu","Zażądać kolejnej godziny przy piersi","Spać, ale wydawać dziwne odgłosy",3],
@@ -229,6 +231,7 @@ function layout(){
 }
 
 function draw(){
+  if(typeof refreshPrompt==='function')refreshPrompt();
   const S=STYLES[(document.getElementById('style')||{}).value]||STYLES.krem;
   const L=layout();
   cv.width=W; cv.height=L.total;
