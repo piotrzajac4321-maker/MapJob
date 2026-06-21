@@ -106,6 +106,13 @@
         <option value="nie">Nie — bez tego początku</option>
       </select>
     </div>
+    <div class="row" style="margin-top:12px">
+      <label>🎬 Styl filmu</label>
+      <select id="styl">
+        <option value="standard">Standard (spokojniejszy)</option>
+        <option value="dynamic">Dynamiczny — dużo się dzieje 🔥</option>
+      </select>
+    </div>
     <div class="hint">👋 Końcówka: domyślnie film kończy się <b>samą puentą</b> (mocniej!). Follow-CTA dawaj tylko co kilka filmów, nie za każdym razem.<br>🎙️ <b>Mowa:</b> Bobo mówi <b>szybko</b>, żeby zmieścić cały tekst (szybkie tempo = lepsze wyniki!). Veo bywa słaby w polskim — przy długich tekstach przełącz na „bez mowy" i dograj głos w CapCut.<br>⚠️ Veo Flash generuje poziomo — pion ustaw w Gemini (proporcje 9:16) albo dotnij w CapCut.</div>
   </div>
 
@@ -603,6 +610,7 @@ function makePrompt(txt,gagEn){
   dur=(dur==="auto")?recSec(txt):+dur;
   const mid=(dur-5>2)?(dur-5):6;
   const mode=(document.getElementById('speech')||{}).value||"veo";
+  const dyn=((document.getElementById('styl')||{}).value==="dynamic")?"\n\nDYNAMIC HIGH-ENERGY EDITING (LOTS HAPPENING): fast-paced with quick ANGLE CHANGES and snappy cuts roughly every 1–2 seconds (front, side, close-up of the face, slight low angle), punchy ZOOM-IN punches on Bobo's face on key words, energetic whip-pans and quick push-ins, playful cartoon sparkles and little stars popping in on emphasis, constant lively motion and bouncy energy — never static, vibrant high-energy montage feel.":"";
   const action="- 0–2s (HOOK): the clip OPENS already on an eye-catching frame — Bobo mid-expression with big wide eyes and one tiny index finger raised like a wise professor (NO calm intro); a fast playful whip-pan snaps in.\n- 2–"+mid+"s (ADVICE): Bobo gestures expressively and energetically while making its point, warm and lively, with constant small lively movement.\n- "+mid+"–"+dur+"s (OUTRO): returns to the SAME opening pose and framing (big eyes, raised finger, cheeky confident smile) so the clip loops seamlessly.";
   let speech,voice,negExtra="";
   if(mode==="mute"){
@@ -629,7 +637,7 @@ ${voice}
 
 ${TECH}
 
-RETENTION & PERFECT LOOP: keep high energy and snappy fast pacing the whole time, constant lively micro-movements, NO static dead moments. The clip MUST be a seamless loop — the FIRST and LAST frame are IDENTICAL: same pose, same head position, same expression and same background, so it replays with no visible cut.
+RETENTION & PERFECT LOOP: keep high energy and snappy fast pacing the whole time, constant lively micro-movements, NO static dead moments. The clip MUST be a seamless loop — the FIRST and LAST frame are IDENTICAL: same pose, same head position, same expression and same background, so it replays with no visible cut.${dyn}
 
 ${NEG}${negExtra?(" Avoid:"+negExtra+" cut-off speech."):""}`;
 }
@@ -752,6 +760,7 @@ document.getElementById('outro').addEventListener('change',renderLib);
 document.getElementById('dur').addEventListener('change',renderLib);
 document.getElementById('speech').addEventListener('change',renderLib);
 document.getElementById('intro').addEventListener('change',renderLib);
+document.getElementById('styl').addEventListener('change',renderLib);
 renderFilters();renderLib();
 </script>
 </body>
