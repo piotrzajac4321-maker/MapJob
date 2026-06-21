@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Generator grafik — Spotted Rybnik</title>
+<style>
+  :root{--graf:#15171c;--gold:#c9a24b;--line:#2a2d34;--card:#1d2026}
+  *{box-sizing:border-box}
+  body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:#0f1115;color:#e8e6df;line-height:1.5}
+  header{background:var(--graf);color:var(--gold);padding:20px 18px;text-align:center;border-bottom:1px solid var(--line)}
+  header h1{margin:0;font-size:20px;letter-spacing:3px}
+  header p{margin:6px 0 0;font-size:13px;color:#9aa0a6}
+  .wrap{max-width:820px;margin:0 auto;padding:16px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:16px}
+  label{display:block;font-weight:600;font-size:13px;margin:0 0 6px;color:#cfcabb}
+  textarea{width:100%;min-height:150px;padding:10px;border:1px solid var(--line);border-radius:10px;font-size:14px;background:#12141a;color:#e8e6df;font-family:inherit}
+  .btns{display:flex;gap:10px;flex-wrap:wrap;margin:8px 0}
+  button{cursor:pointer;border:none;border-radius:999px;padding:12px 20px;font-size:15px;font-weight:700}
+  .gold{background:var(--gold);color:#15171c}.gold:hover{background:#dab863}
+  .ghost{background:#2a2d34;color:#e8e6df}
+  .hint{font-size:12px;color:#8a9096;margin-top:6px}
+  .preview{text-align:center;background:#000;border:1px solid var(--line);border-radius:12px;padding:12px}
+  canvas{max-width:100%;height:auto;border-radius:8px}
+  .tag{display:inline-block;background:#2a2d34;color:var(--gold);border-radius:6px;padding:2px 8px;font-size:11px;font-weight:700;margin-bottom:8px;letter-spacing:1px}
+  a.back{color:var(--gold);font-size:14px;text-decoration:none}
+</style>
+</head>
+<body>
+<header>
+  <h1>SPOTTED RYBNIK</h1>
+  <p>Generator grafik na posty · 4:5 · grafit i złoto</p>
+</header>
+
+<div class="wrap">
+  <div style="margin-bottom:12px"><a class="back" href="bobo-generator.html">← Wróć do generatora BoboFoto</a></div>
+
+  <div class="card">
+    <span class="tag">TWOJE 5 WIADOMOŚCI</span>
+    <label>Wklej wiadomości — każda w nowej linii (użyje pierwszych 5)</label>
+    <textarea id="msgs"></textarea>
+    <div class="btns">
+      <button class="gold" onclick="losuj()">🎲 Losuj 5 z bazy (100)</button>
+      <button class="ghost" onclick="draw()">🔄 Odśwież podgląd</button>
+    </div>
+    <div class="hint">Możesz edytować dowolnie. Liczniki 1–5 i układ kafelków ustawiają się same.</div>
+  </div>
+
+  <div class="btns">
+    <button class="gold" onclick="dl()">⬇️ Pobierz PNG (4:5)</button>
+  </div>
+
+  <div class="card">
+    <span class="tag">PODGLĄD</span>
+    <div class="preview"><canvas id="cv" width="1080" height="1350"></canvas></div>
+  </div>
+</div>
+
+<script>
+const MSGS=[
+"Komu wpadł telefon w sobotę wieczorem na Rynku? Mam go u siebie, odezwij się!",
+"Znalazłem pęk kluczy przy fontannie na Rynku, czyje? Piszcie!",
+"Zgubiłeś czarny portfel w Galerii? Mam go, opisz zawartość.",
+"Ktoś zostawił rower pod biblioteką już 3 dni, wiecie czyj?",
+"Znalazłam obrączkę na parkingu przy markecie, odezwij się właściciel.",
+"Czyj był ten mały piesek biegający dziś rano po Rynku?",
+"Zgubiłeś czapkę w autobusie linii 1? Kierowca ją ma.",
+"Leży damski szalik na ławce przy parku, czyj?",
+"Znalazłem legitymację studencką, kojarzycie nazwisko Kowalski?",
+"Komu wypadł klucz z brelokiem Rybnik przy dworcu?",
+"Zgubił się rudy kot w okolicy Nowin, bardzo płochliwy. Widział go ktoś?",
+"Szukamy psa, czarny labrador, uciekł z Boguszowic. Pomóżcie!",
+"Widział ktoś szarego kota z obrożą na Smolnej? Wabi się Mruczek.",
+"Znaleziono papugę na balkonie w Chwałowicach, czyja?",
+"Zaginął biały królik na Nowinach, dzieci płaczą, pomóżcie.",
+"Biega bezpański piesek przy szkole na Niedobczycach, ktoś go zna?",
+"Komu uciekł rudy kocur spod bloku na Paderewskiego?",
+"Widzieliście czarno-białego kota przy cmentarzu? Szukamy od tygodnia.",
+"Szukam fryzjera w Rybniku, który ogarnie koloryzację. Kogo polecacie?",
+"Polećcie dobrego mechanika w Rybniku, uczciwego. Czekam na typy!",
+"Gdzie najlepsza pizza w Rybniku? Walczcie w komentarzach!",
+"Szukam dentysty, który przyjmie szybko. Kto się sprawdził?",
+"Polećcie ekipę remontową, łazienka do zrobienia. Kontakty mile widziane.",
+"Gdzie zjeść dobry obiad domowy w Rybniku? Czekam na propozycje.",
+"Szukam opiekunki do dziecka na kilka godzin, kogo polecacie?",
+"Dobry weterynarz w Rybniku? Mój kot choruje, pomóżcie.",
+"Gdzie kupić świeże pieczywo w niedzielę? Podpowiedzcie.",
+"Polećcie kawiarnię na randkę w Rybniku, klimatyczną.",
+"Szukam korepetytora z matematyki dla syna, kto poleci?",
+"Gdzie naprawią telefon w Rybniku szybko i tanio? Czekam na typy.",
+"Jesteśmy dwie i siedzimy dziś w Rybniku bez planu, co polecacie na wieczór?",
+"Single z Rybnika, gdzie się dziś wybrać? Piszcie, może się spotkamy!",
+"Szukam paczki znajomych do wspólnych wyjść, ktoś chętny?",
+"Kto idzie dziś na koncert w Rybniku? Szukam towarzystwa.",
+"Nudny piątek, kto ma pomysł na wieczór w Rybniku?",
+"Widzieliśmy się wczoraj na Rynku, miałaś czerwony płaszcz. Odezwij się?",
+"Szukam partnera do biegania o poranku w parku, kto wstaje rano?",
+"Kto gra w siatkówkę w Rybniku? Szukamy ludzi do drużyny.",
+"Oddam za darmo kanapę w dobrym stanie, odbiór własny z Boguszowic.",
+"Oddam kartony po przeprowadzce, kto potrzebuje? Piszcie.",
+"Mam do oddania ubranka dla niemowlaka, odbiór Chwałowice.",
+"Oddam stare meble kuchenne, zabierzcie dziś. Kto pierwszy?",
+"Rozdam sadzonki pomidorów, mam za dużo. Zgłaszajcie się!",
+"Oddam za darmo lodówkę, działa, odbiór z Niedobczyc.",
+"Mam zapas węgla do oddania, odezwij się kto potrzebuje.",
+"Oddam książki, cały karton, dla miłośnika czytania. Kto chce?",
+"Co to za hałas wczoraj wieczorem nad Rybnikiem? Słyszeliście?",
+"Wiecie, co budują przy Rynku? Ktoś ma info?",
+"Czemu nie ma wody w Boguszowicach? Was też dotyczy?",
+"Korek na Gliwickiej, co się stało? Piszcie na bieżąco.",
+"Widzieliście ten zachód słońca nad Rybnikiem? Bajka!",
+"Kiedy znów festyn w Kamieniu? Ktoś wie datę?",
+"Działa już ten nowy lokal na Rynku? Byliście?",
+"Co z remontem drogi na Chwałowice? Ktoś ma wieści?",
+"Słyszeliście syreny w centrum? Wie ktoś, co się dzieje?",
+"Dziękuję panu, który pomógł mi zmienić koło na Rudzkiej, jesteś wielki!",
+"Wielkie dzięki dla pani, która oddała mój portfel. Są dobrzy ludzie!",
+"Chcę podziękować obsłudze sklepu na Nowinach, super ludzie.",
+"Ktoś znalazł mojego kota i przyniósł do domu, dziękuję z całego serca!",
+"Dzięki dla kierowcy autobusu 6, zaczekał na mnie. Złoty człowiek.",
+"Starsza sąsiadka potrzebuje pomocy z zakupami w Boguszowicach, ktoś z okolicy?",
+"Szukam pilnie krwiodawcy grupy 0 Rh minus dla bliskiej osoby, udostępnijcie!",
+"Zbieramy karmę dla schroniska w Rybniku, kto się dołączy?",
+"Potrzebuję podwózki do szpitala jutro rano, zwrócę za paliwo. Pomoże ktoś?",
+"Szukam pracy dorywczej w Rybniku, ogarnę wszystko. Macie coś?",
+"Znalazłem dziecięcy bucik przy placu zabaw na Smolnej, czyj?",
+"Komu zginął parasol w kawiarni na Rynku? Jest u nas.",
+"Leży telefon na przystanku przy szpitalu, zgłoście się po właściciela.",
+"Znalazłam kartę bankomatową na ulicy, oddam, opisz bank.",
+"Ktoś znalazł smycz bez psa na Paruszowcu, czyja?",
+"Komu uciekł kanarek na Niedobczycach? Siedzi na drzewie.",
+"Mam znaleziony aparat fotograficzny z Rynku, opisz zdjęcia.",
+"Znaleziono okulary w etui przy bibliotece, czyje?",
+"Komu wypadł złoty kolczyk-gwiazdka na parkingu? Mam jeden.",
+"Gdzie dobry fryzjer męski w Rybniku bez kolejki? Czekam na typy.",
+"Polećcie cukiernię na tort urodzinowy, ma być pyszny!",
+"Szukam stolarza na wymiar w Rybniku, kogo polecacie?",
+"Gdzie najlepsze lody w mieście? Walczcie w komentarzach!",
+"Polećcie dobrego kominiarza, potrzebny pilnie.",
+"Szukam szkoły tańca w Rybniku dla dorosłych, gdzie warto?",
+"Kto wybiera się jutro na bazar? Pójdźmy razem, raźniej.",
+"Organizujemy spacer z psami w parku w sobotę, kto z nami?",
+"Szukam kompana na siłownię w Rybniku, motywujmy się!",
+"Gra ktoś w szachy w centrum? Szukam przeciwnika.",
+"Kto chce wymieniać się sadzonkami? Zróbmy giełdę w komentarzach.",
+"Kto zostawił piękny bukiet na ławce na Rynku? Romantyk z Was!",
+"Widzieliście rano tęczę nad Rybnikiem? Ktoś zrobił zdjęcie?",
+"Czyj pies tak ładnie wita wszystkich na Smolnej? Słodziak!",
+"Komu odjechał autobus sprzed nosa dziś rano? Nie tylko Tobie!",
+"Kto puszczał muzykę na Rynku wieczorem? Świetny klimat, dzięki!",
+"Sprzedam rowerek dziecięcy, jak nowy, odbiór Rybnik. Zainteresowani?",
+"Kupię używaną pralkę w dobrym stanie, polećcie ogłoszenia.",
+"Sprzedam wózek 3w1, stan idealny, piszcie po szczegóły.",
+"Szukam taniego mieszkania do wynajęcia w Rybniku, znacie coś?",
+"Sprzedam meble pokojowe, cena do uzgodnienia. Odezwij się.",
+"Zaginęła osoba widziana ostatnio na dworcu, udostępnijcie, rodzina prosi.",
+"Kto wie, czy działa dziś basen w Rybniku? Wybieram się z dziećmi.",
+"Polećcie plac zabaw dla maluchów, gdzie najfajniej?",
+"Szukam grupy mam z Rybnika na spacery, dołączycie?",
+"Sąsiad ma dziś urodziny, dopiszcie życzenia w komentarzach!"
+];
+
+const cv=document.getElementById('cv'),ctx=cv.getContext('2d');
+const W=1080,H=1350,GOLD="#c9a24b",GRAF="#15171c",TILE="#1d2026";
+const ta=document.getElementById('msgs');
+
+function losuj(){
+  const pool=[...MSGS]; const out=[];
+  for(let i=0;i<5;i++){ out.push(pool.splice(Math.floor(Math.random()*pool.length),1)[0]); }
+  ta.value=out.join("\n"); draw();
+}
+function get5(){
+  let a=ta.value.split("\n").map(s=>s.trim()).filter(Boolean).slice(0,5);
+  while(a.length<5)a.push("…");
+  return a;
+}
+function rr(x,y,w,h,r){ctx.beginPath();ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath();}
+function wrap(t,maxW){const words=t.split(" ");let l=[],c="";for(const w of words){const tt=c?c+" "+w:w;if(ctx.measureText(tt).width>maxW&&c){l.push(c);c=w;}else c=tt;}if(c)l.push(c);return l;}
+function fit(t,maxW,maxH){for(let fs=36;fs>=16;fs-=2){ctx.font="500 "+fs+"px system-ui,Segoe UI,Roboto,sans-serif";const ls=wrap(t,maxW);if(ls.length*fs*1.28<=maxH)return{fs,ls,lh:fs*1.28};}ctx.font="500 16px system-ui,Segoe UI,Roboto,sans-serif";return{fs:16,ls:wrap(t,maxW),lh:21};}
+
+function tile(x,y,w,h,num,text){
+  ctx.save();
+  ctx.shadowColor="rgba(0,0,0,0.55)";ctx.shadowBlur=22;ctx.shadowOffsetY=8;
+  ctx.fillStyle=TILE; rr(x,y,w,h,26); ctx.fill();
+  ctx.restore();
+  ctx.strokeStyle="rgba(201,162,75,0.55)";ctx.lineWidth=2; rr(x,y,w,h,26); ctx.stroke();
+  // marker
+  const m=52, mx=x+20, my=y+20;
+  ctx.fillStyle=GOLD; rr(mx,my,m,m,12); ctx.fill();
+  ctx.fillStyle="#fff";ctx.font="bold 30px system-ui,Segoe UI,Roboto,sans-serif";ctx.textAlign="center";ctx.textBaseline="middle";
+  ctx.fillText(num, mx+m/2, my+m/2+1);
+  // text (centered in area below marker)
+  const padX=34, topPad=92, botPad=24;
+  const aw=w-padX*2, ah=h-topPad-botPad;
+  const f=fit(text,aw,ah);
+  ctx.font="500 "+f.fs+"px system-ui,Segoe UI,Roboto,sans-serif";
+  ctx.fillStyle="#f2efe6";ctx.textAlign="center";ctx.textBaseline="alphabetic";
+  const blockH=f.ls.length*f.lh;
+  let ty=y+topPad+(ah-blockH)/2+f.fs;
+  f.ls.forEach(line=>{ctx.fillText(line,x+w/2,ty);ty+=f.lh;});
+}
+
+function draw(){
+  ctx.clearRect(0,0,W,H);
+  // tło grafit
+  ctx.fillStyle=GRAF; ctx.fillRect(0,0,W,H);
+  // poświaty w narożnikach
+  let g1=ctx.createRadialGradient(60,60,0,60,60,520); g1.addColorStop(0,"rgba(201,162,75,0.14)");g1.addColorStop(1,"rgba(201,162,75,0)");
+  ctx.fillStyle=g1;ctx.fillRect(0,0,W,H);
+  let g2=ctx.createRadialGradient(W-60,H-60,0,W-60,H-60,560); g2.addColorStop(0,"rgba(201,162,75,0.10)");g2.addColorStop(1,"rgba(201,162,75,0)");
+  ctx.fillStyle=g2;ctx.fillRect(0,0,W,H);
+  // nagłówek złoty
+  const gg=ctx.createLinearGradient(0,60,0,140);gg.addColorStop(0,"#ecd28a");gg.addColorStop(0.5,"#c9a24b");gg.addColorStop(1,"#9c7c34");
+  ctx.fillStyle=gg;ctx.font="bold 66px system-ui,Segoe UI,Roboto,sans-serif";ctx.textAlign="center";ctx.textBaseline="alphabetic";
+  try{ctx.letterSpacing="12px";}catch(e){}
+  ctx.fillText("SPOTTED RYBNIK",W/2,120);
+  try{ctx.letterSpacing="0px";}catch(e){}
+  // złota kreska
+  ctx.fillStyle=GOLD; rr(W/2-90,150,180,5,3); ctx.fill();
+  // podtytuł
+  ctx.fillStyle="#9aa0a6";ctx.font="27px system-ui,Segoe UI,Roboto,sans-serif";
+  ctx.fillText("Odnieś się w komentarzu, podając numer zgłoszenia",W/2,205);
+  // kafelki
+  const m5=get5();
+  const pad=60,colGap=30;
+  const colW=(W-pad*2-colGap)/2;
+  const startY=255, smallH=300, gap=28, wideH=232;
+  const x2=pad+colW+colGap;
+  tile(pad,startY,colW,smallH,1,m5[0]);
+  tile(x2,startY,colW,smallH,2,m5[1]);
+  tile(pad,startY+smallH+gap,colW,smallH,3,m5[2]);
+  tile(x2,startY+smallH+gap,colW,smallH,4,m5[3]);
+  tile(pad,startY+2*(smallH+gap),W-pad*2,wideH,5,m5[4]);
+  // stopka
+  ctx.font="24px system-ui,Segoe UI,Roboto,sans-serif";ctx.textBaseline="alphabetic";
+  const s1="Spotted Rybnik",s2=" · swoje zgłoszenie wyślij w wiadomości prywatnej";
+  const w1=ctx.measureText(s1).width,w2=ctx.measureText(s2).width;
+  const sx=(W-(w1+w2))/2;
+  ctx.textAlign="left";
+  ctx.fillStyle=GOLD;ctx.fillText(s1,sx,H-44);
+  ctx.fillStyle="#8a9096";ctx.fillText(s2,sx+w1,H-44);
+  ctx.textAlign="center";
+}
+
+function dl(){draw();cv.toBlob(b=>{const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download="spotted-rybnik.png";a.click();},"image/png");}
+
+ta.value=[
+"Komu wpadł telefon w sobotę wieczorem na Rynku? Mam go u siebie, odezwij się!",
+"Szukam fryzjera w Rybniku, który ogarnie koloryzację. Kogo polecacie?",
+"Zgubił się rudy kot w okolicy Nowin, bardzo płochliwy. Widział go ktoś?",
+"Jesteśmy dwie i siedzimy dziś w Rybniku bez planu, co polecacie na wieczór?",
+"Oddam za darmo kanapę w dobrym stanie, odbiór własny z Boguszowic."
+].join("\n");
+ta.addEventListener('input',draw);
+draw();
+</script>
+</body>
+</html>
