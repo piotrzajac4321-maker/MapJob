@@ -53,8 +53,9 @@
   </div>
 
   <div class="btns">
-    <button class="gold" onclick="dl()">⬇️ Pobierz PNG (4:5)</button>
+    <button class="gold" onclick="dl()">⬇️ Pobierz / Zapisz PNG (4:5)</button>
   </div>
+  <div id="exp"></div>
 
   <div class="card">
     <span class="tag">PODGLĄD</span>
@@ -259,17 +260,14 @@ function draw(){
 
 function dl(){
   draw();
-  function viaData(){const a=document.createElement('a');a.href=cv.toDataURL("image/png");a.download="spotted-rybnik.png";document.body.appendChild(a);a.click();a.remove();}
-  try{
-    if(cv.toBlob){
-      cv.toBlob(function(b){
-        if(!b){viaData();return;}
-        const a=document.createElement('a');const url=URL.createObjectURL(b);
-        a.href=url;a.download="spotted-rybnik.png";document.body.appendChild(a);a.click();a.remove();
-        setTimeout(()=>URL.revokeObjectURL(url),3000);
-      },"image/png");
-    } else { viaData(); }
-  }catch(e){ viaData(); }
+  const url=cv.toDataURL("image/png");
+  // próba automatycznego pobrania (komputer)
+  try{const a=document.createElement('a');a.href=url;a.download="spotted-rybnik.png";document.body.appendChild(a);a.click();a.remove();}catch(e){}
+  // zawsze pokaż obrazek do ręcznego zapisu (telefon)
+  document.getElementById('exp').innerHTML=
+    '<div class="card"><span class="tag">GOTOWY OBRAZEK</span>'+
+    '<p class="hint">Jeśli nie pobrało się samo — <b>przytrzymaj palcem (telefon) lub kliknij prawym (komputer)</b> na obrazku i wybierz „Zapisz obraz jako…".</p>'+
+    '<img src="'+url+'" style="max-width:100%;border-radius:8px;margin-top:8px"></div>';
 }
 
 current=[
