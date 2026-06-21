@@ -46,10 +46,15 @@
     <label>Wklej wiadomości — każda w nowej linii</label>
     <textarea id="msgs"></textarea>
     <div class="btns">
-      <button class="gold" onclick="losuj()">🎲 Losuj z bazy (100)</button>
+      <button class="gold" onclick="losuj()">🎲 Losuj z bazy</button>
       <button class="ghost" onclick="draw()">🔄 Odśwież podgląd</button>
     </div>
-    <div class="hint">💡 <b>Kliknij dowolny kafelek na podglądzie</b> → wskoczy w niego inne, losowe ogłoszenie. Liczniki i układ ustawiają się same.</div>
+    <div class="btns">
+      <button class="ghost" onclick="markUsed()">✅ Oznacz obecne jako wrzucone</button>
+      <button class="ghost" onclick="resetUsed()">♻️ Wyzeruj oznaczenia</button>
+    </div>
+    <div class="hint" id="usedInfo"></div>
+    <div class="hint">💡 <b>Kliknij kafelek na podglądzie</b> → wskoczy inne losowe ogłoszenie. „Oznacz jako wrzucone" sprawia, że losowanie omija już użyte (żeby się nie powtarzały).</div>
   </div>
 
   <div class="btns">
@@ -164,7 +169,193 @@ const MSGS=[
 "Kto wie, czy działa dziś basen w Rybniku? Wybieram się z dziećmi.",
 "Polećcie plac zabaw dla maluchów, gdzie najfajniej?",
 "Szukam grupy mam z Rybnika na spacery, dołączycie?",
-"Sąsiad ma dziś urodziny, dopiszcie życzenia w komentarzach!"
+"Sąsiad ma dziś urodziny, dopiszcie życzenia w komentarzach!",
+"gdzie najlepsza pizza w rybniku?? piszcie w komentarzu bo głodna jestem",
+"polećcie pizzerie w rybniku tylko taka co dowozi szybko",
+"szukam pizzy na grubym cieście, gdzie robia najlepsza? komentujcie",
+"ktora pizzeria w rybniku ma najlepsze ceny? dajcie znać",
+"chce zamówic pizze wieczorem co polecacie, łapka w góre dla dobrej knajpy",
+"najlepsza pizza w okolicy boguszowic? czekam na typy",
+"gdzie zjeść dobra pizze na mieście, komentujcie nazwy niech sie zbierze ranking",
+"polećcie pizzerie co ma wege opcje, szukam dla corki",
+"ktora pizza w rybniku najwieksza za te pieniadze? piszcie",
+"otwarta dziś jakaś dobra pizzeria? głodni jesteśmy dajcie znać",
+"szukam pizzy jak za starych lat, prawdziwej. gdzie taka dostane?",
+"polećcie budke z kebabem w rybniku ma być duzy i tani",
+"gdzie najlepszy burger w mieście? komentujcie robie ranking",
+"szukam dobrej chińskiej w rybniku co polecacie?",
+"gdzie zjeść dobre lody rzemieślnicze? piszcie miejsca",
+"polećcie restauracje na rodzinny obiad w niedziele",
+"gdzie dobre sushi w rybniku ktoś próbował? dajcie znać",
+"szukam knajpy z dobrym schabowym jak u mamy, gdzie taki?",
+"polećcie cukiernie na tort urodzinowy ma byc pyszny i ładny",
+"gdzie kupić dobre świeze bułki rano w rybniku?",
+"polećcie naleśnikarnie albo gofry w rybniku, dzieci marudzą",
+"gdzie dobra kawa na mieście? szukam klimatycznej kawiarni",
+"szukam dobrego cateringu na komunie, kogo polecacie?",
+"polećcie piekarnie co ma najlepszy chleb na zakwasie",
+"gdzie zjeść tanio i smacznie obiad w tygodniu, komentujcie",
+"szukam fryzjera w rybniku co ogarnie koloryzacje kogo polecacie?",
+"polećcie fryzjera meskiego bez kolejki syn potrzebuje",
+"gdzie dobry fryzjer co zrobi balejaż? piszcie w komentarzu",
+"szukam fryzjerki co przyjmie szybko włosy wołaja o pomste",
+"polećcie salon co robi dobre baleyage czekam na typy",
+"gdzie obciać dziecko zeby sie nie bało? polećcie miła pania",
+"szukam barbera w rybniku co ogarnie brode dajcie kontakt",
+"polećcie kosmetyczke od paznokci hybrydowych ma trzymac długo",
+"gdzie dobra kosmetyczka na rzęsy w rybniku? komentujcie",
+"szukam dobrego masażysty na plecy polećcie kogoś",
+"polećcie gabinet od opalania natryskowego gdzie macie?",
+"gdzie zrobic dobry makijaż na wesele w rybniku? piszcie",
+"szukam fryzjera co przyjedzie do domu do starszej osoby znacie kogoś?",
+"polećcie kosmetyczke od depilacji woskiem, ma byc delikatna",
+"gdzie dobry fryzjer dla mamy na 60 urodziny? czekam na typy",
+"szukam salonu co robi przedłuzanie rzęs tanio i ładnie",
+"polećcie uczciwego mechanika w rybniku nie chce przepłacac",
+"szukam fachowca od wymiany opon gdzie szybko i tanio?",
+"gdzie dobry blacharz po stłuczce polećcie warsztat",
+"polećcie elektryka co przyjdzie szybko padło mi w mieszkaniu",
+"szukam hydraulika pilnie cieknie mi rura kto poleci?",
+"polećcie ekipe remontowa do łazienki czekam na kontakty",
+"gdzie dobry kominiarz w rybniku potrzebny na już",
+"szukam stolarza na meble na wymiar kogo polecacie?",
+"polećcie firme od okien chce wymienic w domu",
+"gdzie naprawia pralki w rybniku z dojazdem? piszcie",
+"szukam glazurnika co dobrze kładzie kafle polećcie",
+"polećcie firme co czyści dywany i kanapy znacie taka?",
+"gdzie naprawić laptopa w rybniku padł mi nagle piszcie",
+"szukam kogoś do koszenia trawy raz na tydzien kto sie podejmie?",
+"polećcie dobrego malarza do mieszkania, ma być dokładny",
+"szukam pomocy do przeprowadzki w sobote, zapłace, kto chetny?",
+"polećcie firme od klimatyzacji, chce zamontowac przed latem",
+"gdzie naprawia rowery w rybniku szybko? syn czeka",
+"polećcie dentyste co przyjmie szybko boli mnie zab",
+"szukam dobrego ortodonty dla dziecka kogo polecacie?",
+"gdzie dobry weterynarz w rybniku kot choruje pomóżcie",
+"polećcie fizjoterapeute na kregosłup czekam na typy",
+"szukam pediatry prywatnie co przyjmie szybko piszcie",
+"gdzie dobry okulista w rybniku trzeba dziecku zbadac wzrok",
+"polećcie dobra przychodnie gdzie nie czeka sie wieki",
+"komu wpadł telefon w sobote na rynku? mam go odezwij sie szybko",
+"znalazłem klucze przy fontannie polub i napisz jak twoje",
+"zgubiłeś portfel w galerii? mam go opisz co w środku",
+"leży rower pod biblioteka juz 3 dni wiecie czyj? komentujcie",
+"znalazłam obraczke na parkingu przy markecie odezwij sie",
+"komu uciekł piesek dziś rano z okolic rynku? mały i rudy",
+"zostawiłeś czapke w autobusie 1? kierowca ma napisz",
+"leży szalik damski na ławce w parku czyj? podajcie dalej",
+"znalazłem dowód osobisty napiszcie w komentarzu jak ktoś zna",
+"komu wypadł klucz z brelokiem na dworcu? mam u siebie",
+"znalazłam smoczek dzieciecy przy placu zabaw czyj?",
+"leży telefon na przystanku przy szpitalu dajcie znać po właściciela",
+"znalazłem karte do bankomatu na ulicy opisz bank to oddam",
+"komu zginał parasol w kawiarni na rynku? jest u nas",
+"zgubiłeś słuchawki w autobusie 6? mam je odezwij sie",
+"znalazłam zegarek przy fontannie polub i napisz jaki",
+"komu wpadła legitymacja szkolna przy szkole na smolnej?",
+"znalazłem plecak dzieciecy na przystanku, czyj? piszcie",
+"leża okulary w etui przy bibliotece, czyje? komentujcie",
+"komu uciekł balonik dziecku na rynku? znalazł sie pod ławka",
+"znalazłam kluczyki do auta marki opel przy markecie odezwij sie",
+"zgubił sie rudy kot w okolicy nowin bardzo płochliwy widział ktoś?",
+"uciekł nam czarny labrador z boguszowic prosze udostepniajcie",
+"szukamy szarego kota z obroża na smolnej wabi sie mruczek",
+"zaginał biały królik dzieci płaczą pomóżcie znaleźć",
+"biega bezpański piesek przy szkole na niedobczycach ktoś zna?",
+"komu uciekł kot spod bloku na paderewskiego? rudy duzy",
+"widzieliście czarno białego kota przy cmentarzu? szukamy od tygodnia",
+"znaleziono papuge na balkonie w chwałowicach czyja? piszcie",
+"zginał pies rasy beagle w okolicach parku nagroda za znalezienie",
+"ktoś widział małego yorka? uciekł z ogrodu w kamieniu",
+"znalazł sie kot ale nie wiemy czyj siedzi pod klatka komentujcie",
+"uciekła kotka trójkolorowa z chwałowic prosze o pomoc udostepniajcie",
+"widział ktoś bezpańskiego psa biegajacego przy rondzie? boje sie o niego",
+"znaleziono kanarka na niedobczycach siedzi na drzewie czyj?",
+"szukamy chomika uciekł dzieciom z klatki, mały i rudy, pomóżcie",
+"oddam za darmo kanape w dobrym stanie odbiór własny boguszowice",
+"oddam kartony po przeprowadzce kto potrzebuje napiszcie",
+"mam ubranka dla niemowlaka do oddania odbiór chwałowice",
+"oddam stare meble kuchenne zabierzcie dziś kto pierwszy",
+"rozdam sadzonki pomidorów mam za duzo zgłaszajcie sie",
+"oddam lodówke działa odbiór z niedobczyc polub i napisz",
+"mam wegiel do oddania troche został odezwij sie kto chce",
+"oddam ksiazki cały karton dla kogoś kto czyta kto chetny?",
+"oddam telewizor stary ale działa zabierz dziś",
+"mam zabawki dzieciece do oddania odbiór rynek piszcie",
+"oddam donice ogrodowe duzo ich mam kto chce niech pisze",
+"oddam za darmo szafe trzydrzwiowa trzeba zabrać samemu",
+"mam karme dla kota której kot nie chce oddam komuś",
+"oddam choinke sztuczna komu sie przyda na święta",
+"oddam wózek dzieciecy uzywany ale sprawny odbiór własny",
+"mam stos ubrań damskich rozmiar M oddam za darmo kto chce",
+"oddam materac jednoosobowy czysty, zabierzcie dziś",
+"sprzedam rowerek dzieciecy jak nowy odbiór rybnik zainteresowani?",
+"kupie uzywana pralke w dobrym stanie polećcie ogłoszenia",
+"sprzedam wózek 3w1 stan idealny piszcie po szczegóły",
+"szukam taniego mieszkania do wynajecia w rybniku znacie coś?",
+"sprzedam meble pokojowe cena do uzgodnienia odezwij sie",
+"kupie tanio rower miejski dla zony macie coś?",
+"sprzedam łóżeczko dzieciece z materacem stan bdb",
+"szukam garażu do wynajecia w centrum piszcie",
+"sprzedam opony zimowe 4 sztuki mało jezdzone komentujcie",
+"kupie konsole dla dziecka na urodziny polećcie gdzie tanio",
+"jesteśmy dwie siedzimy w rybniku bez planu co polecacie na wieczór?",
+"single z rybnika gdzie sie dziś wybrać? piszcie moze sie spotkamy",
+"szukam paczki znajomych do wspólnych wyjść ktoś chetny?",
+"nudny piatek kto ma pomysł na wieczór w rybniku?",
+"widzieliśmy sie wczoraj na rynku miałaś czerwony płaszcz odezwij sie?",
+"szukam kogoś do biegania rano w parku kto wstaje wcześnie?",
+"kto gra w siatkówke w rybniku? szukamy ludzi do druzyny",
+"chce kogoś poznać do wspólnych spacerów mam psa piszcie",
+"co to za hałas wczoraj wieczorem nad rybnikiem? słyszeliście tez?",
+"wiecie co buduja przy rynku? ktoś ma info komentujcie",
+"czemu nie ma wody w boguszowicach? was tez dotyczy?",
+"korek na gliwickiej co sie stało? piszcie na biezaco",
+"widzieliście ten zachód słońca nad rybnikiem? bajka po prostu",
+"kiedy znów festyn w kamieniu? ktoś wie date?",
+"działa juz ten nowy lokal na rynku? byliście jak tam?",
+"co z remontem drogi na chwałowice? ktoś ma wieści",
+"słyszeliście syreny w centrum? wie ktoś co sie dzieje",
+"jest dziś gdzieś jarmark w rybniku? chce wyjść z dziećmi",
+"czemu tak korkuje na rondzie dziś rano? piszcie co sie dzieje",
+"wie ktoś czy działa dziś basen w rybniku? wybieram sie z dziećmi",
+"co dziś grane w kinie wartego obejrzenia? polećcie film",
+"dziekuje panu co pomógł mi zmienic koło na rudzkiej jesteś wielki",
+"wielkie dzieki dla pani co oddała mój portfel sa dobrzy ludzie",
+"chce podziekowac obsłudze sklepu na nowinach super ludzie",
+"ktoś znalazł mojego kota i przyniósł dziekuje z całego serca",
+"dzieki dla kierowcy autobusu 6 zaczekał na mnie złoty człowiek",
+"dziekuje chłopakom co pomogli wnieść pralke po schodach",
+"starsza sasiadka potrzebuje pomocy z zakupami w boguszowicach ktoś z okolicy?",
+"szukam pilnie krwiodawcy grupy 0 rh minus dla bliskiej osoby udostepniajcie",
+"zbieramy karme dla schroniska w rybniku kto sie dołaczy?",
+"potrzebuje podwózki do szpitala jutro rano zwróce za paliwo pomoze ktoś?",
+"szukam pracy dorywczej w rybniku ogarne wszystko macie coś?",
+"potrzebny pilnie opiekun dla psa na weekend zapłace piszcie",
+"kto wybiera sie jutro na bazar? pójdźmy razem raźniej",
+"organizujemy spacer z psami w parku w sobote kto z nami?",
+"szukam kompana na siłownie w rybniku motywujmy sie",
+"gra ktoś w szachy w centrum? szukam przeciwnika",
+"kto chce wymieniać sie sadzonkami? zróbmy giełde w komentarzach",
+"polub ten post jeśli tez kochasz rybnik ciekawe ile nas tu jest",
+"napisz w komentarzu z jakiej dzielnicy jesteś sprawdźmy gdzie nas najwiecej",
+"komentuj nazwe ulicy na której mieszkasz ciekawe ile dzielnic sie zbierze",
+"łapka w góre jeśli tez utknąłeś dziś w korku na gliwickiej",
+"polub jeśli tez czekasz az otworza ten lokal na rynku",
+"napiszcie w komentarzu ulubione miejsce w rybniku na spacer",
+"komentuj jednym słowem co kojarzy ci sie z rybnikiem bedzie zabawnie",
+"polub i udostepnij zeby wiecej osob zobaczyło te zgube",
+"napisz w komentarzu jaka pogode wolisz dziś znów leje",
+"łapka w góre kto tez nie moze sie doczekać weekendu",
+"polub post jeśli tez wolisz rybnik latem niz zima",
+"komentuj gdzie najlepsza kawa w mieście niech sie zbierze lista",
+"napisz w komentarzu z kim czytasz spotted, otaguj znajomego",
+"łapka w góre jeśli mieszkasz w rybniku od urodzenia",
+"szukam pracownika do kawiarni w rybniku piszcie w wiadomości",
+"przyjme pomoc do sprzatania na kilka godzin kontakt w komentarzu",
+"szukam dorywczo do roznoszenia ulotek kto chetny?",
+"szukam opiekunki do dziecka na kilka godzin w tygodniu polećcie",
+"przyjme kierowce z prawem jazdy b do drobnych dostaw piszcie"
 ];
 
 const cv=document.getElementById('cv'),ctx=cv.getContext('2d');
@@ -176,8 +367,13 @@ let tileRects=[];
 function Nv(){return +((document.getElementById('count')||{}).value||5);}
 function syncTA(){ta.value=current.join("\n");}
 function syncFromTA(){current=ta.value.split("\n").map(s=>s.trim()).filter(Boolean);draw();}
-function randUnused(){const a=MSGS.filter(m=>!current.includes(m));const p=a.length?a:MSGS;return p[Math.floor(Math.random()*p.length)];}
-function losuj(){const n=Nv();const pool=[...MSGS];current=[];for(let i=0;i<n;i++)current.push(pool.splice(Math.floor(Math.random()*pool.length),1)[0]);syncTA();draw();}
+function getUsed(){try{return JSON.parse(localStorage.getItem('spottedUsed')||'{}');}catch(e){return{};}}
+function saveUsed(u){localStorage.setItem('spottedUsed',JSON.stringify(u));}
+function usedInfo(){const u=getUsed();const c=Object.values(u).filter(Boolean).length;const el=document.getElementById('usedInfo');if(el)el.textContent='Wrzucone (oznaczone): '+c+' / '+MSGS.length;}
+function markUsed(){const u=getUsed();current.slice(0,Nv()).forEach(m=>{if(m&&m!=="…")u[m]=true;});saveUsed(u);usedInfo();}
+function resetUsed(){if(confirm("Wyzerować oznaczenia wrzucone?")){saveUsed({});usedInfo();}}
+function randUnused(){const used=getUsed();let a=MSGS.filter(m=>!current.includes(m)&&!used[m]);if(!a.length)a=MSGS.filter(m=>!current.includes(m));if(!a.length)a=MSGS;return a[Math.floor(Math.random()*a.length)];}
+function losuj(){const n=Nv();const used=getUsed();let pool=MSGS.filter(m=>!used[m]);if(pool.length<n)pool=[...MSGS];pool=[...pool];current=[];for(let i=0;i<n;i++)current.push(pool.splice(Math.floor(Math.random()*pool.length),1)[0]);syncTA();draw();}
 function setCount(){const n=Nv();if(current.length>n)current=current.slice(0,n);else while(current.length<n)current.push(randUnused());syncTA();draw();}
 function getMsgs(){const n=Nv();const a=current.slice(0,n);while(a.length<n)a.push("…");return a;}
 function rr(x,y,w,h,r){ctx.beginPath();ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath();}
@@ -287,6 +483,7 @@ cv.addEventListener('click',e=>{
     if(px>=t.x&&px<=t.x+t.w&&py>=t.y&&py<=t.y+t.h){ current[t.i]=randUnused(); syncTA(); draw(); break; }
   }
 });
+usedInfo();
 draw();
 </script>
 </body>
