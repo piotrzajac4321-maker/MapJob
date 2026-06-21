@@ -22,7 +22,7 @@
   .ghost{background:#2a2d34;color:#e8e6df}
   .hint{font-size:12px;color:#8a9096;margin-top:6px}
   .preview{text-align:center;background:#000;border:1px solid var(--line);border-radius:12px;padding:12px}
-  canvas{max-width:100%;height:auto;border-radius:8px}
+  canvas{max-width:100%;height:auto;border-radius:8px;cursor:pointer}
   .tag{display:inline-block;background:#2a2d34;color:var(--gold);border-radius:6px;padding:2px 8px;font-size:11px;font-weight:700;margin-bottom:8px;letter-spacing:1px}
   a.back{color:var(--gold);font-size:14px;text-decoration:none}
 </style>
@@ -37,14 +37,19 @@
   <div style="margin-bottom:12px"><a class="back" href="bobo-generator.html">← Wróć do generatora BoboFoto</a></div>
 
   <div class="card">
-    <span class="tag">TWOJE 5 WIADOMOŚCI</span>
-    <label>Wklej wiadomości — każda w nowej linii (użyje pierwszych 5)</label>
+    <span class="tag">TWOJE WIADOMOŚCI</span>
+    <label>Ile ogłoszeń (kafelków)</label>
+    <select id="count" style="width:100%;padding:10px;border:1px solid var(--line);border-radius:10px;font-size:14px;background:#12141a;color:#e8e6df;margin-bottom:12px">
+      <option value="1">1</option><option value="2">2</option><option value="3">3</option>
+      <option value="4">4</option><option value="5" selected>5</option><option value="6">6</option>
+    </select>
+    <label>Wklej wiadomości — każda w nowej linii</label>
     <textarea id="msgs"></textarea>
     <div class="btns">
-      <button class="gold" onclick="losuj()">🎲 Losuj 5 z bazy (100)</button>
+      <button class="gold" onclick="losuj()">🎲 Losuj z bazy (100)</button>
       <button class="ghost" onclick="draw()">🔄 Odśwież podgląd</button>
     </div>
-    <div class="hint">Możesz edytować dowolnie. Liczniki 1–5 i układ kafelków ustawiają się same.</div>
+    <div class="hint">💡 <b>Kliknij dowolny kafelek na podglądzie</b> → wskoczy w niego inne, losowe ogłoszenie. Liczniki i układ ustawiają się same.</div>
   </div>
 
   <div class="btns">
@@ -165,16 +170,15 @@ const cv=document.getElementById('cv'),ctx=cv.getContext('2d');
 const W=1080,H=1350,GOLD="#c9a24b",GRAF="#15171c",TILE="#1d2026";
 const ta=document.getElementById('msgs');
 
-function losuj(){
-  const pool=[...MSGS]; const out=[];
-  for(let i=0;i<5;i++){ out.push(pool.splice(Math.floor(Math.random()*pool.length),1)[0]); }
-  ta.value=out.join("\n"); draw();
-}
-function get5(){
-  let a=ta.value.split("\n").map(s=>s.trim()).filter(Boolean).slice(0,5);
-  while(a.length<5)a.push("…");
-  return a;
-}
+let current=[];
+let tileRects=[];
+function Nv(){return +((document.getElementById('count')||{}).value||5);}
+function syncTA(){ta.value=current.join("\n");}
+function syncFromTA(){current=ta.value.split("\n").map(s=>s.trim()).filter(Boolean);draw();}
+function randUnused(){const a=MSGS.filter(m=>!current.includes(m));const p=a.length?a:MSGS;return p[Math.floor(Math.random()*p.length)];}
+function losuj(){const n=Nv();const pool=[...MSGS];current=[];for(let i=0;i<n;i++)current.push(pool.splice(Math.floor(Math.random()*pool.length),1)[0]);syncTA();draw();}
+function setCount(){const n=Nv();if(current.length>n)current=current.slice(0,n);else while(current.length<n)current.push(randUnused());syncTA();draw();}
+function getMsgs(){const n=Nv();const a=current.slice(0,n);while(a.length<n)a.push("…");return a;}
 function rr(x,y,w,h,r){ctx.beginPath();ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath();}
 function wrap(t,maxW){const words=t.split(" ");let l=[],c="";for(const w of words){const tt=c?c+" "+w:w;if(ctx.measureText(tt).width>maxW&&c){l.push(c);c=w;}else c=tt;}if(c)l.push(c);return l;}
 function fit(t,maxW,maxH){for(let fs=36;fs>=16;fs-=2){ctx.font="500 "+fs+"px system-ui,Segoe UI,Roboto,sans-serif";const ls=wrap(t,maxW);if(ls.length*fs*1.28<=maxH)return{fs,ls,lh:fs*1.28};}ctx.font="500 16px system-ui,Segoe UI,Roboto,sans-serif";return{fs:16,ls:wrap(t,maxW),lh:21};}
@@ -221,17 +225,27 @@ function draw(){
   // podtytuł
   ctx.fillStyle="#9aa0a6";ctx.font="27px system-ui,Segoe UI,Roboto,sans-serif";
   ctx.fillText("Odnieś się w komentarzu, podając numer zgłoszenia",W/2,205);
-  // kafelki
-  const m5=get5();
-  const pad=60,colGap=30;
+  // kafelki (dynamiczna liczba 1–6)
+  const msgs=getMsgs();
+  const n=msgs.length;
+  const pad=60,colGap=30,gap=26;
   const colW=(W-pad*2-colGap)/2;
-  const startY=255, smallH=300, gap=28, wideH=232;
+  const contentTop=255, contentBottom=H-92;
+  const rows=Math.ceil(n/2);
+  const rowH=(contentBottom-contentTop-(rows-1)*gap)/rows;
   const x2=pad+colW+colGap;
-  tile(pad,startY,colW,smallH,1,m5[0]);
-  tile(x2,startY,colW,smallH,2,m5[1]);
-  tile(pad,startY+smallH+gap,colW,smallH,3,m5[2]);
-  tile(x2,startY+smallH+gap,colW,smallH,4,m5[3]);
-  tile(pad,startY+2*(smallH+gap),W-pad*2,wideH,5,m5[4]);
+  tileRects=[];
+  let idx=0;
+  for(let r=0;r<rows;r++){
+    const y=contentTop+r*(rowH+gap);
+    const lastOdd=(r===rows-1)&&((n-idx)===1);
+    if(lastOdd){
+      tile(pad,y,W-pad*2,rowH,idx+1,msgs[idx]); tileRects.push({x:pad,y,w:W-pad*2,h:rowH,i:idx}); idx++;
+    } else {
+      tile(pad,y,colW,rowH,idx+1,msgs[idx]); tileRects.push({x:pad,y,w:colW,h:rowH,i:idx}); idx++;
+      if(idx<n){ tile(x2,y,colW,rowH,idx+1,msgs[idx]); tileRects.push({x:x2,y,w:colW,h:rowH,i:idx}); idx++; }
+    }
+  }
   // stopka
   ctx.font="24px system-ui,Segoe UI,Roboto,sans-serif";ctx.textBaseline="alphabetic";
   const s1="Spotted Rybnik",s2=" · swoje zgłoszenie wyślij w wiadomości prywatnej";
@@ -245,14 +259,23 @@ function draw(){
 
 function dl(){draw();cv.toBlob(b=>{const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download="spotted-rybnik.png";a.click();},"image/png");}
 
-ta.value=[
+current=[
 "Komu wpadł telefon w sobotę wieczorem na Rynku? Mam go u siebie, odezwij się!",
 "Szukam fryzjera w Rybniku, który ogarnie koloryzację. Kogo polecacie?",
 "Zgubił się rudy kot w okolicy Nowin, bardzo płochliwy. Widział go ktoś?",
 "Jesteśmy dwie i siedzimy dziś w Rybniku bez planu, co polecacie na wieczór?",
 "Oddam za darmo kanapę w dobrym stanie, odbiór własny z Boguszowic."
-].join("\n");
-ta.addEventListener('input',draw);
+];
+syncTA();
+ta.addEventListener('input',syncFromTA);
+document.getElementById('count').addEventListener('change',setCount);
+cv.addEventListener('click',e=>{
+  const r=cv.getBoundingClientRect(), sx=cv.width/r.width, sy=cv.height/r.height;
+  const px=(e.clientX-r.left)*sx, py=(e.clientY-r.top)*sy;
+  for(const t of tileRects){
+    if(px>=t.x&&px<=t.x+t.w&&py>=t.y&&py<=t.y+t.h){ current[t.i]=randUnused(); syncTA(); draw(); break; }
+  }
+});
 draw();
 </script>
 </body>
