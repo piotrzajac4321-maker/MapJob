@@ -280,6 +280,7 @@ const CATS = {
   f:{name:"Dla mam",col:"#a0628f",close:"Napisz szczerze w komentarzu 💬",ht:"#mama #macierzyństwo #motywacja #refleksja #rozwój"},
   l:{name:"Listy 😂",col:"#d2691e",close:"Która najbardziej Twoja? 💬",ht:"#humor #rodzicielstwo #relatable"},
   hr:{name:"Horrory 😱",col:"#7a3b3b",close:"Który najgorszy? 💬",ht:"#humor #rodzicielstwo #relatable"},
+  sc:{name:"Scenki 🎭",col:"#6a8caf",close:"Otaguj mamę, która to zna 😂",ht:"#humor #rodzicielstwo #relatable"},
   g:{name:"Listy ❤️",col:"#c98aa8",close:"Zapisz, jeśli też tak masz 💛",ht:"#mama #macierzyństwo #wzruszające"},
   tt:{name:"Tato radzi",col:"#3d6e8a",close:"Otaguj tatę 👨",ht:"#tata #rodzicielstwo #rodzina"},
   p:{name:"Kamienie milowe",col:"#4a9d7f",close:"Pamiętasz ten moment? 💬",ht:"#niemowlę #rozwójdziecka #pierwszyraz"},
@@ -307,6 +308,7 @@ const HOOKS={
   p:["Za rok tego nie cofniesz","To mija w sekundę","Zatrzymaj to, póki możesz"],
   q:["Tylko 1 na 10 zgadnie 🤔","Komentuj A, B, C czy D 👇","Pytanie za milion!"],
   hr:["Nie tylko u Ciebie 😅","Każda mama to zna","Który najgorszy? 👇"],
+  sc:["Każda mama to zna 😂","Poczekaj na koniec 😭","To jesteś Ty?"],
   c:["Za rok tego nie cofniesz","Nie przegap tej chwili"]
 };
 function pickHook(c){const a=HOOKS[c]||HOOKS.a;return a[Math.floor(Math.random()*a.length)];}
@@ -572,6 +574,20 @@ const POOL = [
   {c:"hr",t:"Pięć horrorów ząbkowania: swędzące dziąsła, gryzak za twardy, ślina wszędzie, noc bez snu i mina, gdy nikt nie wie, co mi jest."},
   {c:"hr",t:"Pięć horrorów obcinania paznokci: nożyczki blisko, trzymanie rączki, słynne już prawie, nagły ruch i panika wszystkich dookoła."},
   {c:"hr",t:"Pięć horrorów świąt: za dużo cioć, każda chce mnie potrzymać, błyski fleszy, drzemka przerwana i sweterek, który drapie."},
+  {c:"sc",t:"Bobo rozsypuje kaszę po całej kuchni i zanosi się śmiechem, gdy mama wchodzi",en:"Bobo gleefully scatters cereal all over the kitchen floor, then bursts out laughing as a friendly cartoon mom walks in and gasps"},
+  {c:"sc",t:"Bobo wyciąga chusteczki z pudełka jedna po drugiej i piszczy z radości",en:"Bobo pulls tissues out of a box one by one, giggling with delight, a growing fluffy pile around him"},
+  {c:"sc",t:"Bobo maże buzię musem owocowym i śmieje się dumnie do mamy",en:"Bobo smears fruit puree all over his own face and highchair tray, laughing proudly at cartoon mom"},
+  {c:"sc",t:"Bobo rozwija cały papier toaletowy w łazience i klaszcze",en:"Bobo unrolls an entire toilet paper roll across the bathroom floor, clapping happily at the mess"},
+  {c:"sc",t:"Bobo chowa pilot za siebie i chichocze, gdy mama go szuka",en:"Bobo hides the TV remote behind his back and giggles as cartoon mom searches everywhere"},
+  {c:"sc",t:"Bobo bębni łyżką w garnki i zaśmiewa się z hałasu",en:"Bobo bangs a wooden spoon on pots and pans like drums, laughing hard at the loud noise"},
+  {c:"sc",t:"Bobo wyciąga ubrania z szuflady i siada dumnie na stosie, śmiejąc się",en:"Bobo pulls clothes out of a low drawer and sits triumphantly on the pile, laughing proudly"},
+  {c:"sc",t:"Bobo goni grubego kota na czworakach i piszczy z radości",en:"Bobo crawls fast chasing a chubby cartoon cat across the room, squealing with happy laughter"},
+  {c:"sc",t:"Bobo zakłada miskę na głowę jak hełm i śmieje się do mamy",en:"Bobo puts a small bowl on his head like a helmet and laughs at cartoon mom, very pleased with himself"},
+  {c:"sc",t:"Bobo wyjada herbatniki z szafki i chowa je, gdy widzi mamę",en:"Bobo sneaks cookies from a low cupboard and hides them behind his back, grinning, when cartoon mom appears"},
+  {c:"sc",t:"Bobo rozlewa mleko i klaszcze w kałużę, chichocząc",en:"Bobo tips over a cup of milk and claps in the little puddle, giggling, as cartoon mom rushes over"},
+  {c:"sc",t:"Bobo zrzuca poukładane zabawki i zaśmiewa się na widok bałaganu",en:"Bobo knocks over a neat tower of toys and laughs out loud at the tumbling mess, clapping"},
+  {c:"sc",t:"Bobo smaruje kremem lustro i chichocze do swojego odbicia",en:"Bobo smears mom's face cream all over a low mirror and giggles at his own reflection"},
+  {c:"sc",t:"Bobo ściąga skarpetki i rzuca nimi przez pokój, śmiejąc się",en:"Bobo pulls off his socks and tosses them across the room one by one, laughing out loud"},
   {c:"c",t:"Te policzki znikną. Ten zapach noworodka też. Zatrzymaj to, póki możesz."},
   {c:"c",t:"Robisz mi tysiąc zdjęć, a żadne nie jest jak ze studia? Wyślij jedno do BoboFoto."},
   {c:"c",t:"Za rok mnie nie poznasz. Masz jedną szansę, żeby to zatrzymać."},
@@ -605,12 +621,32 @@ function hashtags(it){return BASE_HT+(it.c==="c"?" #sesjanoworodkowa #zdjęciano
 function toast(){const t=document.getElementById('toast');t.classList.add('show');setTimeout(()=>t.classList.remove('show'),1500);}
 function copyTxt(id){navigator.clipboard.writeText(document.getElementById(id).innerText).then(toast);}
 
-function makePrompt(txt,gagEn){
+function makePrompt(txt,gagEn,cat,en){
   let dur=(document.getElementById('dur')||{}).value||"auto";
   dur=(dur==="auto")?recSec(txt):+dur;
   const mid=(dur-5>2)?(dur-5):6;
   const mode=(document.getElementById('speech')||{}).value||"veo";
   const dyn=((document.getElementById('styl')||{}).value==="dynamic")?"\n\nDYNAMIC HIGH-ENERGY EDITING (LOTS HAPPENING): fast-paced with quick ANGLE CHANGES and snappy cuts roughly every 1–2 seconds (front, side, close-up of the face, slight low angle), punchy ZOOM-IN punches on Bobo's face on key words, energetic whip-pans and quick push-ins, playful cartoon sparkles and little stars popping in on emphasis, constant lively motion and bouncy energy — never static, vibrant high-energy montage feel.":"";
+  if(cat==="sc"){
+    return `VERTICAL 9:16 PORTRAIT VIDEO, 1080x1920, full vertical frame, NO black bars. Strictly 9:16 — do NOT render 16:9 or landscape. Premium 3D animated cartoon (stylized, polished, clearly fictional and wholesome), soft cinematic lighting, 30 fps, optimized for TikTok / Instagram Reels / YouTube Shorts, ${dur} seconds, happy and family-friendly.
+
+${CHARACTER}
+
+SCENE: a cozy bright cartoon home (kitchen, living room or nursery as fits), warm daylight. A friendly cartoon mom may appear partly in frame reacting with a loving, surprised smile. Tall vertical 9:16 framing.
+
+ACTION (wholesome funny skit, NO talking — only happy baby giggles): ${en||txt}. Bobo is adorable and clearly having fun, giggling and laughing the whole time; harmless playful mischief, very cute.
+
+NO DIALOGUE: the baby does NOT say any words — only cute happy giggles, squeals and baby babble.
+
+CAMERA: lively, snappy, follows the action with playful push-ins.
+LIGHTING: warm bright cheerful daylight.
+AUDIO: light playful comedic music, baby giggles and laughter, soft fun sound effects, NO spoken words.
+MOOD: funny, adorable, heart-warming, wholesome mischief.${dyn}
+
+RETENTION & PERFECT LOOP: high energy, no static dead moments; the FIRST and LAST frame match for a seamless loop.
+
+Negative: spoken words, dialogue, talking, narration, landscape, horizontal, 16:9, black bars, on-screen text, captions, watermark, photorealistic, real human baby, deformed face, extra fingers, creepy, uncanny valley, dark, low quality, scary, crying baby, anything unsafe or distressing.`;
+  }
   const action="- 0–2s (HOOK): the clip OPENS already on an eye-catching frame — Bobo mid-expression with big wide eyes and one tiny index finger raised like a wise professor (NO calm intro); a fast playful whip-pan snaps in.\n- 2–"+mid+"s (ADVICE): Bobo gestures expressively and energetically while making its point, warm and lively, with constant small lively movement.\n- "+mid+"–"+dur+"s (OUTRO): returns to the SAME opening pose and framing (big eyes, raised finger, cheeky confident smile) so the clip loops seamlessly.";
   let speech,voice,negExtra="";
   if(mode==="mute"){
@@ -705,7 +741,7 @@ function renderLib(){
   });
   const total=POOL.length, left=POOL.length-Object.values(rem).filter(Boolean).length;
   document.getElementById('progress').textContent="W puli: "+left+" / "+total+"  ·  Pokazuję: "+list.length;
-  box.querySelectorAll('[data-p]').forEach(b=>b.onclick=()=>{navigator.clipboard.writeText(makePrompt(POOL[+b.dataset.p].t,pickGag().en)).then(toast);});
+  box.querySelectorAll('[data-p]').forEach(b=>b.onclick=()=>{const o=POOL[+b.dataset.p];navigator.clipboard.writeText(makePrompt(o.t,pickGag().en,o.c,o.en)).then(toast);});
   box.querySelectorAll('[data-cap]').forEach(b=>b.onclick=()=>{navigator.clipboard.writeText(fullPack(POOL[+b.dataset.cap])).then(toast);});
   box.querySelectorAll('[data-hk]').forEach(b=>b.onclick=()=>{navigator.clipboard.writeText(decodeURIComponent(b.dataset.hk)).then(toast);});
   box.querySelectorAll('[data-fav]').forEach(b=>b.onclick=()=>{const f=ls(K_FAV);f[+b.dataset.fav]=!f[+b.dataset.fav];save(K_FAV,f);renderLib();});
@@ -728,7 +764,7 @@ function setOfDay(){
         '<div class="actions"><button class="primary" data-sp="'+o.i+'">📋 Prompt</button>'+
         '<button class="ghost" data-sc="'+o.i+'">📝 Opis+#</button></div></div>';
     }).join('')+'</div>';
-  box.querySelectorAll('[data-sp]').forEach(b=>b.onclick=()=>{navigator.clipboard.writeText(makePrompt(POOL[+b.dataset.sp].t,pickGag().en)).then(toast);});
+  box.querySelectorAll('[data-sp]').forEach(b=>b.onclick=()=>{const o=POOL[+b.dataset.sp];navigator.clipboard.writeText(makePrompt(o.t,pickGag().en,o.c,o.en)).then(toast);});
   box.querySelectorAll('[data-sc]').forEach(b=>b.onclick=()=>{const o=POOL[+b.dataset.sc];navigator.clipboard.writeText(caption(o)+"\n\n"+hashtags(o)).then(toast);});
 }
 
