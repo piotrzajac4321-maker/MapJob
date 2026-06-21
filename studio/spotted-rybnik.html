@@ -257,7 +257,20 @@ function draw(){
   ctx.textAlign="center";
 }
 
-function dl(){draw();cv.toBlob(b=>{const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download="spotted-rybnik.png";a.click();},"image/png");}
+function dl(){
+  draw();
+  function viaData(){const a=document.createElement('a');a.href=cv.toDataURL("image/png");a.download="spotted-rybnik.png";document.body.appendChild(a);a.click();a.remove();}
+  try{
+    if(cv.toBlob){
+      cv.toBlob(function(b){
+        if(!b){viaData();return;}
+        const a=document.createElement('a');const url=URL.createObjectURL(b);
+        a.href=url;a.download="spotted-rybnik.png";document.body.appendChild(a);a.click();a.remove();
+        setTimeout(()=>URL.revokeObjectURL(url),3000);
+      },"image/png");
+    } else { viaData(); }
+  }catch(e){ viaData(); }
+}
 
 current=[
 "Komu wpadł telefon w sobotę wieczorem na Rynku? Mam go u siebie, odezwij się!",
