@@ -38,6 +38,8 @@
 
   <div class="card">
     <span class="tag">TWOJE WIADOMOŚCI</span>
+    <label>🎨 Szablon (styl grafiki)</label>
+    <select id="tpl" style="width:100%;padding:10px;border:1px solid var(--line);border-radius:10px;font-size:14px;background:#12141a;color:#e8e6df;margin-bottom:12px"></select>
     <label>Ile ogłoszeń (kafelków)</label>
     <select id="count" style="width:100%;padding:10px;border:1px solid var(--line);border-radius:10px;font-size:14px;background:#12141a;color:#e8e6df;margin-bottom:12px">
       <option value="1">1</option><option value="2">2</option><option value="3">3</option>
@@ -594,6 +596,14 @@ function poolBase(){const rem=getRemoved(),cf=curCat();return MSGS.filter(m=>!re
 
 const cv=document.getElementById('cv'),ctx=cv.getContext('2d');
 const W=1080,H=1350,GOLD="#c9a24b",GRAF="#15171c",TILE="#1d2026";
+const THEMES={
+ grafit:{name:"Grafit + złoto",bg:"#15171c",glow:"201,162,75",g1:"#ecd28a",g2:"#c9a24b",g3:"#9c7c34",gold:"#c9a24b",sub:"#9aa0a6",tile:"#1d2026",tb:"rgba(201,162,75,0.55)",tt:"#f2efe6",mk:"#c9a24b",mt:"#ffffff",foot:"#8a9096"},
+ czern:{name:"Czerń + złoto",bg:"#0c0c0e",glow:"212,175,55",g1:"#f3dd96",g2:"#d4af37",g3:"#a4801f",gold:"#d4af37",sub:"#9a9a9a",tile:"#161618",tb:"rgba(212,175,55,0.6)",tt:"#f5f2e8",mk:"#d4af37",mt:"#111111",foot:"#888888"},
+ granat:{name:"Granat + złoto",bg:"#0e1530",glow:"216,184,96",g1:"#ecd28a",g2:"#d8b860",g3:"#9c7c34",gold:"#d8b860",sub:"#9fb0d0",tile:"#16203f",tb:"rgba(216,184,96,0.55)",tt:"#eef2fb",mk:"#d8b860",mt:"#0e1530",foot:"#8a9bbd"},
+ jasny:{name:"Jasny elegancki",bg:"#f6f1e7",glow:"201,162,75",g1:"#b8902f",g2:"#9c7c34",g3:"#7a5f22",gold:"#9c7c34",sub:"#7a7466",tile:"#fffdf8",tb:"rgba(156,124,52,0.5)",tt:"#2b2a26",mk:"#9c7c34",mt:"#ffffff",foot:"#8a8472"}
+};
+let T=THEMES.grafit;
+function curTpl(){return (document.getElementById('tpl')||{}).value||"grafit";}
 const ta=document.getElementById('msgs');
 
 let current=[];
@@ -616,45 +626,39 @@ function fit(t,maxW,maxH){for(let fs=36;fs>=16;fs-=2){ctx.font="500 "+fs+"px sys
 
 function tile(x,y,w,h,num,text){
   ctx.save();
-  ctx.shadowColor="rgba(0,0,0,0.55)";ctx.shadowBlur=22;ctx.shadowOffsetY=8;
-  ctx.fillStyle=TILE; rr(x,y,w,h,26); ctx.fill();
+  ctx.shadowColor="rgba(0,0,0,0.5)";ctx.shadowBlur=22;ctx.shadowOffsetY=8;
+  ctx.fillStyle=T.tile; rr(x,y,w,h,26); ctx.fill();
   ctx.restore();
-  ctx.strokeStyle="rgba(201,162,75,0.55)";ctx.lineWidth=2; rr(x,y,w,h,26); ctx.stroke();
-  // marker
+  ctx.strokeStyle=T.tb;ctx.lineWidth=2; rr(x,y,w,h,26); ctx.stroke();
   const m=52, mx=x+20, my=y+20;
-  ctx.fillStyle=GOLD; rr(mx,my,m,m,12); ctx.fill();
-  ctx.fillStyle="#fff";ctx.font="bold 30px system-ui,Segoe UI,Roboto,sans-serif";ctx.textAlign="center";ctx.textBaseline="middle";
+  ctx.fillStyle=T.mk; rr(mx,my,m,m,12); ctx.fill();
+  ctx.fillStyle=T.mt;ctx.font="bold 30px system-ui,Segoe UI,Roboto,sans-serif";ctx.textAlign="center";ctx.textBaseline="middle";
   ctx.fillText(num, mx+m/2, my+m/2+1);
-  // text (centered in area below marker)
   const padX=34, topPad=92, botPad=24;
   const aw=w-padX*2, ah=h-topPad-botPad;
   const f=fit(text,aw,ah);
   ctx.font="500 "+f.fs+"px system-ui,Segoe UI,Roboto,sans-serif";
-  ctx.fillStyle="#f2efe6";ctx.textAlign="center";ctx.textBaseline="alphabetic";
+  ctx.fillStyle=T.tt;ctx.textAlign="center";ctx.textBaseline="alphabetic";
   const blockH=f.ls.length*f.lh;
   let ty=y+topPad+(ah-blockH)/2+f.fs;
   f.ls.forEach(line=>{ctx.fillText(line,x+w/2,ty);ty+=f.lh;});
 }
 
 function draw(){
+  T=THEMES[curTpl()]||THEMES.grafit;
   ctx.clearRect(0,0,W,H);
-  // tło grafit
-  ctx.fillStyle=GRAF; ctx.fillRect(0,0,W,H);
-  // poświaty w narożnikach
-  let g1=ctx.createRadialGradient(60,60,0,60,60,520); g1.addColorStop(0,"rgba(201,162,75,0.14)");g1.addColorStop(1,"rgba(201,162,75,0)");
+  ctx.fillStyle=T.bg; ctx.fillRect(0,0,W,H);
+  let g1=ctx.createRadialGradient(60,60,0,60,60,520); g1.addColorStop(0,"rgba("+T.glow+",0.14)");g1.addColorStop(1,"rgba("+T.glow+",0)");
   ctx.fillStyle=g1;ctx.fillRect(0,0,W,H);
-  let g2=ctx.createRadialGradient(W-60,H-60,0,W-60,H-60,560); g2.addColorStop(0,"rgba(201,162,75,0.10)");g2.addColorStop(1,"rgba(201,162,75,0)");
+  let g2=ctx.createRadialGradient(W-60,H-60,0,W-60,H-60,560); g2.addColorStop(0,"rgba("+T.glow+",0.10)");g2.addColorStop(1,"rgba("+T.glow+",0)");
   ctx.fillStyle=g2;ctx.fillRect(0,0,W,H);
-  // nagłówek złoty
-  const gg=ctx.createLinearGradient(0,60,0,140);gg.addColorStop(0,"#ecd28a");gg.addColorStop(0.5,"#c9a24b");gg.addColorStop(1,"#9c7c34");
+  const gg=ctx.createLinearGradient(0,60,0,140);gg.addColorStop(0,T.g1);gg.addColorStop(0.5,T.g2);gg.addColorStop(1,T.g3);
   ctx.fillStyle=gg;ctx.font="bold 66px system-ui,Segoe UI,Roboto,sans-serif";ctx.textAlign="center";ctx.textBaseline="alphabetic";
   try{ctx.letterSpacing="12px";}catch(e){}
   ctx.fillText("SPOTTED RYBNIK",W/2,120);
   try{ctx.letterSpacing="0px";}catch(e){}
-  // złota kreska
-  ctx.fillStyle=GOLD; rr(W/2-90,150,180,5,3); ctx.fill();
-  // podtytuł
-  ctx.fillStyle="#9aa0a6";ctx.font="27px system-ui,Segoe UI,Roboto,sans-serif";
+  ctx.fillStyle=T.gold; rr(W/2-90,150,180,5,3); ctx.fill();
+  ctx.fillStyle=T.sub;ctx.font="27px system-ui,Segoe UI,Roboto,sans-serif";
   ctx.fillText("Odnieś się w komentarzu, podając numer zgłoszenia",W/2,205);
   // kafelki (dynamiczna liczba 1–6)
   const msgs=getMsgs();
@@ -683,8 +687,8 @@ function draw(){
   const w1=ctx.measureText(s1).width,w2=ctx.measureText(s2).width;
   const sx=(W-(w1+w2))/2;
   ctx.textAlign="left";
-  ctx.fillStyle=GOLD;ctx.fillText(s1,sx,H-44);
-  ctx.fillStyle="#8a9096";ctx.fillText(s2,sx+w1,H-44);
+  ctx.fillStyle=T.gold;ctx.fillText(s1,sx,H-44);
+  ctx.fillStyle=T.foot;ctx.fillText(s2,sx+w1,H-44);
   ctx.textAlign="center";
 }
 
@@ -731,6 +735,9 @@ function renderManage(){
 const cf=document.getElementById('catFilter');
 Object.keys(CAT_NAMES).forEach(k=>{const o=document.createElement('option');o.value=k;o.textContent=CAT_NAMES[k];cf.appendChild(o);});
 cf.addEventListener('change',()=>{renderManage();});
+const tplSel=document.getElementById('tpl');
+Object.keys(THEMES).forEach(k=>{const o=document.createElement('option');o.value=k;o.textContent=THEMES[k].name;tplSel.appendChild(o);});
+tplSel.addEventListener('change',draw);
 usedInfo();
 renderManage();
 draw();
