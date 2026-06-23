@@ -708,14 +708,9 @@ function dl(){
     '<p class="hint">Jeśli nie pobrało się samo — <b>przytrzymaj palcem (telefon) lub kliknij prawym (komputer)</b> na obrazku i wybierz „Zapisz obraz jako…".</p>'+
     '<img src="'+url+'" style="max-width:100%;border-radius:8px;margin-top:8px"></div>';
 }
-const OPIS=`📍 SPOTTED RYBNIK — lokalne ogłoszenia, zguby, polecenia i nie tylko!
+const OPIS=`📍 SPOTTED RYBNIK — lokalne ogłoszenia, zguby i polecenia!
 Masz coś do ogłoszenia? Wyślij w wiadomości prywatnej, a my opublikujemy 📩
 Odnieś się w komentarzu, podając numer zgłoszenia 👇
-
-📣 Chcesz się u nas zareklamować? Dotrzyj do tysięcy mieszkańców Rybnika i okolic:
-👍 Facebook: 11 700+ osób
-📸 Instagram: 4 700+ osób
-Napisz do nas w wiadomości — przygotujemy ofertę reklamy dla Twojej firmy!
 
 #rybnik #spottedrybnik #mojrybnik #śląsk #ogłoszenia`;
 function copyOpis(){navigator.clipboard.writeText(OPIS).then(()=>{const e=document.getElementById('opisInfo');if(e){e.textContent="Skopiowano opis posta! ✓";setTimeout(()=>e.textContent="",2000);}});}
