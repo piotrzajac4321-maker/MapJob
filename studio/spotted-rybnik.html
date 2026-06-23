@@ -607,6 +607,7 @@ const THEMES={
 };
 let T=THEMES.grafit;
 function curTpl(){return (document.getElementById('tpl')||{}).value||"grafit";}
+const SPARKS=Array.from({length:26},()=>({x:Math.random()*1080,y:Math.random()*1350,r:1+Math.random()*2.4,a:0.12+Math.random()*0.32}));
 const ta=document.getElementById('msgs');
 
 let current=[];
@@ -647,15 +648,17 @@ function tile(x,y,w,h,num,text){
   f.ls.forEach(line=>{ctx.fillText(line,x+w/2,ty);ty+=f.lh;});
 }
 
-function draw(prog){
-  prog=(prog===undefined)?1:prog;
+function draw(p){
+  const anim=(p!==undefined);
+  const gb=anim?(0.12+0.05*Math.sin(p*6.283)):0.14;
   T=THEMES[curTpl()]||THEMES.grafit;
   ctx.clearRect(0,0,W,H);
   ctx.fillStyle=T.bg; ctx.fillRect(0,0,W,H);
-  let g1=ctx.createRadialGradient(60,60,0,60,60,520); g1.addColorStop(0,"rgba("+T.glow+",0.14)");g1.addColorStop(1,"rgba("+T.glow+",0)");
+  let g1=ctx.createRadialGradient(60,60,0,60,60,520); g1.addColorStop(0,"rgba("+T.glow+","+gb+")");g1.addColorStop(1,"rgba("+T.glow+",0)");
   ctx.fillStyle=g1;ctx.fillRect(0,0,W,H);
-  let g2=ctx.createRadialGradient(W-60,H-60,0,W-60,H-60,560); g2.addColorStop(0,"rgba("+T.glow+",0.10)");g2.addColorStop(1,"rgba("+T.glow+",0)");
+  let g2=ctx.createRadialGradient(W-60,H-60,0,W-60,H-60,560); g2.addColorStop(0,"rgba("+T.glow+","+(gb*0.7)+")");g2.addColorStop(1,"rgba("+T.glow+",0)");
   ctx.fillStyle=g2;ctx.fillRect(0,0,W,H);
+  if(anim){ctx.save();ctx.fillStyle="rgb("+T.glow+")";SPARKS.forEach(s=>{const y=((s.y-p*H)%H+H)%H;ctx.globalAlpha=s.a;ctx.beginPath();ctx.arc(s.x,y,s.r,0,6.283);ctx.fill();});ctx.globalAlpha=1;ctx.restore();}
   const gg=ctx.createLinearGradient(0,60,0,140);gg.addColorStop(0,T.g1);gg.addColorStop(0.5,T.g2);gg.addColorStop(1,T.g3);
   ctx.fillStyle=gg;ctx.font="bold 66px system-ui,Segoe UI,Roboto,sans-serif";ctx.textAlign="center";ctx.textBaseline="alphabetic";
   try{ctx.letterSpacing="12px";}catch(e){}
@@ -674,16 +677,16 @@ function draw(prog){
   const rowH=(contentBottom-contentTop-(rows-1)*gap)/rows;
   const x2=pad+colW+colGap;
   tileRects=[];
-  const av=i=>{if(prog>=1)return 1;const s=(i/n)*0.72;return Math.max(0,Math.min(1,(prog-s)/0.2));};
+  const dy=i=>anim?Math.sin(p*6.283+i*0.8)*7:0;
   let idx=0;
   for(let r=0;r<rows;r++){
-    const y=contentTop+r*(rowH+gap);
+    const y0=contentTop+r*(rowH+gap);
     const lastOdd=(r===rows-1)&&((n-idx)===1);
     if(lastOdd){
-      ctx.globalAlpha=av(idx); tile(pad,y,W-pad*2,rowH,idx+1,msgs[idx]); ctx.globalAlpha=1; tileRects.push({x:pad,y,w:W-pad*2,h:rowH,i:idx}); idx++;
+      tile(pad,y0+dy(idx),W-pad*2,rowH,idx+1,msgs[idx]); tileRects.push({x:pad,y:y0,w:W-pad*2,h:rowH,i:idx}); idx++;
     } else {
-      ctx.globalAlpha=av(idx); tile(pad,y,colW,rowH,idx+1,msgs[idx]); ctx.globalAlpha=1; tileRects.push({x:pad,y,w:colW,h:rowH,i:idx}); idx++;
-      if(idx<n){ ctx.globalAlpha=av(idx); tile(x2,y,colW,rowH,idx+1,msgs[idx]); ctx.globalAlpha=1; tileRects.push({x:x2,y,w:colW,h:rowH,i:idx}); idx++; }
+      tile(pad,y0+dy(idx),colW,rowH,idx+1,msgs[idx]); tileRects.push({x:pad,y:y0,w:colW,h:rowH,i:idx}); idx++;
+      if(idx<n){ tile(x2,y0+dy(idx),colW,rowH,idx+1,msgs[idx]); tileRects.push({x:x2,y:y0,w:colW,h:rowH,i:idx}); idx++; }
     }
   }
   // stopka
