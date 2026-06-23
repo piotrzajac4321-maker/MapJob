@@ -67,8 +67,11 @@
   </div>
 
   <div class="btns">
-    <button class="gold" onclick="dl()">⬇️ Pobierz / Zapisz PNG (4:5)</button>
+    <button class="gold" onclick="dl()">⬇️ Pobierz PNG (post)</button>
+    <button class="gold" onclick="rolka()">🎬 Pobierz rolkę (animacja)</button>
+    <button class="ghost" onclick="copyOpis()">📋 Kopiuj opis posta</button>
   </div>
+  <div class="hint" id="opisInfo"></div>
   <div id="exp"></div>
 
   <div class="card">
@@ -644,7 +647,8 @@ function tile(x,y,w,h,num,text){
   f.ls.forEach(line=>{ctx.fillText(line,x+w/2,ty);ty+=f.lh;});
 }
 
-function draw(){
+function draw(prog){
+  prog=(prog===undefined)?1:prog;
   T=THEMES[curTpl()]||THEMES.grafit;
   ctx.clearRect(0,0,W,H);
   ctx.fillStyle=T.bg; ctx.fillRect(0,0,W,H);
@@ -670,15 +674,16 @@ function draw(){
   const rowH=(contentBottom-contentTop-(rows-1)*gap)/rows;
   const x2=pad+colW+colGap;
   tileRects=[];
+  const av=i=>{if(prog>=1)return 1;const s=(i/n)*0.72;return Math.max(0,Math.min(1,(prog-s)/0.2));};
   let idx=0;
   for(let r=0;r<rows;r++){
     const y=contentTop+r*(rowH+gap);
     const lastOdd=(r===rows-1)&&((n-idx)===1);
     if(lastOdd){
-      tile(pad,y,W-pad*2,rowH,idx+1,msgs[idx]); tileRects.push({x:pad,y,w:W-pad*2,h:rowH,i:idx}); idx++;
+      ctx.globalAlpha=av(idx); tile(pad,y,W-pad*2,rowH,idx+1,msgs[idx]); ctx.globalAlpha=1; tileRects.push({x:pad,y,w:W-pad*2,h:rowH,i:idx}); idx++;
     } else {
-      tile(pad,y,colW,rowH,idx+1,msgs[idx]); tileRects.push({x:pad,y,w:colW,h:rowH,i:idx}); idx++;
-      if(idx<n){ tile(x2,y,colW,rowH,idx+1,msgs[idx]); tileRects.push({x:x2,y,w:colW,h:rowH,i:idx}); idx++; }
+      ctx.globalAlpha=av(idx); tile(pad,y,colW,rowH,idx+1,msgs[idx]); ctx.globalAlpha=1; tileRects.push({x:pad,y,w:colW,h:rowH,i:idx}); idx++;
+      if(idx<n){ ctx.globalAlpha=av(idx); tile(x2,y,colW,rowH,idx+1,msgs[idx]); ctx.globalAlpha=1; tileRects.push({x:x2,y,w:colW,h:rowH,i:idx}); idx++; }
     }
   }
   // stopka
@@ -702,6 +707,30 @@ function dl(){
     '<div class="card"><span class="tag">GOTOWY OBRAZEK</span>'+
     '<p class="hint">Jeśli nie pobrało się samo — <b>przytrzymaj palcem (telefon) lub kliknij prawym (komputer)</b> na obrazku i wybierz „Zapisz obraz jako…".</p>'+
     '<img src="'+url+'" style="max-width:100%;border-radius:8px;margin-top:8px"></div>';
+}
+const OPIS=`📍 SPOTTED RYBNIK — lokalne ogłoszenia, zguby, polecenia i nie tylko!
+Masz coś do ogłoszenia? Wyślij w wiadomości prywatnej, a my opublikujemy 📩
+Odnieś się w komentarzu, podając numer zgłoszenia 👇
+
+📣 Chcesz się u nas zareklamować? Dotrzyj do tysięcy mieszkańców Rybnika i okolic:
+👍 Facebook: 11 700+ osób
+📸 Instagram: 4 700+ osób
+Napisz do nas w wiadomości — przygotujemy ofertę reklamy dla Twojej firmy!
+
+#rybnik #spottedrybnik #mojrybnik #śląsk #ogłoszenia`;
+function copyOpis(){navigator.clipboard.writeText(OPIS).then(()=>{const e=document.getElementById('opisInfo');if(e){e.textContent="Skopiowano opis posta! ✓";setTimeout(()=>e.textContent="",2000);}});}
+function rolka(){
+  if(!cv.captureStream||!window.MediaRecorder){alert("Ta przeglądarka nie nagra rolki — pobierz grafikę PNG i wrzuć ją jako post albo jako Reels z aplikacji.");return;}
+  let mime="video/webm";
+  try{if(MediaRecorder.isTypeSupported("video/webm;codecs=vp9"))mime="video/webm;codecs=vp9";}catch(e){}
+  const stream=cv.captureStream(30);
+  const rec=new MediaRecorder(stream,{mimeType:mime});
+  const chunks=[];rec.ondataavailable=e=>{if(e.data&&e.data.size)chunks.push(e.data);};
+  rec.onstop=()=>{const b=new Blob(chunks,{type:"video/webm"});const a=document.createElement("a");a.href=URL.createObjectURL(b);a.download="spotted-rybnik-rolka.webm";document.body.appendChild(a);a.click();a.remove();const e=document.getElementById("opisInfo");if(e){e.textContent="Rolka pobrana! Wrzuć ją jako Reels/Rolke.";setTimeout(()=>e.textContent="",4000);}};
+  const info=document.getElementById("opisInfo");if(info)info.textContent="Nagrywam rolke... poczekaj ~6 s";
+  rec.start();
+  const dur=5500,start=performance.now();
+  (function frame(t){const p=Math.min(1,(t-start)/dur);draw(p);if(p<1)requestAnimationFrame(frame);else{draw(1);setTimeout(()=>rec.stop(),700);}})(performance.now());
 }
 
 current=[
