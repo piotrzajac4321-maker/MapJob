@@ -687,14 +687,13 @@ function draw(prog){
     }
   }
   // stopka
-  ctx.font="24px system-ui,Segoe UI,Roboto,sans-serif";ctx.textBaseline="alphabetic";
-  const s1="Spotted Rybnik",s2=" · swoje zgłoszenie wyślij w wiadomości prywatnej";
-  const w1=ctx.measureText(s1).width,w2=ctx.measureText(s2).width;
-  const sx=(W-(w1+w2))/2;
-  ctx.textAlign="left";
-  ctx.fillStyle=T.gold;ctx.fillText(s1,sx,H-44);
-  ctx.fillStyle=T.foot;ctx.fillText(s2,sx+w1,H-44);
-  ctx.textAlign="center";
+  ctx.textAlign="center";ctx.textBaseline="alphabetic";
+  ctx.font="bold 27px system-ui,Segoe UI,Roboto,sans-serif";
+  ctx.fillStyle=T.gold;
+  ctx.fillText("Reklama u nas? Napisz w wiadomości",W/2,H-58);
+  ctx.font="24px system-ui,Segoe UI,Roboto,sans-serif";
+  ctx.fillStyle=T.foot;
+  ctx.fillText("Facebook 11 700+    ·    Instagram 4 700+",W/2,H-24);
 }
 
 function dl(){
