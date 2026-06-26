@@ -16,6 +16,7 @@
   .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:16px}
   label{display:block;font-weight:600;font-size:13px;margin:0 0 6px;color:#cfcabb}
   textarea{width:100%;min-height:150px;padding:10px;border:1px solid var(--line);border-radius:10px;font-size:14px;background:#12141a;color:#e8e6df;font-family:inherit}
+  input[type=text]{width:100%;padding:9px;border:1px solid var(--line);border-radius:8px;font-size:13.5px;background:#12141a;color:#e8e6df;font-family:inherit}
   .btns{display:flex;gap:10px;flex-wrap:wrap;margin:8px 0}
   button{cursor:pointer;border:none;border-radius:999px;padding:12px 20px;font-size:15px;font-weight:700}
   .gold{background:var(--gold);color:#15171c}.gold:hover{background:#dab863}
@@ -42,6 +43,16 @@
     <select id="tpl" style="width:100%;padding:10px;border:1px solid var(--line);border-radius:10px;font-size:14px;background:#12141a;color:#e8e6df;margin-bottom:12px"></select>
     <label>🧩 Układ kafelków</label>
     <select id="lay" style="width:100%;padding:10px;border:1px solid var(--line);border-radius:10px;font-size:14px;background:#12141a;color:#e8e6df;margin-bottom:12px"></select>
+    <details style="margin-bottom:12px">
+      <summary style="cursor:pointer;color:var(--gold);font-weight:600;font-size:14px">✏️ Dostosuj teksty (nagłówek, podtytuł, stopka)</summary>
+      <div style="margin-top:8px">
+        <label>Nagłówek</label><input type="text" id="hdr" value="SPOTTED RYBNIK">
+        <label style="margin-top:8px">Podtytuł</label><input type="text" id="sub" value="Odnieś się w komentarzu, podając numer zgłoszenia">
+        <label style="margin-top:10px"><input type="checkbox" id="showFoot" checked style="width:auto;margin-right:6px">pokaż stopkę</label>
+        <label style="margin-top:8px">Stopka — linia 1</label><input type="text" id="ft1" value="Reklama u nas? Napisz w wiadomości">
+        <label style="margin-top:8px">Stopka — linia 2</label><input type="text" id="ft2" value="Facebook 11 700+    ·    Instagram 4 700+">
+      </div>
+    </details>
     <label>Ile ogłoszeń (kafelków)</label>
     <select id="count" style="width:100%;padding:10px;border:1px solid var(--line);border-radius:10px;font-size:14px;background:#12141a;color:#e8e6df;margin-bottom:12px">
       <option value="1">1</option><option value="2">2</option><option value="3">3</option>
@@ -610,7 +621,15 @@ const THEMES={
  korpo:{name:"Granatowy korpo",bg:"#0f2a4a",glow:"120,170,220",g1:"#dcebff",g2:"#9cc4ef",g3:"#5e8fc4",gold:"#9cc4ef",sub:"#b7cbe6",tile:"#163a63",tb:"rgba(156,196,239,0.5)",tt:"#eef4fb",mk:"#5e8fc4",mt:"#0f2a4a",foot:"#8fa9c8"},
  zielen:{name:"Butelkowa zieleń + złoto",bg:"#14241c",glow:"201,162,75",g1:"#ecd28a",g2:"#c9a24b",g3:"#9c7c34",gold:"#c9a24b",sub:"#9bb0a4",tile:"#1c3328",tb:"rgba(201,162,75,0.5)",tt:"#eef4ee",mk:"#c9a24b",mt:"#14241c",foot:"#8aa093"},
  bordo:{name:"Bordo + złoto",bg:"#2a1116",glow:"216,184,96",g1:"#ecd28a",g2:"#d8b860",g3:"#9c7c34",gold:"#d8b860",sub:"#c79aa3",tile:"#3a1922",tb:"rgba(216,184,96,0.5)",tt:"#f6eef0",mk:"#d8b860",mt:"#2a1116",foot:"#b58a93"},
- nocny:{name:"Nocny cyan (nowoczesny)",bg:"#0a0e1a",glow:"111,214,230",g1:"#bff0ff",g2:"#6fd6e6",g3:"#2f97a8",gold:"#6fd6e6",sub:"#8fa3b5",tile:"#121a2e",tb:"rgba(111,214,230,0.45)",tt:"#eaf3f8",mk:"#6fd6e6",mt:"#0a1018",foot:"#7d93a8"}
+ nocny:{name:"Nocny cyan (nowoczesny)",bg:"#0a0e1a",glow:"111,214,230",g1:"#bff0ff",g2:"#6fd6e6",g3:"#2f97a8",gold:"#6fd6e6",sub:"#8fa3b5",tile:"#121a2e",tb:"rgba(111,214,230,0.45)",tt:"#eaf3f8",mk:"#6fd6e6",mt:"#0a1018",foot:"#7d93a8"},
+ fiolet:{name:"Fiolet + złoto",bg:"#1a1230",glow:"190,150,230",g1:"#ecd28a",g2:"#c9a24b",g3:"#9c7c34",gold:"#c9a24b",sub:"#b3a3cf",tile:"#271a45",tb:"rgba(201,162,75,0.5)",tt:"#efeaf8",mk:"#c9a24b",mt:"#1a1230",foot:"#9a8cbf"},
+ rozezloto:{name:"Rose gold",bg:"#2a1a1f",glow:"230,180,160",g1:"#f3d3c0",g2:"#e0a98f",g3:"#b97f63",gold:"#e0a98f",sub:"#c9a99e",tile:"#3a242b",tb:"rgba(224,169,143,0.5)",tt:"#f7eee9",mk:"#e0a98f",mt:"#2a1a1f",foot:"#b08f84"},
+ mieta:{name:"Mięta (świeża)",bg:"#0e2622",glow:"120,220,200",g1:"#cfffef",g2:"#6fd6c0",g3:"#2f9a86",gold:"#6fd6c0",sub:"#93c2b8",tile:"#143832",tb:"rgba(111,214,192,0.45)",tt:"#eaf8f4",mk:"#6fd6c0",mt:"#0a1a17",foot:"#7da89e"},
+ zachod:{name:"Zachód słońca",bg:"#2a160c",glow:"240,150,80",g1:"#ffd9a8",g2:"#f0913c",g3:"#b5651d",gold:"#f0913c",sub:"#cba98f",tile:"#3a2113",tb:"rgba(240,145,60,0.5)",tt:"#f8efe6",mk:"#f0913c",mt:"#2a160c",foot:"#b58f70"},
+ stal:{name:"Stalowy modern",bg:"#1b2026",glow:"150,170,190",g1:"#e6edf5",g2:"#9fb4c8",g3:"#5f7488",gold:"#9fb4c8",sub:"#9aa6b2",tile:"#262c34",tb:"rgba(159,180,200,0.4)",tt:"#eef2f6",mk:"#9fb4c8",mt:"#1b2026",foot:"#8893a0"},
+ karmazyn:{name:"Karmazyn",bg:"#240a0e",glow:"230,90,90",g1:"#ffc9c9",g2:"#e84f4f",g3:"#a52f2f",gold:"#e84f4f",sub:"#c79aa0",tile:"#331317",tb:"rgba(232,79,79,0.45)",tt:"#f8ecec",mk:"#e84f4f",mt:"#240a0e",foot:"#b58a8f"},
+ lod:{name:"Lodowy błękit",bg:"#0c1824",glow:"120,190,240",g1:"#d6efff",g2:"#79bdf0",g3:"#2f7ab8",gold:"#79bdf0",sub:"#93b3cf",tile:"#122636",tb:"rgba(121,189,240,0.45)",tt:"#eaf3fb",mk:"#79bdf0",mt:"#0a1622",foot:"#7d99b5"},
+ las:{name:"Leśna zieleń",bg:"#0d1f14",glow:"120,200,120",g1:"#cfffd6",g2:"#6fd683",g3:"#2f9a45",gold:"#6fd683",sub:"#93c2a0",tile:"#143020",tb:"rgba(111,214,131,0.45)",tt:"#eaf8ee",mk:"#6fd683",mt:"#0a1a10",foot:"#7da888"}
 };
 let T=THEMES.grafit;
 function curTpl(){return (document.getElementById('tpl')||{}).value||"grafit";}
@@ -674,6 +693,7 @@ function draw(p){
   T=THEMES[curTpl()]||THEMES.grafit;
   const lay=curLay();
   const FF=(lay==="gazeta")?"Georgia,'Times New Roman',serif":"system-ui,Segoe UI,Roboto,sans-serif";
+  const showFoot=!(document.getElementById('showFoot'))||document.getElementById('showFoot').checked;
   ctx.clearRect(0,0,W,H);
   ctx.fillStyle=T.bg; ctx.fillRect(0,0,W,H);
   let g1=ctx.createRadialGradient(60,60,0,60,60,520); g1.addColorStop(0,"rgba("+T.glow+","+gb+")");g1.addColorStop(1,"rgba("+T.glow+",0)");
@@ -682,19 +702,23 @@ function draw(p){
   ctx.fillStyle=g2;ctx.fillRect(0,0,W,H);
   if(anim){ctx.save();ctx.fillStyle="rgb("+T.glow+")";SPARKS.forEach(s=>{const y=((s.y-p*H)%H+H)%H;ctx.globalAlpha=s.a;ctx.beginPath();ctx.arc(s.x,y,s.r,0,6.283);ctx.fill();});ctx.globalAlpha=1;ctx.restore();}
   const gg=ctx.createLinearGradient(0,60,0,140);gg.addColorStop(0,T.g1);gg.addColorStop(0.5,T.g2);gg.addColorStop(1,T.g3);
-  ctx.fillStyle=gg;ctx.font="bold 66px "+FF;ctx.textAlign="center";ctx.textBaseline="alphabetic";
+  const hdr=(((document.getElementById('hdr')||{}).value)||"SPOTTED RYBNIK").trim()||"SPOTTED RYBNIK";
+  const subEl=document.getElementById('sub');
+  const sub=(subEl&&subEl.value!==undefined)?subEl.value:"Odnieś się w komentarzu, podając numer zgłoszenia";
+  ctx.fillStyle=gg;ctx.textAlign="center";ctx.textBaseline="alphabetic";
   try{ctx.letterSpacing="12px";}catch(e){}
-  ctx.fillText("SPOTTED RYBNIK",W/2,120);
+  let hs=66;ctx.font="bold "+hs+"px "+FF;while(ctx.measureText(hdr).width>W-120&&hs>28){hs-=2;ctx.font="bold "+hs+"px "+FF;}
+  ctx.fillText(hdr,W/2,120);
   try{ctx.letterSpacing="0px";}catch(e){}
   ctx.fillStyle=T.gold; rr(W/2-90,150,180,5,3); ctx.fill();
   ctx.fillStyle=T.sub;ctx.font="27px "+FF;
-  ctx.fillText("Odnieś się w komentarzu, podając numer zgłoszenia",W/2,205);
+  ctx.fillText(sub,W/2,205);
   // kafelki (dynamiczna liczba 1–6)
   const msgs=getMsgs();
   const n=msgs.length;
   const pad=60,colGap=30,gap=26;
   const colW=(W-pad*2-colGap)/2;
-  const contentTop=255, contentBottom=H-92;
+  const contentTop=255, contentBottom=showFoot?H-92:H-44;
   tileRects=[];
   const dy=i=>anim?Math.sin(p*6.283+i*0.8)*7:0;
   if(lay==="lista"||lay==="gazeta"){
@@ -713,13 +737,14 @@ function draw(p){
     }
   }
   // stopka
-  ctx.textAlign="center";ctx.textBaseline="alphabetic";
-  ctx.font="bold 27px "+FF;
-  ctx.fillStyle=T.gold;
-  ctx.fillText("Reklama u nas? Napisz w wiadomości",W/2,H-58);
-  ctx.font="24px "+FF;
-  ctx.fillStyle=T.foot;
-  ctx.fillText("Facebook 11 700+    ·    Instagram 4 700+",W/2,H-24);
+  if(showFoot){
+    const f1El=document.getElementById('ft1'),f2El=document.getElementById('ft2');
+    const ft1=(f1El&&f1El.value!==undefined)?f1El.value:"Reklama u nas? Napisz w wiadomości";
+    const ft2=(f2El&&f2El.value!==undefined)?f2El.value:"Facebook 11 700+    ·    Instagram 4 700+";
+    ctx.textAlign="center";ctx.textBaseline="alphabetic";
+    ctx.font="bold 27px "+FF;ctx.fillStyle=T.gold;ctx.fillText(ft1,W/2,H-58);
+    ctx.font="24px "+FF;ctx.fillStyle=T.foot;ctx.fillText(ft2,W/2,H-24);
+  }
 }
 
 function dl(){
@@ -790,6 +815,8 @@ tplSel.addEventListener('change',()=>draw());
 const laySel=document.getElementById('lay');
 Object.keys(LAYS).forEach(k=>{const o=document.createElement('option');o.value=k;o.textContent=LAYS[k];laySel.appendChild(o);});
 laySel.addEventListener('change',()=>draw());
+["hdr","sub","ft1","ft2"].forEach(id=>{const el=document.getElementById(id);if(el)el.addEventListener('input',()=>draw());});
+const sf=document.getElementById('showFoot');if(sf)sf.addEventListener('change',()=>draw());
 usedInfo();
 renderManage();
 draw();
