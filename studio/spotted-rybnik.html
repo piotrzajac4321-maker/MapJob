@@ -56,7 +56,7 @@
         <select id="borderW" style="width:100%;padding:9px;border:1px solid var(--line);border-radius:8px;background:#12141a;color:#e8e6df">
           <option value="c">Cienka</option><option value="m" selected>Średnia</option><option value="g">Gruba</option>
         </select>
-        <label style="margin-top:8px">Stopka — linia 1</label><input type="text" id="ft1" value="Reklama u nas? Napisz w wiadomości">
+        <label style="margin-top:8px">Stopka — linia 1</label><input type="text" id="ft1" value="Reklama u nas? Napisz w wiadomości albo komentarzu">
         <label style="margin-top:8px">Stopka — linia 2</label><input type="text" id="ft2" value="Facebook 11 700+    ·    Instagram 4 700+">
       </div>
     </details>
@@ -627,7 +627,7 @@ const MSGS=[
 "polećcie second hand z dobra jakościa ubrań w rybniku",
 "gdzie kupic uzywane ksiazki tanio? polećcie miejsca albo grupy",
 "Twoja firma z Rybnika? Dotrzyj do 11 700+ mieszkańców na Facebooku i 4 700+ na Instagramie",
-"Reklama u nas to lokalni klienci, którzy Cię znajdą. Napisz w wiadomości",
+"Reklama u nas to lokalni klienci, którzy Cię znajdą. Napisz w wiadomości albo komentarzu",
 "Post na Facebooku i Instagramie z Twoją ofertą. Pakiety dostępne od ręki",
 "Relacja, przypięcie posta i krótka rolka promująca Twoją firmę",
 "Konkurs z nagrodą od Twojej firmy to ogromny zasięg i reklama w jednym",
@@ -637,7 +637,7 @@ const MSGS=[
 "Pakiety reklamowe dopasowane do każdego budżetu. Napisz, dobierzemy coś",
 "Promujemy lokalne firmy: gastronomia, usługi, handel i nie tylko",
 "Chcesz więcej klientów z Rybnika? Reklama u nas to prosty start",
-"Napisz w wiadomości prywatnej, a przygotujemy ofertę dla Twojej firmy"
+"Napisz w wiadomości albo komentarzu, a przygotujemy ofertę dla Twojej firmy"
 ];
 
 const CAT_NAMES={all:"Wszystkie",reklama:"📣 Reklama (oferta)",jedzenie:"🍕 Jedzenie/lokale",uroda:"💇 Fryzjer/uroda",fachowcy:"🔧 Fachowcy/usługi",zdrowie:"🏥 Zdrowie",zguby:"🔑 Zguby/znaleziska",zwierzeta:"🐾 Zwierzęta",oddam:"🎁 Oddam za darmo",sprzedaz:"🛒 Sprzedam/kupię",spotkania:"👥 Spotkania/wieczór",dzieci:"🧒 Dzieci/szkoły",podziekowania:"❤️ Podziękowania",zaangazowanie:"💬 Polub/komentuj",polecenia:"⭐ Polecenia",inne:"📌 Inne"};
@@ -718,7 +718,7 @@ const PRESETS=[
  ["Śmieszne z Rybnika","ŚMIESZNE Z RYBNIKA","Otaguj znajomego w komentarzu","fiolet","kafelki",2,true],
  ["Zgadnij miejsce","ZGADNIJ MIEJSCE","Wiesz, gdzie to jest? Napisz","lod","lista",1,true],
  ["Podziękowania","PODZIĘKOWANIA","Dobre uczynki mieszkańców Rybnika","rozezloto","lista",3,true],
- ["Oferta reklamy (pakiet)","OFERTA REKLAMY","Twoja firma w Spotted Rybnik — napisz w wiadomości","korpo","kafelki",4,true,"reklama"]
+ ["Oferta reklamy (pakiet)","OFERTA REKLAMY","Twoja firma w Spotted Rybnik — napisz w wiadomości albo komentarzu","korpo","kafelki",4,true,"reklama"]
 ];
 function applyPreset(i){const p=PRESETS[i];if(!p)return;document.getElementById('hdr').value=p[1];document.getElementById('sub').value=p[2];document.getElementById('tpl').value=p[3];document.getElementById('lay').value=p[4];document.getElementById('count').value=String(p[5]);document.getElementById('showFoot').checked=p[6];if(p[7]){const cfEl=document.getElementById('catFilter');if(cfEl){cfEl.value=p[7];renderManage();}losuj();}else setCount();}
 function saveCfg(){const g=id=>document.getElementById(id);const c={tpl:curTpl(),lay:curLay(),count:Nv(),hdr:g('hdr').value,sub:g('sub').value,ft1:g('ft1').value,ft2:g('ft2').value,foot:g('showFoot').checked,cbg:g('cbg').value,cacc:g('cacc').value,ctile:g('ctile').value,ctext:g('ctext').value};localStorage.setItem('spottedCfg',JSON.stringify(c));const e=document.getElementById('opisInfo');if(e){e.textContent="Zapisano ustawienia ✓";setTimeout(()=>e.textContent="",2000);}}
@@ -833,7 +833,7 @@ function draw(p){
   // stopka
   if(showFoot){
     const f1El=document.getElementById('ft1'),f2El=document.getElementById('ft2');
-    const ft1=(f1El&&f1El.value!==undefined)?f1El.value:"Reklama u nas? Napisz w wiadomości";
+    const ft1=(f1El&&f1El.value!==undefined)?f1El.value:"Reklama u nas? Napisz w wiadomości albo komentarzu";
     const ft2=(f2El&&f2El.value!==undefined)?f2El.value:"Facebook 11 700+    ·    Instagram 4 700+";
     ctx.textAlign="center";ctx.textBaseline="alphabetic";
     ctx.font="bold 27px "+FF;ctx.fillStyle=T.gold;ctx.fillText(ft1,W/2,H-58);
