@@ -132,6 +132,12 @@
 
   <div class="card">
     <span class="tag">PODGLĄD</span>
+    <div style="display:flex;align-items:center;gap:10px;margin:10px 0 4px">
+      <span style="font-size:13px;color:var(--mut);white-space:nowrap">🔤 Wielkość napisów</span>
+      <span style="font-size:13px">A</span>
+      <input type="range" id="txtSlider" min="0" max="3" step="1" value="1" style="flex:1;accent-color:#caa64a">
+      <span style="font-size:20px;font-weight:700">A</span>
+    </div>
     <div class="preview"><canvas id="cv" width="1080" height="1350"></canvas></div>
   </div>
 </div>
@@ -932,7 +938,10 @@ tplSel.value="monoczarny"; laySel.value="kafelki";
 const sf=document.getElementById('showFoot');if(sf)sf.addEventListener('change',()=>draw());
 const ctaEl=document.getElementById('cta');if(ctaEl)ctaEl.addEventListener('change',()=>draw());
 const bwEl=document.getElementById('borderW');if(bwEl)bwEl.addEventListener('change',()=>draw());
-const tsEl=document.getElementById('txtSize');if(tsEl)tsEl.addEventListener('change',()=>draw());
+const TS_KEYS=['s','m','l','xl'];
+const tsEl=document.getElementById('txtSize'),tsSlider=document.getElementById('txtSlider');
+if(tsEl)tsEl.addEventListener('change',()=>{if(tsSlider){const i=TS_KEYS.indexOf(tsEl.value);if(i>=0)tsSlider.value=i;}draw();});
+if(tsSlider)tsSlider.addEventListener('input',()=>{if(tsEl)tsEl.value=TS_KEYS[+tsSlider.value]||'m';draw();});
 ["cbg","cacc","ctile","ctext"].forEach(id=>{const el=document.getElementById(id);if(el)el.addEventListener('input',()=>{document.getElementById('tpl').value="wlasny";draw();});});
 const presetSel=document.getElementById('preset');
 const o0=document.createElement('option');o0.value="";o0.textContent="— wybierz przykład —";presetSel.appendChild(o0);
