@@ -661,6 +661,8 @@ const THEMES={
  karmazyn:{name:"Karmazyn",bg:"#240a0e",glow:"230,90,90",g1:"#ffc9c9",g2:"#e84f4f",g3:"#a52f2f",gold:"#e84f4f",sub:"#c79aa0",tile:"#331317",tb:"rgba(232,79,79,0.45)",tt:"#f8ecec",mk:"#e84f4f",mt:"#240a0e",foot:"#b58a8f"},
  lod:{name:"Lodowy błękit",bg:"#0c1824",glow:"120,190,240",g1:"#d6efff",g2:"#79bdf0",g3:"#2f7ab8",gold:"#79bdf0",sub:"#93b3cf",tile:"#122636",tb:"rgba(121,189,240,0.45)",tt:"#eaf3fb",mk:"#79bdf0",mt:"#0a1622",foot:"#7d99b5"},
  las:{name:"Leśna zieleń",bg:"#0d1f14",glow:"120,200,120",g1:"#cfffd6",g2:"#6fd683",g3:"#2f9a45",gold:"#6fd683",sub:"#93c2a0",tile:"#143020",tb:"rgba(111,214,131,0.45)",tt:"#eaf8ee",mk:"#6fd683",mt:"#0a1a10",foot:"#7da888"},
+ monoczarny:{name:"Mono czarno-biały",bg:"#0f0f10",glow:"255,255,255",g1:"#ffffff",g2:"#e8e8e8",g3:"#bdbdbd",gold:"#ffffff",sub:"#9a9a9a",tile:"#1b1b1d",tb:"rgba(255,255,255,0.5)",tt:"#f3f3f3",mk:"#ffffff",mt:"#0f0f10",foot:"#888888"},
+ monobialy:{name:"Mono biało-czarny",bg:"#ffffff",glow:"0,0,0",g1:"#2a2a2a",g2:"#141414",g3:"#000000",gold:"#111111",sub:"#777777",tile:"#f4f4f4",tb:"rgba(0,0,0,0.18)",tt:"#1a1a1a",mk:"#111111",mt:"#ffffff",foot:"#9a9a9a"},
  wlasny:{name:"🎨 Własny (suwaki)",bg:"#15171c",glow:"201,162,75",g1:"#c9a24b",g2:"#c9a24b",g3:"#c9a24b",gold:"#c9a24b",sub:"#9aa0a6",tile:"#1d2026",tb:"rgba(201,162,75,0.55)",tt:"#f2efe6",mk:"#c9a24b",mt:"#15171c",foot:"#8a9096"}
 };
 function hexToRgb(h){h=(h||"#c9a24b").replace('#','');if(h.length===3)h=h.split('').map(c=>c+c).join('');const n=parseInt(h,16);return ((n>>16)&255)+","+((n>>8)&255)+","+(n&255);}
