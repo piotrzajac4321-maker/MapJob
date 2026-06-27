@@ -52,12 +52,16 @@
         <label style="margin-top:8px">Podtytuł</label><input type="text" id="sub" value="Odnieś się w komentarzu, podając numer zgłoszenia">
         <label style="margin-top:10px"><input type="checkbox" id="cta" checked style="width:auto;margin-right:6px">CTA: POLUB · SKOMENTUJ · UDOSTĘPNIJ</label>
         <label style="margin-top:8px"><input type="checkbox" id="showFoot" checked style="width:auto;margin-right:6px">pokaż stopkę</label>
+        <label style="margin-top:10px">Wielkość napisów</label>
+        <select id="txtSize" style="width:100%;padding:9px;border:1px solid var(--line);border-radius:8px;background:#12141a;color:#e8e6df">
+          <option value="s">Małe</option><option value="m" selected>Średnie</option><option value="l">Duże</option><option value="xl">Bardzo duże</option>
+        </select>
         <label style="margin-top:10px">Grubość obwódki kafelków</label>
         <select id="borderW" style="width:100%;padding:9px;border:1px solid var(--line);border-radius:8px;background:#12141a;color:#e8e6df">
           <option value="c">Cienka</option><option value="m" selected>Średnia</option><option value="g">Gruba</option>
         </select>
-        <label style="margin-top:8px">Stopka — linia 1</label><input type="text" id="ft1" value="Reklama u nas? Napisz w wiadomości albo komentarzu">
-        <label style="margin-top:8px">Stopka — linia 2</label><input type="text" id="ft2" value="Facebook 11 700+    ·    Instagram 4 700+">
+        <label style="margin-top:8px">Stopka — linia 1</label><input type="text" id="ft1" value="">
+        <label style="margin-top:8px">Stopka — linia 2</label><input type="text" id="ft2" value="Facebook 11 700+    ·    Instagram 7 900+">
       </div>
     </details>
     <details style="margin-bottom:12px">
@@ -626,7 +630,7 @@ const MSGS=[
 "szukam mebli dla studenta co sie wprowadza pomożecie?",
 "polećcie second hand z dobra jakościa ubrań w rybniku",
 "gdzie kupic uzywane ksiazki tanio? polećcie miejsca albo grupy",
-"Twoja firma z Rybnika? Dotrzyj do 11 700+ mieszkańców na Facebooku i 4 700+ na Instagramie",
+"Twoja firma z Rybnika? Dotrzyj do 11 700+ mieszkańców na Facebooku i 7 900+ na Instagramie",
 "Reklama u nas to lokalni klienci, którzy Cię znajdą. Napisz w wiadomości albo komentarzu",
 "Post na Facebooku i Instagramie z Twoją ofertą. Pakiety dostępne od ręki",
 "Relacja, przypięcie posta i krótka rolka promująca Twoją firmę",
@@ -642,7 +646,7 @@ const MSGS=[
 
 const CAT_NAMES={all:"Wszystkie",reklama:"📣 Reklama (oferta)",jedzenie:"🍕 Jedzenie/lokale",uroda:"💇 Fryzjer/uroda",fachowcy:"🔧 Fachowcy/usługi",zdrowie:"🏥 Zdrowie",zguby:"🔑 Zguby/znaleziska",zwierzeta:"🐾 Zwierzęta",oddam:"🎁 Oddam za darmo",sprzedaz:"🛒 Sprzedam/kupię",spotkania:"👥 Spotkania/wieczór",dzieci:"🧒 Dzieci/szkoły",podziekowania:"❤️ Podziękowania",zaangazowanie:"💬 Polub/komentuj",polecenia:"⭐ Polecenia",inne:"📌 Inne"};
 function category(t){const s=t.toLowerCase();
- if(/(reklam|11 700|4 700|twoja firma|twoją firmę|pakiet|promujemy lokalne|oferta dla twojej|wśród zaufanej|więcej klientów z rybnika)/.test(s))return"reklama";
+ if(/(reklam|11 700|4 700|7 900|twoja firma|twoją firmę|pakiet|promujemy lokalne|oferta dla twojej|wśród zaufanej|więcej klientów z rybnika)/.test(s))return"reklama";
  if(/(pizza|kebab|burger|jedz|obiad|sushi|lody|ciast|piekarni|cukierni|gofry|naleśnik|kawiarni|kawa|restaurac|knajp|śniadani|zup|pierog|catering|miod|jajk|nabiał|szarlotk|bar mleczny|food truck|paczki|bułk|chińsk|schabow)/.test(s))return"jedzenie";
  if(/(fryzjer|barber|paznok|rzęs|kosmetycz|makijaż|brod|balejaż|koloryzac|depilac|masaż|podolog|trwał|keratyn|fade)/.test(s))return"uroda";
  if(/(mechanik|hydraulik|elektryk|remont|glazurnik|stolarz|dekarz|malarz|fachow|kominiar|okna|piec|tapicer|ślusarz|montaz|naprawia|warsztat|ogrodzeni|płot|rusztowani|gruz|wulkaniz|holowani|opon|krawcow|ślusar|rolety|elewacj|trawnik|kosi|ogrodnik)/.test(s))return"fachowcy";
@@ -742,7 +746,8 @@ function setCount(){const n=Nv();if(current.length>n)current=current.slice(0,n);
 function getMsgs(){const n=Nv();const a=current.slice(0,n);while(a.length<n)a.push("…");return a;}
 function rr(x,y,w,h,r){ctx.beginPath();ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath();}
 function wrap(t,maxW){const words=t.split(" ");let l=[],c="";for(const w of words){const tt=c?c+" "+w:w;if(ctx.measureText(tt).width>maxW&&c){l.push(c);c=w;}else c=tt;}if(c)l.push(c);return l;}
-function fit(t,maxW,maxH,ff,weight){ff=ff||"system-ui,Segoe UI,Roboto,sans-serif";weight=weight||"500";for(let fs=36;fs>=15;fs--){ctx.font=weight+" "+fs+"px "+ff;const ls=wrap(t,maxW);if(ls.length*fs*1.28<=maxH)return{fs,ls,lh:fs*1.28};}ctx.font=weight+" 15px "+ff;return{fs:15,ls:wrap(t,maxW),lh:20};}
+function txtScale(){const el=document.getElementById('txtSize');return ({s:0.8,m:1,l:1.2,xl:1.45}[(el&&el.value)||'m'])||1;}
+function fit(t,maxW,maxH,ff,weight,sc){ff=ff||"system-ui,Segoe UI,Roboto,sans-serif";weight=weight||"500";sc=sc||1;const top=Math.round(36*sc);for(let fs=top;fs>=12;fs--){ctx.font=weight+" "+fs+"px "+ff;const ls=wrap(t,maxW);if(ls.length*fs*1.28<=maxH)return{fs,ls,lh:fs*1.28};}ctx.font=weight+" 12px "+ff;return{fs:12,ls:wrap(t,maxW),lh:16};}
 
 function tile(x,y,w,h,num,text,mode,ff){
   mode=mode||"kafelki"; ff=ff||"system-ui,Segoe UI,Roboto,sans-serif";
@@ -772,7 +777,7 @@ function tile(x,y,w,h,num,text,mode,ff){
     txtX=x+w/2;txtW=w-60;align="center";topPad=76;
   }
   const ah=(topPad<0)?(h-40):(h-topPad-24);
-  const f=fit(text,txtW,ah,ff,weight);
+  const f=fit(text,txtW,ah,ff,weight,txtScale());
   ctx.font=weight+" "+f.fs+"px "+ff;ctx.fillStyle=T.tt;ctx.textAlign=align;ctx.textBaseline="alphabetic";
   const blockH=f.ls.length*f.lh;
   let ty=(topPad<0)?(y+(h-blockH)/2+f.fs):(y+topPad+(ah-blockH)/2+f.fs);
@@ -833,11 +838,15 @@ function draw(p){
   // stopka
   if(showFoot){
     const f1El=document.getElementById('ft1'),f2El=document.getElementById('ft2');
-    const ft1=(f1El&&f1El.value!==undefined)?f1El.value:"Reklama u nas? Napisz w wiadomości albo komentarzu";
-    const ft2=(f2El&&f2El.value!==undefined)?f2El.value:"Facebook 11 700+    ·    Instagram 4 700+";
+    const ft1=((f1El&&f1El.value!==undefined)?f1El.value:"").trim();
+    const ft2=(f2El&&f2El.value!==undefined)?f2El.value:"Facebook 11 700+    ·    Instagram 7 900+";
     ctx.textAlign="center";ctx.textBaseline="alphabetic";
-    ctx.font="bold 27px "+FF;ctx.fillStyle=T.gold;ctx.fillText(ft1,W/2,H-58);
-    ctx.font="24px "+FF;ctx.fillStyle=T.foot;ctx.fillText(ft2,W/2,H-24);
+    if(ft1){
+      ctx.font="bold 27px "+FF;ctx.fillStyle=T.gold;ctx.fillText(ft1,W/2,H-58);
+      ctx.font="24px "+FF;ctx.fillStyle=T.foot;ctx.fillText(ft2,W/2,H-24);
+    } else {
+      ctx.font="24px "+FF;ctx.fillStyle=T.foot;ctx.fillText(ft2,W/2,H-34);
+    }
   }
   if(ctaOn){const cy=showFoot?H-104:H-40;ctx.textAlign="center";ctx.textBaseline="alphabetic";ctx.font="bold 28px "+FF;ctx.fillStyle=T.gold;ctx.fillText("POLUB   ·   SKOMENTUJ   ·   UDOSTĘPNIJ",W/2,cy);}
   if(LOGO&&LOGO.complete&&LOGO.naturalWidth){
@@ -923,6 +932,7 @@ tplSel.value="monoczarny"; laySel.value="kafelki";
 const sf=document.getElementById('showFoot');if(sf)sf.addEventListener('change',()=>draw());
 const ctaEl=document.getElementById('cta');if(ctaEl)ctaEl.addEventListener('change',()=>draw());
 const bwEl=document.getElementById('borderW');if(bwEl)bwEl.addEventListener('change',()=>draw());
+const tsEl=document.getElementById('txtSize');if(tsEl)tsEl.addEventListener('change',()=>draw());
 ["cbg","cacc","ctile","ctext"].forEach(id=>{const el=document.getElementById(id);if(el)el.addEventListener('input',()=>{document.getElementById('tpl').value="wlasny";draw();});});
 const presetSel=document.getElementById('preset');
 const o0=document.createElement('option');o0.value="";o0.textContent="— wybierz przykład —";presetSel.appendChild(o0);
