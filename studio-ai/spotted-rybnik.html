@@ -64,6 +64,19 @@
         <label>Tekst <input type="color" id="ctext" value="#f2efe6"></label>
       </div>
     </details>
+    <details style="margin-bottom:12px">
+      <summary style="cursor:pointer;color:var(--gold);font-weight:600;font-size:14px">🖼️ Logo (wgraj swoje)</summary>
+      <div style="margin-top:8px;font-size:13px">
+        <input type="file" id="logoFile" accept="image/*" style="font-size:12.5px">
+        <label style="margin-top:8px">Pozycja logo</label>
+        <select id="logoPos" style="width:100%;padding:9px;border:1px solid var(--line);border-radius:8px;background:#12141a;color:#e8e6df">
+          <option value="pg">Prawy górny róg</option>
+          <option value="lg">Lewy górny róg</option>
+          <option value="st">Przy stopce (lewy)</option>
+        </select>
+        <button class="ghost" onclick="removeLogo()" style="margin-top:8px;padding:7px 14px;font-size:12.5px">🗑️ Usuń logo</button>
+      </div>
+    </details>
     <div class="btns">
       <button class="ghost" onclick="saveCfg()">💾 Zapisz ustawienia</button>
       <button class="ghost" onclick="loadCfg()">📂 Wczytaj zapisane</button>
@@ -626,6 +639,9 @@ function curCat(){return (document.getElementById('catFilter')||{}).value||"all"
 function poolBase(){const rem=getRemoved(),cf=curCat();return MSGS.filter(m=>!rem[m]&&(cf==="all"||category(m)===cf));}
 
 const cv=document.getElementById('cv'),ctx=cv.getContext('2d');
+let LOGO=null;
+function setLogo(durl){if(!durl){LOGO=null;return;}const im=new Image();im.onload=()=>{LOGO=im;draw();};im.src=durl;}
+function removeLogo(){localStorage.removeItem('spottedLogo');LOGO=null;const f=document.getElementById('logoFile');if(f)f.value="";draw();}
 const W=1080,H=1350,GOLD="#c9a24b",GRAF="#15171c",TILE="#1d2026";
 const THEMES={
  grafit:{name:"Grafit + złoto",bg:"#15171c",glow:"201,162,75",g1:"#ecd28a",g2:"#c9a24b",g3:"#9c7c34",gold:"#c9a24b",sub:"#9aa0a6",tile:"#1d2026",tb:"rgba(201,162,75,0.55)",tt:"#f2efe6",mk:"#c9a24b",mt:"#ffffff",foot:"#8a9096"},
@@ -787,6 +803,13 @@ function draw(p){
     ctx.font="bold 27px "+FF;ctx.fillStyle=T.gold;ctx.fillText(ft1,W/2,H-58);
     ctx.font="24px "+FF;ctx.fillStyle=T.foot;ctx.fillText(ft2,W/2,H-24);
   }
+  if(LOGO&&LOGO.complete&&LOGO.naturalWidth){
+    const pos=(document.getElementById('logoPos')||{}).value||"pg";
+    const lh=78,lw=LOGO.naturalWidth*(lh/LOGO.naturalHeight);
+    let lx,ly;
+    if(pos==="lg"){lx=44;ly=26;} else if(pos==="st"){lx=44;ly=H-lh-18;} else {lx=W-44-lw;ly=26;}
+    ctx.drawImage(LOGO,lx,ly,lw,lh);
+  }
 }
 
 function dl(){
@@ -864,6 +887,10 @@ const presetSel=document.getElementById('preset');
 const o0=document.createElement('option');o0.value="";o0.textContent="— wybierz przykład —";presetSel.appendChild(o0);
 PRESETS.forEach((p,i)=>{const o=document.createElement('option');o.value=i;o.textContent=p[0];presetSel.appendChild(o);});
 presetSel.addEventListener('change',()=>{if(presetSel.value!=="")applyPreset(+presetSel.value);});
+const lf=document.getElementById('logoFile');
+if(lf)lf.addEventListener('change',e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{localStorage.setItem('spottedLogo',r.result);}catch(err){}setLogo(r.result);};r.readAsDataURL(f);});
+const lp=document.getElementById('logoPos');if(lp)lp.addEventListener('change',()=>draw());
+const savedLogo=localStorage.getItem('spottedLogo');if(savedLogo)setLogo(savedLogo);
 usedInfo();
 renderManage();
 draw();
