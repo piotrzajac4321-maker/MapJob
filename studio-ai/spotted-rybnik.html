@@ -75,6 +75,12 @@
           <option value="lg">Lewy górny róg</option>
           <option value="st">Przy stopce (lewy)</option>
         </select>
+        <label style="margin-top:8px">Rozmiar logo</label>
+        <select id="logoSize" style="width:100%;padding:9px;border:1px solid var(--line);border-radius:8px;background:#12141a;color:#e8e6df">
+          <option value="s">Mały</option>
+          <option value="m" selected>Średni</option>
+          <option value="l">Duży</option>
+        </select>
         <button class="ghost" onclick="removeLogo()" style="margin-top:8px;padding:7px 14px;font-size:12.5px">🗑️ Usuń logo</button>
       </div>
     </details>
@@ -724,7 +730,7 @@ function fit(t,maxW,maxH,ff,weight){ff=ff||"system-ui,Segoe UI,Roboto,sans-serif
 function tile(x,y,w,h,num,text,mode,ff){
   mode=mode||"kafelki"; ff=ff||"system-ui,Segoe UI,Roboto,sans-serif";
   const rad=(mode==="gazeta")?8:24;
-  ctx.save();ctx.shadowColor="rgba(0,0,0,0.45)";ctx.shadowBlur=18;ctx.shadowOffsetY=6;
+  ctx.save();ctx.shadowColor="rgba(0,0,0,0.5)";ctx.shadowBlur=24;ctx.shadowOffsetY=9;
   ctx.fillStyle=T.tile; rr(x,y,w,h,rad); ctx.fill(); ctx.restore();
   ctx.strokeStyle=T.tb;ctx.lineWidth=(mode==="gazeta")?1.5:2; rr(x,y,w,h,rad); ctx.stroke();
   let txtX,txtW,align,topPad,weight=(mode==="gazeta")?"400":"500";
@@ -815,10 +821,11 @@ function draw(p){
   if(ctaOn){const cy=showFoot?H-104:H-40;ctx.textAlign="center";ctx.textBaseline="alphabetic";ctx.font="bold 28px "+FF;ctx.fillStyle=T.gold;ctx.fillText("POLUB   ·   SKOMENTUJ   ·   UDOSTĘPNIJ",W/2,cy);}
   if(LOGO&&LOGO.complete&&LOGO.naturalWidth){
     const pos=(document.getElementById('logoPos')||{}).value||"pg";
-    const lh=78,lw=LOGO.naturalWidth*(lh/LOGO.naturalHeight);
+    const sz=(document.getElementById('logoSize')||{}).value||"m";
+    const lh=(sz==="s"?60:sz==="l"?106:80),lw=LOGO.naturalWidth*(lh/LOGO.naturalHeight);
     let lx,ly;
     if(pos==="lg"){lx=44;ly=26;} else if(pos==="st"){lx=44;ly=H-lh-18;} else {lx=W-44-lw;ly=26;}
-    ctx.drawImage(LOGO,lx,ly,lw,lh);
+    ctx.save();ctx.shadowColor="rgba(0,0,0,0.4)";ctx.shadowBlur=12;ctx.shadowOffsetY=3;ctx.drawImage(LOGO,lx,ly,lw,lh);ctx.restore();
   }
 }
 
@@ -902,6 +909,7 @@ presetSel.addEventListener('change',()=>{if(presetSel.value!=="")applyPreset(+pr
 const lf=document.getElementById('logoFile');
 if(lf)lf.addEventListener('change',e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{localStorage.setItem('spottedLogo',r.result);}catch(err){}setLogo(r.result);};r.readAsDataURL(f);});
 const lp=document.getElementById('logoPos');if(lp)lp.addEventListener('change',()=>draw());
+const ls2=document.getElementById('logoSize');if(ls2)ls2.addEventListener('change',()=>draw());
 const savedLogo=localStorage.getItem('spottedLogo');if(savedLogo)setLogo(savedLogo);
 usedInfo();
 renderManage();
