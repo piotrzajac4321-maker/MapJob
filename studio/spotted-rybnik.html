@@ -52,6 +52,10 @@
         <label style="margin-top:8px">Podtytuł</label><input type="text" id="sub" value="Odnieś się w komentarzu, podając numer zgłoszenia">
         <label style="margin-top:10px"><input type="checkbox" id="cta" checked style="width:auto;margin-right:6px">CTA: POLUB · SKOMENTUJ · UDOSTĘPNIJ</label>
         <label style="margin-top:8px"><input type="checkbox" id="showFoot" checked style="width:auto;margin-right:6px">pokaż stopkę</label>
+        <label style="margin-top:10px">Grubość obwódki kafelków</label>
+        <select id="borderW" style="width:100%;padding:9px;border:1px solid var(--line);border-radius:8px;background:#12141a;color:#e8e6df">
+          <option value="c">Cienka</option><option value="m" selected>Średnia</option><option value="g">Gruba</option>
+        </select>
         <label style="margin-top:8px">Stopka — linia 1</label><input type="text" id="ft1" value="Reklama u nas? Napisz w wiadomości">
         <label style="margin-top:8px">Stopka — linia 2</label><input type="text" id="ft2" value="Facebook 11 700+    ·    Instagram 4 700+">
       </div>
@@ -732,7 +736,11 @@ function tile(x,y,w,h,num,text,mode,ff){
   const rad=(mode==="gazeta")?8:24;
   ctx.save();ctx.shadowColor="rgba(0,0,0,0.5)";ctx.shadowBlur=24;ctx.shadowOffsetY=9;
   ctx.fillStyle=T.tile; rr(x,y,w,h,rad); ctx.fill(); ctx.restore();
-  ctx.strokeStyle=T.tb;ctx.lineWidth=(mode==="gazeta")?1.5:2; rr(x,y,w,h,rad); ctx.stroke();
+  ctx.save(); rr(x,y,w,h,rad); ctx.clip();
+  const sh=ctx.createLinearGradient(0,y,0,y+h*0.5); sh.addColorStop(0,"rgba(255,255,255,0.07)"); sh.addColorStop(1,"rgba(255,255,255,0)");
+  ctx.fillStyle=sh; ctx.fillRect(x,y,w,h*0.5); ctx.restore();
+  const bw=(document.getElementById('borderW')||{}).value||"m";
+  ctx.strokeStyle=T.tb;ctx.lineWidth=bw==="c"?1.5:bw==="g"?4:2.5; rr(x,y,w,h,rad); ctx.stroke();
   let txtX,txtW,align,topPad,weight=(mode==="gazeta")?"400":"500";
   if(mode==="akcent"){
     ctx.save();ctx.beginPath();ctx.rect(x,y+12,14,h-24);ctx.fillStyle=T.mk;ctx.fill();ctx.restore();
@@ -901,6 +909,7 @@ tplSel.value="monoczarny"; laySel.value="kafelki";
 ["hdr","sub","ft1","ft2"].forEach(id=>{const el=document.getElementById(id);if(el)el.addEventListener('input',()=>draw());});
 const sf=document.getElementById('showFoot');if(sf)sf.addEventListener('change',()=>draw());
 const ctaEl=document.getElementById('cta');if(ctaEl)ctaEl.addEventListener('change',()=>draw());
+const bwEl=document.getElementById('borderW');if(bwEl)bwEl.addEventListener('change',()=>draw());
 ["cbg","cacc","ctile","ctext"].forEach(id=>{const el=document.getElementById(id);if(el)el.addEventListener('input',()=>{document.getElementById('tpl').value="wlasny";draw();});});
 const presetSel=document.getElementById('preset');
 const o0=document.createElement('option');o0.value="";o0.textContent="— wybierz przykład —";presetSel.appendChild(o0);
