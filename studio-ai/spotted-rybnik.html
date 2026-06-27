@@ -50,7 +50,8 @@
       <div style="margin-top:8px">
         <label>Nagłówek</label><input type="text" id="hdr" value="SPOTTED RYBNIK">
         <label style="margin-top:8px">Podtytuł</label><input type="text" id="sub" value="Odnieś się w komentarzu, podając numer zgłoszenia">
-        <label style="margin-top:10px"><input type="checkbox" id="showFoot" checked style="width:auto;margin-right:6px">pokaż stopkę</label>
+        <label style="margin-top:10px"><input type="checkbox" id="cta" checked style="width:auto;margin-right:6px">CTA: POLUB · SKOMENTUJ · UDOSTĘPNIJ</label>
+        <label style="margin-top:8px"><input type="checkbox" id="showFoot" checked style="width:auto;margin-right:6px">pokaż stopkę</label>
         <label style="margin-top:8px">Stopka — linia 1</label><input type="text" id="ft1" value="Reklama u nas? Napisz w wiadomości">
         <label style="margin-top:8px">Stopka — linia 2</label><input type="text" id="ft2" value="Facebook 11 700+    ·    Instagram 4 700+">
       </div>
@@ -754,6 +755,7 @@ function draw(p){
   const lay=curLay();
   const FF=(lay==="gazeta")?"Georgia,'Times New Roman',serif":"system-ui,Segoe UI,Roboto,sans-serif";
   const showFoot=!(document.getElementById('showFoot'))||document.getElementById('showFoot').checked;
+  const ctaOn=!(document.getElementById('cta'))||document.getElementById('cta').checked;
   ctx.clearRect(0,0,W,H);
   ctx.fillStyle=T.bg; ctx.fillRect(0,0,W,H);
   let g1=ctx.createRadialGradient(60,60,0,60,60,520); g1.addColorStop(0,"rgba("+T.glow+","+gb+")");g1.addColorStop(1,"rgba("+T.glow+",0)");
@@ -778,7 +780,7 @@ function draw(p){
   const n=msgs.length;
   const pad=60,colGap=30,gap=26;
   const colW=(W-pad*2-colGap)/2;
-  const contentTop=255, contentBottom=showFoot?H-92:H-44;
+  const contentTop=255, contentBottom=(showFoot?H-92:H-44)-(ctaOn?54:0);
   tileRects=[];
   const dy=i=>anim?Math.sin(p*6.283+i*0.8)*7:0;
   if(lay==="lista"||lay==="gazeta"){
@@ -805,6 +807,7 @@ function draw(p){
     ctx.font="bold 27px "+FF;ctx.fillStyle=T.gold;ctx.fillText(ft1,W/2,H-58);
     ctx.font="24px "+FF;ctx.fillStyle=T.foot;ctx.fillText(ft2,W/2,H-24);
   }
+  if(ctaOn){const cy=showFoot?H-104:H-40;ctx.textAlign="center";ctx.textBaseline="alphabetic";ctx.font="bold 28px "+FF;ctx.fillStyle=T.gold;ctx.fillText("POLUB   ·   SKOMENTUJ   ·   UDOSTĘPNIJ",W/2,cy);}
   if(LOGO&&LOGO.complete&&LOGO.naturalWidth){
     const pos=(document.getElementById('logoPos')||{}).value||"pg";
     const lh=78,lw=LOGO.naturalWidth*(lh/LOGO.naturalHeight);
@@ -884,6 +887,7 @@ Object.keys(LAYS).forEach(k=>{const o=document.createElement('option');o.value=k
 laySel.addEventListener('change',()=>draw());
 ["hdr","sub","ft1","ft2"].forEach(id=>{const el=document.getElementById(id);if(el)el.addEventListener('input',()=>draw());});
 const sf=document.getElementById('showFoot');if(sf)sf.addEventListener('change',()=>draw());
+const ctaEl=document.getElementById('cta');if(ctaEl)ctaEl.addEventListener('change',()=>draw());
 ["cbg","cacc","ctile","ctext"].forEach(id=>{const el=document.getElementById(id);if(el)el.addEventListener('input',()=>{document.getElementById('tpl').value="wlasny";draw();});});
 const presetSel=document.getElementById('preset');
 const o0=document.createElement('option');o0.value="";o0.textContent="— wybierz przykład —";presetSel.appendChild(o0);
