@@ -625,11 +625,24 @@ const MSGS=[
 "gdzie oddać przeterminowane leki w rybniku? piszcie",
 "szukam mebli dla studenta co sie wprowadza pomożecie?",
 "polećcie second hand z dobra jakościa ubrań w rybniku",
-"gdzie kupic uzywane ksiazki tanio? polećcie miejsca albo grupy"
+"gdzie kupic uzywane ksiazki tanio? polećcie miejsca albo grupy",
+"Twoja firma z Rybnika? Dotrzyj do 11 700+ mieszkańców na Facebooku i 4 700+ na Instagramie",
+"Reklama u nas to lokalni klienci, którzy Cię znajdą. Napisz w wiadomości",
+"Post na Facebooku i Instagramie z Twoją ofertą. Pakiety dostępne od ręki",
+"Relacja, przypięcie posta i krótka rolka promująca Twoją firmę",
+"Konkurs z nagrodą od Twojej firmy to ogromny zasięg i reklama w jednym",
+"Pierwsza reklama w atrakcyjnej cenie. Sprawdź, jak to u nas działa",
+"Docieraj do mieszkańców Rybnika i okolic, a nie do przypadkowych osób",
+"Twoja oferta wśród zaufanej lokalnej społeczności Spotted Rybnik",
+"Pakiety reklamowe dopasowane do każdego budżetu. Napisz, dobierzemy coś",
+"Promujemy lokalne firmy: gastronomia, usługi, handel i nie tylko",
+"Chcesz więcej klientów z Rybnika? Reklama u nas to prosty start",
+"Napisz w wiadomości prywatnej, a przygotujemy ofertę dla Twojej firmy"
 ];
 
-const CAT_NAMES={all:"Wszystkie",jedzenie:"🍕 Jedzenie/lokale",uroda:"💇 Fryzjer/uroda",fachowcy:"🔧 Fachowcy/usługi",zdrowie:"🏥 Zdrowie",zguby:"🔑 Zguby/znaleziska",zwierzeta:"🐾 Zwierzęta",oddam:"🎁 Oddam za darmo",sprzedaz:"🛒 Sprzedam/kupię",spotkania:"👥 Spotkania/wieczór",dzieci:"🧒 Dzieci/szkoły",podziekowania:"❤️ Podziękowania",zaangazowanie:"💬 Polub/komentuj",polecenia:"⭐ Polecenia",inne:"📌 Inne"};
+const CAT_NAMES={all:"Wszystkie",reklama:"📣 Reklama (oferta)",jedzenie:"🍕 Jedzenie/lokale",uroda:"💇 Fryzjer/uroda",fachowcy:"🔧 Fachowcy/usługi",zdrowie:"🏥 Zdrowie",zguby:"🔑 Zguby/znaleziska",zwierzeta:"🐾 Zwierzęta",oddam:"🎁 Oddam za darmo",sprzedaz:"🛒 Sprzedam/kupię",spotkania:"👥 Spotkania/wieczór",dzieci:"🧒 Dzieci/szkoły",podziekowania:"❤️ Podziękowania",zaangazowanie:"💬 Polub/komentuj",polecenia:"⭐ Polecenia",inne:"📌 Inne"};
 function category(t){const s=t.toLowerCase();
+ if(/(reklam|11 700|4 700|twoja firma|twoją firmę|pakiet|promujemy lokalne|oferta dla twojej|wśród zaufanej|więcej klientów z rybnika)/.test(s))return"reklama";
  if(/(pizza|kebab|burger|jedz|obiad|sushi|lody|ciast|piekarni|cukierni|gofry|naleśnik|kawiarni|kawa|restaurac|knajp|śniadani|zup|pierog|catering|miod|jajk|nabiał|szarlotk|bar mleczny|food truck|paczki|bułk|chińsk|schabow)/.test(s))return"jedzenie";
  if(/(fryzjer|barber|paznok|rzęs|kosmetycz|makijaż|brod|balejaż|koloryzac|depilac|masaż|podolog|trwał|keratyn|fade)/.test(s))return"uroda";
  if(/(mechanik|hydraulik|elektryk|remont|glazurnik|stolarz|dekarz|malarz|fachow|kominiar|okna|piec|tapicer|ślusarz|montaz|naprawia|warsztat|ogrodzeni|płot|rusztowani|gruz|wulkaniz|holowani|opon|krawcow|ślusar|rolety|elewacj|trawnik|kosi|ogrodnik)/.test(s))return"fachowcy";
