@@ -734,10 +734,10 @@ function tile(x,y,w,h,num,text,mode,ff){
     ctx.fillStyle=T.mk;ctx.font="bold 30px "+ff;ctx.textAlign="left";ctx.textBaseline="middle";ctx.fillText(num+".",x+30,y+42);
     txtX=x+30;txtW=w-60;align="left";topPad=68;
   } else {
-    const m=52,mx=x+20,my=y+20;
-    ctx.fillStyle=T.mk; rr(mx,my,m,m,12); ctx.fill();
-    ctx.fillStyle=T.mt;ctx.font="bold 30px "+ff;ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillText(num,mx+m/2,my+m/2+1);
-    txtX=x+w/2;txtW=w-68;align="center";topPad=92;
+    const m=40,mx=x+w/2-m/2,my=y+18;
+    ctx.fillStyle=T.mk; rr(mx,my,m,m,10); ctx.fill();
+    ctx.fillStyle=T.mt;ctx.font="bold 23px "+ff;ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillText(num,mx+m/2,my+m/2+1);
+    txtX=x+w/2;txtW=w-60;align="center";topPad=76;
   }
   const ah=(topPad<0)?(h-40):(h-topPad-24);
   const f=fit(text,txtW,ah,ff,weight);
