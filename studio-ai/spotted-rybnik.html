@@ -39,6 +39,8 @@
 
   <div class="card">
     <span class="tag">TWOJE WIADOMOŚCI</span>
+    <label>⭐ Gotowy przykład (kliknij = od razu ustawione)</label>
+    <select id="preset" style="width:100%;padding:10px;border:1px solid var(--line);border-radius:10px;font-size:14px;background:#12141a;color:#e8e6df;margin-bottom:12px"></select>
     <label>🎨 Szablon (kolory)</label>
     <select id="tpl" style="width:100%;padding:10px;border:1px solid var(--line);border-radius:10px;font-size:14px;background:#12141a;color:#e8e6df;margin-bottom:12px"></select>
     <label>🧩 Układ kafelków</label>
@@ -53,6 +55,19 @@
         <label style="margin-top:8px">Stopka — linia 2</label><input type="text" id="ft2" value="Facebook 11 700+    ·    Instagram 4 700+">
       </div>
     </details>
+    <details style="margin-bottom:12px">
+      <summary style="cursor:pointer;color:var(--gold);font-weight:600;font-size:14px">🎨 Własne kolory (wybierz szablon „Własny")</summary>
+      <div style="display:flex;gap:14px;flex-wrap:wrap;margin-top:10px;font-size:13px;align-items:center">
+        <label>Tło <input type="color" id="cbg" value="#15171c"></label>
+        <label>Akcent <input type="color" id="cacc" value="#c9a24b"></label>
+        <label>Kafelek <input type="color" id="ctile" value="#1d2026"></label>
+        <label>Tekst <input type="color" id="ctext" value="#f2efe6"></label>
+      </div>
+    </details>
+    <div class="btns">
+      <button class="ghost" onclick="saveCfg()">💾 Zapisz ustawienia</button>
+      <button class="ghost" onclick="loadCfg()">📂 Wczytaj zapisane</button>
+    </div>
     <label>Ile ogłoszeń (kafelków)</label>
     <select id="count" style="width:100%;padding:10px;border:1px solid var(--line);border-radius:10px;font-size:14px;background:#12141a;color:#e8e6df;margin-bottom:12px">
       <option value="1">1</option><option value="2">2</option><option value="3">3</option>
@@ -629,12 +644,38 @@ const THEMES={
  stal:{name:"Stalowy modern",bg:"#1b2026",glow:"150,170,190",g1:"#e6edf5",g2:"#9fb4c8",g3:"#5f7488",gold:"#9fb4c8",sub:"#9aa6b2",tile:"#262c34",tb:"rgba(159,180,200,0.4)",tt:"#eef2f6",mk:"#9fb4c8",mt:"#1b2026",foot:"#8893a0"},
  karmazyn:{name:"Karmazyn",bg:"#240a0e",glow:"230,90,90",g1:"#ffc9c9",g2:"#e84f4f",g3:"#a52f2f",gold:"#e84f4f",sub:"#c79aa0",tile:"#331317",tb:"rgba(232,79,79,0.45)",tt:"#f8ecec",mk:"#e84f4f",mt:"#240a0e",foot:"#b58a8f"},
  lod:{name:"Lodowy błękit",bg:"#0c1824",glow:"120,190,240",g1:"#d6efff",g2:"#79bdf0",g3:"#2f7ab8",gold:"#79bdf0",sub:"#93b3cf",tile:"#122636",tb:"rgba(121,189,240,0.45)",tt:"#eaf3fb",mk:"#79bdf0",mt:"#0a1622",foot:"#7d99b5"},
- las:{name:"Leśna zieleń",bg:"#0d1f14",glow:"120,200,120",g1:"#cfffd6",g2:"#6fd683",g3:"#2f9a45",gold:"#6fd683",sub:"#93c2a0",tile:"#143020",tb:"rgba(111,214,131,0.45)",tt:"#eaf8ee",mk:"#6fd683",mt:"#0a1a10",foot:"#7da888"}
+ las:{name:"Leśna zieleń",bg:"#0d1f14",glow:"120,200,120",g1:"#cfffd6",g2:"#6fd683",g3:"#2f9a45",gold:"#6fd683",sub:"#93c2a0",tile:"#143020",tb:"rgba(111,214,131,0.45)",tt:"#eaf8ee",mk:"#6fd683",mt:"#0a1a10",foot:"#7da888"},
+ wlasny:{name:"🎨 Własny (suwaki)",bg:"#15171c",glow:"201,162,75",g1:"#c9a24b",g2:"#c9a24b",g3:"#c9a24b",gold:"#c9a24b",sub:"#9aa0a6",tile:"#1d2026",tb:"rgba(201,162,75,0.55)",tt:"#f2efe6",mk:"#c9a24b",mt:"#15171c",foot:"#8a9096"}
 };
+function hexToRgb(h){h=(h||"#c9a24b").replace('#','');if(h.length===3)h=h.split('').map(c=>c+c).join('');const n=parseInt(h,16);return ((n>>16)&255)+","+((n>>8)&255)+","+(n&255);}
+function customTheme(){const g=id=>(document.getElementById(id)||{}).value;const bg=g('cbg')||"#15171c",acc=g('cacc')||"#c9a24b",tl=g('ctile')||"#1d2026",tx=g('ctext')||"#f2efe6";return{bg,glow:hexToRgb(acc),g1:acc,g2:acc,g3:acc,gold:acc,sub:tx,tile:tl,tb:acc,tt:tx,mk:acc,mt:bg,foot:tx};}
 let T=THEMES.grafit;
 function curTpl(){return (document.getElementById('tpl')||{}).value||"grafit";}
 const LAYS={kafelki:"Kafelki (klasyczny)",akcent:"Akcent boczny",lista:"Lista numerowana",gazeta:"Gazeta (szeryfowa)"};
 function curLay(){return (document.getElementById('lay')||{}).value||"kafelki";}
+const PRESETS=[
+ ["5 ogłoszeń (klasyk)","SPOTTED RYBNIK","Odnieś się w komentarzu, podając numer zgłoszenia","grafit","kafelki",5,true],
+ ["Pytanie dnia","PYTANIE DNIA","Komentuj swoją odpowiedź poniżej","nocny","lista",1,true],
+ ["To czy tamto","TO CZY TAMTO?","Wybierz opcję w komentarzu","korpo","kafelki",2,true],
+ ["Zguby i znaleziska","ZGUBY I ZNALEZISKA","Odezwij się w komentarzu","grafit","kafelki",4,true],
+ ["Polecane w Rybniku","POLECANE W RYBNIKU","Wasze typy w komentarzach","zielen","lista",4,true],
+ ["Oddam za darmo","ODDAM ZA DARMO","Pisz w wiadomości prywatnej","jasny","akcent",4,true],
+ ["Zaginął pupil","ZAGINĄŁ PUPIL","Udostępnij i pomóż go znaleźć","karmazyn","lista",1,true],
+ ["Nostalgia","PAMIĘTACIE?","Wasze wspomnienia w komentarzach","bordo","lista",1,true],
+ ["Co się dzieje","CO SIĘ DZIEJE?","Wiesz coś? Napisz w komentarzu","stal","lista",1,true],
+ ["Weekend w Rybniku","WEEKEND W RYBNIKU","Co robicie? Komentujcie","zachod","kafelki",4,true],
+ ["Przedstaw się","Z JAKIEJ DZIELNICY?","Komentuj swoją dzielnicę","korpo","lista",1,true],
+ ["Gazeta lokalna","SPOTTED RYBNIK","Lokalne ogłoszenia i nie tylko","biel","gazeta",5,true],
+ ["Premium złoto","SPOTTED RYBNIK","Odnieś się w komentarzu, podając numer zgłoszenia","czern","kafelki",5,true],
+ ["Minimal biały","SPOTTED RYBNIK","Lokalne ogłoszenia","biel","akcent",4,true],
+ ["Śmieszne z Rybnika","ŚMIESZNE Z RYBNIKA","Otaguj znajomego w komentarzu","fiolet","kafelki",2,true],
+ ["Zgadnij miejsce","ZGADNIJ MIEJSCE","Wiesz, gdzie to jest? Napisz","lod","lista",1,true],
+ ["Podziękowania","PODZIĘKOWANIA","Dobre uczynki mieszkańców Rybnika","rozezloto","lista",3,true],
+ ["Oferta reklamy","REKLAMA U NAS","Twoja firma w Spotted Rybnik","korpo","lista",1,true]
+];
+function applyPreset(i){const p=PRESETS[i];if(!p)return;document.getElementById('hdr').value=p[1];document.getElementById('sub').value=p[2];document.getElementById('tpl').value=p[3];document.getElementById('lay').value=p[4];document.getElementById('count').value=String(p[5]);document.getElementById('showFoot').checked=p[6];setCount();}
+function saveCfg(){const g=id=>document.getElementById(id);const c={tpl:curTpl(),lay:curLay(),count:Nv(),hdr:g('hdr').value,sub:g('sub').value,ft1:g('ft1').value,ft2:g('ft2').value,foot:g('showFoot').checked,cbg:g('cbg').value,cacc:g('cacc').value,ctile:g('ctile').value,ctext:g('ctext').value};localStorage.setItem('spottedCfg',JSON.stringify(c));const e=document.getElementById('opisInfo');if(e){e.textContent="Zapisano ustawienia ✓";setTimeout(()=>e.textContent="",2000);}}
+function loadCfg(){let c;try{c=JSON.parse(localStorage.getItem('spottedCfg')||"null");}catch(e){}if(!c){alert("Brak zapisanych ustawień");return;}const s=(id,v)=>{const el=document.getElementById(id);if(el&&v!==undefined)el.value=v;};s('tpl',c.tpl);s('lay',c.lay);s('count',String(c.count));s('hdr',c.hdr);s('sub',c.sub);s('ft1',c.ft1);s('ft2',c.ft2);s('cbg',c.cbg);s('cacc',c.cacc);s('ctile',c.ctile);s('ctext',c.ctext);const sf=document.getElementById('showFoot');if(sf)sf.checked=!!c.foot;setCount();}
 const SPARKS=Array.from({length:26},()=>({x:Math.random()*1080,y:Math.random()*1350,r:1+Math.random()*2.4,a:0.12+Math.random()*0.32}));
 const ta=document.getElementById('msgs');
 
@@ -691,6 +732,7 @@ function draw(p){
   const anim=(p!==undefined);
   const gb=anim?(0.12+0.05*Math.sin(p*6.283)):0.14;
   T=THEMES[curTpl()]||THEMES.grafit;
+  if(curTpl()==="wlasny")T=customTheme();
   const lay=curLay();
   const FF=(lay==="gazeta")?"Georgia,'Times New Roman',serif":"system-ui,Segoe UI,Roboto,sans-serif";
   const showFoot=!(document.getElementById('showFoot'))||document.getElementById('showFoot').checked;
@@ -817,6 +859,11 @@ Object.keys(LAYS).forEach(k=>{const o=document.createElement('option');o.value=k
 laySel.addEventListener('change',()=>draw());
 ["hdr","sub","ft1","ft2"].forEach(id=>{const el=document.getElementById(id);if(el)el.addEventListener('input',()=>draw());});
 const sf=document.getElementById('showFoot');if(sf)sf.addEventListener('change',()=>draw());
+["cbg","cacc","ctile","ctext"].forEach(id=>{const el=document.getElementById(id);if(el)el.addEventListener('input',()=>{document.getElementById('tpl').value="wlasny";draw();});});
+const presetSel=document.getElementById('preset');
+const o0=document.createElement('option');o0.value="";o0.textContent="— wybierz przykład —";presetSel.appendChild(o0);
+PRESETS.forEach((p,i)=>{const o=document.createElement('option');o.value=i;o.textContent=p[0];presetSel.appendChild(o);});
+presetSel.addEventListener('change',()=>{if(presetSel.value!=="")applyPreset(+presetSel.value);});
 usedInfo();
 renderManage();
 draw();
