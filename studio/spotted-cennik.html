@@ -48,22 +48,22 @@
     <label>Pozycje cennika
       <span class="hint" style="font-weight:400"> — każda linia: <b>Nazwa | Cena</b> · linia z <b>#</b> na początku = nagłówek sekcji · pusta linia = odstęp</span>
     </label>
-    <textarea id="rows"># UDOSTĘPNIENIA
-Facebook + Instagram | 75 zł
-Facebook + Instagram + Relacje | 105 zł
+    <textarea id="rows"># POJEDYNCZY POST
+Facebook + Instagram | 25 zł
+Facebook + Instagram + Relacje | 35 zł
 
-# PAKIETY
-Pakiet 10 udostępnień (bez relacji) | 525 zł
-Pakiet 10 udostępnień (z relacjami) | 750 zł
+# PAKIET MIESIĘCZNY
+30 dni codziennych postów + relacje | 300 zł
 
-# ABONAMENT
-Stała obecność co tydzień | indywidualnie
-Pakiet roczny — najniższa cena za post | indywidualnie</textarea>
+# PAKIET ROCZNY
+Współpraca całoroczna | do uzgodnienia</textarea>
+    <label>Notka (nad bannerem)</label>
+    <input type="text" id="note" value="✔ Możliwość rozliczenia w barterze">
     <div class="row2">
       <div><label>CTA (banner na dole)</label><input type="text" id="cta" value="ZAREKLAMUJ SIĘ U NAS · POWIĘKSZ ZASIĘGI"></div>
     </div>
     <label>Stopka (zasięgi / kontakt)</label>
-    <input type="text" id="foot" value="Facebook 11 700+  ·  Instagram 7 900+  ·  napisz w wiadomości albo komentarzu">
+    <input type="text" id="foot" value="Facebook 11 900+  ·  Instagram 7 900+  ·  napisz w wiadomości albo komentarzu">
   </div>
 
   <div class="card">
@@ -108,6 +108,20 @@ let W=1080,H=1350,T=THEMES.czarny;
 function scale(){return ({0:0.86,1:1,2:1.14,3:1.28})[+document.getElementById('tsize').value]||1;}
 function fmt(){const v=document.getElementById('fmt').value;if(v==="11")return[1080,1080];if(v==="916")return[1080,1920];return[1080,1350];}
 function rr(x,y,w,h,r){ctx.beginPath();ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath();}
+function wrap2(text,maxW,font){
+  ctx.font=font;
+  if(ctx.measureText(text).width<=maxW)return[text];
+  const words=text.split(/\s+/);let l1="",l2="";
+  for(let i=0;i<words.length;i++){
+    const test=l1?l1+" "+words[i]:words[i];
+    if(ctx.measureText(test).width<=maxW||!l1)l1=test;
+    else{l2=words.slice(i).join(" ");break;}
+  }
+  const ell=s=>{while(s.length>2&&ctx.measureText(s+"…").width>maxW)s=s.slice(0,-1);return s+"…";};
+  if(ctx.measureText(l1).width>maxW)l1=ell(l1);
+  if(l2&&ctx.measureText(l2).width>maxW)l2=ell(l2);
+  return l2?[l1,l2]:[l1];
+}
 
 function parseRows(){
   return document.getElementById('rows').value.split(/\n/).map(l=>{
@@ -149,7 +163,10 @@ function draw(){
 
   // rows area
   const items=parseRows();
-  const topY=300, botReserve=(document.getElementById('cta').value.trim()?150:70)+70;
+  const cta=document.getElementById('cta').value.trim();
+  const note=document.getElementById('note').value.trim();
+  const footH=70, ctaH=cta?96:0, noteH=note?52:0;
+  const topY=300, botReserve=footH+ctaH+noteH;
   const areaTop=topY, areaBot=H-botReserve;
   const px=80, pw=W-px*2;
   // measure weighted units: row=1, sect=1.15, gap=0.5
@@ -178,22 +195,30 @@ function draw(){
     ctx.save();ctx.fillStyle=T.card;rr(px,y+h*0.08,pw,h*0.84,14);ctx.fill();
     ctx.strokeStyle=T.cardB;ctx.lineWidth=1.2;rr(px,y+h*0.08,pw,h*0.84,14);ctx.stroke();ctx.restore();
     ctx.textBaseline="middle";
-    // price first (right)
-    ctx.textAlign="right";ctx.fillStyle=T.price;ctx.font="bold "+priceFs+"px "+FF;
+    // price first (right) — shrink if very long (np. „do uzgodnienia")
+    let pfs=priceFs;const priceMax=pw*0.44;
+    if(it.price){ctx.font="bold "+pfs+"px "+FF;while(ctx.measureText(it.price).width>priceMax&&pfs>18){pfs-=1;ctx.font="bold "+pfs+"px "+FF;}}
     const priceW=it.price?ctx.measureText(it.price).width:0;
+    ctx.textAlign="right";ctx.fillStyle=T.price;ctx.font="bold "+pfs+"px "+FF;
     if(it.price)ctx.fillText(it.price,px+pw-26,cy);
-    // name (left, wrap to available width)
-    ctx.textAlign="left";ctx.fillStyle=T.name;ctx.font="600 "+rowFs+"px "+FF;
+    // name (left) — zawijanie do 2 linii
+    ctx.textAlign="left";ctx.fillStyle=T.name;
     const nameMax=pw-52-priceW-30;
-    let name=it.name;
-    if(ctx.measureText(name).width>nameMax){while(name.length>4&&ctx.measureText(name+"…").width>nameMax)name=name.slice(0,-1);name+="…";}
-    ctx.fillText(name,px+26,cy);
+    const nlines=wrap2(it.name,nameMax,"600 "+rowFs+"px "+FF);
+    ctx.font="600 "+rowFs+"px "+FF;
+    const nlh=rowFs*1.1;let ny=cy-((nlines.length-1)*nlh)/2;
+    nlines.forEach(l=>{ctx.fillText(l,px+26,ny);ny+=nlh;});
     y+=h;
   });
 
-  // CTA banner
-  const cta=document.getElementById('cta').value.trim();
-  let by=H-botReserve+20;
+  // notka (np. barter) + CTA banner
+  let by=areaBot+8;
+  if(note){
+    ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillStyle=T.gold;
+    let nfs=27*sc;ctx.font="italic 600 "+nfs+"px "+FF;while(ctx.measureText(note).width>W-140&&nfs>16){nfs-=1;ctx.font="italic 600 "+nfs+"px "+FF;}
+    ctx.fillText(note,W/2,by+noteH/2);
+    by+=noteH;
+  }
   if(cta){
     const bh=78;const bw=W-px*2;
     ctx.save();ctx.fillStyle=T.cta;rr(px,by,bw,bh,16);ctx.fill();ctx.restore();
@@ -224,7 +249,7 @@ function dl(){
   },'image/png');
 }
 
-['hdr','sub','rows','cta','foot'].forEach(id=>document.getElementById(id).addEventListener('input',draw));
+['hdr','sub','rows','note','cta','foot'].forEach(id=>document.getElementById(id).addEventListener('input',draw));
 ['theme','fmt'].forEach(id=>document.getElementById(id).addEventListener('change',draw));
 document.getElementById('tsize').addEventListener('input',draw);
 draw();
