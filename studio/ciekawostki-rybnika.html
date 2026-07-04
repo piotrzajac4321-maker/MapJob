@@ -79,8 +79,10 @@
       <input type="range" id="tsize" min="0" max="3" step="1" value="1" style="flex:1;accent-color:#caa64a">
       <span style="font-size:20px;font-weight:700">A</span>
     </div>
-    <label style="margin-top:12px">Stopka (zasięgi / marka)</label>
-    <input type="text" id="foot" value="Znasz więcej? Napisz w komentarzu 👇  ·  Spotted Rybnik">
+    <label style="margin-top:12px">Stopka — linia 1</label>
+    <input type="text" id="foot" value="Znasz więcej? Napisz w komentarzu 👇">
+    <label>Stopka — linia 2 (Instagram)</label>
+    <input type="text" id="foot2" value="📸 Znajdź nas również na Instagramie">
   </div>
 
   <div class="btns">
@@ -172,14 +174,17 @@ function draw(){
   // brand + title
   const gg=ctx.createLinearGradient(0,60,0,150);gg.addColorStop(0,T.g1);gg.addColorStop(0.5,T.g2);gg.addColorStop(1,T.g3);
   ctx.textAlign="center";ctx.textBaseline="alphabetic";
-  ctx.fillStyle=T.sub;ctx.font="600 24px "+FF;try{ctx.letterSpacing="6px";}catch(e){}
-  ctx.fillText("SPOTTED RYBNIK",W/2,100);try{ctx.letterSpacing="0px";}catch(e){}
-  ctx.fillStyle=gg;let ts=64;try{ctx.letterSpacing="2px";}catch(e){}
-  ctx.font="bold "+ts+"px "+FF;while(ctx.measureText("CIEKAWOSTKI RYBNIKA").width>W-140&&ts>34){ts-=2;ctx.font="bold "+ts+"px "+FF;}
-  ctx.fillText("CIEKAWOSTKI RYBNIKA",W/2,168);try{ctx.letterSpacing="0px";}catch(e){}
-  ctx.fillStyle=T.gold;rr(W/2-70,190,140,5,3);ctx.fill();
+  ctx.fillStyle=gg;let bs=46;try{ctx.letterSpacing="4px";}catch(e){}
+  ctx.font="bold "+bs+"px "+FF;while(ctx.measureText("SPOTTED RYBNIK").width>W-130&&bs>30){bs-=2;ctx.font="bold "+bs+"px "+FF;}
+  ctx.fillText("SPOTTED RYBNIK",W/2,112);try{ctx.letterSpacing="0px";}catch(e){}
+  ctx.fillStyle=T.sub;let ts=42;try{ctx.letterSpacing="4px";}catch(e){}
+  ctx.font="600 "+ts+"px "+FF;while(ctx.measureText("CIEKAWOSTKI RYBNIKA").width>W-160&&ts>26){ts-=2;ctx.font="600 "+ts+"px "+FF;}
+  ctx.fillText("CIEKAWOSTKI RYBNIKA",W/2,164);try{ctx.letterSpacing="0px";}catch(e){}
+  ctx.fillStyle=T.gold;rr(W/2-70,184,140,4,2);ctx.fill();
 
-  const contentTop=228, contentBot=H-(foot?96:56);
+  const foot2=(document.getElementById('foot2').value||"").trim();
+  const footBlock=(foot&&foot2)?128:(foot||foot2)?68:44;
+  const contentTop=216, contentBot=H-footBlock;
   // photo area (if any)
   let textTop=contentTop+30;
   if(PHOTO){
@@ -218,11 +223,14 @@ function draw(){
   let y=boxTop+(boxH-blockH)/2+fs;
   lines.forEach(l=>{ctx.fillText(l,W/2,y);y+=lh;});
 
-  // footer
-  if(foot){
-    ctx.textAlign="center";ctx.textBaseline="alphabetic";ctx.fillStyle=T.foot;
-    let ffs=25;ctx.font=ffs+"px "+FF;while(ctx.measureText(foot).width>W-120&&ffs>15){ffs-=1;ctx.font=ffs+"px "+FF;}
-    ctx.fillText(foot,W/2,H-52);
+  // footer (do 2 linii)
+  ctx.textAlign="center";ctx.textBaseline="alphabetic";
+  const fitLine=(t,base,wt)=>{let s=25;ctx.font=wt+s+"px "+FF;while(ctx.measureText(t).width>W-120&&s>15){s-=1;ctx.font=wt+s+"px "+FF;}return base;};
+  if(foot&&foot2){
+    ctx.fillStyle=T.foot;fitLine(foot,0,"");ctx.fillText(foot,W/2,H-88);
+    ctx.fillStyle=T.gold;fitLine(foot2,0,"600 ");ctx.fillText(foot2,W/2,H-50);
+  } else if(foot||foot2){
+    const one=foot||foot2;ctx.fillStyle=foot2?T.gold:T.foot;const wt=foot2?"600 ":"";fitLine(one,0,wt);ctx.fillText(one,W/2,H-52);
   }
 }
 
@@ -244,7 +252,7 @@ function dl(){
   },'image/png');
 }
 
-['fact','hdr','src','foot'].forEach(id=>document.getElementById(id).addEventListener('input',draw));
+['fact','hdr','src','foot','foot2'].forEach(id=>document.getElementById(id).addEventListener('input',draw));
 ['theme','fmt'].forEach(id=>document.getElementById(id).addEventListener('change',draw));
 document.getElementById('tsize').addEventListener('input',draw);
 document.getElementById('photo').addEventListener('change',e=>loadPhoto(e.target.files[0]));
