@@ -103,10 +103,12 @@
     </select>
     <label>Kategoria (filtruje losowanie i listę poniżej)</label>
     <select id="catFilter" style="width:100%;padding:10px;border:1px solid var(--line);border-radius:10px;font-size:14px;background:#12141a;color:#e8e6df;margin-bottom:12px"></select>
-    <label>Wklej wiadomości — każda w nowej linii</label>
-    <textarea id="msgs"></textarea>
+    <details style="margin-bottom:10px"><summary style="cursor:pointer;color:var(--gold);font-weight:600;font-size:13px">✏️ Edytuj teksty ręcznie (opcjonalnie)</summary>
+      <label style="margin-top:8px">Wklej wiadomości — każda w nowej linii</label>
+      <textarea id="msgs"></textarea>
+    </details>
     <div class="btns">
-      <button class="gold" onclick="losuj()">🎲 Losuj z bazy</button>
+      <button class="gold" onclick="nowyPost()">🎲 Nowy post</button>
       <button class="ghost" onclick="draw()">🔄 Odśwież podgląd</button>
     </div>
     <div class="btns">
@@ -114,7 +116,7 @@
       <button class="ghost" onclick="resetUsed()">♻️ Wyzeruj oznaczenia</button>
     </div>
     <div class="hint" id="usedInfo"></div>
-    <div class="hint">💡 <b>Kliknij kafelek na podglądzie</b> → wskoczy inne losowe ogłoszenie. „Oznacz jako wrzucone" sprawia, że losowanie omija już użyte.</div>
+    <div class="hint">💡 <b>Kliknij podgląd</b> albo <b>„🎲 Nowy post"</b> → automatycznie wskakuje kolejne ogłoszenie (poprzednie oznacza się jako wrzucone, więc nic się nie powtarza).</div>
     <details style="margin-top:12px">
       <summary style="cursor:pointer;color:var(--gold);font-weight:600;font-size:14px">📚 Zarządzaj bazą (dodaj / usuń wiadomości)</summary>
       <p class="hint" style="margin-top:8px">⬜/✅ = oznacz jako wrzucone · 🗑️/↩️ = usuń z losowania / przywróć. Filtruje się wg wybranej kategorii powyżej.</p>
@@ -747,6 +749,7 @@ function usedInfo(){const u=getUsed();const c=Object.values(u).filter(Boolean).l
 function markUsed(){const u=getUsed();current.slice(0,Nv()).forEach(m=>{if(m&&m!=="…")u[m]=true;});saveUsed(u);usedInfo();}
 function resetUsed(){if(confirm("Wyzerować oznaczenia wrzucone?")){saveUsed({});usedInfo();}}
 function randUnused(){const used=getUsed();const base=poolBase();let a=base.filter(m=>!current.includes(m)&&!used[m]);if(!a.length)a=base.filter(m=>!current.includes(m));if(!a.length)a=base.length?base:MSGS;return a[Math.floor(Math.random()*a.length)];}
+function nowyPost(){markUsed();losuj();}
 function losuj(){const n=Nv();const used=getUsed();const base=poolBase();let pool=base.filter(m=>!used[m]);if(pool.length<n)pool=[...base];if(pool.length<n)pool=[...MSGS];pool=[...pool];current=[];for(let i=0;i<n&&pool.length;i++)current.push(pool.splice(Math.floor(Math.random()*pool.length),1)[0]);syncTA();draw();}
 function setCount(){const n=Nv();if(current.length>n)current=current.slice(0,n);else while(current.length<n)current.push(randUnused());syncTA();draw();}
 function getMsgs(){const n=Nv();const a=current.slice(0,n);while(a.length<n)a.push("…");return a;}
@@ -910,7 +913,7 @@ cv.addEventListener('click',e=>{
   const r=cv.getBoundingClientRect(), sx=cv.width/r.width, sy=cv.height/r.height;
   const px=(e.clientX-r.left)*sx, py=(e.clientY-r.top)*sy;
   for(const t of tileRects){
-    if(px>=t.x&&px<=t.x+t.w&&py>=t.y&&py<=t.y+t.h){ current[t.i]=randUnused(); syncTA(); draw(); break; }
+    if(px>=t.x&&px<=t.x+t.w&&py>=t.y&&py<=t.y+t.h){ const old=current[t.i]; const u=getUsed(); if(old&&old!=="…")u[old]=true; saveUsed(u); current[t.i]=randUnused(); syncTA(); usedInfo(); draw(); break; }
   }
 });
 function renderManage(){
