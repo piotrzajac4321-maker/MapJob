@@ -61,7 +61,7 @@
           <option value="c">Cienka</option><option value="m" selected>Średnia</option><option value="g">Gruba</option>
         </select>
         <label style="margin-top:8px">Stopka — linia 1</label><input type="text" id="ft1" value="">
-        <label style="margin-top:8px">Stopka — linia 2</label><input type="text" id="ft2" value="Facebook 11 900+    ·    Instagram 4 900+">
+        <label style="margin-top:8px">Stopka — linia 2</label><input type="text" id="ft2" value="Facebook 11 900+    ·    Instagram 7 900+">
       </div>
     </details>
     <details style="margin-bottom:12px">
@@ -848,7 +848,7 @@ function draw(p){
   if(showFoot){
     const f1El=document.getElementById('ft1'),f2El=document.getElementById('ft2');
     const ft1=((f1El&&f1El.value!==undefined)?f1El.value:"").trim();
-    const ft2=(f2El&&f2El.value!==undefined)?f2El.value:"Facebook 11 900+    ·    Instagram 4 900+";
+    const ft2=(f2El&&f2El.value!==undefined)?f2El.value:"Facebook 11 900+    ·    Instagram 7 900+";
     ctx.textAlign="center";ctx.textBaseline="alphabetic";
     if(ft1){
       ctx.font="bold 27px "+FF;ctx.fillStyle=T.gold;ctx.fillText(ft1,W/2,H-58);
