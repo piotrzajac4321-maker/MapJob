@@ -61,7 +61,7 @@
           <option value="c">Cienka</option><option value="m" selected>Średnia</option><option value="g">Gruba</option>
         </select>
         <label style="margin-top:8px">Stopka — linia 1</label><input type="text" id="ft1" value="">
-        <label style="margin-top:8px">Stopka — linia 2</label><input type="text" id="ft2" value="Facebook 11 900+    ·    Instagram 7 900+">
+        <label style="margin-top:8px">Stopka — linia 2</label><input type="text" id="ft2" value="Facebook 11 900+    ·    Instagram 4 900+">
       </div>
     </details>
     <details style="margin-bottom:12px">
@@ -103,10 +103,8 @@
     </select>
     <label>Kategoria (filtruje losowanie i listę poniżej)</label>
     <select id="catFilter" style="width:100%;padding:10px;border:1px solid var(--line);border-radius:10px;font-size:14px;background:#12141a;color:#e8e6df;margin-bottom:12px"></select>
-    <details style="margin-bottom:10px"><summary style="cursor:pointer;color:var(--gold);font-weight:600;font-size:13px">✏️ Edytuj teksty ręcznie (opcjonalnie)</summary>
-      <label style="margin-top:8px">Wklej wiadomości — każda w nowej linii</label>
-      <textarea id="msgs"></textarea>
-    </details>
+    <label>✏️ Tekst posta — możesz pisać / wklejać ręcznie (każda wiadomość w nowej linii)</label>
+    <textarea id="msgs"></textarea>
     <div class="btns">
       <button class="gold" onclick="nowyPost()">🎲 Nowy post</button>
       <button class="ghost" onclick="draw()">🔄 Odśwież podgląd</button>
@@ -638,7 +636,7 @@ const MSGS=[
 "szukam mebli dla studenta co sie wprowadza pomożecie?",
 "polećcie second hand z dobra jakościa ubrań w rybniku",
 "gdzie kupic uzywane ksiazki tanio? polećcie miejsca albo grupy",
-"Twoja firma z Rybnika? Dotrzyj do 11 700+ mieszkańców na Facebooku i 7 900+ na Instagramie",
+"Twoja firma z Rybnika? Dotrzyj do 11 900+ mieszkańców na Facebooku i 4 900+ na Instagramie",
 "Reklama u nas to lokalni klienci, którzy Cię znajdą. Napisz w wiadomości albo komentarzu",
 "Post na Facebooku i Instagramie z Twoją ofertą. Pakiety dostępne od ręki",
 "Relacja, przypięcie posta i krótka rolka promująca Twoją firmę",
@@ -654,7 +652,7 @@ const MSGS=[
 
 const CAT_NAMES={all:"Wszystkie",reklama:"📣 Reklama (oferta)",jedzenie:"🍕 Jedzenie/lokale",uroda:"💇 Fryzjer/uroda",fachowcy:"🔧 Fachowcy/usługi",zdrowie:"🏥 Zdrowie",zguby:"🔑 Zguby/znaleziska",zwierzeta:"🐾 Zwierzęta",oddam:"🎁 Oddam za darmo",sprzedaz:"🛒 Sprzedam/kupię",spotkania:"👥 Spotkania/wieczór",dzieci:"🧒 Dzieci/szkoły",podziekowania:"❤️ Podziękowania",zaangazowanie:"💬 Polub/komentuj",polecenia:"⭐ Polecenia",inne:"📌 Inne"};
 function category(t){const s=t.toLowerCase();
- if(/(reklam|11 700|4 700|7 900|twoja firma|twoją firmę|pakiet|promujemy lokalne|oferta dla twojej|wśród zaufanej|więcej klientów z rybnika)/.test(s))return"reklama";
+ if(/(reklam|11 700|11 900|4 700|4 900|7 900|twoja firma|twoją firmę|pakiet|promujemy lokalne|oferta dla twojej|wśród zaufanej|więcej klientów z rybnika)/.test(s))return"reklama";
  if(/(pizza|kebab|burger|jedz|obiad|sushi|lody|ciast|piekarni|cukierni|gofry|naleśnik|kawiarni|kawa|restaurac|knajp|śniadani|zup|pierog|catering|miod|jajk|nabiał|szarlotk|bar mleczny|food truck|paczki|bułk|chińsk|schabow)/.test(s))return"jedzenie";
  if(/(fryzjer|barber|paznok|rzęs|kosmetycz|makijaż|brod|balejaż|koloryzac|depilac|masaż|podolog|trwał|keratyn|fade)/.test(s))return"uroda";
  if(/(mechanik|hydraulik|elektryk|remont|glazurnik|stolarz|dekarz|malarz|fachow|kominiar|okna|piec|tapicer|ślusarz|montaz|naprawia|warsztat|ogrodzeni|płot|rusztowani|gruz|wulkaniz|holowani|opon|krawcow|ślusar|rolety|elewacj|trawnik|kosi|ogrodnik)/.test(s))return"fachowcy";
@@ -848,7 +846,7 @@ function draw(p){
   if(showFoot){
     const f1El=document.getElementById('ft1'),f2El=document.getElementById('ft2');
     const ft1=((f1El&&f1El.value!==undefined)?f1El.value:"").trim();
-    const ft2=(f2El&&f2El.value!==undefined)?f2El.value:"Facebook 11 900+    ·    Instagram 7 900+";
+    const ft2=(f2El&&f2El.value!==undefined)?f2El.value:"Facebook 11 900+    ·    Instagram 4 900+";
     ctx.textAlign="center";ctx.textBaseline="alphabetic";
     if(ft1){
       ctx.font="bold 27px "+FF;ctx.fillStyle=T.gold;ctx.fillText(ft1,W/2,H-58);
