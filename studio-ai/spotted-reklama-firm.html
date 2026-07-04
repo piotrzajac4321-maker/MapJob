@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Reklama dla firm — Spotted Rybnik</title>
+<style>
+  :root{--gold:#c9a24b;--line:#2a2d34;--card:#1d2026;--mut:#8a9096}
+  *{box-sizing:border-box}
+  body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:#0f1115;color:#e8e6df;line-height:1.5}
+  header{background:#15171c;color:var(--gold);padding:20px 18px;text-align:center;border-bottom:1px solid var(--line)}
+  header h1{margin:0;font-size:20px;letter-spacing:3px}
+  header p{margin:6px 0 0;font-size:13px;color:#9aa0a6}
+  .wrap{max-width:820px;margin:0 auto;padding:16px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:16px}
+  label{display:block;font-weight:600;font-size:13px;margin:10px 0 6px;color:#cfcabb}
+  input[type=text],textarea{width:100%;padding:9px;border:1px solid var(--line);border-radius:8px;font-size:14px;background:#12141a;color:#e8e6df;font-family:inherit}
+  textarea{min-height:70px;resize:vertical;line-height:1.5}
+  select{width:100%;padding:9px;border:1px solid var(--line);border-radius:8px;background:#12141a;color:#e8e6df}
+  .btns{display:flex;gap:10px;flex-wrap:wrap;margin:8px 0}
+  button{cursor:pointer;border:none;border-radius:999px;padding:12px 20px;font-size:15px;font-weight:700}
+  .gold{background:var(--gold);color:#15171c}.gold:hover{background:#dab863}
+  .ghost{background:#2a2d34;color:#e8e6df}
+  .hint{font-size:12px;color:var(--mut);margin-top:6px}
+  .preview{text-align:center;background:#000;border:1px solid var(--line);border-radius:12px;padding:12px}
+  canvas{max-width:100%;height:auto;border-radius:8px}
+  .tag{display:inline-block;background:#2a2d34;color:var(--gold);border-radius:6px;padding:2px 8px;font-size:11px;font-weight:700;margin-bottom:8px;letter-spacing:1px}
+  a.back{color:var(--gold);font-size:14px;text-decoration:none}
+  .row2{display:flex;gap:12px;flex-wrap:wrap}.row2>div{flex:1;min-width:130px}
+</style>
+</head>
+<body>
+<header>
+  <h1>SPOTTED RYBNIK</h1>
+  <p>Generator grafiki „Reklama dla firm" · carbon + złoto</p>
+</header>
+
+<div class="wrap">
+  <div style="margin-bottom:12px;display:flex;gap:16px;flex-wrap:wrap"><a class="back" href="spotted-rybnik.html">← Generator postów</a><a class="back" href="spotted-cennik.html">💰 Cennik</a></div>
+
+  <div class="card">
+    <span class="tag">TREŚĆ</span>
+    <div class="row2">
+      <div><label>Nagłówek — linia 1</label><input type="text" id="h1" value="REKLAMA DLA"></div>
+      <div><label>Nagłówek — linia 2</label><input type="text" id="h2" value="TWOJEJ FIRMY"></div>
+    </div>
+    <label>Podtytuł (zachęta)</label>
+    <textarea id="sub">Zbuduj silną markę w Rybniku! Dotrzyj do ponad 17 000 zaangażowanych mieszkańców już dziś.</textarea>
+    <div class="row2">
+      <div><label>Facebook</label><input type="text" id="fb" value="12 000+"></div>
+      <div><label>Instagram</label><input type="text" id="ig" value="5 100+"></div>
+    </div>
+    <label>Co oferujecie (oddziel przecinkami)</label>
+    <input type="text" id="feat" value="post, relacja, rolka, konkurs">
+    <label>Notka na dole</label>
+    <textarea id="note">Rozliczamy się również w barterze, w razie jakichkolwiek pytań jesteśmy do dyspozycji!</textarea>
+    <label>Napis w medalionie (3 linijki, oddziel „|")</label>
+    <input type="text" id="badge" value="Nowe | SPOTTED RYBNIK | Dziennie aktywni">
+  </div>
+
+  <div class="card">
+    <span class="tag">WYGLĄD</span>
+    <div class="row2">
+      <div><label>Format</label><select id="fmt"><option value="45" selected>4:5 (post)</option><option value="11">1:1</option><option value="916">9:16 (relacja)</option></select></div>
+    </div>
+  </div>
+
+  <div class="btns"><button class="gold" onclick="dl()">⬇️ Pobierz PNG</button><button class="ghost" onclick="draw()">🔄 Odśwież</button></div>
+  <div class="hint" id="info"></div>
+  <div id="exp"></div>
+
+  <div class="card">
+    <span class="tag">PODGLĄD</span>
+    <div class="preview"><canvas id="cv" width="1080" height="1350"></canvas></div>
+  </div>
+</div>
+
+<script>
+const cv=document.getElementById('cv'),ctx=cv.getContext('2d');
+const SERIF="Georgia,'Times New Roman',serif";
+let W=1080,H=1350;
+const $=id=>document.getElementById(id);
+function fmt(){const v=$('fmt').value;if(v==="11")return[1080,1080];if(v==="916")return[1080,1920];return[1080,1350];}
+function rr(x,y,w,h,r){ctx.beginPath();ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath();}
+function metal(y0,y1){const g=ctx.createLinearGradient(0,y0,0,y1);g.addColorStop(0,"#fdfbf3");g.addColorStop(0.42,"#efe4c6");g.addColorStop(0.55,"#c8ad66");g.addColorStop(1,"#8a6c2e");return g;}
+function goldGrad(y0,y1){const g=ctx.createLinearGradient(0,y0,0,y1);g.addColorStop(0,"#f3e2b0");g.addColorStop(1,"#c49a4e");return g;}
+function wrap(t,maxW,font){ctx.font=font;const words=(t||"").split(/\s+/);const L=[];let c="";for(const w of words){const t2=c?c+" "+w:w;if(ctx.measureText(t2).width<=maxW||!c)c=t2;else{L.push(c);c=w;}}if(c)L.push(c);return L;}
+
+function background(){
+  ctx.fillStyle="#0a0a0c";ctx.fillRect(0,0,W,H);
+  // carbon weave
+  ctx.save();
+  for(let i=-H;i<W;i+=7){ctx.strokeStyle="rgba(255,255,255,0.020)";ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(i,0);ctx.lineTo(i+H,H);ctx.stroke();}
+  for(let i=-H;i<W+H;i+=7){ctx.strokeStyle="rgba(0,0,0,0.30)";ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(i,0);ctx.lineTo(i-H,H);ctx.stroke();}
+  ctx.restore();
+  const glow=(x,y,r,a)=>{const g=ctx.createRadialGradient(x,y,0,x,y,r);g.addColorStop(0,"rgba(226,192,110,"+a+")");g.addColorStop(1,"rgba(226,192,110,0)");ctx.fillStyle=g;ctx.fillRect(0,0,W,H);};
+  glow(W*0.9,H*0.06,W*0.55,0.28);
+  glow(W*0.02,H*0.5,W*0.4,0.20);
+  glow(W*0.95,H*0.55,W*0.4,0.16);
+  glow(W*0.5,H*0.98,W*0.5,0.12);
+  // frame
+  ctx.strokeStyle="rgba(226,192,110,0.55)";ctx.lineWidth=2.5;rr(26,26,W-52,H-52,4);ctx.stroke();
+  ctx.strokeStyle="rgba(226,192,110,0.22)";ctx.lineWidth=1;rr(38,38,W-76,H-76,3);ctx.stroke();
+}
+
+function medallion(cx,cy,r){
+  const parts=($('badge').value||"").split("|").map(s=>s.trim());
+  ctx.save();
+  // outer glow disc
+  const gd=ctx.createRadialGradient(cx,cy-r*0.3,r*0.2,cx,cy,r*1.15);
+  gd.addColorStop(0,"rgba(20,20,22,0.9)");gd.addColorStop(1,"rgba(10,10,12,0.9)");
+  ctx.fillStyle=gd;ctx.beginPath();ctx.arc(cx,cy,r,0,7);ctx.fill();
+  // rings
+  ctx.lineWidth=r*0.05;ctx.strokeStyle=metal(cy-r,cy+r);ctx.beginPath();ctx.arc(cx,cy,r,0,7);ctx.stroke();
+  ctx.lineWidth=r*0.02;ctx.strokeStyle="rgba(226,192,110,0.6)";ctx.beginPath();ctx.arc(cx,cy,r*0.86,0,7);ctx.stroke();
+  ctx.textAlign="center";ctx.textBaseline="middle";
+  ctx.fillStyle=metal(cy-r*0.5,cy+r*0.5);
+  ctx.font="italic "+(r*0.2)+"px "+SERIF;ctx.fillText(parts[0]||"",cx,cy-r*0.42);
+  const mid=(parts[1]||"").split(" ");
+  ctx.font="bold "+(r*0.34)+"px "+SERIF;
+  if(mid.length>1){ctx.fillText(mid[0],cx,cy-r*0.05);ctx.fillText(mid.slice(1).join(" "),cx,cy+r*0.32);}
+  else ctx.fillText(parts[1]||"",cx,cy+r*0.1);
+  ctx.font=(r*0.13)+"px "+SERIF;ctx.fillStyle="#cbb06a";
+  ctx.fillText((parts[2]||"").toUpperCase(),cx,cy+r*0.66);
+  ctx.restore();
+}
+
+function fbGlyph(cx,cy,r){
+  ctx.save();const g=ctx.createLinearGradient(cx,cy-r,cx,cy+r);g.addColorStop(0,"#f2e7c4");g.addColorStop(1,"#c39a48");
+  ctx.fillStyle=g;ctx.beginPath();ctx.arc(cx,cy,r,0,7);ctx.fill();
+  ctx.fillStyle="#0b0b0d";ctx.font="bold "+(r*1.6)+"px "+SERIF;ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillText("f",cx,cy+r*0.08);ctx.restore();
+}
+function igGlyph(cx,cy,r){
+  ctx.save();const g=ctx.createLinearGradient(cx,cy-r,cx,cy+r);g.addColorStop(0,"#f2e7c4");g.addColorStop(1,"#c39a48");
+  ctx.strokeStyle=g;ctx.lineWidth=r*0.16;ctx.lineJoin="round";
+  rr(cx-r,cy-r,r*2,r*2,r*0.62);ctx.stroke();
+  ctx.beginPath();ctx.arc(cx,cy,r*0.5,0,7);ctx.stroke();
+  ctx.fillStyle=g;ctx.beginPath();ctx.arc(cx+r*0.55,cy-r*0.55,r*0.12,0,7);ctx.fill();ctx.restore();
+}
+
+// feature icons (gold line)
+function icon(name,cx,cy,s){
+  ctx.save();ctx.strokeStyle=goldGrad(cy-s,cy+s);ctx.fillStyle=goldGrad(cy-s,cy+s);ctx.lineWidth=s*0.12;ctx.lineJoin="round";ctx.lineCap="round";
+  if(name==="post"){
+    rr(cx-s*0.75,cy-s*0.7,s*1.5,s*1.15,s*0.28);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(cx-s*0.25,cy+s*0.45);ctx.lineTo(cx-s*0.05,cy+s*0.8);ctx.lineTo(cx+s*0.2,cy+s*0.45);ctx.closePath();ctx.fill();
+    ctx.beginPath();ctx.arc(cx,cy-s*0.12,s*0.16,0,7);ctx.fill();
+  } else if(name==="relacja"){
+    ctx.beginPath();ctx.arc(cx,cy-s*0.32,s*0.36,0,7);ctx.stroke();
+    ctx.beginPath();ctx.arc(cx,cy+s*0.85,s*0.62,Math.PI*1.08,Math.PI*1.92);ctx.stroke();
+  } else if(name==="rolka"){
+    rr(cx-s*0.75,cy-s*0.7,s*1.5,s*1.4,s*0.3);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(cx-s*0.2,cy-s*0.28);ctx.lineTo(cx-s*0.2,cy+s*0.3);ctx.lineTo(cx+s*0.32,cy+0.01);ctx.closePath();ctx.fill();
+  } else if(name==="konkurs"){
+    ctx.beginPath();ctx.moveTo(cx-s*0.5,cy-s*0.6);ctx.lineTo(cx+s*0.5,cy-s*0.6);ctx.lineTo(cx+s*0.42,cy+s*0.05);
+    ctx.arc(cx,cy-s*0.1,s*0.42,0,Math.PI,false);ctx.closePath();ctx.stroke();
+    ctx.beginPath();ctx.arc(cx-s*0.5,cy-s*0.4,s*0.22,Math.PI*0.5,Math.PI*1.5,true);ctx.stroke();
+    ctx.beginPath();ctx.arc(cx+s*0.5,cy-s*0.4,s*0.22,Math.PI*1.5,Math.PI*0.5,true);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(cx,cy+s*0.35);ctx.lineTo(cx,cy+s*0.62);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(cx-s*0.35,cy+s*0.72);ctx.lineTo(cx+s*0.35,cy+s*0.72);ctx.stroke();
+  }
+  ctx.restore();
+}
+
+function draw(){
+  const d=fmt();W=d[0];H=d[1];cv.width=W;cv.height=H;
+  background();
+  const cx=W/2;
+  // medallion
+  const mr=Math.min(150,H*0.12);
+  medallion(cx,150+mr*0.1,mr);
+  let y=150+mr*1.25+40;
+  // headline
+  ctx.textAlign="center";ctx.textBaseline="alphabetic";
+  const h1=($('h1').value||"").toUpperCase(),h2=($('h2').value||"").toUpperCase();
+  let hs=88;ctx.font="bold "+hs+"px "+SERIF;
+  const longest=ctx.measureText(h1).width>ctx.measureText(h2).width?h1:h2;
+  while(ctx.measureText(longest).width>W-150&&hs>44){hs-=2;ctx.font="bold "+hs+"px "+SERIF;}
+  ctx.fillStyle=metal(y-hs,y+hs*1.1);
+  try{ctx.letterSpacing="2px";}catch(e){}
+  if(h1){ctx.fillText(h1,cx,y);y+=hs*1.02;}
+  if(h2){ctx.fillText(h2,cx,y);}
+  try{ctx.letterSpacing="0px";}catch(e){}
+  y+=46;
+  // subtitle
+  const sub=($('sub').value||"").trim();
+  if(sub){
+    ctx.fillStyle=goldGrad(y-10,y+120);
+    let sfs=40;let lines=wrap(sub,W-150,"600 "+sfs+"px "+SERIF);
+    while(lines.length*sfs*1.32>250&&sfs>24){sfs-=2;lines=wrap(sub,W-150,"600 "+sfs+"px "+SERIF);}
+    ctx.font="600 "+sfs+"px "+SERIF;
+    lines.forEach(l=>{y+=sfs*1.15;ctx.fillText(l,cx,y);});
+    y+=sfs*0.4;
+  }
+  y+=44;
+  // reach row
+  const fb=($('fb').value||"").trim(),ig=($('ig').value||"").trim();
+  const rfs=Math.min(60,W*0.058);
+  ctx.font="bold "+rfs+"px "+SERIF;
+  const gr=rfs*0.62, gap=20, blockGap=60;
+  const fbw=gr*2+gap+ctx.measureText(fb).width;
+  const igw=gr*2+gap+ctx.measureText(ig).width;
+  const total=fbw+blockGap+igw;
+  let rx=cx-total/2;
+  const ry=y+gr;
+  // FB
+  fbGlyph(rx+gr,ry,gr);
+  ctx.textAlign="left";ctx.textBaseline="middle";ctx.fillStyle=goldGrad(ry-gr,ry+gr);
+  ctx.fillText(fb,rx+gr*2+gap,ry+2);
+  rx+=fbw+blockGap;
+  // IG
+  igGlyph(rx+gr,ry,gr);
+  ctx.fillStyle=goldGrad(ry-gr,ry+gr);ctx.fillText(ig,rx+gr*2+gap,ry+2);
+  y=ry+gr+54;
+  // divider band
+  ctx.strokeStyle="rgba(226,192,110,0.3)";ctx.lineWidth=1;
+  ctx.beginPath();ctx.moveTo(70,y);ctx.lineTo(W-70,y);ctx.stroke();
+  // features
+  const feats=($('feat').value||"").split(",").map(s=>s.trim()).filter(Boolean).slice(0,4);
+  const iconNames=["post","relacja","rolka","konkurs"];
+  const fy=y+92;const step=(W-160)/feats.length;
+  ctx.textAlign="center";
+  feats.forEach((f,i)=>{
+    const fx=80+step*(i+0.5);
+    icon(iconNames[i]||"post",fx,fy,44);
+    ctx.textBaseline="alphabetic";ctx.fillStyle=goldGrad(fy+60,fy+95);ctx.font="600 34px "+SERIF;
+    ctx.fillText(f,fx,fy+108);
+  });
+  y=fy+150;
+  ctx.strokeStyle="rgba(226,192,110,0.3)";ctx.beginPath();ctx.moveTo(70,y);ctx.lineTo(W-70,y);ctx.stroke();
+  // note
+  const note=($('note').value||"").trim();
+  if(note){
+    ctx.fillStyle=goldGrad(y+10,y+120);ctx.textAlign="center";ctx.textBaseline="alphabetic";
+    let nfs=32;let nl=wrap(note,W-150,"600 italic "+nfs+"px "+SERIF);
+    while((y+30+nl.length*nfs*1.3)>H-46&&nfs>18){nfs-=1;nl=wrap(note,W-150,"600 italic "+nfs+"px "+SERIF);}
+    ctx.font="600 italic "+nfs+"px "+SERIF;
+    let ny=y+40;nl.forEach(l=>{ny+=nfs*1.15;ctx.fillText(l,cx,ny);});
+  }
+}
+
+function dl(){
+  draw();const info=$('info');
+  cv.toBlob(b=>{
+    if(b){const u=URL.createObjectURL(b);const a=document.createElement('a');a.href=u;a.download="reklama-dla-firm-spotted-rybnik.png";document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),1500);}
+    const exp=$('exp');exp.innerHTML='<div class="hint" style="margin:8px 0">📱 Na telefonie: przytrzymaj obraz i wybierz „Zapisz".</div>';
+    const im=new Image();im.src=cv.toDataURL('image/png');im.style.maxWidth="100%";im.style.borderRadius="8px";exp.appendChild(im);
+    if(info){info.textContent="Pobrano PNG ✓";setTimeout(()=>info.textContent="",2500);}
+  },'image/png');
+}
+['h1','h2','sub','fb','ig','feat','note','badge'].forEach(id=>$(id).addEventListener('input',draw));
+$('fmt').addEventListener('change',draw);
+draw();
+</script>
+</body>
+</html>
