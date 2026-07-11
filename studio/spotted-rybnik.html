@@ -61,7 +61,7 @@
           <option value="c">Cienka</option><option value="m" selected>Średnia</option><option value="g">Gruba</option>
         </select>
         <label style="margin-top:8px">Stopka — linia 1</label><input type="text" id="ft1" value="">
-        <label style="margin-top:8px">Stopka — linia 2</label><input type="text" id="ft2" value="Facebook 12 000+    ·    Instagram 5 300+">
+        <label style="margin-top:8px">Stopka — linia 2</label><input type="text" id="ft2" value="Facebook 12 100+    ·    Instagram 5 500+">
       </div>
     </details>
     <details style="margin-bottom:12px">
@@ -77,6 +77,10 @@
       <summary style="cursor:pointer;color:var(--gold);font-weight:600;font-size:14px">🖼️ Logo (wgraj swoje)</summary>
       <div style="margin-top:8px;font-size:13px">
         <input type="file" id="logoFile" accept="image/*" style="font-size:12.5px">
+        <label style="margin-top:8px">Nazwa firmy (obok logo)</label>
+        <input type="text" id="logoName" placeholder="np. Kwiaciarnia Róża" style="width:100%;padding:9px;border:1px solid var(--line);border-radius:8px;background:#12141a;color:#e8e6df;font-size:13px">
+        <label style="margin-top:8px">Etykieta nad nazwą</label>
+        <input type="text" id="logoLabel" value="Reklama" style="width:100%;padding:9px;border:1px solid var(--line);border-radius:8px;background:#12141a;color:#e8e6df;font-size:13px">
         <label style="margin-top:8px">Pozycja logo</label>
         <select id="logoPos" style="width:100%;padding:9px;border:1px solid var(--line);border-radius:8px;background:#12141a;color:#e8e6df">
           <option value="pg">Prawy górny róg</option>
@@ -636,7 +640,7 @@ const MSGS=[
 "szukam mebli dla studenta co sie wprowadza pomożecie?",
 "polećcie second hand z dobra jakościa ubrań w rybniku",
 "gdzie kupic uzywane ksiazki tanio? polećcie miejsca albo grupy",
-"Twoja firma z Rybnika? Dotrzyj do 12 000+ mieszkańców na Facebooku i 5 300+ na Instagramie",
+"Twoja firma z Rybnika? Dotrzyj do 12 100+ mieszkańców na Facebooku i 5 500+ na Instagramie",
 "Reklama u nas to lokalni klienci, którzy Cię znajdą. Napisz w wiadomości albo komentarzu",
 "Post na Facebooku i Instagramie z Twoją ofertą. Pakiety dostępne od ręki",
 "Relacja, przypięcie posta i krótka rolka promująca Twoją firmę",
@@ -652,7 +656,7 @@ const MSGS=[
 
 const CAT_NAMES={all:"Wszystkie",reklama:"📣 Reklama (oferta)",jedzenie:"🍕 Jedzenie/lokale",uroda:"💇 Fryzjer/uroda",fachowcy:"🔧 Fachowcy/usługi",zdrowie:"🏥 Zdrowie",zguby:"🔑 Zguby/znaleziska",zwierzeta:"🐾 Zwierzęta",oddam:"🎁 Oddam za darmo",sprzedaz:"🛒 Sprzedam/kupię",spotkania:"👥 Spotkania/wieczór",dzieci:"🧒 Dzieci/szkoły",podziekowania:"❤️ Podziękowania",zaangazowanie:"💬 Polub/komentuj",polecenia:"⭐ Polecenia",inne:"📌 Inne"};
 function category(t){const s=t.toLowerCase();
- if(/(reklam|11 700|11 900|12 000|4 700|4 900|5 000|5 100|5 200|5 300|7 900|twoja firma|twoją firmę|pakiet|promujemy lokalne|oferta dla twojej|wśród zaufanej|więcej klientów z rybnika)/.test(s))return"reklama";
+ if(/(reklam|11 700|11 900|12 000|12 100|4 700|4 900|5 000|5 100|5 200|5 300|5 500|7 900|twoja firma|twoją firmę|pakiet|promujemy lokalne|oferta dla twojej|wśród zaufanej|więcej klientów z rybnika)/.test(s))return"reklama";
  if(/(pizza|kebab|burger|jedz|obiad|sushi|lody|ciast|piekarni|cukierni|gofry|naleśnik|kawiarni|kawa|restaurac|knajp|śniadani|zup|pierog|catering|miod|jajk|nabiał|szarlotk|bar mleczny|food truck|paczki|bułk|chińsk|schabow)/.test(s))return"jedzenie";
  if(/(fryzjer|barber|paznok|rzęs|kosmetycz|makijaż|brod|balejaż|koloryzac|depilac|masaż|podolog|trwał|keratyn|fade)/.test(s))return"uroda";
  if(/(mechanik|hydraulik|elektryk|remont|glazurnik|stolarz|dekarz|malarz|fachow|kominiar|okna|piec|tapicer|ślusarz|montaz|naprawia|warsztat|ogrodzeni|płot|rusztowani|gruz|wulkaniz|holowani|opon|krawcow|ślusar|rolety|elewacj|trawnik|kosi|ogrodnik)/.test(s))return"fachowcy";
@@ -846,7 +850,7 @@ function draw(p){
   if(showFoot){
     const f1El=document.getElementById('ft1'),f2El=document.getElementById('ft2');
     const ft1=((f1El&&f1El.value!==undefined)?f1El.value:"").trim();
-    const ft2=(f2El&&f2El.value!==undefined)?f2El.value:"Facebook 12 000+    ·    Instagram 5 300+";
+    const ft2=(f2El&&f2El.value!==undefined)?f2El.value:"Facebook 12 100+    ·    Instagram 5 500+";
     ctx.textAlign="center";ctx.textBaseline="alphabetic";
     if(ft1){
       ctx.font="bold 27px "+FF;ctx.fillStyle=T.gold;ctx.fillText(ft1,W/2,H-58);
@@ -856,14 +860,56 @@ function draw(p){
     }
   }
   if(ctaOn){const cy=showFoot?H-104:H-40;ctx.textAlign="center";ctx.textBaseline="alphabetic";ctx.font="bold 28px "+FF;ctx.fillStyle=T.gold;ctx.fillText("POLUB   ·   SKOMENTUJ   ·   UDOSTĘPNIJ",W/2,cy);}
-  if(LOGO&&LOGO.complete&&LOGO.naturalWidth){
-    const pos=(document.getElementById('logoPos')||{}).value||"pg";
-    const sz=(document.getElementById('logoSize')||{}).value||"m";
-    const lh=(sz==="s"?60:sz==="l"?106:80),lw=LOGO.naturalWidth*(lh/LOGO.naturalHeight);
+  drawSponsor();
+}
+
+function drawSponsor(){
+  const hasLogo=LOGO&&LOGO.complete&&LOGO.naturalWidth;
+  const cname=((document.getElementById('logoName')||{}).value||"").trim();
+  const clabel=((document.getElementById('logoLabel')||{}).value||"").trim();
+  if(!hasLogo&&!cname)return;
+  const pos=(document.getElementById('logoPos')||{}).value||"pg";
+  const sz=(document.getElementById('logoSize')||{}).value||"m";
+  const lh=(sz==="s"?60:sz==="l"?106:80);
+  const lw=hasLogo?LOGO.naturalWidth*(lh/LOGO.naturalHeight):0;
+
+  // Samo logo, bez nazwy — jak dawniej (róg bez tła)
+  if(hasLogo&&!cname){
     let lx,ly;
     if(pos==="lg"){lx=44;ly=26;} else if(pos==="st"){lx=44;ly=H-lh-18;} else {lx=W-44-lw;ly=26;}
     ctx.save();ctx.shadowColor="rgba(0,0,0,0.4)";ctx.shadowBlur=12;ctx.shadowOffsetY=3;ctx.drawImage(LOGO,lx,ly,lw,lh);ctx.restore();
+    return;
   }
+
+  // Pasek sponsora: logo + etykieta + nazwa firmy na tle
+  ctx.save();ctx.textBaseline="alphabetic";
+  const labelFs=Math.max(15,Math.round(lh*0.26)), nameFs=Math.max(24,Math.round(lh*0.40));
+  ctx.font="700 "+nameFs+"px "+FF;const nameW=ctx.measureText(cname).width;
+  ctx.font="700 "+labelFs+"px "+FF;const labW=clabel?ctx.measureText(clabel.toUpperCase()).width+labelFs:0;
+  const textW=Math.max(nameW,labW);
+  const padX=20,gap=hasLogo?18:0,padY=14;
+  const textH=(clabel?labelFs+8:0)+nameFs;
+  const badgeH=Math.max(hasLogo?lh:0,textH)+padY*2;
+  const badgeW=(hasLogo?lw+gap:0)+textW+padX*2;
+  let bx,by;
+  if(pos==="lg"){bx=30;by=20;}
+  else if(pos==="pg"){bx=W-30-badgeW;by=20;}
+  else {bx=30;by=H-badgeH-16;}
+  bx=Math.max(20,Math.min(bx,W-20-badgeW));
+  by=Math.max(20,Math.min(by,H-20-badgeH));
+  // tło paska
+  ctx.fillStyle="rgba(9,10,13,0.74)";rr(bx,by,badgeW,badgeH,16);ctx.fill();
+  ctx.strokeStyle=(T.gold||"#c9a24b");ctx.globalAlpha=0.45;ctx.lineWidth=1.5;rr(bx,by,badgeW,badgeH,16);ctx.stroke();ctx.globalAlpha=1;
+  // logo
+  let tx=bx+padX;
+  if(hasLogo){const lyy=by+(badgeH-lh)/2;ctx.drawImage(LOGO,bx+padX,lyy,lw,lh);tx=bx+padX+lw+gap;}
+  // teksty (wyśrodkowane w pionie)
+  const blockTop=by+(badgeH-textH)/2;
+  ctx.textAlign="left";
+  if(clabel){ctx.font="700 "+labelFs+"px "+FF;ctx.fillStyle=(T.gold||"#c9a24b");try{ctx.letterSpacing="2px";}catch(e){}ctx.fillText(clabel.toUpperCase(),tx,blockTop+labelFs);try{ctx.letterSpacing="0px";}catch(e){}}
+  ctx.font="700 "+nameFs+"px "+FF;ctx.fillStyle="#ffffff";
+  ctx.fillText(cname,tx,blockTop+(clabel?labelFs+8:0)+nameFs);
+  ctx.restore();
 }
 
 function dl(){
@@ -936,6 +982,7 @@ Object.keys(LAYS).forEach(k=>{const o=document.createElement('option');o.value=k
 laySel.addEventListener('change',()=>draw());
 tplSel.value="monoczarny"; laySel.value="kafelki";
 ["hdr","sub","ft1","ft2"].forEach(id=>{const el=document.getElementById(id);if(el)el.addEventListener('input',()=>draw());});
+["logoName","logoLabel"].forEach(id=>{const el=document.getElementById(id);if(el)el.addEventListener('input',()=>draw());});
 const sf=document.getElementById('showFoot');if(sf)sf.addEventListener('change',()=>draw());
 const ctaEl=document.getElementById('cta');if(ctaEl)ctaEl.addEventListener('change',()=>draw());
 const bwEl=document.getElementById('borderW');if(bwEl)bwEl.addEventListener('change',()=>draw());
