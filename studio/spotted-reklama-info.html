@@ -28,12 +28,15 @@
   .tag{display:inline-block;background:#2a2d34;color:var(--gold);border-radius:6px;padding:2px 8px;font-size:11px;font-weight:700;margin-bottom:8px;letter-spacing:1px}
   a.back{color:var(--gold);font-size:14px;text-decoration:none}
   .row2{display:flex;gap:12px;flex-wrap:wrap}.row2>div{flex:1;min-width:130px}
+  .swatches{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+  .sw{width:34px;height:34px;border-radius:50%;border:2px solid #2a2d34;cursor:pointer;padding:0}
+  .sw.active{border-color:#e8e6df;box-shadow:0 0 0 2px #c9a24b}
 </style>
 </head>
 <body>
 <header>
   <h1>SPOTTED RYBNIK</h1>
-  <p>Informacja o reklamie do przypięcia · bez liczb · carbon + złoto</p>
+  <p>Informacja o reklamie do przypięcia · bez liczb · wybór kolorystyki</p>
 </header>
 
 <div class="wrap">
@@ -60,8 +63,21 @@
   <div class="card">
     <span class="tag">WYGLĄD</span>
     <div class="row2">
+      <div><label>Kolorystyka</label>
+        <select id="theme">
+          <option value="carbon" selected>Czerń + złoto</option>
+          <option value="granat">Granat + złoto</option>
+          <option value="bordo">Bordo + złoto</option>
+          <option value="las">Butelkowa zieleń + złoto</option>
+          <option value="fiolet">Fiolet + złoto</option>
+          <option value="srebro">Czerń + srebro</option>
+          <option value="roz">Czerń + różowe złoto</option>
+          <option value="biel">Biel + złoto (jasny)</option>
+        </select>
+      </div>
       <div><label>Format</label><select id="fmt"><option value="45" selected>4:5 (post)</option><option value="11">1:1</option><option value="916">9:16 (relacja)</option></select></div>
     </div>
+    <div class="swatches" id="swatches"></div>
   </div>
 
   <div class="btns"><button class="gold" onclick="dl()">⬇️ Pobierz PNG</button><button class="ghost" onclick="draw()">🔄 Odśwież</button></div>
@@ -81,33 +97,50 @@ let W=1080,H=1350;
 const $=id=>document.getElementById(id);
 function fmt(){const v=$('fmt').value;if(v==="11")return[1080,1080];if(v==="916")return[1080,1920];return[1080,1350];}
 function rr(x,y,w,h,r){ctx.beginPath();ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath();}
-function metal(y0,y1){const g=ctx.createLinearGradient(0,y0,0,y1);g.addColorStop(0,"#fdfbf3");g.addColorStop(0.42,"#efe4c6");g.addColorStop(0.55,"#c8ad66");g.addColorStop(1,"#8a6c2e");return g;}
-function goldGrad(y0,y1){const g=ctx.createLinearGradient(0,y0,0,y1);g.addColorStop(0,"#f3e2b0");g.addColorStop(1,"#c49a4e");return g;}
-function wrap(t,maxW,font){ctx.font=font;const words=(t||"").split(/\s+/);const L=[];let c="";for(const w of words){const t2=c?c+" "+w:w;if(ctx.measureText(t2).width<=maxW||!c)c=t2;else{L.push(c);c=w;}}if(c)L.push(c);return L;}
+
+/* ---------- KOLORYSTYKA ---------- */
+const M_GOLD=[[0,"#fdfbf3"],[0.42,"#efe4c6"],[0.55,"#c8ad66"],[1,"#8a6c2e"]];
+const G_GOLD=["#f3e2b0","#c49a4e"];
+const THEMES={
+  carbon:{label:"Czerń + złoto",preview:"#c9a24b",bg:"#0a0a0c",accent:"226,192,110",metal:M_GOLD,gold:G_GOLD,ctaFill:M_GOLD,ctaText:"#15130c",disc:["rgba(20,20,22,0.9)","rgba(10,10,12,0.9)"],weave:["rgba(255,255,255,0.020)","rgba(0,0,0,0.30)"],badge:"#cbb06a",glyphInk:"#0b0b0d"},
+  granat:{label:"Granat + złoto",preview:"#12305e",bg:"#0a1430",accent:"226,192,110",metal:M_GOLD,gold:G_GOLD,ctaFill:M_GOLD,ctaText:"#15130c",disc:["rgba(14,26,54,0.92)","rgba(7,15,34,0.94)"],weave:["rgba(255,255,255,0.022)","rgba(0,0,0,0.28)"],badge:"#cbb06a",glyphInk:"#0b0b0d"},
+  bordo:{label:"Bordo + złoto",preview:"#5c1116",bg:"#200709",accent:"228,190,150",metal:M_GOLD,gold:G_GOLD,ctaFill:M_GOLD,ctaText:"#15130c",disc:["rgba(46,12,15,0.92)","rgba(24,6,8,0.94)"],weave:["rgba(255,255,255,0.020)","rgba(0,0,0,0.30)"],badge:"#e0b48f",glyphInk:"#0b0b0d"},
+  las:{label:"Butelkowa zieleń + złoto",preview:"#0f3826",bg:"#06160f",accent:"214,196,140",metal:M_GOLD,gold:G_GOLD,ctaFill:M_GOLD,ctaText:"#0e130c",disc:["rgba(10,32,22,0.92)","rgba(5,18,12,0.94)"],weave:["rgba(255,255,255,0.020)","rgba(0,0,0,0.30)"],badge:"#cbb06a",glyphInk:"#0b0b0d"},
+  fiolet:{label:"Fiolet + złoto",preview:"#33165a",bg:"#150a24",accent:"226,192,110",metal:M_GOLD,gold:G_GOLD,ctaFill:M_GOLD,ctaText:"#15130c",disc:["rgba(32,16,52,0.92)","rgba(17,8,30,0.94)"],weave:["rgba(255,255,255,0.022)","rgba(0,0,0,0.28)"],badge:"#cbb06a",glyphInk:"#0b0b0d"},
+  srebro:{label:"Czerń + srebro",preview:"#c6ccd6",bg:"#0b0c10",accent:"205,212,222",metal:[[0,"#ffffff"],[0.45,"#e8ecf1"],[0.6,"#aab4c0"],[1,"#6b7480"]],gold:["#eef2f6","#9aa4b0"],ctaFill:[[0,"#ffffff"],[0.45,"#e8ecf1"],[0.6,"#aab4c0"],[1,"#6b7480"]],ctaText:"#10131a",disc:["rgba(22,24,28,0.92)","rgba(10,11,14,0.94)"],weave:["rgba(255,255,255,0.025)","rgba(0,0,0,0.30)"],badge:"#aeb6c0",glyphInk:"#10131a"},
+  roz:{label:"Czerń + różowe złoto",preview:"#d99f8b",bg:"#100809",accent:"232,184,170",metal:[[0,"#fff2ee"],[0.45,"#f4d3c8"],[0.6,"#e0a892"],[1,"#a56a55"]],gold:["#f6d8cd","#cf9581"],ctaFill:[[0,"#fff2ee"],[0.45,"#f4d3c8"],[0.6,"#e0a892"],[1,"#a56a55"]],ctaText:"#1a0e0b",disc:["rgba(30,18,18,0.92)","rgba(16,8,9,0.94)"],weave:["rgba(255,255,255,0.022)","rgba(0,0,0,0.30)"],badge:"#d9a996",glyphInk:"#1a0e0b"},
+  biel:{label:"Biel + złoto (jasny)",preview:"#f0e6cf",bg:"#f4efe3",accent:"165,125,55",metal:[[0,"#8a6a24"],[0.45,"#b6902f"],[0.6,"#9c7a2c"],[1,"#6f5216"]],gold:["#9c7a2c","#6f5216"],ctaFill:[[0,"#2a2113"],[1,"#141009"]],ctaText:"#f3e2b0",disc:["rgba(255,252,244,0.96)","rgba(243,236,222,0.96)"],weave:["rgba(0,0,0,0.030)","rgba(120,90,30,0.12)"],badge:"#9c7a2c",glyphInk:"#f7ecd2"}
+};
+let T=THEMES.carbon;
+function grad(st,y0,y1){const g=ctx.createLinearGradient(0,y0,0,y1);if(Array.isArray(st[0]))st.forEach(s=>g.addColorStop(s[0],s[1]));else{g.addColorStop(0,st[0]);g.addColorStop(1,st[1]);}return g;}
+function metal(y0,y1){return grad(T.metal,y0,y1);}
+function goldGrad(y0,y1){return grad(T.gold,y0,y1);}
+function ctaFillGrad(y0,y1){return grad(T.ctaFill,y0,y1);}
+function acc(a){return "rgba("+T.accent+","+a+")";}
 
 function background(){
-  ctx.fillStyle="#0a0a0c";ctx.fillRect(0,0,W,H);
+  ctx.fillStyle=T.bg;ctx.fillRect(0,0,W,H);
   ctx.save();
-  for(let i=-H;i<W;i+=7){ctx.strokeStyle="rgba(255,255,255,0.020)";ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(i,0);ctx.lineTo(i+H,H);ctx.stroke();}
-  for(let i=-H;i<W+H;i+=7){ctx.strokeStyle="rgba(0,0,0,0.30)";ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(i,0);ctx.lineTo(i-H,H);ctx.stroke();}
+  for(let i=-H;i<W;i+=7){ctx.strokeStyle=T.weave[0];ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(i,0);ctx.lineTo(i+H,H);ctx.stroke();}
+  for(let i=-H;i<W+H;i+=7){ctx.strokeStyle=T.weave[1];ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(i,0);ctx.lineTo(i-H,H);ctx.stroke();}
   ctx.restore();
-  const glow=(x,y,r,a)=>{const g=ctx.createRadialGradient(x,y,0,x,y,r);g.addColorStop(0,"rgba(226,192,110,"+a+")");g.addColorStop(1,"rgba(226,192,110,0)");ctx.fillStyle=g;ctx.fillRect(0,0,W,H);};
+  const glow=(x,y,r,a)=>{const g=ctx.createRadialGradient(x,y,0,x,y,r);g.addColorStop(0,acc(a));g.addColorStop(1,acc(0));ctx.fillStyle=g;ctx.fillRect(0,0,W,H);};
   glow(W*0.9,H*0.06,W*0.55,0.28);
   glow(W*0.02,H*0.5,W*0.4,0.20);
   glow(W*0.95,H*0.55,W*0.4,0.16);
   glow(W*0.5,H*0.98,W*0.5,0.12);
-  ctx.strokeStyle="rgba(226,192,110,0.55)";ctx.lineWidth=2.5;rr(26,26,W-52,H-52,4);ctx.stroke();
-  ctx.strokeStyle="rgba(226,192,110,0.22)";ctx.lineWidth=1;rr(38,38,W-76,H-76,3);ctx.stroke();
+  ctx.strokeStyle=acc(0.55);ctx.lineWidth=2.5;rr(26,26,W-52,H-52,4);ctx.stroke();
+  ctx.strokeStyle=acc(0.22);ctx.lineWidth=1;rr(38,38,W-76,H-76,3);ctx.stroke();
 }
 
 function medallion(cx,cy,r){
   const parts=($('badge').value||"").split("|").map(s=>s.trim());
   ctx.save();
   const gd=ctx.createRadialGradient(cx,cy-r*0.3,r*0.2,cx,cy,r*1.15);
-  gd.addColorStop(0,"rgba(20,20,22,0.9)");gd.addColorStop(1,"rgba(10,10,12,0.9)");
+  gd.addColorStop(0,T.disc[0]);gd.addColorStop(1,T.disc[1]);
   ctx.fillStyle=gd;ctx.beginPath();ctx.arc(cx,cy,r,0,7);ctx.fill();
   ctx.lineWidth=r*0.05;ctx.strokeStyle=metal(cy-r,cy+r);ctx.beginPath();ctx.arc(cx,cy,r,0,7);ctx.stroke();
-  ctx.lineWidth=r*0.02;ctx.strokeStyle="rgba(226,192,110,0.6)";ctx.beginPath();ctx.arc(cx,cy,r*0.86,0,7);ctx.stroke();
+  ctx.lineWidth=r*0.02;ctx.strokeStyle=acc(0.6);ctx.beginPath();ctx.arc(cx,cy,r*0.86,0,7);ctx.stroke();
   ctx.textAlign="center";ctx.textBaseline="middle";
   ctx.fillStyle=metal(cy-r*0.5,cy+r*0.5);
   ctx.font="italic "+(r*0.2)+"px "+SERIF;ctx.fillText(parts[0]||"",cx,cy-r*0.42);
@@ -115,12 +148,12 @@ function medallion(cx,cy,r){
   ctx.font="bold "+(r*0.34)+"px "+SERIF;
   if(mid.length>1){ctx.fillText(mid[0],cx,cy-r*0.05);ctx.fillText(mid.slice(1).join(" "),cx,cy+r*0.32);}
   else ctx.fillText(parts[1]||"",cx,cy+r*0.1);
-  ctx.font=(r*0.13)+"px "+SERIF;ctx.fillStyle="#cbb06a";
+  ctx.font=(r*0.13)+"px "+SERIF;ctx.fillStyle=T.badge;
   ctx.fillText((parts[2]||"").toUpperCase(),cx,cy+r*0.66);
   ctx.restore();
 }
 
-// feature icons (gold line)
+// feature icons (accent line)
 function icon(name,cx,cy,s){
   ctx.save();ctx.strokeStyle=goldGrad(cy-s,cy+s);ctx.fillStyle=goldGrad(cy-s,cy+s);ctx.lineWidth=s*0.12;ctx.lineJoin="round";ctx.lineCap="round";
   if(name==="post"){
@@ -144,7 +177,7 @@ function icon(name,cx,cy,s){
   ctx.restore();
 }
 
-// gold CTA pill with dark text
+// przycisk-baner z tekstem
 function ctaBanner(cx,y,text){
   if(!text)return y;
   let fs=Math.min(46,W*0.045);
@@ -152,15 +185,12 @@ function ctaBanner(cx,y,text){
   while(ctx.measureText(text).width>W-260&&fs>26){fs-=1;ctx.font="bold "+fs+"px "+SERIF;}
   const tw=ctx.measureText(text).width;
   const padX=fs*1.1, h=fs+fs*0.95, w=Math.min(W-100,tw+padX*2), x=cx-w/2;
-  // glow behind
   ctx.save();
-  ctx.shadowColor="rgba(226,192,110,0.55)";ctx.shadowBlur=34;
-  ctx.fillStyle=metal(y,y+h);rr(x,y,w,h,h/2);ctx.fill();
+  ctx.shadowColor=acc(0.55);ctx.shadowBlur=34;
+  ctx.fillStyle=ctaFillGrad(y,y+h);rr(x,y,w,h,h/2);ctx.fill();
   ctx.restore();
-  // inner sheen ring
-  ctx.strokeStyle="rgba(255,255,255,0.35)";ctx.lineWidth=1.5;rr(x+3,y+3,w-6,h-6,(h-6)/2);ctx.stroke();
-  // text
-  ctx.fillStyle="#15130c";ctx.textAlign="center";ctx.textBaseline="middle";
+  ctx.strokeStyle="rgba(255,255,255,0.30)";ctx.lineWidth=1.5;rr(x+3,y+3,w-6,h-6,(h-6)/2);ctx.stroke();
+  ctx.fillStyle=T.ctaText;ctx.textAlign="center";ctx.textBaseline="middle";
   try{ctx.letterSpacing="1px";}catch(e){}
   ctx.font="bold "+fs+"px "+SERIF;ctx.fillText(text,cx,y+h/2+2);
   try{ctx.letterSpacing="0px";}catch(e){}
@@ -168,6 +198,7 @@ function ctaBanner(cx,y,text){
 }
 
 function draw(){
+  T=THEMES[$('theme').value]||THEMES.carbon;
   const d=fmt();W=d[0];H=d[1];cv.width=W;cv.height=H;
   background();
   const cx=W/2;
@@ -202,7 +233,7 @@ function draw(){
   y=ctaBanner(cx,y,($('cta').value||"").trim());
   y+=54;
   // divider
-  ctx.strokeStyle="rgba(226,192,110,0.3)";ctx.lineWidth=1;
+  ctx.strokeStyle=acc(0.3);ctx.lineWidth=1;
   ctx.beginPath();ctx.moveTo(70,y);ctx.lineTo(W-70,y);ctx.stroke();
   // features
   const feats=($('feat').value||"").split(",").map(s=>s.trim()).filter(Boolean).slice(0,4);
@@ -216,7 +247,7 @@ function draw(){
     ctx.fillText(f,fx,fy+108);
   });
   y=fy+150;
-  ctx.strokeStyle="rgba(226,192,110,0.3)";ctx.beginPath();ctx.moveTo(70,y);ctx.lineTo(W-70,y);ctx.stroke();
+  ctx.strokeStyle=acc(0.3);ctx.beginPath();ctx.moveTo(70,y);ctx.lineTo(W-70,y);ctx.stroke();
   // note
   const note=($('note').value||"").trim();
   if(note){
@@ -227,6 +258,7 @@ function draw(){
     let ny=y+40;nl.forEach(l=>{ny+=nfs*1.15;ctx.fillText(l,cx,ny);});
   }
 }
+function wrap(t,maxW,font){ctx.font=font;const words=(t||"").split(/\s+/);const L=[];let c="";for(const w of words){const t2=c?c+" "+w:w;if(ctx.measureText(t2).width<=maxW||!c)c=t2;else{L.push(c);c=w;}}if(c)L.push(c);return L;}
 
 function dl(){
   draw();const info=$('info');
@@ -237,8 +269,22 @@ function dl(){
     if(info){info.textContent="Pobrano PNG ✓";setTimeout(()=>info.textContent="",2500);}
   },'image/png');
 }
+
+// swatches (szybki wybór koloru)
+function buildSwatches(){
+  const box=$('swatches');box.innerHTML="";
+  Object.keys(THEMES).forEach(k=>{
+    const b=document.createElement('button');b.className="sw"+($('theme').value===k?" active":"");
+    b.style.background=THEMES[k].preview;b.title=THEMES[k].label;
+    b.onclick=()=>{$('theme').value=k;buildSwatches();draw();};
+    box.appendChild(b);
+  });
+}
+
 ['h1','h2','sub','cta','feat','note','badge'].forEach(id=>$(id).addEventListener('input',draw));
 $('fmt').addEventListener('change',draw);
+$('theme').addEventListener('change',()=>{buildSwatches();draw();});
+buildSwatches();
 draw();
 </script>
 </body>
