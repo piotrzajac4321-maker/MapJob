@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="robots" content="noindex, nofollow">
-<title>Reklama dla firm — Spotted Rybnik</title>
+<title>Informacja o reklamie (do przypięcia) — Spotted Rybnik</title>
 <style>
   :root{--gold:#c9a24b;--line:#2a2d34;--card:#1d2026;--mut:#8a9096}
   *{box-sizing:border-box}
@@ -33,30 +33,28 @@
 <body>
 <header>
   <h1>SPOTTED RYBNIK</h1>
-  <p>Generator grafiki „Reklama dla firm" · carbon + złoto</p>
+  <p>Informacja o reklamie do przypięcia · bez liczb · carbon + złoto</p>
 </header>
 
 <div class="wrap">
-  <div style="margin-bottom:12px;display:flex;gap:16px;flex-wrap:wrap"><a class="back" href="spotted-rybnik.html">← Generator postów</a><a class="back" href="spotted-cennik.html">💰 Cennik</a><a class="back" href="spotted-reklama-info.html">📌 Info o reklamie</a></div>
+  <div style="margin-bottom:12px;display:flex;gap:16px;flex-wrap:wrap"><a class="back" href="spotted-rybnik.html">← Generator postów</a><a class="back" href="spotted-reklama-firm.html">🏢 Reklama dla firm</a><a class="back" href="spotted-cennik.html">💰 Cennik</a></div>
 
   <div class="card">
     <span class="tag">TREŚĆ</span>
     <div class="row2">
-      <div><label>Nagłówek — linia 1</label><input type="text" id="h1" value="REKLAMA DLA"></div>
-      <div><label>Nagłówek — linia 2</label><input type="text" id="h2" value="TWOJEJ FIRMY"></div>
+      <div><label>Nagłówek — linia 1</label><input type="text" id="h1" value="REKLAMUJ SIĘ W"></div>
+      <div><label>Nagłówek — linia 2</label><input type="text" id="h2" value="SPOTTED RYBNIK"></div>
     </div>
     <label>Podtytuł (zachęta)</label>
-    <textarea id="sub">Zbuduj silną markę w Rybniku! Dotrzyj do ponad 17 000 zaangażowanych mieszkańców już dziś.</textarea>
-    <div class="row2">
-      <div><label>Facebook</label><input type="text" id="fb" value="12 300+"></div>
-      <div><label>Instagram</label><input type="text" id="ig" value="5 800+"></div>
-    </div>
+    <textarea id="sub">Masz firmę, wydarzenie albo usługę? Dotrzyj do mieszkańców Rybnika i okolic — szybko i skutecznie.</textarea>
+    <label>Baner / wezwanie (przycisk)</label>
+    <input type="text" id="cta" value="NAPISZ W WIADOMOŚCI PRYWATNEJ">
     <label>Co oferujecie (oddziel przecinkami)</label>
     <input type="text" id="feat" value="post, relacja, rolka, konkurs">
     <label>Notka na dole</label>
-    <textarea id="note">Rozliczamy się również w barterze, w razie jakichkolwiek pytań jesteśmy do dyspozycji!</textarea>
+    <textarea id="note">Rozliczamy się również w barterze — w razie jakichkolwiek pytań jesteśmy do dyspozycji!</textarea>
     <label>Napis w medalionie (3 linijki, oddziel „|")</label>
-    <input type="text" id="badge" value="Nowe | SPOTTED RYBNIK | Dziennie aktywni">
+    <input type="text" id="badge" value="Reklama | SPOTTED RYBNIK | Twój lokalny zasięg">
   </div>
 
   <div class="card">
@@ -89,7 +87,6 @@ function wrap(t,maxW,font){ctx.font=font;const words=(t||"").split(/\s+/);const 
 
 function background(){
   ctx.fillStyle="#0a0a0c";ctx.fillRect(0,0,W,H);
-  // carbon weave
   ctx.save();
   for(let i=-H;i<W;i+=7){ctx.strokeStyle="rgba(255,255,255,0.020)";ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(i,0);ctx.lineTo(i+H,H);ctx.stroke();}
   for(let i=-H;i<W+H;i+=7){ctx.strokeStyle="rgba(0,0,0,0.30)";ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(i,0);ctx.lineTo(i-H,H);ctx.stroke();}
@@ -99,7 +96,6 @@ function background(){
   glow(W*0.02,H*0.5,W*0.4,0.20);
   glow(W*0.95,H*0.55,W*0.4,0.16);
   glow(W*0.5,H*0.98,W*0.5,0.12);
-  // frame
   ctx.strokeStyle="rgba(226,192,110,0.55)";ctx.lineWidth=2.5;rr(26,26,W-52,H-52,4);ctx.stroke();
   ctx.strokeStyle="rgba(226,192,110,0.22)";ctx.lineWidth=1;rr(38,38,W-76,H-76,3);ctx.stroke();
 }
@@ -107,11 +103,9 @@ function background(){
 function medallion(cx,cy,r){
   const parts=($('badge').value||"").split("|").map(s=>s.trim());
   ctx.save();
-  // outer glow disc
   const gd=ctx.createRadialGradient(cx,cy-r*0.3,r*0.2,cx,cy,r*1.15);
   gd.addColorStop(0,"rgba(20,20,22,0.9)");gd.addColorStop(1,"rgba(10,10,12,0.9)");
   ctx.fillStyle=gd;ctx.beginPath();ctx.arc(cx,cy,r,0,7);ctx.fill();
-  // rings
   ctx.lineWidth=r*0.05;ctx.strokeStyle=metal(cy-r,cy+r);ctx.beginPath();ctx.arc(cx,cy,r,0,7);ctx.stroke();
   ctx.lineWidth=r*0.02;ctx.strokeStyle="rgba(226,192,110,0.6)";ctx.beginPath();ctx.arc(cx,cy,r*0.86,0,7);ctx.stroke();
   ctx.textAlign="center";ctx.textBaseline="middle";
@@ -124,19 +118,6 @@ function medallion(cx,cy,r){
   ctx.font=(r*0.13)+"px "+SERIF;ctx.fillStyle="#cbb06a";
   ctx.fillText((parts[2]||"").toUpperCase(),cx,cy+r*0.66);
   ctx.restore();
-}
-
-function fbGlyph(cx,cy,r){
-  ctx.save();const g=ctx.createLinearGradient(cx,cy-r,cx,cy+r);g.addColorStop(0,"#f2e7c4");g.addColorStop(1,"#c39a48");
-  ctx.fillStyle=g;ctx.beginPath();ctx.arc(cx,cy,r,0,7);ctx.fill();
-  ctx.fillStyle="#0b0b0d";ctx.font="bold "+(r*1.6)+"px "+SERIF;ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillText("f",cx,cy+r*0.08);ctx.restore();
-}
-function igGlyph(cx,cy,r){
-  ctx.save();const g=ctx.createLinearGradient(cx,cy-r,cx,cy+r);g.addColorStop(0,"#f2e7c4");g.addColorStop(1,"#c39a48");
-  ctx.strokeStyle=g;ctx.lineWidth=r*0.16;ctx.lineJoin="round";
-  rr(cx-r,cy-r,r*2,r*2,r*0.62);ctx.stroke();
-  ctx.beginPath();ctx.arc(cx,cy,r*0.5,0,7);ctx.stroke();
-  ctx.fillStyle=g;ctx.beginPath();ctx.arc(cx+r*0.55,cy-r*0.55,r*0.12,0,7);ctx.fill();ctx.restore();
 }
 
 // feature icons (gold line)
@@ -161,6 +142,29 @@ function icon(name,cx,cy,s){
     ctx.beginPath();ctx.moveTo(cx-s*0.35,cy+s*0.72);ctx.lineTo(cx+s*0.35,cy+s*0.72);ctx.stroke();
   }
   ctx.restore();
+}
+
+// gold CTA pill with dark text
+function ctaBanner(cx,y,text){
+  if(!text)return y;
+  let fs=Math.min(46,W*0.045);
+  ctx.font="bold "+fs+"px "+SERIF;
+  while(ctx.measureText(text).width>W-260&&fs>26){fs-=1;ctx.font="bold "+fs+"px "+SERIF;}
+  const tw=ctx.measureText(text).width;
+  const padX=fs*1.1, h=fs+fs*0.95, w=Math.min(W-100,tw+padX*2), x=cx-w/2;
+  // glow behind
+  ctx.save();
+  ctx.shadowColor="rgba(226,192,110,0.55)";ctx.shadowBlur=34;
+  ctx.fillStyle=metal(y,y+h);rr(x,y,w,h,h/2);ctx.fill();
+  ctx.restore();
+  // inner sheen ring
+  ctx.strokeStyle="rgba(255,255,255,0.35)";ctx.lineWidth=1.5;rr(x+3,y+3,w-6,h-6,(h-6)/2);ctx.stroke();
+  // text
+  ctx.fillStyle="#15130c";ctx.textAlign="center";ctx.textBaseline="middle";
+  try{ctx.letterSpacing="1px";}catch(e){}
+  ctx.font="bold "+fs+"px "+SERIF;ctx.fillText(text,cx,y+h/2+2);
+  try{ctx.letterSpacing="0px";}catch(e){}
+  return y+h;
 }
 
 function draw(){
@@ -188,38 +192,22 @@ function draw(){
   if(sub){
     ctx.fillStyle=goldGrad(y-10,y+120);
     let sfs=40;let lines=wrap(sub,W-150,"600 "+sfs+"px "+SERIF);
-    while(lines.length*sfs*1.32>250&&sfs>24){sfs-=2;lines=wrap(sub,W-150,"600 "+sfs+"px "+SERIF);}
+    while(lines.length*sfs*1.32>270&&sfs>24){sfs-=2;lines=wrap(sub,W-150,"600 "+sfs+"px "+SERIF);}
     ctx.font="600 "+sfs+"px "+SERIF;
     lines.forEach(l=>{y+=sfs*1.15;ctx.fillText(l,cx,y);});
     y+=sfs*0.4;
   }
-  y+=44;
-  // reach row
-  const fb=($('fb').value||"").trim(),ig=($('ig').value||"").trim();
-  const rfs=Math.min(60,W*0.058);
-  ctx.font="bold "+rfs+"px "+SERIF;
-  const gr=rfs*0.62, gap=20, blockGap=60;
-  const fbw=gr*2+gap+ctx.measureText(fb).width;
-  const igw=gr*2+gap+ctx.measureText(ig).width;
-  const total=fbw+blockGap+igw;
-  let rx=cx-total/2;
-  const ry=y+gr;
-  // FB
-  fbGlyph(rx+gr,ry,gr);
-  ctx.textAlign="left";ctx.textBaseline="middle";ctx.fillStyle=goldGrad(ry-gr,ry+gr);
-  ctx.fillText(fb,rx+gr*2+gap,ry+2);
-  rx+=fbw+blockGap;
-  // IG
-  igGlyph(rx+gr,ry,gr);
-  ctx.fillStyle=goldGrad(ry-gr,ry+gr);ctx.fillText(ig,rx+gr*2+gap,ry+2);
-  y=ry+gr+54;
-  // divider band
+  y+=52;
+  // CTA banner (zamiast liczb)
+  y=ctaBanner(cx,y,($('cta').value||"").trim());
+  y+=54;
+  // divider
   ctx.strokeStyle="rgba(226,192,110,0.3)";ctx.lineWidth=1;
   ctx.beginPath();ctx.moveTo(70,y);ctx.lineTo(W-70,y);ctx.stroke();
   // features
   const feats=($('feat').value||"").split(",").map(s=>s.trim()).filter(Boolean).slice(0,4);
   const iconNames=["post","relacja","rolka","konkurs"];
-  const fy=y+92;const step=(W-160)/feats.length;
+  const fy=y+92;const step=(W-160)/Math.max(1,feats.length);
   ctx.textAlign="center";
   feats.forEach((f,i)=>{
     const fx=80+step*(i+0.5);
@@ -243,13 +231,13 @@ function draw(){
 function dl(){
   draw();const info=$('info');
   cv.toBlob(b=>{
-    if(b){const u=URL.createObjectURL(b);const a=document.createElement('a');a.href=u;a.download="reklama-dla-firm-spotted-rybnik.png";document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),1500);}
+    if(b){const u=URL.createObjectURL(b);const a=document.createElement('a');a.href=u;a.download="informacja-o-reklamie-spotted-rybnik.png";document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),1500);}
     const exp=$('exp');exp.innerHTML='<div class="hint" style="margin:8px 0">📱 Na telefonie: przytrzymaj obraz i wybierz „Zapisz".</div>';
     const im=new Image();im.src=cv.toDataURL('image/png');im.style.maxWidth="100%";im.style.borderRadius="8px";exp.appendChild(im);
     if(info){info.textContent="Pobrano PNG ✓";setTimeout(()=>info.textContent="",2500);}
   },'image/png');
 }
-['h1','h2','sub','fb','ig','feat','note','badge'].forEach(id=>$(id).addEventListener('input',draw));
+['h1','h2','sub','cta','feat','note','badge'].forEach(id=>$(id).addEventListener('input',draw));
 $('fmt').addEventListener('change',draw);
 draw();
 </script>
