@@ -684,18 +684,74 @@ function poolBase(){const rem=getRemoved(),cf=curCat();return MSGS.filter(m=>!re
 const cv=document.getElementById('cv'),ctx=cv.getContext('2d');
 let LOGO=null, LOGOS=[], curLogoId=null;
 const _g=id=>document.getElementById(id);
-function loadLogos(){
-  try{LOGOS=JSON.parse(localStorage.getItem('spottedLogos')||'[]');}catch(e){LOGOS=[];}
-  // migracja starego pojedynczego logo do biblioteki
-  const old=localStorage.getItem('spottedLogo');
-  if(old&&!LOGOS.length){LOGOS.push({id:'l'+(LOGOS.length+1)+'x',name:'',data:old});localStorage.removeItem('spottedLogo');saveLogos();}
-}
-function saveLogos(){try{localStorage.setItem('spottedLogos',JSON.stringify(LOGOS));}catch(e){alert('Pamięć przeglądarki pełna — usuń któreś logo (mniejsze pliki PNG działają najlepiej).');}}
+
+// ---- Trwałe przechowywanie logotypów w IndexedDB (bez limitu ~5 MB localStorage) ----
+let _logoDB=null, _logoSeq=0;
+function _idb(){return new Promise((res,rej)=>{
+  if(_logoDB)return res(_logoDB);
+  let r;try{r=indexedDB.open('spottedLogosDB',1);}catch(e){return rej(e);}
+  r.onupgradeneeded=()=>{try{r.result.createObjectStore('logos',{keyPath:'id'});}catch(e){}};
+  r.onsuccess=()=>{_logoDB=r.result;res(_logoDB);};
+  r.onerror=()=>rej(r.error);
+});}
+function _idbAll(){return _idb().then(db=>new Promise((res,rej)=>{
+  const q=db.transaction('logos','readonly').objectStore('logos').getAll();
+  q.onsuccess=()=>res(q.result||[]);q.onerror=()=>rej(q.error);
+}));}
+function _idbPut(it){return _idb().then(db=>new Promise((res,rej)=>{
+  const tx=db.transaction('logos','readwrite');tx.objectStore('logos').put(it);
+  tx.oncomplete=()=>res();tx.onerror=()=>rej(tx.error);
+}));}
+function _idbDel(id){return _idb().then(db=>new Promise((res,rej)=>{
+  const tx=db.transaction('logos','readwrite');tx.objectStore('logos').delete(id);
+  tx.oncomplete=()=>res();tx.onerror=()=>rej(tx.error);
+}));}
+
 function newId(){let n=1;while(LOGOS.some(l=>l.id==='logo'+n))n++;return 'logo'+n;}
-function addLogo(data){
+
+// zmniejsz logo do max 400 px — mały plik, ostrość w poście zachowana
+function downscaleLogo(dataURL,maxDim){return new Promise(res=>{
+  const im=new Image();
+  im.onload=()=>{
+    let w=im.naturalWidth||1,h=im.naturalHeight||1;
+    const sc=Math.min(1,maxDim/Math.max(w,h));
+    w=Math.max(1,Math.round(w*sc));h=Math.max(1,Math.round(h*sc));
+    try{const c=document.createElement('canvas');c.width=w;c.height=h;
+      c.getContext('2d').drawImage(im,0,0,w,h);res(c.toDataURL('image/png'));}
+    catch(e){res(dataURL);}
+  };
+  im.onerror=()=>res(dataURL);
+  im.src=dataURL;
+});}
+
+async function loadLogos(){
+  // jednorazowa migracja ze starego localStorage do IndexedDB
+  try{
+    const oldArr=JSON.parse(localStorage.getItem('spottedLogos')||'[]');
+    const oldOne=localStorage.getItem('spottedLogo');
+    const toMig=[];
+    if(oldArr&&oldArr.length)oldArr.forEach(l=>toMig.push(l));
+    if(oldOne)toMig.push({id:'logo0',name:'',data:oldOne});
+    for(const l of toMig){await _idbPut({id:l.id||newId(),ord:++_logoSeq,name:l.name||'',data:l.data});}
+    if(toMig.length){localStorage.removeItem('spottedLogos');localStorage.removeItem('spottedLogo');}
+  }catch(e){}
+  try{
+    const all=await _idbAll();
+    all.sort((a,b)=>(a.ord||0)-(b.ord||0));
+    LOGOS=all;
+    _logoSeq=all.reduce((m,l)=>Math.max(m,l.ord||0),_logoSeq);
+  }catch(e){LOGOS=[];}
+  renderLogoGallery();
+}
+
+async function addLogo(rawData){
+  if(LOGOS.length>=20){alert('Osiągnięto limit 20 logotypów — usuń któreś, żeby dodać nowe.');return;}
   const nm=(_g('logoName')&&_g('logoName').value.trim())||"";
-  const it={id:newId(),name:nm,data:data};
-  LOGOS.push(it);saveLogos();selectLogo(it.id);
+  const data=await downscaleLogo(rawData,400);
+  const it={id:newId(),ord:++_logoSeq,name:nm,data:data};
+  LOGOS.push(it);
+  try{await _idbPut(it);}catch(e){alert('Nie udało się zapisać logo w przeglądarce.');}
+  selectLogo(it.id);
 }
 function selectLogo(id){
   curLogoId=id;const it=LOGOS.find(l=>l.id===id);
@@ -704,9 +760,10 @@ function selectLogo(id){
   if(_g('logoName')&&it.name)_g('logoName').value=it.name;
   const im=new Image();im.onload=()=>{LOGO=im;draw();};im.onerror=()=>{LOGO=null;draw();};im.src=it.data;
 }
-function deleteLogo(id,ev){
+async function deleteLogo(id,ev){
   if(ev)ev.stopPropagation();
-  LOGOS=LOGOS.filter(l=>l.id!==id);saveLogos();
+  LOGOS=LOGOS.filter(l=>l.id!==id);
+  try{await _idbDel(id);}catch(e){}
   if(curLogoId===id){curLogoId=null;LOGO=null;}
   renderLogoGallery();draw();
 }
@@ -1075,7 +1132,7 @@ presetSel.addEventListener('change',()=>{if(presetSel.value!=="")applyPreset(+pr
 const lf=document.getElementById('logoFile');
 if(lf)lf.addEventListener('change',e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{addLogo(r.result);lf.value="";};r.readAsDataURL(f);});
 ['logoX','logoY','logoS'].forEach(id=>{const el=_g(id);if(el)el.addEventListener('input',()=>{updateLogoLabels();saveLogoCfg();draw();});});
-loadLogos();loadLogoCfg();
+loadLogos().then(loadLogoCfg);
 usedInfo();
 renderManage();
 draw();
