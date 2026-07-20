@@ -76,10 +76,10 @@
     <details style="margin-bottom:12px">
       <summary style="cursor:pointer;color:var(--gold);font-weight:600;font-size:14px">🖼️ Logo firm (biblioteka)</summary>
       <div style="margin-top:8px;font-size:13px">
-        <label>Wgraj nowe logo firmy</label>
-        <input type="file" id="logoFile" accept="image/*" style="font-size:12.5px">
-        <div class="hint" style="margin-top:4px">Zapisuje się na stałe. Kliknij zapisane logo, żeby użyć go w poście.</div>
-        <label style="margin-top:10px">📚 Zapisane logotypy</label>
+        <label>Wgraj logo firmy <span style="color:#8a9096;font-weight:400">(możesz zaznaczyć kilka naraz)</span></label>
+        <input type="file" id="logoFile" accept="image/*" multiple style="font-size:12.5px">
+        <div class="hint" style="margin-top:4px">Zapisują się na stałe. Kliknij zapisane logo, żeby użyć go w poście. <span style="color:#c9a24b">[wersja logo v3]</span></div>
+        <label style="margin-top:10px">📚 Zapisane logotypy <span id="logoCount" style="color:var(--gold)"></span></label>
         <div id="logoGallery" style="display:flex;flex-wrap:wrap;gap:8px;margin-top:4px"></div>
         <label style="margin-top:10px">Nazwa firmy (obok logo)</label>
         <input type="text" id="logoName" placeholder="np. Kwiaciarnia Róża" style="width:100%;padding:9px;border:1px solid var(--line);border-radius:8px;background:#12141a;color:#e8e6df;font-size:13px">
@@ -736,6 +736,7 @@ function deleteLogo(id,ev){
 }
 function clearCurLogo(){curLogoId=null;LOGO=null;renderLogoGallery();saveLogoCfg();draw();}
 function renderLogoGallery(){
+  const cnt=_g('logoCount');if(cnt)cnt.textContent=LOGOS.length?('('+LOGOS.length+')'):'';
   const box=_g('logoGallery');if(!box)return;box.innerHTML="";
   if(!LOGOS.length){box.innerHTML='<span class="hint" style="color:#8a9096">Brak zapisanych logotypów — wgraj pierwsze powyżej.</span>';return;}
   LOGOS.forEach(l=>{
@@ -1097,7 +1098,14 @@ const o0=document.createElement('option');o0.value="";o0.textContent="— wybier
 PRESETS.forEach((p,i)=>{const o=document.createElement('option');o.value=i;o.textContent=p[0];presetSel.appendChild(o);});
 presetSel.addEventListener('change',()=>{if(presetSel.value!=="")applyPreset(+presetSel.value);});
 const lf=document.getElementById('logoFile');
-if(lf)lf.addEventListener('change',e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{addLogo(r.result);lf.value="";};r.readAsDataURL(f);});
+if(lf)lf.addEventListener('change',async e=>{
+  const files=Array.from((e.target&&e.target.files)||[]);
+  for(const f of files){
+    const data=await new Promise(res=>{const r=new FileReader();r.onload=()=>res(r.result);r.onerror=()=>res(null);r.readAsDataURL(f);});
+    if(data)await addLogo(data);
+  }
+  lf.value="";
+});
 ['logoX','logoY','logoS'].forEach(id=>{const el=_g(id);if(el)el.addEventListener('input',()=>{updateLogoLabels();saveLogoCfg();draw();});});
 loadLogos();loadLogoCfg();
 usedInfo();
