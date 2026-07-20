@@ -74,26 +74,31 @@
       </div>
     </details>
     <details style="margin-bottom:12px">
-      <summary style="cursor:pointer;color:var(--gold);font-weight:600;font-size:14px">🖼️ Logo (wgraj swoje)</summary>
+      <summary style="cursor:pointer;color:var(--gold);font-weight:600;font-size:14px">🖼️ Logo firm (biblioteka)</summary>
       <div style="margin-top:8px;font-size:13px">
+        <label>Wgraj nowe logo firmy</label>
         <input type="file" id="logoFile" accept="image/*" style="font-size:12.5px">
-        <label style="margin-top:8px">Nazwa firmy (obok logo)</label>
+        <div class="hint" style="margin-top:4px">Zapisuje się na stałe. Kliknij zapisane logo, żeby użyć go w poście.</div>
+        <label style="margin-top:10px">📚 Zapisane logotypy</label>
+        <div id="logoGallery" style="display:flex;flex-wrap:wrap;gap:8px;margin-top:4px"></div>
+        <label style="margin-top:10px">Nazwa firmy (obok logo)</label>
         <input type="text" id="logoName" placeholder="np. Kwiaciarnia Róża" style="width:100%;padding:9px;border:1px solid var(--line);border-radius:8px;background:#12141a;color:#e8e6df;font-size:13px">
         <label style="margin-top:8px">Etykieta nad nazwą</label>
         <input type="text" id="logoLabel" value="Reklama" style="width:100%;padding:9px;border:1px solid var(--line);border-radius:8px;background:#12141a;color:#e8e6df;font-size:13px">
-        <label style="margin-top:8px">Pozycja logo</label>
-        <select id="logoPos" style="width:100%;padding:9px;border:1px solid var(--line);border-radius:8px;background:#12141a;color:#e8e6df">
-          <option value="pg">Prawy górny róg</option>
-          <option value="lg">Lewy górny róg</option>
-          <option value="st">Przy stopce (lewy)</option>
-        </select>
-        <label style="margin-top:8px">Rozmiar logo</label>
-        <select id="logoSize" style="width:100%;padding:9px;border:1px solid var(--line);border-radius:8px;background:#12141a;color:#e8e6df">
-          <option value="s">Mały</option>
-          <option value="m" selected>Średni</option>
-          <option value="l">Duży</option>
-        </select>
-        <button class="ghost" onclick="removeLogo()" style="margin-top:8px;padding:7px 14px;font-size:12.5px">🗑️ Usuń logo</button>
+        <label style="margin-top:12px">📍 Pozycja — szybki wybór</label>
+        <div class="btns" style="margin:2px 0 4px">
+          <button class="ghost" type="button" onclick="setLogoPreset('lg')" style="padding:7px 12px;font-size:12.5px">↖ Lewy góra</button>
+          <button class="ghost" type="button" onclick="setLogoPreset('pg')" style="padding:7px 12px;font-size:12.5px">↗ Prawy góra</button>
+          <button class="ghost" type="button" onclick="setLogoPreset('sl')" style="padding:7px 12px;font-size:12.5px">↙ Dół lewo</button>
+          <button class="ghost" type="button" onclick="setLogoPreset('sp')" style="padding:7px 12px;font-size:12.5px">↘ Dół prawo</button>
+        </div>
+        <label>Pozycja pozioma ◀ ▶ <span id="logoXv" style="color:var(--gold)"></span></label>
+        <input type="range" id="logoX" min="0" max="100" value="100" style="width:100%;accent-color:#c9a24b">
+        <label>Pozycja pionowa ▲ ▼ <span id="logoYv" style="color:var(--gold)"></span></label>
+        <input type="range" id="logoY" min="0" max="100" value="0" style="width:100%;accent-color:#c9a24b">
+        <label>Wielkość logo <span id="logoSv" style="color:var(--gold)"></span></label>
+        <input type="range" id="logoS" min="40" max="220" value="80" style="width:100%;accent-color:#c9a24b">
+        <button class="ghost" type="button" onclick="clearCurLogo()" style="margin-top:8px;padding:7px 14px;font-size:12.5px">✖️ Nie pokazuj logo w tym poście</button>
       </div>
     </details>
     <div class="btns">
@@ -677,9 +682,81 @@ function curCat(){return (document.getElementById('catFilter')||{}).value||"all"
 function poolBase(){const rem=getRemoved(),cf=curCat();return MSGS.filter(m=>!rem[m]&&(cf==="all"||category(m)===cf));}
 
 const cv=document.getElementById('cv'),ctx=cv.getContext('2d');
-let LOGO=null;
-function setLogo(durl){if(!durl){LOGO=null;return;}const im=new Image();im.onload=()=>{LOGO=im;draw();};im.src=durl;}
-function removeLogo(){localStorage.removeItem('spottedLogo');LOGO=null;const f=document.getElementById('logoFile');if(f)f.value="";draw();}
+let LOGO=null, LOGOS=[], curLogoId=null;
+const _g=id=>document.getElementById(id);
+function loadLogos(){
+  try{LOGOS=JSON.parse(localStorage.getItem('spottedLogos')||'[]');}catch(e){LOGOS=[];}
+  // migracja starego pojedynczego logo do biblioteki
+  const old=localStorage.getItem('spottedLogo');
+  if(old&&!LOGOS.length){LOGOS.push({id:'l'+(LOGOS.length+1)+'x',name:'',data:old});localStorage.removeItem('spottedLogo');saveLogos();}
+}
+function saveLogos(){try{localStorage.setItem('spottedLogos',JSON.stringify(LOGOS));}catch(e){alert('Pamięć przeglądarki pełna — usuń któreś logo (mniejsze pliki PNG działają najlepiej).');}}
+function newId(){let n=1;while(LOGOS.some(l=>l.id==='logo'+n))n++;return 'logo'+n;}
+function addLogo(data){
+  const nm=(_g('logoName')&&_g('logoName').value.trim())||"";
+  const it={id:newId(),name:nm,data:data};
+  LOGOS.push(it);saveLogos();selectLogo(it.id);
+}
+function selectLogo(id){
+  curLogoId=id;const it=LOGOS.find(l=>l.id===id);
+  renderLogoGallery();saveLogoCfg();
+  if(!it){LOGO=null;draw();return;}
+  if(_g('logoName')&&it.name)_g('logoName').value=it.name;
+  const im=new Image();im.onload=()=>{LOGO=im;draw();};im.onerror=()=>{LOGO=null;draw();};im.src=it.data;
+}
+function deleteLogo(id,ev){
+  if(ev)ev.stopPropagation();
+  LOGOS=LOGOS.filter(l=>l.id!==id);saveLogos();
+  if(curLogoId===id){curLogoId=null;LOGO=null;}
+  renderLogoGallery();draw();
+}
+function clearCurLogo(){curLogoId=null;LOGO=null;renderLogoGallery();saveLogoCfg();draw();}
+function renderLogoGallery(){
+  const box=_g('logoGallery');if(!box)return;box.innerHTML="";
+  if(!LOGOS.length){box.innerHTML='<span class="hint" style="color:#8a9096">Brak zapisanych logotypów — wgraj pierwsze powyżej.</span>';return;}
+  LOGOS.forEach(l=>{
+    const d=document.createElement('div');d.title=l.name||'logo';
+    d.style.cssText="position:relative;width:64px;height:64px;border-radius:10px;border:2px solid "+(curLogoId===l.id?'#c9a24b':'#2a2d34')+";background:#12141a;display:flex;align-items:center;justify-content:center;cursor:pointer;overflow:hidden";
+    const img=document.createElement('img');img.src=l.data;img.style.cssText="max-width:100%;max-height:100%;object-fit:contain";
+    d.appendChild(img);
+    const x=document.createElement('button');x.type="button";x.textContent="×";x.title="Usuń";
+    x.style.cssText="position:absolute;top:-7px;right:-7px;width:20px;height:20px;border-radius:50%;background:#b23b3b;color:#fff;border:none;font-size:15px;line-height:1;cursor:pointer;padding:0";
+    x.onclick=(e)=>deleteLogo(l.id,e);
+    d.appendChild(x);
+    d.onclick=()=>selectLogo(l.id);
+    box.appendChild(d);
+  });
+}
+function setLogoPreset(p){
+  const set=(id,v)=>{if(_g(id)){_g(id).value=v;}};
+  if(p==="lg"){set('logoX',0);set('logoY',0);}
+  else if(p==="pg"){set('logoX',100);set('logoY',0);}
+  else if(p==="sl"){set('logoX',0);set('logoY',100);}
+  else if(p==="sp"){set('logoX',100);set('logoY',100);}
+  updateLogoLabels();saveLogoCfg();draw();
+}
+function updateLogoLabels(){
+  if(_g('logoXv')&&_g('logoX'))_g('logoXv').textContent=_g('logoX').value+"%";
+  if(_g('logoYv')&&_g('logoY'))_g('logoYv').textContent=_g('logoY').value+"%";
+  if(_g('logoSv')&&_g('logoS'))_g('logoSv').textContent=_g('logoS').value+" px";
+}
+function saveLogoCfg(){
+  const c={id:curLogoId,
+    name:_g('logoName')?_g('logoName').value:"",
+    label:_g('logoLabel')?_g('logoLabel').value:"",
+    x:_g('logoX')?_g('logoX').value:100,
+    y:_g('logoY')?_g('logoY').value:0,
+    s:_g('logoS')?_g('logoS').value:80};
+  try{localStorage.setItem('spottedLogoCfg',JSON.stringify(c));}catch(e){}
+}
+function loadLogoCfg(){
+  let c={};try{c=JSON.parse(localStorage.getItem('spottedLogoCfg')||'{}');}catch(e){}
+  const set=(id,v)=>{if(_g(id)&&v!==undefined&&v!==null&&v!=='')_g(id).value=v;};
+  set('logoName',c.name);set('logoLabel',c.label);set('logoX',c.x);set('logoY',c.y);set('logoS',c.s);
+  updateLogoLabels();
+  if(c.id&&LOGOS.some(l=>l.id===c.id)){selectLogo(c.id);}
+  else{renderLogoGallery();}
+}
 const W=1080,H=1350,GOLD="#c9a24b",GRAF="#15171c",TILE="#1d2026";
 const THEMES={
  grafit:{name:"Grafit + złoto",bg:"#15171c",glow:"201,162,75",g1:"#ecd28a",g2:"#c9a24b",g3:"#9c7c34",gold:"#c9a24b",sub:"#9aa0a6",tile:"#1d2026",tb:"rgba(201,162,75,0.55)",tt:"#f2efe6",mk:"#c9a24b",mt:"#ffffff",foot:"#8a9096"},
@@ -868,15 +945,17 @@ function drawSponsor(){
   const cname=((document.getElementById('logoName')||{}).value||"").trim();
   const clabel=((document.getElementById('logoLabel')||{}).value||"").trim();
   if(!hasLogo&&!cname)return;
-  const pos=(document.getElementById('logoPos')||{}).value||"pg";
-  const sz=(document.getElementById('logoSize')||{}).value||"m";
-  const lh=(sz==="s"?60:sz==="l"?106:80);
+  const lay=(typeof curLay==='function')?curLay():'kafelki';
+  const FF=(lay==="gazeta")?"Georgia,'Times New Roman',serif":"system-ui,Segoe UI,Roboto,sans-serif";
+  const posX=+((document.getElementById('logoX')||{}).value||100);
+  const posY=+((document.getElementById('logoY')||{}).value||0);
+  const lh=+((document.getElementById('logoS')||{}).value||80);
   const lw=hasLogo?LOGO.naturalWidth*(lh/LOGO.naturalHeight):0;
 
-  // Samo logo, bez nazwy — jak dawniej (róg bez tła)
+  // Samo logo, bez nazwy — bez tła, pozycja wg suwaków
   if(hasLogo&&!cname){
-    let lx,ly;
-    if(pos==="lg"){lx=44;ly=26;} else if(pos==="st"){lx=44;ly=H-lh-18;} else {lx=W-44-lw;ly=26;}
+    const lx=20+(W-40-lw)*(posX/100);
+    const ly=20+(H-40-lh)*(posY/100);
     ctx.save();ctx.shadowColor="rgba(0,0,0,0.4)";ctx.shadowBlur=12;ctx.shadowOffsetY=3;ctx.drawImage(LOGO,lx,ly,lw,lh);ctx.restore();
     return;
   }
@@ -891,10 +970,8 @@ function drawSponsor(){
   const textH=(clabel?labelFs+8:0)+nameFs;
   const badgeH=Math.max(hasLogo?lh:0,textH)+padY*2;
   const badgeW=(hasLogo?lw+gap:0)+textW+padX*2;
-  let bx,by;
-  if(pos==="lg"){bx=30;by=20;}
-  else if(pos==="pg"){bx=W-30-badgeW;by=20;}
-  else {bx=30;by=H-badgeH-16;}
+  let bx=20+(W-40-badgeW)*(posX/100);
+  let by=20+(H-40-badgeH)*(posY/100);
   bx=Math.max(20,Math.min(bx,W-20-badgeW));
   by=Math.max(20,Math.min(by,H-20-badgeH));
   // tło paska
@@ -982,7 +1059,7 @@ Object.keys(LAYS).forEach(k=>{const o=document.createElement('option');o.value=k
 laySel.addEventListener('change',()=>draw());
 tplSel.value="monoczarny"; laySel.value="kafelki";
 ["hdr","sub","ft1","ft2"].forEach(id=>{const el=document.getElementById(id);if(el)el.addEventListener('input',()=>draw());});
-["logoName","logoLabel"].forEach(id=>{const el=document.getElementById(id);if(el)el.addEventListener('input',()=>draw());});
+["logoName","logoLabel"].forEach(id=>{const el=document.getElementById(id);if(el)el.addEventListener('input',()=>{saveLogoCfg();draw();});});
 const sf=document.getElementById('showFoot');if(sf)sf.addEventListener('change',()=>draw());
 const ctaEl=document.getElementById('cta');if(ctaEl)ctaEl.addEventListener('change',()=>draw());
 const bwEl=document.getElementById('borderW');if(bwEl)bwEl.addEventListener('change',()=>draw());
@@ -996,10 +1073,9 @@ const o0=document.createElement('option');o0.value="";o0.textContent="— wybier
 PRESETS.forEach((p,i)=>{const o=document.createElement('option');o.value=i;o.textContent=p[0];presetSel.appendChild(o);});
 presetSel.addEventListener('change',()=>{if(presetSel.value!=="")applyPreset(+presetSel.value);});
 const lf=document.getElementById('logoFile');
-if(lf)lf.addEventListener('change',e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{localStorage.setItem('spottedLogo',r.result);}catch(err){}setLogo(r.result);};r.readAsDataURL(f);});
-const lp=document.getElementById('logoPos');if(lp)lp.addEventListener('change',()=>draw());
-const ls2=document.getElementById('logoSize');if(ls2)ls2.addEventListener('change',()=>draw());
-const savedLogo=localStorage.getItem('spottedLogo');if(savedLogo)setLogo(savedLogo);
+if(lf)lf.addEventListener('change',e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{addLogo(r.result);lf.value="";};r.readAsDataURL(f);});
+['logoX','logoY','logoS'].forEach(id=>{const el=_g(id);if(el)el.addEventListener('input',()=>{updateLogoLabels();saveLogoCfg();draw();});});
+loadLogos();loadLogoCfg();
 usedInfo();
 renderManage();
 draw();
