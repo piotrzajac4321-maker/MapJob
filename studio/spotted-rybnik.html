@@ -49,7 +49,7 @@
       <summary style="cursor:pointer;color:var(--gold);font-weight:600;font-size:14px">✏️ Dostosuj teksty (nagłówek, podtytuł, stopka)</summary>
       <div style="margin-top:8px">
         <label>Nagłówek</label><input type="text" id="hdr" value="SPOTTED RYBNIK">
-        <label style="margin-top:8px">Podtytuł</label><input type="text" id="sub" value="Odnieś się w komentarzu, podając numer zgłoszenia">
+        <label style="margin-top:8px">Podtytuł <span style="color:#8a9096;font-weight:400">(zostaw puste, jeśli niepotrzebny)</span></label><input type="text" id="sub" value="" placeholder="np. Odnieś się w komentarzu, podając numer zgłoszenia">
         <label style="margin-top:10px"><input type="checkbox" id="cta" checked style="width:auto;margin-right:6px">CTA: POLUB · SKOMENTUJ · UDOSTĘPNIJ</label>
         <label style="margin-top:8px"><input type="checkbox" id="showFoot" checked style="width:auto;margin-right:6px">pokaż stopkę</label>
         <label style="margin-top:10px">Wielkość napisów</label>
@@ -965,7 +965,7 @@ function wrap(t,maxW){const words=t.split(" ");let l=[],c="";for(const w of word
 function txtScale(){const el=document.getElementById('txtSize');return ({s:0.8,m:1,l:1.2,xl:1.45}[(el&&el.value)||'m'])||1;}
 function fit(t,maxW,maxH,ff,weight,sc){ff=ff||"system-ui,Segoe UI,Roboto,sans-serif";weight=weight||"500";sc=sc||1;const top=Math.round(36*sc);for(let fs=top;fs>=12;fs--){ctx.font=weight+" "+fs+"px "+ff;const ls=wrap(t,maxW);if(ls.length*fs*1.28<=maxH)return{fs,ls,lh:fs*1.28};}ctx.font=weight+" 12px "+ff;return{fs:12,ls:wrap(t,maxW),lh:16};}
 
-function tile(x,y,w,h,num,text,mode,ff){
+function tile(x,y,w,h,num,text,mode,ff,hideNum){
   mode=mode||"kafelki"; ff=ff||"system-ui,Segoe UI,Roboto,sans-serif";
   const rad=(mode==="gazeta")?8:24;
   ctx.save();ctx.shadowColor="rgba(0,0,0,0.5)";ctx.shadowBlur=24;ctx.shadowOffsetY=9;
@@ -978,19 +978,19 @@ function tile(x,y,w,h,num,text,mode,ff){
   let txtX,txtW,align,topPad,weight=(mode==="gazeta")?"400":"500";
   if(mode==="akcent"){
     ctx.save();ctx.beginPath();ctx.rect(x,y+12,14,h-24);ctx.fillStyle=T.mk;ctx.fill();ctx.restore();
-    ctx.fillStyle=T.mk;ctx.font="bold 42px "+ff;ctx.textAlign="left";ctx.textBaseline="middle";ctx.fillText(num,x+36,y+46);
-    txtX=x+36;txtW=w-36-30;align="left";topPad=82;
+    if(!hideNum){ctx.fillStyle=T.mk;ctx.font="bold 42px "+ff;ctx.textAlign="left";ctx.textBaseline="middle";ctx.fillText(num,x+36,y+46);}
+    txtX=x+36;txtW=w-36-30;align="left";topPad=hideNum?-1:82;
   } else if(mode==="lista"){
-    ctx.fillStyle=T.mk;ctx.font="bold 62px "+ff;ctx.textAlign="left";ctx.textBaseline="middle";ctx.fillText(num,x+30,y+h/2);
-    txtX=x+122;txtW=w-122-34;align="left";topPad=-1;
+    if(!hideNum){ctx.fillStyle=T.mk;ctx.font="bold 62px "+ff;ctx.textAlign="left";ctx.textBaseline="middle";ctx.fillText(num,x+30,y+h/2);}
+    txtX=hideNum?(x+34):(x+122);txtW=w-(hideNum?68:156);align="left";topPad=-1;
   } else if(mode==="gazeta"){
-    ctx.fillStyle=T.mk;ctx.font="bold 30px "+ff;ctx.textAlign="left";ctx.textBaseline="middle";ctx.fillText(num+".",x+30,y+42);
-    txtX=x+30;txtW=w-60;align="left";topPad=68;
+    if(!hideNum){ctx.fillStyle=T.mk;ctx.font="bold 30px "+ff;ctx.textAlign="left";ctx.textBaseline="middle";ctx.fillText(num+".",x+30,y+42);}
+    txtX=x+30;txtW=w-60;align="left";topPad=hideNum?-1:68;
   } else {
-    const m=40,mx=x+w/2-m/2,my=y+18;
-    ctx.fillStyle=T.mk; rr(mx,my,m,m,10); ctx.fill();
-    ctx.fillStyle=T.mt;ctx.font="bold 23px "+ff;ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillText(num,mx+m/2,my+m/2+1);
-    txtX=x+w/2;txtW=w-60;align="center";topPad=76;
+    if(!hideNum){const m=40,mx=x+w/2-m/2,my=y+18;
+      ctx.fillStyle=T.mk; rr(mx,my,m,m,10); ctx.fill();
+      ctx.fillStyle=T.mt;ctx.font="bold 23px "+ff;ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillText(num,mx+m/2,my+m/2+1);}
+    txtX=x+w/2;txtW=w-60;align="center";topPad=hideNum?-1:76;
   }
   const ah=(topPad<0)?(h-40):(h-topPad-24);
   const f=fit(text,txtW,ah,ff,weight,txtScale());
@@ -1031,6 +1031,7 @@ function draw(p){
   // kafelki (dynamiczna liczba 1–6)
   const msgs=getMsgs();
   const n=msgs.length;
+  const oneOnly=(n===1);   // przy jednym ogłoszeniu chowamy numerek
   const pad=60,colGap=30,gap=26;
   const colW=(W-pad*2-colGap)/2;
   const contentTop=255, contentBottom=(showFoot?H-92:H-44)-(ctaOn?54:0);
@@ -1038,7 +1039,7 @@ function draw(p){
   const dy=i=>anim?Math.sin(p*6.283+i*0.8)*7:0;
   if(lay==="lista"||lay==="gazeta"){
     const rowH=(contentBottom-contentTop-(n-1)*gap)/n;
-    for(let i=0;i<n;i++){const y0=contentTop+i*(rowH+gap);tile(pad,y0+dy(i),W-pad*2,rowH,i+1,msgs[i],lay,FF);tileRects.push({x:pad,y:y0,w:W-pad*2,h:rowH,i});}
+    for(let i=0;i<n;i++){const y0=contentTop+i*(rowH+gap);tile(pad,y0+dy(i),W-pad*2,rowH,i+1,msgs[i],lay,FF,oneOnly);tileRects.push({x:pad,y:y0,w:W-pad*2,h:rowH,i});}
   } else {
     const rows=Math.ceil(n/2);
     const rowH=(contentBottom-contentTop-(rows-1)*gap)/rows;
@@ -1047,8 +1048,8 @@ function draw(p){
     for(let r=0;r<rows;r++){
       const y0=contentTop+r*(rowH+gap);
       const lastOdd=(r===rows-1)&&((n-idx)===1);
-      if(lastOdd){ tile(pad,y0+dy(idx),W-pad*2,rowH,idx+1,msgs[idx],lay,FF); tileRects.push({x:pad,y:y0,w:W-pad*2,h:rowH,i:idx}); idx++; }
-      else { tile(pad,y0+dy(idx),colW,rowH,idx+1,msgs[idx],lay,FF); tileRects.push({x:pad,y:y0,w:colW,h:rowH,i:idx}); idx++; if(idx<n){ tile(x2,y0+dy(idx),colW,rowH,idx+1,msgs[idx],lay,FF); tileRects.push({x:x2,y:y0,w:colW,h:rowH,i:idx}); idx++; } }
+      if(lastOdd){ tile(pad,y0+dy(idx),W-pad*2,rowH,idx+1,msgs[idx],lay,FF,oneOnly); tileRects.push({x:pad,y:y0,w:W-pad*2,h:rowH,i:idx}); idx++; }
+      else { tile(pad,y0+dy(idx),colW,rowH,idx+1,msgs[idx],lay,FF,oneOnly); tileRects.push({x:pad,y:y0,w:colW,h:rowH,i:idx}); idx++; if(idx<n){ tile(x2,y0+dy(idx),colW,rowH,idx+1,msgs[idx],lay,FF,oneOnly); tileRects.push({x:x2,y:y0,w:colW,h:rowH,i:idx}); idx++; } }
     }
   }
   // stopka
