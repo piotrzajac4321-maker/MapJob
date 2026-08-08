@@ -78,7 +78,7 @@
       <div style="margin-top:8px;font-size:13px">
         <label>Wgraj logo firmy <span style="color:#8a9096;font-weight:400">(możesz zaznaczyć kilka naraz)</span></label>
         <input type="file" id="logoFile" accept="image/*" multiple style="font-size:12.5px">
-        <div class="hint" style="margin-top:4px">Zapisują się na stałe. Kliknij zapisane logo, żeby użyć go w poście. <span style="color:#c9a24b">[wersja logo v5 — przeciąganie + usuwanie tła]</span></div>
+        <div class="hint" style="margin-top:4px">Zapisują się na stałe. <b>Kliknij logo → dodaje je do postu (✓)</b>. Klik ponownie na aktywne → zdejmuje z postu. Możesz dodać wiele firm naraz. <span style="color:#c9a24b">[wersja logo v6 — wiele logo]</span></div>
         <label style="margin-top:10px">📚 Zapisane logotypy <span id="logoCount" style="color:var(--gold)"></span></label>
         <div id="logoGallery" style="display:flex;flex-wrap:wrap;gap:8px;margin-top:4px"></div>
         <div id="bgTools" style="display:none;margin-top:10px;padding:10px;border:1px solid var(--line);border-radius:10px;background:#141720">
@@ -91,11 +91,10 @@
           <input type="range" id="bgTol" min="12" max="150" value="45" style="width:100%;accent-color:#c9a24b">
           <div class="hint" style="margin-top:4px">Działa najlepiej dla logo na białym/jednolitym tle. Białe elementy w środku logo zostają.</div>
         </div>
-        <label style="margin-top:10px">Nazwa firmy (obok logo)</label>
+        <label style="margin-top:10px">Nazwa firmy (podpis w bibliotece)</label>
         <input type="text" id="logoName" placeholder="np. Kwiaciarnia Róża" style="width:100%;padding:9px;border:1px solid var(--line);border-radius:8px;background:#12141a;color:#e8e6df;font-size:13px">
-        <label style="margin-top:8px">Etykieta nad nazwą</label>
-        <input type="text" id="logoLabel" value="Reklama" style="width:100%;padding:9px;border:1px solid var(--line);border-radius:8px;background:#12141a;color:#e8e6df;font-size:13px">
-        <label style="margin-top:12px">📍 Pozycja — szybki wybór</label>
+        <input type="hidden" id="logoLabel" value="">
+        <label style="margin-top:12px">📍 Pozycja <b>aktywnego</b> logo — szybki wybór</label>
         <div class="btns" style="margin:2px 0 4px">
           <button class="ghost" type="button" onclick="setLogoPreset('lg')" style="padding:7px 12px;font-size:12.5px">↖ Lewy góra</button>
           <button class="ghost" type="button" onclick="setLogoPreset('pg')" style="padding:7px 12px;font-size:12.5px">↗ Prawy góra</button>
@@ -108,7 +107,7 @@
         <input type="range" id="logoY" min="0" max="100" value="0" style="width:100%;accent-color:#c9a24b">
         <label>Wielkość logo <span id="logoSv" style="color:var(--gold)"></span></label>
         <input type="range" id="logoS" min="40" max="220" value="80" style="width:100%;accent-color:#c9a24b">
-        <button class="ghost" type="button" onclick="clearCurLogo()" style="margin-top:8px;padding:7px 14px;font-size:12.5px">✖️ Nie pokazuj logo w tym poście</button>
+        <button class="ghost" type="button" onclick="clearCurLogo()" style="margin-top:8px;padding:7px 14px;font-size:12.5px">🗑️ Wyczyść wszystkie logo z postu</button>
       </div>
     </details>
     <div class="btns">
@@ -157,7 +156,7 @@
       <input type="range" id="txtSlider" min="0" max="3" step="1" value="1" style="flex:1;accent-color:#caa64a">
       <span style="font-size:20px;font-weight:700">A</span>
     </div>
-    <div class="hint" id="logoDragHint" style="display:none;margin:0 0 6px;color:#c9a24b">✋ Przeciągnij logo palcem po podglądzie, aby je przesunąć. Złoty narożnik = zmiana rozmiaru.</div>
+    <div class="hint" id="logoDragHint" style="display:none;margin:0 0 6px;color:#c9a24b">✋ Dotknij logo, aby je zaznaczyć, i przeciągnij, by przesunąć. Jasny narożnik = zmiana rozmiaru. Wiele logo naraz — dotykasz to, które chcesz ruszyć.</div>
     <div class="preview"><canvas id="cv" width="1080" height="1350" style="touch-action:none"></canvas></div>
   </div>
 </div>
@@ -693,7 +692,7 @@ function curCat(){return (document.getElementById('catFilter')||{}).value||"all"
 function poolBase(){const rem=getRemoved(),cf=curCat();return MSGS.filter(m=>!rem[m]&&(cf==="all"||category(m)===cf));}
 
 const cv=document.getElementById('cv'),ctx=cv.getContext('2d');
-let LOGO=null, LOGOS=[], curLogoId=null, LOGO_RECT=null, EXPORTING=false;
+let LOGOS=[], curLogoId=null, PLACED=[], activeIdx=-1, RECTS=[], EXPORTING=false, logoHit=false;
 const _g=id=>document.getElementById(id);
 
 function newId(){let n=1;while(LOGOS.some(l=>l.id==='logo'+n))n++;return 'logo'+n;}
@@ -730,25 +729,62 @@ async function addLogo(rawData){
   const it={id:newId(),name:nm,data:data};
   LOGOS.push(it);
   if(!persistLogos()){LOGOS.pop();alert('Brak miejsca w pamięci przeglądarki — usuń kilka logotypów i spróbuj ponownie.');return;}
-  selectLogo(it.id);
+  placeLogo(it.id);          // nowo wgrane od razu ląduje na poście
 }
-function selectLogo(id){
-  curLogoId=id;const it=LOGOS.find(l=>l.id===id);
-  if(it&&_g('logoName')&&it.name)_g('logoName').value=it.name;
-  renderLogoGallery();saveLogoCfg();
-  if(!it){LOGO=null;draw();return;}
-  // źródłem rysowania jest obrazek z galerii (już wyświetlony) — najpewniejsze na iOS
-  if(it._img&&it._img.complete&&it._img.naturalWidth){LOGO=it._img;}
-  else{LOGO=null;}
-  draw();
+// dodaj logo na post (osobna pozycja, kaskadowo, żeby się nie nakładały)
+function placeLogo(id){
+  if(PLACED.length>=30){alert('Limit 30 logotypów na jednym poście.');return;}
+  const n=PLACED.length;
+  const x=Math.round((14+n*17)%70);
+  const y=Math.round((8+n*13)%58);
+  PLACED.push({logoId:id,x:x,y:y,s:120});
+  setActive(PLACED.length-1);
+  saveLogoCfg();draw();
 }
-function deleteLogo(id,ev){
+// klik miniaturki: brak na poście → dodaj; jest ale nieaktywne → uaktywnij; aktywne → zdejmij z postu
+function onThumbClick(id){
+  const idx=PLACED.findIndex(p=>p.logoId===id);
+  if(idx<0){placeLogo(id);}
+  else if(idx!==activeIdx){setActive(idx);draw();}
+  else{removePlaced(idx);}
+}
+function setActive(i){
+  activeIdx=i;
+  if(i>=0&&PLACED[i]){curLogoId=PLACED[i].logoId;syncSlidersFromActive();
+    const it=LOGOS.find(l=>l.id===curLogoId);if(it&&_g('logoName'))_g('logoName').value=it.name||'';
+  }else{curLogoId=null;}
+  renderLogoGallery();
+}
+function removePlaced(idx){
+  PLACED.splice(idx,1);
+  activeIdx=PLACED.length?Math.min(activeIdx,PLACED.length-1):-1;
+  if(activeIdx>=0){curLogoId=PLACED[activeIdx].logoId;syncSlidersFromActive();}else{curLogoId=null;}
+  renderLogoGallery();saveLogoCfg();draw();
+}
+function syncSlidersFromActive(){
+  if(activeIdx<0||!PLACED[activeIdx])return;const pl=PLACED[activeIdx];
+  if(_g('logoX'))_g('logoX').value=pl.x;
+  if(_g('logoY'))_g('logoY').value=pl.y;
+  if(_g('logoS'))_g('logoS').value=pl.s;
+  updateLogoLabels();
+}
+function applySlidersToActive(){
+  if(activeIdx<0||!PLACED[activeIdx])return;const pl=PLACED[activeIdx];
+  if(_g('logoX'))pl.x=+_g('logoX').value;
+  if(_g('logoY'))pl.y=+_g('logoY').value;
+  if(_g('logoS'))pl.s=+_g('logoS').value;
+}
+function deleteLogo(id,ev){         // usuń z biblioteki (i z postu)
   if(ev)ev.stopPropagation();
   LOGOS=LOGOS.filter(l=>l.id!==id);persistLogos();
-  if(curLogoId===id){curLogoId=null;LOGO=null;}
-  renderLogoGallery();draw();
+  const pidx=PLACED.findIndex(p=>p.logoId===id);
+  if(pidx>=0)PLACED.splice(pidx,1);
+  activeIdx=PLACED.length?Math.min(activeIdx,PLACED.length-1):-1;
+  curLogoId=activeIdx>=0?PLACED[activeIdx].logoId:null;
+  if(activeIdx>=0)syncSlidersFromActive();
+  renderLogoGallery();saveLogoCfg();draw();
 }
-function clearCurLogo(){curLogoId=null;LOGO=null;renderLogoGallery();saveLogoCfg();draw();}
+function clearCurLogo(){PLACED=[];activeIdx=-1;curLogoId=null;renderLogoGallery();saveLogoCfg();draw();}
 
 // usuwanie tła: przezroczystość dla pikseli koloru tła połączonych z krawędzią
 function removeBg(dataURL,tol){return new Promise(res=>{
@@ -785,13 +821,13 @@ async function removeLogoBg(){
   const out=await removeBg(it.orig,tol);     // zawsze od oryginału → suwak działa w obie strony
   it.data=out;
   persistLogos();
-  renderLogoGallery();selectLogo(it.id);
+  renderLogoGallery();draw();
 }
 function restoreLogoBg(){
   const it=LOGOS.find(l=>l.id===curLogoId);
   if(!it||!it.orig){return;}
   it.data=it.orig;delete it.orig;
-  persistLogos();renderLogoGallery();selectLogo(it.id);
+  persistLogos();renderLogoGallery();draw();
 }
 function renderLogoGallery(){
   const cnt=_g('logoCount');if(cnt)cnt.textContent=LOGOS.length?('('+LOGOS.length+')'):'';
@@ -800,18 +836,23 @@ function renderLogoGallery(){
   const box=_g('logoGallery');if(!box)return;box.innerHTML="";
   if(!LOGOS.length){box.innerHTML='<span class="hint" style="color:#8a9096">Brak zapisanych logotypów — wgraj pierwsze powyżej.</span>';return;}
   LOGOS.forEach(l=>{
+    const pIdx=PLACED.findIndex(p=>p.logoId===l.id);
+    const placed=pIdx>=0, active=pIdx===activeIdx&&pIdx>=0;
     const d=document.createElement('div');d.title=l.name||'logo';
-    d.style.cssText="position:relative;width:64px;height:64px;border-radius:10px;border:2px solid "+(curLogoId===l.id?'#c9a24b':'#2a2d34')+";background:#12141a;display:flex;align-items:center;justify-content:center;cursor:pointer;overflow:hidden";
+    const bord=active?'#f4c860':(placed?'#c9a24b':'#2a2d34');
+    d.style.cssText="position:relative;width:64px;height:64px;border-radius:10px;border:"+(active?'3px':'2px')+" solid "+bord+";background:#12141a;display:flex;align-items:center;justify-content:center;cursor:pointer;overflow:hidden"+(placed?";box-shadow:0 0 0 2px rgba(201,162,75,0.25)":"");
     const img=document.createElement('img');img.style.cssText="max-width:100%;max-height:100%;object-fit:contain";
-    img.onload=()=>{if(curLogoId===l.id){LOGO=img;draw();}};
-    img.onerror=()=>{if(curLogoId===l.id){LOGO=null;draw();}};
+    img.onload=()=>draw();img.onerror=()=>draw();
     img.src=l.data;l._img=img;
     d.appendChild(img);
-    const x=document.createElement('button');x.type="button";x.textContent="×";x.title="Usuń";
+    if(placed){const chk=document.createElement('div');chk.textContent="✓";chk.title="Na poście";
+      chk.style.cssText="position:absolute;bottom:-6px;left:-6px;width:20px;height:20px;border-radius:50%;background:#c9a24b;color:#15171c;font-size:13px;font-weight:800;line-height:20px;text-align:center";
+      d.appendChild(chk);}
+    const x=document.createElement('button');x.type="button";x.textContent="×";x.title="Usuń z biblioteki";
     x.style.cssText="position:absolute;top:-7px;right:-7px;width:20px;height:20px;border-radius:50%;background:#b23b3b;color:#fff;border:none;font-size:15px;line-height:1;cursor:pointer;padding:0";
     x.onclick=(e)=>deleteLogo(l.id,e);
     d.appendChild(x);
-    d.onclick=()=>selectLogo(l.id);
+    d.onclick=()=>onThumbClick(l.id);
     box.appendChild(d);
   });
 }
@@ -821,7 +862,7 @@ function setLogoPreset(p){
   else if(p==="pg"){set('logoX',100);set('logoY',0);}
   else if(p==="sl"){set('logoX',0);set('logoY',100);}
   else if(p==="sp"){set('logoX',100);set('logoY',100);}
-  updateLogoLabels();saveLogoCfg();draw();
+  applySlidersToActive();updateLogoLabels();saveLogoCfg();draw();
 }
 function updateLogoLabels(){
   if(_g('logoXv')&&_g('logoX'))_g('logoXv').textContent=_g('logoX').value+"%";
@@ -829,21 +870,20 @@ function updateLogoLabels(){
   if(_g('logoSv')&&_g('logoS'))_g('logoSv').textContent=_g('logoS').value+" px";
 }
 function saveLogoCfg(){
-  const c={id:curLogoId,
-    name:_g('logoName')?_g('logoName').value:"",
-    label:_g('logoLabel')?_g('logoLabel').value:"",
-    x:_g('logoX')?_g('logoX').value:100,
-    y:_g('logoY')?_g('logoY').value:0,
-    s:_g('logoS')?_g('logoS').value:80};
+  const c={placed:PLACED,active:activeIdx};
   try{localStorage.setItem('spottedLogoCfg',JSON.stringify(c));}catch(e){}
 }
 function loadLogoCfg(){
   let c={};try{c=JSON.parse(localStorage.getItem('spottedLogoCfg')||'{}');}catch(e){}
-  const set=(id,v)=>{if(_g(id)&&v!==undefined&&v!==null&&v!=='')_g(id).value=v;};
-  set('logoName',c.name);set('logoLabel',c.label);set('logoX',c.x);set('logoY',c.y);set('logoS',c.s);
-  updateLogoLabels();
-  if(c.id&&LOGOS.some(l=>l.id===c.id)){selectLogo(c.id);}
-  else{renderLogoGallery();}
+  if(Array.isArray(c.placed)){
+    PLACED=c.placed.filter(p=>p&&LOGOS.some(l=>l.id===p.logoId)).map(p=>({logoId:p.logoId,x:+p.x||0,y:+p.y||0,s:+p.s||120}));
+  } else if(c.id&&LOGOS.some(l=>l.id===c.id)){   // migracja starego formatu (jedno logo)
+    PLACED=[{logoId:c.id,x:+(c.x)||100,y:+(c.y)||0,s:+(c.s)||80}];
+  }
+  activeIdx=(typeof c.active==='number'&&c.active>=0&&c.active<PLACED.length)?c.active:(PLACED.length?0:-1);
+  if(activeIdx>=0){curLogoId=PLACED[activeIdx].logoId;syncSlidersFromActive();
+    const it=LOGOS.find(l=>l.id===curLogoId);if(it&&_g('logoName'))_g('logoName').value=it.name||'';}
+  updateLogoLabels();renderLogoGallery();draw();
 }
 const W=1080,H=1350,GOLD="#c9a24b",GRAF="#15171c",TILE="#1d2026";
 const THEMES={
@@ -1025,74 +1065,38 @@ function draw(p){
     }
   }
   if(ctaOn){const cy=showFoot?H-104:H-40;ctx.textAlign="center";ctx.textBaseline="alphabetic";ctx.font="bold 28px "+FF;ctx.fillStyle=T.gold;ctx.fillText("POLUB   ·   SKOMENTUJ   ·   UDOSTĘPNIJ",W/2,cy);}
-  drawSponsor();
-  if(!EXPORTING){drawLogoHandles();const _h=_g('logoDragHint');if(_h)_h.style.display=LOGO_RECT?'block':'none';}
+  drawLogos();
+  if(!EXPORTING){drawLogoHandles();const _h=_g('logoDragHint');if(_h)_h.style.display=(PLACED.length?'block':'none');}
+}
+
+// rysuje wszystkie logotypy umieszczone na poście; zapisuje ich prostokąty do RECTS
+function drawLogos(){
+  RECTS=[];
+  for(let i=0;i<PLACED.length;i++){
+    const pl=PLACED[i];
+    const it=LOGOS.find(l=>l.id===pl.logoId);
+    const img=it&&it._img;
+    if(!img||!img.complete||!img.naturalWidth){RECTS.push(null);continue;}
+    const lh=pl.s, lw=img.naturalWidth*(lh/img.naturalHeight);
+    const lx=20+(W-40-lw)*(pl.x/100);
+    const ly=20+(H-40-lh)*(pl.y/100);
+    ctx.save();ctx.shadowColor="rgba(0,0,0,0.4)";ctx.shadowBlur=12;ctx.shadowOffsetY=3;ctx.drawImage(img,lx,ly,lw,lh);ctx.restore();
+    RECTS.push({x:lx,y:ly,w:lw,h:lh});
+  }
 }
 
 function drawLogoHandles(){
-  if(!LOGO||!LOGO_RECT)return;
-  const R=LOGO_RECT;
+  if(activeIdx<0||activeIdx>=RECTS.length)return;
+  const R=RECTS[activeIdx];if(!R)return;
   ctx.save();
-  ctx.strokeStyle="#c9a24b";ctx.lineWidth=3;ctx.setLineDash([12,8]);
+  ctx.strokeStyle="#f4c860";ctx.lineWidth=3;ctx.setLineDash([12,8]);
   rr(R.x-6,R.y-6,R.w+12,R.h+12,12);ctx.stroke();
   ctx.setLineDash([]);
   // uchwyt zmiany rozmiaru — prawy dolny róg
   const hx=R.x+R.w,hy=R.y+R.h;
-  ctx.fillStyle="#c9a24b";ctx.beginPath();ctx.arc(hx,hy,18,0,7);ctx.fill();
+  ctx.fillStyle="#f4c860";ctx.beginPath();ctx.arc(hx,hy,18,0,7);ctx.fill();
   ctx.strokeStyle="#15171c";ctx.lineWidth=3;ctx.lineCap="round";
   ctx.beginPath();ctx.moveTo(hx-7,hy);ctx.lineTo(hx+7,hy);ctx.moveTo(hx,hy-7);ctx.lineTo(hx,hy+7);ctx.stroke();
-  ctx.restore();
-}
-
-function drawSponsor(){
-  const hasLogo=LOGO&&LOGO.complete&&LOGO.naturalWidth;
-  const cname=((document.getElementById('logoName')||{}).value||"").trim();
-  const clabel=((document.getElementById('logoLabel')||{}).value||"").trim();
-  LOGO_RECT=null;
-  if(!hasLogo&&!cname)return;
-  const lay=(typeof curLay==='function')?curLay():'kafelki';
-  const FF=(lay==="gazeta")?"Georgia,'Times New Roman',serif":"system-ui,Segoe UI,Roboto,sans-serif";
-  const posX=+((document.getElementById('logoX')||{}).value||100);
-  const posY=+((document.getElementById('logoY')||{}).value||0);
-  const lh=+((document.getElementById('logoS')||{}).value||80);
-  const lw=hasLogo?LOGO.naturalWidth*(lh/LOGO.naturalHeight):0;
-
-  // Samo logo, bez nazwy — bez tła, pozycja wg suwaków
-  if(hasLogo&&!cname){
-    const lx=20+(W-40-lw)*(posX/100);
-    const ly=20+(H-40-lh)*(posY/100);
-    ctx.save();ctx.shadowColor="rgba(0,0,0,0.4)";ctx.shadowBlur=12;ctx.shadowOffsetY=3;ctx.drawImage(LOGO,lx,ly,lw,lh);ctx.restore();
-    LOGO_RECT={x:lx,y:ly,w:lw,h:lh};
-    return;
-  }
-
-  // Pasek sponsora: logo + etykieta + nazwa firmy na tle
-  ctx.save();ctx.textBaseline="alphabetic";
-  const labelFs=Math.max(15,Math.round(lh*0.26)), nameFs=Math.max(24,Math.round(lh*0.40));
-  ctx.font="700 "+nameFs+"px "+FF;const nameW=ctx.measureText(cname).width;
-  ctx.font="700 "+labelFs+"px "+FF;const labW=clabel?ctx.measureText(clabel.toUpperCase()).width+labelFs:0;
-  const textW=Math.max(nameW,labW);
-  const padX=20,gap=hasLogo?18:0,padY=14;
-  const textH=(clabel?labelFs+8:0)+nameFs;
-  const badgeH=Math.max(hasLogo?lh:0,textH)+padY*2;
-  const badgeW=(hasLogo?lw+gap:0)+textW+padX*2;
-  let bx=20+(W-40-badgeW)*(posX/100);
-  let by=20+(H-40-badgeH)*(posY/100);
-  bx=Math.max(20,Math.min(bx,W-20-badgeW));
-  by=Math.max(20,Math.min(by,H-20-badgeH));
-  LOGO_RECT={x:bx,y:by,w:badgeW,h:badgeH};
-  // tło paska
-  ctx.fillStyle="rgba(9,10,13,0.74)";rr(bx,by,badgeW,badgeH,16);ctx.fill();
-  ctx.strokeStyle=(T.gold||"#c9a24b");ctx.globalAlpha=0.45;ctx.lineWidth=1.5;rr(bx,by,badgeW,badgeH,16);ctx.stroke();ctx.globalAlpha=1;
-  // logo
-  let tx=bx+padX;
-  if(hasLogo){const lyy=by+(badgeH-lh)/2;ctx.drawImage(LOGO,bx+padX,lyy,lw,lh);tx=bx+padX+lw+gap;}
-  // teksty (wyśrodkowane w pionie)
-  const blockTop=by+(badgeH-textH)/2;
-  ctx.textAlign="left";
-  if(clabel){ctx.font="700 "+labelFs+"px "+FF;ctx.fillStyle=(T.gold||"#c9a24b");try{ctx.letterSpacing="2px";}catch(e){}ctx.fillText(clabel.toUpperCase(),tx,blockTop+labelFs);try{ctx.letterSpacing="0px";}catch(e){}}
-  ctx.font="700 "+nameFs+"px "+FF;ctx.fillStyle="#ffffff";
-  ctx.fillText(cname,tx,blockTop+(clabel?labelFs+8:0)+nameFs);
   ctx.restore();
 }
 
@@ -1139,8 +1143,11 @@ syncTA();
 ta.addEventListener('input',syncFromTA);
 document.getElementById('count').addEventListener('change',setCount);
 cv.addEventListener('click',e=>{
+  if(logoHit){logoHit=false;return;}   // kliknięto/przeciągnięto logo — nie zmieniaj wiadomości
   const r=cv.getBoundingClientRect(), sx=cv.width/r.width, sy=cv.height/r.height;
   const px=(e.clientX-r.left)*sx, py=(e.clientY-r.top)*sy;
+  // klik w obszar logo też nie zmienia wiadomości
+  for(const R of RECTS){if(R&&px>=R.x&&px<=R.x+R.w&&py>=R.y&&py<=R.y+R.h)return;}
   for(const t of tileRects){
     if(px>=t.x&&px<=t.x+t.w&&py>=t.y&&py<=t.y+t.h){ const old=current[t.i]; const u=getUsed(); if(old&&old!=="…")u[old]=true; saveUsed(u); current[t.i]=randUnused(); syncTA(); usedInfo(); draw(); break; }
   }
@@ -1189,41 +1196,47 @@ if(lf)lf.addEventListener('change',async e=>{
   }
   lf.value="";
 });
-['logoX','logoY','logoS'].forEach(id=>{const el=_g(id);if(el)el.addEventListener('input',()=>{updateLogoLabels();saveLogoCfg();draw();});});
+['logoX','logoY','logoS'].forEach(id=>{const el=_g(id);if(el)el.addEventListener('input',()=>{applySlidersToActive();updateLogoLabels();saveLogoCfg();draw();});});
 const bgt=_g('bgTol');
 if(bgt){
   bgt.addEventListener('input',()=>{const bv=_g('bgTolV');if(bv)bv.textContent=bgt.value;});
   bgt.addEventListener('change',()=>{const it=LOGOS.find(l=>l.id===curLogoId);if(it&&it.orig)removeLogoBg();});
 }
-// ---- Przeciąganie logo po podglądzie (dotyk + mysz) ----
+// ---- Przeciąganie logotypów po podglądzie (dotyk + mysz) ----
 (function(){
   let mode=null,off={x:0,y:0},startS=0,startP=null;
   function pos(e){const r=cv.getBoundingClientRect();return {x:(e.clientX-r.left)*(cv.width/r.width),y:(e.clientY-r.top)*(cv.height/r.height)};}
   cv.addEventListener('pointerdown',e=>{
-    if(!LOGO||!LOGO_RECT)return;
-    const p=pos(e),R=LOGO_RECT,hx=R.x+R.w,hy=R.y+R.h;
-    if(Math.hypot(p.x-hx,p.y-hy)<=34){mode='resize';startS=+(_g('logoS').value||80);startP=p;}
-    else if(p.x>=R.x-14&&p.x<=R.x+R.w+14&&p.y>=R.y-14&&p.y<=R.y+R.h+14){mode='move';off={x:p.x-R.x,y:p.y-R.y};}
-    else return;
-    try{cv.setPointerCapture(e.pointerId);}catch(_){}
-    e.preventDefault();
+    logoHit=false;
+    if(!PLACED.length||!RECTS.length)return;
+    const p=pos(e);
+    // najpierw uchwyt zmiany rozmiaru aktywnego logo
+    if(activeIdx>=0&&RECTS[activeIdx]){const R=RECTS[activeIdx];
+      if(Math.hypot(p.x-(R.x+R.w),p.y-(R.y+R.h))<=34){mode='resize';startS=PLACED[activeIdx].s;startP=p;logoHit=true;try{cv.setPointerCapture(e.pointerId);}catch(_){}e.preventDefault();return;}}
+    // trafienie w dowolne logo — od wierzchniego (ostatnie w tablicy)
+    for(let i=RECTS.length-1;i>=0;i--){const R=RECTS[i];
+      if(R&&p.x>=R.x-14&&p.x<=R.x+R.w+14&&p.y>=R.y-14&&p.y<=R.y+R.h+14){
+        if(i!==activeIdx)setActive(i);
+        mode='move';off={x:p.x-R.x,y:p.y-R.y};logoHit=true;
+        try{cv.setPointerCapture(e.pointerId);}catch(_){}
+        e.preventDefault();draw();return;
+      }
+    }
   });
   cv.addEventListener('pointermove',e=>{
-    if(!mode||!LOGO_RECT)return;e.preventDefault();
-    const p=pos(e),R=LOGO_RECT;
+    if(!mode||activeIdx<0||!RECTS[activeIdx])return;e.preventDefault();
+    const p=pos(e),R=RECTS[activeIdx],pl=PLACED[activeIdx];
     if(mode==='move'){
       const dx=(W-40-R.w),dy=(H-40-R.h);
-      const px=dx>0?((p.x-off.x-20)/dx)*100:0;
-      const py=dy>0?((p.y-off.y-20)/dy)*100:0;
-      if(_g('logoX'))_g('logoX').value=Math.max(0,Math.min(100,Math.round(px)));
-      if(_g('logoY'))_g('logoY').value=Math.max(0,Math.min(100,Math.round(py)));
+      pl.x=Math.max(0,Math.min(100,Math.round(dx>0?((p.x-off.x-20)/dx)*100:0)));
+      pl.y=Math.max(0,Math.min(100,Math.round(dy>0?((p.y-off.y-20)/dy)*100:0)));
     }else{
       const d=(p.x-startP.x)+(p.y-startP.y);
-      if(_g('logoS'))_g('logoS').value=Math.max(40,Math.min(220,Math.round(startS+d*0.6)));
+      pl.s=Math.max(40,Math.min(220,Math.round(startS+d*0.6)));
     }
-    updateLogoLabels();saveLogoCfg();draw();
+    syncSlidersFromActive();saveLogoCfg();draw();
   });
-  const end=e=>{if(mode){mode=null;try{cv.releasePointerCapture(e.pointerId);}catch(_){}}};
+  const end=e=>{if(mode){mode=null;try{cv.releasePointerCapture(e.pointerId);}catch(_){}setTimeout(()=>{logoHit=false;},60);}};
   cv.addEventListener('pointerup',end);
   cv.addEventListener('pointercancel',end);
 })();
