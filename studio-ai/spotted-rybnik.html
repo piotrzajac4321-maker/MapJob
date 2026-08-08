@@ -78,9 +78,15 @@
       <div style="margin-top:8px;font-size:13px">
         <label>Wgraj logo firmy <span style="color:#8a9096;font-weight:400">(możesz zaznaczyć kilka naraz)</span></label>
         <input type="file" id="logoFile" accept="image/*" multiple style="font-size:12.5px">
-        <div class="hint" style="margin-top:4px">Zapisują się na stałe. <b>Kliknij logo → dodaje je do postu (✓)</b>. Klik ponownie na aktywne → zdejmuje z postu. Możesz dodać wiele firm naraz. <span style="color:#c9a24b">[wersja logo v6 — wiele logo]</span></div>
+        <div class="hint" style="margin-top:4px">Zapisują się na stałe. <b>Kliknij logo → dodaje je do postu (✓)</b>. Klik ponownie na aktywne → zdejmuje z postu. Możesz dodać wiele firm naraz. <span style="color:#c9a24b">[wersja logo v7 — eksport/import]</span></div>
         <label style="margin-top:10px">📚 Zapisane logotypy <span id="logoCount" style="color:var(--gold)"></span></label>
         <div id="logoGallery" style="display:flex;flex-wrap:wrap;gap:8px;margin-top:4px"></div>
+        <div class="btns" style="margin:10px 0 0">
+          <button class="ghost" type="button" onclick="exportLogos()" style="padding:7px 12px;font-size:12.5px">⬇️ Eksportuj logo (plik)</button>
+          <button class="ghost" type="button" onclick="document.getElementById('logoImport').click()" style="padding:7px 12px;font-size:12.5px">⬆️ Wczytaj logo z pliku</button>
+          <input type="file" id="logoImport" accept="application/json,.json" style="display:none">
+        </div>
+        <div class="hint" style="margin-top:4px">📲 <b>Te same logo na telefonie i komputerze:</b> na komputerze kliknij „Eksportuj", wyślij plik na telefon (e-mail / WhatsApp do siebie), a na telefonie kliknij „Wczytaj z pliku". Raz — i masz wszystkie.</div>
         <div id="bgTools" style="display:none;margin-top:10px;padding:10px;border:1px solid var(--line);border-radius:10px;background:#141720">
           <div style="font-weight:600;color:#cfcabb;margin-bottom:6px">✂️ Tło wybranego logo</div>
           <div class="btns" style="margin:0 0 6px">
@@ -714,12 +720,38 @@ function downscaleLogo(dataURL,maxDim){return new Promise(res=>{
 
 function persistLogos(){try{localStorage.setItem('spottedLogos',JSON.stringify(LOGOS.map(l=>({id:l.id,name:l.name,data:l.data,orig:l.orig}))));return true;}catch(e){return false;}}
 
-function loadLogos(){
+async function loadLogos(){
   try{LOGOS=JSON.parse(localStorage.getItem('spottedLogos')||'[]');}catch(e){LOGOS=[];}
   // migracja starego pojedynczego logo do biblioteki
   const old=localStorage.getItem('spottedLogo');
-  if(old){LOGOS.push({id:newId(),name:'',data:old});localStorage.removeItem('spottedLogo');persistLogos();}
+  if(old){LOGOS.push({id:newId(),name:'',data:old});localStorage.removeItem('spottedLogo');}
+  // wspólna biblioteka wbudowana w apkę — te same logo na każdym urządzeniu
+  try{
+    const r=await fetch('spotted-logos.json',{cache:'no-store'});
+    if(r.ok){const def=await r.json();
+      if(Array.isArray(def))def.forEach(l=>{if(l&&l.id&&l.data&&!LOGOS.some(x=>x.id===l.id))LOGOS.push({id:l.id,name:l.name||'',data:l.data,orig:l.orig});});
+    }
+  }catch(e){}
+  persistLogos();
   renderLogoGallery();
+}
+function exportLogos(){
+  if(!LOGOS.length){alert('Nie masz jeszcze żadnych logotypów do wyeksportowania.');return;}
+  const data=JSON.stringify(LOGOS.map(l=>({id:l.id,name:l.name||'',data:l.data,orig:l.orig})));
+  const b=new Blob([data],{type:'application/json'});const u=URL.createObjectURL(b);
+  const a=document.createElement('a');a.href=u;a.download='spotted-logo-biblioteka.json';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),1500);
+}
+async function importLogos(file){
+  try{
+    const arr=JSON.parse(await file.text());
+    if(!Array.isArray(arr)){alert('To nie jest plik z logotypami.');return;}
+    let added=0;
+    arr.forEach(l=>{if(l&&l.data){const ex=LOGOS.find(x=>x.id===l.id);
+      if(ex){ex.name=l.name||ex.name;ex.data=l.data;ex.orig=l.orig;}
+      else{LOGOS.push({id:l.id||newId(),name:l.name||'',data:l.data,orig:l.orig});added++;}}});
+    persistLogos();renderLogoGallery();draw();
+    alert('Wczytano logotypy ✓  (nowych: '+added+', razem w bibliotece: '+LOGOS.length+')');
+  }catch(e){alert('Nie udało się wczytać pliku — upewnij się, że to plik wyeksportowany z generatora.');}
 }
 
 async function addLogo(rawData){
@@ -1198,6 +1230,8 @@ if(lf)lf.addEventListener('change',async e=>{
   lf.value="";
 });
 ['logoX','logoY','logoS'].forEach(id=>{const el=_g(id);if(el)el.addEventListener('input',()=>{applySlidersToActive();updateLogoLabels();saveLogoCfg();draw();});});
+const li=_g('logoImport');
+if(li)li.addEventListener('change',e=>{const f=e.target.files&&e.target.files[0];if(f)importLogos(f);li.value='';});
 const bgt=_g('bgTol');
 if(bgt){
   bgt.addEventListener('input',()=>{const bv=_g('bgTolV');if(bv)bv.textContent=bgt.value;});
@@ -1241,7 +1275,7 @@ if(bgt){
   cv.addEventListener('pointerup',end);
   cv.addEventListener('pointercancel',end);
 })();
-loadLogos();loadLogoCfg();
+loadLogos().then(loadLogoCfg);
 usedInfo();
 renderManage();
 draw();
