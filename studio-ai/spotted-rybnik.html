@@ -78,9 +78,19 @@
       <div style="margin-top:8px;font-size:13px">
         <label>Wgraj logo firmy <span style="color:#8a9096;font-weight:400">(możesz zaznaczyć kilka naraz)</span></label>
         <input type="file" id="logoFile" accept="image/*" multiple style="font-size:12.5px">
-        <div class="hint" style="margin-top:4px">Zapisują się na stałe. Kliknij zapisane logo, żeby użyć go w poście. <span style="color:#c9a24b">[wersja logo v4 — przeciąganie]</span></div>
+        <div class="hint" style="margin-top:4px">Zapisują się na stałe. Kliknij zapisane logo, żeby użyć go w poście. <span style="color:#c9a24b">[wersja logo v5 — przeciąganie + usuwanie tła]</span></div>
         <label style="margin-top:10px">📚 Zapisane logotypy <span id="logoCount" style="color:var(--gold)"></span></label>
         <div id="logoGallery" style="display:flex;flex-wrap:wrap;gap:8px;margin-top:4px"></div>
+        <div id="bgTools" style="display:none;margin-top:10px;padding:10px;border:1px solid var(--line);border-radius:10px;background:#141720">
+          <div style="font-weight:600;color:#cfcabb;margin-bottom:6px">✂️ Tło wybranego logo</div>
+          <div class="btns" style="margin:0 0 6px">
+            <button class="ghost" type="button" onclick="removeLogoBg()" style="padding:8px 14px;font-size:13px">✂️ Usuń tło (białe/jednolite)</button>
+            <button class="ghost" type="button" onclick="restoreLogoBg()" style="padding:8px 14px;font-size:13px">↩️ Przywróć oryginał</button>
+          </div>
+          <label style="margin-top:2px">Czułość <span id="bgTolV" style="color:var(--gold)"></span> <span style="color:#8a9096;font-weight:400">— zwiększ, jeśli zostają resztki tła</span></label>
+          <input type="range" id="bgTol" min="12" max="150" value="45" style="width:100%;accent-color:#c9a24b">
+          <div class="hint" style="margin-top:4px">Działa najlepiej dla logo na białym/jednolitym tle. Białe elementy w środku logo zostają.</div>
+        </div>
         <label style="margin-top:10px">Nazwa firmy (obok logo)</label>
         <input type="text" id="logoName" placeholder="np. Kwiaciarnia Róża" style="width:100%;padding:9px;border:1px solid var(--line);border-radius:8px;background:#12141a;color:#e8e6df;font-size:13px">
         <label style="margin-top:8px">Etykieta nad nazwą</label>
@@ -703,7 +713,7 @@ function downscaleLogo(dataURL,maxDim){return new Promise(res=>{
   im.src=dataURL;
 });}
 
-function persistLogos(){try{localStorage.setItem('spottedLogos',JSON.stringify(LOGOS));return true;}catch(e){return false;}}
+function persistLogos(){try{localStorage.setItem('spottedLogos',JSON.stringify(LOGOS.map(l=>({id:l.id,name:l.name,data:l.data,orig:l.orig}))));return true;}catch(e){return false;}}
 
 function loadLogos(){
   try{LOGOS=JSON.parse(localStorage.getItem('spottedLogos')||'[]');}catch(e){LOGOS=[];}
@@ -739,8 +749,54 @@ function deleteLogo(id,ev){
   renderLogoGallery();draw();
 }
 function clearCurLogo(){curLogoId=null;LOGO=null;renderLogoGallery();saveLogoCfg();draw();}
+
+// usuwanie tła: przezroczystość dla pikseli koloru tła połączonych z krawędzią
+function removeBg(dataURL,tol){return new Promise(res=>{
+  const im=new Image();
+  im.onload=()=>{
+    const w=im.naturalWidth,h=im.naturalHeight;
+    if(!w||!h){res(dataURL);return;}
+    const c=document.createElement('canvas');c.width=w;c.height=h;
+    const g=c.getContext('2d');g.drawImage(im,0,0);
+    let id;try{id=g.getImageData(0,0,w,h);}catch(e){res(dataURL);return;}
+    const d=id.data;
+    // kolor tła = średnia z 4 rogów
+    const co=[0,(w-1),(h-1)*w,(h-1)*w+(w-1)].map(i=>i*4);
+    let br=0,bgc=0,bb=0;co.forEach(o=>{br+=d[o];bgc+=d[o+1];bb+=d[o+2];});br/=4;bgc/=4;bb/=4;
+    const T=tol*tol;
+    const match=i=>{const a=d[i]-br,b=d[i+1]-bgc,cc=d[i+2]-bb;return (a*a+b*b+cc*cc)<=T;};
+    const vis=new Uint8Array(w*h),st=[];
+    const push=(x,y)=>{if(x<0||y<0||x>=w||y>=h)return;const p=y*w+x;if(vis[p])return;vis[p]=1;if(match(p*4)){d[p*4+3]=0;st.push(x,y);}};
+    for(let x=0;x<w;x++){push(x,0);push(x,h-1);}
+    for(let y=0;y<h;y++){push(0,y);push(w-1,y);}
+    while(st.length){const y=st.pop(),x=st.pop();push(x+1,y);push(x-1,y);push(x,y+1);push(x,y-1);}
+    // delikatne zmiękczenie krawędzi
+    g.putImageData(id,0,0);
+    res(c.toDataURL('image/png'));
+  };
+  im.onerror=()=>res(dataURL);
+  im.src=dataURL;
+});}
+async function removeLogoBg(){
+  const it=LOGOS.find(l=>l.id===curLogoId);
+  if(!it){alert('Najpierw kliknij logo w galerii, żeby je wybrać.');return;}
+  if(!it.orig)it.orig=it.data;               // zachowaj oryginał
+  const tol=+((_g('bgTol')||{}).value||45);
+  const out=await removeBg(it.orig,tol);     // zawsze od oryginału → suwak działa w obie strony
+  it.data=out;
+  persistLogos();
+  renderLogoGallery();selectLogo(it.id);
+}
+function restoreLogoBg(){
+  const it=LOGOS.find(l=>l.id===curLogoId);
+  if(!it||!it.orig){return;}
+  it.data=it.orig;delete it.orig;
+  persistLogos();renderLogoGallery();selectLogo(it.id);
+}
 function renderLogoGallery(){
   const cnt=_g('logoCount');if(cnt)cnt.textContent=LOGOS.length?('('+LOGOS.length+')'):'';
+  const bt=_g('bgTools');if(bt)bt.style.display=(curLogoId&&LOGOS.some(l=>l.id===curLogoId))?'block':'none';
+  const bv=_g('bgTolV');if(bv&&_g('bgTol'))bv.textContent=_g('bgTol').value;
   const box=_g('logoGallery');if(!box)return;box.innerHTML="";
   if(!LOGOS.length){box.innerHTML='<span class="hint" style="color:#8a9096">Brak zapisanych logotypów — wgraj pierwsze powyżej.</span>';return;}
   LOGOS.forEach(l=>{
@@ -1134,6 +1190,11 @@ if(lf)lf.addEventListener('change',async e=>{
   lf.value="";
 });
 ['logoX','logoY','logoS'].forEach(id=>{const el=_g(id);if(el)el.addEventListener('input',()=>{updateLogoLabels();saveLogoCfg();draw();});});
+const bgt=_g('bgTol');
+if(bgt){
+  bgt.addEventListener('input',()=>{const bv=_g('bgTolV');if(bv)bv.textContent=bgt.value;});
+  bgt.addEventListener('change',()=>{const it=LOGOS.find(l=>l.id===curLogoId);if(it&&it.orig)removeLogoBg();});
+}
 // ---- Przeciąganie logo po podglądzie (dotyk + mysz) ----
 (function(){
   let mode=null,off={x:0,y:0},startS=0,startP=null;
