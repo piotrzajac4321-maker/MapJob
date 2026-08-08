@@ -78,7 +78,7 @@
       <div style="margin-top:8px;font-size:13px">
         <label>Wgraj logo firmy <span style="color:#8a9096;font-weight:400">(możesz zaznaczyć kilka naraz)</span></label>
         <input type="file" id="logoFile" accept="image/*" multiple style="font-size:12.5px">
-        <div class="hint" style="margin-top:4px">Zapisują się na stałe. Kliknij zapisane logo, żeby użyć go w poście. <span style="color:#c9a24b">[wersja logo v3]</span></div>
+        <div class="hint" style="margin-top:4px">Zapisują się na stałe. Kliknij zapisane logo, żeby użyć go w poście. <span style="color:#c9a24b">[wersja logo v4 — przeciąganie]</span></div>
         <label style="margin-top:10px">📚 Zapisane logotypy <span id="logoCount" style="color:var(--gold)"></span></label>
         <div id="logoGallery" style="display:flex;flex-wrap:wrap;gap:8px;margin-top:4px"></div>
         <label style="margin-top:10px">Nazwa firmy (obok logo)</label>
@@ -147,7 +147,8 @@
       <input type="range" id="txtSlider" min="0" max="3" step="1" value="1" style="flex:1;accent-color:#caa64a">
       <span style="font-size:20px;font-weight:700">A</span>
     </div>
-    <div class="preview"><canvas id="cv" width="1080" height="1350"></canvas></div>
+    <div class="hint" id="logoDragHint" style="display:none;margin:0 0 6px;color:#c9a24b">✋ Przeciągnij logo palcem po podglądzie, aby je przesunąć. Złoty narożnik = zmiana rozmiaru.</div>
+    <div class="preview"><canvas id="cv" width="1080" height="1350" style="touch-action:none"></canvas></div>
   </div>
 </div>
 
@@ -682,7 +683,7 @@ function curCat(){return (document.getElementById('catFilter')||{}).value||"all"
 function poolBase(){const rem=getRemoved(),cf=curCat();return MSGS.filter(m=>!rem[m]&&(cf==="all"||category(m)===cf));}
 
 const cv=document.getElementById('cv'),ctx=cv.getContext('2d');
-let LOGO=null, LOGOS=[], curLogoId=null;
+let LOGO=null, LOGOS=[], curLogoId=null, LOGO_RECT=null, EXPORTING=false;
 const _g=id=>document.getElementById(id);
 
 function newId(){let n=1;while(LOGOS.some(l=>l.id==='logo'+n))n++;return 'logo'+n;}
@@ -723,10 +724,13 @@ async function addLogo(rawData){
 }
 function selectLogo(id){
   curLogoId=id;const it=LOGOS.find(l=>l.id===id);
+  if(it&&_g('logoName')&&it.name)_g('logoName').value=it.name;
   renderLogoGallery();saveLogoCfg();
   if(!it){LOGO=null;draw();return;}
-  if(_g('logoName')&&it.name)_g('logoName').value=it.name;
-  const im=new Image();im.onload=()=>{LOGO=im;draw();};im.onerror=()=>{LOGO=null;draw();};im.src=it.data;
+  // źródłem rysowania jest obrazek z galerii (już wyświetlony) — najpewniejsze na iOS
+  if(it._img&&it._img.complete&&it._img.naturalWidth){LOGO=it._img;}
+  else{LOGO=null;}
+  draw();
 }
 function deleteLogo(id,ev){
   if(ev)ev.stopPropagation();
@@ -742,7 +746,10 @@ function renderLogoGallery(){
   LOGOS.forEach(l=>{
     const d=document.createElement('div');d.title=l.name||'logo';
     d.style.cssText="position:relative;width:64px;height:64px;border-radius:10px;border:2px solid "+(curLogoId===l.id?'#c9a24b':'#2a2d34')+";background:#12141a;display:flex;align-items:center;justify-content:center;cursor:pointer;overflow:hidden";
-    const img=document.createElement('img');img.src=l.data;img.style.cssText="max-width:100%;max-height:100%;object-fit:contain";
+    const img=document.createElement('img');img.style.cssText="max-width:100%;max-height:100%;object-fit:contain";
+    img.onload=()=>{if(curLogoId===l.id){LOGO=img;draw();}};
+    img.onerror=()=>{if(curLogoId===l.id){LOGO=null;draw();}};
+    img.src=l.data;l._img=img;
     d.appendChild(img);
     const x=document.createElement('button');x.type="button";x.textContent="×";x.title="Usuń";
     x.style.cssText="position:absolute;top:-7px;right:-7px;width:20px;height:20px;border-radius:50%;background:#b23b3b;color:#fff;border:none;font-size:15px;line-height:1;cursor:pointer;padding:0";
@@ -963,12 +970,29 @@ function draw(p){
   }
   if(ctaOn){const cy=showFoot?H-104:H-40;ctx.textAlign="center";ctx.textBaseline="alphabetic";ctx.font="bold 28px "+FF;ctx.fillStyle=T.gold;ctx.fillText("POLUB   ·   SKOMENTUJ   ·   UDOSTĘPNIJ",W/2,cy);}
   drawSponsor();
+  if(!EXPORTING){drawLogoHandles();const _h=_g('logoDragHint');if(_h)_h.style.display=LOGO_RECT?'block':'none';}
+}
+
+function drawLogoHandles(){
+  if(!LOGO||!LOGO_RECT)return;
+  const R=LOGO_RECT;
+  ctx.save();
+  ctx.strokeStyle="#c9a24b";ctx.lineWidth=3;ctx.setLineDash([12,8]);
+  rr(R.x-6,R.y-6,R.w+12,R.h+12,12);ctx.stroke();
+  ctx.setLineDash([]);
+  // uchwyt zmiany rozmiaru — prawy dolny róg
+  const hx=R.x+R.w,hy=R.y+R.h;
+  ctx.fillStyle="#c9a24b";ctx.beginPath();ctx.arc(hx,hy,18,0,7);ctx.fill();
+  ctx.strokeStyle="#15171c";ctx.lineWidth=3;ctx.lineCap="round";
+  ctx.beginPath();ctx.moveTo(hx-7,hy);ctx.lineTo(hx+7,hy);ctx.moveTo(hx,hy-7);ctx.lineTo(hx,hy+7);ctx.stroke();
+  ctx.restore();
 }
 
 function drawSponsor(){
   const hasLogo=LOGO&&LOGO.complete&&LOGO.naturalWidth;
   const cname=((document.getElementById('logoName')||{}).value||"").trim();
   const clabel=((document.getElementById('logoLabel')||{}).value||"").trim();
+  LOGO_RECT=null;
   if(!hasLogo&&!cname)return;
   const lay=(typeof curLay==='function')?curLay():'kafelki';
   const FF=(lay==="gazeta")?"Georgia,'Times New Roman',serif":"system-ui,Segoe UI,Roboto,sans-serif";
@@ -982,6 +1006,7 @@ function drawSponsor(){
     const lx=20+(W-40-lw)*(posX/100);
     const ly=20+(H-40-lh)*(posY/100);
     ctx.save();ctx.shadowColor="rgba(0,0,0,0.4)";ctx.shadowBlur=12;ctx.shadowOffsetY=3;ctx.drawImage(LOGO,lx,ly,lw,lh);ctx.restore();
+    LOGO_RECT={x:lx,y:ly,w:lw,h:lh};
     return;
   }
 
@@ -999,6 +1024,7 @@ function drawSponsor(){
   let by=20+(H-40-badgeH)*(posY/100);
   bx=Math.max(20,Math.min(bx,W-20-badgeW));
   by=Math.max(20,Math.min(by,H-20-badgeH));
+  LOGO_RECT={x:bx,y:by,w:badgeW,h:badgeH};
   // tło paska
   ctx.fillStyle="rgba(9,10,13,0.74)";rr(bx,by,badgeW,badgeH,16);ctx.fill();
   ctx.strokeStyle=(T.gold||"#c9a24b");ctx.globalAlpha=0.45;ctx.lineWidth=1.5;rr(bx,by,badgeW,badgeH,16);ctx.stroke();ctx.globalAlpha=1;
@@ -1015,8 +1041,9 @@ function drawSponsor(){
 }
 
 function dl(){
-  draw();
+  EXPORTING=true;draw();
   const url=cv.toDataURL("image/png");
+  EXPORTING=false;draw();
   // próba automatycznego pobrania (komputer)
   try{const a=document.createElement('a');a.href=url;a.download="spotted-rybnik.png";document.body.appendChild(a);a.click();a.remove();}catch(e){}
   // zawsze pokaż obrazek do ręcznego zapisu (telefon)
@@ -1107,6 +1134,38 @@ if(lf)lf.addEventListener('change',async e=>{
   lf.value="";
 });
 ['logoX','logoY','logoS'].forEach(id=>{const el=_g(id);if(el)el.addEventListener('input',()=>{updateLogoLabels();saveLogoCfg();draw();});});
+// ---- Przeciąganie logo po podglądzie (dotyk + mysz) ----
+(function(){
+  let mode=null,off={x:0,y:0},startS=0,startP=null;
+  function pos(e){const r=cv.getBoundingClientRect();return {x:(e.clientX-r.left)*(cv.width/r.width),y:(e.clientY-r.top)*(cv.height/r.height)};}
+  cv.addEventListener('pointerdown',e=>{
+    if(!LOGO||!LOGO_RECT)return;
+    const p=pos(e),R=LOGO_RECT,hx=R.x+R.w,hy=R.y+R.h;
+    if(Math.hypot(p.x-hx,p.y-hy)<=34){mode='resize';startS=+(_g('logoS').value||80);startP=p;}
+    else if(p.x>=R.x-14&&p.x<=R.x+R.w+14&&p.y>=R.y-14&&p.y<=R.y+R.h+14){mode='move';off={x:p.x-R.x,y:p.y-R.y};}
+    else return;
+    try{cv.setPointerCapture(e.pointerId);}catch(_){}
+    e.preventDefault();
+  });
+  cv.addEventListener('pointermove',e=>{
+    if(!mode||!LOGO_RECT)return;e.preventDefault();
+    const p=pos(e),R=LOGO_RECT;
+    if(mode==='move'){
+      const dx=(W-40-R.w),dy=(H-40-R.h);
+      const px=dx>0?((p.x-off.x-20)/dx)*100:0;
+      const py=dy>0?((p.y-off.y-20)/dy)*100:0;
+      if(_g('logoX'))_g('logoX').value=Math.max(0,Math.min(100,Math.round(px)));
+      if(_g('logoY'))_g('logoY').value=Math.max(0,Math.min(100,Math.round(py)));
+    }else{
+      const d=(p.x-startP.x)+(p.y-startP.y);
+      if(_g('logoS'))_g('logoS').value=Math.max(40,Math.min(220,Math.round(startS+d*0.6)));
+    }
+    updateLogoLabels();saveLogoCfg();draw();
+  });
+  const end=e=>{if(mode){mode=null;try{cv.releasePointerCapture(e.pointerId);}catch(_){}}};
+  cv.addEventListener('pointerup',end);
+  cv.addEventListener('pointercancel',end);
+})();
 loadLogos();loadLogoCfg();
 usedInfo();
 renderManage();
