@@ -37,6 +37,14 @@
 <div class="wrap">
   <div style="margin-bottom:12px;display:flex;gap:16px;flex-wrap:wrap"><a class="back" href="bobo-generator.html">← Generator BoboFoto</a><a class="back" href="ciekawostki-rybnika.html">📜 Ciekawostki Rybnika</a><a class="back" href="spotted-anonim.html">💬 Anonimowe wiadomości</a><a class="back" href="spotted-cennik.html">💰 Cennik reklamy</a><a class="back" href="spotted-reklama-firm.html">🏢 Reklama dla firm</a><a class="back" href="spotted-reklama-info.html">📌 Info o reklamie</a></div>
 
+  <div id="adAlerts" style="display:none"></div>
+
+  <details class="card" id="clientsCard">
+    <summary style="cursor:pointer;color:var(--gold);font-weight:700;font-size:15px;letter-spacing:1px">📋 KLIENCI REKLAMOWI <span id="clientsBadge" style="font-weight:600"></span></summary>
+    <div class="hint" style="margin:8px 0">Dopnij do każdego logo datę startu i długość reklamy — sam policzę, komu i kiedy się kończy. Kliknij „📄 Zrób post", żeby od razu przygotować post z logo klienta.</div>
+    <div id="clientList"></div>
+  </details>
+
   <div class="card">
     <span class="tag">TWOJE WIADOMOŚCI</span>
     <label>⭐ Gotowy przykład (kliknij = od razu ustawione)</label>
@@ -78,7 +86,7 @@
       <div style="margin-top:8px;font-size:13px">
         <label>Wgraj logo firmy <span style="color:#8a9096;font-weight:400">(możesz zaznaczyć kilka naraz)</span></label>
         <input type="file" id="logoFile" accept="image/*" multiple style="font-size:12.5px">
-        <div class="hint" style="margin-top:4px">Zapisują się na stałe. <b>Kliknij logo → dodaje je do postu (✓)</b>. Klik ponownie na aktywne → zdejmuje z postu. Możesz dodać wiele firm naraz. <span style="color:#c9a24b">[wersja logo v8 — wbudowane logo + auto-zapis]</span></div>
+        <div class="hint" style="margin-top:4px">Zapisują się na stałe. <b>Kliknij logo → dodaje je do postu (✓)</b>. Klik ponownie na aktywne → zdejmuje z postu. Możesz dodać wiele firm naraz. <span style="color:#c9a24b">[wersja logo v9 — panel klientów + alerty]</span></div>
         <label style="margin-top:10px">📚 Zapisane logotypy <span id="logoCount" style="color:var(--gold)"></span></label>
         <div id="logoGallery" style="display:flex;flex-wrap:wrap;gap:8px;margin-top:4px"></div>
         <div class="btns" style="margin:10px 0 0">
@@ -719,7 +727,7 @@ function downscaleLogo(dataURL,maxDim){return new Promise(res=>{
   im.src=dataURL;
 });}
 
-function persistLogos(){try{localStorage.setItem('spottedLogos',JSON.stringify(LOGOS.map(l=>({id:l.id,name:l.name,data:l.data,orig:l.orig}))));return true;}catch(e){return false;}}
+function persistLogos(){try{localStorage.setItem('spottedLogos',JSON.stringify(LOGOS.map(l=>({id:l.id,name:l.name,data:l.data,orig:l.orig,start:l.start,days:l.days,price:l.price,note:l.note}))));return true;}catch(e){return false;}}
 
 async function loadLogos(){
   try{LOGOS=JSON.parse(localStorage.getItem('spottedLogos')||'[]');}catch(e){LOGOS=[];}
@@ -739,11 +747,11 @@ async function loadLogos(){
     }catch(e){}
   }
   persistLogos();
-  renderLogoGallery();
+  renderLogoGallery();refreshClients();
 }
 function exportLogos(){
   if(!LOGOS.length){alert('Nie masz jeszcze żadnych logotypów do wyeksportowania.');return;}
-  const data=JSON.stringify(LOGOS.map(l=>({id:l.id,name:l.name||'',data:l.data,orig:l.orig})));
+  const data=JSON.stringify(LOGOS.map(l=>({id:l.id,name:l.name||'',data:l.data,orig:l.orig,start:l.start,days:l.days,price:l.price,note:l.note})));
   const b=new Blob([data],{type:'application/json'});const u=URL.createObjectURL(b);
   const a=document.createElement('a');a.href=u;a.download='spotted-logo-biblioteka.json';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),1500);
 }
@@ -753,11 +761,85 @@ async function importLogos(file){
     if(!Array.isArray(arr)){alert('To nie jest plik z logotypami.');return;}
     let added=0;
     arr.forEach(l=>{if(l&&l.data){const ex=LOGOS.find(x=>x.id===l.id);
-      if(ex){ex.name=l.name||ex.name;ex.data=l.data;ex.orig=l.orig;}
-      else{LOGOS.push({id:l.id||newId(),name:l.name||'',data:l.data,orig:l.orig});added++;}}});
-    persistLogos();renderLogoGallery();draw();
+      if(ex){ex.name=l.name||ex.name;ex.data=l.data;ex.orig=l.orig;if(l.start!==undefined)ex.start=l.start;if(l.days!==undefined)ex.days=l.days;if(l.price!==undefined)ex.price=l.price;if(l.note!==undefined)ex.note=l.note;}
+      else{LOGOS.push({id:l.id||newId(),name:l.name||'',data:l.data,orig:l.orig,start:l.start,days:l.days,price:l.price,note:l.note});added++;}}});
+    persistLogos();renderLogoGallery();refreshClients();draw();
     alert('Wczytano logotypy ✓  (nowych: '+added+', razem w bibliotece: '+LOGOS.length+')');
   }catch(e){alert('Nie udało się wczytać pliku — upewnij się, że to plik wyeksportowany z generatora.');}
+}
+
+/* ---------- Klienci reklamowi: daty, statusy, alerty ---------- */
+function todayMid(){const d=new Date();d.setHours(0,0,0,0);return d;}
+function parseDate(s){if(!s)return null;const p=String(s).split('-');if(p.length!==3)return null;const d=new Date(+p[0],+p[1]-1,+p[2]);d.setHours(0,0,0,0);return isNaN(d.getTime())?null:d;}
+function fmtPL(d){try{return d.toLocaleDateString('pl-PL',{day:'numeric',month:'short',year:'numeric'});}catch(e){return '';}}
+function escHtml(s){return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
+function campaign(l){
+  const start=parseDate(l.start);const days=parseInt(l.days,10);
+  if(!start||!days||days<=0)return {set:false};
+  const end=new Date(start.getTime());end.setDate(end.getDate()+days);
+  const left=Math.round((end-todayMid())/86400000);
+  let status='active';if(left<0)status='expired';else if(left<=3)status='soon';
+  return {set:true,start,end,left,status,days};
+}
+function statusColor(s){return s==='expired'?'#e05555':s==='soon'?'#e0a94e':'#4ea86a';}
+function statusText(c){if(c.status==='expired')return 'WYGASŁA '+Math.abs(c.left)+' dni temu';if(c.left===0)return 'kończy się DZIŚ';if(c.status==='soon')return 'kończy się za '+c.left+' dni';return 'aktywna · jeszcze '+c.left+' dni';}
+function mkInp(type,val,ph){const i=document.createElement('input');i.type=type;if(val!==undefined&&val!==null&&val!=='')i.value=val;if(ph)i.placeholder=ph;i.style.cssText="padding:7px;border:1px solid var(--line);border-radius:7px;background:#12141a;color:#e8e6df;font-size:13px";return i;}
+function fieldWrap(lab,inp){const w=document.createElement('label');w.style.cssText="font-size:11px;color:#9aa0a6;display:flex;flex-direction:column;gap:2px";w.appendChild(document.createTextNode(lab));w.appendChild(inp);return w;}
+function renderClients(){
+  const box=_g('clientList');if(!box)return;box.innerHTML='';
+  if(!LOGOS.length){box.innerHTML='<div class="hint" style="color:#8a9096">Brak logotypów — wgraj logo w sekcji „🖼️ Logo firm", a tutaj ustawisz daty reklam.</div>';return;}
+  const arr=LOGOS.map(l=>({l,c:campaign(l)}));
+  arr.sort((a,b)=>{if(a.c.set&&b.c.set)return a.c.left-b.c.left;if(a.c.set)return -1;if(b.c.set)return 1;return 0;});
+  arr.forEach(({l,c})=>{
+    const row=document.createElement('div');
+    row.style.cssText="border:1px solid var(--line);border-left:5px solid "+(c.set?statusColor(c.status):'#3a3d44')+";border-radius:10px;padding:10px;margin-bottom:10px;background:#141720";
+    const top=document.createElement('div');top.style.cssText="display:flex;align-items:center;gap:10px";
+    const th=document.createElement('div');th.style.cssText="width:44px;height:44px;border-radius:8px;background:#12141a;flex:none;display:flex;align-items:center;justify-content:center;overflow:hidden";
+    const im=document.createElement('img');im.src=l.data;im.style.cssText="max-width:100%;max-height:100%;object-fit:contain";th.appendChild(im);
+    const nm=mkInp('text',l.name||'','Nazwa firmy');nm.style.flex='1';nm.addEventListener('input',()=>{l.name=nm.value;persistLogos();renderAlerts();});
+    const pb=document.createElement('button');pb.type='button';pb.className='ghost';pb.textContent='📄 Zrób post';pb.style.cssText="padding:7px 10px;font-size:12.5px;white-space:nowrap";pb.onclick=()=>makeClientPost(l.id);
+    top.appendChild(th);top.appendChild(nm);top.appendChild(pb);
+    const r2=document.createElement('div');r2.style.cssText="display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end;margin-top:8px";
+    const sd=mkInp('date',l.start||'');sd.addEventListener('change',()=>{l.start=sd.value;persistLogos();renderClients();renderAlerts();});
+    const dd=mkInp('number',l.days!=null?l.days:'','dni');dd.min='1';dd.style.width='70px';dd.addEventListener('change',()=>{l.days=dd.value?parseInt(dd.value,10):undefined;persistLogos();renderClients();renderAlerts();});
+    const pr=mkInp('text',l.price||'','zł');pr.style.width='76px';pr.addEventListener('input',()=>{l.price=pr.value;persistLogos();});
+    r2.appendChild(fieldWrap('Start',sd));r2.appendChild(fieldWrap('Długość (dni)',dd));r2.appendChild(fieldWrap('Cena',pr));
+    const st=document.createElement('div');st.style.cssText="margin-left:auto;font-size:13px;font-weight:700;text-align:right;color:"+(c.set?statusColor(c.status):'#8a9096');
+    st.textContent=c.set?(statusText(c)+' · do '+fmtPL(c.end)):'— ustaw datę i długość';
+    r2.appendChild(st);
+    const nt=mkInp('text',l.note||'','Notatka (treść reklamy / kontakt)');nt.style.width='100%';nt.style.marginTop='6px';nt.addEventListener('input',()=>{l.note=nt.value;persistLogos();});
+    row.appendChild(top);row.appendChild(r2);row.appendChild(nt);
+    box.appendChild(row);
+  });
+}
+function renderAlerts(){
+  const box=_g('adAlerts');if(!box)return;
+  const soon=[],exp=[];
+  LOGOS.forEach(l=>{const c=campaign(l);if(!c.set)return;const nm=l.name||'(logo bez nazwy)';if(c.status==='expired')exp.push({nm,c});else if(c.status==='soon')soon.push({nm,c});});
+  updateClientsBadge();
+  if(!soon.length&&!exp.length){box.style.display='none';box.innerHTML='';return;}
+  let h='<div class="card" style="border:1px solid #5a4620;background:#241d10;margin-bottom:16px">';
+  h+='<div style="font-weight:800;color:#e0a94e;letter-spacing:1px;margin-bottom:8px">🔔 PRZYPOMNIENIE O REKLAMACH</div>';
+  exp.forEach(x=>{h+='<div style="color:#ef9a9a;font-weight:600;font-size:14px;margin:2px 0">🔴 '+escHtml(x.nm)+' — reklama WYGASŁA ('+Math.abs(x.c.left)+' dni temu, było do '+fmtPL(x.c.end)+')</div>';});
+  soon.forEach(x=>{h+='<div style="color:#f0c26a;font-weight:600;font-size:14px;margin:2px 0">🟡 '+escHtml(x.nm)+' — '+(x.c.left===0?'kończy się DZIŚ':'kończy się za '+x.c.left+' dni')+' (do '+fmtPL(x.c.end)+')</div>';});
+  h+='</div>';
+  box.innerHTML=h;box.style.display='block';
+}
+function updateClientsBadge(){
+  const bd=_g('clientsBadge');if(!bd)return;
+  let soon=0,exp=0;LOGOS.forEach(l=>{const c=campaign(l);if(c.set){if(c.status==='expired')exp++;else if(c.status==='soon')soon++;}});
+  let t='';if(exp)t+=' 🔴'+exp;if(soon)t+=' 🟡'+soon;bd.textContent=t;
+}
+function refreshClients(){renderClients();renderAlerts();}
+function makeClientPost(id){
+  const l=LOGOS.find(x=>x.id===id);if(!l)return;
+  const cs=_g('count');if(cs)cs.value='1';
+  current=[l.note&&l.note.trim()?l.note.trim():(l.name?('Reklama: '+l.name):'')];
+  PLACED=[{logoId:id,x:100,y:0,s:170}];activeIdx=0;curLogoId=id;
+  if(_g('logoName'))_g('logoName').value=l.name||'';
+  syncSlidersFromActive();renderLogoGallery();saveLogoCfg();
+  if(typeof setCount==='function')setCount(); else draw();
+  const cvEl=_g('cv');if(cvEl&&cvEl.scrollIntoView)cvEl.scrollIntoView({behavior:'smooth',block:'center'});
 }
 
 async function addLogo(rawData){
@@ -768,6 +850,7 @@ async function addLogo(rawData){
   LOGOS.push(it);
   if(!persistLogos()){LOGOS.pop();alert('Brak miejsca w pamięci przeglądarki — usuń kilka logotypów i spróbuj ponownie.');return;}
   placeLogo(it.id);          // nowo wgrane od razu ląduje na poście
+  refreshClients();
 }
 // dodaj logo na post (osobna pozycja, kaskadowo, żeby się nie nakładały)
 function placeLogo(id){
@@ -821,7 +904,7 @@ function deleteLogo(id,ev){         // usuń z biblioteki (i z postu)
   activeIdx=PLACED.length?Math.min(activeIdx,PLACED.length-1):-1;
   curLogoId=activeIdx>=0?PLACED[activeIdx].logoId:null;
   if(activeIdx>=0)syncSlidersFromActive();
-  renderLogoGallery();saveLogoCfg();draw();
+  renderLogoGallery();refreshClients();saveLogoCfg();draw();
 }
 function clearCurLogo(){PLACED=[];activeIdx=-1;curLogoId=null;renderLogoGallery();saveLogoCfg();draw();}
 
