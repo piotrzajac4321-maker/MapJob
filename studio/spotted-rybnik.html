@@ -41,7 +41,7 @@
 
   <details class="card" id="clientsCard">
     <summary style="cursor:pointer;color:var(--gold);font-weight:700;font-size:15px;letter-spacing:1px">📋 KLIENCI REKLAMOWI <span id="clientsBadge" style="font-weight:600"></span></summary>
-    <div class="hint" style="margin:8px 0">Dopnij do każdego logo datę startu i długość reklamy — sam policzę, komu i kiedy się kończy. Kliknij „📄 Zrób post", żeby od razu przygotować post z logo klienta.</div>
+    <div class="hint" style="margin:8px 0">Wpisz przy każdym logo <b>datę końca subskrypcji</b> (albo kliknij „📅 30 dni od dziś") — sam przypomnę, komu i kiedy się kończy. Kliknij „📄 Zrób post", żeby od razu przygotować post z logo klienta.</div>
     <div id="clientList"></div>
   </details>
 
@@ -727,7 +727,7 @@ function downscaleLogo(dataURL,maxDim){return new Promise(res=>{
   im.src=dataURL;
 });}
 
-function persistLogos(){try{localStorage.setItem('spottedLogos',JSON.stringify(LOGOS.map(l=>({id:l.id,name:l.name,data:l.data,orig:l.orig,start:l.start,days:l.days,price:l.price,note:l.note}))));return true;}catch(e){return false;}}
+function persistLogos(){try{localStorage.setItem('spottedLogos',JSON.stringify(LOGOS.map(l=>({id:l.id,name:l.name,data:l.data,orig:l.orig,start:l.start,end:l.end,days:l.days,price:l.price,note:l.note}))));return true;}catch(e){return false;}}
 
 async function loadLogos(){
   try{LOGOS=JSON.parse(localStorage.getItem('spottedLogos')||'[]');}catch(e){LOGOS=[];}
@@ -751,7 +751,7 @@ async function loadLogos(){
 }
 function exportLogos(){
   if(!LOGOS.length){alert('Nie masz jeszcze żadnych logotypów do wyeksportowania.');return;}
-  const data=JSON.stringify(LOGOS.map(l=>({id:l.id,name:l.name||'',data:l.data,orig:l.orig,start:l.start,days:l.days,price:l.price,note:l.note})));
+  const data=JSON.stringify(LOGOS.map(l=>({id:l.id,name:l.name||'',data:l.data,orig:l.orig,start:l.start,end:l.end,days:l.days,price:l.price,note:l.note})));
   const b=new Blob([data],{type:'application/json'});const u=URL.createObjectURL(b);
   const a=document.createElement('a');a.href=u;a.download='spotted-logo-biblioteka.json';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),1500);
 }
@@ -761,8 +761,8 @@ async function importLogos(file){
     if(!Array.isArray(arr)){alert('To nie jest plik z logotypami.');return;}
     let added=0;
     arr.forEach(l=>{if(l&&l.data){const ex=LOGOS.find(x=>x.id===l.id);
-      if(ex){ex.name=l.name||ex.name;ex.data=l.data;ex.orig=l.orig;if(l.start!==undefined)ex.start=l.start;if(l.days!==undefined)ex.days=l.days;if(l.price!==undefined)ex.price=l.price;if(l.note!==undefined)ex.note=l.note;}
-      else{LOGOS.push({id:l.id||newId(),name:l.name||'',data:l.data,orig:l.orig,start:l.start,days:l.days,price:l.price,note:l.note});added++;}}});
+      if(ex){ex.name=l.name||ex.name;ex.data=l.data;ex.orig=l.orig;if(l.start!==undefined)ex.start=l.start;if(l.end!==undefined)ex.end=l.end;if(l.days!==undefined)ex.days=l.days;if(l.price!==undefined)ex.price=l.price;if(l.note!==undefined)ex.note=l.note;}
+      else{LOGOS.push({id:l.id||newId(),name:l.name||'',data:l.data,orig:l.orig,start:l.start,end:l.end,days:l.days,price:l.price,note:l.note});added++;}}});
     persistLogos();renderLogoGallery();refreshClients();draw();
     alert('Wczytano logotypy ✓  (nowych: '+added+', razem w bibliotece: '+LOGOS.length+')');
   }catch(e){alert('Nie udało się wczytać pliku — upewnij się, że to plik wyeksportowany z generatora.');}
@@ -773,13 +773,16 @@ function todayMid(){const d=new Date();d.setHours(0,0,0,0);return d;}
 function parseDate(s){if(!s)return null;const p=String(s).split('-');if(p.length!==3)return null;const d=new Date(+p[0],+p[1]-1,+p[2]);d.setHours(0,0,0,0);return isNaN(d.getTime())?null:d;}
 function fmtPL(d){try{return d.toLocaleDateString('pl-PL',{day:'numeric',month:'short',year:'numeric'});}catch(e){return '';}}
 function escHtml(s){return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
+function isoDate(d){const z=n=>String(n).padStart(2,'0');return d.getFullYear()+'-'+z(d.getMonth()+1)+'-'+z(d.getDate());}
+function todayISO(){return isoDate(new Date());}
+function plusDaysISO(n){const d=new Date();d.setDate(d.getDate()+n);return isoDate(d);}
 function campaign(l){
-  const start=parseDate(l.start);const days=parseInt(l.days,10);
-  if(!start||!days||days<=0)return {set:false};
-  const end=new Date(start.getTime());end.setDate(end.getDate()+days);
+  let end=parseDate(l.end);
+  if(!end&&l.start&&l.days){const s=parseDate(l.start);const d=parseInt(l.days,10);if(s&&d>0){end=new Date(s.getTime());end.setDate(end.getDate()+d);}}
+  if(!end)return {set:false};
   const left=Math.round((end-todayMid())/86400000);
   let status='active';if(left<0)status='expired';else if(left<=3)status='soon';
-  return {set:true,start,end,left,status,days};
+  return {set:true,end,left,status};
 }
 function statusColor(s){return s==='expired'?'#e05555':s==='soon'?'#e0a94e':'#4ea86a';}
 function statusText(c){if(c.status==='expired')return 'WYGASŁA '+Math.abs(c.left)+' dni temu';if(c.left===0)return 'kończy się DZIŚ';if(c.status==='soon')return 'kończy się za '+c.left+' dni';return 'aktywna · jeszcze '+c.left+' dni';}
@@ -801,9 +804,10 @@ function renderClients(){
     top.appendChild(th);top.appendChild(nm);top.appendChild(pb);
     const r2=document.createElement('div');r2.style.cssText="display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end;margin-top:8px";
     const sd=mkInp('date',l.start||'');sd.addEventListener('change',()=>{l.start=sd.value;persistLogos();renderClients();renderAlerts();});
-    const dd=mkInp('number',l.days!=null?l.days:'','dni');dd.min='1';dd.style.width='70px';dd.addEventListener('change',()=>{l.days=dd.value?parseInt(dd.value,10):undefined;persistLogos();renderClients();renderAlerts();});
+    const ed=mkInp('date',l.end||'');ed.addEventListener('change',()=>{l.end=ed.value;persistLogos();renderClients();renderAlerts();});
     const pr=mkInp('text',l.price||'','zł');pr.style.width='76px';pr.addEventListener('input',()=>{l.price=pr.value;persistLogos();});
-    r2.appendChild(fieldWrap('Start',sd));r2.appendChild(fieldWrap('Długość (dni)',dd));r2.appendChild(fieldWrap('Cena',pr));
+    const q30=document.createElement('button');q30.type='button';q30.className='ghost';q30.textContent='📅 30 dni od dziś';q30.style.cssText="padding:7px 10px;font-size:12px;white-space:nowrap";q30.onclick=()=>{l.start=todayISO();l.end=plusDaysISO(30);persistLogos();renderClients();renderAlerts();};
+    r2.appendChild(fieldWrap('Start (opcjonalnie)',sd));r2.appendChild(fieldWrap('Koniec subskrypcji',ed));r2.appendChild(fieldWrap('Cena',pr));r2.appendChild(q30);
     const st=document.createElement('div');st.style.cssText="margin-left:auto;font-size:13px;font-weight:700;text-align:right;color:"+(c.set?statusColor(c.status):'#8a9096');
     st.textContent=c.set?(statusText(c)+' · do '+fmtPL(c.end)):'— ustaw datę i długość';
     r2.appendChild(st);
