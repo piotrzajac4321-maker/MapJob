@@ -35,7 +35,7 @@
 </header>
 
 <div class="wrap">
-  <div style="margin-bottom:12px;display:flex;gap:16px;flex-wrap:wrap"><a class="back" href="bobo-generator.html">← Generator BoboFoto</a><a class="back" href="ciekawostki-rybnika.html">📜 Ciekawostki Rybnika</a><a class="back" href="spotted-anonim.html">💬 Anonimowe wiadomości</a><a class="back" href="spotted-cennik.html">💰 Cennik reklamy</a><a class="back" href="spotted-reklama-firm.html">🏢 Reklama dla firm</a><a class="back" href="spotted-reklama-info.html">📌 Info o reklamie</a></div>
+  <div style="margin-bottom:12px;display:flex;gap:16px;flex-wrap:wrap"><a class="back" href="bobo-generator.html">← Generator BoboFoto</a><a class="back" href="ciekawostki-rybnika.html">📜 Ciekawostki Rybnika</a><a class="back" href="spotted-anonim.html">💬 Anonimowe wiadomości</a><a class="back" href="spotted-cennik.html">💰 Cennik reklamy</a><a class="back" href="spotted-reklama-firm.html">🏢 Reklama dla firm</a><a class="back" href="spotted-reklama-info.html">📌 Info o reklamie</a><a class="back" href="spotted-raport.html">📊 Raport zasięgów</a></div>
 
   <div id="adAlerts" style="display:none"></div>
 
@@ -801,7 +801,8 @@ function renderClients(){
     const im=document.createElement('img');im.src=l.data;im.style.cssText="max-width:100%;max-height:100%;object-fit:contain";th.appendChild(im);
     const nm=mkInp('text',l.name||'','Nazwa firmy');nm.style.flex='1';nm.addEventListener('input',()=>{l.name=nm.value;persistLogos();renderAlerts();});
     const pb=document.createElement('button');pb.type='button';pb.className='ghost';pb.textContent='📄 Zrób post';pb.style.cssText="padding:7px 10px;font-size:12.5px;white-space:nowrap";pb.onclick=()=>makeClientPost(l.id);
-    top.appendChild(th);top.appendChild(nm);top.appendChild(pb);
+    const rp=document.createElement('button');rp.type='button';rp.className='ghost';rp.textContent='📊 Raport';rp.style.cssText="padding:7px 10px;font-size:12.5px;white-space:nowrap";rp.onclick=()=>window.open('spotted-raport.html?c='+encodeURIComponent(l.id),'_blank');
+    top.appendChild(th);top.appendChild(nm);top.appendChild(pb);top.appendChild(rp);
     const r2=document.createElement('div');r2.style.cssText="display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end;margin-top:8px";
     const sd=mkInp('date',l.start||'');sd.addEventListener('change',()=>{l.start=sd.value;persistLogos();renderClients();renderAlerts();});
     const ed=mkInp('date',l.end||'');ed.addEventListener('change',()=>{l.end=ed.value;persistLogos();renderClients();renderAlerts();});
