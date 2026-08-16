@@ -41,7 +41,7 @@
 
   <details class="card" id="clientsCard">
     <summary style="cursor:pointer;color:var(--gold);font-weight:700;font-size:15px;letter-spacing:1px">📋 KLIENCI REKLAMOWI <span id="clientsBadge" style="font-weight:600"></span></summary>
-    <div class="hint" style="margin:8px 0">Wpisz przy każdym logo <b>datę końca subskrypcji</b> (albo kliknij „📅 30 dni od dziś") — sam przypomnę, komu i kiedy się kończy. Kliknij „📄 Zrób post", żeby od razu przygotować post z logo klienta.</div>
+    <div class="hint" style="margin:8px 0">Wpisz przy każdym logo <b>datę końca subskrypcji</b> (albo „📅 30 dni od dziś") — sam przypomnę, kiedy się kończy. W polu <b>Opis reklamy</b> wklej tekst posta klienta i kopiuj go jednym klikiem („📋 Kopiuj opis"). „📄 Zrób post" = gotowy post z jego logo.</div>
     <div id="clientList"></div>
   </details>
 
@@ -86,7 +86,7 @@
       <div style="margin-top:8px;font-size:13px">
         <label>Wgraj logo firmy <span style="color:#8a9096;font-weight:400">(możesz zaznaczyć kilka naraz)</span></label>
         <input type="file" id="logoFile" accept="image/*" multiple style="font-size:12.5px">
-        <div class="hint" style="margin-top:4px">Zapisują się na stałe. <b>Kliknij logo → dodaje je do postu (✓)</b>. Klik ponownie na aktywne → zdejmuje z postu. Możesz dodać wiele firm naraz. <span style="color:#c9a24b">[wersja logo v9 — panel klientów + alerty]</span></div>
+        <div class="hint" style="margin-top:4px">Zapisują się na stałe. <b>Kliknij logo → dodaje je do postu (✓)</b>. Klik ponownie na aktywne → zdejmuje z postu. Możesz dodać wiele firm naraz. <span style="color:#c9a24b">[wersja logo v10 — opis + szybkie kopiowanie]</span></div>
         <label style="margin-top:10px">📚 Zapisane logotypy <span id="logoCount" style="color:var(--gold)"></span></label>
         <div id="logoGallery" style="display:flex;flex-wrap:wrap;gap:8px;margin-top:4px"></div>
         <div class="btns" style="margin:10px 0 0">
@@ -812,8 +812,14 @@ function renderClients(){
     const st=document.createElement('div');st.style.cssText="margin-left:auto;font-size:13px;font-weight:700;text-align:right;color:"+(c.set?statusColor(c.status):'#8a9096');
     st.textContent=c.set?(statusText(c)+' · do '+fmtPL(c.end)):'— ustaw datę i długość';
     r2.appendChild(st);
-    const nt=mkInp('text',l.note||'','Notatka (treść reklamy / kontakt)');nt.style.width='100%';nt.style.marginTop='6px';nt.addEventListener('input',()=>{l.note=nt.value;persistLogos();});
-    row.appendChild(top);row.appendChild(r2);row.appendChild(nt);
+    const nt=document.createElement('textarea');nt.value=l.note||'';nt.placeholder='Opis reklamy — wklej tu tekst posta klienta (do szybkiego skopiowania)';
+    nt.style.cssText="width:100%;margin-top:8px;min-height:66px;padding:9px;border:1px solid var(--line);border-radius:8px;background:#12141a;color:#e8e6df;font-size:13px;font-family:inherit;line-height:1.5;resize:vertical";
+    nt.addEventListener('input',()=>{l.note=nt.value;persistLogos();});
+    const cpRow=document.createElement('div');cpRow.style.cssText="display:flex;gap:8px;margin-top:6px;flex-wrap:wrap";
+    const cp=document.createElement('button');cp.type='button';cp.className='gold';cp.textContent='📋 Kopiuj opis';cp.style.cssText="padding:9px 18px;font-size:13px;border-radius:999px";
+    cp.onclick=()=>{const t=nt.value.trim();if(!t){const o=cp.textContent;cp.textContent='— puste —';setTimeout(()=>cp.textContent=o,900);return;}copyText(t,cp);};
+    cpRow.appendChild(cp);
+    row.appendChild(top);row.appendChild(r2);row.appendChild(nt);row.appendChild(cpRow);
     box.appendChild(row);
   });
 }
@@ -836,6 +842,11 @@ function updateClientsBadge(){
   let t='';if(exp)t+=' 🔴'+exp;if(soon)t+=' 🟡'+soon;bd.textContent=t;
 }
 function refreshClients(){renderClients();renderAlerts();}
+function copyText(t,btn){
+  const done=()=>{if(btn){const o=btn.dataset.o||btn.textContent;btn.dataset.o=o;btn.textContent='✅ Skopiowano!';setTimeout(()=>{btn.textContent=o;},1300);}};
+  const fb=()=>{try{const ta=document.createElement('textarea');ta.value=t;ta.style.position='fixed';ta.style.top='-9999px';document.body.appendChild(ta);ta.focus();ta.select();document.execCommand('copy');ta.remove();done();}catch(e){alert('Skopiuj ręcznie:\n\n'+t);}};
+  if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t).then(done,fb);}else fb();
+}
 function makeClientPost(id){
   const l=LOGOS.find(x=>x.id===id);if(!l)return;
   const cs=_g('count');if(cs)cs.value='1';
