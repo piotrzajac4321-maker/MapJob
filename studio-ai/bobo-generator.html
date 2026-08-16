@@ -1,0 +1,805 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Generator promptów „Bobo radzi" — BoboFoto.pl</title>
+<style>
+  :root{--sage:#7c8a6e;--sage-d:#5f6c54;--cream:#faf7f0;--ink:#33352f;--line:#e6e0d4;--card:#fff;}
+  *{box-sizing:border-box}
+  body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:var(--cream);color:var(--ink);line-height:1.5}
+  header{background:var(--sage);color:#fff;padding:20px 18px;text-align:center}
+  header h1{margin:0 0 4px;font-size:21px}
+  header p{margin:0;opacity:.9;font-size:13px}
+  .wrap{max-width:900px;margin:0 auto;padding:16px}
+  .grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+  @media(max-width:720px){.grid{grid-template-columns:1fr}}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:16px}
+  label{display:block;font-weight:600;font-size:13px;margin:0 0 6px}
+  select,textarea,input[type=text]{width:100%;padding:10px;border:1px solid var(--line);border-radius:10px;font-size:14px;font-family:inherit;background:#fff;color:var(--ink)}
+  textarea{min-height:60px;resize:vertical}
+  .hint{font-size:12px;color:#8a8676;margin-top:4px}
+  .tag{display:inline-block;background:#eef0e8;color:var(--sage-d);border-radius:6px;padding:2px 8px;font-size:11px;font-weight:700;margin-bottom:8px}
+  .out{white-space:pre-wrap;background:#1f211c;color:#e9e7df;border-radius:12px;padding:14px;font-size:12px;font-family:ui-monospace,Menlo,Consolas,monospace;max-height:360px;overflow:auto}
+  button{cursor:pointer;border:none;border-radius:999px;padding:9px 16px;font-size:13px;font-weight:600}
+  .primary{background:var(--sage);color:#fff}.primary:hover{background:var(--sage-d)}
+  .ghost{background:#efe9dc;color:var(--ink)}
+  .toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--ink);color:#fff;padding:12px 20px;border-radius:999px;opacity:0;transition:.25s;pointer-events:none;font-size:14px}
+  .toast.show{opacity:1}
+  .item{border:1px solid var(--line);border-radius:12px;padding:12px;margin-bottom:10px;background:#fff}
+  .item.done{background:#eef3e7;border-color:#cdd9bf}
+  .item.fav{border-color:#e0b3b3;background:#fdf4f4}
+  .cat{display:inline-block;border-radius:6px;padding:1px 8px;font-size:10.5px;font-weight:700;color:#fff;margin-bottom:6px;text-transform:uppercase;letter-spacing:.3px}
+  .item .q{font-size:14px;margin:4px 0;font-weight:600}
+  .item .op{font-size:12.5px;color:#46483f;margin:4px 0 2px}
+  .item .ht{font-size:11.5px;color:#8a8676;margin:2px 0 8px}
+  .actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  .actions button{padding:7px 13px;font-size:12.5px}
+  .icon{background:#efe9dc}
+  .chk{display:flex;align-items:center;gap:5px;font-size:12.5px;font-weight:600;cursor:pointer;user-select:none}
+  .chk input{width:17px;height:17px;accent-color:var(--sage)}
+  .progress{font-size:13px;color:var(--sage-d);font-weight:600;margin-bottom:10px}
+  details{margin-top:8px}summary{cursor:pointer;font-size:13px;color:var(--sage-d);font-weight:600}
+  .filters{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+  .filters button{padding:6px 12px;font-size:12px;background:#efe9dc;color:var(--ink)}
+  .filters button.on{background:var(--sage);color:#fff}
+</style>
+</head>
+<body>
+<header>
+  <h1>🍼 Generator promptów „Bobo radzi"</h1>
+  <p>Biblioteka skryptów · oceniaj, usuwaj, kopiuj. Po usunięciu wskakuje nowy.</p>
+</header>
+
+<div class="wrap">
+  <div class="card" style="background:#eef0e8;text-align:center">
+    <p style="margin:0 0 10px;font-weight:700;font-size:13px;color:var(--sage-d)">SZYBKI DOSTĘP</p>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center">
+      <a href="bobo-quiz.html" style="background:var(--sage);color:#fff;text-decoration:none;font-weight:700;padding:11px 18px;border-radius:999px;font-size:14px">🃏 Karta Pytanie za milion →</a>
+      <a href="spotted-rybnik.html" style="background:#15171c;color:#c9a24b;text-decoration:none;font-weight:700;padding:11px 18px;border-radius:999px;font-size:14px;border:1px solid #c9a24b">📍 Spotted Rybnik →</a>
+      <a href="ciekawostki-rybnika.html" style="background:#15171c;color:#c9a24b;text-decoration:none;font-weight:700;padding:11px 18px;border-radius:999px;font-size:14px;border:1px solid #c9a24b">📜 Ciekawostki Rybnika →</a>
+      <a href="#sec-biblioteka" style="background:#fff;color:var(--ink);text-decoration:none;font-weight:600;padding:11px 18px;border-radius:999px;font-size:14px;border:1px solid var(--line)">📚 Skrypty</a>
+      <a href="#sec-strategia" style="background:#fff;color:var(--ink);text-decoration:none;font-weight:600;padding:11px 18px;border-radius:999px;font-size:14px;border:1px solid var(--line)">📈 Strategia + YT</a>
+      <a href="#sec-social" style="background:#fff;color:var(--ink);text-decoration:none;font-weight:600;padding:11px 18px;border-radius:999px;font-size:14px;border:1px solid var(--line)">📱 TikTok & IG</a>
+      <a href="#sec-dzwieki" style="background:#fff;color:var(--ink);text-decoration:none;font-weight:600;padding:11px 18px;border-radius:999px;font-size:14px;border:1px solid var(--line)">🎵 Dźwięki</a>
+    </div>
+  </div>
+  <div class="card">
+    <span class="tag">USTAWIENIA (działają dla wszystkich)</span>
+    <div class="grid">
+      <div>
+        <label>🎭 Co w tle</label>
+        <select id="gag"></select>
+      </div>
+      <div>
+        <label>👋 Końcówka</label>
+        <select id="outro">
+          <option value="">🎯 Sama puenta (bez CTA) — zalecane</option>
+          <option value="Bobo wie swoje.">Sygnaturka: „Bobo wie swoje."</option>
+          <option value="I to by było na tyle.">Sygnaturka: „I to by było na tyle."</option>
+          <option value="Nie ma za co.">Sygnaturka: „Nie ma za co."</option>
+          <option value="Zaobserwuj mój kanał, żeby niczego nie przegapić!">CTA: Zaobserwuj mój kanał…</option>
+          <option value="Kliknij obserwuj, żeby być na bieżąco!">CTA: Kliknij obserwuj…</option>
+          <option value="Polub i obserwuj… albo Bobo będzie smutne!">CTA: Polub… albo Bobo smutne</option>
+        </select>
+      </div>
+      <div>
+        <label>⏱️ Długość</label>
+        <select id="dur">
+          <option value="auto">Auto (dopasuj do tekstu) — zalecane</option>
+          <option value="8">8 s</option>
+          <option value="10">10 s</option>
+          <option value="14">14 s</option>
+        </select>
+      </div>
+    </div>
+    <div class="row" style="margin-top:12px">
+      <label>🎙️ Mowa Bobo</label>
+      <select id="speech">
+        <option value="veo">🗣️ Mówi w Veo (najlepiej krótkie teksty)</option>
+        <option value="mute">🔇 Bez mowy — głos dodaję w CapCut (do długich/list)</option>
+      </select>
+    </div>
+    <div class="row" style="margin-top:12px">
+      <label>🗣️ Początek „Słuchaj, dorosły!"</label>
+      <select id="intro">
+        <option value="tak">Tak — z hookiem „Słuchaj, dorosły!"</option>
+        <option value="nie">Nie — bez tego początku</option>
+      </select>
+    </div>
+    <div class="row" style="margin-top:12px">
+      <label>🎬 Styl filmu</label>
+      <select id="styl">
+        <option value="standard">Standard (spokojniejszy)</option>
+        <option value="dynamic">Dynamiczny — dużo się dzieje 🔥</option>
+      </select>
+    </div>
+    <div class="hint">👋 Końcówka: domyślnie film kończy się <b>samą puentą</b> (mocniej!). Follow-CTA dawaj tylko co kilka filmów, nie za każdym razem.<br>🎙️ <b>Mowa:</b> Bobo mówi <b>szybko</b>, żeby zmieścić cały tekst (szybkie tempo = lepsze wyniki!). Veo bywa słaby w polskim — przy długich tekstach przełącz na „bez mowy" i dograj głos w CapCut.<br>⚠️ Veo Flash generuje poziomo — pion ustaw w Gemini (proporcje 9:16) albo dotnij w CapCut.</div>
+  </div>
+
+  <div class="card" id="sec-dzwieki">
+    <span class="tag">📈 DŹWIĘKI I TRENDY</span>
+    <details>
+      <summary>🎵 Jak znaleźć trendujący dźwięk (3 kroki)</summary>
+      <div style="font-size:13px;margin-top:8px">
+        <p style="margin:4px 0">1. TikTok → ikona 🔍 / „Odkrywaj" → wpisz <b>trendujące dźwięki</b>.</p>
+        <p style="margin:4px 0">2. Przeglądaj rolki — obok nazwy dźwięku szukaj strzałki <b>📈</b> (= dźwięk rośnie). Zapisz go (przytrzymaj → „Dodaj do ulubionych").</p>
+        <p style="margin:4px 0">3. W CapCut dodaj ten dźwięk pod głos Bobo i <b>ścisz go do ~15–20%</b>, żeby nie zagłuszał kwestii.</p>
+        <p style="margin:6px 0 0;color:#8a8676">💡 Bierz dźwięk, gdy ma ok. <b>10–100 tys. użyć</b> — świeży, ale już sprawdzony. Wrzucaj w ciągu <b>48 h</b> od szczytu trendu.</p>
+      </div>
+    </details>
+    <details>
+      <summary>🔥 Trendy formatów na teraz (czerwiec 2026)</summary>
+      <div style="font-size:13px;margin-top:8px">
+        <p style="margin:4px 0"><b>Rzeczy, do których zawsze wracam</b> — wdzięczność/przywiązanie (świetne pod sprzedaż).</p>
+        <p style="margin:4px 0"><b>5 codziennych horrorów</b> — zwykłe momenty jak z horroru (mocny humor).</p>
+        <p style="margin:4px 0"><b>Nastrój przed / po</b> — mikro-historia zmiany nastroju w rytm dźwięku.</p>
+        <p style="margin:4px 0"><b>Glitch / zamrożona klatka</b> — w CapCut zatrzymaj kadr na śmiesznej minie w „zacięciu" dźwięku.</p>
+        <p style="margin:6px 0 0;color:#8a8676">👉 Gotowe teksty pod te formaty znajdziesz w kategorii <b>Trend</b> poniżej.</p>
+      </div>
+    </details>
+  </div>
+
+  <div class="card" id="sec-strategia">
+    <span class="tag">📈 STRATEGIA + YOUTUBE SEO</span>
+    <details>
+      <summary>📺 YouTube — ustawienia kanału (kopiuj)</summary>
+      <div style="font-size:13px;margin-top:8px">
+        <p style="margin:6px 0 2px"><b>Słowa kluczowe kanału</b> (Studio → Ustawienia → Kanał):</p>
+        <div id="ytkw" style="background:#f3f1e8;border:1px solid var(--line);border-radius:8px;padding:8px;font-size:12.5px">bobo radzi, gadające dziecko, śmieszne dziecko, humor dla mam, porady dla mam, macierzyństwo, mama, niemowlak, noworodek, rodzicielstwo, życie z dzieckiem, pierwsze miesiące z dzieckiem, polska mama, dla rodziców, bobofoto</div>
+        <button class="ghost" style="margin:6px 0;padding:7px 13px;font-size:12.5px" onclick="copyTxt('ytkw')">📋 Kopiuj słowa kluczowe</button>
+        <p style="margin:10px 0 2px"><b>Opis kanału</b> (Dostosuj kanał → Informacje):</p>
+        <div id="ytdesc" style="background:#f3f1e8;border:1px solid var(--line);border-radius:8px;padding:8px;font-size:12.5px">Bobo radzi 🍼 Codzienna dawka uśmiechu i mądrości prosto od bobasa — humor, porady i ciepłe chwile dla mam i całych rodzin. Subskrybuj, żeby nic nie przegapić! 👶</div>
+        <button class="ghost" style="margin:6px 0;padding:7px 13px;font-size:12.5px" onclick="copyTxt('ytdesc')">📋 Kopiuj opis kanału</button>
+        <p class="hint" style="margin-top:4px">Ustaw też kraj: Polska, język: polski. Przy każdym filmie tytuł/opis/tagi → przycisk „📺 YT" niżej.</p>
+      </div>
+    </details>
+    <details>
+      <summary>🎯 Strategia w skrócie (faza 1: zasięgi)</summary>
+      <div style="font-size:13px;margin-top:8px;line-height:1.7">
+        <p style="margin:4px 0"><b>Cel teraz:</b> zasięgi i obserwacje. Sprzedaż później. Bobo = maskotka, nie reklama.</p>
+        <p style="margin:4px 0"><b>Dla kogo:</b> mamy 25–38, ciężarne, młodzi rodzice, babcie. Oglądają wieczorem i przy karmieniach.</p>
+        <p style="margin:4px 0"><b>Filary (na tydzień):</b> 40% humor (Roast/Listy/Kawały/Milionery) · 25% Dla mam · 15% wzruszające · 10% trendy · 10% marka.</p>
+        <p style="margin:4px 0"><b>Plan:</b> 2–3 filmy/dzień przez 30 dni. Pory ~9:00 humor, ~14:00 lista/quiz, ~20:00 wzruszające.</p>
+        <p style="margin:4px 0"><b>Wzrost:</b> giveaway co 3–4 tyg. · odpisuj w 1. godzinie (wideo-odpowiedzi) · duety · trendujące dźwięki · ten sam film na TikTok+Reels+Shorts+FB.</p>
+        <p style="margin:4px 0"><b>Technika:</b> hook w 1,5 s · szybkie tempo mowy · napisy wypalone · loop · pion 9:16.</p>
+        <p style="margin:4px 0"><b>Mierz:</b> obserwacje, % obejrzeń, udostępnienia/zapisy, komentarze → rób więcej tego, co działa.</p>
+      </div>
+    </details>
+  </div>
+
+  <div class="card" id="sec-social">
+    <span class="tag">📱 TIKTOK & INSTAGRAM — OPIS I HASHTAGI</span>
+    <p class="hint" style="margin-top:0">Dziś <b>opis ze słowami kluczowymi działa lepiej niż same hashtagi</b> — TikTok i IG to wyszukiwarki. Wpleć w pierwsze zdanie frazy, których szukają mamy.</p>
+    <details>
+      <summary>🔑 Frazy kluczowe (wpleć w opis)</summary>
+      <div style="margin-top:8px">
+        <div id="seoKw" style="background:#f3f1e8;border:1px solid var(--line);border-radius:8px;padding:8px;font-size:12.5px">porady dla mam, jak przetrwać z niemowlakiem, śmieszny bobas, mama noworodka, pierwsze miesiące z dzieckiem, rozwój dziecka, humor rodzicielski, życie z dzieckiem, zmęczona mama, mądrości dziecka</div>
+        <button class="ghost" style="margin-top:6px;padding:7px 13px;font-size:12.5px" onclick="copyTxt('seoKw')">📋 Kopiuj frazy</button>
+      </div>
+    </details>
+    <details>
+      <summary>🎵 TikTok — gotowy opis + hashtagi</summary>
+      <div style="margin-top:8px">
+        <div id="ttDesc" style="background:#f3f1e8;border:1px solid var(--line);border-radius:8px;padding:8px;font-size:12.5px">Bobo radzi 🍼 śmieszne porady dla mam i zmęczonych rodziców — codzienna dawka humoru o życiu z niemowlakiem 👶 Obserwuj po więcej!
+
+#dlaciebie #fyp #mama #niemowlak #dziecko #rodzicielstwo #polskamama #poradydlamam</div>
+        <button class="ghost" style="margin-top:6px;padding:7px 13px;font-size:12.5px" onclick="copyTxt('ttDesc')">📋 Kopiuj (TikTok)</button>
+        <p class="hint" style="margin-top:4px">TikTok: 5–8 hashtagów wystarczy. Najważniejsza jest pierwsza linia opisu z frazą.</p>
+      </div>
+    </details>
+    <details>
+      <summary>📸 Instagram — gotowy opis + hashtagi</summary>
+      <div style="margin-top:8px">
+        <div id="igDesc" style="background:#f3f1e8;border:1px solid var(--line);border-radius:8px;padding:8px;font-size:12.5px">Bobo radzi 🍼 humor i mądrości prosto od bobasa dla mam noworodków i małych dzieci. Pierwsze miesiące z dzieckiem bywają ciężkie — więc codziennie dajemy Wam uśmiech 👶 Zapisz i wyślij koleżance-mamie!
+
+#mama #macierzyństwo #niemowlę #noworodek #dziecko #rodzina #polskamama #instamama #mamamałegodziecka #świeżoupieczonamama #rodzicielstwo #maluch #mamasynka #mamacórki #reels</div>
+        <button class="ghost" style="margin-top:6px;padding:7px 13px;font-size:12.5px" onclick="copyTxt('igDesc')">📋 Kopiuj (Instagram)</button>
+        <p class="hint" style="margin-top:4px">Instagram: możesz dać więcej hashtagów (10–20). Pierwsze zdanie opisu = fraza kluczowa.</p>
+      </div>
+    </details>
+  </div>
+
+  <div class="card">
+    <span class="tag">✅ CHECKLISTA VIRALOWA</span>
+    <details>
+      <summary>Sprawdź przed publikacją (klikalne ✓)</summary>
+      <div id="viralCheck" style="font-size:13px;margin-top:8px"></div>
+      <p class="hint" id="viralScore" style="margin-top:8px"></p>
+      <button class="ghost" onclick="resetCheck()" style="margin-top:4px;padding:6px 12px">Wyczyść ✓</button>
+    </details>
+  </div>
+
+  <div class="card">
+    <span class="tag">✍️ WŁASNY TEKST</span>
+    <textarea id="customText" placeholder="np. Nie porównuj się z innymi. Każdy ma swoje tempo."></textarea>
+    <div class="actions" style="margin-top:10px">
+      <button class="primary" onclick="copyCustom()">📋 Kopiuj prompt z moim tekstem</button>
+    </div>
+    <details><summary>Podgląd promptu</summary><div class="out" id="customOut" style="margin-top:8px"></div></details>
+  </div>
+
+  <div class="card" id="sec-biblioteka">
+    <span class="tag">📚 BIBLIOTEKA SKRYPTÓW</span>
+    <p style="margin:4px 0 10px;font-size:13px">Oceń (❤️ = ulubiony, na górze), usuń 🗑️ (wskoczy nowy z puli) i kopiuj. „wrzucone ✅" odhaczasz po publikacji.</p>
+    <div class="actions" style="margin-bottom:12px">
+      <button class="primary" onclick="setOfDay()">🎲 Zestaw dnia (3 filmy)</button>
+    </div>
+    <div id="setBox"></div>
+    <div class="filters" id="filters"></div>
+    <div class="progress" id="progress"></div>
+    <div id="lib"></div>
+    <button class="ghost" onclick="resetAll()" style="margin-top:6px">♻️ Przywróć usunięte i wyzeruj</button>
+  </div>
+</div>
+
+<div class="toast" id="toast">Skopiowano! ✓</div>
+
+<script>
+const CHARACTER = `CHARACTER "Bobo": an adorable friendly cartoon baby mascot — a clearly fictional, wholesome animated character (stylized 3D). Chubby cheerful proportions, big round head, large expressive dark-brown eyes with bright catchlights, full rosy cheeks, small button nose, one little curl of light-brown hair on top, soft double chin, warm happy smile. Polished stylized shading, cute and family-friendly. Wearing a cozy cream ribbed onesie.`;
+const SCENE = `SCENE: a bright airy beige-and-cream cartoon nursery — soft cream rug, a cozy cushion, a big window with warm soft daylight on the left, a framed nursery poster on the wall, a blurred shelf with small plain decor. Tall vertical 9:16 portrait framing, a comfortable medium-wide shot with Bobo sitting happily, centred in the lower-middle, with clear empty open space in the frame (behind and to one side) left free for the single background character.`;
+const VOICE = `VOICE: native fluent Polish, a cute high-pitched toddler voice, soft with a slight lisp but every word crisp and fully articulated. Lively, energetic and FAST on the opening line, then a touch calmer but still upbeat for the advice, warm and friendly on the closing line. Correct natural Polish pronunciation; finish every word; no mumbling, no cut-off words, no repeated words, no English accent. Natural breaths and light playful intonation.`;
+const TECH = `CAMERA: fast whip-pan into a snappy stop, then static eye-level with a very subtle slow push-in, 35mm lens look, gentle cinematic bokeh.
+LIGHTING: warm soft daylight from the left window, golden cozy tone, soft rim light, bright.
+AUDIO: a quick comedic "ding!" chime and a playful whoosh at the very start, then soft warm ambient nursery tone + light gentle background music low in the mix, a small cheerful cue at the end, no other voices.
+MOOD: charming, wise, slightly funny, attention-grabbing, heart-melting, premium, clean.`;
+const NEG = `Negative: landscape, horizontal, 16:9, widescreen, square, black bars, letterbox, multiple background characters, second mascot, extra gags, on-screen text, captions, subtitles, garbled text, fake logo, watermark, dark, low quality, English accent, mispronounced Polish, mumbling, robotic voice.`;
+
+const GAGS = [
+  {pl:"Gruby zrzędliwy kot na deskorolce", en:"a chubby grumpy cartoon cat slowly slides across on a tiny skateboard"},
+  {pl:"Gruby kot robi jogę do góry nogami", en:"a chubby cat does slow upside-down yoga against the wall"},
+  {pl:"Gruby kot robi moonwalk w tył", en:"a chubby cat moonwalks backwards in slow motion"},
+  {pl:"Mops w okularach na robocie sprzątającym", en:"a tiny pug in sunglasses slowly rides a robot vacuum like a surfboard"},
+  {pl:"Kaczka z malutkim parasolem", en:"a small duck waddles across carrying a tiny umbrella"},
+  {pl:"Śpiący leniwiec na firance", en:"a sleepy sloth very slowly climbs up the curtain"},
+  {pl:"Chomik podnosi malutki hantel", en:"a hamster slowly lifts a tiny dumbbell, struggling"},
+  {pl:"Corgi kroczy jak po wybiegu", en:"a corgi slowly does a dramatic catwalk strut"},
+  {pl:"Papuga wisi głową w dół na lampie", en:"a parrot slowly hangs upside-down from the lamp, swinging"},
+  {pl:"Żółw w pelerynie bohatera", en:"a turtle slowly speed-walks with a tiny hero cape"},
+  {pl:"Rządek gumowych kaczek maszeruje", en:"a line of rubber ducks slowly marches across the floor"},
+  {pl:"Robot sprzątający kręci się w kółko", en:"a small robot vacuum slowly spins in confused circles"},
+  {pl:"Nakręcany dinozaur tupie", en:"a wind-up toy dinosaur slowly stomps across in slow motion"},
+  {pl:"Balon-piesek do góry nogami", en:"a dog-shaped balloon slowly drifts past upside down"},
+  {pl:"Malutki astronauta przepływa", en:"a tiny astronaut floats slowly across the background"},
+  {pl:"Myszka tańczy pod kulą disco", en:"a mouse slowly does a single disco dance move under a tiny disco ball"},
+  {pl:"Roślina odwraca się do kamery", en:"a potted plant slowly turns to watch the camera"},
+  {pl:"Złota rybka w okularach", en:"a goldfish in a bowl slowly does laps wearing tiny sunglasses"}
+];
+
+const CATS = {
+  m:{name:"Motywacja",col:"#c97c4a",close:"Co dziś zrobisz? 💬",ht:"#motywacja #rozwój #mindset"},
+  h:{name:"Humor",col:"#a45db0",close:"Otaguj kogoś, kto to zna 😏",ht:"#humor #rodzicielstwo #śmieszne"},
+  s:{name:"Spokój",col:"#5a9aa8",close:"Weź dziś oddech 🧘",ht:"#spokój #selfcare #stres"},
+  e:{name:"Emocje",col:"#cc6b86",close:"❤️",ht:"#emocje #zdrowiepsychiczne #uczucia"},
+  r:{name:"Relacje",col:"#cf5a5a",close:"Otaguj tę osobę 👇",ht:"#rodzina #relacje #miłość"},
+  w:{name:"Wdzięczność",col:"#c9a247",close:"Doceniaj małe rzeczy 💛",ht:"#wdzięczność #szczęście #cytaty"},
+  a:{name:"Mądrość",col:"#7c8a6e",close:"Zapisz sobie 🤍",ht:"#poradyzyciowe #cytaty #rozwójosobisty"},
+  k:{name:"Kawał",col:"#e0913c",close:"Śmieszne? Otaguj kogoś 😂",ht:"#kawał #żart #humor #śmieszne"},
+  x:{name:"Roast",col:"#b03a3a",close:"Powiedz szczerze — trafione? 😬",ht:"#humor #rodzice #relatable #śmieszne"},
+  o:{name:"Okazje",col:"#2f9e8f",close:"Otaguj kogoś na tę okazję 🎉",ht:"#święta #rodzina #sezon"},
+  d:{name:"Trend",col:"#5b6cff",close:"Zrób swoją wersję 🔥",ht:"#trend #viral #fyp #relatable"},
+  f:{name:"Dla mam",col:"#a0628f",close:"Napisz szczerze w komentarzu 💬",ht:"#mama #macierzyństwo #motywacja #refleksja #rozwój"},
+  l:{name:"Listy 😂",col:"#d2691e",close:"Która najbardziej Twoja? 💬",ht:"#humor #rodzicielstwo #relatable"},
+  hr:{name:"Horrory 😱",col:"#7a3b3b",close:"Który najgorszy? 💬",ht:"#humor #rodzicielstwo #relatable"},
+  sc:{name:"Scenki 🎭",col:"#6a8caf",close:"Otaguj mamę, która to zna 😂",ht:"#humor #rodzicielstwo #relatable"},
+  g:{name:"Listy ❤️",col:"#c98aa8",close:"Zapisz, jeśli też tak masz 💛",ht:"#mama #macierzyństwo #wzruszające"},
+  tt:{name:"Tato radzi",col:"#3d6e8a",close:"Otaguj tatę 👨",ht:"#tata #rodzicielstwo #rodzina"},
+  p:{name:"Kamienie milowe",col:"#4a9d7f",close:"Pamiętasz ten moment? 💬",ht:"#niemowlę #rozwójdziecka #pierwszyraz"},
+  q:{name:"Pytanie za milion",col:"#2d6cdf",close:"A, B, C czy D? Pisz w komentarzu 💬",ht:"#humor #rodzicielstwo #zgadnij"},
+  c:{name:"BoboFoto",col:"#33352f",close:"👉 bobofoto.pl",ht:"#sesjanoworodkowa #noworodek #zdjęcianoworodka #pamiątka"}
+};
+const BASE_HT="#fyp #dlaciebie #mama #dziecko #rodzina #macierzyństwo #rodzicielstwo #niemowlę #noworodek #maluch #polskamama #instamama";
+
+/* DODATEK: napisy-hooki (ekranowy tekst na start, INNY niż głos) wg kategorii */
+const HOOKS={
+  m:["Nikt Ci tego nie powie","Obejrzyj, zanim się poddasz","To zmieni Twój dzień","Czytaj, jeśli masz dość"],
+  h:["Powiedz, że to nie Ty 😭","Nie tylko u Ciebie tak jest","Każda mama to zna","Otaguj, kto musi to zobaczyć"],
+  s:["Mamo, to dla Ciebie","Przeczytaj, gdy masz dość","Zatrzymaj się na 8 sekund","Nikt o tym nie mówi"],
+  e:["Nie oglądaj bez chusteczek","To Cię ruszy","Poczujesz to"],
+  r:["Wyślij to tej jednej osobie","Pomyśl, do kogo zadzwonisz","Otaguj ją 👇"],
+  w:["Tego dziś potrzebujesz","Przeczytaj, zanim zaśniesz","Doceń to, zanim minie"],
+  a:["Zapisz, zanim zniknie","Mądrość, którą ignorujesz","Nikt Ci tego nie powiedział"],
+  k:["Nie pokazuj mężowi 😂","Ostrzegam: zaśmiejesz się","Czekaj na puentę 😭"],
+  x:["Powiedz, że kłamię 😬","Zaboli, ale to prawda","To jesteś Ty, przyznaj"],
+  o:["Zapisz na tę okazję","Idealne na dziś","Otaguj kogoś 🎉"],
+  d:["Wszyscy to robią 🔥","Twój ruch","Zrób swoją wersję"],
+  f:["Mamo, to musisz usłyszeć","Jeśli jesteś zmęczona — zatrzymaj się","Nikt Ci tego nie mówi, a powinien","Przeczytaj, zanim znów się obwinisz"],
+  g:["Nie oglądaj bez chusteczek","Zapisz, póki jest mały","To mija szybciej, niż myślisz"],
+  tt:["Otaguj tatę 👨","Tato, to do Ciebie","Każdy tata to zna"],
+  p:["Za rok tego nie cofniesz","To mija w sekundę","Zatrzymaj to, póki możesz"],
+  q:["Tylko 1 na 10 zgadnie 🤔","Komentuj A, B, C czy D 👇","Pytanie za milion!"],
+  hr:["Nie tylko u Ciebie 😅","Każda mama to zna","Który najgorszy? 👇"],
+  sc:["Każda mama to zna 😂","Poczekaj na koniec 😭","To jesteś Ty?"],
+  c:["Za rok tego nie cofniesz","Nie przegap tej chwili"]
+};
+function pickHook(c){const a=HOOKS[c]||HOOKS.a;return a[Math.floor(Math.random()*a.length)];}
+
+const POOL = [
+  {c:"m",t:"Czekasz na idealny moment? Ja nie czekałem, żeby się urodzić. Po prostu przyszedłem."},
+  {c:"m",t:"Upadłem dziś czterdzieści razy. Wstałem czterdzieści jeden. Tyle wystarczy."},
+  {c:"m",t:"Nie umiesz? Ja wczoraj nie umiałem nic. Dziś umiem trochę więcej."},
+  {c:"m",t:"Każdy ekspert był kiedyś leżącym noworodkiem. Daj sobie czas."},
+  {c:"m",t:"Mały krok to wciąż krok. A ja nawet jeszcze nie chodzę."},
+  {c:"f",t:"Boisz się porażki? Ja przewracam się publicznie codziennie i nikt się nie śmieje. A Ty ile razy rezygnujesz, zanim w ogóle spróbujesz?"},
+  {c:"m",t:"Marzysz po cichu? Ja krzyczę o swoich potrzebach na cały dom. I działa."},
+  {c:"m",t:"Nie poddawaj się po pierwszej próbie. Ja uczę się jednej rzeczy tygodniami."},
+  {c:"m",t:"Zacznij dziś, choćby na chwilę. Jutro będziesz o krok dalej."},
+  {c:"m",t:"Porównujesz swój start z czyjąś metą? Każdy zaczyna od leżenia."},
+  {c:"m",t:"Nie czekaj na pozwolenie. Ja po prostu zacząłem rosnąć i nikt mnie nie pytał."},
+  {c:"h",t:"Myślisz, że to ty mnie wychowujesz? Jeden płacz w nocy i biegniesz. Kto tu rządzi?"},
+  {c:"h",t:"Robisz mi tysiąc zdjęć dziennie. Rozumiem. Też bym się sobą zachwycał."},
+  {c:"h",t:"Wmawiasz sobie, że dziecko śpi smacznie? Ja budzę się osiem razy. Tata to najlepszy przykład — oznaczcie go 😂"},
+  {c:"h",t:"Wydałeś fortunę na zabawki, a ja bawię się pudełkiem. Pomyśl o tym."},
+  {c:"h",t:"Negocjujesz w pracy? Ja wynegocjowałem nocne karmienie samym płaczem."},
+  {c:"h",t:"Mówisz, że jesteś zmęczony? Uroczo. Ja dopiero uczę się trzymać głowę."},
+  {c:"h",t:"Masz zły dzień? Ja zgubiłem smoczek. Pogadajmy o prawdziwych problemach."},
+  {c:"h",t:"Dieta? Ja jem co dwie godziny i mam idealną figurę. Pozdrawiam."},
+  {c:"h",t:"Wiecznie nie masz czasu? Ja całymi dniami patrzę w sufit i też jestem zajęty."},
+  {c:"h",t:"Stresujesz się opinią innych? Ja siedzę w pielusze i mam to całkowicie gdzieś."},
+  {c:"s",t:"Czujesz się winny, że odpoczywasz? Ja śpię szesnaście godzin i wyglądam świetnie."},
+  {c:"s",t:"Masz sto problemów naraz? Ja mam jeden: głodny albo nie. Uprość sobie życie."},
+  {c:"s",t:"Nie zjadłeś dziś spokojnie? Ja robię z posiłku półgodzinne wydarzenie. Zwolnij."},
+  {c:"s",t:"Drzemka to nie lenistwo. To restart. Ja robię trzy dziennie."},
+  {c:"s",t:"Martwisz się jutrem? Ja nie wiem nawet, co było wczoraj. I jest mi dobrze."},
+  {c:"s",t:"Złość Cię zżera? Wykrzycz to i idź dalej. Mnie zajmuje to pięć minut."},
+  {c:"s",t:"Spiesz się wolno. Ja na jeden ząbek czekam miesiącami i nie panikuję."},
+  {c:"s",t:"Wszystko Cię irytuje? Może po prostu jesteś głodny. Na mnie zawsze działa."},
+  {c:"e",t:"Chce ci się płakać? To płacz. Stłumione emocje nie znikają."},
+  {c:"e",t:"Nie udawaj, że wszystko gra. Ja jak płaczę, to cała ulica wie."},
+  {c:"e",t:"Czujesz za dużo? To znaczy, że żyjesz. Ja czuję wszystko na maksa."},
+  {c:"e",t:"Nie wstydź się łez. Ja płaczę i pięć minut później znów się śmieję."},
+  {c:"r",t:"Zadzwoń do mamy. Ja płaczę i przybiega w sekundę. Ty masz telefon."},
+  {c:"r",t:"Przytul kogoś dziś. Mnie przytulanie rozwiązuje dosłownie każdy problem."},
+  {c:"r",t:"Nie umiesz prosić o pomoc? Ja krzyczę i nie wstydzę się ani trochę."},
+  {c:"r",t:"Chcesz, żeby Cię kochali bez powodu? Sekret: po prostu bądź sobą."},
+  {c:"r",t:"Tęsknisz? Powiedz to. Ja robię to, gdy tylko mama wyjdzie z pokoju."},
+  {c:"r",t:"Otaczaj się ludźmi, przy których możesz być sobą. Jak ja przy rodzicach."},
+  {c:"w",t:"Jestem najbogatszy na świecie. Nie mam nic i nic mi nie trzeba."},
+  {c:"w",t:"Szukasz wielkiego szczęścia? Mnie cieszy jedna bańka mydlana."},
+  {c:"w",t:"Masz ciepłe łóżko i kogoś, kto Cię kocha? To więcej, niż myślisz."},
+  {c:"w",t:"Gonisz za rzeczami? Ja mam grzechotkę i jestem w pełni szczęśliwy."},
+  {c:"w",t:"Doceniaj drobiazgi. Ja odkryłem własną stopę i był to najlepszy dzień."},
+  {c:"w",t:"Zatrzymaj się i popatrz. Ja godzinami wpatruję się w zwykłą lampę."},
+  {c:"a",t:"Nie porównuj się z innymi. Kolega z wózka już siedzi, ja leżę. I co z tego."},
+  {c:"a",t:"Każdy ma swoje tempo. Ja nauczę się chodzić, gdy będę gotowy. Ty też."},
+  {c:"a",t:"Bądź dla siebie cierpliwy. Próbowałem chwycić zabawkę osiemnaście razy."},
+  {c:"a",t:"Żyj teraz. Ja nie znam słowa później i świetnie sobie radzę."},
+  {c:"a",t:"Śmiej się bez powodu. Ja chichoczę z bańki, z miny taty, z niczego."},
+  {c:"a",t:"Mów, co czujesz. Ja nie umiem kłamać i moje życie jest prostsze."},
+  {c:"a",t:"Ciekawość to siła. Ja wkładam wszystko do buzi, żeby zrozumieć świat."},
+  {c:"a",t:"Nie bój się być początkującym. Ja jestem nim w każdej dziedzinie."},
+  {c:"a",t:"Najpierw raczkuj, potem biegnij. Pomijanie kroków się nie opłaca."},
+  {c:"a",t:"Odpuść kontrolę. Ja nie kontroluję niczego i jakoś wszystko działa."},
+  {c:"h",t:"Płaczę bez powodu o trzeciej w nocy. Ty nazywasz to kryzysem. Ja to nazywam wtorek."},
+  {c:"h",t:"Mama mówi, że jestem aniołkiem. Tata widział, co robię o czwartej rano. Prawda leży pośrodku."},
+  {c:"h",t:"Nauczyłem się sztuczki: płaczę, dostaję jedzenie. Polecam w każdej sytuacji."},
+  {c:"h",t:"Babcia daje mi wszystko, na co rodzice nie pozwalają. Babcie znają życie."},
+  {c:"h",t:"Ludzie płacą za spa. Ja dostaję masaż, kąpiel i drzemkę za darmo. Kto tu wygrywa?"},
+  {c:"h",t:"Mówisz, że nic nie robię cały dzień? Rosną mi zęby. Ucz się szanować."},
+  {c:"h",t:"Nie lubię warzyw. Mam pół roku i już mam zasady."},
+  {c:"h",t:"Tata myślał, że szybko przewija. Zrobiłem niespodziankę. Teraz wie."},
+  {c:"h",t:"Założyłaś mi piękną stylizację. Pobrudziłem ją w trzy minuty. Sztuka jest ulotna."},
+  {c:"h",t:"Wszyscy robią do mnie aguuu. Nie rozumiem ani słowa, ale kiwam głową grzecznie."},
+  {c:"h",t:"Mam dwa tryby: aniołek i syrena alarmowa. Przełączam bez ostrzeżenia."},
+  {c:"h",t:"Mówisz, że masz korek w pracy? Ja utknąłem na dywanie i nie umiem się obrócić."},
+  {c:"e",t:"Pewnego dnia przestanę się mieścić w Twoich ramionach. Przytul mnie dziś dłużej."},
+  {c:"e",t:"Nie będę mały na zawsze. Zostaw telefon na chwilę i po prostu popatrz."},
+  {c:"e",t:"Wiem, że jesteś zmęczona, mamo. Ale dla mnie jesteś całym światem."},
+  {c:"k",t:"Wiesz, czemu noworodki są takie mądre? Całą noc ćwiczą… płacz!"},
+  {c:"k",t:"Dlaczego jestem szefem w domu? Bo mam najgłośniejszy głos na każdym zebraniu o trzeciej w nocy."},
+  {c:"k",t:"Co robi bobas na siłowni? Podnosi mamę z kanapy o trzeciej w nocy. Codziennie."},
+  {c:"k",t:"Jaki jest mój ulubiony gatunek muzyki? Brzdąc and roll!"},
+  {c:"k",t:"Czemu nie opowiadam długich kawałów? Mam bardzo krótką drzemkę uwagi."},
+  {c:"k",t:"Wiesz, czemu zawsze wygrywam w chowanego? Płaczę, zanim ktokolwiek zdąży się schować."},
+  {c:"k",t:"Co łączy mnie i Wi-Fi? Jak znikam na chwilę, w całym domu panika."},
+  {c:"k",t:"Dlaczego jestem najlepszym budzikiem? Bo nie mam przycisku drzemki."},
+  {c:"k",t:"Czemu nie boję się żadnego szefa? Sam rządzę firmą o nazwie Dom, całą dobę."},
+  {c:"k",t:"Pielucha codziennie powtarza, że na mnie liczy. I nigdy się nie zawodzi."},
+  {c:"x",t:"Kupiłeś mi pięćdziesiąt zabawek. Bawię się kartonem. Kto tu nie umie zarządzać budżetem?"},
+  {c:"x",t:"Mówisz, że dużo płaczę. Słyszałeś siebie przy składaniu wózka?"},
+  {c:"x",t:"Obiecałeś, że dziecko nie zmieni Twojego życia. Spójrz na siebie o szóstej rano."},
+  {c:"x",t:"Robisz mi zdjęcie do każdego posiłku. To ja tu jestem influencerem, nie ty."},
+  {c:"x",t:"Mówisz: zaraz idziemy spać. Oboje wiemy, że to nieprawda."},
+  {c:"x",t:"Masz aplikację, która liczy moje drzemki. A swój sen liczysz na palcach jednej ręki."},
+  {c:"x",t:"Narzekasz na bałagan. To Ty kupiłeś te wszystkie grzechotki."},
+  {c:"x",t:"Mówisz do mnie jak do dorosłego, a potem robisz aguuu. Zdecyduj się."},
+  {c:"o",t:"Pierwsza Gwiazdka? I tak prześpię najważniejszy moment. Taka tradycja."},
+  {c:"o",t:"Mówią, że Mikołaj patrzy, czy jestem grzeczny. Mikołaju, mamy do pogadania."},
+  {c:"o",t:"Postanowienie noworoczne? Spać dłużej niż cztery godziny. Ambitnie."},
+  {c:"o",t:"Pierwsze lato. Plan: leżeć w cieniu i jeść. Czyli jak zawsze."},
+  {c:"o",t:"Mamo, nie umiem jeszcze mówić. Ale gdybym umiał, powiedziałbym: dziękuję."},
+  {c:"o",t:"Dziś moje święto? U mnie każdy dzień jest moje święto. Ale i tak dziękuję."},
+  {c:"o",t:"Słońce wyszło, więc i ja wyjdę… jak tylko skończę drzemkę."},
+  {c:"o",t:"Mówią, że zajączek chowa jajka. Ja chowam smoczek i nikt go nie znajdzie."},
+  {c:"d",t:"Rzeczy, do których zawsze wracam: ramiona mamy, ciepłe mleko i mój ulubiony koc. Doceniaj swoje."},
+  {c:"d",t:"Pięć horrorów z życia bobasa: pusta butelka, zgubiony smoczek, obcinanie paznokci, zimna chusteczka i mama wychodząca z pokoju."},
+  {c:"d",t:"Mój nastrój, zanim dostanę jeść, i pięć sekund po. To samo dziecko, dwa różne światy."},
+  {c:"d",t:"Rzeczy, których nie rozumiem, ale akceptuję: skarpetki, drzemki w dzień i czemu nie wolno mi zjeść telefonu."},
+  {c:"d",t:"Trzy rzeczy, na które zawsze mam czas: jeść, spać i psuć wam plany. Klasyka."},
+  {c:"f",t:"Ja uczę się chodzić, choć codziennie upadam. A Ty kiedy ostatnio zrobiłaś coś, czego się boisz?"},
+  {c:"f",t:"Ja nie wstydzę się prosić o pomoc. A Ty dlaczego próbujesz udźwignąć wszystko sama?"},
+  {c:"f",t:"Ja płaczę i już mi lżej. A Ty jak dawno pozwoliłaś sobie odpocząć bez wyrzutów?"},
+  {c:"f",t:"Cieszę się każdą bańką mydlaną. A Ty kiedy ostatnio cieszyłaś się czymś małym?"},
+  {c:"f",t:"Ja próbuję, aż mi wyjdzie. A Ty ile marzeń odłożyłaś na kiedyś?"},
+  {c:"f",t:"Dla mnie jesteś całym światem, mamo. A Ty pamiętasz, jak bardzo jesteś ważna?"},
+  {c:"f",t:"Ja nie porównuję się z nikim. A Ty komu pozwalasz oceniać Twoje macierzyństwo?"},
+  {c:"f",t:"Ja odpoczywam bez poczucia winy. A Ty kiedy ostatnio zadbałaś o siebie?"},
+  {c:"f",t:"Każdego dnia uczę się czegoś nowego. A Ty za co się dziś weźmiesz?"},
+  {c:"f",t:"Ja uczę się każdego dnia od zera i się nie wstydzę. A Ty czemu wymagasz od siebie, żeby od razu być idealną mamą?"},
+  {c:"f",t:"Ja nie pamiętam wczorajszych potknięć. A Ty jak długo jeszcze będziesz wracać do swoich błędów?"},
+  {c:"f",t:"Ja raczkuję w swoim tempie. A Ty czemu porównujesz się do mam z internetu?"},
+  {c:"f",t:"Ja śpię, gdy jestem zmęczony, i nikomu się nie tłumaczę. A Ty komu musisz się tłumaczyć z odpoczynku?"},
+  {c:"f",t:"Mama zawsze przychodzi, gdy płaczę. A Ty kto przychodzi, gdy to Ty potrzebujesz wsparcia?"},
+  {c:"f",t:"Ja widzę w Tobie bohaterkę. A Ty kiedy ostatnio powiedziałaś sobie, że jesteś dobrą mamą?"},
+  {c:"f",t:"Ja rosnę, nawet gdy tego nie widać. A Ty ile zrobiłaś rzeczy, których w ogóle nie doceniłaś?"},
+  {c:"f",t:"Ja próbuję, płaczę i próbuję dalej. A Ty co byś zrobiła, gdybyś wiedziała, że się uda?"},
+  {c:"f",t:"Ja nie znam słowa później. A Ty na kiedy odkładasz to, co dla Ciebie ważne?"},
+  {c:"f",t:"Ja cieszę się Twoją obecnością, nie prezentami. A Ty pamiętasz, że dziecku wystarczysz Ty sama?"},
+  {c:"f",t:"Ja nie udaję, że jest dobrze, gdy nie jest. A Ty jak często powtarzasz, że dajesz radę, choć ledwo dajesz?"},
+  {c:"f",t:"Ja patrzę na Ciebie jak na cud. A Ty kiedy ostatnio spojrzałaś na siebie z dumą?"},
+  {c:"f",t:"Ja zapominam o złości w pięć minut. A Ty ile nosisz w sobie rzeczy, które dawno warto odpuścić?"},
+  {c:"f",t:"Ja nie wiem, co to perfekcja, i jestem szczęśliwy. A Ty dla kogo starasz się być idealna?"},
+  {c:"f",t:"Ja potrzebuję tylko Twoich ramion. A Ty pamiętasz, że nie musisz mieć wszystkiego pod kontrolą?"},
+  {c:"f",t:"Każdy mój dzień to nowa próba. A Ty co odpuściłaś, bo raz Ci nie wyszło?"},
+  {c:"f",t:"Ja ufam, że mnie złapiesz. A Ty komu pozwalasz się złapać, gdy się potykasz?"},
+  {c:"f",t:"Ja rosnę szybciej, niż myślisz. A Ty jesteś dziś naprawdę obecna, czy tylko zabiegana?"},
+  {c:"f",t:"Ja nie oceniam Cię za bałagan w domu. A Ty czemu oceniasz siebie tak surowo?"},
+  {c:"f",t:"Mama uśmiecha się do mnie nawet zmęczona. A Ty kiedy ostatnio uśmiechnęłaś się do siebie w lustrze?"},
+  {c:"f",t:"Ja nie liczę kalorii ani fałdek. A Ty kiedy ostatnio pokochałaś swoje ciało takim, jakie jest po mnie?"},
+  {c:"f",t:"Ja krzyczę, gdy czegoś potrzebuję, bez skrępowania. A Ty czemu tak trudno Ci powiedzieć, że potrzebujesz pomocy?"},
+  {c:"f",t:"Ja nie wiem, jak wyglądałaś przed ciążą, i kocham Cię taką, jaka jesteś. A Ty kiedy przestaniesz tęsknić za dawną sobą?"},
+  {c:"f",t:"Ja bawię się jedną łyżką godzinami. A Ty kiedy ostatnio robiłaś coś tylko dla przyjemności?"},
+  {c:"f",t:"Ja nie czuję presji, że muszę zdążyć ze wszystkim. A Ty kto Ci powiedział, że masz ogarnąć wszystko naraz?"},
+  {c:"f",t:"Ja widzę Twój uśmiech, nawet gdy jesteś na skraju sił. A Ty komu mówisz, gdy jest Ci ciężko?"},
+  {c:"f",t:"Ja zasypiam spokojny, bo Ty jesteś obok. A Ty co daje spokój Tobie?"},
+  {c:"f",t:"Ja nie pamiętam, ile razy się dziś pomyliłaś. A Ty czemu pamiętasz każdą swoją wpadkę?"},
+  {c:"f",t:"Ja rosnę, a Ty w biegu tego nie zauważasz. A Ty kiedy ostatnio zatrzymałaś się choć na chwilę?"},
+  {c:"f",t:"Ja dostaję Twoją uwagę zawsze. A Ty kiedy ostatnio ktoś zapytał, jak Ty się czujesz?"},
+  {c:"f",t:"Ja nie porównuję Twojego mleka, wózka ani domu. A Ty czemu słuchasz tych, którzy to robią?"},
+  {c:"f",t:"Ja kocham Cię bez warunków, w piżamie i bez makijażu. A Ty kiedy uwierzysz, że jesteś wystarczająca?"},
+  {c:"f",t:"Ja nie potrzebuję idealnej mamy, tylko obecnej. A Ty czy na pewno musisz być idealna?"},
+  {c:"f",t:"Ja śmieję się z byle czego. A Ty kiedy ostatnio śmiałaś się tak naprawdę, do łez?"},
+  {c:"f",t:"Ja zapominam o wczoraj i cieszę się dziś. A Ty ile dzisiejszych chwil przegapiłaś, myśląc o jutrze?"},
+  {c:"f",t:"Ja nie mam planu, listy ani presji. A Ty co by się stało, gdybyś sobie odpuściła choć jeden dzień?"},
+  {c:"f",t:"Ja wyciągam do Ciebie ręce, bo Ci ufam. A Ty komu pozwalasz się wesprzeć?"},
+  {c:"f",t:"Ja widzę, jak bardzo się starasz. A Ty skoro nikt dziś nie podziękował — czemu nie podziękujesz sobie sama?"},
+  {c:"f",t:"Ja rosnę z każdej Twojej nieprzespanej nocy. A Ty wiesz, ile dla mnie znaczysz?"},
+  {c:"f",t:"Ja nie oczekuję rzeczy, tylko Ciebie. A Ty czemu wmawiasz sobie, że to za mało?"},
+  {c:"l",t:"Pięć rzeczy, które robię lepiej niż dorośli: śpię, jem, płaczę kiedy chcę, nie udaję i niczym się nie przejmuję."},
+  {c:"l",t:"Trzy rzeczy, których rodzice nigdy nie zrozumieją: czemu płaczę, kiedy płaczę i jak długo będę płakać."},
+  {c:"l",t:"Pięć oznak, że jesteś zmęczonym rodzicem: zimna kawa, koszulka w plamach, mówisz do mnie swoim imieniem i nie pamiętasz, który dziś dzień."},
+  {c:"l",t:"Czego nauczyłem się w pierwszym miesiącu: nic nie muszę, wszystko mi wolno, a płacz załatwia wszystko."},
+  {c:"l",t:"Pięć moich supermocy: zasypiam wszędzie, budzę cały dom, jem o każdej porze, topię serca i nigdy nie przepraszam."},
+  {c:"l",t:"Trzy zasady bobasa: jeśli to widzę — moje. Jeśli to wezmę — moje. Jeśli płaczę — na pewno będzie moje."},
+  {c:"l",t:"Pięć rzeczy, które są dla mnie luksusem: czysta pielucha, ciepłe mleko, suchy śliniak, drzemka i Twoje ramiona."},
+  {c:"l",t:"Pięć powodów, dla których płaczę: jestem głodny, jestem najedzony, jest za jasno, jest za ciemno i bez powodu."},
+  {c:"l",t:"Trzy rzeczy, których nie cierpię: czapeczki, obcinania paznokci i kiedy odkładasz mnie do łóżeczka."},
+  {c:"l",t:"Pięć rzeczy, które robię, gdy myślisz, że śpię: planuję, ładuję baterie, słucham, rosnę i szykuję się na trzecią w nocy."},
+  {c:"l",t:"Pięć etapów mojego dnia: jeść, spać, zniszczyć ciszę, powtórzyć i jeszcze raz."},
+  {c:"l",t:"Trzy rzeczy, które kocham bardziej niż zabawki: pudełko, w którym przyszły, folia i Twój telefon."},
+  {c:"l",t:"Pięć rzeczy, które mama robi, a nie docenia: wstaje w nocy, nosi mnie godzinami, nie je na spokojnie, uśmiecha się zmęczona i kocha bez końca."},
+  {c:"l",t:"Trzy rzeczy, w których jestem mistrzem: znikanie skarpetek, robienie hałasu i wybór najgorszego momentu na płacz."},
+  {c:"l",t:"Pięć rzeczy, które słyszę sto razy dziennie: ale urosłeś, cały tata, oczka mamy, kto to taki i aguuu."},
+  {c:"l",t:"Cztery typy płaczu, które znam: jestem głodny, jestem zmęczony, jest nudno i tak tylko sprawdzam, czy przyjdziesz."},
+  {c:"l",t:"Pięć rzeczy, które robię z każdą zabawką: oglądam, gryzę, rzucam, płaczę i żądam z powrotem."},
+  {c:"l",t:"Trzy powody, dla których nie śpię w nocy: bo mogę, bo cisza mnie nudzi i bo lubię towarzystwo."},
+  {c:"l",t:"Pięć rzeczy, których uczę rodziców: cierpliwości, pokory, działania bez snu, miłości bez granic i szybkiego przewijania."},
+  {c:"l",t:"Cztery moje ulubione miejsca: ramiona mamy, ramiona taty, ramiona babci i znowu ramiona mamy."},
+  {c:"l",t:"Pięć rzeczy, które robię lepiej z wiekiem: krzyczę głośniej, jem więcej, śpię mniej, rozrabiam sprytniej i ładniej się uśmiecham."},
+  {c:"l",t:"Trzy rzeczy, które chowam i nikt nie znajdzie: smoczek, jedną skarpetkę i pilot od telewizora."},
+  {c:"l",t:"Pięć etapów kąpieli: protest, krzyk, nagłe zauroczenie wodą, zabawa i drugi protest przy wychodzeniu."},
+  {c:"l",t:"Pięć rzeczy, na które patrzę zamiast na drogie zabawki: wentylator, lampa, własne dłonie, pies i ściana."},
+  {c:"l",t:"Trzy rzeczy, które robię punktualnie: budzę się o piątej, jem co dwie godziny i psuję każde Wasze plany."},
+  {c:"l",t:"Pięć rzeczy, które dostaję bez proszenia, a Wy o nich marzycie: drzemki, masaże, jedzenie do łóżka, bezwarunkową miłość i brak rachunków."},
+  {c:"l",t:"Cztery dźwięki, które uwielbiam: szum suszarki, bicie serca mamy, szelest folii i własne gaworzenie."},
+  {c:"g",t:"Pięć rzeczy, których nigdy nie zapomnę, choć jestem mały: Twój głos, zapach mamy, ciepło ramion, bicie serca i to, że jestem bezpieczny."},
+  {c:"g",t:"Trzy rzeczy, które dajesz mi każdego dnia, nawet zmęczona: cierpliwość, czułość i całą siebie."},
+  {c:"g",t:"Pięć powodów, dla których jesteś moją bohaterką: wstajesz w nocy, nie poddajesz się, uśmiechasz mimo zmęczenia, kochasz bez warunków i jesteś zawsze."},
+  {c:"g",t:"Cztery rzeczy, które kiedyś sobie przypomnę: jak mnie tuliłaś, jak śpiewałaś, jak czekałaś przy łóżeczku i jak bardzo mnie kochałaś."},
+  {c:"g",t:"Pięć chwil, które miną szybciej, niż myślisz: pierwszy uśmiech, pierwszy ząbek, pierwsze kroki, pierwsze słowo i to, że mieszczę się w Twoich ramionach."},
+  {c:"g",t:"Cztery rzeczy, których uczysz mnie bez słów: że jestem ważny, że jestem kochany, że jestem bezpieczny i że nie jestem sam."},
+  {c:"g",t:"Trzy rzeczy, za które kiedyś Ci podziękuję: że byłaś, że się nie poddałaś i że dałaś mi dom."},
+  {c:"g",t:"Pięć rzeczy, które znaczą dla mnie więcej niż prezenty: Twój czas, Twój głos, Twoja obecność, Twój uśmiech i Twoje ramiona."},
+  {c:"g",t:"Trzy rzeczy, które chciałbym, żebyś wiedziała: jesteś wystarczająca, robisz świetną robotę i jesteś moim całym światem."},
+  {c:"tt",t:"Tata mówi, że ogarnia. Trzyma mnie, butelkę i telefon, a pilota szuka od godziny."},
+  {c:"tt",t:"Słuchaj, tato. Mecz się powtórzy. Ja będę mały tylko raz. Wybierz mądrze."},
+  {c:"tt",t:"Tata twierdzi, że zmienia pieluchę szybciej niż mama. Statystyki mówią co innego."},
+  {c:"tt",t:"Tato, nie musisz wszystkiego umieć. Wystarczy, że jesteś. Reszty nauczymy się razem."},
+  {c:"tt",t:"Tata uczy mnie rzucać piłką. Ja uczę tatę wstawać pięć razy w nocy. Remis."},
+  {c:"tt",t:"Słuchaj, tato. Twoja broda to moja ulubiona zabawka. Przyzwyczaj się."},
+  {c:"tt",t:"Tata mówi, że jest twardy. Rozkleja się za każdym razem, gdy się uśmiecham."},
+  {c:"tt",t:"Tato, praca poczeka. Najlepszy projekt to ja. Poświęć mi chwilę."},
+  {c:"p",t:"Dziś pierwszy raz złapałem swoją stopę. Plan na jutro: zjeść ją."},
+  {c:"p",t:"Pierwszy ząbek nadchodzi. Przygotujcie się — i wy, i moje gryzaki."},
+  {c:"p",t:"Dziś się przekręciłem. Sam. Mama krzyczała, jakbym zdobył medal olimpijski."},
+  {c:"p",t:"Pierwszy uśmiech poszedł do taty. Spokojnie, mamo — kolejne należą do Ciebie."},
+  {c:"p",t:"Nauczyłem się siadać. Świat wygląda lepiej, gdy nie patrzysz tylko w sufit."},
+  {c:"p",t:"Dziś pierwsze aguuu. Tłumaczę: znaczyło zmień mnie, jestem głodny i kocham was."},
+  {c:"p",t:"Pierwsze kroki coraz bliżej. Ostrzegam — gdy ruszę, nic nie będzie bezpieczne."},
+  {c:"p",t:"Dziś mija mój pierwszy miesiąc. Bilans: zero słów, sto skradzionych serc."},
+  {c:"q",t:"Pytanie za milion! Rodzice idą spać. Powinienem: A) narobić do świeżej pieluchy, B) nie zasnąć do wpół do piątej bez powodu, C) zażądać kolejnej godziny przy piersi, D) spać, ale wydawać dziwne odgłosy. Prawidłowa? D."},
+  {c:"q",t:"Pytanie za milion! Mama właśnie usiadła z gorącą kawą. Powinienem: A) zacząć płakać teraz, B) poczekać na pierwszy łyk, C) narobić w pieluchę, D) wszystko naraz, jestem profesjonalistą. Oczywiście D."},
+  {c:"q",t:"Pytanie za milion! Jest trzecia w nocy. Czas na: A) płacz bez powodu, B) gaworzenie na całego, C) wielki głód, D) imprezę, kto śpi ten przegrywa. Poprawna? D."},
+  {c:"q",t:"Pytanie za milion! Babcia w odwiedzinach. Powinienem: A) być słodki tylko przy niej, B) płakać gdy weźmie mnie mama, C) zjeść wszystko od babci, D) zostać u babci na zawsze, tam nie ma zasad. D."},
+  {c:"q",t:"Pytanie za milion! Tata zmienia mi pieluchę. Idealny moment, żeby: A) zrobić niespodziankę, B) złapać się za stópki, C) zrobić fontannę, D) wszystko po kolei. Prawidłowa? D."},
+  {c:"q",t:"Pytanie za milion! Mama robi mi tysięczne zdjęcie. Powinienem: A) odwrócić głowę, B) zrobić dziwną minę, C) zamknąć oczy w tym momencie, D) wyglądać idealnie, ale gdy odłoży telefon. D."},
+  {c:"q",t:"Pytanie za milion! Dostałem drogą zabawkę. Wybieram: A) pudełko, B) folię, C) metkę, D) pilot od telewizora, klasyka. Poprawna? D."},
+  {c:"q",t:"Pytanie za milion! Mama wreszcie zasnęła. Powinienem: A) też spać, B) zapłakać, C) zgłodnieć, D) poczekać siedem minut i uderzyć. D."},
+  {c:"q",t:"Pytanie za milion! Goście chcą mnie potrzymać. Plan: A) płakać u każdego, B) być słodkim dziesięć sekund, potem płakać, C) zasnąć żeby mnie nie oddali, D) patrzeć groźnie aż oddadzą mnie mamie. D."},
+  {c:"q",t:"Pytanie za milion! Mama mówi: już prawie śpi. Powinienem: A) udowodnić, że się myli, B) otworzyć szeroko oczy, C) uśmiechnąć się słodko, D) zrobić to wszystko i zażądać noszenia. D."},
+  {c:"q",t:"Pytanie za milion! Zostawili mnie samego na minutę. Reaguję: A) bawię się sam, B) rozglądam się, C) płaczę jakby świat się kończył, D) cisza, dopóki nie wejdą, wtedy dramat. D."},
+  {c:"q",t:"Pytanie za milion! Pora na drzemkę. Wybieram miejsce: A) łóżeczko, B) wózek, C) ramiona mamy, D) ramiona mamy, ale tylko gdy stoi, nie siedzi. Prawidłowa? D."},
+  {c:"q",t:"Pytanie za milion! Jestem w sklepie z rodzicami. Pora na: A) cichy płacz, B) głośny płacz, C) koncert na całe centrum handlowe, D) uśmiech do obcych, żeby myśleli, że jestem grzeczny. D."},
+  {c:"q",t:"Pytanie za milion! Dostałem nową czapeczkę. Reaguję: A) zdejmuję ją, B) płaczę, C) udaję, że mnie nie ma, D) zdejmuję i rzucam, mam standardy. D."},
+  {c:"q",t:"Pytanie za milion! Pora karmienia. Tempo: A) spokojnie, B) szybko, C) jakby ktoś miał mi to zabrać, D) tak głośno, żeby cały dom wiedział. D."},
+  {c:"q",t:"Pytanie za milion! Mama bierze prysznic. Idealny moment, żeby: A) spać, B) gaworzyć, C) zacząć płakać teraz, D) płakać, aż wyjdzie cała mokra. D."},
+  {c:"q",t:"Pytanie za milion! Wsadzają mnie do fotelika w aucie. Plan: A) zasnąć od razu, B) protestować minutę, C) płakać całą drogę, D) zasnąć dokładnie gdy dojeżdżamy. D."},
+  {c:"q",t:"Pytanie za milion! Tata ogląda mecz. Powinienem: A) spać, B) gaworzyć, C) zgłodnieć w najważniejszym momencie, D) narobić w pieluchę przy golu. D."},
+  {c:"q",t:"Pytanie za milion! Założyli mi śliniaczek. Powinienem: A) zostawić go, B) bawić się nim, C) ściągnąć, D) ściągnąć i obślinić wszystko dookoła. D."},
+  {c:"q",t:"Pytanie za milion! Mama nuci kołysankę. Reaguję: A) zasypiam, B) słucham, C) uśmiecham się, D) otwieram oczy coraz szerzej z każdą zwrotką. D."},
+  {c:"q",t:"Pytanie za milion! Czas na obcinanie paznokci. Plan: A) być grzecznym, B) wiercić się, C) płakać, D) ruszać paluszkami jak ninja, żeby się nie dało. D."},
+  {c:"q",t:"Pytanie za milion! Mama mówi, że idziemy do lekarza. Reaguję: A) spokojnie, B) marudzę, C) płaczę w poczekalni, D) jestem aniołkiem, aż wszyscy chwalą, a potem dramat. D."},
+  {c:"q",t:"Pytanie za milion! Próbuję raczkować. Cel: A) zabawka, B) pilot, C) kabel od ładowarki, D) najbardziej niebezpieczna rzecz w zasięgu wzroku. D."},
+  {c:"q",t:"Pytanie za milion! Mama odkłada mnie na chwilę. Mój timer płaczu startuje: A) za pięć minut, B) za minutę, C) za dziesięć sekund, D) zanim zdąży usiąść. D."},
+  {c:"q",t:"Pytanie za milion! Pora spać, a ja mam energię. Wybieram: A) walczyć ze snem, B) gaworzyć, C) śpiewać po swojemu, D) zasnąć dokładnie gdy mama się podda i weźmie mnie na ręce. D."},
+  {c:"q",t:"Pytanie za milion! Dziadek robi śmieszne miny. Powinienem: A) zignorować, B) patrzeć, C) uśmiechnąć się raz, D) śmiać się tylko wtedy, gdy nikt nie nagrywa. D."},
+  {c:"q",t:"Pytanie za milion! Ktoś mówi do mnie aguuu. Odpowiadam: A) uśmiechem, B) gaworzeniem, C) ciszą, D) spojrzeniem, jakby właśnie powiedział coś dziwnego. D."},
+  {c:"q",t:"Pytanie za milion! Mama mówi: tylko zamknę oczy na chwilę. Mój sygnał do ataku: A) gdy usiądzie, B) gdy się położy, C) gdy zaśnie, D) w sekundzie, gdy oczy się zamkną. D."},
+  {c:"q",t:"Pytanie za milion! Pierwszy raz próbuję marchewki. Werdykt: A) pyszne, B) ujdzie, C) nie dla mnie, D) wypluwam i robię minę, jakby mnie otruto. D."},
+  {c:"q",t:"Pytanie za milion! Tata mówi: uśpię ją w pięć minut. Realnie: A) pięć minut, B) dwadzieścia, C) godzina, D) tata zaśnie pierwszy. D."},
+  {c:"q",t:"Pytanie za milion! Kupili mi drogi leżaczek. Wolę: A) leżaczek, B) dywan, C) kanapę, D) wyłącznie ręce mamy, całą dobę. D."},
+  {c:"q",t:"Pytanie za milion! Mama szykuje wyjście, mamy zdążyć. Mój wkład: A) być gotowym, B) marudzić, C) zachlapać śliniaczek, D) zrobić wielką kupę dokładnie przy drzwiach. D."},
+  {c:"q",t:"Pytanie za milion! Założyli mi rękawiczki na drapanie. Reaguję: A) akceptuję, B) gryzę je, C) zdejmuję, D) zdejmuję i chowam tam gdzie smoczek. D."},
+  {c:"q",t:"Pytanie za milion! Mam czkawkę. Plan: A) przeczekać, B) napić się, C) płakać, D) czkać równo czterdzieści pięć minut, dla dramaturgii. D."},
+  {c:"q",t:"Pytanie za milion! Robią mi sesję zdjęciową. Współpracuję: A) cały czas, B) przez minutę, C) wcale, D) idealnie, ale tylko gdy nikt nie patrzy. D."},
+  {c:"q",t:"Pytanie za milion! Dziadek pyta: a kto to taki? Odpowiadam: A) uśmiechem, B) gaworzeniem, C) ciszą, D) miną: a kto Ty taki? D."},
+  {c:"q",t:"Pytanie za milion DLA MAM! Dziecko wreszcie zasnęło. Co robisz? A) śpisz, B) sprzątasz, C) jesz na spokojnie, D) oglądasz jego zdjęcia, choć leży obok. D."},
+  {c:"q",t:"Pytanie za milion DLA MAM! Ostatni ciepły posiłek zjadłaś: A) dziś, B) wczoraj, C) nie pamiętam, D) nie wiem już, czym jest ciepły posiłek. D."},
+  {c:"q",t:"Pytanie za milion DLA MAM! Wyszłaś z domu bez dziecka. Czujesz: A) wolność, B) ulgę, C) tęsknotę po pięciu minutach, D) sprawdzasz telefon co trzydzieści sekund. D."},
+  {c:"q",t:"Pytanie za milion DLA MAM! Zdjęć dziecka w telefonie masz: A) kilkaset, B) tysiąc, C) kilka tysięcy, D) musiałaś dokupić pamięć. D."},
+  {c:"q",t:"Pytanie za milion! Pierwsze święta z dzieckiem. Plan: A) wszystko ogarnięte, B) trochę chaosu, C) spanie pod choinką, D) zdjęcie w stroju elfa, czy chce, czy nie. D."},
+  {c:"q",t:"Pytanie za milion! Mama wyszła, tata sam z dzieckiem. Po godzinie: A) pełna kontrola, B) lekki chaos, C) telefon do mamy, D) oboje płaczą, ale dali radę. D."},
+  {c:"hr",t:"Pięć nocnych horrorów bobasa: zgubiony smoczek, za ciasna pieluszka, mama wychodzi z pokoju, czkawka o trzeciej i nuda, gdy wszyscy śpią."},
+  {c:"hr",t:"Pięć horrorów na zakupach: zdjęta skarpetka, upuszczona zabawka, długa kolejka, zimno przy lodówkach i mama, która nie kupuje mi całego sklepu."},
+  {c:"hr",t:"Pięć horrorów u babci: koniec wizyty, powrót do zasad, czapka bo zimno, trzecia dokładka i moment, gdy mama mówi: ubieramy się."},
+  {c:"hr",t:"Pięć horrorów kąpieli: woda za chłodna, woda za ciepła, szampon blisko oczu, koniec zabawy i zimny ręcznik na początku."},
+  {c:"hr",t:"Pięć horrorów u lekarza: zimna słuchawka, ważenie bez ubranka, poczekalnia pełna obcych, szczepionka i mina mamy, gdy mówi: będzie dobrze."},
+  {c:"hr",t:"Pięć horrorów w aucie: fotelik, zapinanie pasów, korek, czerwone światło gdy chcę jechać i postój dokładnie, gdy zasnąłem."},
+  {c:"hr",t:"Pięć horrorów mamy: zimna kawa, cisza w pokoju dziecka, dzwonek do drzwi przy drzemce, koniec pieluch i biała bluzka."},
+  {c:"hr",t:"Pięć horrorów taty: pełna pielucha, mecz w czasie karmienia, słynne potrzymaj na chwilę, instrukcja wózka i pytanie mamy: ogarniesz sam?"},
+  {c:"hr",t:"Pięć horrorów pory snu: za jasno, za cicho, za głośno, smoczek wypadł i nagła energia dokładnie, gdy mam spać."},
+  {c:"hr",t:"Pięć horrorów karmienia: za gorące, za zimne, butelka się skończyła, łyżka leci za wolno i warzywa udające obiad."},
+  {c:"hr",t:"Pięć horrorów przewijania: zimna chusteczka, podmuch chłodu, mokra pieluszka, druga niespodzianka w trakcie i ten dziwny zimny krem."},
+  {c:"hr",t:"Pięć horrorów ubierania: rękaw za ciasny, czapka na uszy, body przez głowę, walka ze skarpetkami i suwak pod brodą."},
+  {c:"hr",t:"Pięć horrorów spaceru: wiatr w buzię, słońce w oczy, znowu czapka, koc który spada i powrót do domu, gdy było fajnie."},
+  {c:"hr",t:"Pięć horrorów ząbkowania: swędzące dziąsła, gryzak za twardy, ślina wszędzie, noc bez snu i mina, gdy nikt nie wie, co mi jest."},
+  {c:"hr",t:"Pięć horrorów obcinania paznokci: nożyczki blisko, trzymanie rączki, słynne już prawie, nagły ruch i panika wszystkich dookoła."},
+  {c:"hr",t:"Pięć horrorów świąt: za dużo cioć, każda chce mnie potrzymać, błyski fleszy, drzemka przerwana i sweterek, który drapie."},
+  {c:"sc",t:"Bobo rozsypuje kaszę po całej kuchni i zanosi się śmiechem, gdy mama wchodzi",en:"Bobo gleefully scatters cereal all over the kitchen floor, then bursts out laughing as a friendly cartoon mom walks in and gasps"},
+  {c:"sc",t:"Bobo wyciąga chusteczki z pudełka jedna po drugiej i piszczy z radości",en:"Bobo pulls tissues out of a box one by one, giggling with delight, a growing fluffy pile around him"},
+  {c:"sc",t:"Bobo maże buzię musem owocowym i śmieje się dumnie do mamy",en:"Bobo smears fruit puree all over his own face and highchair tray, laughing proudly at cartoon mom"},
+  {c:"sc",t:"Bobo rozwija cały papier toaletowy w łazience i klaszcze",en:"Bobo unrolls an entire toilet paper roll across the bathroom floor, clapping happily at the mess"},
+  {c:"sc",t:"Bobo chowa pilot za siebie i chichocze, gdy mama go szuka",en:"Bobo hides the TV remote behind his back and giggles as cartoon mom searches everywhere"},
+  {c:"sc",t:"Bobo bębni łyżką w garnki i zaśmiewa się z hałasu",en:"Bobo bangs a wooden spoon on pots and pans like drums, laughing hard at the loud noise"},
+  {c:"sc",t:"Bobo wyciąga ubrania z szuflady i siada dumnie na stosie, śmiejąc się",en:"Bobo pulls clothes out of a low drawer and sits triumphantly on the pile, laughing proudly"},
+  {c:"sc",t:"Bobo goni grubego kota na czworakach i piszczy z radości",en:"Bobo crawls fast chasing a chubby cartoon cat across the room, squealing with happy laughter"},
+  {c:"sc",t:"Bobo zakłada miskę na głowę jak hełm i śmieje się do mamy",en:"Bobo puts a small bowl on his head like a helmet and laughs at cartoon mom, very pleased with himself"},
+  {c:"sc",t:"Bobo wyjada herbatniki z szafki i chowa je, gdy widzi mamę",en:"Bobo sneaks cookies from a low cupboard and hides them behind his back, grinning, when cartoon mom appears"},
+  {c:"sc",t:"Bobo rozlewa mleko i klaszcze w kałużę, chichocząc",en:"Bobo tips over a cup of milk and claps in the little puddle, giggling, as cartoon mom rushes over"},
+  {c:"sc",t:"Bobo zrzuca poukładane zabawki i zaśmiewa się na widok bałaganu",en:"Bobo knocks over a neat tower of toys and laughs out loud at the tumbling mess, clapping"},
+  {c:"sc",t:"Bobo smaruje kremem lustro i chichocze do swojego odbicia",en:"Bobo smears mom's face cream all over a low mirror and giggles at his own reflection"},
+  {c:"sc",t:"Bobo ściąga skarpetki i rzuca nimi przez pokój, śmiejąc się",en:"Bobo pulls off his socks and tosses them across the room one by one, laughing out loud"},
+  {c:"c",t:"Te policzki znikną. Ten zapach noworodka też. Zatrzymaj to, póki możesz."},
+  {c:"c",t:"Robisz mi tysiąc zdjęć, a żadne nie jest jak ze studia? Wyślij jedno do BoboFoto."},
+  {c:"c",t:"Za rok mnie nie poznasz. Masz jedną szansę, żeby to zatrzymać."},
+  {c:"c",t:"Profesjonalna sesja bez wychodzenia z domu? Jedno zdjęcie z telefonu wystarczy."}
+];
+
+/* ---- helpers ---- */
+const gagSel=document.getElementById('gag');
+const rnd=document.createElement('option');rnd.value="random";rnd.textContent="🎲 Losowy";gagSel.appendChild(rnd);
+GAGS.forEach((g,i)=>{const o=document.createElement('option');o.value=i;o.textContent=g.pl;gagSel.appendChild(o);});
+
+function pickGag(){const v=gagSel.value;return v==="random"?GAGS[Math.floor(Math.random()*GAGS.length)]:GAGS[+v];}
+function gagLabel(){const v=gagSel.value;return v==="random"?"🎲 losowy (przy kopiowaniu)":GAGS[+v].pl;}
+function makeSpeak(txt){const o=document.getElementById('outro').value;const intro=((document.getElementById('intro')||{}).value!=="nie");return "„"+(intro?"Słuchaj, dorosły! ":"")+txt+(o?(" "+o):"")+"”";}
+function recSec(txt){const words=makeSpeak(txt).split(/\s+/).filter(Boolean).length;let s=Math.ceil(words/3.4)+1;s=Math.max(5,Math.min(16,s));return s;}
+function caption(it){const cat=CATS[it.c];return it.t+"\n\n"+cat.close;}
+function ytTitle(it){let t=it.t.split(/[?.!]/)[0].trim(); if(t.length>72)t=t.slice(0,69)+"…"; return t+" 🍼 #shorts";}
+function ytPack(it){return "TYTUŁ:\n"+ytTitle(it)+"\n\nOPIS:\n"+caption(it)+"\n\n"+hashtags(it)+" #shorts\n\nTAGI: bobo radzi, porady dla mam, niemowlak, śmieszne dziecko, rodzicielstwo";}
+function fullPack(it){
+  const cap=caption(it);
+  const seo="Bobo radzi 🍼 śmieszne porady dla mam i zmęczonych rodziców — humor i mądrości o życiu z niemowlakiem 👶\nCodzienna dawka uśmiechu o macierzyństwie, pierwszych miesiącach z dzieckiem i rozwoju maluszka.";
+  const tt="#dlaciebie #fyp #mama #niemowlak #poradydlamam";
+  const ig="#mama #macierzyństwo #niemowlę #polskamama #reels";
+  const yt="#shorts #mama #niemowlak #poradydlamam #rodzicielstwo";
+  const ytTags="bobo radzi, porady dla mam, niemowlak, śmieszne dziecko, rodzicielstwo, macierzyństwo, gadające dziecko, życie z dzieckiem, pierwsze miesiące z dzieckiem, humor dla rodziców";
+  return "===== TIKTOK =====\n"+seo+"\n"+cap+"\n\n"+tt+
+    "\n\n===== INSTAGRAM =====\n"+seo+"\n"+cap+"\n\n"+ig+
+    "\n\n===== YOUTUBE =====\nTYTUŁ: "+ytTitle(it)+"\nOPIS: "+seo+" "+cap+"\n"+yt+"\nTAGI (pole tagów): "+ytTags;
+}
+function hashtags(it){return BASE_HT+(it.c==="c"?" #sesjanoworodkowa #zdjęcianoworodka":"");}
+function toast(){const t=document.getElementById('toast');t.classList.add('show');setTimeout(()=>t.classList.remove('show'),1500);}
+function copyTxt(id){navigator.clipboard.writeText(document.getElementById(id).innerText).then(toast);}
+
+function makePrompt(txt,gagEn,cat,en){
+  let dur=(document.getElementById('dur')||{}).value||"auto";
+  dur=(dur==="auto")?recSec(txt):+dur;
+  const mid=(dur-5>2)?(dur-5):6;
+  const mode=(document.getElementById('speech')||{}).value||"veo";
+  const dyn=((document.getElementById('styl')||{}).value==="dynamic")?"\n\nDYNAMIC HIGH-ENERGY EDITING (LOTS HAPPENING): fast-paced with quick ANGLE CHANGES and snappy cuts roughly every 1–2 seconds (front, side, close-up of the face, slight low angle), punchy ZOOM-IN punches on Bobo's face on key words, energetic whip-pans and quick push-ins, playful cartoon sparkles and little stars popping in on emphasis, constant lively motion and bouncy energy — never static, vibrant high-energy montage feel.":"";
+  if(cat==="sc"){
+    return `VERTICAL 9:16 PORTRAIT VIDEO, 1080x1920, full vertical frame, NO black bars. Strictly 9:16 — do NOT render 16:9 or landscape. Premium 3D animated cartoon (stylized, polished, clearly fictional and wholesome), soft cinematic lighting, 30 fps, optimized for TikTok / Instagram Reels / YouTube Shorts, ${dur} seconds, happy and family-friendly.
+
+${CHARACTER}
+
+SCENE: a cozy bright cartoon home (kitchen, living room or nursery as fits), warm daylight. A friendly cartoon mom may appear partly in frame reacting with a loving, surprised smile. Tall vertical 9:16 framing.
+
+ACTION (wholesome funny skit, NO talking — only happy baby giggles): ${en||txt}. Bobo is adorable and clearly having fun, giggling and laughing the whole time; harmless playful mischief, very cute.
+
+NO DIALOGUE: the baby does NOT say any words — only cute happy giggles, squeals and baby babble.
+
+CAMERA: lively, snappy, follows the action with playful push-ins.
+LIGHTING: warm bright cheerful daylight.
+AUDIO: light playful comedic music, baby giggles and laughter, soft fun sound effects, NO spoken words.
+MOOD: funny, adorable, heart-warming, wholesome mischief.${dyn}
+
+RETENTION & PERFECT LOOP: high energy, no static dead moments; the FIRST and LAST frame match for a seamless loop.
+
+Negative: spoken words, dialogue, talking, narration, landscape, horizontal, 16:9, black bars, on-screen text, captions, watermark, photorealistic, real human baby, deformed face, extra fingers, creepy, uncanny valley, dark, low quality, scary, crying baby, anything unsafe or distressing.`;
+  }
+  const action="- 0–2s (HOOK): the clip OPENS already on an eye-catching frame — Bobo mid-expression with big wide eyes and one tiny index finger raised like a wise professor (NO calm intro); a fast playful whip-pan snaps in.\n- 2–"+mid+"s (ADVICE): Bobo gestures expressively and energetically while making its point, warm and lively, with constant small lively movement.\n- "+mid+"–"+dur+"s (OUTRO): returns to the SAME opening pose and framing (big eyes, raised finger, cheeky confident smile) so the clip loops seamlessly.";
+  let speech,voice,negExtra="";
+  if(mode==="mute"){
+    speech="NO SPOKEN DIALOGUE: Bobo opens and moves its mouth and gestures expressively as if cheerfully talking, with natural lively lip movement, but produces NO voice and NO words — silent character animation only (the Polish voice-over is added later in editing). Reference line to match the lip movement to (do NOT generate it as audio): "+makeSpeak(txt);
+    voice="AUDIO: only ambient room tone and light gentle background music — absolutely NO voice, NO speech, NO talking.";
+    negExtra=" spoken words, dialogue, voice, talking audio, speech, narration, singing, gibberish,";
+  }else{
+    speech="THE BABY SPEAKS (Polish, lip-synced) — say this WHOLE line at a FAST, energetic pace, fitting every word into the clip from the first word to the last:\n"+makeSpeak(txt);
+    voice="VOICE: native fluent Polish, a cute high-pitched toddler voice, soft with a slight lisp but every word crisp. Speak VERY FAST — rapid-fire, almost double speed, like an excited auctioneer / game-show host — squeeze the ENTIRE line into the clip with minimal pauses between words; pronounce and FINISH every single word, do not cut off, do not stop early, do not skip words. Correct natural Polish pronunciation, no English accent.";
+  }
+  return `VERTICAL 9:16 PORTRAIT VIDEO (taller than it is wide), portrait orientation, 1080x1920 resolution, full vertical frame edge to edge, NO black bars, NO letterbox. Strictly 9:16 aspect ratio — do NOT render in 16:9, landscape, widescreen or square. Premium 3D animated cartoon (stylized, polished, clearly fictional and wholesome), soft cinematic lighting, 30 fps, optimized for TikTok / Instagram Reels / YouTube Shorts, ${dur} seconds, happy and family-friendly.
+
+${CHARACTER}
+
+${SCENE}
+BACKGROUND GAG: throughout, in the blurred background directly behind Bobo and centered in the frame (not off to the side), ${gagEn}, deadpan, never acknowledged by Bobo. IMPORTANT: there is EXACTLY ONE background character total — this one and nothing else. No other animals, creatures, toys or moving characters anywhere in the scene.
+
+ACTION:
+${action}
+
+${speech}
+
+${voice}
+
+${TECH}
+
+RETENTION & PERFECT LOOP: keep high energy and snappy fast pacing the whole time, constant lively micro-movements, NO static dead moments. The clip MUST be a seamless loop — the FIRST and LAST frame are IDENTICAL: same pose, same head position, same expression and same background, so it replays with no visible cut.${dyn}
+
+${NEG}${negExtra?(" Avoid:"+negExtra+" cut-off speech."):""}`;
+}
+
+function copyCustom(){
+  const txt=(document.getElementById('customText').value.trim()||"[wpisz swój tekst]");
+  const p=makePrompt(txt,pickGag().en);
+  document.getElementById('customOut').textContent=p;
+  navigator.clipboard.writeText(p).then(toast);
+}
+document.getElementById('customText').addEventListener('input',()=>{
+  const txt=(document.getElementById('customText').value.trim()||"[wpisz swój tekst]");
+  document.getElementById('customOut').textContent=makePrompt(txt,pickGag().en);
+});
+
+/* ---- biblioteka z usuwaniem / ulubionymi ---- */
+const QSIZE=24;
+const K_REM="boboRemoved",K_FAV="boboFav",K_DONE="boboDone2";
+function ls(k){try{return JSON.parse(localStorage.getItem(k)||"{}");}catch(e){return {};}}
+function save(k,v){localStorage.setItem(k,JSON.stringify(v));}
+let filter="all";
+
+function renderFilters(){
+  const box=document.getElementById('filters');box.innerHTML="";
+  const opts=[["all","Wszystkie"],["fav","❤️ Ulubione"]];
+  Object.keys(CATS).forEach(k=>opts.push([k,CATS[k].name]));
+  opts.forEach(([v,n])=>{const b=document.createElement('button');b.textContent=n;if(v===filter)b.className="on";b.onclick=()=>{filter=v;renderFilters();renderLib();};box.appendChild(b);});
+}
+
+function visibleList(){
+  const rem=ls(K_REM),fav=ls(K_FAV);
+  let list=POOL.map((it,i)=>({...it,i})).filter(o=>!rem[o.i]);
+  if(filter==="fav")return list.filter(o=>fav[o.i]);
+  if(filter!=="all")list=list.filter(o=>o.c===filter);
+  // ulubione na górze, reszta w kolejności
+  const f=list.filter(o=>fav[o.i]), nf=list.filter(o=>!fav[o.i]);
+  return f.concat(nf).slice(0,QSIZE);
+}
+
+function renderLib(){
+  const fav=ls(K_FAV),done=ls(K_DONE),rem=ls(K_REM);
+  const box=document.getElementById('lib');box.innerHTML="";
+  const list=visibleList();
+  list.forEach(o=>{
+    const cat=CATS[o.c];
+    const div=document.createElement('div');
+    div.className="item"+(done[o.i]?" done":"")+(fav[o.i]?" fav":"");
+    const hk=pickHook(o.c);
+    div.innerHTML=
+      '<span class="cat" style="background:'+cat.col+'">'+cat.name+'</span>'+
+      '<p class="q">🎙️ '+makeSpeak(o.t)+'</p>'+
+      '<p class="op" style="color:#b06a2c">🪝 Napis-hook (na ekran): '+hk+'</p>'+
+      '<p class="op">⏱️ Zalecana długość: ~'+recSec(o.t)+' s</p>'+
+      '<p class="op">📝 '+caption(o).replace("\n\n"," · ")+'</p>'+
+      '<p class="ht">#️⃣ '+hashtags(o)+'</p>'+
+      '<div class="actions">'+
+        '<button class="primary" data-p="'+o.i+'">📋 Prompt</button>'+
+        '<button class="ghost" data-cap="'+o.i+'">📋 Opisy (TT/IG/YT)</button>'+
+        '<button class="ghost" data-hk="'+encodeURIComponent(hk)+'">🪝 Hook</button>'+
+        '<button class="icon" data-fav="'+o.i+'">'+(fav[o.i]?"❤️":"🤍")+'</button>'+
+        '<button class="icon" data-del="'+o.i+'">🗑️</button>'+
+        '<label class="chk"><input type="checkbox" data-done="'+o.i+'" '+(done[o.i]?'checked':'')+'> wrzucone ✅</label>'+
+      '</div>';
+    box.appendChild(div);
+  });
+  const total=POOL.length, left=POOL.length-Object.values(rem).filter(Boolean).length;
+  document.getElementById('progress').textContent="W puli: "+left+" / "+total+"  ·  Pokazuję: "+list.length;
+  box.querySelectorAll('[data-p]').forEach(b=>b.onclick=()=>{const o=POOL[+b.dataset.p];navigator.clipboard.writeText(makePrompt(o.t,pickGag().en,o.c,o.en)).then(toast);});
+  box.querySelectorAll('[data-cap]').forEach(b=>b.onclick=()=>{navigator.clipboard.writeText(fullPack(POOL[+b.dataset.cap])).then(toast);});
+  box.querySelectorAll('[data-hk]').forEach(b=>b.onclick=()=>{navigator.clipboard.writeText(decodeURIComponent(b.dataset.hk)).then(toast);});
+  box.querySelectorAll('[data-fav]').forEach(b=>b.onclick=()=>{const f=ls(K_FAV);f[+b.dataset.fav]=!f[+b.dataset.fav];save(K_FAV,f);renderLib();});
+  box.querySelectorAll('[data-del]').forEach(b=>b.onclick=()=>{const r=ls(K_REM);r[+b.dataset.del]=true;save(K_REM,r);renderLib();});
+  box.querySelectorAll('[data-done]').forEach(c=>c.onchange=()=>{const d=ls(K_DONE);d[+c.dataset.done]=c.checked;save(K_DONE,d);renderLib();});
+}
+function resetAll(){if(confirm("Przywrócić usunięte i wyzerować odhaczenia/ulubione?")){save(K_REM,{});save(K_DONE,{});save(K_FAV,{});renderLib();}}
+
+function pickFrom(cats){const opts=POOL.map((it,i)=>({...it,i})).filter(o=>cats.includes(o.c));return opts[Math.floor(Math.random()*opts.length)];}
+function setOfDay(){
+  const funny=pickFrom(["h","k","x"]);
+  const value=pickFrom(["m","a","w","s","e","r","o"]);
+  const cta=pickFrom(["c"]);
+  const items=[["😂 Na zasięg",funny],["💛 Wartość",value],["🍼 Sprzedaż",cta]];
+  const box=document.getElementById('setBox');
+  box.innerHTML='<div class="card" style="background:#f3f1e8;margin:0 0 14px"><span class="tag">🎲 ZESTAW NA DZIŚ</span>'+
+    items.map(([lab,o])=>{const cat=CATS[o.c];
+      return '<div class="item" style="margin-top:8px"><span class="cat" style="background:'+cat.col+'">'+lab+' · '+cat.name+'</span>'+
+        '<p class="q">🎙️ '+makeSpeak(o.t)+'</p>'+
+        '<div class="actions"><button class="primary" data-sp="'+o.i+'">📋 Prompt</button>'+
+        '<button class="ghost" data-sc="'+o.i+'">📝 Opis+#</button></div></div>';
+    }).join('')+'</div>';
+  box.querySelectorAll('[data-sp]').forEach(b=>b.onclick=()=>{const o=POOL[+b.dataset.sp];navigator.clipboard.writeText(makePrompt(o.t,pickGag().en,o.c,o.en)).then(toast);});
+  box.querySelectorAll('[data-sc]').forEach(b=>b.onclick=()=>{const o=POOL[+b.dataset.sc];navigator.clipboard.writeText(caption(o)+"\n\n"+hashtags(o)).then(toast);});
+}
+
+/* DODATEK: checklista viralowa */
+const CHECK=[
+  "🪝 Hook w 1,5 s — napis-szok INNY niż głos",
+  "⏱️ Długość 8–12 s (krótko = wyższy % obejrzenia)",
+  "📝 Napisy słowo-po-słowie, nad środkiem (safe zone)",
+  "🐱 Kot/gag w tle (powód do powtórki)",
+  "🎵 Trendujący dźwięk ścichniony pod głosem",
+  "🔁 Loop — ostatnia klatka wraca do pierwszej",
+  "💬 Pytanie albo otaguj kogoś (komentarze/udostępnienia)",
+  "📱 Pion 9:16, Bobo wyśrodkowany",
+  "🍼 Logo Bobo radzi · bobofoto.pl w rogu"
+];
+const K_CHK="boboCheck";
+function renderCheck(){
+  const st=ls(K_CHK);const box=document.getElementById('viralCheck');if(!box)return;
+  box.innerHTML=CHECK.map((c,i)=>'<label class="chk" style="margin:6px 0"><input type="checkbox" data-vc="'+i+'" '+(st[i]?'checked':'')+'> '+c+'</label>').join('');
+  const done=CHECK.filter((_,i)=>st[i]).length;
+  document.getElementById('viralScore').textContent="Gotowość: "+done+" / "+CHECK.length+(done===CHECK.length?"  ✅ Wrzucaj!":"");
+  box.querySelectorAll('[data-vc]').forEach(c=>c.onchange=()=>{const s=ls(K_CHK);s[+c.dataset.vc]=c.checked;save(K_CHK,s);renderCheck();});
+}
+function resetCheck(){save(K_CHK,{});renderCheck();}
+renderCheck();
+
+gagSel.addEventListener('change',renderLib);
+document.getElementById('outro').addEventListener('change',renderLib);
+document.getElementById('dur').addEventListener('change',renderLib);
+document.getElementById('speech').addEventListener('change',renderLib);
+document.getElementById('intro').addEventListener('change',renderLib);
+document.getElementById('styl').addEventListener('change',renderLib);
+renderFilters();renderLib();
+</script>
+</body>
+</html>

@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Karta „Pytanie za milion" — BoboFoto</title>
+<style>
+  :root{--sage:#7c8a6e;--sage-d:#5f6c54;--cream:#faf7f0;--ink:#33352f;--line:#e6e0d4}
+  *{box-sizing:border-box}
+  body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:var(--cream);color:var(--ink);line-height:1.5}
+  header{background:var(--sage);color:#fff;padding:18px;text-align:center}
+  header h1{margin:0;font-size:19px}
+  header p{margin:4px 0 0;font-size:13px;opacity:.9}
+  .wrap{max-width:780px;margin:0 auto;padding:16px}
+  .card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:16px}
+  label{display:block;font-weight:600;font-size:13px;margin:10px 0 4px}
+  input[type=text]{width:100%;padding:10px;border:1px solid var(--line);border-radius:10px;font-size:14px}
+  .ans{display:flex;align-items:center;gap:8px}
+  .ans .let{width:30px;font-weight:700;color:var(--sage-d)}
+  .ans input[type=radio]{width:18px;height:18px;accent-color:#3a9d5d}
+  .hint{font-size:12px;color:#8a8676;margin-top:6px}
+  button{cursor:pointer;border:none;border-radius:999px;padding:12px 20px;font-size:15px;font-weight:600}
+  .primary{background:var(--sage);color:#fff}.primary:hover{background:var(--sage-d)}
+  .ghost{background:#efe9dc;color:var(--ink)}
+  .btns{display:flex;gap:10px;flex-wrap:wrap;margin:8px 0 4px}
+  .preview{background:repeating-conic-gradient(#eee 0% 25%,#fff 0% 50%) 50%/22px 22px;border:1px solid var(--line);border-radius:12px;padding:12px;text-align:center;overflow:auto}
+  canvas{max-width:100%;height:auto;border-radius:8px}
+  .tag{display:inline-block;background:#eef0e8;color:var(--sage-d);border-radius:6px;padding:2px 8px;font-size:11px;font-weight:700;margin-bottom:8px}
+</style>
+</head>
+<body>
+<header>
+  <h1>🤔 Karta „Pytanie za milion"</h1>
+  <p>Wpisz pytanie i odpowiedzi → pobierz przezroczysty PNG → nałóż w CapCut</p>
+</header>
+
+<div class="wrap">
+  <div style="text-align:center;margin-bottom:14px">
+    <a href="bobo-generator.html" style="color:var(--sage-d);font-weight:600;font-size:14px">← Wróć do generatora promptów</a>
+  </div>
+  <div class="card">
+    <span class="tag">🎬 PROMPT NA MYŚLĄCEGO BOBO (do Veo)</span>
+    <p class="hint" style="margin-top:0">Wklej do Veo, wygeneruj myślącego Bobo (góra kadru pusta na kartę), a kartę poniżej nałóż w CapCut.</p>
+    <textarea id="prompt" readonly style="width:100%;height:120px;border:1px solid var(--line);border-radius:10px;padding:10px;font-size:12px;font-family:ui-monospace,monospace"></textarea>
+    <div class="btns"><button class="primary" onclick="copyPrompt()">📋 Kopiuj prompt</button></div>
+  </div>
+
+  <div class="card">
+    <span class="tag">TREŚĆ</span>
+    <label>📋 Wybierz gotowe pytanie (albo wpisz swoje)</label>
+    <select id="preset" style="width:100%;padding:10px;border:1px solid var(--line);border-radius:10px;font-size:14px"></select>
+    <label>Pytanie</label>
+    <input type="text" id="q" value="Rodzice idą spać. Powinienem:">
+    <label>Odpowiedzi</label>
+    <div class="ans"><span class="let">A</span><input type="text" id="a" value="Narobić do świeżej pieluchy"><input type="radio" name="ok" value="0" title="poprawna"></div>
+    <div class="ans"><span class="let">B</span><input type="text" id="b" value="Nie zasnąć do 4:30 bez powodu"><input type="radio" name="ok" value="1"></div>
+    <div class="ans"><span class="let">C</span><input type="text" id="c" value="Zażądać kolejnej godziny przy piersi"><input type="radio" name="ok" value="2"></div>
+    <div class="ans"><span class="let">D</span><input type="text" id="d" value="Spać, ale wydawać dziwne odgłosy"><input type="radio" name="ok" value="3" checked></div>
+    <div class="hint">Kropka = zaznacz poprawną (podświetli się na zielono). Możesz odznaczyć, klikając ponownie.</div>
+    <label style="margin-top:12px">Nagłówek</label>
+    <input type="text" id="title" value="PYTANIE ZA MILION">
+    <label style="margin-top:12px">🎨 Styl ramki</label>
+    <select id="style" style="width:100%;padding:10px;border:1px solid var(--line);border-radius:10px;font-size:14px"></select>
+    <label style="margin-top:12px">🧩 Układ odpowiedzi</label>
+    <select id="uklad" style="width:100%;padding:10px;border:1px solid var(--line);border-radius:10px;font-size:14px">
+      <option value="lista">Lista (kółko + tekst)</option>
+      <option value="przyciski">Przyciski (boxy)</option>
+      <option value="siatka">Siatka 2×2 (A B / C D)</option>
+      <option value="pasy">Paski (pełna szerokość)</option>
+      <option value="numerki">Numerki (duże litery)</option>
+    </select>
+  </div>
+
+  <div class="btns">
+    <button class="primary" onclick="dl()">⬇️ Pobierz PNG (przezroczyste)</button>
+    <button class="ghost" onclick="draw()">🔄 Odśwież</button>
+  </div>
+
+  <div class="card">
+    <span class="tag">PODGLĄD</span>
+    <div class="preview"><canvas id="cv" width="1080" height="600"></canvas></div>
+    <div class="hint">Tło w kratkę = przezroczystość (na filmie jej nie będzie). Karta jest wyśrodkowana — w CapCut ustaw ją na środku/górze.</div>
+  </div>
+</div>
+
+<script>
+function quizSecs(){const t=[val('q'),val('a'),val('b'),val('c'),val('d')].join(' ');const w=t.split(/\s+/).filter(Boolean).length;return Math.max(6,Math.min(15,Math.ceil(w/3)+3));}
+function makeQuizPrompt(){const secs=quizSecs();return `VERTICAL 9:16 PORTRAIT VIDEO, 1080x1920, full vertical frame, NO black bars. Strictly 9:16 — do NOT render 16:9 or landscape. Premium 3D animated cartoon (stylized, polished, clearly fictional and wholesome), soft cinematic lighting, 30 fps, optimized for TikTok / Reels / Shorts, ${secs} seconds, happy and family-friendly.
+
+CHARACTER "Bobo": an adorable friendly cartoon baby mascot — a clearly fictional wholesome animated character (stylized 3D). Chubby cheerful proportions, big round head, large expressive dark-brown eyes with bright catchlights, full rosy cheeks, small button nose, one little curl of light-brown hair on top, warm face. Wearing a cozy cream ribbed onesie.
+
+COMPOSITION: Bobo placed HIGH at the TOP of the frame — the top of its head touching the very top edge — shown as head-and-shoulders only in the UPPER third. The CENTER and LOWER two-thirds of the vertical frame are clear empty background (a quiz card is added there later). Do NOT center Bobo, do NOT place Bobo at the bottom.
+
+SCENE: a bright airy beige-and-cream cartoon nursery, soft daylight from the left, with lots of empty plain wall/space in the middle and lower part of the frame.
+
+ACTION:
+- 0–2s: a fast playful whip-pan onto Bobo at the top; he raises one tiny index finger like a wise professor and says the line below.
+- 2–${secs}s: Bobo stops talking (mouth closed) and just THINKS — a little hand on the chin, eyes looking up and to the side, pondering hard, eyebrows moving, then a cheeky knowing smile and a tiny nod. No more speaking.
+
+THE BABY SPEAKS EXACTLY ONCE, only the two words below, at the very start (0–2s), and then is COMPLETELY SILENT for the rest of the clip: „Pytanie za milion!”
+Do NOT add any other words, no question, no „którą wybierasz”, no „hmm”, no follow-up — after these two words the mouth stays closed and Bobo only thinks.
+VOICE: native fluent Polish, cute high-pitched toddler voice, FAST and lively like a game-show host, only on these two words; no English accent.
+
+CAMERA: snappy whip-pan, then a slight push-in, gentle bokeh; static framing that keeps Bobo at the top with empty space below.
+LIGHTING: warm bright daylight. AUDIO: a quick "ding!" chime at the start, then light playful quiz-show thinking music low in the mix (pondering vibe), and NO more speech for the rest of the clip.
+MOOD: fun energetic intro, then curious silent pondering, cute.
+RETENTION & LOOP: high energy, no static dead moments; the final frame visually matches the first frame so the clip loops seamlessly.
+
+Negative: any extra words, talking after the first two words, asking a question, „którą wybierasz”, „która wybierasz”, „które wybierasz”, „hmm”, follow-up dialogue, landscape, horizontal, 16:9, black bars, baby centered, baby in the middle, baby at the bottom, full body, multiple background characters, on-screen text, captions, watermark, English accent, mispronounced Polish.`;}
+function refreshPrompt(){document.getElementById('prompt').value=makeQuizPrompt();}
+function copyPrompt(){refreshPrompt();navigator.clipboard.writeText(document.getElementById('prompt').value);}
+refreshPrompt();
+
+const QUIZZES=[
+ ["Rodzice idą spać. Powinienem:","Narobić do świeżej pieluchy","Nie zasnąć do 4:30 bez powodu","Zażądać kolejnej godziny przy piersi","Spać, ale wydawać dziwne odgłosy",3],
+ ["Mama usiadła z gorącą kawą. Powinienem:","Płakać teraz","Poczekać na pierwszy łyk","Narobić w pieluchę","Wszystko naraz, jestem profesjonalistą",3],
+ ["Jest 3:00 w nocy. Czas na:","Płacz bez powodu","Gaworzenie na całego","Wielki głód","Imprezę, kto śpi ten przegrywa",3],
+ ["Dostałem drogą zabawkę. Wybieram:","Pudełko","Folię","Metkę","Pilot od telewizora, klasyka",3],
+ ["Goście chcą mnie potrzymać. Plan:","Płakać u każdego","Słodki 10 sekund, potem płacz","Zasnąć","Patrzeć groźnie, aż oddadzą mnie mamie",3],
+ ["Mama wreszcie zasnęła. Powinienem:","Też spać","Zapłakać","Zgłodnieć","Poczekać 7 minut i uderzyć",3],
+ ["Tata zmienia pieluchę. Idealny moment:","Zrobić niespodziankę","Złapać się za stópki","Zrobić fontannę","Wszystko po kolei",3],
+ ["Mama robi tysięczne zdjęcie. Powinienem:","Odwrócić głowę","Zrobić dziwną minę","Zamknąć oczy","Wyglądać idealnie, gdy odłoży telefon",3],
+ ["Babcia w odwiedzinach. Powinienem:","Słodki tylko przy niej","Płakać u mamy","Zjeść wszystko od babci","Zostać u babci na zawsze, brak zasad",3],
+ ["Jestem w sklepie. Pora na:","Cichy płacz","Głośny płacz","Koncert na całe centrum","Uśmiech do obcych, udawać grzecznego",3],
+ ["Pora karmienia. Tempo:","Spokojnie","Szybko","Jakby ktoś miał mi to zabrać","Tak głośno, żeby dom wiedział",3],
+ ["Mama bierze prysznic. Moment, żeby:","Spać","Gaworzyć","Płakać teraz","Płakać, aż wyjdzie cała mokra",3],
+ ["Wsadzają mnie do fotelika. Plan:","Zasnąć od razu","Protestować minutę","Płakać całą drogę","Zasnąć dokładnie gdy dojeżdżamy",3],
+ ["Tata ogląda mecz. Powinienem:","Spać","Gaworzyć","Zgłodnieć","Narobić w pieluchę przy golu",3],
+ ["Czas na obcinanie paznokci. Plan:","Być grzecznym","Wiercić się","Płakać","Ruszać paluszkami jak ninja",3],
+ ["Mama mówi: już prawie śpi:","Udowodnić, że się myli","Otworzyć oczy","Uśmiechnąć się","Zrobić to wszystko i zażądać noszenia",3],
+ ["Zostawili mnie na minutę. Reaguję:","Bawię się sam","Rozglądam się","Płaczę","Cisza, aż wejdą — wtedy dramat",3],
+ ["Pora na drzemkę. Miejsce:","Łóżeczko","Wózek","Ramiona mamy","Ramiona mamy, ale tylko gdy stoi",3],
+ ["Dostałem czapeczkę. Reaguję:","Zdejmuję","Płaczę","Udaję, że mnie nie ma","Zdejmuję i rzucam, mam standardy",3],
+ ["Założyli śliniaczek. Powinienem:","Zostawić","Bawić się nim","Ściągnąć","Ściągnąć i obślinić wszystko",3],
+ ["Mama nuci kołysankę. Reaguję:","Zasypiam","Słucham","Uśmiecham się","Otwieram oczy coraz szerzej",3],
+ ["Idziemy do lekarza. Reaguję:","Spokojnie","Marudzę","Płaczę w poczekalni","Aniołek, aż chwalą, potem dramat",3],
+ ["Próbuję raczkować. Cel:","Zabawka","Pilot","Kabel od ładowarki","Najniebezpieczniejsza rzecz w pobliżu",3],
+ ["Pora spać, a mam energię:","Walczyć ze snem","Gaworzyć","Śpiewać po swojemu","Zasnąć, gdy mama się podda",3],
+ ["Ktoś mówi do mnie aguuu. Odpowiadam:","Uśmiechem","Gaworzeniem","Ciszą","Spojrzeniem, jakby powiedział coś dziwnego",3],
+ ["Mama mówi: tylko zamknę oczy na chwilę. Mój sygnał do ataku:","Gdy usiądzie","Gdy się położy","Gdy zaśnie","W sekundzie, gdy oczy się zamkną",3],
+ ["Pierwszy raz próbuję marchewki. Werdykt:","Pyszne","Ujdzie","Nie dla mnie","Wypluwam i robię minę, jakby mnie otruto",3],
+ ["Tata mówi: uśpię ją w 5 minut. Realnie:","5 minut","20 minut","Godzina","Tata zaśnie pierwszy",3],
+ ["Kupili mi drogi leżaczek. Wolę:","Leżaczek","Dywan","Kanapę","Wyłącznie ręce mamy, całą dobę",3],
+ ["Mama szykuje wyjście, mamy zdążyć. Mój wkład:","Być gotowym","Marudzić","Zachlapać śliniaczek","Wielka kupa dokładnie przy drzwiach",3],
+ ["Założyli mi rękawiczki na drapanie. Reaguję:","Akceptuję","Gryzę je","Zdejmuję","Zdejmuję i chowam tam gdzie smoczek",3],
+ ["Mam czkawkę. Plan:","Przeczekać","Napić się","Płakać","Czkać równo 45 minut, dla dramaturgii",3],
+ ["Robią mi sesję zdjęciową. Współpracuję:","Cały czas","Przez minutę","Wcale","Idealnie, ale gdy nikt nie patrzy",3],
+ ["Dziadek pyta: a kto to taki? Odpowiadam:","Uśmiechem","Gaworzeniem","Ciszą","Miną: a kto Ty taki?",3],
+ ["DLA MAM: dziecko wreszcie zasnęło. Co robisz?","Śpisz","Sprzątasz","Jesz na spokojnie","Oglądasz jego zdjęcia, choć leży obok",3],
+ ["DLA MAM: ostatni ciepły posiłek zjadłaś:","Dziś","Wczoraj","Nie pamiętam","Nie wiem już, czym jest ciepły posiłek",3],
+ ["DLA MAM: wyszłaś z domu bez dziecka. Czujesz:","Wolność","Ulgę","Tęsknotę po 5 minutach","Sprawdzasz telefon co 30 sekund",3],
+ ["DLA MAM: zdjęć dziecka w telefonie masz:","Kilkaset","Tysiąc","Kilka tysięcy","Musiałaś dokupić pamięć",3],
+ ["Pierwsze święta z dzieckiem. Plan:","Wszystko ogarnięte","Trochę chaosu","Spanie pod choinką","Zdjęcie w stroju elfa, czy chce czy nie",3],
+ ["Mama wyszła, tata sam z dzieckiem. Po godzinie:","Pełna kontrola","Lekki chaos","Telefon do mamy","Oboje płaczą, ale dali radę",3]
+];
+const presetSel=document.getElementById('preset');
+const o0=document.createElement('option');o0.value="";o0.textContent="— wybierz albo wpisz swoje —";presetSel.appendChild(o0);
+QUIZZES.forEach((qz,i)=>{const o=document.createElement('option');o.value=i;o.textContent=(i+1)+". "+qz[0];presetSel.appendChild(o);});
+presetSel.addEventListener('change',()=>{
+  const v=presetSel.value;if(v==="")return;const qz=QUIZZES[+v];
+  document.getElementById('q').value=qz[0];
+  document.getElementById('a').value=qz[1];
+  document.getElementById('b').value=qz[2];
+  document.getElementById('c').value=qz[3];
+  document.getElementById('d').value=qz[4];
+  document.querySelectorAll('input[name=ok]').forEach((r,idx)=>{r.checked=(idx===qz[5]);r.dataset.was=(idx===qz[5])?"1":"0";});
+  draw();
+});
+
+const cv=document.getElementById('cv'),ctx=cv.getContext('2d');
+const STYLES={
+  krem:{name:"Kremowa (delikatna)",cardBg:"rgba(250,247,240,0.97)",cardBorder:"#cdbf9f",pillBg:"#7c8a6e",pillText:"#ffffff",qText:"#33352f",circleBg:"#7c8a6e",circleText:"#ffffff",ansText:"#33352f",okBg:"#3a9d5d",okText:"#ffffff",okAns:"#2c7a47",box:"#f1ede3",boxBorder:"#ddd3bf"},
+  teleturniej:{name:"Teleturniej (granat + złoto)",cardBg:"rgba(11,18,46,0.96)",cardBorder:"#d4af37",pillBg:"#d4af37",pillText:"#0b122e",qText:"#ffffff",circleBg:"#d4af37",circleText:"#0b122e",ansText:"#f3f3f3",okBg:"#2ecc71",okText:"#06351b",okAns:"#7cf0a8",box:"rgba(255,255,255,0.08)",boxBorder:"#d4af37"},
+  tiktok:{name:"TikTok pop (żółta)",cardBg:"rgba(255,221,51,0.97)",cardBorder:"#111111",pillBg:"#111111",pillText:"#ffd900",qText:"#111111",circleBg:"#111111",circleText:"#ffd900",ansText:"#111111",okBg:"#e8492b",okText:"#ffffff",okAns:"#b5301a",box:"rgba(0,0,0,0.07)",boxBorder:"#111111"},
+  roz:{name:"Cukierkowa (róż)",cardBg:"rgba(255,240,246,0.97)",cardBorder:"#e58aa8",pillBg:"#e0608f",pillText:"#ffffff",qText:"#4a2230",circleBg:"#e0608f",circleText:"#ffffff",ansText:"#4a2230",okBg:"#3a9d5d",okText:"#ffffff",okAns:"#2c7a47",box:"#fde6ee",boxBorder:"#e8a8c0"},
+  czarna:{name:"Czarna elegancka",cardBg:"rgba(18,18,20,0.93)",cardBorder:"#ffffff",pillBg:"#ffffff",pillText:"#111111",qText:"#ffffff",circleBg:"#ffffff",circleText:"#111111",ansText:"#f0f0f0",okBg:"#5ad17a",okText:"#06351b",okAns:"#9af0b5",box:"rgba(255,255,255,0.09)",boxBorder:"#888888"},
+  niebieska:{name:"Niebieska (chłodna)",cardBg:"rgba(232,243,255,0.97)",cardBorder:"#5b8fd6",pillBg:"#3a6fb0",pillText:"#ffffff",qText:"#15314f",circleBg:"#3a6fb0",circleText:"#ffffff",ansText:"#15314f",okBg:"#3a9d5d",okText:"#ffffff",okAns:"#2c7a47",box:"#dbe9fb",boxBorder:"#b6d0f0"},
+  mieta:{name:"Miętowa (świeża)",cardBg:"rgba(230,248,242,0.97)",cardBorder:"#4bbf9a",pillBg:"#2f9e8f",pillText:"#ffffff",qText:"#1d3b34",circleBg:"#2f9e8f",circleText:"#ffffff",ansText:"#1d3b34",okBg:"#e8902b",okText:"#ffffff",okAns:"#b56a18",box:"#d6f1e8",boxBorder:"#aed8cb"},
+  pomarancz:{name:"Pomarańczowa (energia)",cardBg:"rgba(255,238,224,0.97)",cardBorder:"#e8762b",pillBg:"#e8762b",pillText:"#ffffff",qText:"#3a1f0c",circleBg:"#e8762b",circleText:"#ffffff",ansText:"#3a1f0c",okBg:"#3a9d5d",okText:"#ffffff",okAns:"#2c7a47",box:"#ffe2cc",boxBorder:"#f0c29a"},
+  fiolet:{name:"Fioletowa (bajkowa)",cardBg:"rgba(243,235,255,0.97)",cardBorder:"#8a63c0",pillBg:"#7a4fbf",pillText:"#ffffff",qText:"#2e1d4a",circleBg:"#7a4fbf",circleText:"#ffffff",ansText:"#2e1d4a",okBg:"#3a9d5d",okText:"#ffffff",okAns:"#2c7a47",box:"#ebe0fb",boxBorder:"#cbb6ec"}
+};
+const styleSel=document.getElementById('style');
+Object.keys(STYLES).forEach(k=>{const o=document.createElement('option');o.value=k;o.textContent=STYLES[k].name;styleSel.appendChild(o);});
+styleSel.addEventListener('change',draw);
+const W=1080, PAD=56, CARDX=24, CARDW=W-48;
+function val(id){return document.getElementById(id).value.trim();}
+function correct(){const r=document.querySelector('input[name=ok]:checked');return r?+r.value:-1;}
+
+function wrap(text,font,maxW){
+  ctx.font=font;const words=text.split(' ');let lines=[],line='';
+  for(const w of words){const t=line?line+' '+w:w;
+    if(ctx.measureText(t).width>maxW && line){lines.push(line);line=w;}else line=t;}
+  if(line)lines.push(line);return lines;
+}
+function roundRect(x,y,w,h,r){ctx.beginPath();ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath();}
+
+function layout(){
+  const mode=(document.getElementById('uklad')||{}).value||"lista";
+  const Q=val('q')||"Pytanie...";
+  const A=[val('a'),val('b'),val('c'),val('d')];
+  const ok=correct();
+  const qFont="bold 50px system-ui,Segoe UI,Roboto,sans-serif";
+  const innerW=CARDW-PAD*2;
+  const qLines=wrap(Q,qFont,innerW);
+  let aFont,lineH,ansTextW,colW=0;
+  if(mode==="siatka"){aFont="34px system-ui,Segoe UI,Roboto,sans-serif";lineH=44;colW=(innerW-24)/2;ansTextW=colW-48;}
+  else{aFont="38px system-ui,Segoe UI,Roboto,sans-serif";lineH=50;
+    ansTextW=innerW-(mode==="przyciski"?150:mode==="pasy"?150:mode==="numerki"?110:86);}
+  const ansLines=A.map(t=>wrap(t||"...",aFont,ansTextW));
+  let y=40; const headH=82; y+=headH+34;
+  const qLH=62; y+=qLines.length*qLH+30;
+  let rowGap,rowHs=[],gridRowHs=[];
+  if(mode==="siatka"){
+    rowGap=22;
+    const cellHs=ansLines.map(ls=>Math.max(124, ls.length*lineH+58));
+    gridRowHs=[Math.max(cellHs[0],cellHs[1]),Math.max(cellHs[2],cellHs[3])];
+    gridRowHs.forEach(h=>y+=h+rowGap); rowHs=cellHs;
+  }else{
+    rowGap=mode==="przyciski"?18:mode==="pasy"?14:mode==="numerki"?16:26;
+    rowHs=ansLines.map(ls=>{
+      if(mode==="przyciski")return Math.max(96, ls.length*lineH+44);
+      if(mode==="pasy")return Math.max(92, ls.length*lineH+36);
+      if(mode==="numerki")return Math.max(82, ls.length*lineH+26);
+      return Math.max(70, ls.length*lineH+18);
+    });
+    rowHs.forEach(h=>y+=h+rowGap);
+  }
+  y+=14;
+  return {mode,Q,A,ok,qFont,aFont,innerW,colW,qLines,ansLines,qLH,rowGap,lineH,rowHs,gridRowHs,headH,total:y};
+}
+
+function draw(){
+  if(typeof refreshPrompt==='function')refreshPrompt();
+  const S=STYLES[(document.getElementById('style')||{}).value]||STYLES.krem;
+  const L=layout();
+  cv.width=W; cv.height=L.total;
+  ctx.clearRect(0,0,W,cv.height);
+  // karta
+  ctx.fillStyle=S.cardBg;
+  ctx.strokeStyle=S.cardBorder; ctx.lineWidth=5;
+  roundRect(CARDX,12,CARDW,cv.height-24,40); ctx.fill(); ctx.stroke();
+  // nagłówek (pill)
+  ctx.font="bold 34px system-ui,Segoe UI,Roboto,sans-serif";
+  const title=(val('title')||"PYTANIE ZA MILION");
+  const tw=ctx.measureText(title).width;
+  const pillW=tw+96, pillH=L.headH, pillX=(W-pillW)/2, pillY=34;
+  ctx.fillStyle=S.pillBg; roundRect(pillX,pillY,pillW,pillH,pillH/2); ctx.fill();
+  ctx.fillStyle=S.pillText; ctx.textAlign="center"; ctx.textBaseline="middle";
+  ctx.fillText("⭐ "+title, W/2, pillY+pillH/2+2);
+  // pytanie
+  let y=34+L.headH+34;
+  ctx.fillStyle=S.qText; ctx.font=L.qFont; ctx.textAlign="center"; ctx.textBaseline="alphabetic";
+  L.qLines.forEach(line=>{ctx.fillText(line,W/2,y+44); y+=L.qLH;});
+  y+=30;
+  // odpowiedzi
+  const letters=["A","B","C","D"];
+  const cx=CARDX+PAD, circleD=64, innerW=CARDW-PAD*2;
+  const bf="bold 36px system-ui,Segoe UI,Roboto,sans-serif";
+
+  if(L.mode==="siatka"){
+    const colGap=24, colW=L.colW, cD=52, xs=[cx, cx+colW+colGap];
+    for(let r=0;r<2;r++){
+      const rowH=L.gridRowHs[r];
+      for(let c=0;c<2;c++){
+        const i=r*2+c, isOk=L.ok===i, bx=xs[c];
+        ctx.fillStyle=isOk?S.okBg:S.box; ctx.strokeStyle=isOk?S.okBg:S.boxBorder; ctx.lineWidth=3;
+        roundRect(bx, y, colW, rowH, 22); ctx.fill(); ctx.stroke();
+        const ccx=bx+24+cD/2, ccy=y+26+cD/2;
+        ctx.beginPath(); ctx.arc(ccx, ccy, cD/2, 0, Math.PI*2);
+        ctx.fillStyle=isOk?S.okText:S.circleBg; ctx.fill();
+        ctx.fillStyle=isOk?S.okBg:S.circleText; ctx.font="bold 30px system-ui,Segoe UI,Roboto,sans-serif";
+        ctx.textAlign="center"; ctx.textBaseline="middle"; ctx.fillText(letters[i], ccx, ccy+1);
+        ctx.fillStyle=isOk?S.okText:S.ansText; ctx.font=L.aFont; ctx.textAlign="left"; ctx.textBaseline="alphabetic";
+        let ty=y+26+cD+38;
+        L.ansLines[i].forEach(line=>{ctx.fillText(line, bx+24, ty); ty+=L.lineH;});
+      }
+      y+=rowH+L.rowGap;
+    }
+    return;
+  }
+
+  for(let i=0;i<4;i++){
+    const rowH=L.rowHs[i], isOk=L.ok===i;
+    if(L.mode==="przyciski"){
+      ctx.fillStyle=isOk?S.okBg:S.box; ctx.strokeStyle=isOk?S.okBg:S.boxBorder; ctx.lineWidth=3;
+      roundRect(cx, y, innerW, rowH, 26); ctx.fill(); ctx.stroke();
+      const cyc=y+rowH/2, ccx=cx+24+circleD/2;
+      ctx.beginPath(); ctx.arc(ccx, cyc, circleD/2, 0, Math.PI*2);
+      ctx.fillStyle=isOk?S.okText:S.circleBg; ctx.fill();
+      ctx.fillStyle=isOk?S.okBg:S.circleText; ctx.font=bf; ctx.textAlign="center"; ctx.textBaseline="middle";
+      ctx.fillText(letters[i], ccx, cyc+2);
+      ctx.fillStyle=isOk?S.okText:S.ansText; ctx.font=L.aFont; ctx.textAlign="left"; ctx.textBaseline="middle";
+      const tx=ccx+circleD/2+22, lines=L.ansLines[i]; let ty=cyc-(lines.length-1)*L.lineH/2;
+      lines.forEach(line=>{ctx.fillText(line, tx, ty); ty+=L.lineH;}); ctx.textBaseline="alphabetic";
+    }
+    else if(L.mode==="pasy"){
+      const barX=CARDX+16, barW=CARDW-32;
+      ctx.fillStyle=isOk?S.okBg:S.box; ctx.strokeStyle=isOk?S.okBg:S.boxBorder; ctx.lineWidth=3;
+      roundRect(barX, y, barW, rowH, 16); ctx.fill(); ctx.stroke();
+      const badge=rowH-24, bxx=barX+12, byy=y+12;
+      ctx.fillStyle=isOk?S.okText:S.circleBg; roundRect(bxx, byy, badge, badge, 12); ctx.fill();
+      ctx.fillStyle=isOk?S.okBg:S.circleText; ctx.font="bold 42px system-ui,Segoe UI,Roboto,sans-serif";
+      ctx.textAlign="center"; ctx.textBaseline="middle"; ctx.fillText(letters[i], bxx+badge/2, byy+badge/2+1);
+      ctx.fillStyle=isOk?S.okText:S.ansText; ctx.font=L.aFont; ctx.textAlign="left"; ctx.textBaseline="middle";
+      const tx=bxx+badge+24, lines=L.ansLines[i]; let ty=y+rowH/2-(lines.length-1)*L.lineH/2;
+      lines.forEach(line=>{ctx.fillText(line, tx, ty); ty+=L.lineH;}); ctx.textBaseline="alphabetic";
+    }
+    else if(L.mode==="numerki"){
+      ctx.fillStyle=isOk?S.okBg:S.circleBg; ctx.font="bold 66px system-ui,Segoe UI,Roboto,sans-serif";
+      ctx.textAlign="left"; ctx.textBaseline="middle"; ctx.fillText(letters[i], cx, y+rowH/2);
+      ctx.fillStyle=isOk?S.okAns:S.ansText; ctx.font=L.aFont; ctx.textBaseline="middle";
+      const tx=cx+96, lines=L.ansLines[i]; let ty=y+rowH/2-(lines.length-1)*L.lineH/2;
+      lines.forEach(line=>{ctx.fillText(line, tx, ty); ty+=L.lineH;});
+      ctx.strokeStyle=S.boxBorder; ctx.lineWidth=2; ctx.beginPath();
+      ctx.moveTo(cx, y+rowH+L.rowGap/2-2); ctx.lineTo(cx+innerW, y+rowH+L.rowGap/2-2); ctx.stroke();
+      ctx.textBaseline="alphabetic";
+    }
+    else {
+      const cyc=y+34;
+      ctx.beginPath(); ctx.arc(cx+circleD/2, cyc, circleD/2, 0, Math.PI*2);
+      ctx.fillStyle=isOk?S.okBg:S.circleBg; ctx.fill();
+      ctx.fillStyle=isOk?S.okText:S.circleText; ctx.font=bf; ctx.textAlign="center"; ctx.textBaseline="middle";
+      ctx.fillText(letters[i], cx+circleD/2, cyc+2);
+      ctx.fillStyle=isOk?S.okAns:S.ansText; ctx.font=L.aFont; ctx.textAlign="left"; ctx.textBaseline="alphabetic";
+      let ty=y+ (L.ansLines[i].length===1?44:30);
+      L.ansLines[i].forEach(line=>{ctx.fillText(line, cx+circleD+22, ty); ty+=L.lineH;});
+    }
+    y+=rowH+L.rowGap;
+  }
+}
+document.getElementById('uklad').addEventListener('change',draw);
+
+function dl(){
+  draw();
+  cv.toBlob(b=>{
+    const a=document.createElement('a');
+    a.href=URL.createObjectURL(b);
+    a.download="pytanie-za-milion.png";
+    a.click();
+  },"image/png");
+}
+
+["q","a","b","c","d","title"].forEach(id=>document.getElementById(id).addEventListener('input',draw));
+document.querySelectorAll('input[name=ok]').forEach(r=>{
+  r.addEventListener('click',function(){ if(this.dataset.was==="1"){this.checked=false;this.dataset.was="0";}else{document.querySelectorAll('input[name=ok]').forEach(x=>x.dataset.was="0");this.dataset.was="1";} draw();});
+});
+draw();
+</script>
+</body>
+</html>

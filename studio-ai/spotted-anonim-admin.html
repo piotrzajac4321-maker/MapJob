@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Panel — Anonimowe wiadomości Spotted Rybnik</title>
+<style>
+  :root{--gold:#c9a24b;--line:#2a2d34;--card:#1d2026;--mut:#8a9096}
+  *{box-sizing:border-box}
+  body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:#0f1115;color:#e8e6df;line-height:1.5}
+  header{background:#15171c;color:var(--gold);padding:18px;text-align:center;border-bottom:1px solid var(--line)}
+  header h1{margin:0;font-size:18px;letter-spacing:2px}
+  .wrap{max-width:720px;margin:0 auto;padding:16px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:14px}
+  input[type=password],input[type=text],textarea{width:100%;padding:11px;border:1px solid var(--line);border-radius:10px;font-size:15px;background:#12141a;color:#e8e6df;font-family:inherit}
+  textarea{min-height:70px;resize:vertical}
+  button{cursor:pointer;border:none;border-radius:999px;padding:10px 16px;font-size:14px;font-weight:700;margin:4px 4px 0 0}
+  .gold{background:var(--gold);color:#15171c}.ghost{background:#2a2d34;color:#e8e6df}
+  .red{background:#3a1d1d;color:#f0a0a0}.green{background:#16311f;color:#8ee0a6}
+  .tabs button{background:#2a2d34;color:#cfcabb}.tabs button.on{background:var(--gold);color:#15171c}
+  .tell{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:12px}
+  .tell .q{font-size:15.5px;white-space:pre-wrap;word-break:break-word}
+  .badge{display:inline-block;font-size:11px;font-weight:700;padding:2px 8px;border-radius:6px;margin-bottom:6px}
+  .b-new{background:#2b2f38;color:#e6c877}.b-pub{background:#16311f;color:#8ee0a6}.b-hid{background:#3a2b1d;color:#e0b080}
+  .d{font-size:11.5px;color:var(--mut);margin:6px 0}
+  .hint{font-size:12.5px;color:var(--mut);margin-top:8px}
+  .msg{font-size:14px;margin-top:10px;padding:10px 12px;border-radius:8px;display:none}
+  .ok{background:#16311f;color:#8ee0a6;display:block}.err{background:#3a1d1d;color:#f0a0a0;display:block}
+</style>
+</head>
+<body>
+<header><h1>🔐 PANEL — ANONIMOWE WIADOMOŚCI</h1></header>
+<div class="wrap">
+
+  <div class="card" id="login">
+    <label style="font-weight:700;display:block;margin-bottom:8px">Hasło administratora</label>
+    <input type="password" id="pw" placeholder="Wpisz hasło" onkeydown="if(event.key==='Enter')doLogin()">
+    <button class="gold" style="margin-top:10px" onclick="doLogin()">Zaloguj</button>
+    <div class="msg" id="lmsg"></div>
+    <div class="hint">Ten adres trzymaj dla siebie. Hasło zmienisz, prosząc o to w czacie.</div>
+  </div>
+
+  <div id="panel" style="display:none">
+    <div class="card">
+      <div class="tabs">
+        <button id="t-new" class="on" onclick="setTab('new')">🆕 Nowe (<span id="n-new">0</span>)</button>
+        <button id="t-published" onclick="setTab('published')">✅ Opublikowane (<span id="n-published">0</span>)</button>
+        <button id="t-hidden" onclick="setTab('hidden')">🚫 Ukryte (<span id="n-hidden">0</span>)</button>
+        <button class="ghost" onclick="load()" style="float:right">🔄 Odśwież</button>
+      </div>
+      <div class="msg" id="pmsg"></div>
+    </div>
+    <div id="list"></div>
+  </div>
+
+</div>
+
+<script>
+const SB_URL="https://ahgzjneegvptudphibdm.supabase.co";
+const SB_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFoZ3pqbmVlZ3ZwdHVkcGhpYmRtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQxMTA3NzcsImV4cCI6MjA4OTY4Njc3N30.KrCBuAzz7fsCHCUSGeTZ5vm7BOo-DIGvI3jZyrk4tL4";
+const H={apikey:SB_KEY,Authorization:"Bearer "+SB_KEY,"Content-Type":"application/json"};
+const $=id=>document.getElementById(id);
+let PW="", ITEMS=[], TAB="new";
+
+async function rpc(fn,args){
+  const r=await fetch(SB_URL+"/rest/v1/rpc/"+fn,{method:"POST",headers:H,body:JSON.stringify(args)});
+  if(!r.ok)throw new Error(await r.text());
+  return await r.json();
+}
+function fmtDate(s){try{return new Date(s).toLocaleString('pl-PL');}catch(e){return"";}}
+
+async function doLogin(){
+  const pw=$('pw').value.trim();const m=$('lmsg');
+  if(!pw){return;}
+  m.style.display="none";
+  try{
+    const items=await rpc('spotted_admin_list',{pw});
+    PW=pw;ITEMS=items;sessionStorage.setItem('spTellPw',pw);
+    $('login').style.display="none";$('panel').style.display="block";
+    render();
+  }catch(e){m.className="msg err";m.textContent="Błędne hasło.";}
+}
+
+async function load(){
+  try{ITEMS=await rpc('spotted_admin_list',{pw:PW});render();}
+  catch(e){flash("Błąd wczytywania.",true);}
+}
+
+function setTab(t){TAB=t;['new','published','hidden'].forEach(x=>$('t-'+x).classList.toggle('on',x===t));render();}
+function counts(){['new','published','hidden'].forEach(s=>{$('n-'+s).textContent=ITEMS.filter(i=>i.status===s).length;});}
+
+function render(){
+  counts();
+  const list=$('list');list.innerHTML="";
+  const rows=ITEMS.filter(i=>i.status===TAB);
+  if(!rows.length){list.innerHTML='<div class="hint" style="text-align:center;padding:20px">Brak wiadomości w tej zakładce.</div>';return;}
+  rows.forEach(row=>{
+    const c=document.createElement('div');c.className="tell";
+    const badge=document.createElement('span');
+    badge.className="badge "+(row.status==='new'?'b-new':row.status==='published'?'b-pub':'b-hid');
+    badge.textContent=row.status==='new'?'NOWA':row.status==='published'?'OPUBLIKOWANA':'UKRYTA';
+    c.appendChild(badge);
+    const q=document.createElement('div');q.className="q";q.textContent=row.body;c.appendChild(q);
+    const d=document.createElement('div');d.className="d";d.textContent="Wpłynęła: "+fmtDate(row.created_at)+(row.published_at?(" · opublikowana: "+fmtDate(row.published_at)):"");c.appendChild(d);
+    const ans=document.createElement('textarea');ans.placeholder="Twoja odpowiedź (opcjonalnie) — pojawi się pod wiadomością";ans.value=row.answer||"";c.appendChild(ans);
+    const bar=document.createElement('div');bar.style.marginTop="8px";
+    if(row.status!=='published'){bar.appendChild(mkBtn("✅ Publikuj","gold",()=>act(row.id,'publish',ans.value)));}
+    bar.appendChild(mkBtn("💾 Zapisz odpowiedź","ghost",()=>act(row.id,'answer',ans.value)));
+    if(row.status==='published'){bar.appendChild(mkBtn("↩️ Cofnij publikację","ghost",()=>act(row.id,'unpublish')));}
+    if(row.status!=='hidden'){bar.appendChild(mkBtn("🚫 Ukryj","ghost",()=>act(row.id,'hide')));}
+    bar.appendChild(mkBtn("🗑️ Usuń","red",()=>{if(confirm("Usunąć na stałe?"))act(row.id,'delete');}));
+    c.appendChild(bar);
+    list.appendChild(c);
+  });
+}
+function mkBtn(txt,cls,fn){const b=document.createElement('button');b.className=cls;b.textContent=txt;b.onclick=fn;return b;}
+
+async function act(id,action,ans){
+  try{
+    await rpc('spotted_admin_action',{pw:PW,act:action,tid:id,ans:ans||null});
+    flash("Zrobione ✓",false);
+    await load();
+  }catch(e){flash("Błąd operacji.",true);}
+}
+function flash(t,err){const m=$('pmsg');m.className="msg "+(err?"err":"ok");m.textContent=t;setTimeout(()=>m.style.display="none",2500);}
+
+(function(){const s=sessionStorage.getItem('spTellPw');if(s){$('pw').value=s;doLogin();}})();
+</script>
+</body>
+</html>

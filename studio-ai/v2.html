@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BoboFoto — podgląd v2</title>
+  <meta name="description" content="Zamieniamy zwykłe zdjęcie Twojego dziecka w profesjonalną sesję online. Od 9,90 zł/zdjęcie, gotowe w ~10 h." />
+  <!-- PODGLĄD: nie indeksować -->
+  <meta name="robots" content="noindex, nofollow" />
+  <meta name="theme-color" content="#8E9C82" />
+
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="preconnect" href="https://d8j0ntlcm91z4.cloudfront.net" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css?v=47" />
+  <link rel="stylesheet" href="css/v2.css?v=18" />
+  <!-- szybsze ładowanie pierwszych kafelków przed/po -->
+  <link rel="preload" as="image" href="https://d8j0ntlcm91z4.cloudfront.net/user_3EL0T26twgaFdlHuM3eJuT2XjHR/hf_20260604_222839_89b0e61c-6229-43b8-a1e1-1c73aeb57dec_min.webp" fetchpriority="high" />
+  <link rel="preload" as="image" href="https://d8j0ntlcm91z4.cloudfront.net/user_3EL0T26twgaFdlHuM3eJuT2XjHR/hf_20260604_215500_bcf31546-efd1-4746-b8c8-bdd09d7ec8c7_min.webp" fetchpriority="high" />
+</head>
+<body class="v2">
+
+  <!-- wstążka podglądu -->
+  <div class="v2-ribbon">PODGLĄD v2 — wersja do akceptacji</div>
+
+  <!-- ============ NAGŁÓWEK ============ -->
+  <div class="site-header">
+    <div class="promo-bar" id="promoBar" role="status">
+      <div class="promo-inner">
+        <span class="promo-emoji">🎁</span>
+        <span class="promo-text"><b>-30%</b><span class="promo-sep">&nbsp;·&nbsp;</span>10 zdjęć już od <b>49 zł</b><span class="promo-hide-sm">&nbsp;·&nbsp;sesja od 9,90 zł</span></span>
+        <span class="promo-timer">promocja ograniczona czasowo</span>
+      </div>
+    </div>
+    <header class="nav" id="nav">
+      <div class="container">
+        <a href="#start" class="brand">Bobo<span>Foto</span><small>studio zdjęć noworodkowych</small></a>
+        <nav class="nav-links" id="navLinks">
+          <a href="#start">Przykłady</a>
+          <a href="#galeria">Stylizacje</a>
+          <a href="#opinie">Opinie</a>
+          <a href="#cennik">Cennik</a>
+          <a href="#cennik" class="btn btn-primary nav-cta"><span>Zamów</span></a>
+        </nav>
+        <button class="nav-toggle" id="navToggle" aria-label="Menu">☰</button>
+      </div>
+    </header>
+  </div>
+
+  <!-- ============ HERO ============ -->
+  <section class="v2-hero" id="start">
+    <div class="container v2-hero-stack">
+      <span class="v2-pill">📷 Sesja noworodka i dziecka online</span>
+      <h1>Zmień zdjęcie w&nbsp;<em>profesjonalną sesję zdjęciową</em></h1>
+      <p class="v2-lead">Wyślij jedno zdjęcie, wybierz tło — a my przygotujemy zdjęcia jak ze studia. <b>Bez wychodzenia z domu.</b></p>
+
+      <!-- PRZYKŁADY od razu pod nagłówkiem -->
+      <div class="bac-grid" id="bacGrid" aria-label="Przykłady przed i po"></div>
+      <p class="v2-examples-note">👆 Tak zwykłe zdjęcie z telefonu (<b>PRZED</b>) zmienia się w profesjonalny kadr (<b>PO</b>) — twarz dziecka bez zmian</p>
+
+      <div class="v2-choice" role="group" aria-label="Wybierz rodzaj sesji">
+        <button type="button" class="v2-choice-btn is-active" data-age="noworodek">👶 Noworodek</button>
+        <button type="button" class="v2-choice-btn" data-age="dziecko">🧒 Starsze dziecko</button>
+      </div>
+      <div class="v2-bullets">
+        <span>✅ Twarz dziecka bez zmian</span>
+        <span>⚡ Gotowe w ~10 h</span>
+        <span>💸 Cała sesja już od 9,90 zł</span>
+      </div>
+      <div class="v2-social">
+        <div class="v2-avatars"><span>A</span><span>K</span><span>M</span><span>E</span><span>N</span></div>
+        <div class="v2-social-txt"><span class="v2-stars">★★★★★</span> <b>5,0</b> &nbsp;·&nbsp; zadowolone mamy z całej Polski</div>
+      </div>
+      <div class="hero-cta">
+        <a href="#cennik" class="btn btn-primary btn-lg btn-shine">Zamów sesję →</a>
+        <a href="#galeria" class="btn btn-ghost btn-lg">Zobacz stylizacje</a>
+      </div>
+      <p class="v2-microcopy">🔒 Płatność BLIK / karta &nbsp;·&nbsp; 🛡️ Gwarancja zwrotu &nbsp;·&nbsp; 📩 Zdjęcia prosto na maila</p>
+    </div>
+  </section>
+
+  <!-- ============ PASEK ZAUFANIA ============ -->
+  <section class="trustbar">
+    <div class="container trustbar-grid">
+      <div class="trust"><span class="t-ico">🛡️</span><div><b>Gwarancja zwrotu</b><span>Nieostre zdjęcie lub zmieniona twarz? Zwracamy pieniądze.</span></div></div>
+      <div class="trust"><span class="t-ico">👶</span><div><b>Twarz bez zmian</b><span>Zmieniamy tylko tło, ubranko i światło.</span></div></div>
+      <div class="trust"><span class="t-ico">🎨</span><div><b>30+ stylizacji</b><span>Klasyczne, boho, świąteczne, bajkowe…</span></div></div>
+      <div class="trust"><span class="t-ico">🔒</span><div><b>Zdjęcia bezpieczne</b><span>Usuwamy je po realizacji zamówienia.</span></div></div>
+    </div>
+  </section>
+
+  <!-- ============ GALERIA STYLIZACJI (zdjęcia do wyboru) ============ -->
+  <section class="section section-alt" id="galeria">
+    <div class="container">
+      <div class="section-head reveal">
+        <span class="eyebrow">Ponad 30 stylizacji do wyboru</span>
+        <h2>Zdjęcia do wyboru</h2>
+        <p>Kliknij czerwone <strong style="color:#ff3b5c">♥</strong> przy zdjęciach, które Ci się podobają, a potem <strong>„Zamów"</strong> na dole. Przy każdym napiszesz, co zmienić i prześlesz własne zdjęcie.</p>
+      </div>
+      <div class="filters" id="filters"></div>
+      <div class="gallery" id="gallery"></div>
+    </div>
+  </section>
+
+  <!-- ============ JAK TO DZIAŁA — 3 proste kroki ============ -->
+  <section class="section" id="jak">
+    <div class="container">
+      <div class="section-head reveal">
+        <span class="eyebrow">To naprawdę proste</span>
+        <h2>Sesja w 3 krokach</h2>
+      </div>
+      <div class="v2-steps">
+        <div class="v2-step reveal"><span class="v2-num">1</span><h3>Wyślij zdjęcie</h3><p>Jedno zdjęcie maluszka zrobione telefonem w domu w zupełności wystarczy.</p></div>
+        <div class="v2-step reveal"><span class="v2-num">2</span><h3>Wybierz tło</h3><p>Ponad 30 gotowych stylizacji — klasyczne, boho, świąteczne, bajkowe.</p></div>
+        <div class="v2-step reveal"><span class="v2-num">3</span><h3>Odbierasz w ~10 h</h3><p>Gotowe zdjęcia w wysokiej jakości prosto na maila — gotowe do druku.</p></div>
+      </div>
+      <p class="v2-steps-note">Zamówisz wieczorem — rano masz gotowe zdjęcia w skrzynce. 💌</p>
+      <div class="v2-center"><a href="#cennik" class="btn btn-primary btn-lg btn-shine">Zaczynam →</a></div>
+    </div>
+  </section>
+
+  <!-- ============ OPINIE ============ -->
+  <section class="section section-alt" id="opinie">
+    <div class="container">
+      <div class="section-head reveal">
+        <span class="eyebrow">Opinie</span>
+        <h2>Co mówią rodzice</h2>
+        <p>Średnia ocena <strong>5,0</strong> ★ — oto, co najczęściej słyszymy od mam i tatusiów.</p>
+      </div>
+      <div class="reviews">
+        <figure class="review reveal">
+          <div class="stars">★★★★★</div>
+          <blockquote>Zdjęcia wyszły przepiękne, a wszystko zrobiłam z kanapy w trakcie drzemki córki. Efekt jak ze studia!</blockquote>
+          <figcaption><span class="avatar">A</span><span class="who"><b>Ania</b><small>Wrocław</small></span></figcaption>
+        </figure>
+        <figure class="review reveal">
+          <div class="stars">★★★★★</div>
+          <blockquote>Bałam się, że twarz synka się zmieni, a wyszedł dokładnie taki, jaki jest. Mam ciary, cudowna pamiątka.</blockquote>
+          <figcaption><span class="avatar">M</span><span class="who"><b>Magda</b><small>Poznań</small></span></figcaption>
+        </figure>
+        <figure class="review reveal">
+          <div class="stars">★★★★★</div>
+          <blockquote>Gotowe w niecałe dwie godziny. Idealne na kartki dla babci i dziadka — wszyscy byli zachwyceni.</blockquote>
+          <figcaption><span class="avatar">K</span><span class="who"><b>Karolina</b><small>Kraków</small></span></figcaption>
+        </figure>
+        <figure class="review reveal">
+          <div class="stars">★★★★★</div>
+          <blockquote>Super kontakt na każdym etapie i ekspresowa realizacja. Cena nieporównywalnie niższa niż sesja w studio.</blockquote>
+          <figcaption><span class="avatar">P</span><span class="who"><b>Paulina</b><small>Gdańsk</small></span></figcaption>
+        </figure>
+        <figure class="review reveal">
+          <div class="stars">★★★★★</div>
+          <blockquote>Wzięłam pakiet Premium i dostałam 10 różnych stylizacji. Nie umiałam wybrać, bo każda jest piękna!</blockquote>
+          <figcaption><span class="avatar">E</span><span class="who"><b>Ewa</b><small>Warszawa</small></span></figcaption>
+        </figure>
+        <figure class="review reveal">
+          <div class="stars">★★★★★</div>
+          <blockquote>Prosto, szybko i bez stresu z noworodkiem. Zdjęcia obeszły całą rodzinę i każdy pytał, gdzie to robiłam.</blockquote>
+          <figcaption><span class="avatar">N</span><span class="who"><b>Natalia</b><small>Łódź</small></span></figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ CENNIK ============ -->
+  <section class="section" id="cennik">
+    <div class="container">
+      <div class="section-head reveal">
+        <span class="eyebrow">Cennik</span>
+        <h2>Wybierz pakiet</h2>
+        <p class="price-anchor">Tradycyjna sesja w studiu to <s>400–600 zł</s>, dojazd i tygodnie czekania.<br>U nas: <strong>od 9,90 zł, bez wychodzenia z domu, gotowe w ~10 h.</strong></p>
+        <p>🎁 <strong>-30%</strong> na wszystkie pakiety — promocja ograniczona czasowo. Bez ukrytych kosztów, płatność BLIK lub karta.</p>
+      </div>
+      <div class="pricing">
+        <div class="plan reveal">
+          <div class="plan-head">
+            <span class="plan-name"><h3>Mini</h3><span class="ribbon">-30%</span></span>
+            <div class="price"><span class="price-old">zwykle 14 zł</span>9,90 <span>zł</span></div>
+          </div>
+          <p class="desc">Idealne na start i social media.</p>
+          <ul>
+            <li>1 gotowe zdjęcie</li>
+            <li>1 wybrana stylizacja / tło</li>
+            <li>Format 3:4, jakość 2K</li>
+            <li>Realizacja do ~10 godzin</li>
+          </ul>
+          <a class="btn btn-ghost" data-plan="mini" data-price="24" href="#galeria">Wybieram Mini</a>
+        </div>
+        <div class="plan featured reveal">
+          <span class="tag">Najczęściej wybierany</span>
+          <div class="plan-head">
+            <span class="plan-name"><h3>Standard</h3><span class="ribbon">-30%</span></span>
+            <div class="price"><span class="price-old">zwykle 42 zł</span>29 <span>zł</span></div>
+          </div>
+          <p class="desc">Najlepszy stosunek ceny do jakości — <strong>7,25 zł za zdjęcie</strong>.</p>
+          <ul>
+            <li>4 gotowe zdjęcia</li>
+            <li>do 4 stylizacji / teł</li>
+            <li>Format 3:4, jakość 2K</li>
+            <li>1 poprawka w cenie</li>
+            <li>Realizacja do ~10 godzin</li>
+          </ul>
+          <a class="btn btn-primary btn-shine" data-plan="standard" data-price="49" href="#galeria">Wybieram Standard</a>
+        </div>
+        <div class="plan reveal">
+          <div class="plan-head">
+            <span class="plan-name"><h3>Premium</h3><span class="ribbon">-30%</span></span>
+            <div class="price"><span class="price-old">zwykle 70 zł</span>49 <span>zł</span></div>
+          </div>
+          <p class="desc">Pełna sesja — tylko <strong>4,90 zł za zdjęcie</strong>.</p>
+          <ul>
+            <li>10 gotowych zdjęć do wyboru</li>
+            <li>dowolne stylizacje / tła</li>
+            <li>Format 3:4, jakość 2K</li>
+            <li>2 poprawki w cenie</li>
+            <li>Priorytetowa realizacja</li>
+          </ul>
+          <a class="btn btn-ghost" data-plan="premium" data-price="99" href="#galeria">Wybieram Premium</a>
+        </div>
+      </div>
+      <p class="pricing-note">🛡️ <strong>Zamawiasz bez ryzyka</strong> — jeśli zdjęcie wyjdzie nieostre lub twarz zostanie zmieniona, zwracamy pieniądze. &nbsp;💬 Stały kontakt na każdym etapie.<br>* Twarz i rysy dziecka zostają bez zmian — zmieniamy wyłącznie tło, scenografię i światło.</p>
+
+      <div class="edit-cta reveal" id="obrobka">
+        <button class="btn btn-ghost" id="editOrder" type="button">Mam własne zdjęcie do obróbki →</button>
+        <p>Retusz, zmiana tła, koloryzacja starych zdjęć — prześlij i opisz, czego potrzebujesz.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ IDEALNY PREZENT ============ -->
+  <section class="section section-alt v2-gift">
+    <div class="container v2-gift-inner">
+      <span class="v2-gift-ico">🎁</span>
+      <h2>Idealny prezent, który wzrusza</h2>
+      <p>Sesja BoboFoto to prezent na <strong>baby shower, chrzciny i narodziny</strong> — oraz pamiątka, którą babcia i dziadek powieszą na ścianie. Wystarczy jedno zdjęcie maluszka.</p>
+      <a href="#cennik" class="btn btn-primary btn-lg btn-shine">Podaruj sesję →</a>
+    </div>
+  </section>
+
+  <!-- ============ FAQ ============ -->
+  <section class="section" id="faq">
+    <div class="container">
+      <div class="section-head reveal"><span class="eyebrow">FAQ</span><h2>Najczęstsze pytania</h2></div>
+      <div class="faq reveal">
+        <details><summary>Czy twarz mojego dziecka się zmieni?</summary><div class="faq-a">Nie. Twarz i rysy dziecka zostają bez zmian — zmieniamy wyłącznie tło, stylizację, scenografię i światło. Jeśli twarz zostałaby zmieniona — zwracamy pieniądze.</div></details>
+        <details><summary>Ile to kosztuje i jak płacę?</summary><div class="faq-a">Od 9,90 zł (Mini), 29 zł (Standard), 49 zł (Premium — czyli 4,90 zł za zdjęcie). Płatność online — BLIK lub karta, bez ukrytych kosztów.</div></details>
+        <details><summary>Jak szybko dostanę zdjęcia?</summary><div class="faq-a">Zwykle w około 10 godzin od przesłania zdjęcia i opłacenia zamówienia. W pakiecie Premium realizacja jest priorytetowa.</div></details>
+        <details><summary>Jakie zdjęcie mam wysłać?</summary><div class="faq-a">Jedno wyraźne zdjęcie z telefonu, najlepiej przy świetle z okna, na gładkim tle. Resztę robimy my — wskazówki zobaczysz też przy dodawaniu zdjęcia.</div></details>
+        <details><summary>Czy robicie sesje starszych dzieci?</summary><div class="faq-a">Tak! Oprócz noworodków robimy też sesje dzieci w każdym wieku — portrety, sesje urodzinowe, świąteczne i okolicznościowe. Prześlij zdjęcie i napisz, jaki efekt chcesz uzyskać.</div></details>
+        <details><summary>Czy moje zdjęcia są bezpieczne?</summary><div class="faq-a">Tak. Zdjęcia przesyłasz bezpiecznie, wykorzystujemy je wyłącznie do realizacji Twojego zamówienia (zgodnie z RODO), a po realizacji usuwamy.</div></details>
+        <details><summary>Co jeśli efekt mi się nie spodoba?</summary><div class="faq-a">W pakietach Standard i Premium masz poprawki w cenie. A jeśli zdjęcie wyjdzie nieostre lub twarz zostanie zmieniona — zwracamy pieniądze.</div></details>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ FOOTER ============ -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <div class="brand">Bobo<span style="color:var(--sage)">Foto</span></div>
+          <p style="margin-top:14px">Profesjonalne zdjęcia noworodkowe online — bez dojazdu, stresu i wysokich kosztów.</p>
+          <a href="mailto:kontakt@bobofoto.pl" style="display:flex;align-items:center;gap:8px;margin-top:14px;font-weight:700">✉️ kontakt@bobofoto.pl</a>
+          <a href="https://www.facebook.com/share/18m1mN548V/" target="_blank" rel="me noopener" style="display:inline-flex;align-items:center;gap:8px;margin-top:10px;font-weight:700">📘 Facebook</a>
+        </div>
+        <div>
+          <h4>Strona</h4>
+          <a href="#start">Przykłady</a>
+          <a href="#galeria">Stylizacje</a>
+          <a href="#opinie">Opinie</a>
+          <a href="#cennik">Cennik</a>
+          <a href="/poradnik">Poradnik</a>
+        </div>
+        <div>
+          <h4>Informacje</h4>
+          <a href="regulamin.html">Regulamin</a>
+          <a href="polityka-prywatnosci.html">Polityka prywatności (RODO)</a>
+          <a href="cookies.html">Polityka cookies</a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>© <span id="year"></span> BoboFoto — El-Zając Paweł Zając, NIP 6423229954, al. Piastów 9b/14, 44-193 Knurów. &nbsp;·&nbsp; <a href="#" id="cookieSettings">Ustawienia cookies</a></span>
+        <span>Zdjęcia w galerii to przykładowe wizualizacje stylizacji.</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ============ PASEK CTA + KOSZYK ============ -->
+  <a class="pricebar" id="pricebar" href="#cennik" aria-label="Zamów sesję">
+    <span class="pb-badge">-30%</span>
+    <span class="pb-info">
+      <b class="pb-title">Sesja już od <span class="pb-price">9,90 zł</span></b>
+      <span class="pb-urgency">⚡ Gotowe w ~10 h</span>
+      <span class="pb-note">Bez ukrytych kosztów</span>
+    </span>
+    <span class="pricebar-cta">Zamów teraz <span class="pb-arrow">→</span></span>
+  </a>
+
+  <!-- pełnoszerokowy pasek CTA na dole (kolory BoboFoto) -->
+  <a class="v2-bottombar" href="#cennik" aria-label="Zamów sesję">
+    <span class="v2-bb-info"><b>10 zdjęć za 49 zł — czyli 4,90 zł/szt.</b><small>Zwrot pieniędzy, jeśli zdjęcie wyjdzie nieostre lub twarz zostanie zmieniona</small></span>
+    <span class="v2-bb-btn">Zamów teraz →</span>
+  </a>
+
+  <div class="cart-bar" id="cartBar" aria-hidden="true">
+    <span class="cart-count">♥ Wybrane: <strong id="cartCount">0</strong></span>
+    <button class="btn btn-primary" id="cartOpen" type="button">Zamów spersonalizowane →</button>
+  </div>
+
+  <!-- MODAL: WYBÓR + PERSONALIZACJA -->
+  <div class="cart-modal" id="cartModal" aria-hidden="true">
+    <div class="cart-panel">
+      <button class="cart-close" id="cartClose" type="button" aria-label="Zamknij">✕</button>
+      <h3>Twoje wybrane zdjęcia</h3>
+      <p class="cart-sub">Wybierz stylizacje z galerii lub prześlij własne zdjęcie. Opisz, czego potrzebujesz — zrobimy to pod Ciebie.</p>
+      <div class="cart-items" id="cartItems"></div>
+      <form class="cart-form" id="cartForm" novalidate>
+        <div class="retouch-box">
+          <h4>✨ Dodaj zdjęcie swojego dziecka</h4>
+          <label class="file-drop" for="c-foto">
+            <input type="file" id="c-foto" name="foto" accept="image/*" multiple hidden />
+            <span class="file-ico">📷</span>
+            <span class="file-text" id="fileText">Kliknij, aby dodać zdjęcie (możesz dodać kilka)</span>
+          </label>
+          <details class="tips-toggle">
+            <summary>📸 Jak zrobić dobre zdjęcie? — szybkie wskazówki</summary>
+            <div class="v2-tips v2-tips-compact">
+              <div class="v2-tip good"><h3>✅ Dobre zdjęcie</h3><ul><li>Tylko dziecko, z bliska</li><li>Światło dzienne (przy oknie)</li><li>Wyraźna, ostra twarz</li><li>Gładkie, jasne tło</li></ul></div>
+              <div class="v2-tip bad"><h3>❌ Unikaj</h3><ul><li>Ciemnych / żółtych zdjęć</li><li>Rozmazania i flesza</li><li>Bałaganu w tle</li><li>Filtrów z aplikacji</li></ul></div>
+            </div>
+          </details>
+          <textarea id="c-opis" name="opis" rows="3" placeholder="Co zmienić? (opcjonalnie) — np. inne tło, kolor ubranka, dopisek z imieniem…"></textarea>
+        </div>
+        <div class="row">
+          <div><label for="c-imie">Imię</label><input type="text" id="c-imie" name="imie" placeholder="np. Anna" required /></div>
+          <div><label for="c-email">E-mail (tu wyślemy zdjęcia)</label><input type="email" id="c-email" name="email" placeholder="twoj@email.pl" required /></div>
+        </div>
+        <label for="c-tel">Telefon (opcjonalnie)</label>
+        <input type="tel" id="c-tel" name="telefon" placeholder="np. 600 100 200" />
+        <label>Wybierz pakiet</label>
+        <div class="plan-pick" id="planPick">
+          <button type="button" class="plan-opt" data-plan="mini" data-limit="1"><b>Mini</b><span>1 zdjęcie</span><em>9,90 zł</em></button>
+          <button type="button" class="plan-opt is-active" data-plan="standard" data-limit="4"><b>Standard</b><span>4 zdjęcia</span><em>29 zł</em></button>
+          <button type="button" class="plan-opt" data-plan="premium" data-limit="10"><b>Premium</b><span>10 zdjęć</span><em>49 zł</em></button>
+        </div>
+        <input type="hidden" id="c-pakiet" name="pakiet" value="standard" />
+        <p class="plan-counter" id="planCounter">Wybrane zdjęcia: <strong>0 / 4</strong></p>
+        <label class="consent"><input type="checkbox" id="c-zgoda" name="zgodaWizerunek" required /><span>Akceptuję <a href="regulamin.html" target="_blank">regulamin</a> i wyrażam zgodę na przetwarzanie przesłanego wizerunku mojego dziecka w celu realizacji zamówienia — jestem rodzicem/opiekunem prawnym. <em>(wymagane)</em></span></label>
+        <label class="consent"><input type="checkbox" id="c-marketing" name="zgodaMarketing" /><span>Chcę otrzymywać informacje o promocjach (opcjonalnie).</span></label>
+        <button type="submit" class="btn btn-primary btn-shine" id="paySubmit">Zapłać 49 zł →</button>
+        <div class="pay-badges"><span class="pay-badge pay-blik">BLIK</span><span class="pay-badge">Visa</span><span class="pay-badge">Mastercard</span></div>
+        <p class="cart-reassure">🔒 Bezpieczna płatność BLIK / karta. &nbsp;🛡️ Zwrot, jeśli zdjęcie nieostre lub twarz zmieniona.</p>
+      </form>
+    </div>
+  </div>
+
+  <!-- COOKIES -->
+  <div class="cookie" id="cookie">
+    <div class="cookie-box">
+      <span class="cookie-emoji">🍪</span>
+      <h4>Dbamy o Twoją prywatność</h4>
+      <p class="cookie-lead">Używamy plików cookie, żeby strona działała poprawnie i była dla Ciebie jeszcze lepsza.</p>
+      <button class="cookie-more-btn" id="cookieMore" type="button">Zobacz więcej</button>
+      <div class="cookie-more" id="cookieMoreText" hidden>Niezbędne pliki cookie są zawsze aktywne (potrzebne do działania strony). Za Twoją zgodą używamy też cookie analitycznych i marketingowych, aby ulepszać stronę i dopasować ofertę. Szczegóły w <a href="cookies.html">Polityce cookies</a>.</div>
+      <div class="cookie-btns">
+        <button class="btn btn-ghost" id="cookieReject" type="button">Tylko niezbędne</button>
+        <button class="btn btn-primary cookie-accept" id="cookieAccept" type="button">Akceptuję wszystkie ✓</button>
+      </div>
+    </div>
+  </div>
+  <script>
+    (function () {
+      var c = document.getElementById('cookie'); if (!c) return;
+      var K = 'fotomagia_cookie_consent', v = null;
+      try { v = localStorage.getItem(K); } catch (e) {}
+      if (!v) c.classList.add('show');
+      function hide(val){ try{ localStorage.setItem(K,val);}catch(e){} c.classList.remove('show'); }
+      var a=document.getElementById('cookieAccept'),r=document.getElementById('cookieReject');
+      if(a)a.addEventListener('click',function(){hide('all');});
+      if(r)r.addEventListener('click',function(){hide('necessary');});
+      var m=document.getElementById('cookieMore'),mt=document.getElementById('cookieMoreText');
+      if(m&&mt)m.addEventListener('click',function(){ if(mt.hasAttribute('hidden')){mt.removeAttribute('hidden');m.textContent='Ukryj szczegóły';}else{mt.setAttribute('hidden','');m.textContent='Zobacz więcej';} });
+      var s=document.getElementById('cookieSettings');
+      if(s)s.addEventListener('click',function(e){e.preventDefault();try{localStorage.removeItem(K);}catch(er){}c.classList.add('show');});
+    })();
+  </script>
+
+  <!-- LIGHTBOX -->
+  <div class="lightbox" id="lightbox" aria-hidden="true">
+    <button class="lb-close" id="lbClose" aria-label="Zamknij">✕</button>
+    <button class="lb-nav lb-prev" id="lbPrev" aria-label="Poprzednie">‹</button>
+    <img id="lbImg" src="" alt="" />
+    <button class="lb-nav lb-next" id="lbNext" aria-label="Następne">›</button>
+  </div>
+
+  <!-- przełącznik wieku + kafelki przed/po -->
+  <script>
+    (function(){
+      // mini-toast (niezależny od main.js)
+      function note(msg){
+        var t = document.getElementById('v2Note');
+        if (!t) { t = document.createElement('div'); t.id = 'v2Note'; t.className = 'toast'; document.body.appendChild(t); }
+        t.innerHTML = msg; t.classList.add('show');
+        clearTimeout(t._tm); t._tm = setTimeout(function(){ t.classList.remove('show'); }, 4200);
+      }
+      // przełącznik noworodek / dziecko
+      var btns = document.querySelectorAll('.v2-choice-btn');
+      btns.forEach(function(b){
+        b.addEventListener('click', function(){
+          btns.forEach(function(x){ x.classList.remove('is-active'); });
+          b.classList.add('is-active');
+          try { localStorage.setItem('bf_age', b.dataset.age); } catch(e){}
+          if (b.dataset.age === 'dziecko') {
+            note('🧒 Robimy też sesje starszych dzieci!<br>Prześlij zdjęcie przez <b>„Zamów"</b> i napisz, jaki efekt chcesz — stylizacje dziecięce dobierzemy dla Ciebie.');
+          }
+        });
+      });
+
+      // kafelki PRZED → PO
+      var CDN = "https://d8j0ntlcm91z4.cloudfront.net/user_3EL0T26twgaFdlHuM3eJuT2XjHR/";
+      var pairs = [
+        ["hf_20260604_222839_89b0e61c-6229-43b8-a1e1-1c73aeb57dec","hf_20260604_215500_bcf31546-efd1-4746-b8c8-bdd09d7ec8c7"],
+        ["hf_20260604_222840_c26add32-ed9d-466e-869a-8c7f0972b73c","hf_20260604_215523_90e6f5ae-935d-42f9-a33b-67e8a1ac6326"],
+        ["hf_20260604_222842_574aaf76-926b-4e5b-a7fa-a9434810abdf","hf_20260604_220724_02f95d95-3a5a-4e9a-b3fc-56d834539ebf"],
+        ["hf_20260604_222845_d545a4a2-bdea-43f5-8f69-48e47d949dcb","hf_20260604_220726_2bdd7aca-58ee-43d9-98c3-07d17169ec3e"]
+      ];
+      var grid = document.getElementById('bacGrid');
+      if (grid) {
+        pairs.forEach(function(p, idx){
+          var d = document.createElement('div');
+          d.className = 'bac bac' + (idx + 1);
+          d.innerHTML =
+            '<img class="bac-img" src="'+CDN+p[0]+'_min.webp" alt="Zdjęcie przed obróbką" loading="lazy" />' +
+            '<img class="bac-img bac-after" src="'+CDN+p[1]+'_min.webp" alt="Zdjęcie po obróbce" loading="lazy" />' +
+            '<span class="bac-line"></span>' +
+            '<span class="bac-tag bac-l">PRZED</span><span class="bac-tag bac-r">PO</span>';
+          grid.appendChild(d);
+        });
+      }
+    })();
+  </script>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/gallery-data.js?v=34"></script>
+  <script src="js/main.js?v=50"></script>
+</body>
+</html>

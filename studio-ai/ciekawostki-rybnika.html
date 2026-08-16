@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Ciekawostki Rybnika — generator</title>
+<style>
+  :root{--graf:#15171c;--gold:#c9a24b;--line:#2a2d34;--card:#1d2026;--mut:#8a9096}
+  *{box-sizing:border-box}
+  body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:#0f1115;color:#e8e6df;line-height:1.5}
+  header{background:var(--graf);color:var(--gold);padding:20px 18px;text-align:center;border-bottom:1px solid var(--line)}
+  header h1{margin:0;font-size:20px;letter-spacing:3px}
+  header p{margin:6px 0 0;font-size:13px;color:#9aa0a6}
+  .wrap{max-width:820px;margin:0 auto;padding:16px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:16px}
+  label{display:block;font-weight:600;font-size:13px;margin:10px 0 6px;color:#cfcabb}
+  textarea{width:100%;min-height:110px;padding:10px;border:1px solid var(--line);border-radius:10px;font-size:15px;background:#12141a;color:#e8e6df;font-family:inherit;line-height:1.6}
+  input[type=text]{width:100%;padding:9px;border:1px solid var(--line);border-radius:8px;font-size:13.5px;background:#12141a;color:#e8e6df;font-family:inherit}
+  select{width:100%;padding:9px;border:1px solid var(--line);border-radius:8px;background:#12141a;color:#e8e6df}
+  .btns{display:flex;gap:10px;flex-wrap:wrap;margin:8px 0}
+  button{cursor:pointer;border:none;border-radius:999px;padding:12px 20px;font-size:15px;font-weight:700}
+  .gold{background:var(--gold);color:#15171c}.gold:hover{background:#dab863}
+  .ghost{background:#2a2d34;color:#e8e6df}
+  .hint{font-size:12px;color:var(--mut);margin-top:6px}
+  .preview{text-align:center;background:#000;border:1px solid var(--line);border-radius:12px;padding:12px}
+  canvas{max-width:100%;height:auto;border-radius:8px;cursor:pointer}
+  .tag{display:inline-block;background:#2a2d34;color:var(--gold);border-radius:6px;padding:2px 8px;font-size:11px;font-weight:700;margin-bottom:8px;letter-spacing:1px}
+  a.back{color:var(--gold);font-size:14px;text-decoration:none}
+  .row2{display:flex;gap:12px;flex-wrap:wrap}.row2>div{flex:1;min-width:140px}
+</style>
+</head>
+<body>
+<header>
+  <h1>SPOTTED RYBNIK</h1>
+  <p>Generator „Ciekawostki Rybnika" · historia i stare zdjęcia</p>
+</header>
+
+<div class="wrap">
+  <div style="margin-bottom:12px;display:flex;gap:16px;flex-wrap:wrap"><a class="back" href="spotted-rybnik.html">← Generator postów</a><a class="back" href="spotted-cennik.html">💰 Cennik</a></div>
+
+  <div class="card">
+    <span class="tag">CIEKAWOSTKA</span>
+    <label>✏️ Tekst ciekawostki — możesz pisać / wklejać ręcznie</label>
+    <textarea id="fact"></textarea>
+    <div class="btns">
+      <button class="gold" onclick="nastepna()">🎲 Następna ciekawostka</button>
+      <button class="ghost" onclick="draw()">🔄 Odśwież</button>
+    </div>
+    <div class="hint" id="cnt"></div>
+    <div class="hint">💡 <b>Kliknij podgląd</b> albo „🎲 Następna" → wskoczy kolejny fakt z bazy (poprzednie się nie powtarzają).</div>
+  </div>
+
+  <div class="card">
+    <span class="tag">STARE ZDJĘCIE (opcjonalnie)</span>
+    <label>📷 Wgraj zdjęcie (tło ciekawostki)</label>
+    <input type="file" id="photo" accept="image/*" style="width:100%;color:#cfcabb;font-size:13px">
+    <div class="btns"><button class="ghost" onclick="clearPhoto()">🗑️ Usuń zdjęcie</button></div>
+    <div class="hint">Skąd stare zdjęcia Rybnika? <b>fotopolska.eu</b>, <b>Narodowe Archiwum Cyfrowe (nac.gov.pl)</b>, <b>Śląska Biblioteka Cyfrowa</b>, grupy FB „Rybnik na starej fotografii". Używaj zdjęć, do których masz prawa lub podaj autora/źródło.</div>
+    <label style="margin-top:12px">Nagłówek</label>
+    <input type="text" id="hdr" value="CZY WIESZ, ŻE…">
+    <label>Podpis źródła / autora zdjęcia (opcjonalnie)</label>
+    <input type="text" id="src" value="">
+  </div>
+
+  <div class="card">
+    <span class="tag">WYGLĄD</span>
+    <div class="row2">
+      <div><label>Kolorystyka</label>
+        <select id="theme"><option value="czarny" selected>Czarny premium</option><option value="sepia">Sepia / retro</option><option value="bialy">Biały premium</option></select>
+      </div>
+      <div><label>Format</label>
+        <select id="fmt"><option value="45" selected>4:5 (post)</option><option value="11">1:1 (kwadrat)</option><option value="916">9:16 (relacja)</option></select>
+      </div>
+    </div>
+    <label style="margin-top:12px">Wielkość napisów</label>
+    <div style="display:flex;align-items:center;gap:10px">
+      <span style="font-size:13px">A</span>
+      <input type="range" id="tsize" min="0" max="3" step="1" value="1" style="flex:1;accent-color:#caa64a">
+      <span style="font-size:20px;font-weight:700">A</span>
+    </div>
+    <label style="margin-top:12px">Stopka — linia 1</label>
+    <input type="text" id="foot" value="Znasz więcej? Napisz w komentarzu 👇">
+    <label>Stopka — linia 2 (Instagram)</label>
+    <input type="text" id="foot2" value="📸 Znajdziesz nas na Instagramie oraz Facebooku">
+  </div>
+
+  <div class="btns">
+    <button class="gold" onclick="dl()">⬇️ Pobierz PNG</button>
+  </div>
+  <div class="hint" id="info"></div>
+  <div id="exp"></div>
+
+  <div class="card">
+    <span class="tag">PODGLĄD</span>
+    <div class="preview"><canvas id="cv" width="1080" height="1350"></canvas></div>
+  </div>
+</div>
+
+<script>
+const cv=document.getElementById('cv'),ctx=cv.getContext('2d');
+const FF="system-ui,Segoe UI,Roboto,sans-serif";
+const THEMES={
+  czarny:{bg:"#111318",glow:"201,162,75",gold:"#e2c079",sub:"#b9bcc4",text:"#f2f0e8",foot:"#8f949c",g1:"#f6e7bf",g2:"#d8b25e",g3:"#b98f38",panel:"rgba(12,13,17,0.72)"},
+  sepia:{bg:"#241c12",glow:"210,170,110",gold:"#f0d29a",sub:"#cbb590",text:"#f6ecd8",foot:"#b09d7e",g1:"#f7e6c2",g2:"#e0bd80",g3:"#c49a50",panel:"rgba(30,22,12,0.72)"},
+  bialy:{bg:"#f4f1ea",glow:"180,140,60",gold:"#9c7a2c",sub:"#5b5f66",text:"#1b1d22",foot:"#7a7f86",g1:"#8a6a24",g2:"#a9862f",g3:"#7c5f1e",panel:"rgba(244,241,234,0.82)"}
+};
+let W=1080,H=1350,T=THEMES.czarny,PHOTO=null;
+
+const FACTS=[
+"Nazwa Rybnik pochodzi od stawu rybnego — dawni mieszkańcy utrzymywali się z hodowli ryb.",
+"Pierwsza pisemna wzmianka o Rybniku pochodzi z 1230 roku — miasto ma niemal 800 lat!",
+"Prawa miejskie Rybnik otrzymał w 1327 roku.",
+"Rybnik powstał z trzech osad rybackich: Rybinka, Zagrodnik i Łon.",
+"Osadnictwo na ziemi rybnickiej sięga epoki kamienia — nawet 8 tysięcy lat przed naszą erą.",
+"Wieże bazyliki św. Antoniego mają 95 metrów — to najwyższa świątynia na Górnym Śląsku.",
+"Bazylikę św. Antoniego zbudowano błyskawicznie — w latach 1903–1906.",
+"Zalew Rybnicki, zwany Rybnickim Morzem, oddano do użytku w grudniu 1971 roku.",
+"Zalew Rybnicki przez dekady nie zamarzał zimą — ciepłą wodą chłodzono turbiny elektrowni.",
+"W styczniu 2024 roku Zalew Rybnicki po raz pierwszy od dekad zamarzł w całości.",
+"W Zalewie Rybnickim żyją sumy giganty — jedne z największych na świecie, ważące ponad 100 kg.",
+"Rybnik składa się aż z 27 dzielnic.",
+"Dwie rybnickie dzielnice noszą egzotyczne nazwy: Meksyk i Maroko!",
+"W międzywojniu Rybnik uchodził za jedno z najpiękniejszych miast w Polsce — zaraz obok Poznania.",
+"W okresie międzywojennym Rybnik liczył około 28 500 mieszkańców.",
+"Rybnik wrócił do Polski w lipcu 1922 roku, po powstaniach śląskich.",
+"Rybnik był jednym z głównych ośrodków przygotowań do powstań śląskich.",
+"Rybnik został wyzwolony 26 marca 1945 roku.",
+"Najstarszy kościół w Rybniku — Wniebowzięcia NMP przy ul. Gliwickiej — pochodzi z XV wieku.",
+"Klasycystyczny dawny ratusz przy Rynku, z wieżą zegarową, wybudowano w 1822 roku.",
+"Kopalnia Ignacy (dawniej Hoym) działa od 1792 roku — to najstarsza kopalnia ziemi rybnickiej.",
+"W zabytkowej kopalni Ignacy wciąż stoją ponad 100-letnie, napędzane parą maszyny wyciągowe.",
+"Najstarszy park miejski Rybnika — Kozie Góry w dzielnicy Meksyk — założono w 1905 roku.",
+"Dziś Rybnik liczy około 140 tysięcy mieszkańców i jest 25. miastem Polski pod względem ludności.",
+"Przodkami Rybniczan było prawdopodobnie słowiańskie plemię Gołęszyców.",
+"Rybnik był sercem Rybnickiego Okręgu Węglowego (ROW).",
+"Rybnicki Rynek z dawnym ratuszem od 200 lat jest ulubionym miejscem spotkań mieszkańców.",
+"Elektrownia Rybnik przez lata była jedną z największych elektrowni węglowych w Polsce."
+];
+
+let queue=[], curFact=FACTS[0];
+function reshuffle(){queue=FACTS.map((_,i)=>i);for(let i=queue.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[queue[i],queue[j]]=[queue[j],queue[i]];}}
+function nastepna(){if(!queue.length)reshuffle();const i=queue.pop();curFact=FACTS[i];document.getElementById('fact').value=curFact;draw();}
+
+function scaleF(){return ({0:0.86,1:1,2:1.14,3:1.28})[+document.getElementById('tsize').value]||1;}
+function fmt(){const v=document.getElementById('fmt').value;if(v==="11")return[1080,1080];if(v==="916")return[1080,1920];return[1080,1350];}
+function rr(x,y,w,h,r){ctx.beginPath();ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath();}
+function wrap(t,maxW,font){ctx.font=font;const words=(t||"").split(/\s+/);const lines=[];let cur="";for(const w of words){const test=cur?cur+" "+w:w;if(ctx.measureText(test).width<=maxW||!cur)cur=test;else{lines.push(cur);cur=w;}}if(cur)lines.push(cur);return lines;}
+
+function drawCover(img,x,y,w,h,rad){
+  ctx.save();rr(x,y,w,h,rad);ctx.clip();
+  const ir=img.width/img.height, tr=w/h;let dw,dh,dx,dy;
+  if(ir>tr){dh=h;dw=h*ir;dx=x-(dw-w)/2;dy=y;}else{dw=w;dh=w/ir;dx=x;dy=y-(dh-h)/2;}
+  ctx.drawImage(img,dx,dy,dw,dh);
+  ctx.restore();
+}
+
+function draw(){
+  const d=fmt();W=d[0];H=d[1];cv.width=W;cv.height=H;
+  T=THEMES[document.getElementById('theme').value]||THEMES.czarny;
+  const sc=scaleF();
+  const fact=(document.getElementById('fact').value||"").trim()||curFact;
+  const hdr=(document.getElementById('hdr').value||"").trim();
+  const src=(document.getElementById('src').value||"").trim();
+  const foot=(document.getElementById('foot').value||"").trim();
+  ctx.clearRect(0,0,W,H);
+  ctx.fillStyle=T.bg;ctx.fillRect(0,0,W,H);
+  let g1=ctx.createRadialGradient(80,80,0,80,80,560);g1.addColorStop(0,"rgba("+T.glow+",0.16)");g1.addColorStop(1,"rgba("+T.glow+",0)");
+  ctx.fillStyle=g1;ctx.fillRect(0,0,W,H);
+  let g2=ctx.createRadialGradient(W-80,H-80,0,W-80,H-80,600);g2.addColorStop(0,"rgba("+T.glow+",0.12)");g2.addColorStop(1,"rgba("+T.glow+",0)");
+  ctx.fillStyle=g2;ctx.fillRect(0,0,W,H);
+  ctx.strokeStyle="rgba("+T.glow+",0.35)";ctx.lineWidth=2;rr(28,28,W-56,H-56,22);ctx.stroke();
+
+  // brand + title
+  const gg=ctx.createLinearGradient(0,60,0,150);gg.addColorStop(0,T.g1);gg.addColorStop(0.5,T.g2);gg.addColorStop(1,T.g3);
+  ctx.textAlign="center";ctx.textBaseline="alphabetic";
+  ctx.fillStyle=gg;let bs=46;try{ctx.letterSpacing="4px";}catch(e){}
+  ctx.font="bold "+bs+"px "+FF;while(ctx.measureText("SPOTTED RYBNIK").width>W-130&&bs>30){bs-=2;ctx.font="bold "+bs+"px "+FF;}
+  ctx.fillText("SPOTTED RYBNIK",W/2,112);try{ctx.letterSpacing="0px";}catch(e){}
+  ctx.fillStyle=T.sub;let ts=42;try{ctx.letterSpacing="4px";}catch(e){}
+  ctx.font="600 "+ts+"px "+FF;while(ctx.measureText("CIEKAWOSTKI RYBNIKA").width>W-160&&ts>26){ts-=2;ctx.font="600 "+ts+"px "+FF;}
+  ctx.fillText("CIEKAWOSTKI RYBNIKA",W/2,164);try{ctx.letterSpacing="0px";}catch(e){}
+  ctx.fillStyle=T.gold;rr(W/2-70,184,140,4,2);ctx.fill();
+
+  const foot2=(document.getElementById('foot2').value||"").trim();
+  const footBlock=(foot&&foot2)?128:(foot||foot2)?68:44;
+  const contentTop=216, contentBot=H-footBlock;
+  // photo area (if any)
+  let textTop=contentTop+30;
+  if(PHOTO){
+    const px=70, pw=W-px*2, ph=Math.min((contentBot-contentTop)*0.52, pw*0.72);
+    const py=contentTop+6;
+    ctx.save();ctx.shadowColor="rgba(0,0,0,0.5)";ctx.shadowBlur=26;ctx.shadowOffsetY=10;
+    ctx.fillStyle="#000";rr(px,py,pw,ph,18);ctx.fill();ctx.restore();
+    drawCover(PHOTO,px,py,pw,ph,18);
+    ctx.strokeStyle="rgba("+T.glow+",0.5)";ctx.lineWidth=2;rr(px,py,pw,ph,18);ctx.stroke();
+    if(src){
+      ctx.textAlign="right";ctx.textBaseline="alphabetic";
+      ctx.font="italic 20px "+FF;
+      const sw=ctx.measureText(src).width;
+      ctx.save();ctx.fillStyle="rgba(0,0,0,0.55)";rr(px+pw-sw-24,py+ph-40,sw+18,30,7);ctx.fill();ctx.restore();
+      ctx.fillStyle="#eee";ctx.fillText(src,px+pw-16,py+ph-18);
+    }
+    textTop=py+ph+34;
+  }
+
+  // "CZY WIESZ, ŻE…" kicker
+  if(hdr){
+    ctx.textAlign="center";ctx.textBaseline="alphabetic";ctx.fillStyle=T.gold;
+    ctx.font="bold 30px "+FF;try{ctx.letterSpacing="2px";}catch(e){}
+    ctx.fillText(hdr.toUpperCase(),W/2,textTop);try{ctx.letterSpacing="0px";}catch(e){}
+    textTop+=18;
+  }
+
+  // fact text — auto-fit in remaining area
+  const boxW=W-160, boxTop=textTop+20, boxBot=contentBot-6;
+  const boxH=boxBot-boxTop;
+  const topFs=Math.round((PHOTO?52:64)*sc);
+  let fs=topFs,lines=[];
+  for(fs=topFs;fs>=22;fs-=2){lines=wrap(fact,boxW,"600 "+fs+"px "+FF);if(lines.length*fs*1.3<=boxH)break;}
+  ctx.textAlign="center";ctx.textBaseline="alphabetic";ctx.fillStyle=T.text;ctx.font="600 "+fs+"px "+FF;
+  const lh=fs*1.3, blockH=lines.length*lh;
+  let y=boxTop+(boxH-blockH)/2+fs;
+  lines.forEach(l=>{ctx.fillText(l,W/2,y);y+=lh;});
+
+  // footer (do 2 linii)
+  ctx.textAlign="center";ctx.textBaseline="alphabetic";
+  const fitLine=(t,base,wt)=>{let s=25;ctx.font=wt+s+"px "+FF;while(ctx.measureText(t).width>W-120&&s>15){s-=1;ctx.font=wt+s+"px "+FF;}return base;};
+  if(foot&&foot2){
+    ctx.fillStyle=T.foot;fitLine(foot,0,"");ctx.fillText(foot,W/2,H-88);
+    ctx.fillStyle=T.gold;fitLine(foot2,0,"600 ");ctx.fillText(foot2,W/2,H-50);
+  } else if(foot||foot2){
+    const one=foot||foot2;ctx.fillStyle=foot2?T.gold:T.foot;const wt=foot2?"600 ":"";fitLine(one,0,wt);ctx.fillText(one,W/2,H-52);
+  }
+}
+
+function loadPhoto(file){
+  if(!file)return;const rd=new FileReader();
+  rd.onload=e=>{const im=new Image();im.onload=()=>{PHOTO=im;draw();};im.src=e.target.result;};
+  rd.readAsDataURL(file);
+}
+function clearPhoto(){PHOTO=null;document.getElementById('photo').value="";draw();}
+
+function dl(){
+  draw();const info=document.getElementById('info');
+  cv.toBlob(b=>{
+    if(b){const u=URL.createObjectURL(b);const a=document.createElement('a');a.href=u;a.download="ciekawostka-rybnika.png";document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),1500);}
+    const exp=document.getElementById('exp');
+    exp.innerHTML='<div class="hint" style="margin:8px 0">📱 Na telefonie: przytrzymaj obraz poniżej i wybierz „Zapisz".</div>';
+    const im=new Image();im.src=cv.toDataURL('image/png');im.style.maxWidth="100%";im.style.borderRadius="8px";exp.appendChild(im);
+    if(info){info.textContent="Pobrano PNG ✓";setTimeout(()=>info.textContent="",2500);}
+  },'image/png');
+}
+
+['fact','hdr','src','foot','foot2'].forEach(id=>document.getElementById(id).addEventListener('input',draw));
+['theme','fmt'].forEach(id=>document.getElementById(id).addEventListener('change',draw));
+document.getElementById('tsize').addEventListener('input',draw);
+document.getElementById('photo').addEventListener('change',e=>loadPhoto(e.target.files[0]));
+cv.addEventListener('click',()=>nastepna());
+function updCnt(){document.getElementById('cnt').textContent="Baza: "+FACTS.length+" ciekawostek · pozostało w losowaniu: "+queue.length;}
+document.getElementById('fact').value=curFact;
+reshuffle();updCnt();
+const _n=nastepna;nastepna=function(){_n();updCnt();};
+draw();
+</script>
+</body>
+</html>

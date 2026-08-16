@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Spotted Rybnik — Anonimowe wiadomości</title>
+<meta name="description" content="Wyślij anonimową wiadomość do Spotted Rybnik. Bez logowania, bez rejestracji. Napisz, co Ci leży na sercu — my wybieramy i publikujemy najlepsze.">
+<style>
+  :root{--graf:#15171c;--gold:#c9a24b;--line:#2a2d34;--card:#1d2026;--mut:#8a9096}
+  *{box-sizing:border-box}
+  body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:#0f1115;color:#e8e6df;line-height:1.55}
+  header{background:linear-gradient(180deg,#181b21,#111318);color:var(--gold);padding:30px 18px 26px;text-align:center;border-bottom:1px solid var(--line)}
+  header h1{margin:0;font-size:30px;letter-spacing:3px;font-weight:800}
+  header .k{color:#e8e6df;font-weight:400;font-size:15px;letter-spacing:0;display:block;margin-top:8px}
+  .wrap{max-width:640px;margin:0 auto;padding:16px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px;margin-bottom:16px}
+  textarea{width:100%;min-height:120px;padding:13px;border:1px solid var(--line);border-radius:12px;font-size:16px;background:#12141a;color:#e8e6df;font-family:inherit;line-height:1.5;resize:vertical}
+  .cnt{font-size:12px;color:var(--mut);text-align:right;margin-top:4px}
+  button{cursor:pointer;border:none;border-radius:999px;padding:14px 22px;font-size:16px;font-weight:700}
+  .gold{background:var(--gold);color:#15171c;width:100%}.gold:hover{background:#dab863}
+  .gold:disabled{opacity:.5;cursor:not-allowed}
+  .hint{font-size:12.5px;color:var(--mut);margin-top:8px}
+  .msg{font-size:14px;margin-top:10px;padding:11px 13px;border-radius:10px;display:none}
+  .ok{background:#16311f;color:#8ee0a6;display:block}
+  .err{background:#3a1d1d;color:#f0a0a0;display:block}
+  h2{font-size:16px;letter-spacing:1px;color:var(--gold);margin:22px 4px 12px;text-transform:uppercase}
+  .tell{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:15px 16px;margin-bottom:12px}
+  .tell .q{font-size:16.5px;color:#f2f0e8;white-space:pre-wrap;word-break:break-word}
+  .tell .a{margin-top:10px;padding:11px 13px;background:#12141a;border-left:3px solid var(--gold);border-radius:8px;font-size:15px;color:#dcd7c8;white-space:pre-wrap;word-break:break-word}
+  .tell .a b{color:var(--gold);font-weight:700}
+  .tell .d{font-size:11.5px;color:var(--mut);margin-top:9px}
+  .ad{border:1px dashed #333842;border-radius:12px;padding:14px;text-align:center;color:#5c626b;font-size:12px;margin-bottom:16px}
+  .foot{text-align:center;color:var(--mut);font-size:12px;padding:24px 12px 90px}
+  .foot a{color:var(--gold);text-decoration:none}
+  /* cookie banner */
+  #cookie{position:fixed;left:0;right:0;bottom:0;background:#181b21;border-top:1px solid var(--line);padding:14px 16px;display:none;z-index:50}
+  #cookie .inner{max-width:640px;margin:0 auto;display:flex;gap:12px;align-items:center;flex-wrap:wrap;justify-content:center}
+  #cookie p{margin:0;font-size:13px;color:#cfcabb;flex:1;min-width:220px}
+  #cookie button{padding:10px 16px;font-size:14px}
+  .c-ok{background:var(--gold);color:#15171c}.c-no{background:#2a2d34;color:#e8e6df}
+</style>
+</head>
+<body>
+<header>
+  <h1>SPOTTED RYBNIK</h1>
+  <span class="k">💬 Napisz do nas <b>anonimowo</b> — bez logowania i rejestracji</span>
+</header>
+
+<div class="wrap">
+  <!-- MIEJSCE NA REKLAMĘ (góra). Wklej tu kod AdSense między znacznikami. Reklama pojawia się tylko po zgodzie na cookies. -->
+  <div class="ad" id="ad-top">Miejsce na reklamę</div>
+
+  <div class="card">
+    <label style="font-weight:700;font-size:15px;display:block;margin-bottom:8px">✍️ Twoja anonimowa wiadomość</label>
+    <textarea id="body" maxlength="1000" placeholder="Napisz, co Ci leży na sercu — pytanie, spostrzeżenie, pozdrowienia, ogłoszenie… Nikt nie zobaczy, kto to wysłał."></textarea>
+    <div class="cnt"><span id="cc">0</span> / 1000</div>
+    <input type="text" id="hp" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px;opacity:0" aria-hidden="true">
+    <button class="gold" id="send" onclick="send()">Wyślij anonimowo →</button>
+    <div class="msg" id="msg"></div>
+    <div class="hint">🔒 Nie zbieramy Twoich danych — nie pytamy o imię, e-mail ani numer. Wiadomości przegląda administrator i publikuje wybrane. Zero hejtu, gróźb i danych osobowych innych osób.</div>
+  </div>
+
+  <h2>📢 Opublikowane wiadomości</h2>
+  <div id="wall"><div class="hint" style="text-align:center">Wczytywanie…</div></div>
+
+  <div class="foot">
+    Spotted Rybnik · anonimowa tablica<br>
+    <a href="spotted-rybnik.html">Generator postów</a> · <a href="ciekawostki-rybnika.html">Ciekawostki Rybnika</a>
+  </div>
+</div>
+
+<div id="cookie">
+  <div class="inner">
+    <p>🍪 Używamy plików cookies, aby strona działała i by wyświetlać reklamy. Możesz zaakceptować lub odrzucić.</p>
+    <button class="c-ok" onclick="cookieChoice(true)">Akceptuję</button>
+    <button class="c-no" onclick="cookieChoice(false)">Odrzucam</button>
+  </div>
+</div>
+
+<script>
+const SB_URL="https://ahgzjneegvptudphibdm.supabase.co";
+const SB_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFoZ3pqbmVlZ3ZwdHVkcGhpYmRtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQxMTA3NzcsImV4cCI6MjA4OTY4Njc3N30.KrCBuAzz7fsCHCUSGeTZ5vm7BOo-DIGvI3jZyrk4tL4";
+const H={apikey:SB_KEY,Authorization:"Bearer "+SB_KEY,"Content-Type":"application/json"};
+const $=id=>document.getElementById(id);
+
+$('body').addEventListener('input',()=>{$('cc').textContent=$('body').value.length;});
+
+function fmtDate(s){try{const d=new Date(s);return d.toLocaleDateString('pl-PL',{day:'numeric',month:'long',year:'numeric'});}catch(e){return"";}}
+
+async function send(){
+  const t=$('body').value.trim();
+  const m=$('msg');
+  if($('hp').value){return;} // honeypot — bot
+  if(t.length<2){m.className="msg err";m.textContent="Napisz trochę więcej 🙂";return;}
+  const last=+localStorage.getItem('spTellLast')||0;
+  if(Date.now()-last<15000){m.className="msg err";m.textContent="Chwila przerwy — spróbuj za kilkanaście sekund.";return;}
+  $('send').disabled=true;$('send').textContent="Wysyłanie…";
+  try{
+    const r=await fetch(SB_URL+"/rest/v1/spotted_tells",{method:"POST",headers:{...H,Prefer:"return=minimal"},body:JSON.stringify({body:t})});
+    if(!r.ok)throw new Error(await r.text());
+    localStorage.setItem('spTellLast',String(Date.now()));
+    $('body').value="";$('cc').textContent="0";
+    m.className="msg ok";m.textContent="✅ Wysłane! Dziękujemy. Jeśli administrator wybierze Twoją wiadomość — pojawi się poniżej.";
+  }catch(e){
+    m.className="msg err";m.textContent="Nie udało się wysłać. Spróbuj ponownie za chwilę.";
+  }finally{
+    $('send').disabled=false;$('send').textContent="Wyślij anonimowo →";
+  }
+}
+
+async function loadWall(){
+  const wall=$('wall');
+  try{
+    const r=await fetch(SB_URL+"/rest/v1/spotted_tells?status=eq.published&select=id,body,answer,published_at&order=published_at.desc&limit=60",{headers:H});
+    const rows=await r.json();
+    if(!Array.isArray(rows)||!rows.length){wall.innerHTML='<div class="hint" style="text-align:center">Nie ma jeszcze opublikowanych wiadomości. Bądź pierwszy! ✍️</div>';return;}
+    wall.innerHTML="";
+    rows.forEach(row=>{
+      const c=document.createElement('div');c.className="tell";
+      const q=document.createElement('div');q.className="q";q.textContent=row.body;c.appendChild(q);
+      if(row.answer){const a=document.createElement('div');a.className="a";const b=document.createElement('b');b.textContent="Spotted Rybnik: ";a.appendChild(b);a.appendChild(document.createTextNode(row.answer));c.appendChild(a);}
+      const d=document.createElement('div');d.className="d";d.textContent=fmtDate(row.published_at);c.appendChild(d);
+      wall.appendChild(c);
+    });
+  }catch(e){wall.innerHTML='<div class="hint" style="text-align:center">Nie udało się wczytać wiadomości.</div>';}
+}
+
+/* ---- Cookies / reklamy ---- */
+function loadAds(){
+  // Reklamy ładują się tylko po zgodzie. Wklej tu inicjalizację AdSense.
+  document.querySelectorAll('.ad').forEach(a=>{a.textContent="Miejsce na reklamę (dodaj kod AdSense)";});
+}
+function cookieChoice(ok){
+  localStorage.setItem('spottedCookieConsent',ok?"yes":"no");
+  $('cookie').style.display="none";
+  if(ok)loadAds();
+}
+(function(){
+  const c=localStorage.getItem('spottedCookieConsent');
+  if(!c)$('cookie').style.display="block";
+  else if(c==="yes")loadAds();
+})();
+
+loadWall();
+</script>
+</body>
+</html>

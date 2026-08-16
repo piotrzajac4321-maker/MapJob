@@ -1,0 +1,39 @@
+User-agent: *
+Allow: /
+Disallow: /panel
+Disallow: /panel.html
+
+# Boty AI — jawnie mile widziane (ChatGPT, Claude, Gemini, Perplexity, Bing)
+User-agent: GPTBot
+Allow: /
+Disallow: /panel
+
+User-agent: OAI-SearchBot
+Allow: /
+Disallow: /panel
+
+User-agent: ChatGPT-User
+Allow: /
+Disallow: /panel
+
+User-agent: ClaudeBot
+Allow: /
+Disallow: /panel
+
+User-agent: anthropic-ai
+Allow: /
+Disallow: /panel
+
+User-agent: Google-Extended
+Allow: /
+Disallow: /panel
+
+User-agent: PerplexityBot
+Allow: /
+Disallow: /panel
+
+User-agent: Bingbot
+Allow: /
+Disallow: /panel
+
+Sitemap: https://bobofoto.pl/sitemap.xml
