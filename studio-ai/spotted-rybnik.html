@@ -86,7 +86,7 @@
       <div style="margin-top:8px;font-size:13px">
         <label>Wgraj logo firmy <span style="color:#8a9096;font-weight:400">(możesz zaznaczyć kilka naraz)</span></label>
         <input type="file" id="logoFile" accept="image/*" multiple style="font-size:12.5px">
-        <div class="hint" style="margin-top:4px">Zapisują się na stałe. <b>Kliknij logo → dodaje je do postu (✓)</b>. Klik ponownie na aktywne → zdejmuje z postu. Możesz dodać wiele firm naraz. <span style="color:#c9a24b">[wersja logo v10 — opis + szybkie kopiowanie]</span></div>
+        <div class="hint" style="margin-top:4px">Zapisują się na stałe. <b>Kliknij logo → dodaje je do postu (✓)</b>. Klik ponownie na aktywne → zdejmuje z postu. Możesz dodać wiele firm naraz. <span style="color:#c9a24b">[wersja logo v11 — opis + zdjęcie klienta]</span></div>
         <label style="margin-top:10px">📚 Zapisane logotypy <span id="logoCount" style="color:var(--gold)"></span></label>
         <div id="logoGallery" style="display:flex;flex-wrap:wrap;gap:8px;margin-top:4px"></div>
         <div class="btns" style="margin:10px 0 0">
@@ -707,7 +707,7 @@ function curCat(){return (document.getElementById('catFilter')||{}).value||"all"
 function poolBase(){const rem=getRemoved(),cf=curCat();return MSGS.filter(m=>!rem[m]&&(cf==="all"||category(m)===cf));}
 
 const cv=document.getElementById('cv'),ctx=cv.getContext('2d');
-let LOGOS=[], curLogoId=null, PLACED=[], activeIdx=-1, RECTS=[], EXPORTING=false, logoHit=false;
+let LOGOS=[], curLogoId=null, PLACED=[], activeIdx=-1, RECTS=[], EXPORTING=false, logoHit=false, PHOTOS={};
 const _g=id=>document.getElementById(id);
 
 function newId(){let n=1;while(LOGOS.some(l=>l.id==='logo'+n))n++;return 'logo'+n;}
@@ -731,6 +731,7 @@ function persistLogos(){try{localStorage.setItem('spottedLogos',JSON.stringify(L
 
 async function loadLogos(){
   try{LOGOS=JSON.parse(localStorage.getItem('spottedLogos')||'[]');}catch(e){LOGOS=[];}
+  try{PHOTOS=JSON.parse(localStorage.getItem('spottedPhotos')||'{}');}catch(e){PHOTOS={};}
   // migracja starego pojedynczego logo do biblioteki
   const old=localStorage.getItem('spottedLogo');
   if(old){LOGOS.push({id:newId(),name:'',data:old});localStorage.removeItem('spottedLogo');}
@@ -819,7 +820,20 @@ function renderClients(){
     const cp=document.createElement('button');cp.type='button';cp.className='gold';cp.textContent='📋 Kopiuj opis';cp.style.cssText="padding:9px 18px;font-size:13px;border-radius:999px";
     cp.onclick=()=>{const t=nt.value.trim();if(!t){const o=cp.textContent;cp.textContent='— puste —';setTimeout(()=>cp.textContent=o,900);return;}copyText(t,cp);};
     cpRow.appendChild(cp);
-    row.appendChild(top);row.appendChild(r2);row.appendChild(nt);row.appendChild(cpRow);
+    // zdjęcie do szybkiego pobrania
+    const phRow=document.createElement('div');phRow.style.cssText="display:flex;gap:8px;margin-top:6px;align-items:center;flex-wrap:wrap";
+    const fi=document.createElement('input');fi.type='file';fi.accept='image/*';fi.style.display='none';
+    fi.addEventListener('change',e=>{const f=e.target.files&&e.target.files[0];if(f)attachPhoto(l.id,f);fi.value='';});
+    const addBtn=document.createElement('button');addBtn.type='button';addBtn.className='ghost';addBtn.style.cssText="padding:8px 14px;font-size:12.5px";
+    addBtn.textContent=PHOTOS[l.id]?'🖼️ Zmień zdjęcie':'🖼️ Dodaj zdjęcie';addBtn.onclick=()=>fi.click();
+    phRow.appendChild(fi);phRow.appendChild(addBtn);
+    if(PHOTOS[l.id]){
+      const th2=document.createElement('img');th2.src=PHOTOS[l.id];th2.title='Kliknij, aby pobrać';th2.style.cssText="width:46px;height:46px;object-fit:cover;border-radius:6px;border:1px solid var(--line);cursor:pointer";th2.onclick=()=>downloadPhoto(l.id,l.name);
+      const dlb=document.createElement('button');dlb.type='button';dlb.className='gold';dlb.style.cssText="padding:9px 16px;font-size:12.5px;border-radius:999px";dlb.textContent='⬇️ Pobierz zdjęcie';dlb.onclick=()=>downloadPhoto(l.id,l.name);
+      const rmb=document.createElement('button');rmb.type='button';rmb.className='ghost';rmb.style.cssText="padding:8px 12px;font-size:12.5px";rmb.textContent='🗑️';rmb.title='Usuń zdjęcie';rmb.onclick=()=>removePhoto(l.id);
+      phRow.appendChild(th2);phRow.appendChild(dlb);phRow.appendChild(rmb);
+    }
+    row.appendChild(top);row.appendChild(r2);row.appendChild(nt);row.appendChild(cpRow);row.appendChild(phRow);
     box.appendChild(row);
   });
 }
@@ -847,6 +861,30 @@ function copyText(t,btn){
   const fb=()=>{try{const ta=document.createElement('textarea');ta.value=t;ta.style.position='fixed';ta.style.top='-9999px';document.body.appendChild(ta);ta.focus();ta.select();document.execCommand('copy');ta.remove();done();}catch(e){alert('Skopiuj ręcznie:\n\n'+t);}};
   if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t).then(done,fb);}else fb();
 }
+// zdjęcia klienta (osobna pamięć, żeby duże zdjęcie nie blokowało zapisu dat/opisów)
+function persistPhotos(){try{localStorage.setItem('spottedPhotos',JSON.stringify(PHOTOS));return true;}catch(e){return false;}}
+function scalePhoto(dataURL,maxDim,q){return new Promise(res=>{
+  const im=new Image();
+  im.onload=()=>{let w=im.naturalWidth||1,h=im.naturalHeight||1;const sc=Math.min(1,maxDim/Math.max(w,h));w=Math.max(1,Math.round(w*sc));h=Math.max(1,Math.round(h*sc));
+    try{const c=document.createElement('canvas');c.width=w;c.height=h;const g=c.getContext('2d');g.fillStyle='#ffffff';g.fillRect(0,0,w,h);g.drawImage(im,0,0,w,h);res(c.toDataURL('image/jpeg',q||0.85));}catch(e){res(dataURL);}};
+  im.onerror=()=>res(dataURL);im.src=dataURL;
+});}
+async function attachPhoto(id,file){
+  const raw=await new Promise(res=>{const r=new FileReader();r.onload=()=>res(r.result);r.onerror=()=>res(null);r.readAsDataURL(file);});
+  if(!raw)return;
+  const prev=PHOTOS[id];
+  PHOTOS[id]=await scalePhoto(raw,1440,0.85);
+  if(!persistPhotos()){if(prev)PHOTOS[id]=prev;else delete PHOTOS[id];alert('Za mało miejsca na zdjęcie w pamięci przeglądarki. Pobierz i usuń starsze zdjęcia, potem spróbuj ponownie.');}
+  renderClients();
+}
+function downloadPhoto(id,name){
+  const p=PHOTOS[id];if(!p)return;
+  const nm=(name||'klient').replace(/[^a-z0-9]+/gi,'-').toLowerCase();
+  const isMobile=/Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent)||(navigator.maxTouchPoints>1);
+  if(isMobile){const w=window.open();if(w){w.document.write('<title>zdjecie-'+nm+'</title><p style="font-family:sans-serif;padding:10px">Przytrzymaj zdjęcie i wybierz „Zapisz obraz".</p><img src="'+p+'" style="max-width:100%">');w.document.close();return;}}
+  const a=document.createElement('a');a.href=p;a.download='zdjecie-'+nm+'.jpg';document.body.appendChild(a);a.click();a.remove();
+}
+function removePhoto(id){delete PHOTOS[id];persistPhotos();renderClients();}
 function makeClientPost(id){
   const l=LOGOS.find(x=>x.id===id);if(!l)return;
   const cs=_g('count');if(cs)cs.value='1';
@@ -914,6 +952,7 @@ function applySlidersToActive(){
 function deleteLogo(id,ev){         // usuń z biblioteki (i z postu)
   if(ev)ev.stopPropagation();
   LOGOS=LOGOS.filter(l=>l.id!==id);persistLogos();
+  if(PHOTOS[id]){delete PHOTOS[id];persistPhotos();}
   try{const del=JSON.parse(localStorage.getItem('spottedLogoDel')||'[]');if(!del.includes(id)){del.push(id);localStorage.setItem('spottedLogoDel',JSON.stringify(del));}}catch(e){}
   const pidx=PLACED.findIndex(p=>p.logoId===id);
   if(pidx>=0)PLACED.splice(pidx,1);
